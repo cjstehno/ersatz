@@ -1,0 +1,96 @@
+plugins {
+    id 'groovy'
+    id "com.github.hierynomus.license" version "0.13.1"
+    id 'findbugs'
+    id 'jacoco'
+    id 'maven'
+    id 'maven-publish'
+}
+
+group = 'com.stehno.ersatz'
+version = '0.0.1'
+
+sourceCompatibility = 8
+targetCompatibility = 8
+
+repositories {
+    jcenter()
+}
+
+configurations {
+    asciidoclet
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.6'
+
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+
+    asciidoclet 'org.asciidoctor:asciidoclet:1.+'
+}
+
+javadoc {
+    options.docletpath = configurations.asciidoclet.files.asType(List)
+    options.links("http://docs.oracle.com/javase/8/docs/api/", "http://docs.groovy-lang.org/latest/html/gapi/");
+    options.doclet = 'org.asciidoctor.Asciidoclet'
+    //options.overview = "src/main/java/overview.adoc"
+    options.addStringOption "-base-dir", "${projectDir}"
+    options.addStringOption "-attribute", "name=${project.name},version=${project.version},title-link=https://github.com/cjstehno/ersatz[${project.name} ${project.version}]"
+}
+
+task sourcesJar(type: Jar) {
+    description = 'Creates sources JAR.'
+    classifier = 'sources'
+    from project.sourceSets.main.allSource
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+project.publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            groupId project.group
+            version project.version
+        }
+    }
+
+    configurations.runtime.allDependencies.each {
+        println(it);
+    }
+}
+
+tasks.withType(FindBugs) {
+    ignoreFailures = true
+    effort = 'max'
+    reportLevel = 'low'
+    reports {
+        xml.enabled false
+        html.enabled true
+        html.stylesheet resources.text.fromFile('/config/findbugs-styles.xsl')
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true // coveralls plugin depends on xml format report
+        html.enabled = true
+    }
+}
+
+license {
+    header rootProject.file('config/license_header.txt')
+
+    // Toggle ignoreFailures to false to enable license-checking that will fail the build
+    ignoreFailures true
+
+    ext.name = 'Christopher J. Stehno'
+    ext.year = Calendar.instance.get(Calendar.YEAR)
+
+    excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks'])
+}
+
