@@ -23,17 +23,19 @@ import java.util.function.Function;
  */
 public interface Request {
 
-    GetRequest header(final String name, final String value);
+    Request header(final String name, final String value);
 
-    GetRequest contentType(final String contentType);
+    Request contentType(final String contentType);
 
-    GetRequest query(final String name, final String value);
+    Request query(final String name, final String value);
 
-    GetRequest cookie(final String name, final String value);
+    Request cookie(final String name, final String value);
 
-    GetRequest listener(final Consumer<Request> listener);
+    Request listener(final Consumer<Request> listener);
 
-    GetRequest verifier(final Function<Integer, Boolean> verifier);
+    Request verifier(final Function<Integer, Boolean> verifier);
 
     Response responds();
+
+    Request responder(final Consumer<Response> responder);
 }
