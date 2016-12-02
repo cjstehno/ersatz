@@ -6,9 +6,4 @@
 - setup Travis for CI builds
 - setup Coveralls for coverage
 
-# GET Method Support
-
-- request cookies
-- response cookies
-
 

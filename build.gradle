@@ -60,10 +60,6 @@ project.publishing {
             version project.version
         }
     }
-
-    configurations.runtime.allDependencies.each {
-        println(it);
-    }
 }
 
 tasks.withType(FindBugs) {

@@ -19,10 +19,10 @@ import spock.lang.Specification
 
 class ErsatzServerSpec extends Specification {
 
+    private final ErsatzServer ersatzServer = new ErsatzServer()
+
     def 'prototype'() {
         setup:
-        final ErsatzServer ersatzServer = new ErsatzServer()
-
         ersatzServer.requesting { expectations ->
             expectations.get('/foo').responds().body('This is Ersatz!!')
             expectations.get('/bar').responds().body('This is Bar!!')
@@ -35,5 +35,9 @@ class ErsatzServerSpec extends Specification {
 
         then:
         text == 'This is Ersatz!!'
+    }
+
+    def cleanup(){
+        ersatzServer.stop()
     }
 }
