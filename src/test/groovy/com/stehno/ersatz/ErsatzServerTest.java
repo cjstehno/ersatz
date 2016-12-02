@@ -57,6 +57,8 @@ public class ErsatzServerTest {
             expectations.get("/bing").header("bravo", "hello").responds().body("Heads up!").header("charlie", "goodbye").code(222);
 
             expectations.get("/cookie/monster").cookie("flavor", "chocolate-chip").responds().body("I love cookies!").cookie("eaten", "yes");
+
+            expectations.head("/head").responds().header("foo", "blah").code(123);
         });
 
         ersatzServer.start();
@@ -85,6 +87,10 @@ public class ErsatzServerTest {
         resp = client.newCall(request).execute();
         assertEquals("I love cookies!", resp.body().string());
         assertEquals("eaten=yes", resp.header("Set-Cookie"));
+
+        resp = client.newCall(new okhttp3.Request.Builder().head().url(url("/head")).build()).execute();
+        assertEquals(123, resp.code());
+        assertEquals("blah", resp.header("foo"));
 
         assertTrue(ersatzServer.verify());
     }

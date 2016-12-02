@@ -13,28 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz;
-
-import com.stehno.ersatz.model.ContentResponse;
+package com.stehno.ersatz.model;
 
 /**
- * Used to configure the provided response to a web request.
+ * Created by cjstehno on 12/2/16.
  */
-public interface Response {
+public class EmptyResponse extends ContentResponse {
 
-    ContentResponse body(final Object content);
-
-    ContentResponse header(final String name, final String value);
-
-    ContentResponse cookie(final String name, final String value);
-
-    ContentResponse contentType(final String contentType);
-
-    ContentResponse code(int code);
+    @Override
+    public ContentResponse body(Object content) {
+        throw new UnsupportedOperationException("Empty responses cannot have a body.");
+    }
 }
-
-/*
-    TODO:
-        - headers(map)
-        - cookies(map)
- */

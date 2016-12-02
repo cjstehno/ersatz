@@ -32,4 +32,8 @@ public interface Expectations {
     Request get(String path);
 
     Request get(String path, @DelegatesTo(Request.class) Closure closure);
+
+    Request head(String path);
+
+    Request head(String path, @DelegatesTo(Request.class) Closure closure);
 }

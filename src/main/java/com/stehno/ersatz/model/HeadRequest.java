@@ -15,12 +15,19 @@
  */
 package com.stehno.ersatz.model;
 
-/**
- * Created by cjstehno on 12/1/16.
- */
-public class GetRequestImpl extends AbstractRequest {
+import com.stehno.ersatz.Response;
 
-    GetRequestImpl(final String path) {
+/**
+ * Created by cjstehno on 12/2/16.
+ */
+public class HeadRequest extends AbstractRequest {
+
+    HeadRequest(final String path) {
         super(path);
+    }
+
+    @Override
+    protected Response newResponse() {
+        return new EmptyResponse();
     }
 }

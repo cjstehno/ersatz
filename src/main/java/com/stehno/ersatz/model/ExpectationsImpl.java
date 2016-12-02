@@ -18,6 +18,7 @@ package com.stehno.ersatz.model;
 import com.stehno.ersatz.Expectations;
 import com.stehno.ersatz.Request;
 import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.undertow.server.HttpServerExchange;
 
 import java.util.ArrayList;
@@ -32,13 +33,13 @@ public class ExpectationsImpl implements Expectations {
     private final List<Request> requests = new ArrayList<>();
 
     public Request get(final String path) {
-        Request request = new GetRequestImpl(path);
+        Request request = new GetRequest(path);
         requests.add(request);
         return request;
     }
 
-    public Request get(final String path, final Closure closure) {
-        Request request = new GetRequestImpl(path);
+    public Request get(final String path, @DelegatesTo(Request.class) final Closure closure) {
+        Request request = new GetRequest(path);
         closure.setDelegate(request);
         closure.call();
 
@@ -46,7 +47,22 @@ public class ExpectationsImpl implements Expectations {
         return request;
     }
 
-    // PostRequest post(final String path){}...
+    @Override
+    public Request head(String path) {
+        Request request = new HeadRequest(path);
+        requests.add(request);
+        return request;
+    }
+
+    @Override
+    public Request head(String path, @DelegatesTo(Request.class) Closure closure) {
+        Request request = new HeadRequest(path);
+        closure.setDelegate(request);
+        closure.call();
+
+        requests.add(request);
+        return request;
+    }
 
     public Optional<Request> find(final HttpServerExchange exchange) {
         return requests.stream().filter(request -> ((AbstractRequest) request).matches(exchange)).findFirst();

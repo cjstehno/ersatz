@@ -23,35 +23,35 @@ import io.undertow.util.HttpString;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ResponseImpl implements Response {
+public class ContentResponse implements Response {
 
     private final Map<String, String> headers = new HashMap<>();
     private final Map<String, String> cookies = new HashMap<>();
     private Object body;
     private Integer code = 200;
 
-    public ResponseImpl body(final Object content) {
+    public ContentResponse body(final Object content) {
         this.body = content;
         return this;
     }
 
     // TODO: support for more complex headers
-    public ResponseImpl header(final String name, final String value) {
+    public ContentResponse header(final String name, final String value) {
         headers.put(name, value);
         return this;
     }
 
-    public ResponseImpl cookie(final String name, final String value) {
+    public ContentResponse cookie(final String name, final String value) {
         cookies.put(name, value);
         return this;
     }
 
-    public ResponseImpl contentType(final String contentType) {
+    public ContentResponse contentType(final String contentType) {
         header("Content-Type", contentType);
         return this;
     }
 
-    public ResponseImpl code(int code) {
+    public ContentResponse code(int code) {
         this.code = code;
         return this;
     }

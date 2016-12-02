@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz;
+package com.stehno.ersatz.model;
 
-import com.stehno.ersatz.model.ContentResponse;
+import com.stehno.ersatz.Response;
 
 /**
- * Used to configure the provided response to a web request.
+ * Created by cjstehno on 12/1/16.
  */
-public interface Response {
+public class GetRequest extends AbstractRequest {
 
-    ContentResponse body(final Object content);
+    GetRequest(final String path) {
+        super(path);
+    }
 
-    ContentResponse header(final String name, final String value);
-
-    ContentResponse cookie(final String name, final String value);
-
-    ContentResponse contentType(final String contentType);
-
-    ContentResponse code(int code);
+    @Override
+    protected Response newResponse() {
+        return new ContentResponse();
+    }
 }
-
-/*
-    TODO:
-        - headers(map)
-        - cookies(map)
- */

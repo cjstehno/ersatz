@@ -32,9 +32,11 @@ import java.util.function.Consumer;
  */
 public class ErsatzServer {
 
+    // FIXME: need a means of adding "plugins" for supporting things like BASIC, DIGEST, OAUTH
+
     private final ExpectationsImpl expectations = new ExpectationsImpl();
     private Undertow server;
-    private final int requestedPort;
+    private int requestedPort;
     private int actualPort = -1;
 
     public ErsatzServer() {
@@ -42,6 +44,10 @@ public class ErsatzServer {
     }
 
     public ErsatzServer(final int requestedPort) {
+        this.requestedPort = requestedPort;
+    }
+
+    public void setRequestedPort(int requestedPort) {
         this.requestedPort = requestedPort;
     }
 
@@ -66,10 +72,8 @@ public class ErsatzServer {
         return this;
     }
 
-    // FIMXE: logging?
-    // FIXME: record and allow access to all requests (optional)
+    // FIXME: record and allow access to all requests (optional) - just logging?
     // FIXME: 404 should provide info about the missed request  (optional)
-
 
     // FIXME: should be restartable
     public void start() {

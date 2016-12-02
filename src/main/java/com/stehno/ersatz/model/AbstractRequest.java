@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Created by cjstehno on 12/2/16.
+ * Abstract base class for request expectation definitions.
  */
 public abstract class AbstractRequest implements Request {
 
@@ -84,20 +84,20 @@ public abstract class AbstractRequest implements Request {
     }
 
     public Response responds() {
-        Response response = new ResponseImpl();
+        Response response = newResponse();
         responses.add(response);
         return response;
     }
 
     public Request responder(final Consumer<Response> responder) {
-        Response response = new ResponseImpl();
+        Response response = newResponse();
         responder.accept(response);
         responses.add(response);
         return this;
     }
 
     public Request responder(final Closure closure) {
-        Response response = new ResponseImpl();
+        Response response = newResponse();
         closure.setDelegate(response);
         closure.call();
 
@@ -128,6 +128,8 @@ public abstract class AbstractRequest implements Request {
             containsCookies(exchange.getRequestCookies());
     }
 
+    protected abstract Response newResponse();
+
     // header matching is not absolute - the request must contain the specified headers but not necessarily all of them
     // TODO: needs to support more complicated headers
     private boolean containsHeaders(final HeaderMap requestHeads) {
@@ -146,7 +148,7 @@ public abstract class AbstractRequest implements Request {
 
     // TODO: see if this can be package
     public void respond(final HttpServerExchange exchange) {
-        ResponseImpl response = (ResponseImpl) responses.get(callCount >= responses.size() ? responses.size() - 1 : callCount);
+        ContentResponse response = (ContentResponse) responses.get(callCount >= responses.size() ? responses.size() - 1 : callCount);
         mark();
 
         response.send(exchange);
