@@ -15,21 +15,31 @@
  */
 package com.stehno.ersatz;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Created by cjstehno on 12/2/16.
+ * Allows configuration of request matchers for expected responses.
  */
 public interface Request {
 
     Request header(final String name, final String value);
 
+    String header(final String name);
+
     Request contentType(final String contentType);
 
     Request query(final String name, final String value);
 
+    List<String> query(final String name);
+
     Request cookie(final String name, final String value);
+
+    String cookie(final String name);
 
     Request listener(final Consumer<Request> listener);
 
@@ -38,4 +48,15 @@ public interface Request {
     Response responds();
 
     Request responder(final Consumer<Response> responder);
+
+    Request responder(@DelegatesTo(Response.class) final Closure closure);
+
+    Request condition(final Function<Request, Boolean> matcher);
 }
+
+/*
+    TODO:
+        - headers(map)
+        - query(map)
+        - cookies(map)
+ */

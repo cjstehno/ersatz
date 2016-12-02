@@ -15,19 +15,12 @@
  */
 package com.stehno.ersatz;
 
-import okhttp3.Cookie;
-import okhttp3.CookieJar;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -38,26 +31,12 @@ import static org.junit.Assert.assertTrue;
 
 public class ErsatzServerTest {
 
-    private static final CookieJar cookieJar = new CookieJar() {
-
-        private final ConcurrentMap<HttpUrl, List<Cookie>> cookies = new ConcurrentHashMap<>();
-
-        @Override
-        public void saveFromResponse(HttpUrl url, List<Cookie> cook) {
-            cookies.put(url, cook);
-        }
-
-        @Override
-        public List<Cookie> loadForRequest(HttpUrl url) {
-            return cookies.getOrDefault(url, Collections.emptyList());
-        }
-    };
     private OkHttpClient client;
     private ErsatzServer ersatzServer;
 
     @Before
     public void before() {
-        client = new OkHttpClient.Builder().cookieJar(cookieJar).build();
+        client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build();
         ersatzServer = new ErsatzServer();
     }
 
@@ -66,13 +45,15 @@ public class ErsatzServerTest {
         final AtomicInteger counter = new AtomicInteger();
         final Consumer<Request> listener = request -> counter.incrementAndGet();
 
-        ersatzServer.requesting(expectations -> {
+        ersatzServer.expectations(expectations -> {
             expectations.get("/foo").verifier(atLeast(1))
                 .responder(response -> response.body("This is Ersatz!!"))
                 .responds().body("This is another response");
 
             expectations.get("/bar").verifier(atLeast(2)).listener(listener).responds().body("This is Bar!!");
+
             expectations.get("/baz").query("alpha", "42").responds().body("The answer is 42");
+
             expectations.get("/bing").header("bravo", "hello").responds().body("Heads up!").header("charlie", "goodbye").code(222);
 
             expectations.get("/cookie/monster").cookie("flavor", "chocolate-chip").responds().body("I love cookies!").cookie("eaten", "yes");

@@ -18,6 +18,7 @@ package com.stehno.ersatz.model;
 import com.stehno.ersatz.Request;
 import com.stehno.ersatz.Response;
 import com.stehno.ersatz.Verifiers;
+import groovy.lang.Closure;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderMap;
@@ -36,6 +37,7 @@ public abstract class AbstractRequest implements Request {
     private final Map<String, String> cookies = new HashMap<>();
     private final List<Consumer<Request>> listeners = new LinkedList<>();
     private final List<Response> responses = new LinkedList<>();
+    private final List<Function<Request, Boolean>> conditions = new LinkedList<>();
     private final String path;
     private Function<Integer, Boolean> verifier = Verifiers.any();
     private int callCount;
@@ -49,6 +51,10 @@ public abstract class AbstractRequest implements Request {
         return this;
     }
 
+    public String header(final String name) {
+        return headers.get(name);
+    }
+
     public Request contentType(final String contentType) {
         header("Content-Type", contentType);
         return this;
@@ -59,9 +65,17 @@ public abstract class AbstractRequest implements Request {
         return this;
     }
 
+    public List<String> query(final String name) {
+        return Collections.unmodifiableList(queryParams.get(name));
+    }
+
     public Request cookie(final String name, final String value) {
         cookies.put(name, value);
         return this;
+    }
+
+    public String cookie(final String name) {
+        return cookies.get(name);
     }
 
     public Request listener(final Consumer<Request> listener) {
@@ -82,6 +96,21 @@ public abstract class AbstractRequest implements Request {
         return this;
     }
 
+    public Request responder(final Closure closure) {
+        Response response = new ResponseImpl();
+        closure.setDelegate(response);
+        closure.call();
+
+        responses.add(response);
+
+        return this;
+    }
+
+    public Request condition(final Function<Request, Boolean> matcher) {
+        conditions.add(matcher);
+        return this;
+    }
+
     public Request verifier(final Function<Integer, Boolean> verifier) {
         this.verifier = verifier;
         return this;
@@ -93,6 +122,7 @@ public abstract class AbstractRequest implements Request {
 
     boolean matches(final HttpServerExchange exchange) {
         return exchange.getRequestPath().equals(path) &&
+            (conditions.isEmpty() || conditions.stream().allMatch(fn -> fn.apply(this))) &&
             matchQueryParams(exchange.getQueryParameters()) &&
             containsHeaders(exchange.getRequestHeaders()) &&
             containsCookies(exchange.getRequestCookies());

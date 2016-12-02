@@ -18,7 +18,7 @@ package com.stehno.ersatz;
 import com.stehno.ersatz.model.ResponseImpl;
 
 /**
- * Created by cjstehno on 12/2/16.
+ * Used to configure the provided response to a web request.
  */
 public interface Response {
 
@@ -32,3 +32,9 @@ public interface Response {
 
     ResponseImpl code(int code);
 }
+
+/*
+    TODO:
+        - headers(map)
+        - cookies(map)
+ */

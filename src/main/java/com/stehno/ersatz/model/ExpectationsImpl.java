@@ -17,6 +17,7 @@ package com.stehno.ersatz.model;
 
 import com.stehno.ersatz.Expectations;
 import com.stehno.ersatz.Request;
+import groovy.lang.Closure;
 import io.undertow.server.HttpServerExchange;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by cjstehno on 12/1/16.
+ * Implementation of the `Expectations` interface.
  */
 public class ExpectationsImpl implements Expectations {
 
@@ -32,6 +33,15 @@ public class ExpectationsImpl implements Expectations {
 
     public Request get(final String path) {
         Request request = new GetRequestImpl(path);
+        requests.add(request);
+        return request;
+    }
+
+    public Request get(final String path, final Closure closure) {
+        Request request = new GetRequestImpl(path);
+        closure.setDelegate(request);
+        closure.call();
+
         requests.add(request);
         return request;
     }

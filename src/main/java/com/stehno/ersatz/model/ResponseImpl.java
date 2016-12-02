@@ -63,6 +63,7 @@ public class ResponseImpl implements Response {
 
         cookies.entrySet().forEach(entry -> exchange.getResponseCookies().put(entry.getKey(), new CookieImpl(entry.getKey(), entry.getValue())));
 
-        exchange.getResponseSender().send(body.toString());
+        // TODO: figure out how to send empty response
+        exchange.getResponseSender().send(body == null ? "" : body.toString());
     }
 }

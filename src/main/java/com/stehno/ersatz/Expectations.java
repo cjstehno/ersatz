@@ -15,10 +15,21 @@
  */
 package com.stehno.ersatz;
 
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+
 /**
- * Created by cjstehno on 12/2/16.
+ * Allows configuration of the request/response expectations.
  */
 public interface Expectations {
 
+    /**
+     * Allows configuration of a GET request.
+     *
+     * @param path the request path.
+     * @return a `Request` configuration object
+     */
     Request get(String path);
+
+    Request get(String path, @DelegatesTo(Request.class) Closure closure);
 }

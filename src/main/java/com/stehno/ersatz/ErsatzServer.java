@@ -17,6 +17,8 @@ package com.stehno.ersatz;
 
 import com.stehno.ersatz.model.AbstractRequest;
 import com.stehno.ersatz.model.ExpectationsImpl;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -26,7 +28,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * Created by cjstehno on 12/1/16.
+ * Main entry point for the Ersatz server.
  */
 public class ErsatzServer {
 
@@ -47,10 +49,27 @@ public class ErsatzServer {
         return actualPort;
     }
 
-    // FIXME: should be able to call this in global setup and then in local setup to apply additional
-    public void requesting(final Consumer<ExpectationsImpl> expects) {
-        expects.accept(expectations);
+    public String getServerUrl() {
+        return "http://localhost:" + getPort();
     }
+
+    // FIXME: should be able to call this in global setup and then in local setup to apply additional
+    public ErsatzServer expectations(final Consumer<Expectations> expects) {
+        expects.accept(expectations);
+        return this;
+    }
+
+    public ErsatzServer expectations(@DelegatesTo(Expectations.class) final Closure closure) {
+        closure.setDelegate(expectations);
+        closure.call();
+
+        return this;
+    }
+
+    // FIMXE: logging?
+    // FIXME: record and allow access to all requests (optional)
+    // FIXME: 404 should provide info about the missed request  (optional)
+
 
     // FIXME: should be restartable
     public void start() {
