@@ -13,29 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz;
+package com.stehno.ersatz.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.stehno.ersatz.Request;
+import io.undertow.server.HttpServerExchange;
 
 /**
- * Created by cjstehno on 12/1/16.
+ * Created by cjstehno on 12/2/16.
  */
-public class ServerExpectations {
+public abstract class AbstractRequest implements Request {
 
-    private final List<GetRequest> requests = new ArrayList<>();
+    public abstract boolean verify();
 
-    GetRequest get(final String path) {
-        GetRequest request = new GetRequest(path);
-        requests.add(request);
-        return request;
-    }
+    protected abstract boolean matches(final HttpServerExchange exchange);
 
-    List<GetRequest> requests() {
-        return requests;
-    }
-
-    boolean verify() {
-        return requests.stream().allMatch(GetRequest::verify);
-    }
+    public abstract void respond(final HttpServerExchange exchange);
 }

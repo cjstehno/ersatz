@@ -15,20 +15,10 @@
  */
 package com.stehno.ersatz;
 
-import com.stehno.ersatz.model.ResponseImpl;
-
 /**
  * Created by cjstehno on 12/2/16.
  */
-public interface Response {
+public interface Expectations {
 
-    ResponseImpl body(final Object content);
-
-    ResponseImpl header(final String name, final String value);
-
-    ResponseImpl cookie(final String name, final String value);
-
-    ResponseImpl contentType(final String contentType);
-
-    ResponseImpl code(int code);
+    GetRequest get(String path);
 }

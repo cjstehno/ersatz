@@ -15,6 +15,8 @@
  */
 package com.stehno.ersatz;
 
+import com.stehno.ersatz.model.AbstractRequest;
+import com.stehno.ersatz.model.ExpectationsImpl;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -28,7 +30,7 @@ import java.util.function.Consumer;
  */
 public class ErsatzServer {
 
-    private final ServerExpectations expectations = new ServerExpectations();
+    private final ExpectationsImpl expectations = new ExpectationsImpl();
     private Undertow server;
     private final int requestedPort;
     private int actualPort = -1;
@@ -45,7 +47,8 @@ public class ErsatzServer {
         return actualPort;
     }
 
-    public void requesting(final Consumer<ServerExpectations> expects) {
+    // FIXME: should be able to call this in global setup and then in local setup to apply additional
+    public void requesting(final Consumer<ExpectationsImpl> expects) {
         expects.accept(expectations);
     }
 
@@ -56,10 +59,10 @@ public class ErsatzServer {
             .setHandler(new HttpHandler() {
                 @Override
                 public void handleRequest(final HttpServerExchange exchange) throws Exception {
-                    final Optional<GetRequest> optional = expectations.requests().stream().filter(request -> request.matches(exchange)).findFirst();
+                    final Optional<Request> optional = expectations.find(exchange);
                     if (optional.isPresent()) {
-                        GetRequest request = optional.get();
-                        request.respond(exchange);
+                        // TODO: maybe just get the active response here
+                        ((AbstractRequest) optional.get()).respond(exchange);
                     } else {
                         exchange.setStatusCode(404).getResponseSender().send("404 Not Found.");
                     }

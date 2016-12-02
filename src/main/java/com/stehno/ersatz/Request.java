@@ -15,20 +15,25 @@
  */
 package com.stehno.ersatz;
 
-import com.stehno.ersatz.model.ResponseImpl;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by cjstehno on 12/2/16.
  */
-public interface Response {
+public interface Request {
 
-    ResponseImpl body(final Object content);
+    GetRequest header(final String name, final String value);
 
-    ResponseImpl header(final String name, final String value);
+    GetRequest contentType(final String contentType);
 
-    ResponseImpl cookie(final String name, final String value);
+    GetRequest query(final String name, final String value);
 
-    ResponseImpl contentType(final String contentType);
+    GetRequest cookie(final String name, final String value);
 
-    ResponseImpl code(int code);
+    GetRequest listener(final Consumer<Request> listener);
+
+    GetRequest verifier(final Function<Integer, Boolean> verifier);
+
+    Response responds();
 }

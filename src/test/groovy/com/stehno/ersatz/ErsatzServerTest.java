@@ -15,7 +15,10 @@
  */
 package com.stehno.ersatz;
 
-import okhttp3.*;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,7 +64,7 @@ public class ErsatzServerTest {
     @Test
     public void prototype() throws IOException {
         final AtomicInteger counter = new AtomicInteger();
-        final Consumer<GetRequest> listener = request -> counter.incrementAndGet();
+        final Consumer<Request> listener = request -> counter.incrementAndGet();
 
         ersatzServer.requesting(expectations -> {
             expectations.get("/foo").verifier(atLeast(1))
@@ -77,27 +80,27 @@ public class ErsatzServerTest {
 
         ersatzServer.start();
 
-        Request request = new Request.Builder().url(url("/foo")).build();
+        okhttp3.Request request = new okhttp3.Request.Builder().url(url("/foo")).build();
         assertEquals("This is Ersatz!!", client.newCall(request).execute().body().string());
 
-        request = new Request.Builder().url(url("/foo")).build();
+        request = new okhttp3.Request.Builder().url(url("/foo")).build();
         assertEquals("This is another response", client.newCall(request).execute().body().string());
 
-        request = new Request.Builder().url(url("/bar")).build();
+        request = new okhttp3.Request.Builder().url(url("/bar")).build();
         assertEquals("This is Bar!!", client.newCall(request).execute().body().string());
         assertEquals("This is Bar!!", client.newCall(request).execute().body().string());
         assertEquals(2, counter.get());
 
-        request = new Request.Builder().url(url("/baz?alpha=42")).build();
+        request = new okhttp3.Request.Builder().url(url("/baz?alpha=42")).build();
         assertEquals("The answer is 42", client.newCall(request).execute().body().string());
 
-        request = new Request.Builder().url(url("/bing")).addHeader("bravo", "hello").build();
+        request = new okhttp3.Request.Builder().url(url("/bing")).addHeader("bravo", "hello").build();
         okhttp3.Response resp = client.newCall(request).execute();
         assertEquals(222, resp.code());
         assertEquals("goodbye", resp.header("charlie"));
         assertEquals("Heads up!", resp.body().string());
 
-        request = new Request.Builder().url(url("/cookie/monster")).addHeader("Cookie", "flavor=chocolate-chip").build();
+        request = new okhttp3.Request.Builder().url(url("/cookie/monster")).addHeader("Cookie", "flavor=chocolate-chip").build();
         resp = client.newCall(request).execute();
         assertEquals("I love cookies!", resp.body().string());
         assertEquals("eaten=yes", resp.header("Set-Cookie"));
