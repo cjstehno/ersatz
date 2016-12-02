@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,25 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz;
+package com.stehno.ersatz
 
-import java.util.ArrayList;
-import java.util.List;
+import spock.lang.Specification
 
-/**
- * Created by cjstehno on 12/1/16.
- */
-public class ServerExpectations {
+class ErsatzServerSpec extends Specification {
 
-    private final List<GetRequest> requests = new ArrayList<>();
+    def 'prototype'() {
+        setup:
+        final ErsatzServer ersatzServer = new ErsatzServer()
 
-    GetRequest get(final String path) {
-        GetRequest request = new GetRequest(path);
-        requests.add(request);
-        return request;
-    }
+        ersatzServer.requesting { expectations ->
+            expectations.get('/foo').responds().body('This is Ersatz!!')
+            expectations.get('/bar').responds().body('This is Bar!!')
+        }
 
-    public Iterable<GetRequest> requests(){
-        return requests;
+        ersatzServer.start()
+
+        when:
+        String text = 'http://localhost:8080/foo'.toURL().text
+
+        then:
+        text == 'This is Ersatz!!'
     }
 }
