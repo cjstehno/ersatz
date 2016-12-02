@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static com.stehno.ersatz.Verifiers.atLeast;
+import static java.lang.String.format;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -76,27 +77,27 @@ public class ErsatzServerTest {
 
         ersatzServer.start();
 
-        Request request = new Request.Builder().url("http://localhost:8080/foo").build();
+        Request request = new Request.Builder().url(url("/foo")).build();
         assertEquals("This is Ersatz!!", client.newCall(request).execute().body().string());
 
-        request = new Request.Builder().url("http://localhost:8080/foo").build();
+        request = new Request.Builder().url(url("/foo")).build();
         assertEquals("This is another response", client.newCall(request).execute().body().string());
 
-        request = new Request.Builder().url("http://localhost:8080/bar").build();
+        request = new Request.Builder().url(url("/bar")).build();
         assertEquals("This is Bar!!", client.newCall(request).execute().body().string());
         assertEquals("This is Bar!!", client.newCall(request).execute().body().string());
         assertEquals(2, counter.get());
 
-        request = new Request.Builder().url("http://localhost:8080/baz?alpha=42").build();
+        request = new Request.Builder().url(url("/baz?alpha=42")).build();
         assertEquals("The answer is 42", client.newCall(request).execute().body().string());
 
-        request = new Request.Builder().url("http://localhost:8080/bing").addHeader("bravo", "hello").build();
+        request = new Request.Builder().url(url("/bing")).addHeader("bravo", "hello").build();
         okhttp3.Response resp = client.newCall(request).execute();
         assertEquals(222, resp.code());
         assertEquals("goodbye", resp.header("charlie"));
         assertEquals("Heads up!", resp.body().string());
 
-        request = new Request.Builder().url("http://localhost:8080/cookie/monster").addHeader("Cookie", "flavor=chocolate-chip").build();
+        request = new Request.Builder().url(url("/cookie/monster")).addHeader("Cookie", "flavor=chocolate-chip").build();
         resp = client.newCall(request).execute();
         assertEquals("I love cookies!", resp.body().string());
         assertEquals("eaten=yes", resp.header("Set-Cookie"));
@@ -104,8 +105,12 @@ public class ErsatzServerTest {
         assertTrue(ersatzServer.verify());
     }
 
+    private String url(final String path) {
+        return format("http://localhost:%d%s", ersatzServer.getPort(), path);
+    }
+
     @After
-    public void after(){
+    public void after() {
         ersatzServer.stop();
     }
 }

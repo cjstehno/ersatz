@@ -19,6 +19,7 @@ import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
+import java.net.InetSocketAddress;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -29,6 +30,20 @@ public class ErsatzServer {
 
     private final ServerExpectations expectations = new ServerExpectations();
     private Undertow server;
+    private final int requestedPort;
+    private int actualPort = -1;
+
+    public ErsatzServer() {
+        this(0);
+    }
+
+    public ErsatzServer(final int requestedPort) {
+        this.requestedPort = requestedPort;
+    }
+
+    public int getPort() {
+        return actualPort;
+    }
 
     public void requesting(final Consumer<ServerExpectations> expects) {
         expects.accept(expectations);
@@ -37,7 +52,7 @@ public class ErsatzServer {
     // FIXME: should be restartable
     public void start() {
         server = Undertow.builder()
-            .addHttpListener(8080, "localhost")
+            .addHttpListener(requestedPort, "localhost")
             .setHandler(new HttpHandler() {
                 @Override
                 public void handleRequest(final HttpServerExchange exchange) throws Exception {
@@ -52,9 +67,13 @@ public class ErsatzServer {
             }).build();
 
         server.start();
+
+        actualPort = ((InetSocketAddress) server.getListenerInfo().get(0).getAddress()).getPort();
     }
 
     public void stop() {
+        actualPort = -1;
+
         if (server != null) {
             server.stop();
         }

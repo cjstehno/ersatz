@@ -31,7 +31,7 @@ class ErsatzServerSpec extends Specification {
         ersatzServer.start()
 
         when:
-        String text = 'http://localhost:8080/foo'.toURL().text
+        String text = "http://localhost:${ersatzServer.port}/foo".toURL().text
 
         then:
         text == 'This is Ersatz!!'
