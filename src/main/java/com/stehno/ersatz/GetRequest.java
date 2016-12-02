@@ -19,6 +19,7 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -28,6 +29,7 @@ public class GetRequest {
 
     private final Map<String, List<String>> queryParams = new HashMap<>();
     private final Map<String, String> headers = new HashMap<>();
+    private final List<Consumer<GetRequest>> listeners = new LinkedList<>();
     private String path;
     private Response response;
     private int callCount;
@@ -49,6 +51,15 @@ public class GetRequest {
 
     void countCall() {
         callCount++;
+
+        for (final Consumer<GetRequest> listener : listeners) {
+            listener.accept(this);
+        }
+    }
+
+    GetRequest listener(final Consumer<GetRequest> listener) {
+        listeners.add(listener);
+        return this;
     }
 
     Response responds() {
@@ -71,11 +82,13 @@ public class GetRequest {
 
     // TODO: should this return a Predicate for use in the filter?
     boolean matches(final HttpServerExchange exchange) {
-        return exchange.getRequestPath().equals(path) && matchQueryParams(exchange.getQueryParameters()) && matchHeaders(exchange.getRequestHeaders());
+        return exchange.getRequestPath().equals(path) && matchQueryParams(exchange.getQueryParameters()) && containsHeaders(exchange.getRequestHeaders());
     }
 
-    private boolean matchHeaders(final HeaderMap requestHeads){
-        headers are a pain in the butt - working here.
+    // header matching is not absolute - the request must contain the specified headers but not necessarily all of them
+    // TODO: needs to support more complicated headers
+    private boolean containsHeaders(final HeaderMap requestHeads) {
+        return headers.entrySet().stream().allMatch(entry -> entry.getValue().equals(requestHeads.getFirst(entry.getKey())));
     }
 
     private boolean matchQueryParams(final Map<String, Deque<String>> requestQs) {

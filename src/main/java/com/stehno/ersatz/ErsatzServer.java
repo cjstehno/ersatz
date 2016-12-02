@@ -44,7 +44,7 @@ public class ErsatzServer {
                     if (optional.isPresent()) {
                         GetRequest request = optional.get();
                         request.countCall();
-                        exchange.getResponseSender().send(request.getResponse().getBody().toString());
+                        request.getResponse().send(exchange);
                     } else {
                         exchange.setStatusCode(404).getResponseSender().send("404 Not Found.");
                     }
