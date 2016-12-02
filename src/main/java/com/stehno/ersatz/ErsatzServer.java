@@ -61,7 +61,7 @@ public class ErsatzServer {
                 public void handleRequest(final HttpServerExchange exchange) throws Exception {
                     final Optional<Request> optional = expectations.find(exchange);
                     if (optional.isPresent()) {
-                        // TODO: maybe just get the active response here
+                        // TODO: maybe just get the active response here (see after other methods impl)
                         ((AbstractRequest) optional.get()).respond(exchange);
                     } else {
                         exchange.setStatusCode(404).getResponseSender().send("404 Not Found.");
