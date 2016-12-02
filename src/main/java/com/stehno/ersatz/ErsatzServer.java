@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2016 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,7 @@ import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -28,29 +29,33 @@ public class ErsatzServer {
 
     private final ServerExpectations expectations = new ServerExpectations();
 
-    void requesting(final Consumer<ServerExpectations> expects){
+    public void requesting(final Consumer<ServerExpectations> expects) {
         expects.accept(expectations);
     }
 
     // FIXME: should be restartable
-    void start(){
+    public void start() {
         Undertow server = Undertow.builder()
             .addHttpListener(8080, "localhost")
             .setHandler(new HttpHandler() {
                 @Override
                 public void handleRequest(final HttpServerExchange exchange) throws Exception {
-                    expectations.requests().forEach(getreq -> {
-                        if (matches(exchange, getreq)) {
-                            exchange.getResponseSender().send(getreq.getResponse().getBody().toString());
-                        }
-                    });
+                    final Optional<GetRequest> optional = expectations.requests().stream().filter(request -> request.matches(exchange)).findFirst();
+                    if (optional.isPresent()) {
+                        GetRequest request = optional.get();
+                        request.countCall();
+                        exchange.getResponseSender().send(request.getResponse().getBody().toString());
+                    } else {
+                        exchange.setStatusCode(404).getResponseSender().send("404 Not Found.");
+                    }
                 }
             }).build();
 
         server.start();
     }
 
-    private static boolean matches(final HttpServerExchange exchange, final GetRequest request) {
-        return exchange.getRequestPath().equals(request.getPath());
+    // FIXME: find a way to be more explicit about failures (assertions)
+    public boolean verify() {
+        return expectations.verify();
     }
 }
