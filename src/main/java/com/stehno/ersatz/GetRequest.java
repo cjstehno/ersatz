@@ -31,8 +31,8 @@ public class GetRequest {
     private final Map<String, String> headers = new HashMap<>();
     private final List<Consumer<GetRequest>> listeners = new LinkedList<>();
     private Function<Integer, Boolean> verifier = Verifiers.any();
+    private final List<Response> responses = new LinkedList<>();
     private String path;
-    private Response response;
     private int callCount;
 
     public GetRequest(final String path) {
@@ -44,7 +44,7 @@ public class GetRequest {
         return this;
     }
 
-    GetRequest contentType(final String contentType){
+    GetRequest contentType(final String contentType) {
         header("Content-Type", contentType);
         return this;
     }
@@ -54,7 +54,7 @@ public class GetRequest {
         return this;
     }
 
-    void countCall() {
+    private void countCall() {
         callCount++;
 
         for (final Consumer<GetRequest> listener : listeners) {
@@ -67,13 +67,25 @@ public class GetRequest {
         return this;
     }
 
+    // single response or will act as onRest
     Response responds() {
-        response = new Response();
+        Response response = new Response();
+        responses.add(response);
         return response;
     }
 
-    public Response getResponse() {
-        return response;
+    GetRequest responder(final Consumer<Response> responder) {
+        Response response = new Response();
+        responder.accept(response);
+        responses.add(response);
+        return this;
+    }
+
+    void respond(final HttpServerExchange exchange) {
+        int index = callCount >= responses.size() ? responses.size() - 1 : callCount;
+        Response response = responses.get(index);
+        countCall();
+        response.send(exchange);
     }
 
     boolean verify() {

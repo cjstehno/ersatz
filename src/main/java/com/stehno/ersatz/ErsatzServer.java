@@ -43,8 +43,7 @@ public class ErsatzServer {
                     final Optional<GetRequest> optional = expectations.requests().stream().filter(request -> request.matches(exchange)).findFirst();
                     if (optional.isPresent()) {
                         GetRequest request = optional.get();
-                        request.countCall();
-                        request.getResponse().send(exchange);
+                        request.respond(exchange);
                     } else {
                         exchange.setStatusCode(404).getResponseSender().send("404 Not Found.");
                     }

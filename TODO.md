@@ -11,7 +11,4 @@
 - request cookies
 - response cookies
 
-- call verification
-    - onCall | onRest
-
 

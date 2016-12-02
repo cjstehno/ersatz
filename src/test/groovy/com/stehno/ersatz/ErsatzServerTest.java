@@ -39,7 +39,10 @@ public class ErsatzServerTest {
         final Consumer<GetRequest> listener = request -> counter.incrementAndGet();
 
         ersatzServer.requesting(expectations -> {
-            expectations.get("/foo").verifier(atLeast(1)).responds().body("This is Ersatz!!");
+            expectations.get("/foo").verifier(atLeast(1))
+                .responder(response -> response.body("This is Ersatz!!"))
+                .responds().body("This is another response");
+
             expectations.get("/bar").verifier(atLeast(2)).listener(listener).responds().body("This is Bar!!");
             expectations.get("/baz").query("alpha", "42").responds().body("The answer is 42");
             expectations.get("/bing").header("bravo", "hello").responds().body("Heads up!").header("charlie", "goodbye").code(222);
@@ -49,6 +52,9 @@ public class ErsatzServerTest {
 
         Request request = new Request.Builder().url("http://localhost:8080/foo").build();
         assertEquals("This is Ersatz!!", client.newCall(request).execute().body().string());
+
+        request = new Request.Builder().url("http://localhost:8080/foo").build();
+        assertEquals("This is another response", client.newCall(request).execute().body().string());
 
         request = new Request.Builder().url("http://localhost:8080/bar").build();
         assertEquals("This is Bar!!", client.newCall(request).execute().body().string());
