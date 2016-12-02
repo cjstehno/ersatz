@@ -38,7 +38,12 @@ public class Response {
         return this;
     }
 
-    Response code(int code){
+    Response contentType(final String contentType) {
+        header("Content-Type", contentType);
+        return this;
+    }
+
+    Response code(int code) {
         this.code = code;
         return this;
     }

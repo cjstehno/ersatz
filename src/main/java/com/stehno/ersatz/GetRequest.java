@@ -20,7 +20,7 @@ import io.undertow.util.HeaderMap;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 /**
  * Created by cjstehno on 12/1/16.
@@ -30,10 +30,10 @@ public class GetRequest {
     private final Map<String, List<String>> queryParams = new HashMap<>();
     private final Map<String, String> headers = new HashMap<>();
     private final List<Consumer<GetRequest>> listeners = new LinkedList<>();
+    private Function<Integer, Boolean> verifier = Verifiers.any();
     private String path;
     private Response response;
     private int callCount;
-    private Supplier<Boolean> verificationFn = () -> true;
 
     public GetRequest(final String path) {
         this.path = path;
@@ -41,6 +41,11 @@ public class GetRequest {
 
     GetRequest header(final String name, final String value) {
         headers.put(name, value);
+        return this;
+    }
+
+    GetRequest contentType(final String contentType){
+        header("Content-Type", contentType);
         return this;
     }
 
@@ -72,11 +77,11 @@ public class GetRequest {
     }
 
     boolean verify() {
-        return verificationFn.get();
+        return verifier.apply(callCount);
     }
 
-    GetRequest atLeast(final int expectedCount) {
-        verificationFn = () -> callCount >= expectedCount;
+    GetRequest verifier(final Function<Integer, Boolean> verifier) {
+        this.verifier = verifier;
         return this;
     }
 

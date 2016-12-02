@@ -15,13 +15,15 @@
  */
 package com.stehno.ersatz;
 
-import okhttp3.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+import static com.stehno.ersatz.Verifiers.atLeast;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -37,8 +39,8 @@ public class ErsatzServerTest {
         final Consumer<GetRequest> listener = request -> counter.incrementAndGet();
 
         ersatzServer.requesting(expectations -> {
-            expectations.get("/foo").atLeast(1).responds().body("This is Ersatz!!");
-            expectations.get("/bar").atLeast(2).listener(listener).responds().body("This is Bar!!");
+            expectations.get("/foo").verifier(atLeast(1)).responds().body("This is Ersatz!!");
+            expectations.get("/bar").verifier(atLeast(2)).listener(listener).responds().body("This is Bar!!");
             expectations.get("/baz").query("alpha", "42").responds().body("The answer is 42");
             expectations.get("/bing").header("bravo", "hello").responds().body("Heads up!").header("charlie", "goodbye").code(222);
         });
@@ -56,7 +58,7 @@ public class ErsatzServerTest {
         request = new Request.Builder().url("http://localhost:8080/baz?alpha=42").build();
         assertEquals("The answer is 42", client.newCall(request).execute().body().string());
 
-        request = new Request.Builder().url("http://localhost:8080/bing").addHeader("bravo","hello").build();
+        request = new Request.Builder().url("http://localhost:8080/bing").addHeader("bravo", "hello").build();
         okhttp3.Response resp = client.newCall(request).execute();
         assertEquals(222, resp.code());
         assertEquals("goodbye", resp.header("charlie"));
