@@ -21,6 +21,8 @@ import groovy.transform.CompileStatic
 import io.undertow.Undertow
 import io.undertow.server.HttpHandler
 import io.undertow.server.HttpServerExchange
+import io.undertow.server.handlers.CookieImpl
+import io.undertow.util.HttpString
 
 import java.util.function.Consumer
 
@@ -98,10 +100,10 @@ class ErsatzServer {
         server = Undertow.builder().addHttpListener(0, 'localhost').setHandler(new HttpHandler() {
             @Override
             void handleRequest(final HttpServerExchange exchange) throws Exception {
-                Request request = expectations.findMatch(exchange)
+                AbstractRequest request = expectations.findMatch(exchange) as AbstractRequest
                 if (request) {
-                    // TODO: maybe just get the active response here (see after other methods impl)
-                    ((AbstractRequest) request).respond(exchange)
+                    send(exchange, request.currentResponse)
+                    request.mark()
                 } else {
                     exchange.setStatusCode(404).responseSender.send('404 Not Found.')
                 }
@@ -131,5 +133,20 @@ class ErsatzServer {
     boolean verify() {
         // FIXME: find a way to be more explicit about failures (assertions)
         expectations.verify()
+    }
+
+    private void send(final HttpServerExchange exchange, final Response response) {
+        exchange.statusCode = response.code
+
+        response.headers.each { k, v ->
+            exchange.responseHeaders.put(new HttpString(k), v)
+        }
+
+        response.cookies.each { k, v ->
+            exchange.responseCookies.put(k, new CookieImpl(k, v))
+        }
+
+        // TODO: figure out how to send empty response
+        exchange.responseSender.send(response.body?.toString() ?: '')
     }
 }

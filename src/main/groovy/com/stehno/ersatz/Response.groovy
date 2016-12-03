@@ -33,6 +33,14 @@ interface Response {
     ContentResponse contentType(final String contentType)
 
     ContentResponse code(int code)
+
+    Map<String, String> getHeaders()
+
+    Map<String, String> getCookies()
+
+    Object getBody()
+
+    Integer getCode()
 }
 
 /*

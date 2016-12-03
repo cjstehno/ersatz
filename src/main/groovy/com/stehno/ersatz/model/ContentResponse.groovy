@@ -17,9 +17,6 @@ package com.stehno.ersatz.model
 
 import com.stehno.ersatz.Response
 import groovy.transform.CompileStatic
-import io.undertow.server.HttpServerExchange
-import io.undertow.server.handlers.CookieImpl
-import io.undertow.util.HttpString
 
 @CompileStatic
 class ContentResponse implements Response {
@@ -46,7 +43,7 @@ class ContentResponse implements Response {
     }
 
     ContentResponse contentType(final String contentType) {
-        header("Content-Type", contentType)
+        header('Content-Type', contentType)
         this
     }
 
@@ -55,18 +52,19 @@ class ContentResponse implements Response {
         this
     }
 
-    void send(final HttpServerExchange exchange) {
-        exchange.statusCode = code
+    Map<String, String> getHeaders() {
+        headers.asImmutable()
+    }
 
-        headers.each { k, v ->
-            exchange.responseHeaders.put(new HttpString(k), v)
-        }
+    Map<String, String> getCookies() {
+        cookies.asImmutable()
+    }
 
-        cookies.each { k, v ->
-            exchange.responseCookies.put(k, new CookieImpl(k, v))
-        }
+    Object getBody() {
+        body
+    }
 
-        // TODO: figure out how to send empty response
-        exchange.responseSender.send(body?.toString() ?: '')
+    Integer getCode() {
+        code
     }
 }

@@ -51,7 +51,7 @@ abstract class AbstractRequest implements Request {
         this
     }
 
-    String header(final String name) {
+    String getHeader(final String name) {
         headers[name]
     }
 
@@ -65,16 +65,16 @@ abstract class AbstractRequest implements Request {
         this
     }
 
-    List<String> query(final String name) {
+    List<String> getQuery(final String name) {
         queryParams[name].asImmutable()
     }
 
     Request cookie(final String name, final String value) {
         cookies[name] = value
-         this
+        this
     }
 
-    String cookie(final String name) {
+    String getCookie(final String name) {
         cookies[name]
     }
 
@@ -150,15 +150,12 @@ abstract class AbstractRequest implements Request {
         one && two
     }
 
-    // TODO: see if this can be package
-    void respond(final HttpServerExchange exchange) {
-        ContentResponse response = (ContentResponse) responses.get(callCount >= responses.size() ? responses.size() - 1 : callCount)
-        mark()
-
-        response.send(exchange)
+    Response getCurrentResponse() {
+        int index = callCount >= responses.size() ? responses.size() - 1 : callCount
+        ContentResponse response = (ContentResponse) responses.get(index)
     }
 
-    private void mark() {
+    void mark() {
         callCount++
 
         for (final Consumer<Request> listener : listeners) {

@@ -16,6 +16,7 @@
 package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
+import groovy.transform.IndexedProperty
 
 import java.util.function.Consumer
 import java.util.function.Function
@@ -32,17 +33,17 @@ interface Request {
 
     Request header(final String name, final String value)
 
-    String header(final String name)
+    String getHeader(final String name)
 
     Request contentType(final String contentType)
 
     Request query(final String name, final String value)
 
-    List<String> query(final String name)
+    List<String> getQuery(final String name)
 
     Request cookie(final String name, final String value)
 
-    String cookie(final String name)
+    String getCookie(final String name)
 
     /**
      * Specifies a listener which will be called with the active request whenever this request is matched at test-time.
