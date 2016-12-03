@@ -17,37 +17,44 @@ package com.stehno.ersatz.model
 
 import com.stehno.ersatz.Response
 import groovy.transform.CompileStatic
+import groovy.transform.TupleConstructor
 
-@CompileStatic
-class ContentResponse implements Response {
+@CompileStatic @TupleConstructor
+class ResponseImpl implements Response {
+
+    final boolean empty
 
     private final Map<String, String> headers = new HashMap<>()
     private final Map<String, String> cookies = new HashMap<>()
     private Object body
     private Integer code = 200
 
-    ContentResponse body(final Object content) {
+    ResponseImpl body(final Object content) {
+        if (empty) {
+            throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')
+        }
+
         this.body = content
         this
     }
 
     // TODO: support for more complex headers
-    ContentResponse header(final String name, final String value) {
+    ResponseImpl header(final String name, final String value) {
         headers[name] = value
         this
     }
 
-    ContentResponse cookie(final String name, final String value) {
+    ResponseImpl cookie(final String name, final String value) {
         cookies[name] = value
         this
     }
 
-    ContentResponse contentType(final String contentType) {
+    ResponseImpl contentType(final String contentType) {
         header('Content-Type', contentType)
         this
     }
 
-    ContentResponse code(int code) {
+    ResponseImpl code(int code) {
         this.code = code
         this
     }

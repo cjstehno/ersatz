@@ -30,6 +30,6 @@ class HeadRequest extends AbstractRequest {
 
     @Override
     protected Response newResponse() {
-        return new EmptyResponse()
+        return new ResponseImpl(true)
     }
 }

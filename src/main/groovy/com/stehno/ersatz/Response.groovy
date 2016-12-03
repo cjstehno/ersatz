@@ -15,7 +15,7 @@
  */
 package com.stehno.ersatz
 
-import com.stehno.ersatz.model.ContentResponse
+import com.stehno.ersatz.model.ResponseImpl
 import groovy.transform.CompileStatic
 
 /**
@@ -24,15 +24,15 @@ import groovy.transform.CompileStatic
 @CompileStatic
 interface Response {
 
-    ContentResponse body(final Object content)
+    ResponseImpl body(final Object content)
 
-    ContentResponse header(final String name, final String value)
+    ResponseImpl header(final String name, final String value)
 
-    ContentResponse cookie(final String name, final String value)
+    ResponseImpl cookie(final String name, final String value)
 
-    ContentResponse contentType(final String contentType)
+    ResponseImpl contentType(final String contentType)
 
-    ContentResponse code(int code)
+    ResponseImpl code(int code)
 
     Map<String, String> getHeaders()
 

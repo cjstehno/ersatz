@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz.model
 
-import com.stehno.ersatz.Response
 import groovy.transform.CompileStatic
 
 /**
@@ -26,10 +25,5 @@ class DeleteRequest extends AbstractRequest {
 
     DeleteRequest(String path) {
         super(path)
-    }
-
-    @Override
-    protected Response newResponse() {
-        return new ContentResponse()
     }
 }

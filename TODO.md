@@ -1,4 +1,7 @@
 
+- request body content is not used in matching... should be!
+- collapse request type usage down to interfaces rather than models
+
 - finish Groovy conversion
 - codenarc
 

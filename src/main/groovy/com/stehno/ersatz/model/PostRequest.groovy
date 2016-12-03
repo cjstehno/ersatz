@@ -15,34 +15,15 @@
  */
 package com.stehno.ersatz.model
 
-import com.stehno.ersatz.ContentRequest
-import com.stehno.ersatz.Request
-import com.stehno.ersatz.Response
 import groovy.transform.CompileStatic
 
 /**
  * `Request` implementation supporting the configuration of HTTP Post requests.
  */
 @CompileStatic
-class PostRequest extends AbstractRequest implements ContentRequest {
-
-    private Object body
+class PostRequest extends AbstractRequest implements RequestWithContent {
 
     PostRequest(final String path) {
         super(path)
-    }
-
-    Request body(final Object body) {
-        this.body = body
-        return this
-    }
-
-    Object body() {
-        return body
-    }
-
-    @Override
-    protected Response newResponse() {
-        return new ContentResponse()
     }
 }

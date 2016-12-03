@@ -128,7 +128,9 @@ abstract class AbstractRequest implements Request {
             containsCookies(exchange.requestCookies)
     }
 
-    protected abstract Response newResponse()
+    protected Response newResponse() {
+        new ResponseImpl()
+    }
 
     // header matching is not absolute - the request must contain the specified headers but not necessarily all of them
     // TODO: needs to support more complicated headers
@@ -152,7 +154,7 @@ abstract class AbstractRequest implements Request {
 
     Response getCurrentResponse() {
         int index = callCount >= responses.size() ? responses.size() - 1 : callCount
-        ContentResponse response = (ContentResponse) responses.get(index)
+        ResponseImpl response = (ResponseImpl) responses.get(index)
     }
 
     void mark() {

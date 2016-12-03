@@ -16,7 +16,6 @@
 package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
-import groovy.transform.IndexedProperty
 
 import java.util.function.Consumer
 import java.util.function.Function

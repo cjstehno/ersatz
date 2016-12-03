@@ -15,37 +15,15 @@
  */
 package com.stehno.ersatz.model
 
-import com.stehno.ersatz.ContentRequest
-import com.stehno.ersatz.Request
-import com.stehno.ersatz.Response
 import groovy.transform.CompileStatic
 
 /**
  * Created by cjstehno on 12/3/16.
  */
 @CompileStatic
-class PutRequest extends AbstractRequest implements ContentRequest {
-
-    // TODO: this is basically the same as POST - share code?
-
-    private Object body
+class PutRequest extends AbstractRequest implements RequestWithContent {
 
     PutRequest(String path) {
         super(path)
-    }
-
-    @Override
-    Request body(Object body) {
-        this.body = body
-        return this
-    }
-
-    Object body() {
-        return body
-    }
-
-    @Override
-    protected Response newResponse() {
-        return new ContentResponse()
     }
 }

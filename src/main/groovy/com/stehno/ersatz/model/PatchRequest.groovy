@@ -15,36 +15,15 @@
  */
 package com.stehno.ersatz.model
 
-import com.stehno.ersatz.ContentRequest
-import com.stehno.ersatz.Request
-import com.stehno.ersatz.Response
 import groovy.transform.CompileStatic
 
 /**
  * Created by cjstehno on 12/3/16.
  */
 @CompileStatic
-class PatchRequest extends AbstractRequest implements ContentRequest {
-
-    // TODO: same as post - collapse shared code
-
-    private Object body
+class PatchRequest extends AbstractRequest implements RequestWithContent {
 
     PatchRequest(final String path) {
         super(path)
-    }
-
-    Request body(final Object body) {
-        this.body = body
-        return this
-    }
-
-    Object body() {
-        return body
-    }
-
-    @Override
-    protected Response newResponse() {
-        return new ContentResponse()
     }
 }
