@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz;
+package com.stehno.ersatz
 
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
+import groovy.transform.CompileStatic
 
 /**
  * Root element of the expectation configuration which provides access to request expectation based on the request method to be configured.
  */
-public interface Expectations {
+@CompileStatic
+interface Expectations {
 
     // TODO: Add Consumer versions similar to Closures
 
@@ -31,27 +31,27 @@ public interface Expectations {
      * @param path the request path.
      * @return a `Request` configuration object
      */
-    Request get(String path);
+    Request get(String path)
 
-    Request get(String path, @DelegatesTo(Request.class) Closure closure);
+    Request get(String path, @DelegatesTo(Request.class) Closure closure)
 
-    Request head(String path);
+    Request head(String path)
 
-    Request head(String path, @DelegatesTo(Request.class) Closure closure);
+    Request head(String path, @DelegatesTo(Request.class) Closure closure)
 
-    ContentRequest post(String path);
+    ContentRequest post(String path)
 
-    ContentRequest post(String path, @DelegatesTo(ContentRequest.class) Closure closure);
+    ContentRequest post(String path, @DelegatesTo(ContentRequest.class) Closure closure)
 
-    ContentRequest put(String path);
+    ContentRequest put(String path)
 
-    ContentRequest put(String path, @DelegatesTo(ContentRequest.class) Closure closure);
+    ContentRequest put(String path, @DelegatesTo(ContentRequest.class) Closure closure)
 
-    Request delete(String path);
+    Request delete(String path)
 
-    Request delete(String path, @DelegatesTo(Request.class) Closure closure);
+    Request delete(String path, @DelegatesTo(Request.class) Closure closure)
 
-    ContentRequest patch(String path);
+    ContentRequest patch(String path)
 
-    ContentRequest patch(String path, @DelegatesTo(ContentRequest.class) Closure closure);
+    ContentRequest patch(String path, @DelegatesTo(ContentRequest.class) Closure closure)
 }

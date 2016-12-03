@@ -13,21 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.model;
+package com.stehno.ersatz.model
 
-import com.stehno.ersatz.Response;
+import com.stehno.ersatz.ContentRequest
+import com.stehno.ersatz.Request
+import com.stehno.ersatz.Response
+import groovy.transform.CompileStatic
 
 /**
  * Created by cjstehno on 12/3/16.
  */
-public class DeleteRequest extends AbstractRequest {
+@CompileStatic
+class PatchRequest extends AbstractRequest implements ContentRequest {
 
-    DeleteRequest(String path) {
-        super(path);
+    // TODO: same as post - collapse shared code
+
+    private Object body
+
+    PatchRequest(final String path) {
+        super(path)
+    }
+
+    Request body(final Object body) {
+        this.body = body
+        return this
+    }
+
+    Object body() {
+        return body
     }
 
     @Override
     protected Response newResponse() {
-        return new ContentResponse();
+        return new ContentResponse()
     }
 }

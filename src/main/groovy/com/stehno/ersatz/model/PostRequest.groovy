@@ -13,34 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.model;
+package com.stehno.ersatz.model
 
-import com.stehno.ersatz.ContentRequest;
-import com.stehno.ersatz.Request;
-import com.stehno.ersatz.Response;
+import com.stehno.ersatz.ContentRequest
+import com.stehno.ersatz.Request
+import com.stehno.ersatz.Response
+import groovy.transform.CompileStatic
 
 /**
  * `Request` implementation supporting the configuration of HTTP Post requests.
  */
-public class PostRequest extends AbstractRequest implements ContentRequest {
+@CompileStatic
+class PostRequest extends AbstractRequest implements ContentRequest {
 
-    private Object body;
+    private Object body
 
     PostRequest(final String path) {
-        super(path);
+        super(path)
     }
 
-    public Request body(final Object body) {
-        this.body = body;
-        return this;
+    Request body(final Object body) {
+        this.body = body
+        return this
     }
 
-    public Object body() {
-        return body;
+    Object body() {
+        return body
     }
 
     @Override
     protected Response newResponse() {
-        return new ContentResponse();
+        return new ContentResponse()
     }
 }

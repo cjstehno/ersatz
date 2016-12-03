@@ -13,15 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.model;
+package com.stehno.ersatz
+
+import com.stehno.ersatz.model.ContentResponse
+import groovy.transform.CompileStatic
 
 /**
- * Created by cjstehno on 12/2/16.
+ * Used to configure the provided response to a web request.
  */
-public class EmptyResponse extends ContentResponse {
+@CompileStatic
+interface Response {
 
-    @Override
-    public ContentResponse body(Object content) {
-        throw new UnsupportedOperationException("Empty responses cannot have a body.");
-    }
+    ContentResponse body(final Object content)
+
+    ContentResponse header(final String name, final String value)
+
+    ContentResponse cookie(final String name, final String value)
+
+    ContentResponse contentType(final String contentType)
+
+    ContentResponse code(int code)
 }
+
+/*
+    TODO:
+        - headers(map)
+        - cookies(map)
+ */

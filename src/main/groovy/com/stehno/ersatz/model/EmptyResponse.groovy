@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.model;
+package com.stehno.ersatz.model
 
-import com.stehno.ersatz.Response;
+import groovy.transform.CompileStatic
 
 /**
- * Created by cjstehno on 12/1/16.
+ * Created by cjstehno on 12/2/16.
  */
-public class GetRequest extends AbstractRequest {
-
-    GetRequest(final String path) {
-        super(path);
-    }
+@CompileStatic
+class EmptyResponse extends ContentResponse {
 
     @Override
-    protected Response newResponse() {
-        return new ContentResponse();
+    ContentResponse body(Object content) {
+        throw new UnsupportedOperationException("Empty responses cannot have a body.")
     }
 }

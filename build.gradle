@@ -1,7 +1,6 @@
 plugins {
     id 'groovy'
     id "com.github.hierynomus.license" version "0.13.1"
-    id 'findbugs'
     id 'jacoco'
     id 'maven'
     id 'maven-publish'
@@ -17,27 +16,12 @@ repositories {
     jcenter()
 }
 
-configurations {
-    asciidoclet
-}
-
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.6'
     compile 'io.undertow:undertow-core:1.4.6.Final'
 
     testCompile 'com.squareup.okhttp3:okhttp:3.5.0'
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-
-    asciidoclet 'org.asciidoctor:asciidoclet:1.+'
-}
-
-javadoc {
-    options.docletpath = configurations.asciidoclet.files.asType(List)
-    options.links("http://docs.oracle.com/javase/8/docs/api/", "http://docs.groovy-lang.org/latest/html/gapi/");
-    options.doclet = 'org.asciidoctor.Asciidoclet'
-    //options.overview = "src/main/java/overview.adoc"
-    options.addStringOption "-base-dir", "${projectDir}"
-    options.addStringOption "-attribute", "name=${project.name},version=${project.version},title-link=https://github.com/cjstehno/ersatz[${project.name} ${project.version}]"
 }
 
 task sourcesJar(type: Jar) {
@@ -59,17 +43,6 @@ project.publishing {
             groupId project.group
             version project.version
         }
-    }
-}
-
-tasks.withType(FindBugs) {
-    ignoreFailures = true
-    effort = 'max'
-    reportLevel = 'low'
-    reports {
-        xml.enabled false
-        html.enabled true
-        html.stylesheet resources.text.fromFile('/config/findbugs-styles.xsl')
     }
 }
 

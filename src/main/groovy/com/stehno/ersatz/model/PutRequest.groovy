@@ -13,37 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.model;
+package com.stehno.ersatz.model
 
-import com.stehno.ersatz.ContentRequest;
-import com.stehno.ersatz.Request;
-import com.stehno.ersatz.Response;
+import com.stehno.ersatz.ContentRequest
+import com.stehno.ersatz.Request
+import com.stehno.ersatz.Response
+import groovy.transform.CompileStatic
 
 /**
  * Created by cjstehno on 12/3/16.
  */
-public class PutRequest extends AbstractRequest implements ContentRequest {
+@CompileStatic
+class PutRequest extends AbstractRequest implements ContentRequest {
 
     // TODO: this is basically the same as POST - share code?
 
-    private Object body;
+    private Object body
 
     PutRequest(String path) {
-        super(path);
+        super(path)
     }
 
     @Override
-    public Request body(Object body) {
-        this.body = body;
-        return this;
+    Request body(Object body) {
+        this.body = body
+        return this
     }
 
-    public Object body() {
-        return body;
+    Object body() {
+        return body
     }
 
     @Override
     protected Response newResponse() {
-        return new ContentResponse();
+        return new ContentResponse()
     }
 }

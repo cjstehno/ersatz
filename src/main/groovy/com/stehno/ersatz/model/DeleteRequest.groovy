@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.model;
+package com.stehno.ersatz.model
 
-import com.stehno.ersatz.Response;
+import com.stehno.ersatz.Response
+import groovy.transform.CompileStatic
 
 /**
- * Created by cjstehno on 12/2/16.
+ * Created by cjstehno on 12/3/16.
  */
-public class HeadRequest extends AbstractRequest {
+@CompileStatic
+class DeleteRequest extends AbstractRequest {
 
-    HeadRequest(final String path) {
-        super(path);
+    DeleteRequest(String path) {
+        super(path)
     }
 
     @Override
     protected Response newResponse() {
-        return new EmptyResponse();
+        return new ContentResponse()
     }
 }

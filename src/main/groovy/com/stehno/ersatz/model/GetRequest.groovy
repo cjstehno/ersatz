@@ -13,12 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz;
+package com.stehno.ersatz.model
+
+import com.stehno.ersatz.Response
+import groovy.transform.CompileStatic
 
 /**
- * A request with body content.
+ * Created by cjstehno on 12/1/16.
  */
-public interface ContentRequest extends Request {
+@CompileStatic
+class GetRequest extends AbstractRequest {
 
-    Request body(final Object body);
+    GetRequest(final String path) {
+        super(path)
+    }
+
+    @Override
+    protected Response newResponse() {
+        return new ContentResponse()
+    }
 }
