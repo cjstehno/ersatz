@@ -22,7 +22,7 @@ import groovy.transform.CompileStatic
 import io.undertow.server.HttpServerExchange
 
 /**
- * Implementation of the `Expectations` interface.
+ * Implementation of the <code>Expectations</code> interface.
  */
 @CompileStatic
 class ExpectationsImpl implements Expectations {
@@ -30,64 +30,64 @@ class ExpectationsImpl implements Expectations {
     private final List<Request> requests = new ArrayList<>()
 
     Request get(final String path) {
-        addRequest(new GetRequest(path))
+        expect new GetRequest(path)
     }
 
     Request get(final String path, @DelegatesTo(Request.class) final Closure closure) {
-        addRequest(new GetRequest(path), closure)
+        expect new GetRequest(path), closure
     }
 
     @Override
     Request head(String path) {
-        addRequest(new HeadRequest(path))
+        expect new HeadRequest(path)
     }
 
     @Override
     Request head(String path, @DelegatesTo(Request.class) Closure closure) {
-        addRequest(new HeadRequest(path), closure)
+        expect new HeadRequest(path), closure
     }
 
     @Override
     ContentRequest post(String path) {
-        addRequest(new PostRequest(path)) as ContentRequest
+        expect(new PostRequest(path)) as ContentRequest
     }
 
     @Override
     ContentRequest post(String path, @DelegatesTo(ContentRequest.class) Closure closure) {
-        addRequest(new PostRequest(path), closure) as ContentRequest
+        expect(new PostRequest(path), closure) as ContentRequest
     }
 
     @Override
     ContentRequest put(String path) {
-        addRequest(new PutRequest(path)) as ContentRequest
+        expect(new PutRequest(path)) as ContentRequest
     }
 
     @Override
     ContentRequest put(String path, @DelegatesTo(ContentRequest.class) Closure closure) {
-        addRequest(new PutRequest(path), closure) as ContentRequest
+        expect(new PutRequest(path), closure) as ContentRequest
     }
 
     @Override
     Request delete(String path) {
-        addRequest(new DeleteRequest(path))
+        expect new DeleteRequest(path)
     }
 
     @Override
     Request delete(String path, @DelegatesTo(Request.class) Closure closure) {
-        addRequest(new DeleteRequest(path), closure)
+        expect new DeleteRequest(path), closure
     }
 
     @Override
     ContentRequest patch(String path) {
-        addRequest(new PatchRequest(path)) as ContentRequest
+        expect(new PatchRequest(path)) as ContentRequest
     }
 
     @Override
     ContentRequest patch(String path, @DelegatesTo(ContentRequest.class) Closure closure) {
-        addRequest(new PatchRequest(path), closure) as ContentRequest
+        expect(new PatchRequest(path), closure) as ContentRequest
     }
 
-    Request find(final HttpServerExchange exchange) {
+    Request findMatch(final HttpServerExchange exchange) {
         requests.find { r -> ((AbstractRequest) r).matches(exchange) }
     }
 
@@ -95,12 +95,12 @@ class ExpectationsImpl implements Expectations {
         requests.every { r -> ((AbstractRequest) r).verify() }
     }
 
-    private Request addRequest(final Request request) {
+    private Request expect(final Request request) {
         requests.add(request)
         return request
     }
 
-    private Request addRequest(final Request request, final Closure closure) {
+    private Request expect(final Request request, final Closure closure) {
         closure.setDelegate(request)
         closure.call()
 

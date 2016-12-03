@@ -12,16 +12,28 @@ version = '0.0.1'
 sourceCompatibility = 8
 targetCompatibility = 8
 
+
 repositories {
     jcenter()
 }
 
+configurations {
+    groovyDoc
+}
+
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.6'
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
     compile 'io.undertow:undertow-core:1.4.6.Final'
 
     testCompile 'com.squareup.okhttp3:okhttp:3.5.0'
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+
+    groovyDoc 'org.codehaus.groovy:groovy-groovydoc:2.4.7'
+    groovyDoc 'org.codehaus.groovy:groovy-ant:2.4.7'
+}
+
+groovydoc {
+    groovyClasspath = configurations.groovyDoc
 }
 
 task sourcesJar(type: Jar) {

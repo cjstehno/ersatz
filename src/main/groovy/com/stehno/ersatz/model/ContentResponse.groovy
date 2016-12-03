@@ -31,32 +31,32 @@ class ContentResponse implements Response {
 
     ContentResponse body(final Object content) {
         this.body = content
-        return this
+        this
     }
 
     // TODO: support for more complex headers
     ContentResponse header(final String name, final String value) {
-        headers.put(name, value)
-        return this
+        headers[name] = value
+        this
     }
 
     ContentResponse cookie(final String name, final String value) {
-        cookies.put(name, value)
-        return this
+        cookies[name] = value
+        this
     }
 
     ContentResponse contentType(final String contentType) {
         header("Content-Type", contentType)
-        return this
+        this
     }
 
     ContentResponse code(int code) {
         this.code = code
-        return this
+        this
     }
 
     void send(final HttpServerExchange exchange) {
-        exchange.setStatusCode(code)
+        exchange.statusCode = code
 
         headers.each { k, v ->
             exchange.responseHeaders.put(new HttpString(k), v)

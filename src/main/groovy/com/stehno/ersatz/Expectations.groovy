@@ -18,7 +18,8 @@ package com.stehno.ersatz
 import groovy.transform.CompileStatic
 
 /**
- * Root element of the expectation configuration which provides access to request expectation based on the request method to be configured.
+ * The <code>Expectations</code> interface is the root element of the expectation configuration, which provides the ability to define request
+ * expectations and responses for test interactions.
  */
 @CompileStatic
 interface Expectations {
@@ -26,7 +27,7 @@ interface Expectations {
     // TODO: Add Consumer versions similar to Closures
 
     /**
-     * Allows configuration of a GET request.
+     * Allows configuration of a GET request expectation.
      *
      * @param path the request path.
      * @return a `Request` configuration object

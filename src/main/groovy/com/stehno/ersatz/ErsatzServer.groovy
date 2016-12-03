@@ -25,59 +25,80 @@ import io.undertow.server.HttpServerExchange
 import java.util.function.Consumer
 
 /**
- * Main entry point for the Ersatz server.
+ * The main entry point for an Ersatz server, used to configure the expectations and manage the server itself. This is the class that should be
+ * instantiated in unit tests.
+ *
+ * The server will be started on an ephemeral port so as not to collide with itself or other server applications running in the test environment. In
+ * your tests, you can retrieve the server port or URL using the <code>getPort()</code> and <code>getServerUrl()</code> methods respectively.
+ *
+ * TODO: document configuration steps
  */
 @CompileStatic
 class ErsatzServer {
 
     // FIXME: need a means of adding "plugins" for supporting things like BASIC, DIGEST, OAUTH
 
-    int requestedPort
-
     private final ExpectationsImpl expectations = new ExpectationsImpl()
     private Undertow server
     private int actualPort = -1
 
-    ErsatzServer() {
-        this(0)
-    }
-
-    ErsatzServer(final int requestedPort) {
-        this.requestedPort = requestedPort
-    }
-
+    /**
+     * Used to retrieve the port where the HTTP server is running.
+     *
+     * @return the HTTP server port
+     */
     int getPort() {
         actualPort
     }
 
+    /**
+     * Used to retrieve the full URL of the HTTP server.
+     *
+     * @return the full URL of the HTTP server
+     */
     String getServerUrl() {
         "http://localhost:$actualPort"
     }
 
-    // FIXME: should be able to call this in global setup and then in local setup to apply additional
+    /**
+     * Used to configure HTTP expectations on the server; the provided <code>Consumer<Expectations></code> implementation will have an active
+     * <code>Expectations</code> object passed into it for configuring server interaction expectations.
+     *
+     * @param expects the <code>Consumer<Expectations></code> instance to perform the configuration
+     * @return a reference to this server
+     */
     ErsatzServer expectations(final Consumer<Expectations> expects) {
+        // FIXME: should be able to call this in global setup and then in local setup to apply additional
         expects.accept(expectations)
         this
     }
 
+    /**
+     * Used to configure HTTP expectations on the server; the provided Groovy <code>Closure</code> will delegate to an <code>Expectations</code>
+     * instance for configuring server interaction expectations using the Groovy DSL.
+     *
+     * @param closure the Groovy <code>Closure</code> which will provide expectation configuration via DSL
+     * @return a reference to this server
+     */
     ErsatzServer expectations(@DelegatesTo(Expectations) final Closure closure) {
         closure.delegate = expectations
         closure.call()
-
         this
     }
 
-    // FIXME: record and allow access to all requests (optional) - just logging?
-    // FIXME: 404 should provide info about the missed request  (optional)
-
-    // FIXME: should be restartable
+    /**
+     * Used to start the HTTP server for test interactions. This method should be called after configuration of expectations and before the test
+     * interactions are executed against the server.
+     */
     void start() {
-        server = Undertow.builder()
-            .addHttpListener(requestedPort, 'localhost')
-            .setHandler(new HttpHandler() {
+        // FIXME: record and allow access to all requests (optional) - just logging?
+        // FIXME: 404 should provide info about the missed request  (optional)
+        // FIXME: should be restartable
+
+        server = Undertow.builder().addHttpListener(0, 'localhost').setHandler(new HttpHandler() {
             @Override
             void handleRequest(final HttpServerExchange exchange) throws Exception {
-                Request request = expectations.find(exchange)
+                Request request = expectations.findMatch(exchange)
                 if (request) {
                     // TODO: maybe just get the active response here (see after other methods impl)
                     ((AbstractRequest) request).respond(exchange)
@@ -92,14 +113,23 @@ class ErsatzServer {
         actualPort = (server.listenerInfo[0].address as InetSocketAddress).port
     }
 
+    /**
+     * Used to stop the HTTP server.
+     */
     void stop() {
         actualPort = -1
 
         server?.stop()
     }
 
-    // FIXME: find a way to be more explicit about failures (assertions)
+    /**
+     * Used to verify all of the HTTP server interaction for their expected call criteria (if any). This method should be called after any test
+     * interactions have been performed.
+     *
+     * @return <code>true</code> if all call criteria were met during test execution.
+     */
     boolean verify() {
+        // FIXME: find a way to be more explicit about failures (assertions)
         expectations.verify()
     }
 }

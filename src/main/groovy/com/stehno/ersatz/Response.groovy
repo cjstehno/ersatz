@@ -19,7 +19,7 @@ import com.stehno.ersatz.model.ContentResponse
 import groovy.transform.CompileStatic
 
 /**
- * Used to configure the provided response to a web request.
+ * Used to configure the provided response to an HTTP request.
  */
 @CompileStatic
 interface Response {

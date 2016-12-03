@@ -47,53 +47,53 @@ abstract class AbstractRequest implements Request {
     }
 
     Request header(final String name, final String value) {
-        headers.put(name, value)
-        return this
+        headers[name] = value
+        this
     }
 
     String header(final String name) {
-        return headers.get(name)
+        headers[name]
     }
 
     Request contentType(final String contentType) {
-        header("Content-Type", contentType)
-        return this
+        header('Content-Type', contentType)
+        this
     }
 
     Request query(final String name, final String value) {
         queryParams.computeIfAbsent(name, { k -> new ArrayList<>() }).add(value)
-        return this
+        this
     }
 
     List<String> query(final String name) {
-        return Collections.unmodifiableList(queryParams.get(name))
+        queryParams[name].asImmutable()
     }
 
     Request cookie(final String name, final String value) {
-        cookies.put(name, value)
-        return this
+        cookies[name] = value
+         this
     }
 
     String cookie(final String name) {
-        return cookies.get(name)
+        cookies[name]
     }
 
     Request listener(final Consumer<Request> listener) {
         listeners.add(listener)
-        return this
+        this
     }
 
     Response responds() {
         Response response = newResponse()
         responses.add(response)
-        return response
+        response
     }
 
     Request responder(final Consumer<Response> responder) {
         Response response = newResponse()
         responder.accept(response)
         responses.add(response)
-        return this
+        this
     }
 
     Request responder(final Closure closure) {
@@ -103,21 +103,21 @@ abstract class AbstractRequest implements Request {
 
         responses.add(response)
 
-        return this
+        this
     }
 
     Request condition(final Function<Request, Boolean> matcher) {
         conditions.add(matcher)
-        return this
+        this
     }
 
     Request verifier(final Function<Integer, Boolean> verifier) {
         this.verifier = verifier
-        return this
+        this
     }
 
     boolean verify() {
-        return verifier.apply(callCount)
+        verifier.apply(callCount)
     }
 
     boolean matches(final HttpServerExchange exchange) {
@@ -147,7 +147,7 @@ abstract class AbstractRequest implements Request {
         boolean two = requestQs.every { k, v ->
             queryParams.containsKey(k) && queryParams.get(k).containsAll(v)
         }
-        return one && two
+        one && two
     }
 
     // TODO: see if this can be package
