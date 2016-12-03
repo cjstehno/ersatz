@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz.model;
 
+import com.stehno.ersatz.ContentRequest;
 import com.stehno.ersatz.Expectations;
 import com.stehno.ersatz.Request;
 import groovy.lang.Closure;
@@ -33,35 +34,61 @@ public class ExpectationsImpl implements Expectations {
     private final List<Request> requests = new ArrayList<>();
 
     public Request get(final String path) {
-        Request request = new GetRequest(path);
-        requests.add(request);
-        return request;
+        return addRequest(new GetRequest(path));
     }
 
     public Request get(final String path, @DelegatesTo(Request.class) final Closure closure) {
-        Request request = new GetRequest(path);
-        closure.setDelegate(request);
-        closure.call();
-
-        requests.add(request);
-        return request;
+        return addRequest(new GetRequest(path), closure);
     }
 
     @Override
     public Request head(String path) {
-        Request request = new HeadRequest(path);
-        requests.add(request);
-        return request;
+        return addRequest(new HeadRequest(path));
     }
 
     @Override
     public Request head(String path, @DelegatesTo(Request.class) Closure closure) {
-        Request request = new HeadRequest(path);
-        closure.setDelegate(request);
-        closure.call();
+        return addRequest(new HeadRequest(path), closure);
+    }
 
-        requests.add(request);
-        return request;
+    @Override
+    public ContentRequest post(String path) {
+        return addRequest(new PostRequest(path));
+    }
+
+    @Override
+    public ContentRequest post(String path, @DelegatesTo(ContentRequest.class) Closure closure) {
+        return addRequest(new PostRequest(path), closure);
+    }
+
+    @Override
+    public ContentRequest put(String path) {
+        return addRequest(new PutRequest(path));
+    }
+
+    @Override
+    public ContentRequest put(String path, @DelegatesTo(ContentRequest.class) Closure closure) {
+        return addRequest(new PutRequest(path), closure);
+    }
+
+    @Override
+    public Request delete(String path) {
+        return addRequest(new DeleteRequest(path));
+    }
+
+    @Override
+    public Request delete(String path, @DelegatesTo(Request.class) Closure closure) {
+        return addRequest(new DeleteRequest(path), closure);
+    }
+
+    @Override
+    public ContentRequest patch(String path) {
+        return addRequest(new PatchRequest(path));
+    }
+
+    @Override
+    public ContentRequest patch(String path, @DelegatesTo(ContentRequest.class) Closure closure) {
+        return addRequest(new PatchRequest(path), closure);
     }
 
     public Optional<Request> find(final HttpServerExchange exchange) {
@@ -70,5 +97,18 @@ public class ExpectationsImpl implements Expectations {
 
     public boolean verify() {
         return requests.stream().allMatch(request -> ((AbstractRequest) request).verify());
+    }
+
+    private <R extends Request> R addRequest(final Request request) {
+        requests.add(request);
+        return (R) request;
+    }
+
+    private <R extends Request> R addRequest(final Request request, final Closure closure) {
+        closure.setDelegate(request);
+        closure.call();
+
+        requests.add(request);
+        return (R) request;
     }
 }

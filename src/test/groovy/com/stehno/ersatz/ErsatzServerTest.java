@@ -15,7 +15,9 @@
  */
 package com.stehno.ersatz;
 
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +61,14 @@ public class ErsatzServerTest {
             expectations.get("/cookie/monster").cookie("flavor", "chocolate-chip").responds().body("I love cookies!").cookie("eaten", "yes");
 
             expectations.head("/head").responds().header("foo", "blah").code(123);
+
+            expectations.post("/form").body("some content").contentType("text/plain; charset=utf-8").responds().body("response");
+
+            expectations.put("/update").body("more content").contentType("text/plain; charset=utf-8").responds().body("updated");
+
+            expectations.delete("/remove").responds().body("removed");
+
+            expectations.post("/patch").body("a change").contentType("text/plain; charset=utf-8").responds().body("patched");
         });
 
         ersatzServer.start();
@@ -91,6 +101,22 @@ public class ErsatzServerTest {
         resp = client.newCall(new okhttp3.Request.Builder().head().url(url("/head")).build()).execute();
         assertEquals(123, resp.code());
         assertEquals("blah", resp.header("foo"));
+
+        request = new okhttp3.Request.Builder().post(RequestBody.create(MediaType.parse("text/plain"),"some content")).url(url("/form")).build();
+        resp = client.newCall(request).execute();
+        assertEquals("response", resp.body().string());
+
+        request = new okhttp3.Request.Builder().post(RequestBody.create(MediaType.parse("text/plain"),"more content")).url(url("/update")).build();
+        resp = client.newCall(request).execute();
+        assertEquals("updated", resp.body().string());
+
+        request = new okhttp3.Request.Builder().delete().url(url("/remove")).build();
+        resp = client.newCall(request).execute();
+        assertEquals("removed", resp.body().string());
+
+        request = new okhttp3.Request.Builder().post(RequestBody.create(MediaType.parse("text/plain"),"a change")).url(url("/patch")).build();
+        resp = client.newCall(request).execute();
+        assertEquals("patched", resp.body().string());
 
         assertTrue(ersatzServer.verify());
     }
