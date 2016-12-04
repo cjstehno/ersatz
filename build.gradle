@@ -5,6 +5,7 @@ plugins {
     id 'codenarc'
     id 'maven'
     id 'maven-publish'
+    id 'com.github.kt3k.coveralls' version '2.7.1'
 }
 
 group = 'com.stehno.ersatz'
@@ -43,7 +44,7 @@ codenarc {
 }
 
 codenarcMain {
-    ignoreFailures true
+    ignoreFailures false
     configFile file('config/codenarc-main.rules')
 
     maxPriority1Violations 0
