@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.model
+package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.Response
@@ -43,7 +43,7 @@ class ErsatzRequest implements Request {
     private Function<Integer, Boolean> verifier = Verifiers.any()
     private int callCount
 
-    ErsatzRequest(final String path, final boolean emptyResponse=false) {
+    ErsatzRequest(final String path, final boolean emptyResponse = false) {
         this.path = path
         this.emptyResponse = emptyResponse
     }
@@ -131,7 +131,7 @@ class ErsatzRequest implements Request {
     }
 
     protected Response newResponse() {
-        new ResponseImpl(emptyResponse)
+        new ErsatzResponse(emptyResponse)
     }
 
     // header matching is not absolute - the request must contain the specified headers but not necessarily all of them
@@ -156,7 +156,7 @@ class ErsatzRequest implements Request {
 
     Response getCurrentResponse() {
         int index = callCount >= responses.size() ? responses.size() - 1 : callCount
-        ResponseImpl response = (ResponseImpl) responses.get(index)
+        responses.get(index)
     }
 
     void mark() {

@@ -15,8 +15,8 @@
  */
 package com.stehno.ersatz
 
-import com.stehno.ersatz.model.ErsatzRequest
-import com.stehno.ersatz.model.ExpectationsImpl
+import com.stehno.ersatz.impl.ErsatzRequest
+import com.stehno.ersatz.impl.ExpectationsImpl
 import groovy.transform.CompileStatic
 import io.undertow.Undertow
 import io.undertow.server.HttpHandler

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.model
+package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.Response
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 
 @CompileStatic @TupleConstructor
-class ResponseImpl implements Response {
+class ErsatzResponse implements Response {
 
     final boolean empty
 
@@ -29,7 +29,7 @@ class ResponseImpl implements Response {
     private Object body
     private Integer code = 200
 
-    ResponseImpl body(final Object content) {
+    Response body(final Object content) {
         if (empty) {
             throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')
         }
@@ -39,22 +39,22 @@ class ResponseImpl implements Response {
     }
 
     // TODO: support for more complex headers
-    ResponseImpl header(final String name, final String value) {
+    Response header(final String name, final String value) {
         headers[name] = value
         this
     }
 
-    ResponseImpl cookie(final String name, final String value) {
+    Response cookie(final String name, final String value) {
         cookies[name] = value
         this
     }
 
-    ResponseImpl contentType(final String contentType) {
+    Response contentType(final String contentType) {
         header('Content-Type', contentType)
         this
     }
 
-    ResponseImpl code(int code) {
+    Response code(int code) {
         this.code = code
         this
     }
