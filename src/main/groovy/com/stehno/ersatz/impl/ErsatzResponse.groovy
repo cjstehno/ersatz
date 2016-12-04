@@ -39,7 +39,6 @@ class ErsatzResponse implements Response {
         this
     }
 
-    // TODO: support for more complex headers
     Response header(final String name, final String value) {
         headers[name] = value
         this

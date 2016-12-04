@@ -172,7 +172,6 @@ class ErsatzRequest implements Request {
     }
 
     // header matching is not absolute - the request must contain the specified headers but not necessarily all of them
-    // TODO: needs to support more complicated headers
     private boolean containsHeaders(final HeaderMap requestHeads) {
         headers.every { k, v -> v == requestHeads.getFirst(k) }
     }
