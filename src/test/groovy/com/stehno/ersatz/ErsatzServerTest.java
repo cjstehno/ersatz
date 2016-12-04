@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2016 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -102,11 +102,11 @@ public class ErsatzServerTest {
         assertEquals(123, resp.code());
         assertEquals("blah", resp.header("foo"));
 
-        request = new okhttp3.Request.Builder().post(RequestBody.create(MediaType.parse("text/plain"),"some content")).url(url("/form")).build();
+        request = new okhttp3.Request.Builder().post(RequestBody.create(MediaType.parse("text/plain"), "some content")).url(url("/form")).build();
         resp = client.newCall(request).execute();
         assertEquals("response", resp.body().string());
 
-        request = new okhttp3.Request.Builder().post(RequestBody.create(MediaType.parse("text/plain"),"more content")).url(url("/update")).build();
+        request = new okhttp3.Request.Builder().post(RequestBody.create(MediaType.parse("text/plain"), "more content")).url(url("/update")).build();
         resp = client.newCall(request).execute();
         assertEquals("updated", resp.body().string());
 
@@ -114,7 +114,7 @@ public class ErsatzServerTest {
         resp = client.newCall(request).execute();
         assertEquals("removed", resp.body().string());
 
-        request = new okhttp3.Request.Builder().post(RequestBody.create(MediaType.parse("text/plain"),"a change")).url(url("/patch")).build();
+        request = new okhttp3.Request.Builder().post(RequestBody.create(MediaType.parse("text/plain"), "a change")).url(url("/patch")).build();
         resp = client.newCall(request).execute();
         assertEquals("patched", resp.body().string());
 

@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.feat.ServerFeature
 import com.stehno.ersatz.impl.ErsatzRequest
 import com.stehno.ersatz.impl.ExpectationsImpl
 import groovy.transform.CompileStatic
@@ -39,6 +40,8 @@ import java.util.function.Consumer
 class ErsatzServer {
 
     // FIXME: need a means of adding "plugins" for supporting things like BASIC, DIGEST, OAUTH
+
+    List<ServerFeature> features
 
     private final ExpectationsImpl expectations = new ExpectationsImpl()
     private Undertow server
@@ -97,7 +100,7 @@ class ErsatzServer {
         // FIXME: 404 should provide info about the missed request  (optional)
         // FIXME: should be restartable
 
-        server = Undertow.builder().addHttpListener(0, 'localhost').setHandler(new HttpHandler() {
+        server = Undertow.builder().addHttpListener(0, 'localhost').setHandler(applyFeatures(new HttpHandler() {
             @Override
             void handleRequest(final HttpServerExchange exchange) throws Exception {
                 ErsatzRequest request = expectations.findMatch(exchange) as ErsatzRequest
@@ -108,11 +111,21 @@ class ErsatzServer {
                     exchange.setStatusCode(404).responseSender.send('404 Not Found.')
                 }
             }
-        }).build()
+        })).build()
 
         server.start()
 
         actualPort = (server.listenerInfo[0].address as InetSocketAddress).port
+    }
+
+    private HttpHandler applyFeatures(final HttpHandler handler) {
+        HttpHandler result = handler
+
+        features?.each { feat ->
+            result = feat.apply(result)
+        }
+
+        result
     }
 
     /**
