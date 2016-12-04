@@ -6,6 +6,7 @@ plugins {
     id 'maven'
     id 'maven-publish'
     id 'com.github.kt3k.coveralls' version '2.7.1'
+    id 'com.jfrog.bintray' version '1.7.3'
 }
 
 group = 'com.stehno.ersatz'
@@ -102,3 +103,20 @@ license {
     excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks'])
 }
 
+bintray {
+    if (project.hasProperty('user') && project.hasProperty('key')) {
+        user = project.property('user')
+        key = project.property('key')
+
+        publications = ['mavenJava']
+
+        pkg {
+            repo = 'stehno'
+            name = 'ersatz'
+            desc = 'Mock server library for testing HTTP clients.'
+            licenses = ['Apache-2.0']
+            labels = ['groovy']
+            vcsUrl = 'https://github.com/cjstehno/ersatz'
+        }
+    }
+}
