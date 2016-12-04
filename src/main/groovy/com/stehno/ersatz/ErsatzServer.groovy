@@ -44,6 +44,11 @@ class ErsatzServer {
     private Undertow server
     private int actualPort = -1
 
+    /**
+     * Used to enable support for a feature extension.
+     *
+     * @param feature the <code>ServerFeature</code> to be added
+     */
     void addFeature(ServerFeature feature) {
         features << feature
     }
@@ -73,8 +78,8 @@ class ErsatzServer {
      * @param expects the <code>Consumer<Expectations></code> instance to perform the configuration
      * @return a reference to this server
      */
+    @SuppressWarnings('ConfusingMethodName')
     ErsatzServer expectations(final Consumer<Expectations> expects) {
-        // FIXME: should be able to call this in global setup and then in local setup to apply additional
         expects.accept(expectations)
         this
     }
@@ -86,6 +91,7 @@ class ErsatzServer {
      * @param closure the Groovy <code>Closure</code> which will provide expectation configuration via DSL
      * @return a reference to this server
      */
+    @SuppressWarnings('ConfusingMethodName')
     ErsatzServer expectations(@DelegatesTo(Expectations) final Closure closure) {
         closure.delegate = expectations
         closure.call()
@@ -97,10 +103,6 @@ class ErsatzServer {
      * interactions are executed against the server.
      */
     void start() {
-        // FIXME: record and allow access to all requests (optional) - just logging?
-        // FIXME: 404 should provide info about the missed request  (optional)
-        // FIXME: should be restartable
-
         server = Undertow.builder().addHttpListener(0, 'localhost').setHandler(applyFeatures(new HttpHandler() {
             @Override
             void handleRequest(final HttpServerExchange exchange) throws Exception {
@@ -109,7 +111,7 @@ class ErsatzServer {
                     send(exchange, request.currentResponse)
                     request.mark()
                 } else {
-                    exchange.setStatusCode(404).responseSender.send('404 Not Found.')
+                    exchange.setStatusCode(404).responseSender.send('404: Not Found')
                 }
             }
         })).build()
@@ -117,16 +119,6 @@ class ErsatzServer {
         server.start()
 
         actualPort = (server.listenerInfo[0].address as InetSocketAddress).port
-    }
-
-    private HttpHandler applyFeatures(final HttpHandler handler) {
-        HttpHandler result = handler
-
-        features?.each { feat ->
-            result = feat.apply(result)
-        }
-
-        result
     }
 
     /**
@@ -145,11 +137,20 @@ class ErsatzServer {
      * @return <code>true</code> if all call criteria were met during test execution.
      */
     boolean verify() {
-        // FIXME: find a way to be more explicit about failures (assertions)
         expectations.verify()
     }
 
-    private void send(final HttpServerExchange exchange, final Response response) {
+    private HttpHandler applyFeatures(final HttpHandler handler) {
+        HttpHandler result = handler
+
+        features?.each { feat ->
+            result = feat.apply(result)
+        }
+
+        result
+    }
+
+    private static void send(final HttpServerExchange exchange, final Response response) {
         exchange.statusCode = response.code
 
         response.headers.each { k, v ->
@@ -160,7 +161,6 @@ class ErsatzServer {
             exchange.responseCookies.put(k, new CookieImpl(k, v))
         }
 
-        // TODO: figure out how to send empty response
         exchange.responseSender.send(response.body?.toString() ?: '')
     }
 }

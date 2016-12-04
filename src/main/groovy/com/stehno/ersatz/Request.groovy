@@ -26,11 +26,12 @@ import java.util.function.Function
 @CompileStatic
 interface Request {
 
-    // TODO: documentation notes
     // Note that headers are matched as "contains" - others?
     // Note how multiple responses work
 
     Request header(final String name, final String value)
+
+    Request headers(final Map<String,String> heads)
 
     String getHeader(final String name)
 
@@ -38,11 +39,19 @@ interface Request {
 
     Request query(final String name, final String value)
 
+    Request queries(final Map<String,List<String>> map)
+
     List<String> getQuery(final String name)
 
     Request cookie(final String name, final String value)
 
+    Request cookies(final Map<String,String> cookies)
+
     String getCookie(final String name)
+
+    String getPath()
+
+    String getMethod()
 
     /**
      * Specifies a listener which will be called with the active request whenever this request is matched at test-time.
@@ -98,10 +107,3 @@ interface Request {
      */
     Request condition(final Function<Request, Boolean> matcher)
 }
-
-/*
-    TODO:
-        - headers(map)
-        - query(map)
-        - cookies(map)
- */

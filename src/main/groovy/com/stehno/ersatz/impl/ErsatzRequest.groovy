@@ -40,12 +40,48 @@ class ErsatzRequest implements Request {
     private final List<Function<Request, Boolean>> conditions = []
     private final boolean emptyResponse
     private final String path
+    private final String method
     private Function<Integer, Boolean> verifier = Verifiers.any()
     private int callCount
 
-    ErsatzRequest(final String path, final boolean emptyResponse = false) {
+    ErsatzRequest(final String method, final String path, final boolean emptyResponse = false) {
+        this.method = method
         this.path = path
         this.emptyResponse = emptyResponse
+    }
+
+    @Override
+    String getPath() {
+        path
+    }
+
+    @Override
+    String getMethod() {
+        method
+    }
+
+    @Override
+    Request headers(final Map<String, String> heads) {
+        headers.putAll(heads)
+        this
+    }
+
+    @Override
+    Request queries(final Map<String, List<String>> map) {
+        map.each { k, v ->
+            if (queryParams.containsKey(k)) {
+                queryParams[k].addAll(v)
+            } else {
+                queryParams[k] = v
+            }
+        }
+        this
+    }
+
+    @Override
+    Request cookies(Map<String, String> cookies) {
+        this.cookies.putAll(cookies)
+        this
     }
 
     Request header(final String name, final String value) {
@@ -166,5 +202,9 @@ class ErsatzRequest implements Request {
         for (final Consumer<Request> listener : listeners) {
             listener.accept(this)
         }
+    }
+
+    @Override String toString() {
+        "{ $method $path (query=${queryParams}, headers=$headers, cookies=$cookies): counted=$callCount }"
     }
 }

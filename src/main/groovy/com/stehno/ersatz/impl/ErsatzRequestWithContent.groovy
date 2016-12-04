@@ -36,8 +36,8 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
     ]
     private Object body
 
-    ErsatzRequestWithContent(final String path) {
-        super(path)
+    ErsatzRequestWithContent(final String method, final String path) {
+        super(method, path)
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')

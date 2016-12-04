@@ -17,14 +17,14 @@ package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
 
+import java.util.function.Consumer
+
 /**
  * The <code>Expectations</code> interface is the root element of the expectation configuration, which provides the ability to define request
  * expectations and responses for test interactions.
  */
 @CompileStatic
 interface Expectations {
-
-    // TODO: Add Consumer versions similar to Closures
 
     /**
      * Allows configuration of a GET request expectation.
@@ -34,25 +34,37 @@ interface Expectations {
      */
     Request get(String path)
 
-    Request get(String path, @DelegatesTo(Request.class) Closure closure)
+    Request get(String path, @DelegatesTo(Request) Closure closure)
+
+    Request get(String path, Consumer<Request> config)
 
     Request head(String path)
 
-    Request head(String path, @DelegatesTo(Request.class) Closure closure)
+    Request head(String path, @DelegatesTo(Request) Closure closure)
+
+    Request head(String path, Consumer<Request> config)
 
     RequestWithContent post(String path)
 
-    RequestWithContent post(String path, @DelegatesTo(RequestWithContent.class) Closure closure)
+    RequestWithContent post(String path, @DelegatesTo(RequestWithContent) Closure closure)
+
+    RequestWithContent post(String path, Consumer<RequestWithContent> config)
 
     RequestWithContent put(String path)
 
-    RequestWithContent put(String path, @DelegatesTo(RequestWithContent.class) Closure closure)
+    RequestWithContent put(String path, @DelegatesTo(RequestWithContent) Closure closure)
+
+    RequestWithContent put(String path, Consumer<RequestWithContent> config)
 
     Request delete(String path)
 
-    Request delete(String path, @DelegatesTo(Request.class) Closure closure)
+    Request delete(String path, @DelegatesTo(Request) Closure closure)
+
+    Request delete(String path, Consumer<Request> config)
 
     RequestWithContent patch(String path)
 
-    RequestWithContent patch(String path, @DelegatesTo(RequestWithContent.class) Closure closure)
+    RequestWithContent patch(String path, @DelegatesTo(RequestWithContent) Closure closure)
+
+    RequestWithContent patch(String path, Consumer<RequestWithContent> config)
 }
