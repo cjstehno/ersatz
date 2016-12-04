@@ -1,10 +1,13 @@
-= Ersatz Server
+# Ersatz Server
 
 > _noun_ An artificial substance or article used to replace something natural or genuine; a substitute.
 
 A "mock" HTTP server library for testing HTTP/REST clients.
 
-== Features
+[![Build Status](https://travis-ci.org/cjstehno/ersatz.svg?branch=master)](https://travis-ci.org/cjstehno/ersatz)
+[![Coverage Status](https://coveralls.io/repos/github/cjstehno/ersatz/badge.svg?branch=master)](https://coveralls.io/github/cjstehno/ersatz?branch=master)
+
+## Features
 
 * Uses embedded Undertow to setup an HTTP server for unit testing HTTP client code
 * compatible with Java and Groovy (and JVM language)
