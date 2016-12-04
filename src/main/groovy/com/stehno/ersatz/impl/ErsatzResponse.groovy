@@ -44,6 +44,18 @@ class ErsatzResponse implements Response {
         this
     }
 
+    @Override
+    Response headers(final Map<String, String> headers) {
+        this.headers.putAll(headers)
+        this
+    }
+
+    @Override
+    Response cookies(final Map<String, String> cookies) {
+        this.cookies.putAll(cookies)
+        this
+    }
+
     Response cookie(final String name, final String value) {
         cookies[name] = value
         this

@@ -27,7 +27,11 @@ interface Response {
 
     Response header(final String name, final String value)
 
+    Response headers(final Map<String, String> headers)
+
     Response cookie(final String name, final String value)
+
+    Response cookies(final Map<String, String> cookies)
 
     Response contentType(final String contentType)
 
@@ -41,9 +45,3 @@ interface Response {
 
     Integer getCode()
 }
-
-/*
-    TODO:
-        - headers(map)
-        - cookies(map)
- */
