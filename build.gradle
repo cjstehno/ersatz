@@ -1,10 +1,12 @@
 plugins {
     id 'groovy'
     id "com.github.hierynomus.license" version "0.13.1"
-    id 'findbugs'
     id 'jacoco'
+    id 'codenarc'
     id 'maven'
     id 'maven-publish'
+    id 'com.github.kt3k.coveralls' version '2.7.1'
+    id 'com.jfrog.bintray' version '1.7.3'
 }
 
 group = 'com.stehno.ersatz'
@@ -13,29 +15,51 @@ version = '0.0.1'
 sourceCompatibility = 8
 targetCompatibility = 8
 
+
 repositories {
     jcenter()
 }
 
 configurations {
-    asciidoclet
+    groovyDoc
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.6'
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile 'io.undertow:undertow-core:1.4.6.Final'
 
+    testCompile 'com.squareup.okhttp3:okhttp:3.5.0'
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
 
-    asciidoclet 'org.asciidoctor:asciidoclet:1.+'
+    groovyDoc 'org.codehaus.groovy:groovy-groovydoc:2.4.7'
+    groovyDoc 'org.codehaus.groovy:groovy-ant:2.4.7'
+
+    codenarc(
+        'org.codenarc:CodeNarc:0.26.0',
+        'org.codehaus.groovy:groovy-all:2.4.7'
+    )
 }
 
-javadoc {
-    options.docletpath = configurations.asciidoclet.files.asType(List)
-    options.links("http://docs.oracle.com/javase/8/docs/api/", "http://docs.groovy-lang.org/latest/html/gapi/");
-    options.doclet = 'org.asciidoctor.Asciidoclet'
-    //options.overview = "src/main/java/overview.adoc"
-    options.addStringOption "-base-dir", "${projectDir}"
-    options.addStringOption "-attribute", "name=${project.name},version=${project.version},title-link=https://github.com/cjstehno/ersatz[${project.name} ${project.version}]"
+codenarc {
+    toolVersion = '0.26.0'
+}
+
+codenarcMain {
+    ignoreFailures false
+    configFile file('config/codenarc-main.rules')
+
+    maxPriority1Violations 0
+    maxPriority2Violations 5
+    maxPriority3Violations 10
+}
+
+codenarcTest {
+    ignoreFailures true
+    configFile file('config/codenarc-test.rules')
+}
+
+groovydoc {
+    groovyClasspath = configurations.groovyDoc
 }
 
 task sourcesJar(type: Jar) {
@@ -58,21 +82,6 @@ project.publishing {
             version project.version
         }
     }
-
-    configurations.runtime.allDependencies.each {
-        println(it);
-    }
-}
-
-tasks.withType(FindBugs) {
-    ignoreFailures = true
-    effort = 'max'
-    reportLevel = 'low'
-    reports {
-        xml.enabled false
-        html.enabled true
-        html.stylesheet resources.text.fromFile('/config/findbugs-styles.xsl')
-    }
 }
 
 jacocoTestReport {
@@ -94,3 +103,20 @@ license {
     excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks'])
 }
 
+bintray {
+    if (project.hasProperty('user') && project.hasProperty('key')) {
+        user = project.property('user')
+        key = project.property('key')
+
+        publications = ['mavenJava']
+
+        pkg {
+            repo = 'stehno'
+            name = 'ersatz'
+            desc = 'Mock server library for testing HTTP clients.'
+            licenses = ['Apache-2.0']
+            labels = ['groovy']
+            vcsUrl = 'https://github.com/cjstehno/ersatz'
+        }
+    }
+}
