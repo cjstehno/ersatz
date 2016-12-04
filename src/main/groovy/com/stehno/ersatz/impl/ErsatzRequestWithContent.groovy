@@ -18,14 +18,22 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.RequestWithContent
 import groovy.transform.CompileStatic
+import io.undertow.io.Receiver
 import io.undertow.server.HttpServerExchange
 
+import java.util.function.Function
+
 /**
- * Created by cjstehno on 12/4/16.
+ * Ersatz implementation of a <code>Request</code> with body content.
  */
 @CompileStatic
 class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
+    private final Map<String, Function<byte[], Object>> converters = [
+        'text/plain'                : { byte[] m -> body == new String(m, 'UTF-8') } as Function<byte[], Object>,
+        'text/plain; charset=utf-8' : { byte[] m -> body == new String(m, 'UTF-8') } as Function<byte[], Object>,
+        'text/plain; charset=utf-16': { byte[] m -> body == new String(m, 'UTF-16') } as Function<byte[], Object>
+    ]
     private Object body
 
     ErsatzRequestWithContent(final String path) {
@@ -38,27 +46,29 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         this
     }
 
+    Request converter(final String contentType, final Function<byte[], Object> converter) {
+        converters[contentType] = converter
+        this
+    }
+
     Object getBody() {
         body
     }
 
     boolean matches(final HttpServerExchange exchange) {
-        super.matches(exchange)
-//            && matchesBody(exchange) FIXME: body content is not being matched right now - fix this
+        super.matches(exchange) && matchesBody(exchange)
     }
 
     private boolean matchesBody(final HttpServerExchange exchange) {
-        byte[] content = exchange.startBlocking().inputStream.bytes
+        boolean match = false
 
-        // FIXME: support other content types and pluggable converters
+        exchange.requestReceiver.receiveFullBytes(new Receiver.FullBytesCallback() {
+            @Override
+            void handle(final HttpServerExchange exch, byte[] message) {
+                match = converters[getHeader('Content-Type') ?: 'text/plain; charset=utf-8']
+            }
+        })
 
-        String contentType = getHeader('Content-Type') ?: 'text/plain'
-        if (contentType == 'text/plain; charset=utf-8') {
-            return body == new String(content, 'UTF-8')
-        } else if (contentType == 'text/plain; charset=utf-16') {
-            return body == new String(content, 'UTF-16')
-        }
-
-        false
+        match
     }
 }
