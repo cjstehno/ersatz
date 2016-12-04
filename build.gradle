@@ -2,6 +2,7 @@ plugins {
     id 'groovy'
     id "com.github.hierynomus.license" version "0.13.1"
     id 'jacoco'
+    id 'codenarc'
     id 'maven'
     id 'maven-publish'
 }
@@ -30,6 +31,29 @@ dependencies {
 
     groovyDoc 'org.codehaus.groovy:groovy-groovydoc:2.4.7'
     groovyDoc 'org.codehaus.groovy:groovy-ant:2.4.7'
+
+    codenarc(
+        'org.codenarc:CodeNarc:0.26.0',
+        'org.codehaus.groovy:groovy-all:2.4.7'
+    )
+}
+
+codenarc {
+    toolVersion = '0.26.0'
+}
+
+codenarcMain {
+    ignoreFailures true
+    configFile file('config/codenarc-main.rules')
+
+    maxPriority1Violations 0
+    maxPriority2Violations 5
+    maxPriority3Violations 10
+}
+
+codenarcTest {
+    ignoreFailures true
+    configFile file('config/codenarc-test.rules')
 }
 
 groovydoc {

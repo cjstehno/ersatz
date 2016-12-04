@@ -40,7 +40,7 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         super(path)
     }
 
-    @Override
+    @Override @SuppressWarnings('ConfusingMethodName')
     Request body(Object body) {
         this.body = body
         this

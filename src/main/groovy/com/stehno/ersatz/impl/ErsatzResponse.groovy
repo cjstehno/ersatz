@@ -24,11 +24,12 @@ class ErsatzResponse implements Response {
 
     final boolean empty
 
-    private final Map<String, String> headers = new HashMap<>()
-    private final Map<String, String> cookies = new HashMap<>()
+    private final Map<String, String> headers = [:]
+    private final Map<String, String> cookies = [:]
     private Object body
     private Integer code = 200
 
+    @SuppressWarnings('ConfusingMethodName')
     Response body(final Object content) {
         if (empty) {
             throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')
@@ -44,13 +45,13 @@ class ErsatzResponse implements Response {
         this
     }
 
-    @Override
+    @Override @SuppressWarnings('ConfusingMethodName')
     Response headers(final Map<String, String> headers) {
         this.headers.putAll(headers)
         this
     }
 
-    @Override
+    @Override @SuppressWarnings('ConfusingMethodName')
     Response cookies(final Map<String, String> cookies) {
         this.cookies.putAll(cookies)
         this
@@ -66,6 +67,7 @@ class ErsatzResponse implements Response {
         this
     }
 
+    @SuppressWarnings('ConfusingMethodName')
     Response code(int code) {
         this.code = code
         this

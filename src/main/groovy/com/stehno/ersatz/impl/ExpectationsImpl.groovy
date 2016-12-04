@@ -27,13 +27,13 @@ import io.undertow.server.HttpServerExchange
 @CompileStatic
 class ExpectationsImpl implements Expectations {
 
-    private final List<Request> requests = new ArrayList<>()
+    private final List<Request> requests = []
 
     Request get(final String path) {
         expect new ErsatzRequest(path)
     }
 
-    Request get(final String path, @DelegatesTo(Request.class) final Closure closure) {
+    Request get(final String path, @DelegatesTo(Request) final Closure closure) {
         expect new ErsatzRequest(path), closure
     }
 
@@ -43,7 +43,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request head(String path, @DelegatesTo(Request.class) Closure closure) {
+    Request head(String path, @DelegatesTo(Request) Closure closure) {
         expect new ErsatzRequest(path, true), closure
     }
 
@@ -53,7 +53,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    RequestWithContent post(String path, @DelegatesTo(RequestWithContent.class) Closure closure) {
+    RequestWithContent post(String path, @DelegatesTo(RequestWithContent) Closure closure) {
         expect(new ErsatzRequestWithContent(path), closure) as RequestWithContent
     }
 
@@ -63,7 +63,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    RequestWithContent put(String path, @DelegatesTo(RequestWithContent.class) Closure closure) {
+    RequestWithContent put(String path, @DelegatesTo(RequestWithContent) Closure closure) {
         expect(new ErsatzRequestWithContent(path), closure) as RequestWithContent
     }
 
@@ -73,7 +73,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request delete(String path, @DelegatesTo(Request.class) Closure closure) {
+    Request delete(String path, @DelegatesTo(Request) Closure closure) {
         expect new ErsatzRequest(path), closure
     }
 
@@ -83,7 +83,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    RequestWithContent patch(String path, @DelegatesTo(RequestWithContent.class) Closure closure) {
+    RequestWithContent patch(String path, @DelegatesTo(RequestWithContent) Closure closure) {
         expect(new ErsatzRequestWithContent(path), closure) as RequestWithContent
     }
 

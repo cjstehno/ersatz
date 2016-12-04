@@ -32,12 +32,12 @@ import java.util.function.Function
 @CompileStatic
 class ErsatzRequest implements Request {
 
-    private final Map<String, List<String>> queryParams = new HashMap<>()
-    private final Map<String, String> headers = new HashMap<>()
-    private final Map<String, String> cookies = new HashMap<>()
-    private final List<Consumer<Request>> listeners = new LinkedList<>()
-    private final List<Response> responses = new LinkedList<>()
-    private final List<Function<Request, Boolean>> conditions = new LinkedList<>()
+    private final Map<String, List<String>> queryParams = [:]
+    private final Map<String, String> headers = [:]
+    private final Map<String, String> cookies = [:]
+    private final List<Consumer<Request>> listeners = []
+    private final List<Response> responses = []
+    private final List<Function<Request, Boolean>> conditions = []
     private final boolean emptyResponse
     private final String path
     private Function<Integer, Boolean> verifier = Verifiers.any()
@@ -63,7 +63,7 @@ class ErsatzRequest implements Request {
     }
 
     Request query(final String name, final String value) {
-        queryParams.computeIfAbsent(name, { k -> new ArrayList<>() }).add(value)
+        queryParams.computeIfAbsent(name) { k -> [] }.add value
         this
     }
 
@@ -113,6 +113,7 @@ class ErsatzRequest implements Request {
         this
     }
 
+    @SuppressWarnings('ConfusingMethodName')
     Request verifier(final Function<Integer, Boolean> verifier) {
         this.verifier = verifier
         this
@@ -123,7 +124,7 @@ class ErsatzRequest implements Request {
     }
 
     boolean matches(final HttpServerExchange exchange) {
-        exchange.getRequestPath() == path &&
+        exchange.requestPath == path &&
             (conditions.empty || conditions.every { it.apply(this) }) &&
             matchQueryParams(exchange.queryParameters) &&
             containsHeaders(exchange.requestHeaders) &&

@@ -38,15 +38,17 @@ class BasicAuthFeature implements ServerFeature {
     IdentityManager identityManager = new SimpleIdentityManager()
 
     @Override
-    HttpHandler apply(HttpHandler handler) {
-        handler = new AuthenticationCallHandler(handler)
-        handler = new AuthenticationConstraintHandler(handler)
-
-        final List<AuthenticationMechanism> mechanisms = Collections.<AuthenticationMechanism> singletonList(new BasicAuthenticationMechanism(realm))
-        handler = new AuthenticationMechanismsHandler(handler, mechanisms)
-        handler = new SecurityInitialHandler(PRO_ACTIVE, identityManager, handler)
-
-        handler
+    HttpHandler apply(final HttpHandler handler) {
+        new SecurityInitialHandler(
+            PRO_ACTIVE,
+            identityManager,
+            new AuthenticationMechanismsHandler(
+                new AuthenticationConstraintHandler(
+                    new AuthenticationCallHandler(handler)
+                ),
+                Collections.<AuthenticationMechanism> singletonList(new BasicAuthenticationMechanism(realm))
+            )
+        )
     }
 }
 
