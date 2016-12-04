@@ -15,7 +15,7 @@
  */
 package com.stehno.ersatz
 
-import com.stehno.ersatz.model.AbstractRequest
+import com.stehno.ersatz.model.ErsatzRequest
 import com.stehno.ersatz.model.ExpectationsImpl
 import groovy.transform.CompileStatic
 import io.undertow.Undertow
@@ -100,7 +100,7 @@ class ErsatzServer {
         server = Undertow.builder().addHttpListener(0, 'localhost').setHandler(new HttpHandler() {
             @Override
             void handleRequest(final HttpServerExchange exchange) throws Exception {
-                AbstractRequest request = expectations.findMatch(exchange) as AbstractRequest
+                ErsatzRequest request = expectations.findMatch(exchange) as ErsatzRequest
                 if (request) {
                     send(exchange, request.currentResponse)
                     request.mark()

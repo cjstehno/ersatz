@@ -15,9 +15,9 @@
  */
 package com.stehno.ersatz.model
 
-import com.stehno.ersatz.ContentRequest
 import com.stehno.ersatz.Expectations
 import com.stehno.ersatz.Request
+import com.stehno.ersatz.RequestWithContent
 import groovy.transform.CompileStatic
 import io.undertow.server.HttpServerExchange
 
@@ -30,69 +30,69 @@ class ExpectationsImpl implements Expectations {
     private final List<Request> requests = new ArrayList<>()
 
     Request get(final String path) {
-        expect new GetRequest(path)
+        expect new ErsatzRequest(path)
     }
 
     Request get(final String path, @DelegatesTo(Request.class) final Closure closure) {
-        expect new GetRequest(path), closure
+        expect new ErsatzRequest(path), closure
     }
 
     @Override
     Request head(String path) {
-        expect new HeadRequest(path)
+        expect new ErsatzRequest(path, true)
     }
 
     @Override
     Request head(String path, @DelegatesTo(Request.class) Closure closure) {
-        expect new HeadRequest(path), closure
+        expect new ErsatzRequest(path, true), closure
     }
 
     @Override
-    ContentRequest post(String path) {
-        expect(new PostRequest(path)) as ContentRequest
+    RequestWithContent post(String path) {
+        expect(new ErsatzRequestWithContent(path)) as RequestWithContent
     }
 
     @Override
-    ContentRequest post(String path, @DelegatesTo(ContentRequest.class) Closure closure) {
-        expect(new PostRequest(path), closure) as ContentRequest
+    RequestWithContent post(String path, @DelegatesTo(RequestWithContent.class) Closure closure) {
+        expect(new ErsatzRequestWithContent(path), closure) as RequestWithContent
     }
 
     @Override
-    ContentRequest put(String path) {
-        expect(new PutRequest(path)) as ContentRequest
+    RequestWithContent put(String path) {
+        expect(new ErsatzRequestWithContent(path)) as RequestWithContent
     }
 
     @Override
-    ContentRequest put(String path, @DelegatesTo(ContentRequest.class) Closure closure) {
-        expect(new PutRequest(path), closure) as ContentRequest
+    RequestWithContent put(String path, @DelegatesTo(RequestWithContent.class) Closure closure) {
+        expect(new ErsatzRequestWithContent(path), closure) as RequestWithContent
     }
 
     @Override
     Request delete(String path) {
-        expect new DeleteRequest(path)
+        expect new ErsatzRequest(path)
     }
 
     @Override
     Request delete(String path, @DelegatesTo(Request.class) Closure closure) {
-        expect new DeleteRequest(path), closure
+        expect new ErsatzRequest(path), closure
     }
 
     @Override
-    ContentRequest patch(String path) {
-        expect(new PatchRequest(path)) as ContentRequest
+    RequestWithContent patch(String path) {
+        expect(new ErsatzRequestWithContent(path)) as RequestWithContent
     }
 
     @Override
-    ContentRequest patch(String path, @DelegatesTo(ContentRequest.class) Closure closure) {
-        expect(new PatchRequest(path), closure) as ContentRequest
+    RequestWithContent patch(String path, @DelegatesTo(RequestWithContent.class) Closure closure) {
+        expect(new ErsatzRequestWithContent(path), closure) as RequestWithContent
     }
 
     Request findMatch(final HttpServerExchange exchange) {
-        requests.find { r -> ((AbstractRequest) r).matches(exchange) }
+        requests.find { r -> ((ErsatzRequest) r).matches(exchange) }
     }
 
     boolean verify() {
-        requests.every { r -> ((AbstractRequest) r).verify() }
+        requests.every { r -> ((ErsatzRequest) r).verify() }
     }
 
     private Request expect(final Request request) {

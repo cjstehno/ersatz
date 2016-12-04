@@ -40,19 +40,19 @@ interface Expectations {
 
     Request head(String path, @DelegatesTo(Request.class) Closure closure)
 
-    ContentRequest post(String path)
+    RequestWithContent post(String path)
 
-    ContentRequest post(String path, @DelegatesTo(ContentRequest.class) Closure closure)
+    RequestWithContent post(String path, @DelegatesTo(RequestWithContent.class) Closure closure)
 
-    ContentRequest put(String path)
+    RequestWithContent put(String path)
 
-    ContentRequest put(String path, @DelegatesTo(ContentRequest.class) Closure closure)
+    RequestWithContent put(String path, @DelegatesTo(RequestWithContent.class) Closure closure)
 
     Request delete(String path)
 
     Request delete(String path, @DelegatesTo(Request.class) Closure closure)
 
-    ContentRequest patch(String path)
+    RequestWithContent patch(String path)
 
-    ContentRequest patch(String path, @DelegatesTo(ContentRequest.class) Closure closure)
+    RequestWithContent patch(String path, @DelegatesTo(RequestWithContent.class) Closure closure)
 }

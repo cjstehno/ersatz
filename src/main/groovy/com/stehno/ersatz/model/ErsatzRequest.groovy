@@ -30,7 +30,7 @@ import java.util.function.Function
  * Abstract base class for request expectation definitions.
  */
 @CompileStatic
-abstract class AbstractRequest implements Request {
+class ErsatzRequest implements Request {
 
     private final Map<String, List<String>> queryParams = new HashMap<>()
     private final Map<String, String> headers = new HashMap<>()
@@ -38,12 +38,14 @@ abstract class AbstractRequest implements Request {
     private final List<Consumer<Request>> listeners = new LinkedList<>()
     private final List<Response> responses = new LinkedList<>()
     private final List<Function<Request, Boolean>> conditions = new LinkedList<>()
+    private final boolean emptyResponse
     private final String path
     private Function<Integer, Boolean> verifier = Verifiers.any()
     private int callCount
 
-    AbstractRequest(final String path) {
+    ErsatzRequest(final String path, final boolean emptyResponse=false) {
         this.path = path
+        this.emptyResponse = emptyResponse
     }
 
     Request header(final String name, final String value) {
@@ -129,7 +131,7 @@ abstract class AbstractRequest implements Request {
     }
 
     protected Response newResponse() {
-        new ResponseImpl()
+        new ResponseImpl(emptyResponse)
     }
 
     // header matching is not absolute - the request must contain the specified headers but not necessarily all of them

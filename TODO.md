@@ -1,6 +1,6 @@
 
 - request body content is not used in matching... should be!
-- collapse request type usage down to interfaces rather than models
+- collapse request type usage down to interfaces rather than models (Request -> EmptyRequest, ContentRequest)
 
 - finish Groovy conversion
 - codenarc

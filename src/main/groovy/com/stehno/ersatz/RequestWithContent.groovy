@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.model
+package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
 
 /**
- * Created by cjstehno on 12/3/16.
+ * A request with body content.
  */
 @CompileStatic
-class PutRequest extends AbstractRequest implements RequestWithContent {
+interface RequestWithContent extends Request {
 
-    PutRequest(String path) {
-        super(path)
-    }
+    Request body(final Object body)
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,15 +15,29 @@
  */
 package com.stehno.ersatz.model
 
+import com.stehno.ersatz.Request
+import com.stehno.ersatz.RequestWithContent
 import groovy.transform.CompileStatic
 
 /**
- * Created by cjstehno on 12/3/16.
+ * Created by cjstehno on 12/4/16.
  */
 @CompileStatic
-class PatchRequest extends AbstractRequest implements RequestWithContent {
+class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
-    PatchRequest(final String path) {
+    private Object body
+
+    ErsatzRequestWithContent(final String path) {
         super(path)
+    }
+
+    @Override
+    Request body(Object body) {
+        this.body = body
+        this
+    }
+
+    Object getBody() {
+        body
     }
 }
