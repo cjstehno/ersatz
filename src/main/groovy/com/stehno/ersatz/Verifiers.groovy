@@ -25,6 +25,9 @@ import java.util.function.Function
 @CompileStatic
 class Verifiers {
 
+    /**
+     * Verifies that the request was called any number of times.
+     */
     static Function<Integer, Boolean> any() {
         new Function<Integer, Boolean>() {
             @Override Boolean apply(final Integer count) {
@@ -33,6 +36,9 @@ class Verifiers {
         }
     }
 
+    /**
+     * Verifies that the request was called at least the specified number of times.
+     */
     static Function<Integer, Boolean> atLeast(final int min) {
         new Function<Integer, Boolean>() {
             @Override Boolean apply(final Integer count) {
@@ -41,6 +47,9 @@ class Verifiers {
         }
     }
 
+    /**
+     * Verifies that the request was called at most the specified number of times.
+     */
     static Function<Integer, Boolean> atMost(final int max) {
         new Function<Integer, Boolean>() {
             @Override Boolean apply(final Integer count) {
@@ -49,6 +58,9 @@ class Verifiers {
         }
     }
 
+    /**
+     * Verifies that the request was called exactly the specified number of times.
+     */
     static Function<Integer, Boolean> exactly(final int n) {
         new Function<Integer, Boolean>() {
             @Override Boolean apply(final Integer count) {
@@ -57,10 +69,16 @@ class Verifiers {
         }
     }
 
+    /**
+     * Verifies that the request was called only once. This is the same as calling <code>exactly(1)</code>.
+     */
     static Function<Integer, Boolean> once() {
         exactly(1)
     }
 
+    /**
+     * Verifies that the request was never called. This is the same as calling <code>exactly(0)</code>.
+     */
     static Function<Integer, Boolean> never() {
         exactly(0)
     }
