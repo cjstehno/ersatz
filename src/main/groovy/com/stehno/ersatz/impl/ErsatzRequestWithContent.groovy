@@ -18,6 +18,7 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.RequestWithContent
 import groovy.transform.CompileStatic
+import io.undertow.server.HttpServerExchange
 
 /**
  * Created by cjstehno on 12/4/16.
@@ -39,5 +40,25 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     Object getBody() {
         body
+    }
+
+    boolean matches(final HttpServerExchange exchange) {
+        super.matches(exchange)
+//            && matchesBody(exchange) FIXME: body content is not being matched right now - fix this
+    }
+
+    private boolean matchesBody(final HttpServerExchange exchange) {
+        byte[] content = exchange.startBlocking().inputStream.bytes
+
+        // FIXME: support other content types and pluggable converters
+
+        String contentType = getHeader('Content-Type') ?: 'text/plain'
+        if (contentType == 'text/plain; charset=utf-8') {
+            return body == new String(content, 'UTF-8')
+        } else if (contentType == 'text/plain; charset=utf-16') {
+            return body == new String(content, 'UTF-16')
+        }
+
+        false
     }
 }

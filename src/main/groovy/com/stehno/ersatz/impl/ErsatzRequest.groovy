@@ -123,7 +123,7 @@ class ErsatzRequest implements Request {
     }
 
     boolean matches(final HttpServerExchange exchange) {
-        return exchange.getRequestPath() == path &&
+        exchange.getRequestPath() == path &&
             (conditions.empty || conditions.every { it.apply(this) }) &&
             matchQueryParams(exchange.queryParameters) &&
             containsHeaders(exchange.requestHeaders) &&
