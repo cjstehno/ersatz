@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz
 
-import com.stehno.ersatz.feat.ServerFeature
 import com.stehno.ersatz.impl.ErsatzRequest
 import com.stehno.ersatz.impl.ExpectationsImpl
 import groovy.transform.CompileStatic
@@ -39,13 +38,15 @@ import java.util.function.Consumer
 @CompileStatic
 class ErsatzServer {
 
-    // FIXME: need a means of adding "plugins" for supporting things like BASIC, DIGEST, OAUTH
-
-    List<ServerFeature> features
+    List<ServerFeature> features = []
 
     private final ExpectationsImpl expectations = new ExpectationsImpl()
     private Undertow server
     private int actualPort = -1
+
+    void addFeature(ServerFeature feature) {
+        features << feature
+    }
 
     /**
      * Used to retrieve the port where the HTTP server is running.

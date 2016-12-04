@@ -1,18 +1,30 @@
+/*
+ * Copyright (C) 2016 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.stehno.ersatz.feat
 
+import com.stehno.ersatz.ServerFeature
 import groovy.transform.CompileStatic
 import io.undertow.security.api.AuthenticationMechanism
 import io.undertow.security.handlers.AuthenticationCallHandler
 import io.undertow.security.handlers.AuthenticationConstraintHandler
 import io.undertow.security.handlers.AuthenticationMechanismsHandler
 import io.undertow.security.handlers.SecurityInitialHandler
-import io.undertow.security.idm.Account
-import io.undertow.security.idm.Credential
 import io.undertow.security.idm.IdentityManager
 import io.undertow.security.impl.BasicAuthenticationMechanism
 import io.undertow.server.HttpHandler
-
-import java.security.Principal
 
 import static io.undertow.security.api.AuthenticationMode.PRO_ACTIVE
 
@@ -21,8 +33,6 @@ import static io.undertow.security.api.AuthenticationMode.PRO_ACTIVE
  */
 @CompileStatic
 class BasicAuthFeature implements ServerFeature {
-
-    // FIXME: needs work
 
     String realm = 'BasicTesting'
     IdentityManager identityManager = new SimpleIdentityManager()
@@ -40,35 +50,3 @@ class BasicAuthFeature implements ServerFeature {
     }
 }
 
-class SimpleIdentityManager implements IdentityManager {
-
-    static final Account DUMMY_ACCOUNT = new Account() {
-        @Override
-        Principal getPrincipal() {
-            new Principal() {
-                @Override
-                String getName() { 'admin' }
-            }
-        }
-
-        @Override
-        Set<String> getRoles() {
-            ['TESTER'] as Set<String>
-        }
-    }
-
-    @Override
-    Account verify(Account account) {
-        DUMMY_ACCOUNT
-    }
-
-    @Override
-    Account verify(String id, Credential credential) {
-        DUMMY_ACCOUNT
-    }
-
-    @Override
-    Account verify(Credential credential) {
-        DUMMY_ACCOUNT
-    }
-}
