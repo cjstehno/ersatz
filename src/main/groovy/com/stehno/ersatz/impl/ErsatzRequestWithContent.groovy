@@ -18,8 +18,11 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.RequestWithContent
 import groovy.json.JsonParser
 import groovy.transform.CompileStatic
+import io.undertow.server.HttpServerExchange
 
 import java.util.function.Function
+
+import static com.stehno.ersatz.Conditions.bodyEquals
 
 /**
  * Ersatz implementation of a <code>Request</code> with body content.
@@ -67,7 +70,7 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         body
     }
 
-    boolean matches(final ClientRequestMatcher crm) {
-        super.matches(crm) && crm.body(body, converters[getHeader(CONTENT_TYPE_HEADER) ?: DEFAULT_CONTENT_TYPE])
+    boolean matches(final HttpServerExchange exchange) {
+        super.matches(exchange) && bodyEquals(body, converters[getHeader(CONTENT_TYPE_HEADER) ?: DEFAULT_CONTENT_TYPE])
     }
 }

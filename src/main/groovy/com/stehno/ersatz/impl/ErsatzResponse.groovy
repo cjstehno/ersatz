@@ -22,6 +22,8 @@ import groovy.transform.TupleConstructor
 @CompileStatic @TupleConstructor
 class ErsatzResponse implements Response {
 
+    static final String CONTENT_TYPE_HEADER = 'Content-Type'
+
     final boolean empty
 
     private final Map<String, String> headers = [:]
@@ -62,13 +64,13 @@ class ErsatzResponse implements Response {
     }
 
     Response contentType(final String contentType) {
-        header('Content-Type', contentType)
+        header(CONTENT_TYPE_HEADER, contentType)
         this
     }
 
     @Override
     String getContentType() {
-        headers['Content-Type']
+        headers[CONTENT_TYPE_HEADER]
     }
 
     @SuppressWarnings('ConfusingMethodName')

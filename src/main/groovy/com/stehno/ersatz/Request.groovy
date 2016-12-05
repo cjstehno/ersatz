@@ -16,6 +16,7 @@
 package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
+import io.undertow.server.HttpServerExchange
 
 import java.util.function.Consumer
 import java.util.function.Function
@@ -100,5 +101,7 @@ interface Request {
      * @param matcher the matching function to be added.
      * @return a reference to this request
      */
-    Request condition(final Function<Request, Boolean> matcher)
+    Request condition(final Function<HttpServerExchange, Boolean> matcher)
+
+    Request conditions(List<Function<HttpServerExchange, Boolean>> matchers)
 }

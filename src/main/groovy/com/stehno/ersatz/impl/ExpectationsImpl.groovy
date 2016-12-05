@@ -126,8 +126,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     Request findMatch(final HttpServerExchange exchange) {
-        ClientRequestMatcher matcher = new ClientRequestMatcher(exchange)
-        requests.find { r -> ((ErsatzRequest) r).matches(matcher) }
+        requests.find { r -> ((ErsatzRequest) r).matches(exchange) }
     }
 
     boolean verify() {

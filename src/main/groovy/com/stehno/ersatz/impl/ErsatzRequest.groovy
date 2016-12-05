@@ -19,9 +19,13 @@ import com.stehno.ersatz.Request
 import com.stehno.ersatz.Response
 import com.stehno.ersatz.Verifiers
 import groovy.transform.CompileStatic
+import io.undertow.server.HttpServerExchange
 
 import java.util.function.Consumer
 import java.util.function.Function
+
+import static com.stehno.ersatz.Conditions.*
+import static groovy.transform.TypeCheckingMode.SKIP
 
 /**
  * <code>Request</code> implementation representing requests without body content.
@@ -34,7 +38,7 @@ class ErsatzRequest implements Request {
     private final Map<String, String> cookies = [:]
     private final List<Consumer<Request>> listeners = []
     private final List<Response> responses = []
-    private final List<Function<Request, Boolean>> conditions = []
+    private final List<Function<HttpServerExchange, Boolean>> conditions = []
     private final boolean emptyResponse
     private final String path
     private final String method
@@ -57,7 +61,7 @@ class ErsatzRequest implements Request {
         method
     }
 
-    @Override
+    @Override @SuppressWarnings('ConfusingMethodName')
     Request headers(final Map<String, String> heads) {
         headers.putAll(heads)
         this
@@ -75,7 +79,7 @@ class ErsatzRequest implements Request {
         this
     }
 
-    @Override
+    @Override @SuppressWarnings('ConfusingMethodName')
     Request cookies(Map<String, String> cookies) {
         this.cookies.putAll(cookies)
         this
@@ -136,8 +140,15 @@ class ErsatzRequest implements Request {
         this
     }
 
-    Request condition(final Function<Request, Boolean> matcher) {
+    // TODO: when conditions applied they override existing - only specified conditions will be applied (except method and path)
+    Request condition(final Function<HttpServerExchange, Boolean> matcher) {
         conditions.add(matcher)
+        this
+    }
+
+    @SuppressWarnings('ConfusingMethodName')
+    Request conditions(List<Function<HttpServerExchange, Boolean>> matchers) {
+        conditions.addAll(matchers)
         this
     }
 
@@ -151,13 +162,20 @@ class ErsatzRequest implements Request {
         verifier.apply(callCount)
     }
 
-    boolean matches(final ClientRequestMatcher crm) {
-        crm.method(method) &&
-            crm.path(path) &&
-            (conditions.empty || conditions.every { it.apply(this) }) &&
-            crm.queries(queryParams) &&
-            crm.headers(headers) &&
-            crm.cookies(cookies)
+    @CompileStatic(SKIP) // TODO: I would still like to abstract the HttpServerExchange away to something less impl-specific
+    boolean matches(final HttpServerExchange exchange) {
+        if (conditions) {
+            return methodEquals(this.method).apply(exchange) &&
+                pathEquals(this.path).apply(exchange) &&
+                conditions.every { it.apply(exchange) }
+
+        }
+
+        return methodEquals(this.method).apply(exchange) &&
+            pathEquals(this.path).apply(exchange) &&
+            queriesEquals(this.queryParams).apply(exchange) &&
+            headersContains(this.headers).apply(exchange) &&
+            cookiesContains(this.cookies).apply(exchange)
     }
 
     protected Response newResponse() {

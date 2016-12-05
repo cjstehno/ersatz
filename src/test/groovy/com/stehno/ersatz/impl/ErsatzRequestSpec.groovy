@@ -19,6 +19,7 @@ import com.stehno.ersatz.ErsatzServer
 import com.stehno.ersatz.InMemoryCookieJar
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.Response
+import io.undertow.server.HttpServerExchange
 import okhttp3.OkHttpClient
 import okhttp3.Request.Builder
 import spock.lang.AutoCleanup
@@ -27,6 +28,7 @@ import spock.lang.Unroll
 
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
+import java.util.function.Function
 
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
 import static com.stehno.ersatz.Verifiers.exactly
@@ -389,7 +391,7 @@ class ErsatzRequestSpec extends Specification {
     def 'condition (closure)'() {
         setup:
         server.expectations {
-            get('/test').condition({ r -> (r.getHeader('foo') as int) < 50 }).responds().body(STRING_CONTENT)
+            get('/test').condition({ r -> (r.requestHeaders.get('foo').first as int) < 50 }).responds().body(STRING_CONTENT)
         }.start()
 
         when:
@@ -405,14 +407,31 @@ class ErsatzRequestSpec extends Specification {
         value == NOT_FOUND_BODY
     }
 
-    /*
-TODO: test matching
-    condition(function)
-    condition(closure)
+    def 'condition (function)'() {
+        setup:
+        Function<HttpServerExchange,Boolean> fn = new Function<HttpServerExchange, Boolean>() {
+            @Override
+            Boolean apply(final HttpServerExchange ex) {
+                (ex.requestHeaders.get('foo').first as int) < 50
+            }
+        }
 
-- test closures with external variables
-*/
+        server.expectations {
+            get('/test').condition(fn).responds().body(STRING_CONTENT)
+        }.start()
 
+        when:
+        String value = exec(clientGet('/test').addHeader('foo', '42').build()).body().string()
+
+        then:
+        value == STRING_CONTENT
+
+        when:
+        value = exec(clientGet('/test').addHeader('foo', '100').build()).body().string()
+
+        then:
+        value == NOT_FOUND_BODY
+    }
 
     private Builder clientGet(final String path) {
         new Builder().get().url("${server.serverUrl}${path}")

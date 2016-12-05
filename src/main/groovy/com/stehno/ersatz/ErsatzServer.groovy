@@ -129,8 +129,8 @@ class ErsatzServer {
         actualPort = (server.listenerInfo[0].address as InetSocketAddress).port
     }
 
-    private String dump(final HttpServerExchange exchange){
-        "${exchange.requestMethod} ${exchange.requestPath} (query=${exchange.queryParameters}, headers=${exchange.requestHeaders}, cookies=${exchange.requestCookies})"
+    private String dump(final HttpServerExchange ex) {
+        "${ex.requestMethod} ${ex.requestPath} (query=${ex.queryParameters}, headers=${ex.requestHeaders}, cookies=${ex.requestCookies})"
     }
 
     /**
