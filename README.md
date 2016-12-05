@@ -14,3 +14,8 @@ A "mock" HTTP server library for testing HTTP/REST clients.
 * compatible with JUnit and Spock testing frameworks
 * Supports chained builder, Java 8 functions, and a Groovy DSL
 
+## Atrifacts
+
+    compile 'com.stehno.ersatz:ersats:<CURRENT_VERSION>'
+
+> WARNING: This is very much a work in progress and not yet ready for general use.
