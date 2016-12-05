@@ -35,6 +35,8 @@ interface Response {
 
     Response contentType(final String contentType)
 
+    String getContentType()
+
     Response code(int code)
 
     Map<String, String> getHeaders()

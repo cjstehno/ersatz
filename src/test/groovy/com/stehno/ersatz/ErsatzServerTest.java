@@ -28,6 +28,7 @@ import java.util.function.Consumer;
 
 import static com.stehno.ersatz.Verifiers.atLeast;
 import static java.lang.String.format;
+import static okhttp3.MediaType.parse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -102,11 +103,11 @@ public class ErsatzServerTest {
         assertEquals(123, resp.code());
         assertEquals("blah", resp.header("foo"));
 
-        request = new okhttp3.Request.Builder().post(RequestBody.create(MediaType.parse("text/plain"), "some content")).url(url("/form")).build();
+        request = new okhttp3.Request.Builder().post(RequestBody.create(parse("text/plain"), "some content")).url(url("/form")).build();
         resp = client.newCall(request).execute();
         assertEquals("response", resp.body().string());
 
-        request = new okhttp3.Request.Builder().post(RequestBody.create(MediaType.parse("text/plain"), "more content")).url(url("/update")).build();
+        request = new okhttp3.Request.Builder().put(RequestBody.create(parse("text/plain"), "more content")).url(url("/update")).build();
         resp = client.newCall(request).execute();
         assertEquals("updated", resp.body().string());
 
@@ -114,7 +115,7 @@ public class ErsatzServerTest {
         resp = client.newCall(request).execute();
         assertEquals("removed", resp.body().string());
 
-        request = new okhttp3.Request.Builder().post(RequestBody.create(MediaType.parse("text/plain"), "a change")).url(url("/patch")).build();
+        request = new okhttp3.Request.Builder().post(RequestBody.create(parse("text/plain"), "a change")).url(url("/patch")).build();
         resp = client.newCall(request).execute();
         assertEquals("patched", resp.body().string());
 

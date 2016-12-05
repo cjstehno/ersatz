@@ -19,15 +19,12 @@ import com.stehno.ersatz.Request
 import com.stehno.ersatz.Response
 import com.stehno.ersatz.Verifiers
 import groovy.transform.CompileStatic
-import io.undertow.server.HttpServerExchange
-import io.undertow.server.handlers.Cookie
-import io.undertow.util.HeaderMap
 
 import java.util.function.Consumer
 import java.util.function.Function
 
 /**
- * Abstract base class for request expectation definitions.
+ * <code>Request</code> implementation representing requests without body content.
  */
 @CompileStatic
 class ErsatzRequest implements Request {
@@ -93,18 +90,13 @@ class ErsatzRequest implements Request {
         headers[name]
     }
 
-    Request contentType(final String contentType) {
-        header('Content-Type', contentType)
-        this
-    }
-
     Request query(final String name, final String value) {
         queryParams.computeIfAbsent(name) { k -> [] }.add value
         this
     }
 
     List<String> getQuery(final String name) {
-        queryParams[name].asImmutable()
+        (queryParams[name] ?: []).asImmutable()
     }
 
     Request cookie(final String name, final String value) {
@@ -134,7 +126,7 @@ class ErsatzRequest implements Request {
         this
     }
 
-    Request responder(final Closure closure) {
+    Request responder(@DelegatesTo(Response) final Closure closure) {
         Response response = newResponse()
         closure.setDelegate(response)
         closure.call()
@@ -159,35 +151,17 @@ class ErsatzRequest implements Request {
         verifier.apply(callCount)
     }
 
-    boolean matches(final HttpServerExchange exchange) {
-        exchange.requestPath == path &&
+    boolean matches(final ClientRequestMatcher crm) {
+        crm.method(method) &&
+            crm.path(path) &&
             (conditions.empty || conditions.every { it.apply(this) }) &&
-            matchQueryParams(exchange.queryParameters) &&
-            containsHeaders(exchange.requestHeaders) &&
-            containsCookies(exchange.requestCookies)
+            crm.queries(queryParams) &&
+            crm.headers(headers) &&
+            crm.cookies(cookies)
     }
 
     protected Response newResponse() {
         new ErsatzResponse(emptyResponse)
-    }
-
-    // header matching is not absolute - the request must contain the specified headers but not necessarily all of them
-    private boolean containsHeaders(final HeaderMap requestHeads) {
-        headers.every { k, v -> v == requestHeads.getFirst(k) }
-    }
-
-    private boolean containsCookies(final Map<String, Cookie> requestCookies) {
-        cookies.every { k, v -> requestCookies.containsKey(k) && v == requestCookies.get(k).value }
-    }
-
-    private boolean matchQueryParams(final Map<String, Deque<String>> requestQs) {
-        boolean one = queryParams.every { k, v ->
-            requestQs.containsKey(k) && requestQs.get(k).containsAll(v)
-        }
-        boolean two = requestQs.every { k, v ->
-            queryParams.containsKey(k) && queryParams.get(k).containsAll(v)
-        }
-        one && two
     }
 
     Response getCurrentResponse() {

@@ -35,8 +35,6 @@ interface Request {
 
     String getHeader(final String name)
 
-    Request contentType(final String contentType)
-
     Request query(final String name, final String value)
 
     Request queries(final Map<String,List<String>> map)

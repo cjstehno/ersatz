@@ -15,11 +15,9 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.Request
 import com.stehno.ersatz.RequestWithContent
+import groovy.json.JsonParser
 import groovy.transform.CompileStatic
-import io.undertow.io.Receiver
-import io.undertow.server.HttpServerExchange
 
 import java.util.function.Function
 
@@ -29,10 +27,17 @@ import java.util.function.Function
 @CompileStatic
 class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
+    public static final String CONTENT_TYPE_HEADER = 'Content-Type'
+
+    private static final String DEFAULT_CONTENT_TYPE = 'text/plain; charset=utf-8'
+
+    // TODO: a better way to map these would be nice - reduce duplication
     private final Map<String, Function<byte[], Object>> converters = [
-        'text/plain'                : { byte[] m -> body == new String(m, 'UTF-8') } as Function<byte[], Object>,
-        'text/plain; charset=utf-8' : { byte[] m -> body == new String(m, 'UTF-8') } as Function<byte[], Object>,
-        'text/plain; charset=utf-16': { byte[] m -> body == new String(m, 'UTF-16') } as Function<byte[], Object>
+        'text/plain'                : { byte[] m -> new String(m, 'UTF-8') } as Function<byte[], Object>,
+        'text/plain; charset=utf-8' : { byte[] m -> new String(m, 'UTF-8') } as Function<byte[], Object>,
+        'text/plain; charset=utf-16': { byte[] m -> new String(m, 'UTF-16') } as Function<byte[], Object>,
+        'application/json'          : { byte[] m -> JsonParser.newInstance().parse(m) } as Function<byte[], Object>,
+        'text/json'                 : { byte[] m -> JsonParser.newInstance().parse(m) } as Function<byte[], Object>
     ]
     private Object body
 
@@ -41,12 +46,19 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
-    Request body(Object body) {
+    RequestWithContent body(Object body) {
         this.body = body
         this
     }
 
-    Request converter(final String contentType, final Function<byte[], Object> converter) {
+    @Override
+    RequestWithContent contentType(final String contentType) {
+        header(CONTENT_TYPE_HEADER, contentType)
+        this
+    }
+
+    @Override
+    RequestWithContent converter(final String contentType, final Function<byte[], Object> converter) {
         converters[contentType] = converter
         this
     }
@@ -55,20 +67,7 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         body
     }
 
-    boolean matches(final HttpServerExchange exchange) {
-        super.matches(exchange) && matchesBody(exchange)
-    }
-
-    private boolean matchesBody(final HttpServerExchange exchange) {
-        boolean match = false
-
-        exchange.requestReceiver.receiveFullBytes(new Receiver.FullBytesCallback() {
-            @Override
-            void handle(final HttpServerExchange exch, byte[] message) {
-                match = converters[getHeader('Content-Type') ?: 'text/plain; charset=utf-8']
-            }
-        })
-
-        match
+    boolean matches(final ClientRequestMatcher crm) {
+        super.matches(crm) && crm.body(body, converters[getHeader(CONTENT_TYPE_HEADER) ?: DEFAULT_CONTENT_TYPE])
     }
 }

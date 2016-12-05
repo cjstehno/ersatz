@@ -18,6 +18,7 @@ package com.stehno.ersatz
 import com.stehno.ersatz.impl.ErsatzRequest
 import com.stehno.ersatz.impl.ExpectationsImpl
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import io.undertow.Undertow
 import io.undertow.server.HttpHandler
 import io.undertow.server.HttpServerExchange
@@ -35,7 +36,7 @@ import java.util.function.Consumer
  *
  * TODO: document configuration steps
  */
-@CompileStatic
+@CompileStatic @Slf4j
 class ErsatzServer {
 
     List<ServerFeature> features = []
@@ -106,11 +107,16 @@ class ErsatzServer {
         server = Undertow.builder().addHttpListener(0, 'localhost').setHandler(applyFeatures(new HttpHandler() {
             @Override
             void handleRequest(final HttpServerExchange exchange) throws Exception {
+                log.debug 'Request: {}', dump(exchange)
+
                 ErsatzRequest request = expectations.findMatch(exchange) as ErsatzRequest
                 if (request) {
                     send(exchange, request.currentResponse)
                     request.mark()
+
                 } else {
+                    log.warn 'Unmatched-Request: {}', dump(exchange)
+
                     exchange.setStatusCode(404).responseSender.send('404: Not Found')
                 }
             }
@@ -119,6 +125,10 @@ class ErsatzServer {
         server.start()
 
         actualPort = (server.listenerInfo[0].address as InetSocketAddress).port
+    }
+
+    private String dump(final HttpServerExchange exchange){
+        "${exchange.requestMethod} ${exchange.requestPath} (query=${exchange.queryParameters}, headers=${exchange.requestHeaders}, cookies=${exchange.requestCookies})"
     }
 
     /**

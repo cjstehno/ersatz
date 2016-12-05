@@ -66,6 +66,11 @@ class ErsatzResponse implements Response {
         this
     }
 
+    @Override
+    String getContentType() {
+        headers['Content-Type']
+    }
+
     @SuppressWarnings('ConfusingMethodName')
     Response code(int code) {
         this.code = code

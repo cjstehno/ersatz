@@ -17,11 +17,17 @@ package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
 
+import java.util.function.Function
+
 /**
  * A request with body content.
  */
 @CompileStatic
 interface RequestWithContent extends Request {
 
-    Request body(final Object body)
+    RequestWithContent body(final Object body)
+
+    RequestWithContent contentType(final String contentType)
+
+    RequestWithContent converter(final String contentType, final Function<byte[], Object> converter)
 }
