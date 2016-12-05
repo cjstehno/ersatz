@@ -39,6 +39,8 @@ import java.util.function.Consumer
 @CompileStatic @Slf4j
 class ErsatzServer {
 
+    static final String NOT_FOUND_BODY = '404: Not Found'
+
     List<ServerFeature> features = []
 
     private final ExpectationsImpl expectations = new ExpectationsImpl()
@@ -117,7 +119,7 @@ class ErsatzServer {
                 } else {
                     log.warn 'Unmatched-Request: {}', dump(exchange)
 
-                    exchange.setStatusCode(404).responseSender.send('404: Not Found')
+                    exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
                 }
             }
         })).build()

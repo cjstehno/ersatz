@@ -26,9 +26,6 @@ import java.util.function.Function
 @CompileStatic
 interface Request {
 
-    // Note that headers are matched as "contains" - others?
-    // Note how multiple responses work
-
     Request header(final String name, final String value)
 
     Request headers(final Map<String,String> heads)

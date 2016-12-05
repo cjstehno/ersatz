@@ -28,6 +28,7 @@ import spock.lang.Unroll
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
+import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
 import static com.stehno.ersatz.Verifiers.exactly
 
 class ErsatzRequestSpec extends Specification {
@@ -268,7 +269,7 @@ class ErsatzRequestSpec extends Specification {
         }.start()
 
         expect:
-        exec(clientGet('/test').build()).body().string() == '404: Not Found'
+        exec(clientGet('/test').build()).body().string() == NOT_FOUND_BODY
     }
 
     def 'matching: header'() {
@@ -287,7 +288,7 @@ class ErsatzRequestSpec extends Specification {
         value = exec(clientGet('/test').build()).body().string()
 
         then:
-        value == '404: Not Found'
+        value == NOT_FOUND_BODY
     }
 
     def 'matching: headers'() {
@@ -306,24 +307,111 @@ class ErsatzRequestSpec extends Specification {
         value = exec(clientGet('/test').addHeader('alpha', 'one').build()).body().string()
 
         then:
-        value == '404: Not Found'
+        value == NOT_FOUND_BODY
+    }
+
+    def 'matching: query'() {
+        setup:
+        server.expectations {
+            get('/test').query('alpha', 'blah').responds().body(STRING_CONTENT)
+        }.start()
+
+        when:
+        String value = exec(clientGet('/test?alpha=blah').build()).body().string()
+
+        then:
+        value == STRING_CONTENT
+
+        when:
+        value = exec(clientGet('/test').build()).body().string()
+
+        then:
+        value == NOT_FOUND_BODY
+    }
+
+    def 'matching: queries'() {
+        setup:
+        server.expectations {
+            get('/test').queries(alpha: ['one'], bravo: ['two', 'three']).responds().body(STRING_CONTENT)
+        }.start()
+
+        when:
+        String value = exec(clientGet('/test?alpha=one&bravo=two&bravo=three').build()).body().string()
+
+        then:
+        value == STRING_CONTENT
+
+        when:
+        value = exec(clientGet('/test').build()).body().string()
+
+        then:
+        value == NOT_FOUND_BODY
+    }
+
+    def 'matching: cookie'() {
+        setup:
+        server.expectations {
+            get('/test').cookie('flavor', 'chocolate-chip').responds().body(STRING_CONTENT)
+        }.start()
+
+        when:
+        String value = exec(clientGet('/test').addHeader("Cookie", "flavor=chocolate-chip").build()).body().string()
+
+        then:
+        value == STRING_CONTENT
+
+        when:
+        value = exec(clientGet('/test').build()).body().string()
+
+        then:
+        value == NOT_FOUND_BODY
+    }
+
+    def 'matching: cookies'() {
+        setup:
+        server.expectations {
+            get('/test').cookies(flavor: 'chocolate-chip').responds().body(STRING_CONTENT)
+        }.start()
+
+        when:
+        String value = exec(clientGet('/test').addHeader("Cookie", "flavor=chocolate-chip").build()).body().string()
+
+        then:
+        value == STRING_CONTENT
+
+        when:
+        value = exec(clientGet('/test').build()).body().string()
+
+        then:
+        value == NOT_FOUND_BODY
+    }
+
+    def 'condition (closure)'() {
+        setup:
+        server.expectations {
+            get('/test').condition({ r -> (r.getHeader('foo') as int) < 50 }).responds().body(STRING_CONTENT)
+        }.start()
+
+        when:
+        String value = exec(clientGet('/test').addHeader('foo', '42').build()).body().string()
+
+        then:
+        value == STRING_CONTENT
+
+        when:
+        value = exec(clientGet('/test').addHeader('foo', '100').build()).body().string()
+
+        then:
+        value == NOT_FOUND_BODY
     }
 
     /*
 TODO: test matching
-    with(out) queries (single and map)
-    with(out) cookies (single and map)
-    listener
-    verifier
-    responds()
-    responder(consumer)
-    responder(closure)
     condition(function)
     condition(closure)
 
 - test closures with external variables
 */
-
 
 
     private Builder clientGet(final String path) {
