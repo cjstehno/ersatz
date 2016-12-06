@@ -16,7 +16,7 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.RequestWithContent
-import groovy.json.JsonParser
+import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
 import io.undertow.server.HttpServerExchange
 
@@ -39,8 +39,8 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         'text/plain'                : { byte[] m -> new String(m, 'UTF-8') } as Function<byte[], Object>,
         'text/plain; charset=utf-8' : { byte[] m -> new String(m, 'UTF-8') } as Function<byte[], Object>,
         'text/plain; charset=utf-16': { byte[] m -> new String(m, 'UTF-16') } as Function<byte[], Object>,
-        'application/json'          : { byte[] m -> JsonParser.newInstance().parse(m) } as Function<byte[], Object>,
-        'text/json'                 : { byte[] m -> JsonParser.newInstance().parse(m) } as Function<byte[], Object>
+        'application/json'          : { byte[] m -> new JsonSlurper().parse(m) } as Function<byte[], Object>,
+        'text/json'                 : { byte[] m -> new JsonSlurper().parse(m) } as Function<byte[], Object>
     ]
     private Object body
 
@@ -49,15 +49,25 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
-    RequestWithContent body(Object body) {
+    RequestWithContent body(final Object body) {
         this.body = body
         this
+    }
+
+    @Override
+    RequestWithContent body(final Object body, final String contentType) {
+        this.body(body)
+        this.contentType(contentType)
     }
 
     @Override
     RequestWithContent contentType(final String contentType) {
         header(CONTENT_TYPE_HEADER, contentType)
         this
+    }
+
+    String getContentType() {
+        getHeader(CONTENT_TYPE_HEADER)
     }
 
     @Override
@@ -71,6 +81,11 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
     }
 
     boolean matches(final HttpServerExchange exchange) {
-        super.matches(exchange) && bodyEquals(body, converters[getHeader(CONTENT_TYPE_HEADER) ?: DEFAULT_CONTENT_TYPE])
+        boolean matches = super.matches(exchange)
+        conditions ? matches : matches && bodyEquals(body, converters[getHeader(CONTENT_TYPE_HEADER) ?: DEFAULT_CONTENT_TYPE]).apply(exchange)
+    }
+
+    @Override String toString() {
+        "${super.toString()}: $body"
     }
 }

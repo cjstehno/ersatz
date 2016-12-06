@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
 import static com.stehno.ersatz.Verifiers.atLeast
-import static org.junit.Assert.assertEquals
 
 class ErsatzServerSpec extends Specification {
 
@@ -32,8 +31,8 @@ class ErsatzServerSpec extends Specification {
     def 'prototype: functional'() {
         setup:
         ersatzServer.expectations({ expectations ->
-            expectations.get('/foo').responds().body('This is Ersatz!!')
-            expectations.get('/bar').responds().body('This is Bar!!')
+            expectations.get('/foo').responds().content('This is Ersatz!!')
+            expectations.get('/bar').responds().content('This is Bar!!')
         } as Consumer<Expectations>)
 
         ersatzServer.start()
@@ -51,20 +50,20 @@ class ErsatzServerSpec extends Specification {
 
         ersatzServer.expectations {
             get('/foo').verifier(atLeast(1)).responder {
-                body 'This is Ersatz!!'
+                content 'This is Ersatz!!'
             }.responder {
-                body 'This is another response'
+                content 'This is another response'
             }
 
             get('/bar') {
                 verifier { cnt -> cnt >= 2 }
                 listener { req -> counter.incrementAndGet() }
                 responder {
-                    body 'This is Bar!!'
+                    content 'This is Bar!!'
                 }
             }
 
-            get('/baz').query('alpha', '42').responds().body('The answer is 42')
+            get('/baz').query('alpha', '42').responds().content('The answer is 42')
         }
 
         ersatzServer.start()

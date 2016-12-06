@@ -28,17 +28,22 @@ class ErsatzResponse implements Response {
 
     private final Map<String, String> headers = [:]
     private final Map<String, String> cookies = [:]
-    private Object body
+    private Object content
     private Integer code = 200
 
     @SuppressWarnings('ConfusingMethodName')
-    Response body(final Object content) {
+    Response content(final Object content) {
         if (empty) {
             throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')
         }
 
-        this.body = content
+        this.content = content
         this
+    }
+
+    Response content(final Object content, final String contentType) {
+        this.content(content)
+        this.contentType(contentType)
     }
 
     Response header(final String name, final String value) {
@@ -87,8 +92,8 @@ class ErsatzResponse implements Response {
         cookies.asImmutable()
     }
 
-    Object getBody() {
-        body
+    Object getContent() {
+        content
     }
 
     Integer getCode() {

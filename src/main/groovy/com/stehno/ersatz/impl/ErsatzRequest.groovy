@@ -25,6 +25,7 @@ import java.util.function.Consumer
 import java.util.function.Function
 
 import static com.stehno.ersatz.Conditions.*
+import static groovy.lang.Closure.DELEGATE_ONLY
 import static groovy.transform.TypeCheckingMode.SKIP
 
 /**
@@ -33,12 +34,12 @@ import static groovy.transform.TypeCheckingMode.SKIP
 @CompileStatic
 class ErsatzRequest implements Request {
 
-    private final Map<String, List<String>> queryParams = [:]
-    private final Map<String, String> headers = [:]
-    private final Map<String, String> cookies = [:]
+    protected final Map<String, List<String>> queryParams = [:]
+    protected final Map<String, String> headers = [:]
+    protected final Map<String, String> cookies = [:]
     private final List<Consumer<Request>> listeners = []
     private final List<Response> responses = []
-    private final List<Function<HttpServerExchange, Boolean>> conditions = []
+    protected final List<Function<HttpServerExchange, Boolean>> conditions = []
     private final boolean emptyResponse
     private final String path
     private final String method

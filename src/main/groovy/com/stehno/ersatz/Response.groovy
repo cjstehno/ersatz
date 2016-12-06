@@ -23,7 +23,9 @@ import groovy.transform.CompileStatic
 @CompileStatic
 interface Response {
 
-    Response body(final Object content)
+    Response content(final Object content)
+
+    Response content(final Object content, final String contentType)
 
     Response header(final String name, final String value)
 
@@ -43,7 +45,7 @@ interface Response {
 
     Map<String, String> getCookies()
 
-    Object getBody()
+    Object getContent()
 
     Integer getCode()
 }

@@ -183,12 +183,12 @@ class ErsatzRequestSpec extends Specification {
         Object body = new Object()
 
         when:
-        request.responds().contentType('something/else').body(body)
+        request.responds().contentType('something/else').content(body)
 
         then:
         Response resp = request.currentResponse
         resp.contentType == 'something/else'
-        resp.body == body
+        resp.content == body
     }
 
     def 'responder (closure)'() {
@@ -196,10 +196,10 @@ class ErsatzRequestSpec extends Specification {
         Object contentA = new Object()
         Object contentB = new Object()
 
-        request.responds().contentType('something/else').body(contentA)
+        request.responds().contentType('something/else').content(contentA)
         request.responder {
             contentType 'test/date'
-            body contentB
+            content contentB
         }
 
         when:
@@ -207,7 +207,7 @@ class ErsatzRequestSpec extends Specification {
 
         then:
         resp.contentType == 'something/else'
-        resp.body == contentA
+        resp.content == contentA
 
         when:
         request.mark()
@@ -215,7 +215,7 @@ class ErsatzRequestSpec extends Specification {
 
         then:
         resp.contentType == 'test/date'
-        resp.body == contentB
+        resp.content == contentB
 
         when:
         request.mark()
@@ -223,7 +223,7 @@ class ErsatzRequestSpec extends Specification {
 
         then:
         resp.contentType == 'test/date'
-        resp.body == contentB
+        resp.content == contentB
     }
 
     def 'responder (consumer)'() {
@@ -231,12 +231,12 @@ class ErsatzRequestSpec extends Specification {
         Object contentA = new Object()
         Object contentB = new Object()
 
-        request.responds().contentType('something/else').body(contentA)
+        request.responds().contentType('something/else').content(contentA)
         request.responder(new Consumer<Response>() {
             @Override
             void accept(final Response response) {
                 response.contentType 'test/date'
-                response.body contentB
+                response.content contentB
             }
         })
 
@@ -245,7 +245,7 @@ class ErsatzRequestSpec extends Specification {
 
         then:
         resp.contentType == 'something/else'
-        resp.body == contentA
+        resp.content == contentA
 
         when:
         request.mark()
@@ -253,7 +253,7 @@ class ErsatzRequestSpec extends Specification {
 
         then:
         resp.contentType == 'test/date'
-        resp.body == contentB
+        resp.content == contentB
 
         when:
         request.mark()
@@ -261,13 +261,13 @@ class ErsatzRequestSpec extends Specification {
 
         then:
         resp.contentType == 'test/date'
-        resp.body == contentB
+        resp.content == contentB
     }
 
     def 'matching: not found'() {
         setup:
         server.expectations {
-            get('/blah').responds().body(new Object())
+            get('/blah').responds().content(new Object())
         }.start()
 
         expect:
@@ -277,7 +277,7 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: header'() {
         setup:
         server.expectations {
-            get('/test').header('one', 'blah').responds().body(STRING_CONTENT)
+            get('/test').header('one', 'blah').responds().content(STRING_CONTENT)
         }.start()
 
         when:
@@ -296,7 +296,7 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: headers'() {
         setup:
         server.expectations {
-            get('/test').headers(alpha: 'one', bravo: 'two').responds().body(STRING_CONTENT)
+            get('/test').headers(alpha: 'one', bravo: 'two').responds().content(STRING_CONTENT)
         }.start()
 
         when:
@@ -315,7 +315,7 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: query'() {
         setup:
         server.expectations {
-            get('/test').query('alpha', 'blah').responds().body(STRING_CONTENT)
+            get('/test').query('alpha', 'blah').responds().content(STRING_CONTENT)
         }.start()
 
         when:
@@ -334,7 +334,7 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: queries'() {
         setup:
         server.expectations {
-            get('/test').queries(alpha: ['one'], bravo: ['two', 'three']).responds().body(STRING_CONTENT)
+            get('/test').queries(alpha: ['one'], bravo: ['two', 'three']).responds().content(STRING_CONTENT)
         }.start()
 
         when:
@@ -353,7 +353,7 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: cookie'() {
         setup:
         server.expectations {
-            get('/test').cookie('flavor', 'chocolate-chip').responds().body(STRING_CONTENT)
+            get('/test').cookie('flavor', 'chocolate-chip').responds().content(STRING_CONTENT)
         }.start()
 
         when:
@@ -372,7 +372,7 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: cookies'() {
         setup:
         server.expectations {
-            get('/test').cookies(flavor: 'chocolate-chip').responds().body(STRING_CONTENT)
+            get('/test').cookies(flavor: 'chocolate-chip').responds().content(STRING_CONTENT)
         }.start()
 
         when:
@@ -391,7 +391,7 @@ class ErsatzRequestSpec extends Specification {
     def 'condition (closure)'() {
         setup:
         server.expectations {
-            get('/test').condition({ r -> (r.requestHeaders.get('foo').first as int) < 50 }).responds().body(STRING_CONTENT)
+            get('/test').condition({ r -> (r.requestHeaders.get('foo').first as int) < 50 }).responds().content(STRING_CONTENT)
         }.start()
 
         when:
@@ -417,7 +417,7 @@ class ErsatzRequestSpec extends Specification {
         }
 
         server.expectations {
-            get('/test').condition(fn).responds().body(STRING_CONTENT)
+            get('/test').condition(fn).responds().content(STRING_CONTENT)
         }.start()
 
         when:

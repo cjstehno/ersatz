@@ -173,6 +173,6 @@ class ErsatzServer {
             exchange.responseCookies.put(k, new CookieImpl(k, v))
         }
 
-        exchange.responseSender.send(response.body?.toString() ?: '')
+        exchange.responseSender.send(response.content?.toString() ?: '')
     }
 }

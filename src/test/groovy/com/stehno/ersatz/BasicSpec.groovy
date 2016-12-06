@@ -27,7 +27,7 @@ class BasicSpec extends Specification {
     def 'BASIC auth'() {
         setup:
         ersatzServer.expectations {
-            get('/secrets').responds().body('Something secure')
+            get('/secrets').responds().content('Something secure')
         }.start()
 
         String encodedCred = "Basic ${'admin:$3cr3t'.bytes.encodeBase64()}"
