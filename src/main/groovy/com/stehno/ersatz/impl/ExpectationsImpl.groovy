@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.Expectations
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.RequestWithContent
@@ -125,8 +126,8 @@ class ExpectationsImpl implements Expectations {
         expect(new ErsatzRequestWithContent(PATCH, path), config) as RequestWithContent
     }
 
-    Request findMatch(final HttpServerExchange exchange) {
-        requests.find { r -> ((ErsatzRequest) r).matches(exchange) }
+    Request findMatch(final ClientRequest clientRequest) {
+        requests.find { r -> ((ErsatzRequest) r).matches(clientRequest) }
     }
 
     boolean verify() {

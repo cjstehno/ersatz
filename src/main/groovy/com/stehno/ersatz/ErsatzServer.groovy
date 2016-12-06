@@ -87,6 +87,10 @@ class ErsatzServer {
         this
     }
 
+    Expectations expects() {
+        expectations
+    }
+
     /**
      * Used to configure HTTP expectations on the server; the provided Groovy <code>Closure</code> will delegate to an <code>Expectations</code>
      * instance for configuring server interaction expectations using the Groovy DSL.
@@ -109,15 +113,17 @@ class ErsatzServer {
         server = Undertow.builder().addHttpListener(0, 'localhost').setHandler(applyFeatures(new HttpHandler() {
             @Override
             void handleRequest(final HttpServerExchange exchange) throws Exception {
-                log.debug 'Request: {}', dump(exchange)
+                ClientRequest clientRequest = new ClientRequest(exchange)
 
-                ErsatzRequest request = expectations.findMatch(exchange) as ErsatzRequest
+                log.debug 'Request: {}', clientRequest
+
+                ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
                 if (request) {
                     send(exchange, request.currentResponse)
                     request.mark()
 
                 } else {
-                    log.warn 'Unmatched-Request: {}', dump(exchange)
+                    log.warn 'Unmatched-Request: {}', clientRequest
 
                     exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
                 }
@@ -127,10 +133,6 @@ class ErsatzServer {
         server.start()
 
         actualPort = (server.listenerInfo[0].address as InetSocketAddress).port
-    }
-
-    private String dump(final HttpServerExchange ex) {
-        "${ex.requestMethod} ${ex.requestPath} (query=${ex.queryParameters}, headers=${ex.requestHeaders}, cookies=${ex.requestCookies})"
     }
 
     /**

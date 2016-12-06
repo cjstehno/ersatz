@@ -15,11 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ErsatzServer
-import com.stehno.ersatz.InMemoryCookieJar
-import com.stehno.ersatz.Request
-import com.stehno.ersatz.Response
-import io.undertow.server.HttpServerExchange
+import com.stehno.ersatz.*
 import okhttp3.OkHttpClient
 import okhttp3.Request.Builder
 import spock.lang.AutoCleanup
@@ -391,7 +387,7 @@ class ErsatzRequestSpec extends Specification {
     def 'condition (closure)'() {
         setup:
         server.expectations {
-            get('/test').condition({ r -> (r.requestHeaders.get('foo').first as int) < 50 }).responds().content(STRING_CONTENT)
+            get('/test').condition({ r -> (r.headers.get('foo').first as int) < 50 }).responds().content(STRING_CONTENT)
         }.start()
 
         when:
@@ -409,10 +405,10 @@ class ErsatzRequestSpec extends Specification {
 
     def 'condition (function)'() {
         setup:
-        Function<HttpServerExchange,Boolean> fn = new Function<HttpServerExchange, Boolean>() {
+        Function<ClientRequest, Boolean> fn = new Function<ClientRequest, Boolean>() {
             @Override
-            Boolean apply(final HttpServerExchange ex) {
-                (ex.requestHeaders.get('foo').first as int) < 50
+            Boolean apply(final ClientRequest ex) {
+                (ex.headers.get('foo').first as int) < 50
             }
         }
 

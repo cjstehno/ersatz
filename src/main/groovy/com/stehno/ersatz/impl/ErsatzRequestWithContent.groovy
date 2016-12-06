@@ -15,10 +15,10 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.RequestWithContent
 import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
-import io.undertow.server.HttpServerExchange
 
 import java.util.function.Function
 
@@ -80,9 +80,13 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         body
     }
 
-    boolean matches(final HttpServerExchange exchange) {
-        boolean matches = super.matches(exchange)
-        conditions ? matches : matches && bodyEquals(body, converters[getHeader(CONTENT_TYPE_HEADER) ?: DEFAULT_CONTENT_TYPE]).apply(exchange)
+    boolean matches(final ClientRequest clientRequest) {
+        boolean matches = super.matches(clientRequest)
+        conditions ? matches : matches && bodyEquals(body, findConverter(contentType)).apply(clientRequest)
+    }
+
+    private Function<byte[], Object> findConverter(final String contentType) {
+        converters[contentType ?: DEFAULT_CONTENT_TYPE] ?: converters[DEFAULT_CONTENT_TYPE]
     }
 
     @Override String toString() {

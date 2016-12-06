@@ -15,17 +15,18 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.Response
 import com.stehno.ersatz.Verifiers
 import groovy.transform.CompileStatic
-import io.undertow.server.HttpServerExchange
 
 import java.util.function.Consumer
 import java.util.function.Function
 
 import static com.stehno.ersatz.Conditions.*
-import static groovy.lang.Closure.DELEGATE_ONLY
+import static groovy.lang.Closure.DELEGATE_FIRST
+import static groovy.lang.Closure.OWNER_FIRST
 import static groovy.transform.TypeCheckingMode.SKIP
 
 /**
@@ -39,7 +40,7 @@ class ErsatzRequest implements Request {
     protected final Map<String, String> cookies = [:]
     private final List<Consumer<Request>> listeners = []
     private final List<Response> responses = []
-    protected final List<Function<HttpServerExchange, Boolean>> conditions = []
+    protected final List<Function<ClientRequest, Boolean>> conditions = []
     private final boolean emptyResponse
     private final String path
     private final String method
@@ -141,14 +142,14 @@ class ErsatzRequest implements Request {
         this
     }
 
-    // TODO: when conditions applied they override existing - only specified conditions will be applied (except method and path)
-    Request condition(final Function<HttpServerExchange, Boolean> matcher) {
+    // Note: when conditions applied they override existing - only specified conditions will be applied (except method and path)
+    Request condition(final Function<ClientRequest, Boolean> matcher) {
         conditions.add(matcher)
         this
     }
 
     @SuppressWarnings('ConfusingMethodName')
-    Request conditions(List<Function<HttpServerExchange, Boolean>> matchers) {
+    Request conditions(List<Function<ClientRequest, Boolean>> matchers) {
         conditions.addAll(matchers)
         this
     }
@@ -163,20 +164,20 @@ class ErsatzRequest implements Request {
         verifier.apply(callCount)
     }
 
-    @CompileStatic(SKIP) // TODO: I would still like to abstract the HttpServerExchange away to something less impl-specific
-    boolean matches(final HttpServerExchange exchange) {
+    @CompileStatic(SKIP)
+    boolean matches(final ClientRequest clientRequest) {
         if (conditions) {
-            return methodEquals(this.method).apply(exchange) &&
-                pathEquals(this.path).apply(exchange) &&
-                conditions.every { it.apply(exchange) }
+            return methodEquals(this.method).apply(clientRequest) &&
+                pathEquals(this.path).apply(clientRequest) &&
+                conditions.every { it.apply(clientRequest) }
 
         }
 
-        return methodEquals(this.method).apply(exchange) &&
-            pathEquals(this.path).apply(exchange) &&
-            queriesEquals(this.queryParams).apply(exchange) &&
-            headersContains(this.headers).apply(exchange) &&
-            cookiesContains(this.cookies).apply(exchange)
+        return methodEquals(this.method).apply(clientRequest) &&
+            pathEquals(this.path).apply(clientRequest) &&
+            queriesEquals(this.queryParams).apply(clientRequest) &&
+            headersContains(this.headers).apply(clientRequest) &&
+            cookiesContains(this.cookies).apply(clientRequest)
     }
 
     protected Response newResponse() {

@@ -16,7 +16,6 @@
 package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
-import io.undertow.server.HttpServerExchange
 
 import java.util.function.Consumer
 import java.util.function.Function
@@ -29,19 +28,19 @@ interface Request {
 
     Request header(final String name, final String value)
 
-    Request headers(final Map<String,String> heads)
+    Request headers(final Map<String, String> heads)
 
     String getHeader(final String name)
 
     Request query(final String name, final String value)
 
-    Request queries(final Map<String,List<String>> map)
+    Request queries(final Map<String, List<String>> map)
 
     List<String> getQuery(final String name)
 
     Request cookie(final String name, final String value)
 
-    Request cookies(final Map<String,String> cookies)
+    Request cookies(final Map<String, String> cookies)
 
     String getCookie(final String name)
 
@@ -101,7 +100,7 @@ interface Request {
      * @param matcher the matching function to be added.
      * @return a reference to this request
      */
-    Request condition(final Function<HttpServerExchange, Boolean> matcher)
+    Request condition(final Function<ClientRequest, Boolean> matcher)
 
-    Request conditions(List<Function<HttpServerExchange, Boolean>> matchers)
+    Request conditions(List<Function<ClientRequest, Boolean>> matchers)
 }

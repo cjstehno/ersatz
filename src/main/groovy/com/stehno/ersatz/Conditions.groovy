@@ -16,8 +16,6 @@
 package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
-import io.undertow.io.Receiver
-import io.undertow.server.HttpServerExchange
 
 import java.util.function.Function
 
@@ -29,63 +27,54 @@ class Conditions {
  * while the query strings, method name, path, and body are matched for equivalence.
      */
 
-    static final Function<HttpServerExchange, Boolean> methodEquals(final String method) {
-        return new Function<HttpServerExchange, Boolean>() {
-            @Override Boolean apply(final HttpServerExchange exchange) {
-                exchange.requestMethod.toString().equalsIgnoreCase(method)
+    static final Function<ClientRequest, Boolean> methodEquals(final String method) {
+        return new Function<ClientRequest, Boolean>() {
+            @Override Boolean apply(final ClientRequest clientRequest) {
+                clientRequest.method.equalsIgnoreCase(method)
             }
         }
     }
 
-    static final Function<HttpServerExchange, Boolean> pathEquals(final String path) {
-        return new Function<HttpServerExchange, Boolean>() {
-            @Override Boolean apply(final HttpServerExchange exchange) {
-                exchange.requestPath == path
+    static final Function<ClientRequest, Boolean> pathEquals(final String path) {
+        return new Function<ClientRequest, Boolean>() {
+            @Override Boolean apply(final ClientRequest clientRequest) {
+                clientRequest.path == path
             }
         }
     }
 
-    static final Function<HttpServerExchange, Boolean> queriesEquals(final Map<String, List<String>> queries) {
-        return new Function<HttpServerExchange, Boolean>() {
-            @Override Boolean apply(final HttpServerExchange exchange) {
+    static final Function<ClientRequest, Boolean> queriesEquals(final Map<String, List<String>> queries) {
+        return new Function<ClientRequest, Boolean>() {
+            @Override Boolean apply(final ClientRequest clientRequest) {
                 queries.every { k, v ->
-                    exchange.queryParameters.containsKey(k) && exchange.queryParameters.get(k).containsAll(v)
-                } && exchange.queryParameters.every { k, v ->
+                    clientRequest.queryParams.containsKey(k) && clientRequest.queryParams.get(k).containsAll(v)
+                } && clientRequest.queryParams.every { k, v ->
                     queries.containsKey(k) && queries.get(k).containsAll(v)
                 }
             }
         }
     }
 
-    static final Function<HttpServerExchange, Boolean> headersContains(final Map<String, String> headers) {
-        return new Function<HttpServerExchange, Boolean>() {
-            @Override Boolean apply(final HttpServerExchange exchange) {
-                headers.every { k, v -> v == exchange.requestHeaders.getFirst(k) }
+    static final Function<ClientRequest, Boolean> headersContains(final Map<String, String> headers) {
+        return new Function<ClientRequest, Boolean>() {
+            @Override Boolean apply(final ClientRequest clientRequest) {
+                headers.every { k, v -> v == clientRequest.headers.getFirst(k) }
             }
         }
     }
 
-    static final Function<HttpServerExchange, Boolean> cookiesContains(final Map<String, String> cookies) {
-        return new Function<HttpServerExchange, Boolean>() {
-            @Override Boolean apply(final HttpServerExchange exchange) {
-                cookies.every { k, v -> exchange.requestCookies.containsKey(k) && v == exchange.requestCookies.get(k).value }
+    static final Function<ClientRequest, Boolean> cookiesContains(final Map<String, String> cookies) {
+        return new Function<ClientRequest, Boolean>() {
+            @Override Boolean apply(final ClientRequest clientRequest) {
+                cookies.every { k, v -> clientRequest.cookies.containsKey(k) && v == clientRequest.cookies.get(k).value }
             }
         }
     }
 
-    static final Function<HttpServerExchange, Boolean> bodyEquals(final Object body, final Function<byte[], Object> converter) {
-        return new Function<HttpServerExchange, Boolean>() {
-            @Override Boolean apply(final HttpServerExchange exchange) {
-                boolean match = false
-
-                exchange.requestReceiver.receiveFullBytes(new Receiver.FullBytesCallback() {
-                    @Override
-                    void handle(final HttpServerExchange exch, byte[] message) {
-                        match = converter.apply(message) == body
-                    }
-                })
-
-                match
+    static final Function<ClientRequest, Boolean> bodyEquals(final Object body, final Function<byte[], Object> converter) {
+        return new Function<ClientRequest, Boolean>() {
+            @Override Boolean apply(final ClientRequest clientRequest) {
+                clientRequest.getBody(converter) == body
             }
         }
     }
