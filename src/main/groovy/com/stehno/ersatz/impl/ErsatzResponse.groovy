@@ -19,11 +19,17 @@ import com.stehno.ersatz.Response
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 
+/**
+ * Implementation of the <code>Response</code> interface.
+ */
 @CompileStatic @TupleConstructor
 class ErsatzResponse implements Response {
 
     static final String CONTENT_TYPE_HEADER = 'Content-Type'
 
+    /**
+     * Whether or not this instance defines an empty response.
+     */
     final boolean empty
 
     private final Map<String, String> headers = [:]
@@ -31,7 +37,7 @@ class ErsatzResponse implements Response {
     private Object content
     private Integer code = 200
 
-    @SuppressWarnings('ConfusingMethodName')
+    @Override @SuppressWarnings('ConfusingMethodName')
     Response content(final Object content) {
         if (empty) {
             throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')
@@ -41,11 +47,13 @@ class ErsatzResponse implements Response {
         this
     }
 
+    @Override @SuppressWarnings('ConfusingMethodName')
     Response content(final Object content, final String contentType) {
         this.content(content)
         this.contentType(contentType)
     }
 
+    @Override
     Response header(final String name, final String value) {
         headers[name] = value
         this
@@ -63,11 +71,13 @@ class ErsatzResponse implements Response {
         this
     }
 
+    @Override
     Response cookie(final String name, final String value) {
         cookies[name] = value
         this
     }
 
+    @Override
     Response contentType(final String contentType) {
         header(CONTENT_TYPE_HEADER, contentType)
         this
@@ -84,18 +94,22 @@ class ErsatzResponse implements Response {
         this
     }
 
+    @Override
     Map<String, String> getHeaders() {
         headers.asImmutable()
     }
 
+    @Override
     Map<String, String> getCookies() {
         cookies.asImmutable()
     }
 
+    @Override
     Object getContent() {
         content
     }
 
+    @Override
     Integer getCode() {
         code
     }

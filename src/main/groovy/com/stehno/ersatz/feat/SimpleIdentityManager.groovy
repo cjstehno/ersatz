@@ -24,7 +24,7 @@ import io.undertow.security.idm.PasswordCredential
 import java.security.Principal
 
 /**
- * Created by cjstehno on 12/4/16.
+ * IdentityManager used by the <code>BasicAuthFeature</code>. The default username is "admin" and the default password is "$3cr3t".
  */
 @TupleConstructor
 class SimpleIdentityManager implements IdentityManager {

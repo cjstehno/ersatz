@@ -25,7 +25,7 @@ import java.util.function.Function
 import static com.stehno.ersatz.Conditions.bodyEquals
 
 /**
- * Ersatz implementation of a <code>Request</code> with body content.
+ * Ersatz implementation of a <code>Request</code> with request body content.
  */
 @CompileStatic
 class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
@@ -44,6 +44,12 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
     ]
     private Object body
 
+    /**
+     * Creates a request with the specified method and path.
+     *
+     * @param method the request method
+     * @param path the request path
+     */
     ErsatzRequestWithContent(final String method, final String path) {
         super(method, path)
     }
@@ -76,10 +82,34 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         this
     }
 
+    /**
+     * Used to retrieve the configured body content.
+     *
+     * @return the configured body content
+     */
     Object getBody() {
         body
     }
 
+    /**
+     * Used to determine whether or not the incoming client request matches this configured request. If there are configured <code>conditions</code>,
+     * they will override the default match conditions, and only those configured conditions will be applied. The default conditions may be added
+     * back in using the <code>Conditions</code> functions.
+     *
+     * The default match criteria are:
+     *
+     * <ul>
+     *  <li>The request methods must match.</li>
+     *  <li>The request paths must match.</li>
+     *  <li>The request query parameters must match (inclusive).</li>
+     *  <li>The incoming request headers must contain all of the configured headers (non-inclusive).</li>
+     *  <li>The incoming request cookies must contain all of the configured cookies (non-inclusive).</li>
+     *  <li>The incoming request body content must match the configured body content (after conversion).</li>
+     * </ul>
+     *
+     * @param clientRequest the incoming client request
+     * @return true if the incoming request matches the configured request
+     */
     boolean matches(final ClientRequest clientRequest) {
         boolean matches = super.matches(clientRequest)
         conditions ? matches : matches && bodyEquals(body, findConverter(contentType)).apply(clientRequest)

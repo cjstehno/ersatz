@@ -20,7 +20,7 @@ import groovy.transform.CompileStatic
 import java.util.function.Function
 
 /**
- * A request with body content, for defining expectations.
+ * An expectation of a request with body content.
  */
 @CompileStatic
 interface RequestWithContent extends Request {

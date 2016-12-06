@@ -25,9 +25,6 @@ import java.util.function.Consumer
 import java.util.function.Function
 
 import static com.stehno.ersatz.Conditions.*
-import static groovy.lang.Closure.DELEGATE_FIRST
-import static groovy.lang.Closure.OWNER_FIRST
-import static groovy.transform.TypeCheckingMode.SKIP
 
 /**
  * <code>Request</code> implementation representing requests without body content.
@@ -38,15 +35,23 @@ class ErsatzRequest implements Request {
     protected final Map<String, List<String>> queryParams = [:]
     protected final Map<String, String> headers = [:]
     protected final Map<String, String> cookies = [:]
+    protected final List<Function<ClientRequest, Boolean>> conditions = []
+
     private final List<Consumer<Request>> listeners = []
     private final List<Response> responses = []
-    protected final List<Function<ClientRequest, Boolean>> conditions = []
     private final boolean emptyResponse
     private final String path
     private final String method
     private Function<Integer, Boolean> verifier = Verifiers.any()
     private int callCount
 
+    /**
+     * Creates a new request with the specified method, path and optional empty response flag (defaults to false).
+     *
+     * @param method the request method
+     * @param path the request path
+     * @param emptyResponse whether or not this is a request with an empty response (defaults to false)
+     */
     ErsatzRequest(final String method, final String path, final boolean emptyResponse = false) {
         this.method = method
         this.path = path
@@ -87,44 +92,53 @@ class ErsatzRequest implements Request {
         this
     }
 
+    @Override
     Request header(final String name, final String value) {
         headers[name] = value
         this
     }
 
+    @Override
     String getHeader(final String name) {
         headers[name]
     }
 
+    @Override
     Request query(final String name, final String value) {
         queryParams.computeIfAbsent(name) { k -> [] }.add value
         this
     }
 
+    @Override
     List<String> getQuery(final String name) {
         (queryParams[name] ?: []).asImmutable()
     }
 
+    @Override
     Request cookie(final String name, final String value) {
         cookies[name] = value
         this
     }
 
+    @Override
     String getCookie(final String name) {
         cookies[name]
     }
 
+    @Override
     Request listener(final Consumer<Request> listener) {
         listeners.add(listener)
         this
     }
 
+    @Override
     Response responds() {
         Response response = newResponse()
         responses.add(response)
         response
     }
 
+    @Override
     Request responder(final Consumer<Response> responder) {
         Response response = newResponse()
         responder.accept(response)
@@ -132,6 +146,7 @@ class ErsatzRequest implements Request {
         this
     }
 
+    @Override
     Request responder(@DelegatesTo(Response) final Closure closure) {
         Response response = newResponse()
         closure.setDelegate(response)
@@ -142,29 +157,52 @@ class ErsatzRequest implements Request {
         this
     }
 
-    // Note: when conditions applied they override existing - only specified conditions will be applied (except method and path)
+    @Override
     Request condition(final Function<ClientRequest, Boolean> matcher) {
         conditions.add(matcher)
         this
     }
 
-    @SuppressWarnings('ConfusingMethodName')
+    @Override @SuppressWarnings('ConfusingMethodName')
     Request conditions(List<Function<ClientRequest, Boolean>> matchers) {
         conditions.addAll(matchers)
         this
     }
 
-    @SuppressWarnings('ConfusingMethodName')
+    @Override @SuppressWarnings('ConfusingMethodName')
     Request verifier(final Function<Integer, Boolean> verifier) {
         this.verifier = verifier
         this
     }
 
+    /**
+     * Used to verify that the request has been called the expected number of times. By default there is no verification criteria, they must be
+     * configured using the <code>verifier</code> methods.
+     *
+     * @return true if the call count matches the expected verification criteria
+     */
     boolean verify() {
         verifier.apply(callCount)
     }
 
-    @CompileStatic(SKIP)
+    /**
+     * Used to determine whether or not the incoming client request matches this configured request. If there are configured <code>conditions</code>,
+     * they will override the default match conditions, and only those configured conditions will be applied. The default conditions may be added
+     * back in using the <code>Conditions</code> functions.
+     *
+     * The default match criteria are:
+     *
+     * <ul>
+     *  <li>The request methods must match.</li>
+     *  <li>The request paths must match.</li>
+     *  <li>The request query parameters must match (inclusive).</li>
+     *  <li>The incoming request headers must contain all of the configured headers (non-inclusive).</li>
+     *  <li>The incoming request cookies must contain all of the configured cookies (non-inclusive).</li>
+     * </ul>
+     *
+     * @param clientRequest the incoming client request
+     * @return true if the incoming request matches the configured request
+     */
     boolean matches(final ClientRequest clientRequest) {
         if (conditions) {
             return methodEquals(this.method).apply(clientRequest) &&
@@ -180,15 +218,24 @@ class ErsatzRequest implements Request {
             cookiesContains(this.cookies).apply(clientRequest)
     }
 
-    protected Response newResponse() {
+    private Response newResponse() {
         new ErsatzResponse(emptyResponse)
     }
 
+    /**
+     * Used to retrieve the current response in the response list (based on the call count). The last response in the list will be sent to all future
+     * calls.
+     *
+     * @return the current response
+     */
     Response getCurrentResponse() {
         int index = callCount >= responses.size() ? responses.size() - 1 : callCount
         responses.get(index)
     }
 
+    /**
+     * Used to mark the request as having been called. Any configured listeners will be called after the call count has been incremented.
+     */
     void mark() {
         callCount++
 

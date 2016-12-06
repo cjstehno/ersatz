@@ -24,6 +24,7 @@ import io.undertow.server.HttpHandler
 import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.CookieImpl
 import io.undertow.util.HttpString
+import org.codehaus.groovy.ant.Groovy
 
 import java.util.function.Consumer
 
@@ -34,13 +35,30 @@ import java.util.function.Consumer
  * The server will be started on an ephemeral port so as not to collide with itself or other server applications running in the test environment. In
  * your tests, you can retrieve the server port or URL using the <code>getPort()</code> and <code>getServerUrl()</code> methods respectively.
  *
- * TODO: document configuration steps
+ * Using the <code>ErsatzServer</code> follows the workflow:
+ *
+ * <ol>
+ *     <li>Create the <code>ErsatzServer</code> instance.</li>
+ *     <li>Configure the expectations.</li>
+ *     <li>Start the server</li>
+ *     <li>Run your client tests against the server.</li>
+ *     <li>Verify the expectations.</li>
+ *     <li>Stop the server.</li>
+ * </ol>
+ *
+ * See the User Guide for more detailed information.
  */
 @CompileStatic @Slf4j
 class ErsatzServer {
 
+    /**
+     * The response body returned when no matching expectation could be found.
+     */
     static final String NOT_FOUND_BODY = '404: Not Found'
 
+    /**
+     * The server feature extensions configured on the server.
+     */
     List<ServerFeature> features = []
 
     private final ExpectationsImpl expectations = new ExpectationsImpl()
@@ -87,6 +105,11 @@ class ErsatzServer {
         this
     }
 
+    /**
+     * An alternate means of starting the expectation chain.
+     *
+     * @return the reference to the Expectation configuration object
+     */
     Expectations expects() {
         expectations
     }
@@ -146,7 +169,8 @@ class ErsatzServer {
 
     /**
      * Used to verify all of the HTTP server interaction for their expected call criteria (if any). This method should be called after any test
-     * interactions have been performed.
+     * interactions have been performed. This is an optional step since generally you will also be receiving the expected response back from the server;
+     * however, this verification step can come in handy when simply needing to know that a request is actually called or not.
      *
      * @return <code>true</code> if all call criteria were met during test execution.
      */

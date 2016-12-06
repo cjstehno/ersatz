@@ -20,7 +20,6 @@ import com.stehno.ersatz.Expectations
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.RequestWithContent
 import groovy.transform.CompileStatic
-import io.undertow.server.HttpServerExchange
 
 import java.util.function.Consumer
 
@@ -38,10 +37,12 @@ class ExpectationsImpl implements Expectations {
     private static final String PATCH = 'PATCH'
     private final List<Request> requests = []
 
+    @Override
     Request get(final String path) {
         expect new ErsatzRequest(GET, path)
     }
 
+    @Override
     Request get(final String path, @DelegatesTo(Request) final Closure closure) {
         expect new ErsatzRequest(GET, path), closure
     }
@@ -126,10 +127,21 @@ class ExpectationsImpl implements Expectations {
         expect(new ErsatzRequestWithContent(PATCH, path), config) as RequestWithContent
     }
 
+    /**
+     * Used to find a request matching the given incoming client request. The first match will be returned.
+     *
+     * @param clientRequest the incoming client request
+     * @return the matching request expectation
+     */
     Request findMatch(final ClientRequest clientRequest) {
         requests.find { r -> ((ErsatzRequest) r).matches(clientRequest) }
     }
 
+    /**
+     * Used to verify that all request expectations have been called the expected number of times.
+     *
+     * @return a value of true if all requests are verified
+     */
     boolean verify() {
         requests.each { r ->
             assert ((ErsatzRequest) r).verify(), "Expectations for $r were not met."
