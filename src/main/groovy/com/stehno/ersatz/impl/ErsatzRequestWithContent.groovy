@@ -15,60 +15,111 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.Request
+import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.RequestWithContent
+import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic
-import io.undertow.io.Receiver
-import io.undertow.server.HttpServerExchange
 
 import java.util.function.Function
 
+import static com.stehno.ersatz.Conditions.bodyEquals
+
 /**
- * Ersatz implementation of a <code>Request</code> with body content.
+ * Ersatz implementation of a <code>Request</code> with request body content.
  */
 @CompileStatic
 class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
+    public static final String CONTENT_TYPE_HEADER = 'Content-Type'
+
+    private static final String DEFAULT_CONTENT_TYPE = 'text/plain; charset=utf-8'
+
+    // TODO: a better way to map these would be nice - reduce duplication
     private final Map<String, Function<byte[], Object>> converters = [
-        'text/plain'                : { byte[] m -> body == new String(m, 'UTF-8') } as Function<byte[], Object>,
-        'text/plain; charset=utf-8' : { byte[] m -> body == new String(m, 'UTF-8') } as Function<byte[], Object>,
-        'text/plain; charset=utf-16': { byte[] m -> body == new String(m, 'UTF-16') } as Function<byte[], Object>
+        'text/plain'                : { byte[] m -> new String(m, 'UTF-8') } as Function<byte[], Object>,
+        'text/plain; charset=utf-8' : { byte[] m -> new String(m, 'UTF-8') } as Function<byte[], Object>,
+        'text/plain; charset=utf-16': { byte[] m -> new String(m, 'UTF-16') } as Function<byte[], Object>,
+        'application/json'          : { byte[] m -> new JsonSlurper().parse(m) } as Function<byte[], Object>,
+        'text/json'                 : { byte[] m -> new JsonSlurper().parse(m) } as Function<byte[], Object>
     ]
     private Object body
 
+    /**
+     * Creates a request with the specified method and path.
+     *
+     * @param method the request method
+     * @param path the request path
+     */
     ErsatzRequestWithContent(final String method, final String path) {
         super(method, path)
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
-    Request body(Object body) {
+    RequestWithContent body(final Object body) {
         this.body = body
         this
     }
 
-    Request converter(final String contentType, final Function<byte[], Object> converter) {
+    @Override @SuppressWarnings('ConfusingMethodName')
+    RequestWithContent body(final Object body, final String contentType) {
+        this.body(body)
+        this.contentType(contentType)
+    }
+
+    @Override
+    RequestWithContent contentType(final String contentType) {
+        header(CONTENT_TYPE_HEADER, contentType)
+        this
+    }
+
+    String getContentType() {
+        getHeader(CONTENT_TYPE_HEADER)
+    }
+
+    @Override
+    RequestWithContent converter(final String contentType, final Function<byte[], Object> converter) {
         converters[contentType] = converter
         this
     }
 
+    /**
+     * Used to retrieve the configured body content.
+     *
+     * @return the configured body content
+     */
     Object getBody() {
         body
     }
 
-    boolean matches(final HttpServerExchange exchange) {
-        super.matches(exchange) && matchesBody(exchange)
+    /**
+     * Used to determine whether or not the incoming client request matches this configured request. If there are configured <code>conditions</code>,
+     * they will override the default match conditions, and only those configured conditions will be applied. The default conditions may be added
+     * back in using the <code>Conditions</code> functions.
+     *
+     * The default match criteria are:
+     *
+     * <ul>
+     *  <li>The request methods must match.</li>
+     *  <li>The request paths must match.</li>
+     *  <li>The request query parameters must match (inclusive).</li>
+     *  <li>The incoming request headers must contain all of the configured headers (non-inclusive).</li>
+     *  <li>The incoming request cookies must contain all of the configured cookies (non-inclusive).</li>
+     *  <li>The incoming request body content must match the configured body content (after conversion).</li>
+     * </ul>
+     *
+     * @param clientRequest the incoming client request
+     * @return true if the incoming request matches the configured request
+     */
+    boolean matches(final ClientRequest clientRequest) {
+        boolean matches = super.matches(clientRequest)
+        conditions ? matches : matches && bodyEquals(body, findConverter(contentType)).apply(clientRequest)
     }
 
-    private boolean matchesBody(final HttpServerExchange exchange) {
-        boolean match = false
+    private Function<byte[], Object> findConverter(final String contentType) {
+        converters[contentType ?: DEFAULT_CONTENT_TYPE] ?: converters[DEFAULT_CONTENT_TYPE]
+    }
 
-        exchange.requestReceiver.receiveFullBytes(new Receiver.FullBytesCallback() {
-            @Override
-            void handle(final HttpServerExchange exch, byte[] message) {
-                match = converters[getHeader('Content-Type') ?: 'text/plain; charset=utf-8']
-            }
-        })
-
-        match
+    @Override String toString() {
+        "${super.toString()}: $body"
     }
 }

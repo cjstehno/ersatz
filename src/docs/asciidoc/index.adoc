@@ -1,0 +1,248 @@
+= Ersatz Server User Guide
+Christopher J. Stehno <chris@stehno.com>
+v0.1.0, December 2016
+:toc: left
+:toclevels: 3
+
+== Introduction
+
+The Ersatz Server is a HTTP client testing tool, which allows for request/response expectations to be configured in a flexible manner. The expectations
+will respond in a configured manner to requests and allow testing with different responses and/or error conditions without having to write a lot of
+boiler-plate code.
+
+The "mock" server is not really mock at all, it is an embedded Undertow HTTP server which registers the configured expectations as routes and then
+responds according to the expected behavior. This approach may seem overly heavy; however, testing an HTTP client can involve a lot of internal state
+and interactions that the developer is generally unaware of (and should be) - trying to mock those interactions with a pure mocking framework can get
+out of hand very quickly.
+
+Ersatz provides a balance of mock-like known behavior with a real HTTP interface with all of the underlying interactions in place. This allows for
+testing, which is what you were trying to do in the first place.
+
+Ersatz is written in Groovy 2.4.x and requires a Java 8 VM due to its use of the modern functional libraries; however, the Ersatz library is written
+such that it may be used with Groovy or standard Java without pain or feature-loss. With that in mind, the expectation configuration allows two main
+forms, a Java-style chained builder, and a Groovy DSL, both of which may be used interchangeably or together, if you are using Groovy.
+
+Ersatz is developed with testing in mind. It does not favor any specific testing framework, but it does work well with both the JUnit and Spock
+frameworks.
+
+== Getting Started
+
+Add the `ersatz` library to your project, for Gradle, this would mean adding the following to your `dependencies` block:
+
+    testCompile 'com.stehno.ersatz:ersatz:0.1.0'
+
+You could then use Ersatz in a Spock test as follows:
+
+[source,groovy]
+.HelloSpec.groovy
+----
+class HelloSpec extends Specification {
+
+    def 'say hello'(){
+        setup:
+        ErsatzServer ersatz = new ErsatzServer()
+
+        server.expectations {
+            get('/say/hello'){
+                verifier once()
+                query 'name','Ersatz'
+                responder {
+                    content 'Hello Ersatz','text/plain'
+                }
+            }
+        }
+
+        ersatz.start()
+
+        when:
+        String result = "${ersatz.serverUrl}/say/hello?name=Ersatz".toURL().text
+
+        then:
+        result == 'Hello Ersatz'
+
+        and:
+        ersatz.verify()
+
+        cleanup:
+        ersatz.stop()
+    }
+}
+----
+
+The server is expecting a single call to `GET /say/hello?name=Ersatz`, and when it is received, the server will respond with the `text/plain` content
+`Hello Ersatz`. This code also verifies that the expected request was only called once (as requested) - if it was not called or called more than once,
+the verification and likewise the test, would fail.
+
+The expectation configured above could also be written using the chained builder approach (in Java), as follows:
+
+[source,java]
+----
+server.expectations(expect -> {
+    expect.get("/say/hello").verifier(once()).query("name","Ersatz")
+        .responds().content("Hello Ersatz","text/plain");
+))
+----
+
+The two formats are interchangeable.
+
+== Server Lifecycle
+
+The lifecycle of an Ersatz server is broken down into four main states:
+
+1. Configure
+1. Test
+1. Verify
+1. Cleanup
+
+they are detailed in the sections that follow.
+
+=== Configure
+
+The first step is "configuration", where the server is instantiated, request expectations are configured and the server is started.
+
+An Ersatz server is created by creating an instance of `ErsatzServer`. No HTTP server is started at this point, but the server is ready for
+configuration.
+
+Configuring the expectations on the server consists of calling one of the following methods:
+
+[source,groovy]
+----
+ErsatzServer expectations(final Consumer<Expectations> expects)
+
+ErsatzServer expectations(@DelegatesTo(Expectations) final Closure closure)
+
+Expectations expects()
+----
+
+The first allows for configuration within a `Consumer<Expectations>` instance, which will have a prepared `Expectations` instance passed into it. This
+allows for a DSL-style configuration from Java.
+
+The second method is the entry point for the Groovy DSL configuration. The provided `Closure` will delegate to an instance of `Expectations` for
+defining the configurations.
+
+The third method is a simplified builder-style approach for single request method expectation-building.
+
+Once the request expectations are configured, the server must be started by calling the `ErsatzServer` `start()` method. This will start the underlying
+embedded HTTP server and register the configured expectations. If the server is not started, you will receive connection errors during testing.
+
+=== Testing
+
+After configuration, the server is running and ready for test interactions. Any HTTP client can make HTTP requests against the server to retrieve
+configured responses. The `ErsatzServer` object provides helper methods to retrieve the server port and URL, with `getPort()` and `getServerUrl()`
+respectively.
+
+Note that the server will _always_ be started on an ephemeral port so that a random one will be chosen to avoid collisions.
+
+=== Verify
+
+Once testing has been performed, it may be desirable to verify whether or not the expected number of request calls were matched. The `Expectations`
+interface provides a `verifier` method to add call count verification per configured request, something like:
+
+[source,groovy]
+----
+post('/user').body(content, 'application/json').verifier(once())
+    .responds().content(successContent, 'application/json')
+----
+
+This would match a POST request to "/user" with request body content matching the provided content and expect that matched call only once. When `verify()`
+is called it will return `true` if this request has only been matched once, otherwise it will return `false`. This allows testing to ensure that
+requests are not made more often than expected or at unexpected times.
+
+Verification is optional and may simply be skipped if not needed.
+
+=== Cleanup
+
+After testing and verification, when all test interactions have completed, the server must be stopped in order to free up resources. This is done by
+calling the `stop()` method of the `ErsatzServer` class. This is an important step as odd test failures have been noticed during multi-test runs if
+the server is not properly stopped.
+
+== Expectations
+
+Request expectations are the core of the Ersatz server functionality; conceptually, they are HTTP server request routes which are used to match
+incoming request with request handlers or respond with status 404 if no matching request was configured. The expectations are configured off of an
+instance of the `Expectations` interface, which provides three configuration methods for each HTTP request method (GET, HEAD, POST, PUT, DELETE, and
+PATCH), with the method signature name corresponding to the HTTP request method name. The three general types of methods are:
+
+* One taking a `String path` returning an instance of the `Request` interface
+* One taking a `String path` and a `Consumer<Request>` returning an instance of the `Request` interface
+* One taking a `String path` and a Groovy `Closure` returning an instance of the `Request` interface
+
+The `Consumer<Request>` methods will provide a `Consumer<Request>` implementation to perform the configuration on a `Request` instance passed into
+the consumer function.
+
+The `Closure` support is similar to that of the consumer; however, this is a Groovy DSL approach where the `Closure` operations are delegated onto the
+a `Request` instance in order to configure the request.
+
+All three method types return an instance of the request being configured.
+
+The primary role of expectations is to provide a means of matching incoming requests in order to respond in a desired and repeatable manner. They are
+used to build up matching rules based on request properties to help filter and route the incoming request properly.
+
+The configuration interfaces support three main approaches to configuration, a chained builder approach, such as:
+
+[source,groovy]
+----
+head('/foo').query('a','42').cookie('stamp','1234').respond().header('ok','true')
+----
+
+where the code is a chain of builder-style method calls used to wire up the request expectation. The second method is available to users of the Groovy
+language, the Groovy DSL approach would code the same thing as:
+
+[source,groovy]
+----
+head('/foo'){
+    query 'a', '42'
+    cookie 'stamp', '1234'
+    responder {
+        header 'ok', "true"
+    }
+}
+----
+
+which can be more expressive, especially when creating more complicated expectations. A third approach is a Java-based approach more similar to the
+Groovy DSL, using the `Consumer<?>` methods of the interface, this would yield:
+
+[source,java]
+----
+head('/foo', req -> {
+    req.query("a", "42")
+    req.cookie("stamp", "1234")
+    req.responder( res-> {
+        res.header("ok", "true")
+    })
+})
+----
+
+Any of the three may be used in conjunction with each other to build up expectations in the desired manner.
+
+TIP: The matching of expectations is perform in the order the expectations are configured, such that if an incoming request could be matched by more than
+one expectation, the first one configured will be applied.
+
+Request expectations may be configured to respond differently based on how many times a request is matched, for example, if you wanted the first
+request of `GET /something` to respond with `Hello` and second (and all subsequent) request of the same URL to respond with `Goodbye`, you would
+configure multiple responses, in order:
+
+[source,groovy]
+----
+get('/something'){
+    responder {
+        content 'Hello'
+    }
+    responder {
+        content 'Goodbye'
+    }
+    verifier exactly(2)
+}
+----
+
+Adding the `verifier` configuration adds the extra safety of ensuring that if the request is called more than our expected two times, the verification
+will fail (and with that, the test).
+
+== Feature Extensions
+
+Additional server functionality may be added/configured on the server before startup. The `ServerFeature` interface provides this extension point;
+however, the extension feature mechanism is experimental at this point and may change in the future.
+
+At this point there is only one feature extension, the `BasicAuthFeature`, which causes the configured request expectations to require BASIC
+authentication (username and password) as part of their matching.
+

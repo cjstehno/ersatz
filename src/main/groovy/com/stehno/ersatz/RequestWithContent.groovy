@@ -17,11 +17,47 @@ package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
 
+import java.util.function.Function
+
 /**
- * A request with body content.
+ * An expectation of a request with body content.
  */
 @CompileStatic
 interface RequestWithContent extends Request {
 
-    Request body(final Object body)
+    /**
+     * Configures the expected body content of the request.
+     *
+     * @param body the body content
+     * @return a reference to this request
+     */
+    RequestWithContent body(final Object body)
+
+    /**
+     * Configures the expected body content of the request with the specified content type.
+     *
+     * @param body the body content
+     * @param contentType the body content type
+     * @return a reference to this request
+     */
+    RequestWithContent body(final Object body, String contentType)
+
+    /**
+     * Configures the expected content type (header) of the request.
+     *
+     * @param contentType the body content type
+     * @return a reference to this request
+     */
+    RequestWithContent contentType(final String contentType)
+
+    /**
+     * Specifies a custom body content converter function. The function will have the client request body content as a byte array and it will be
+     * converted into the specified output type. Generally the conversion is used when comparing the client request with the configured request
+     * body expectation.
+     *
+     * @param contentType the content type that the convert will handle
+     * @param converter the conversion function
+     * @return a reference to this request
+     */
+    RequestWithContent converter(final String contentType, final Function<byte[], Object> converter)
 }

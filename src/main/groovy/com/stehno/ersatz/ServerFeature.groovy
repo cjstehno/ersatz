@@ -19,10 +19,16 @@ import groovy.transform.CompileStatic
 import io.undertow.server.HttpHandler
 
 /**
- * A <code>ServerFeature</code> provides additional support to the Ersatz server.
+ * A <code>ServerFeature</code> provides support for additional functionality on the Ersatz server.
  */
 @CompileStatic
 interface ServerFeature {
 
+    /**
+     * Applies the extended server configuration.
+     *
+     * @param handler the extension handler
+     * @return the wrapped handler
+     */
     HttpHandler apply(HttpHandler handler)
 }

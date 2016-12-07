@@ -15,35 +15,43 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.Response
 import com.stehno.ersatz.Verifiers
 import groovy.transform.CompileStatic
-import io.undertow.server.HttpServerExchange
-import io.undertow.server.handlers.Cookie
-import io.undertow.util.HeaderMap
 
 import java.util.function.Consumer
 import java.util.function.Function
 
+import static com.stehno.ersatz.Conditions.*
+
 /**
- * Abstract base class for request expectation definitions.
+ * <code>Request</code> implementation representing requests without body content.
  */
 @CompileStatic
 class ErsatzRequest implements Request {
 
-    private final Map<String, List<String>> queryParams = [:]
-    private final Map<String, String> headers = [:]
-    private final Map<String, String> cookies = [:]
+    protected final Map<String, List<String>> queryParams = [:]
+    protected final Map<String, String> headers = [:]
+    protected final Map<String, String> cookies = [:]
+    protected final List<Function<ClientRequest, Boolean>> conditions = []
+
     private final List<Consumer<Request>> listeners = []
     private final List<Response> responses = []
-    private final List<Function<Request, Boolean>> conditions = []
     private final boolean emptyResponse
     private final String path
     private final String method
     private Function<Integer, Boolean> verifier = Verifiers.any()
     private int callCount
 
+    /**
+     * Creates a new request with the specified method, path and optional empty response flag (defaults to false).
+     *
+     * @param method the request method
+     * @param path the request path
+     * @param emptyResponse whether or not this is a request with an empty response (defaults to false)
+     */
     ErsatzRequest(final String method, final String path, final boolean emptyResponse = false) {
         this.method = method
         this.path = path
@@ -60,7 +68,7 @@ class ErsatzRequest implements Request {
         method
     }
 
-    @Override
+    @Override @SuppressWarnings('ConfusingMethodName')
     Request headers(final Map<String, String> heads) {
         headers.putAll(heads)
         this
@@ -78,55 +86,59 @@ class ErsatzRequest implements Request {
         this
     }
 
-    @Override
+    @Override @SuppressWarnings('ConfusingMethodName')
     Request cookies(Map<String, String> cookies) {
         this.cookies.putAll(cookies)
         this
     }
 
+    @Override
     Request header(final String name, final String value) {
         headers[name] = value
         this
     }
 
+    @Override
     String getHeader(final String name) {
         headers[name]
     }
 
-    Request contentType(final String contentType) {
-        header('Content-Type', contentType)
-        this
-    }
-
+    @Override
     Request query(final String name, final String value) {
         queryParams.computeIfAbsent(name) { k -> [] }.add value
         this
     }
 
+    @Override
     List<String> getQuery(final String name) {
-        queryParams[name].asImmutable()
+        (queryParams[name] ?: []).asImmutable()
     }
 
+    @Override
     Request cookie(final String name, final String value) {
         cookies[name] = value
         this
     }
 
+    @Override
     String getCookie(final String name) {
         cookies[name]
     }
 
+    @Override
     Request listener(final Consumer<Request> listener) {
         listeners.add(listener)
         this
     }
 
+    @Override
     Response responds() {
         Response response = newResponse()
         responses.add(response)
         response
     }
 
+    @Override
     Request responder(final Consumer<Response> responder) {
         Response response = newResponse()
         responder.accept(response)
@@ -134,7 +146,8 @@ class ErsatzRequest implements Request {
         this
     }
 
-    Request responder(final Closure closure) {
+    @Override
+    Request responder(@DelegatesTo(Response) final Closure closure) {
         Response response = newResponse()
         closure.setDelegate(response)
         closure.call()
@@ -144,58 +157,85 @@ class ErsatzRequest implements Request {
         this
     }
 
-    Request condition(final Function<Request, Boolean> matcher) {
+    @Override
+    Request condition(final Function<ClientRequest, Boolean> matcher) {
         conditions.add(matcher)
         this
     }
 
-    @SuppressWarnings('ConfusingMethodName')
+    @Override @SuppressWarnings('ConfusingMethodName')
+    Request conditions(List<Function<ClientRequest, Boolean>> matchers) {
+        conditions.addAll(matchers)
+        this
+    }
+
+    @Override @SuppressWarnings('ConfusingMethodName')
     Request verifier(final Function<Integer, Boolean> verifier) {
         this.verifier = verifier
         this
     }
 
+    /**
+     * Used to verify that the request has been called the expected number of times. By default there is no verification criteria, they must be
+     * configured using the <code>verifier</code> methods.
+     *
+     * @return true if the call count matches the expected verification criteria
+     */
     boolean verify() {
         verifier.apply(callCount)
     }
 
-    boolean matches(final HttpServerExchange exchange) {
-        exchange.requestPath == path &&
-            (conditions.empty || conditions.every { it.apply(this) }) &&
-            matchQueryParams(exchange.queryParameters) &&
-            containsHeaders(exchange.requestHeaders) &&
-            containsCookies(exchange.requestCookies)
+    /**
+     * Used to determine whether or not the incoming client request matches this configured request. If there are configured <code>conditions</code>,
+     * they will override the default match conditions, and only those configured conditions will be applied. The default conditions may be added
+     * back in using the <code>Conditions</code> functions.
+     *
+     * The default match criteria are:
+     *
+     * <ul>
+     *  <li>The request methods must match.</li>
+     *  <li>The request paths must match.</li>
+     *  <li>The request query parameters must match (inclusive).</li>
+     *  <li>The incoming request headers must contain all of the configured headers (non-inclusive).</li>
+     *  <li>The incoming request cookies must contain all of the configured cookies (non-inclusive).</li>
+     * </ul>
+     *
+     * @param clientRequest the incoming client request
+     * @return true if the incoming request matches the configured request
+     */
+    boolean matches(final ClientRequest clientRequest) {
+        if (conditions) {
+            return methodEquals(this.method).apply(clientRequest) &&
+                pathEquals(this.path).apply(clientRequest) &&
+                conditions.every { it.apply(clientRequest) }
+
+        }
+
+        return methodEquals(this.method).apply(clientRequest) &&
+            pathEquals(this.path).apply(clientRequest) &&
+            queriesEquals(this.queryParams).apply(clientRequest) &&
+            headersContains(this.headers).apply(clientRequest) &&
+            cookiesContains(this.cookies).apply(clientRequest)
     }
 
-    protected Response newResponse() {
+    private Response newResponse() {
         new ErsatzResponse(emptyResponse)
     }
 
-    // header matching is not absolute - the request must contain the specified headers but not necessarily all of them
-    // TODO: needs to support more complicated headers
-    private boolean containsHeaders(final HeaderMap requestHeads) {
-        headers.every { k, v -> v == requestHeads.getFirst(k) }
-    }
-
-    private boolean containsCookies(final Map<String, Cookie> requestCookies) {
-        cookies.every { k, v -> requestCookies.containsKey(k) && v == requestCookies.get(k).value }
-    }
-
-    private boolean matchQueryParams(final Map<String, Deque<String>> requestQs) {
-        boolean one = queryParams.every { k, v ->
-            requestQs.containsKey(k) && requestQs.get(k).containsAll(v)
-        }
-        boolean two = requestQs.every { k, v ->
-            queryParams.containsKey(k) && queryParams.get(k).containsAll(v)
-        }
-        one && two
-    }
-
+    /**
+     * Used to retrieve the current response in the response list (based on the call count). The last response in the list will be sent to all future
+     * calls.
+     *
+     * @return the current response
+     */
     Response getCurrentResponse() {
         int index = callCount >= responses.size() ? responses.size() - 1 : callCount
         responses.get(index)
     }
 
+    /**
+     * Used to mark the request as having been called. Any configured listeners will be called after the call count has been incremented.
+     */
     void mark() {
         callCount++
 

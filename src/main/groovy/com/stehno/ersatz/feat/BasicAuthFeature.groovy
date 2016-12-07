@@ -29,12 +29,20 @@ import io.undertow.server.HttpHandler
 import static io.undertow.security.api.AuthenticationMode.PRO_ACTIVE
 
 /**
- * A <code>ServerFeature</code> providing support for HTTP BASIC authentication.
+ * A <code>ServerFeature</code> providing support for HTTP BASIC authentication. This will apply BASIC authentication to all requests configured on
+ * the server.
  */
 @CompileStatic
 class BasicAuthFeature implements ServerFeature {
 
+    /**
+     * The realm to be used. Defaults to "BasicTesting".
+     */
     String realm = 'BasicTesting'
+
+    /**
+     * The IdentityManager to be used. Defaults to the <code>SimpleIdentityManager</code>.
+     */
     IdentityManager identityManager = new SimpleIdentityManager()
 
     @Override

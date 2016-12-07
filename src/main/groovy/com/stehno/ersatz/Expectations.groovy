@@ -30,41 +30,161 @@ interface Expectations {
      * Allows configuration of a GET request expectation.
      *
      * @param path the request path.
-     * @return a `Request` configuration object
+     * @return a <code>Request</code> configuration object
      */
     Request get(String path)
 
+    /**
+     * Allows configuration of a GET request expectation using the Groovy DSL.
+     *
+     * @param path the request path.
+     * @pram closure the Groovy closure containing the configuration
+     * @return a <code>Request</code> configuration object
+     */
     Request get(String path, @DelegatesTo(Request) Closure closure)
 
+    /**
+     * Allows configuration of a GET request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param path the request path.
+     * @pram config the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
     Request get(String path, Consumer<Request> config)
 
+    /**
+     * Allows configuration of a HEAD request expectation.
+     *
+     * @param path the request path.
+     * @return a <code>Request</code> configuration object
+     */
     Request head(String path)
 
+    /**
+     * Allows configuration of a HEAD request expectation using the Groovy DSL.
+     *
+     * @param path the request path.
+     * @pram closure the Groovy closure containing the configuration
+     * @return a <code>Request</code> configuration object
+     */
     Request head(String path, @DelegatesTo(Request) Closure closure)
 
+    /**
+     * Allows configuration of a HEAD request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param path the request path.
+     * @pram config the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
     Request head(String path, Consumer<Request> config)
 
+    /**
+     * Allows configuration of a POST request expectation.
+     *
+     * @param path the request path.
+     * @return a <code>RequestWithContent</code> configuration object
+     */
     RequestWithContent post(String path)
 
+    /**
+     * Allows configuration of a POST request expectation using the Groovy DSL.
+     *
+     * @param path the request path.
+     * @pram closure the Groovy closure containing the configuration
+     * @return a <code>RequestWithContent</code> configuration object
+     */
     RequestWithContent post(String path, @DelegatesTo(RequestWithContent) Closure closure)
 
+    /**
+     * Allows configuration of a POST request expectation using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     *
+     * @param path the request path.
+     * @pram config the configuration consumer
+     * @return a <code>RequestWithContent</code> configuration object
+     */
     RequestWithContent post(String path, Consumer<RequestWithContent> config)
 
+    /**
+     * Allows configuration of a PUT request expectation.
+     *
+     * @param path the request path.
+     * @return a <code>RequestWithContent</code> configuration object
+     */
     RequestWithContent put(String path)
 
+    /**
+     * Allows configuration of a PUT request expectation using the Groovy DSL.
+     *
+     * @param path the request path.
+     * @pram closure the Groovy closure containing the configuration
+     * @return a <code>RequestWithContent</code> configuration object
+     */
     RequestWithContent put(String path, @DelegatesTo(RequestWithContent) Closure closure)
 
+    /**
+     * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     *
+     * @param path the request path.
+     * @pram config the configuration consumer
+     * @return a <code>RequestWithContent</code> configuration object
+     */
     RequestWithContent put(String path, Consumer<RequestWithContent> config)
 
+    /**
+     * Allows configuration of a DELETE request expectation.
+     *
+     * @param path the request path.
+     * @return a <code>Request</code> configuration object
+     */
     Request delete(String path)
 
+    /**
+     * Allows configuration of a DELETE request expectation using the Groovy DSL.
+     *
+     * @param path the request path.
+     * @pram closure the Groovy closure containing the configuration
+     * @return a <code>Request</code> configuration object
+     */
     Request delete(String path, @DelegatesTo(Request) Closure closure)
 
+    /**
+     * Allows configuration of a DELETE request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param path the request path.
+     * @pram config the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
     Request delete(String path, Consumer<Request> config)
 
+    /**
+     * Allows configuration of a PATCH request expectation.
+     *
+     * @param path the request path.
+     * @return a <code>RequestWithContent</code> configuration object
+     */
     RequestWithContent patch(String path)
 
+    /**
+     * Allows configuration of a PATCH request expectation using the Groovy DSL.
+     *
+     * @param path the request path.
+     * @pram closure the Groovy closure containing the configuration
+     * @return a <code>RequestWithContent</code> configuration object
+     */
     RequestWithContent patch(String path, @DelegatesTo(RequestWithContent) Closure closure)
 
+    /**
+     * Allows configuration of a PATCH request expectation using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     *
+     * @param path the request path.
+     * @pram config the configuration consumer
+     * @return a <code>RequestWithContent</code> configuration object
+     */
     RequestWithContent patch(String path, Consumer<RequestWithContent> config)
 }

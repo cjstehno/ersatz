@@ -23,25 +23,105 @@ import groovy.transform.CompileStatic
 @CompileStatic
 interface Response {
 
-    Response body(final Object content)
+    /**
+     * Defines the request content to be sent back to the client.
+     *
+     * @param content the content object
+     * @return this response
+     */
+    Response content(final Object content)
 
+    /**
+     * Defines the request content to be sent back to the client, along with its content-type.
+     *
+     * @param content the content object
+     * @param contentType the content type
+     * @return this response
+     */
+    Response content(final Object content, final String contentType)
+
+    /**
+     * Used to add a header to the response with the given name and value.
+     *
+     * @param name the header name
+     * @param value the header value
+     * @return this response
+     */
     Response header(final String name, final String value)
 
+    /**
+     * Used to add multiple headers to the response.
+     *
+     * @param headers the headers
+     * @return this response
+     */
     Response headers(final Map<String, String> headers)
 
+    /**
+     * Used to add a cookie to the response with the given name and value.
+     *
+     * @param name the cookie name
+     * @param value the cookie value
+     * @return this response
+     */
     Response cookie(final String name, final String value)
 
+    /**
+     * Used to add multiple cookies to the response, with the provided names and values.
+     *
+     * @param cookies the cookies to be added
+     * @return this response
+     */
     Response cookies(final Map<String, String> cookies)
 
+    /**
+     * Used to specify the content type of the response.
+     *
+     * @param contentType the response content type
+     * @return this response
+     */
     Response contentType(final String contentType)
 
+    /**
+     * Used to retrieve the content type of the response.
+     *
+     * @return the content type
+     */
+    String getContentType()
+
+    /**
+     * Used to specify the response code for the response.
+     *
+     * @param code the response code
+     * @return this response
+     */
     Response code(int code)
 
+    /**
+     * Used to retrieve the configured response headers.
+     *
+     * @return the response headers
+     */
     Map<String, String> getHeaders()
 
+    /**
+     * Used to retrieve the configured response cookies.
+     *
+     * @return the response cookies
+     */
     Map<String, String> getCookies()
 
-    Object getBody()
+    /**
+     * Used to retrieve the configured response content.
+     *
+     * @return the response content
+     */
+    Object getContent()
 
+    /**
+     * Used to retrieve the configured response code.
+     *
+     * @return the response code
+     */
     Integer getCode()
 }

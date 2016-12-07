@@ -18,6 +18,7 @@ package com.stehno.ersatz
 import com.stehno.ersatz.impl.ErsatzRequest
 import com.stehno.ersatz.impl.ExpectationsImpl
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import io.undertow.Undertow
 import io.undertow.server.HttpHandler
 import io.undertow.server.HttpServerExchange
@@ -33,11 +34,30 @@ import java.util.function.Consumer
  * The server will be started on an ephemeral port so as not to collide with itself or other server applications running in the test environment. In
  * your tests, you can retrieve the server port or URL using the <code>getPort()</code> and <code>getServerUrl()</code> methods respectively.
  *
- * TODO: document configuration steps
+ * Using the <code>ErsatzServer</code> follows the workflow:
+ *
+ * <ol>
+ *     <li>Create the <code>ErsatzServer</code> instance.</li>
+ *     <li>Configure the expectations.</li>
+ *     <li>Start the server</li>
+ *     <li>Run your client tests against the server.</li>
+ *     <li>Verify the expectations.</li>
+ *     <li>Stop the server.</li>
+ * </ol>
+ *
+ * See the User Guide for more detailed information.
  */
-@CompileStatic
+@CompileStatic @Slf4j
 class ErsatzServer {
 
+    /**
+     * The response body returned when no matching expectation could be found.
+     */
+    static final String NOT_FOUND_BODY = '404: Not Found'
+
+    /**
+     * The server feature extensions configured on the server.
+     */
     List<ServerFeature> features = []
 
     private final ExpectationsImpl expectations = new ExpectationsImpl()
@@ -85,6 +105,15 @@ class ErsatzServer {
     }
 
     /**
+     * An alternate means of starting the expectation chain.
+     *
+     * @return the reference to the Expectation configuration object
+     */
+    Expectations expects() {
+        expectations
+    }
+
+    /**
      * Used to configure HTTP expectations on the server; the provided Groovy <code>Closure</code> will delegate to an <code>Expectations</code>
      * instance for configuring server interaction expectations using the Groovy DSL.
      *
@@ -106,12 +135,19 @@ class ErsatzServer {
         server = Undertow.builder().addHttpListener(0, 'localhost').setHandler(applyFeatures(new HttpHandler() {
             @Override
             void handleRequest(final HttpServerExchange exchange) throws Exception {
-                ErsatzRequest request = expectations.findMatch(exchange) as ErsatzRequest
+                ClientRequest clientRequest = new ClientRequest(exchange)
+
+                log.debug 'Request: {}', clientRequest
+
+                ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
                 if (request) {
                     send(exchange, request.currentResponse)
                     request.mark()
+
                 } else {
-                    exchange.setStatusCode(404).responseSender.send('404: Not Found')
+                    log.warn 'Unmatched-Request: {}', clientRequest
+
+                    exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
                 }
             }
         })).build()
@@ -132,7 +168,8 @@ class ErsatzServer {
 
     /**
      * Used to verify all of the HTTP server interaction for their expected call criteria (if any). This method should be called after any test
-     * interactions have been performed.
+     * interactions have been performed. This is an optional step since generally you will also be receiving the expected response back from the
+     * server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
      *
      * @return <code>true</code> if all call criteria were met during test execution.
      */
@@ -161,6 +198,6 @@ class ErsatzServer {
             exchange.responseCookies.put(k, new CookieImpl(k, v))
         }
 
-        exchange.responseSender.send(response.body?.toString() ?: '')
+        exchange.responseSender.send(response.content?.toString() ?: '')
     }
 }
