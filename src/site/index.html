@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Ersatz Server</title>
+</head>
+
+<body>
+<header>
+    <div class="inner">
+        <h1>Ersatz Server</h1>
+        <h2>Mock HTTP server for testing client code.</h2>
+        <a href="https://github.com/cjstehno/ersatz" class="button">
+            <small>View project on</small>
+            GitHub</a>
+    </div>
+    <div class="inner" style="margin-top: 12px;">
+        <a href='https://bintray.com/cjstehno/stehno/ersatz/_latestVersion'><img
+            src='https://api.bintray.com/packages/cjstehno/stehno/ersatz/images/download.svg'></a>
+        <a href="https://travis-ci.org/cjstehno/ersatz"><img src="https://travis-ci.org/cjstehno/ersatz.svg?branch=master" alt="Build Status"></a>
+        <a href="https://coveralls.io/github/cjstehno/ersatz?branch=master"><img
+            src="https://coveralls.io/repos/github/cjstehno/ersatz/badge.svg?branch=master" alt="Coverage Status"></a>
+
+
+    </div>
+</header>
+
+<div id="content-wrapper">
+    <div class="inner clearfix">
+        <section id="main-content">
+
+            <h2 style="margin-top: 0px;"><span aria-hidden="true" class="octicon octicon-link"></span>Introduction</h2>
+
+            <blockquote>
+                <small>
+                    <p>Ersatz <em>(noun)</em> An artificial substance or article used to replace something natural or genuine; a substitute.</p>
+                </small>
+            </blockquote>
+
+            <p>Ersatz Server is a "mock" HTTP server library for testing HTTP clients. It allows for server-side request/response expectations to be
+                configured so that your client library can make real HTTP calls and get back real pre-configured responses rather than fake stubs.</p>
+
+            <p>A simple example of the expectation configuration would be (using Groovy):</p>
+
+            <pre><code>ErsatzServer ersatz = new ErsatzServer()
+
+server.expectations {
+    get('/say/hello'){
+        verifier once()
+        query 'name','Ersatz'
+        responder {
+            body 'Hello Ersatz','text/plain'
+        }
+    }
+}
+
+ersatz.start()
+
+URL url = "&#36;{ersatz.serverUrl}/say/hello?name=Ersatz".toURL()
+assert url.text == 'Hello Ersatz'
+
+assert ersatz.verify()
+
+ersatz.stop()</code></pre>
+
+            <p>which will assert that a GET request to "/say/hello?name=Ersatz" will only happen once and that it will respond with "Hello Ersatz" so
+                that the client code being tested may proceed and do what it needs to do with the response. The expectation may also be written in a
+                builder form, such as:</p>
+
+            <pre><code>server.expectations {
+    get('/say/hello').verifier(once()).query('name','Ersatz')
+        .responds().body('Hello Ersatz','text/plain')
+}</code></pre>
+
+            <p>Both forms are equivalent and may be used together.</p>
+
+            <h2><span aria-hidden="true" class="octicon octicon-link"></span>Features</h2>
+
+            <ul>
+                <li>Uses an embedded <a href="http://undertow.io/">Undertow server</a> to setup the HTTP server</li>
+                <li>Provides a Java 8 compatible builder interface</li>
+                <li>Provides a Groovy configuration DSL</li>
+                <li>Compatible with the <a href="http://junit.org/junit4/">JUnit</a> and <a href="http://spockframework.org/">Spock</a> testing
+                    frameworks
+                </li>
+                <li>Allows configuration of expectations for requests and expected responses</li>
+                <li>Provides call verification to ensure that expected requests are actually called (including specific call counts).</li>
+            </ul>
+
+            <h2><span aria-hidden="true" class="octicon octicon-link"></span>Artifacts</h2>
+
+            The Ersatz Server library is available on Bintray and may be added to a project via Gradle dependency:
+
+            <pre><code>testCompile 'com.stehno.ersatz:ersatz:${project_version}'</code></pre>
+
+            or for Maven:
+
+            <pre><code>&lt;dependency&gt;
+    &lt;group&gt;com.stehno.ersatz&lt;/group&gt;
+    &lt;artifact&gt;ersatz&lt;/artifact&gt;
+    &lt;version&gt;${project_version}&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+
+            <h2><span aria-hidden="true" class="octicon octicon-link"></span>Documentation</h2>
+
+            <p>The best place to learn how to use the Ersatz Server is in the <a href="guide/html5" target="_blank">User Guide</a> (especially the <a
+                href="guide/html5/#_getting_started" target="_blank">Getting Started</a> section) or the
+                <a href="groovydoc" target="_blank">Groovy Docs</a>; however, there are a few other interesting documents available:</p>
+
+            <ul>
+                <li><a href="https://github.com/cjstehno/ersatz" target="_blank">GitHub Project</a> - the GitHub project has all the source code as
+                    well as links to
+                    all of the documentation.
+                </li>
+                <li><a href="tests/test" target="_blank">Unit Test Report</a> - the build-generated unit test results report.</li>
+                <li><a href="jacoco/test/html" target="_blank">Test Coverage Report</a> - the build-generated unit test coverage report (via Jacoco).
+                </li>
+                <li><a href="codenarc/main.html" target="_blank">CodeNarc Report (main)</a> - the build-generated code quality summary (via CodeNarc).
+                </li>
+            </ul>
+
+            <p>If you find any issues with the library or the documentation, please feel free to <a
+                href="https://github.com/cjstehno/ersatz/issues/new">create an issue</a> with a description of the problem or
+                suggestion.</p>
+
+            <p>Ersatz is developed and maintained by <a
+                href="https://github.com/cjstehno">Christopher J. Stehno</a> under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache
+                2</a> open
+                source license. This page was originally generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by
+                <a
+                    href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </section>
+
+        <aside id="sidebar">
+            <a href="https://github.com/cjstehno/ersatz/zipball/master" class="button">
+                <small>Download</small>
+                .zip file
+            </a>
+            <a href="https://github.com/cjstehno/ersatz/tarball/master" class="button">
+                <small>Download</small>
+                .tar.gz file
+            </a>
+
+            <p class="repo-owner"><a href="https://github.com/cjstehno/ersatz"></a> Maintained & Developed by<br/><a
+                href="https://github.com/cjstehno">Christopher J. Stehno</a>.</p>
+        </aside>
+    </div>
+</div>
+
+
+</body>
+</html>
