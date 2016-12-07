@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzRequestWithContent.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.impl</a> &gt; <span class="el_source">ErsatzRequestWithContent.groovy</span></div><h1>ErsatzRequestWithContent.groovy</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2016 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.impl
+
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.RequestWithContent
+import groovy.json.JsonSlurper
+import groovy.transform.CompileStatic
+
+import java.util.function.Function
+
+import static com.stehno.ersatz.Conditions.bodyEquals
+
+/**
+ * Ersatz implementation of a &lt;code&gt;Request&lt;/code&gt; with request body content.
+ */
+@CompileStatic
+class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
+
+    public static final String CONTENT_TYPE_HEADER = 'Content-Type'
+
+    private static final String DEFAULT_CONTENT_TYPE = 'text/plain; charset=utf-8'
+
+    // TODO: a better way to map these would be nice - reduce duplication
+    private final Map&lt;String, Function&lt;byte[], Object&gt;&gt; converters = [
+<span class="nc" id="L39">        'text/plain'                : { byte[] m -&gt; new String(m, 'UTF-8') } as Function&lt;byte[], Object&gt;,</span>
+<span class="pc" id="L40">        'text/plain; charset=utf-8' : { byte[] m -&gt; new String(m, 'UTF-8') } as Function&lt;byte[], Object&gt;,</span>
+<span class="nc" id="L41">        'text/plain; charset=utf-16': { byte[] m -&gt; new String(m, 'UTF-16') } as Function&lt;byte[], Object&gt;,</span>
+<span class="nc" id="L42">        'application/json'          : { byte[] m -&gt; new JsonSlurper().parse(m) } as Function&lt;byte[], Object&gt;,</span>
+<span class="nc" id="L43">        'text/json'                 : { byte[] m -&gt; new JsonSlurper().parse(m) } as Function&lt;byte[], Object&gt;</span>
+    ]
+    private Object body
+
+    /**
+     * Creates a request with the specified method and path.
+     *
+     * @param method the request method
+     * @param path the request path
+     */
+    ErsatzRequestWithContent(final String method, final String path) {
+<span class="fc" id="L54">        super(method, path)</span>
+    }
+
+    @Override @SuppressWarnings('ConfusingMethodName')
+    RequestWithContent body(final Object body) {
+<span class="fc" id="L59">        this.body = body</span>
+<span class="pc" id="L60">        this</span>
+    }
+
+    @Override @SuppressWarnings('ConfusingMethodName')
+    RequestWithContent body(final Object body, final String contentType) {
+<span class="fc" id="L65">        this.body(body)</span>
+<span class="pc" id="L66">        this.contentType(contentType)</span>
+    }
+
+    @Override
+    RequestWithContent contentType(final String contentType) {
+<span class="fc" id="L71">        header(CONTENT_TYPE_HEADER, contentType)</span>
+<span class="pc" id="L72">        this</span>
+    }
+
+    String getContentType() {
+<span class="pc" id="L76">        getHeader(CONTENT_TYPE_HEADER)</span>
+    }
+
+    @Override
+    RequestWithContent converter(final String contentType, final Function&lt;byte[], Object&gt; converter) {
+<span class="fc" id="L81">        converters[contentType] = converter</span>
+<span class="pc" id="L82">        this</span>
+    }
+
+    /**
+     * Used to retrieve the configured body content.
+     *
+     * @return the configured body content
+     */
+    Object getBody() {
+<span class="pc" id="L91">        body</span>
+    }
+
+    /**
+     * Used to determine whether or not the incoming client request matches this configured request. If there are configured &lt;code&gt;conditions&lt;/code&gt;,
+     * they will override the default match conditions, and only those configured conditions will be applied. The default conditions may be added
+     * back in using the &lt;code&gt;Conditions&lt;/code&gt; functions.
+     *
+     * The default match criteria are:
+     *
+     * &lt;ul&gt;
+     *  &lt;li&gt;The request methods must match.&lt;/li&gt;
+     *  &lt;li&gt;The request paths must match.&lt;/li&gt;
+     *  &lt;li&gt;The request query parameters must match (inclusive).&lt;/li&gt;
+     *  &lt;li&gt;The incoming request headers must contain all of the configured headers (non-inclusive).&lt;/li&gt;
+     *  &lt;li&gt;The incoming request cookies must contain all of the configured cookies (non-inclusive).&lt;/li&gt;
+     *  &lt;li&gt;The incoming request body content must match the configured body content (after conversion).&lt;/li&gt;
+     * &lt;/ul&gt;
+     *
+     * @param clientRequest the incoming client request
+     * @return true if the incoming request matches the configured request
+     */
+    boolean matches(final ClientRequest clientRequest) {
+<span class="fc" id="L114">        boolean matches = super.matches(clientRequest)</span>
+<span class="pc bpc" id="L115" title="1 of 6 branches missed.">        conditions ? matches : matches &amp;&amp; bodyEquals(body, findConverter(contentType)).apply(clientRequest)</span>
+    }
+
+    private Function&lt;byte[], Object&gt; findConverter(final String contentType) {
+<span class="pc bpc" id="L119" title="1 of 4 branches missed.">        converters[contentType ?: DEFAULT_CONTENT_TYPE] ?: converters[DEFAULT_CONTENT_TYPE]</span>
+    }
+
+    @Override String toString() {
+<span class="nc" id="L123">        &quot;${super.toString()}: $body&quot;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

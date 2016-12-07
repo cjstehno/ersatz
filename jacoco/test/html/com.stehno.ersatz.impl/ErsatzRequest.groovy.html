@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzRequest.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.impl</a> &gt; <span class="el_source">ErsatzRequest.groovy</span></div><h1>ErsatzRequest.groovy</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2016 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.impl
+
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.Request
+import com.stehno.ersatz.Response
+import com.stehno.ersatz.Verifiers
+import groovy.transform.CompileStatic
+
+import java.util.function.Consumer
+import java.util.function.Function
+
+import static com.stehno.ersatz.Conditions.*
+
+/**
+ * &lt;code&gt;Request&lt;/code&gt; implementation representing requests without body content.
+ */
+@CompileStatic
+class ErsatzRequest implements Request {
+
+    protected final Map&lt;String, List&lt;String&gt;&gt; queryParams = [:]
+    protected final Map&lt;String, String&gt; headers = [:]
+    protected final Map&lt;String, String&gt; cookies = [:]
+<span class="fc" id="L38">    protected final List&lt;Function&lt;ClientRequest, Boolean&gt;&gt; conditions = []</span>
+
+<span class="fc" id="L40">    private final List&lt;Consumer&lt;Request&gt;&gt; listeners = []</span>
+<span class="fc" id="L41">    private final List&lt;Response&gt; responses = []</span>
+    private final boolean emptyResponse
+    private final String path
+    private final String method
+<span class="fc" id="L45">    private Function&lt;Integer, Boolean&gt; verifier = Verifiers.any()</span>
+    private int callCount
+
+    /**
+     * Creates a new request with the specified method, path and optional empty response flag (defaults to false).
+     *
+     * @param method the request method
+     * @param path the request path
+     * @param emptyResponse whether or not this is a request with an empty response (defaults to false)
+     */
+    ErsatzRequest(final String method, final String path, final boolean emptyResponse = false) {
+<span class="fc" id="L56">        this.method = method</span>
+<span class="fc" id="L57">        this.path = path</span>
+<span class="fc" id="L58">        this.emptyResponse = emptyResponse</span>
+    }
+
+    @Override
+    String getPath() {
+<span class="pc" id="L63">        path</span>
+    }
+
+    @Override
+    String getMethod() {
+<span class="pc" id="L68">        method</span>
+    }
+
+    @Override @SuppressWarnings('ConfusingMethodName')
+    Request headers(final Map&lt;String, String&gt; heads) {
+<span class="fc" id="L73">        headers.putAll(heads)</span>
+<span class="pc" id="L74">        this</span>
+    }
+
+    @Override
+    Request queries(final Map&lt;String, List&lt;String&gt;&gt; map) {
+<span class="fc" id="L79">        map.each { k, v -&gt;</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">            if (queryParams.containsKey(k)) {</span>
+<span class="nc" id="L81">                queryParams[k].addAll(v)</span>
+            } else {
+<span class="pc" id="L83">                queryParams[k] = v</span>
+            }
+        }
+<span class="pc" id="L86">        this</span>
+    }
+
+    @Override @SuppressWarnings('ConfusingMethodName')
+    Request cookies(Map&lt;String, String&gt; cookies) {
+<span class="fc" id="L91">        this.cookies.putAll(cookies)</span>
+<span class="pc" id="L92">        this</span>
+    }
+
+    @Override
+    Request header(final String name, final String value) {
+<span class="fc" id="L97">        headers[name] = value</span>
+<span class="pc" id="L98">        this</span>
+    }
+
+    @Override
+    String getHeader(final String name) {
+<span class="pc" id="L103">        headers[name]</span>
+    }
+
+    @Override
+    Request query(final String name, final String value) {
+<span class="pc" id="L108">        queryParams.computeIfAbsent(name) { k -&gt; [] }.add value</span>
+<span class="pc" id="L109">        this</span>
+    }
+
+    @Override
+    List&lt;String&gt; getQuery(final String name) {
+<span class="pc bfc" id="L114" title="All 2 branches covered.">        (queryParams[name] ?: []).asImmutable()</span>
+    }
+
+    @Override
+    Request cookie(final String name, final String value) {
+<span class="fc" id="L119">        cookies[name] = value</span>
+<span class="pc" id="L120">        this</span>
+    }
+
+    @Override
+    String getCookie(final String name) {
+<span class="pc" id="L125">        cookies[name]</span>
+    }
+
+    @Override
+    Request listener(final Consumer&lt;Request&gt; listener) {
+<span class="fc" id="L130">        listeners.add(listener)</span>
+<span class="pc" id="L131">        this</span>
+    }
+
+    @Override
+    Response responds() {
+<span class="fc" id="L136">        Response response = newResponse()</span>
+<span class="fc" id="L137">        responses.add(response)</span>
+<span class="pc" id="L138">        response</span>
+    }
+
+    @Override
+    Request responder(final Consumer&lt;Response&gt; responder) {
+<span class="fc" id="L143">        Response response = newResponse()</span>
+<span class="fc" id="L144">        responder.accept(response)</span>
+<span class="fc" id="L145">        responses.add(response)</span>
+<span class="pc" id="L146">        this</span>
+    }
+
+    @Override
+    Request responder(@DelegatesTo(Response) final Closure closure) {
+<span class="fc" id="L151">        Response response = newResponse()</span>
+<span class="fc" id="L152">        closure.setDelegate(response)</span>
+<span class="fc" id="L153">        closure.call()</span>
+
+<span class="fc" id="L155">        responses.add(response)</span>
+
+<span class="pc" id="L157">        this</span>
+    }
+
+    @Override
+    Request condition(final Function&lt;ClientRequest, Boolean&gt; matcher) {
+<span class="fc" id="L162">        conditions.add(matcher)</span>
+<span class="pc" id="L163">        this</span>
+    }
+
+    @Override @SuppressWarnings('ConfusingMethodName')
+    Request conditions(List&lt;Function&lt;ClientRequest, Boolean&gt;&gt; matchers) {
+<span class="nc" id="L168">        conditions.addAll(matchers)</span>
+<span class="nc" id="L169">        this</span>
+    }
+
+    @Override @SuppressWarnings('ConfusingMethodName')
+    Request verifier(final Function&lt;Integer, Boolean&gt; verifier) {
+<span class="fc" id="L174">        this.verifier = verifier</span>
+<span class="pc" id="L175">        this</span>
+    }
+
+    /**
+     * Used to verify that the request has been called the expected number of times. By default there is no verification criteria, they must be
+     * configured using the &lt;code&gt;verifier&lt;/code&gt; methods.
+     *
+     * @return true if the call count matches the expected verification criteria
+     */
+    boolean verify() {
+<span class="pc" id="L185">        verifier.apply(callCount)</span>
+    }
+
+    /**
+     * Used to determine whether or not the incoming client request matches this configured request. If there are configured &lt;code&gt;conditions&lt;/code&gt;,
+     * they will override the default match conditions, and only those configured conditions will be applied. The default conditions may be added
+     * back in using the &lt;code&gt;Conditions&lt;/code&gt; functions.
+     *
+     * The default match criteria are:
+     *
+     * &lt;ul&gt;
+     *  &lt;li&gt;The request methods must match.&lt;/li&gt;
+     *  &lt;li&gt;The request paths must match.&lt;/li&gt;
+     *  &lt;li&gt;The request query parameters must match (inclusive).&lt;/li&gt;
+     *  &lt;li&gt;The incoming request headers must contain all of the configured headers (non-inclusive).&lt;/li&gt;
+     *  &lt;li&gt;The incoming request cookies must contain all of the configured cookies (non-inclusive).&lt;/li&gt;
+     * &lt;/ul&gt;
+     *
+     * @param clientRequest the incoming client request
+     * @return true if the incoming request matches the configured request
+     */
+    boolean matches(final ClientRequest clientRequest) {
+<span class="fc bfc" id="L207" title="All 2 branches covered.">        if (conditions) {</span>
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">            return methodEquals(this.method).apply(clientRequest) &amp;&amp;</span>
+<span class="pc bpc" id="L209" title="2 of 4 branches missed.">                pathEquals(this.path).apply(clientRequest) &amp;&amp;</span>
+<span class="pc bfc" id="L210" title="All 2 branches covered.">                conditions.every { it.apply(clientRequest) }</span>
+
+        }
+
+<span class="fc bfc" id="L214" title="All 2 branches covered.">        return methodEquals(this.method).apply(clientRequest) &amp;&amp;</span>
+<span class="fc bfc" id="L215" title="All 4 branches covered.">            pathEquals(this.path).apply(clientRequest) &amp;&amp;</span>
+<span class="fc bfc" id="L216" title="All 4 branches covered.">            queriesEquals(this.queryParams).apply(clientRequest) &amp;&amp;</span>
+<span class="fc bfc" id="L217" title="All 4 branches covered.">            headersContains(this.headers).apply(clientRequest) &amp;&amp;</span>
+<span class="pc bfc" id="L218" title="All 2 branches covered.">            cookiesContains(this.cookies).apply(clientRequest)</span>
+    }
+
+    private Response newResponse() {
+<span class="pc" id="L222">        new ErsatzResponse(emptyResponse)</span>
+    }
+
+    /**
+     * Used to retrieve the current response in the response list (based on the call count). The last response in the list will be sent to all future
+     * calls.
+     *
+     * @return the current response
+     */
+    Response getCurrentResponse() {
+<span class="fc bfc" id="L232" title="All 4 branches covered.">        int index = callCount &gt;= responses.size() ? responses.size() - 1 : callCount</span>
+<span class="pc" id="L233">        responses.get(index)</span>
+    }
+
+    /**
+     * Used to mark the request as having been called. Any configured listeners will be called after the call count has been incremented.
+     */
+    void mark() {
+<span class="fc" id="L240">        callCount++</span>
+
+<span class="fc bfc" id="L242" title="All 2 branches covered.">        for (final Consumer&lt;Request&gt; listener : listeners) {</span>
+<span class="fc" id="L243">            listener.accept(this)</span>
+        }
+    }
+
+    @Override String toString() {
+<span class="pc" id="L248">        &quot;{ $method $path (query=${queryParams}, headers=$headers, cookies=$cookies): counted=$callCount }&quot;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

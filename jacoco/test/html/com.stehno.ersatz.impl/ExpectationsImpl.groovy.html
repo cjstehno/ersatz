@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExpectationsImpl.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.impl</a> &gt; <span class="el_source">ExpectationsImpl.groovy</span></div><h1>ExpectationsImpl.groovy</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2016 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.impl
+
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.Expectations
+import com.stehno.ersatz.Request
+import com.stehno.ersatz.RequestWithContent
+import groovy.transform.CompileStatic
+
+import java.util.function.Consumer
+
+/**
+ * Implementation of the &lt;code&gt;Expectations&lt;/code&gt; interface.
+ */
+@CompileStatic @SuppressWarnings('ConfusingMethodName')
+class ExpectationsImpl implements Expectations {
+
+    private static final String GET = 'GET'
+    private static final String HEAD = 'HEAD'
+    private static final String POST = 'POST'
+    private static final String PUT = 'PUT'
+    private static final String DELETE = 'DELETE'
+    private static final String PATCH = 'PATCH'
+<span class="fc" id="L38">    private final List&lt;Request&gt; requests = []</span>
+
+    @Override
+    Request get(final String path) {
+<span class="pc" id="L42">        expect new ErsatzRequest(GET, path)</span>
+    }
+
+    @Override
+    Request get(final String path, @DelegatesTo(Request) final Closure closure) {
+<span class="pc" id="L47">        expect new ErsatzRequest(GET, path), closure</span>
+    }
+
+    @Override
+    Request get(String path, Consumer&lt;Request&gt; config) {
+<span class="nc" id="L52">        expect new ErsatzRequest(GET, path), config</span>
+    }
+
+    @Override
+    Request head(String path) {
+<span class="pc" id="L57">        expect new ErsatzRequest(HEAD, path, true)</span>
+    }
+
+    @Override
+    Request head(String path, @DelegatesTo(Request) Closure closure) {
+<span class="nc" id="L62">        expect new ErsatzRequest(HEAD, path, true), closure</span>
+    }
+
+    @Override
+    Request head(String path, Consumer&lt;Request&gt; config) {
+<span class="nc" id="L67">        expect new ErsatzRequest(HEAD, path), config</span>
+    }
+
+    @Override
+    RequestWithContent post(String path) {
+<span class="pc" id="L72">        expect(new ErsatzRequestWithContent(POST, path)) as RequestWithContent</span>
+    }
+
+    @Override
+    RequestWithContent post(String path, @DelegatesTo(RequestWithContent) Closure closure) {
+<span class="pc" id="L77">        expect(new ErsatzRequestWithContent(POST, path), closure) as RequestWithContent</span>
+    }
+
+    @Override
+    RequestWithContent post(String path, Consumer&lt;RequestWithContent&gt; config) {
+<span class="nc" id="L82">        expect(new ErsatzRequestWithContent(POST, path), config) as RequestWithContent</span>
+    }
+
+    @Override
+    RequestWithContent put(String path) {
+<span class="pc" id="L87">        expect(new ErsatzRequestWithContent(PUT, path)) as RequestWithContent</span>
+    }
+
+    @Override
+    RequestWithContent put(String path, @DelegatesTo(RequestWithContent) Closure closure) {
+<span class="nc" id="L92">        expect(new ErsatzRequestWithContent(PUT, path), closure) as RequestWithContent</span>
+    }
+
+    @Override
+    RequestWithContent put(String path, Consumer&lt;RequestWithContent&gt; config) {
+<span class="nc" id="L97">        expect(new ErsatzRequestWithContent(PUT, path), config) as RequestWithContent</span>
+    }
+
+    @Override
+    Request delete(String path) {
+<span class="pc" id="L102">        expect new ErsatzRequest(DELETE, path)</span>
+    }
+
+    @Override
+    Request delete(String path, @DelegatesTo(Request) Closure closure) {
+<span class="nc" id="L107">        expect new ErsatzRequest(DELETE, path), closure</span>
+    }
+
+    @Override
+    Request delete(String path, Consumer&lt;Request&gt; config) {
+<span class="nc" id="L112">        expect new ErsatzRequest(DELETE, path), config</span>
+    }
+
+    @Override
+    RequestWithContent patch(String path) {
+<span class="nc" id="L117">        expect(new ErsatzRequestWithContent(PATCH, path)) as RequestWithContent</span>
+    }
+
+    @Override
+    RequestWithContent patch(String path, @DelegatesTo(RequestWithContent) Closure closure) {
+<span class="nc" id="L122">        expect(new ErsatzRequestWithContent(PATCH, path), closure) as RequestWithContent</span>
+    }
+
+    @Override
+    RequestWithContent patch(String path, Consumer&lt;RequestWithContent&gt; config) {
+<span class="nc" id="L127">        expect(new ErsatzRequestWithContent(PATCH, path), config) as RequestWithContent</span>
+    }
+
+    /**
+     * Used to find a request matching the given incoming client request. The first match will be returned.
+     *
+     * @param clientRequest the incoming client request
+     * @return the matching request expectation
+     */
+    Request findMatch(final ClientRequest clientRequest) {
+<span class="pc" id="L137">        requests.find { r -&gt; ((ErsatzRequest) r).matches(clientRequest) }</span>
+    }
+
+    /**
+     * Used to verify that all request expectations have been called the expected number of times.
+     *
+     * @return a value of true if all requests are verified
+     */
+    boolean verify() {
+<span class="fc" id="L146">        requests.each { r -&gt;</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">            assert ((ErsatzRequest) r).verify(), &quot;Expectations for $r were not met.&quot;</span>
+        }
+<span class="pc" id="L149">        true</span>
+    }
+
+    private Request expect(final Request request) {
+<span class="fc" id="L153">        requests.add(request)</span>
+<span class="pc" id="L154">        request</span>
+    }
+
+    private Request expect(final Request request, final Closure closure) {
+<span class="fc" id="L158">        closure.setDelegate(request)</span>
+<span class="fc" id="L159">        closure.call()</span>
+
+<span class="fc" id="L161">        requests.add(request)</span>
+<span class="pc" id="L162">        request</span>
+    }
+
+    private Request expect(final Request request, final Consumer&lt;? extends Request&gt; consumer) {
+<span class="nc" id="L166">        consumer.accept(request)</span>
+<span class="nc" id="L167">        requests.add(request)</span>
+<span class="nc" id="L168">        request</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
