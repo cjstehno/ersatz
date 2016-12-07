@@ -60,7 +60,7 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         this
     }
 
-    @Override
+    @Override @SuppressWarnings('ConfusingMethodName')
     RequestWithContent body(final Object body, final String contentType) {
         this.body(body)
         this.contentType(contentType)

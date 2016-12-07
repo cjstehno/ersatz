@@ -98,8 +98,8 @@ interface Expectations {
     RequestWithContent post(String path, @DelegatesTo(RequestWithContent) Closure closure)
 
     /**
-     * Allows configuration of a POST request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<RequestWithContent></code> will
-     * have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     * Allows configuration of a POST request expectation using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param path the request path.
      * @pram config the configuration consumer
@@ -125,8 +125,8 @@ interface Expectations {
     RequestWithContent put(String path, @DelegatesTo(RequestWithContent) Closure closure)
 
     /**
-     * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<RequestWithContent></code> will
-     * have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param path the request path.
      * @pram config the configuration consumer
@@ -179,8 +179,8 @@ interface Expectations {
     RequestWithContent patch(String path, @DelegatesTo(RequestWithContent) Closure closure)
 
     /**
-     * Allows configuration of a PATCH request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<RequestWithContent></code> will
-     * have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     * Allows configuration of a PATCH request expectation using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param path the request path.
      * @pram config the configuration consumer

@@ -24,7 +24,6 @@ import io.undertow.server.HttpHandler
 import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.CookieImpl
 import io.undertow.util.HttpString
-import org.codehaus.groovy.ant.Groovy
 
 import java.util.function.Consumer
 
@@ -169,8 +168,8 @@ class ErsatzServer {
 
     /**
      * Used to verify all of the HTTP server interaction for their expected call criteria (if any). This method should be called after any test
-     * interactions have been performed. This is an optional step since generally you will also be receiving the expected response back from the server;
-     * however, this verification step can come in handy when simply needing to know that a request is actually called or not.
+     * interactions have been performed. This is an optional step since generally you will also be receiving the expected response back from the
+     * server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
      *
      * @return <code>true</code> if all call criteria were met during test execution.
      */

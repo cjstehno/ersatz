@@ -159,9 +159,9 @@ interface Request {
     Request responder(@DelegatesTo(Response) final Closure closure)
 
     /**
-     * Allows for additional configuration of request matching criteria. The provided <code>Function<ClientRequest,Boolean></code> will have the active
-     * request passed into it and the function will return a value of <code>true</code> if the condition is met. The standard matching criteria will
-     * not be applied if conditions are applied; however, they may be added back in using the <code>Conditions</code> functions.
+     * Allows for additional configuration of request matching criteria. The provided <code>Function<ClientRequest,Boolean></code> will have the
+     * active request passed into it and the function will return a value of <code>true</code> if the condition is met. The standard matching
+     * criteria will not be applied if conditions are applied; however, they may be added back in using the <code>Conditions</code> functions.
      *
      * Multiple additional conditions may be applied.
      *
