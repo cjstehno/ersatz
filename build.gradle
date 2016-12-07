@@ -191,11 +191,11 @@ task updateVersion(group: 'Documentation', description: 'Updates the version in 
 
 task checkVersion(group: 'Verification', description: 'Verify that the project version is reflected in the documentation.') {
     doLast {
-        logger.lifecycle "Verifying that the documentation references version ${project.subprojects[0].version}..."
+        logger.lifecycle "Verifying that the documentation references version ${project.version}..."
 
         // Not the most efficient way to do this but should be ok for now
         boolean documented = ['README.md', 'src/docs/asciidoc/index.adoc'].every { f ->
-            boolean ok = project.file(f).text.contains(project.subprojects[0].version)
+            boolean ok = project.file(f).text.contains(project.version)
 
             logger.info " - Checking: $f: $ok"
             ok
