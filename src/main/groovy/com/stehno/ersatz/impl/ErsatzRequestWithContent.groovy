@@ -18,30 +18,32 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.RequestWithContent
 import groovy.json.JsonSlurper
-import groovy.transform.CompileStatic
 
 import java.util.function.Function
 
 import static com.stehno.ersatz.Conditions.bodyEquals
+import static java.net.URLDecoder.decode
 
 /**
  * Ersatz implementation of a <code>Request</code> with request body content.
  */
-@CompileStatic
 class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
     public static final String CONTENT_TYPE_HEADER = 'Content-Type'
 
-    private static final String DEFAULT_CONTENT_TYPE = 'text/plain; charset=utf-8'
+    @SuppressWarnings('GroovyAssignabilityCheck')
+    private final RequestContentConverters converters = new RequestContentConverters({
+        register({ byte[] m -> new String(m, 'UTF-8') }, 'text/plain', 'text/plain; charset=utf-8')
+        register({ byte[] m -> new String(m, 'UTF-16') }, 'text/plain; charset=utf-16')
+        register({ byte[] m -> new JsonSlurper().parse(m) }, 'application/json', 'text/json')
+        register({ byte[] m ->
+            new String(m, 'UTF-8').split('&').collectEntries { String nvp ->
+                def (name, value) = nvp.split('=')
+                [decode(name, 'UTF-8'), decode(value, 'UTF-8')]
+            }
+        }, 'application/x-www-form-urlencoded', 'application/x-www-form-urlencoded; charset=utf-8')
+    })
 
-    // TODO: a better way to map these would be nice - reduce duplication
-    private final Map<String, Function<byte[], Object>> converters = [
-        'text/plain'                : { byte[] m -> new String(m, 'UTF-8') } as Function<byte[], Object>,
-        'text/plain; charset=utf-8' : { byte[] m -> new String(m, 'UTF-8') } as Function<byte[], Object>,
-        'text/plain; charset=utf-16': { byte[] m -> new String(m, 'UTF-16') } as Function<byte[], Object>,
-        'application/json'          : { byte[] m -> new JsonSlurper().parse(m) } as Function<byte[], Object>,
-        'text/json'                 : { byte[] m -> new JsonSlurper().parse(m) } as Function<byte[], Object>
-    ]
     private Object body
 
     /**
@@ -78,7 +80,7 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     @Override
     RequestWithContent converter(final String contentType, final Function<byte[], Object> converter) {
-        converters[contentType] = converter
+        converters.register(converter, contentType)
         this
     }
 
@@ -112,14 +114,12 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
      */
     boolean matches(final ClientRequest clientRequest) {
         boolean matches = super.matches(clientRequest)
-        conditions ? matches : matches && bodyEquals(body, findConverter(contentType)).apply(clientRequest)
-    }
-
-    private Function<byte[], Object> findConverter(final String contentType) {
-        converters[contentType ?: DEFAULT_CONTENT_TYPE] ?: converters[DEFAULT_CONTENT_TYPE]
+        conditions ? matches : matches && bodyEquals(body, converters.findConverter(contentType)).apply(clientRequest)
     }
 
     @Override String toString() {
         "${super.toString()}: $body"
     }
 }
+
+

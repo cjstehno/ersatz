@@ -30,6 +30,7 @@ class BasicSpec extends Specification {
             get('/secrets').responds().content('Something secure')
         }.start()
 
+        // TODO: add helper method to build this for testing
         String encodedCred = "Basic ${'admin:$3cr3t'.bytes.encodeBase64()}"
 
         when:
