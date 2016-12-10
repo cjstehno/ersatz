@@ -15,6 +15,9 @@
  */
 package com.stehno.ersatz.impl
 
+import groovy.transform.Immutable
+
+import javax.activation.MimeType
 import java.util.function.Function
 
 /**
@@ -22,21 +25,33 @@ import java.util.function.Function
  */
 class RequestContentConverters {
 
-    private static final String DEFAULT_CONTENT_TYPE = 'text/plain; charset=utf-8'
-    private final Map<String, Function<byte[], Object>> converters = [:]
+    // FIXME: needs testing
+
+    private static final String DEFAULT_CONTENT_TYPE = 'text/plain'
+    private final List<MimeTypeConverter> converters = []
 
     RequestContentConverters(@DelegatesTo(RequestContentConverters) Closure closure) {
         closure.delegate = this
         closure.call()
     }
 
-    void register(final Function<byte[], Object> converter, final String... contentTypes) {
-        contentTypes.each { ctype ->
-            converters.put ctype, converter
-        }
+    void register(final MimeType contentType, final Function<byte[], Object> converter) {
+        converters.add(new MimeTypeConverter(contentType, converter))
     }
 
     Function<byte[], Object> findConverter(final String contentType) {
-        converters[contentType ?: DEFAULT_CONTENT_TYPE] ?: converters[DEFAULT_CONTENT_TYPE]
+        if (!contentType) {
+            return findConverter(DEFAULT_CONTENT_TYPE)
+        }
+
+        MimeType mimeType = new MimeType(contentType)
+        converters.find { c -> c.mimeType.match(mimeType) }?.converter ?: findConverter(DEFAULT_CONTENT_TYPE)
     }
+}
+
+@Immutable(knownImmutableClasses = [MimeType, Function])
+class MimeTypeConverter {
+
+    MimeType mimeType
+    Function<byte[], Object> converter
 }

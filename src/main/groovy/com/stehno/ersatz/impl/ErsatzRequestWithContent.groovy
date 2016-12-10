@@ -19,6 +19,7 @@ import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.RequestWithContent
 import groovy.json.JsonSlurper
 
+import javax.activation.MimeType
 import java.util.function.Function
 
 import static com.stehno.ersatz.Conditions.bodyEquals
@@ -31,17 +32,21 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     public static final String CONTENT_TYPE_HEADER = 'Content-Type'
 
+    // TODO: document supported mimetypes
+    // TODO: pull functions into a shared class for reuse
+    // TOOD: consider using mimetypes throughout
+
     @SuppressWarnings('GroovyAssignabilityCheck')
     private final RequestContentConverters converters = new RequestContentConverters({
-        register({ byte[] m -> new String(m, 'UTF-8') }, 'text/plain', 'text/plain; charset=utf-8')
-        register({ byte[] m -> new String(m, 'UTF-16') }, 'text/plain; charset=utf-16')
-        register({ byte[] m -> new JsonSlurper().parse(m) }, 'application/json', 'text/json')
-        register({ byte[] m ->
+        register(new MimeType('text/plain'), { byte[] m -> new String(m, 'UTF-8') })
+        register(new MimeType('application/json'), { byte[] m -> new JsonSlurper().parse(m) })
+        register(new MimeType('text/json'), { byte[] m -> new JsonSlurper().parse(m) })
+        register(new MimeType('application/x-www-form-urlencoded'), { byte[] m ->
             new String(m, 'UTF-8').split('&').collectEntries { String nvp ->
                 def (name, value) = nvp.split('=')
                 [decode(name, 'UTF-8'), decode(value, 'UTF-8')]
             }
-        }, 'application/x-www-form-urlencoded', 'application/x-www-form-urlencoded; charset=utf-8')
+        })
     })
 
     private Object body
@@ -80,7 +85,7 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     @Override
     RequestWithContent converter(final String contentType, final Function<byte[], Object> converter) {
-        converters.register(converter, contentType)
+        converters.register(new MimeType(contentType), converter)
         this
     }
 
@@ -95,8 +100,8 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     /**
      * Used to determine whether or not the incoming client request matches this configured request. If there are configured <code>conditions</code>,
-     * they will override the default match conditions, and only those configured conditions will be applied. The default conditions may be added
-     * back in using the <code>Conditions</code> functions.
+     * they will override the default match conditions (except for path and request method matching, and only those configured conditions will be
+     * applied. The default conditions may be added back in using the <code>Conditions</code> functions.
      *
      * The default match criteria are:
      *
@@ -121,5 +126,3 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         "${super.toString()}: $body"
     }
 }
-
-

@@ -18,6 +18,7 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.ErsatzServer
 import com.stehno.ersatz.InMemoryCookieJar
 import groovy.json.JsonSlurper
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -25,6 +26,7 @@ import spock.lang.AutoCleanup
 import spock.lang.Specification
 
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
+import static com.stehno.ersatz.MultipartContentHelper.eq
 import static okhttp3.MediaType.parse
 import static okhttp3.Request.Builder
 import static okhttp3.RequestBody.create
@@ -165,6 +167,37 @@ class ErsatzRequestWithContentSpec extends Specification {
         Builder builder = new Builder().post(create(parse('application/x-www-form-urlencoded'), 'alpha=some+data&bravo=42&charlie=last'))
             .url("${server.serverUrl}/form")
             .addHeader('Content-Type', 'application/x-www-form-urlencoded')
+
+        Response response = client.newCall(builder.build()).execute()
+
+        then:
+        response.body().string() == 'ok'
+    }
+
+    def 'multipart/form-data'() {
+        setup:
+        server.expectations {
+            post('/upload') {
+                condition { cr ->
+                    eq(cr.fileItems[0], fieldName: 'something', string: 'interesting') &&
+                        eq(cr.fileItems[1], fieldName: 'infoFile', string: 'This is some interesting file content.') &&
+                        eq(cr.fileItems[2], fieldName: 'dataFile', size: 7)
+                }
+                responder {
+                    content 'ok'
+                }
+            }
+        }.start()
+
+        OkHttpClient client = new OkHttpClient()
+
+        when:
+        MultipartBody.Builder bodyBuilder = new MultipartBody.Builder()
+            .addFormDataPart('something', 'interesting')
+            .addFormDataPart('infoFile', 'info.txt', create(parse('text/plain'), 'This is some interesting file content.'))
+            .addFormDataPart('dataFile', 'data.bin', create(parse('image/png'), [8, 6, 7, 5, 3, 0, 9] as byte[]))
+
+        Builder builder = new Builder().post(bodyBuilder.build()).url("${server.serverUrl}/upload").addHeader('Content-Type', 'multipart/form-data')
 
         Response response = client.newCall(builder.build()).execute()
 

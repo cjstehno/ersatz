@@ -22,6 +22,10 @@ import io.undertow.io.Receiver
 import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.Cookie
 import io.undertow.util.HeaderMap
+import org.apache.commons.fileupload.FileItem
+import org.apache.commons.fileupload.FileUpload
+import org.apache.commons.fileupload.UploadContext
+import org.apache.commons.fileupload.disk.DiskFileItemFactory
 
 import java.util.function.Function
 
@@ -124,5 +128,39 @@ class ClientRequest {
     @Override
     String toString() {
         "{ $method $path (query=$queryParams, headers=$headers, cookies=$cookies): ${bodyAsString ?: '<empty>'} }"
+    }
+
+    /**
+     * Used to retrieve the list of FileItems contained in a <code>multipart/form-data</code> request.
+     *
+     * @return the list of <code>FileItem</code> objects representing the multipart request content.
+     */
+    List<FileItem> getFileItems() {
+        new FileUpload(new DiskFileItemFactory(1000, File.createTempDir())).parseRequest(new UploadContext() {
+            @Override
+            long contentLength() {
+                exchange.requestContentLength
+            }
+
+            @Override
+            String getCharacterEncoding() {
+                exchange.requestCharset
+            }
+
+            @Override
+            String getContentType() {
+                exchange.requestHeaders.get('Content-Type').first
+            }
+
+            @Override
+            int getContentLength() {
+                exchange.requestContentLength
+            }
+
+            @Override
+            InputStream getInputStream() throws IOException {
+                new ByteArrayInputStream(bodyAsBytes as byte[])
+            }
+        })
     }
 }

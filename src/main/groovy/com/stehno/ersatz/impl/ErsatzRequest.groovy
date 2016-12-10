@@ -187,8 +187,8 @@ class ErsatzRequest implements Request {
 
     /**
      * Used to determine whether or not the incoming client request matches this configured request. If there are configured <code>conditions</code>,
-     * they will override the default match conditions, and only those configured conditions will be applied. The default conditions may be added
-     * back in using the <code>Conditions</code> functions.
+     * they will override the default match conditions (except for path and request method matching, and only those configured conditions will be
+     * applied. The default conditions may be added back in using the <code>Conditions</code> functions.
      *
      * The default match criteria are:
      *
