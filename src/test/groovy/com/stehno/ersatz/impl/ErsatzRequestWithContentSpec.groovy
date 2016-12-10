@@ -148,6 +148,30 @@ class ErsatzRequestWithContentSpec extends Specification {
         value == NOT_FOUND_BODY
     }
 
+    def 'application/x-www-form-urlencoded'() {
+        setup:
+        server.expectations {
+            post('/form') {
+                body([alpha: 'some data', bravo: '42', charlie: 'last'], 'application/x-www-form-urlencoded; charset=utf-8')
+                responder {
+                    content 'ok'
+                }
+            }
+        }.start()
+
+        when:
+        OkHttpClient client = new OkHttpClient()
+
+        Builder builder = new Builder().post(create(parse('application/x-www-form-urlencoded'), 'alpha=some+data&bravo=42&charlie=last'))
+            .url("${server.serverUrl}/form")
+            .addHeader('Content-Type', 'application/x-www-form-urlencoded')
+
+        Response response = client.newCall(builder.build()).execute()
+
+        then:
+        response.body().string() == 'ok'
+    }
+
     private Builder clientPost(final String path, final String contentType, final String content) {
         new Builder().post(create(parse(contentType), content)).url("${server.serverUrl}${path}")
     }
