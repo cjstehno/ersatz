@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ContentType
 import com.stehno.ersatz.Response
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
@@ -53,6 +54,11 @@ class ErsatzResponse implements Response {
         this.contentType(contentType)
     }
 
+    @Override @SuppressWarnings('ConfusingMethodName')
+    Response content(final Object content, final ContentType contentType) {
+        this.content(content, contentType.value)
+    }
+
     @Override
     Response header(final String name, final String value) {
         headers[name] = value
@@ -80,6 +86,12 @@ class ErsatzResponse implements Response {
     @Override
     Response contentType(final String contentType) {
         header(CONTENT_TYPE_HEADER, contentType)
+        this
+    }
+
+    @Override
+    Response contentType(final ContentType contentType) {
+        header(CONTENT_TYPE_HEADER, contentType.value)
         this
     }
 

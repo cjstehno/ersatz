@@ -230,7 +230,7 @@ class ErsatzRequest implements Request {
      */
     Response getCurrentResponse() {
         int index = callCount >= responses.size() ? responses.size() - 1 : callCount
-        responses.get(index)
+        index >= 0 ? responses[index] : null
     }
 
     /**

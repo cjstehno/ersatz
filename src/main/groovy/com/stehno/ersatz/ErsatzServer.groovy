@@ -188,16 +188,19 @@ class ErsatzServer {
     }
 
     private static void send(final HttpServerExchange exchange, final Response response) {
-        exchange.statusCode = response.code
+        if( response ){
+            exchange.statusCode = response.code
 
-        response.headers.each { k, v ->
-            exchange.responseHeaders.put(new HttpString(k), v)
+            response.headers.each { k, v ->
+                exchange.responseHeaders.put(new HttpString(k), v)
+            }
+
+            response.cookies.each { k, v ->
+                exchange.responseCookies.put(k, new CookieImpl(k, v))
+            }
         }
 
-        response.cookies.each { k, v ->
-            exchange.responseCookies.put(k, new CookieImpl(k, v))
-        }
-
-        exchange.responseSender.send(response.content?.toString() ?: '')
+        // FIXME: how does this handle binary response content?
+        exchange.responseSender.send(response?.content?.toString() ?: '')
     }
 }
