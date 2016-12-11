@@ -24,6 +24,8 @@ import groovy.transform.Immutable
 @Immutable @CompileStatic @SuppressWarnings('GroovyUnusedDeclaration')
 class ContentType {
 
+    static final String CONTENT_TYPE_HEADER = 'Content-Type'
+
     static final ContentType TEXT_PLAIN = new ContentType('text/plain')
     static final ContentType TEXT_HTML = new ContentType('text/html')
     static final ContentType TEXT_JAVASCRIPT = new ContentType('text/javascript')
@@ -33,6 +35,8 @@ class ContentType {
     static final ContentType APPLICATION_JSON = new ContentType('application/json')
     static final ContentType TEXT_JSON = new ContentType('text/json')
     static final ContentType APPLICATION_URLENCODED = new ContentType('application/x-www-form-urlencoded')
+    static final ContentType MULTIPART_FORMDATA = new ContentType('multipart/form-data')
+    static final ContentType MULTIPART_MIXED = new ContentType('multipart/mixed')
 
     String value
 }

@@ -23,10 +23,6 @@ import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
 class RequestContentConvertersSpec extends Specification {
 
-    /*
-        FIXME: MultipartContentMatcher object
-     */
-
     private final RequestContentConverters converters = new RequestContentConverters({
         register TEXT_PLAIN, { b -> 'text/plain' }
         register 'text/plain; charset=utf-8', { b -> 'text/plain; charset=utf-8' }

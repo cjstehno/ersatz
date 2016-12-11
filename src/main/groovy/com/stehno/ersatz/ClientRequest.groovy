@@ -135,6 +135,7 @@ class ClientRequest {
      *
      * @return the list of <code>FileItem</code> objects representing the multipart request content.
      */
+    @Memoized
     List<FileItem> getFileItems() {
         new FileUpload(new DiskFileItemFactory(1000, File.createTempDir())).parseRequest(new UploadContext() {
             @Override

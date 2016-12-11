@@ -271,10 +271,11 @@ the unit tests:
 ----
 server.expectations {
     post('/upload') {
+        contentType MULTIPART_FORMDATA
         condition { cr ->
-            eq(cr.fileItems[0], fieldName: 'something', string: 'interesting') &&
-                eq(cr.fileItems[1], fieldName: 'infoFile', string: 'This is some interesting file content.') &&
-                eq(cr.fileItems[2], fieldName: 'dataFile', size: 7)
+            attrs(cr.fileItems[0], fieldName: 'something', string: 'interesting') &&
+                attrs(cr.fileItems[1], fieldName: 'infoFile', string: 'This is some interesting file content.') &&
+                attrs(cr.fileItems[2], fieldName: 'dataFile', size: 7)
         }
         responder {
             content 'ok'
@@ -285,6 +286,26 @@ server.expectations {
 
 This expectation will match a `POST` request to `/upload` that has multipart content matching the specified criteria. The `MultipartContentHelper`
 provides additional functions to aid in creating these `FileItem`-based conditions.
+
+Alternately, you may use the `MultipartContentMatcher`:
+
+[source,groovy]
+----
+server.expectations {
+    post('/upload') {
+        condition multipart {
+            field(0, fieldName: 'something', string: 'interesting') &&
+                field(1, fieldName: 'infoFile', string: 'This is some interesting file content.') &&
+                field(2, fieldName: 'dataFile', size: 7)
+        }
+        responder {
+            content 'ok'
+        }
+    }
+}
+----
+
+which provides some additional helper methods.
 
 == Feature Extensions
 
