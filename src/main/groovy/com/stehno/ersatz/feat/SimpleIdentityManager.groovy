@@ -62,4 +62,9 @@ class SimpleIdentityManager implements IdentityManager {
     Account verify(Credential credential) {
         throw new UnsupportedOperationException()
     }
+
+    static String encodedCredential(final String user, final String pass) {
+        String encoded = "$user:$pass".bytes.encodeBase64()
+        "Basic $encoded"
+    }
 }

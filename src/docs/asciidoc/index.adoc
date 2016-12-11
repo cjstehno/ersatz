@@ -238,6 +238,75 @@ get('/something'){
 Adding the `verifier` configuration adds the extra safety of ensuring that if the request is called more than our expected two times, the verification
 will fail (and with that, the test).
 
+== Url-Encoded Form Requests
+
+Url-encoded form requests are supported by default when the request content-type is specified as `application/x-www-form-urlencoded`. The request
+`body` expectation configuration will expect a `Map<String,String>` equivalent to the name-value pairs specified in the request body content. An
+example would be:
+
+[source,groovy]
+----
+server.expectations {
+    post('/form') {
+        body([alpha: 'some data', bravo: '42'], 'application/x-www-form-urlencoded')
+        responder {
+            content 'ok'
+        }
+    }
+}
+----
+
+where the `POST`ed content data would look like:
+
+    alpha=some+data&bravo=42
+
+== Multipart Request Content
+
+Ersatz server supports file upload requests (`multipart/form-data` content-type) using the
+https://commons.apache.org/proper/commons-fileupload/[Apache File Upload] library on the "server" side; however, due to the complexity of file upload
+content, the standard body matching cannot be used, instead a custom `condition` must be specified to determine the match, such as this example from
+the unit tests:
+
+[source,groovy]
+----
+server.expectations {
+    post('/upload') {
+        contentType MULTIPART_FORMDATA
+        condition { cr ->
+            attrs(cr.fileItems[0], fieldName: 'something', string: 'interesting') &&
+                attrs(cr.fileItems[1], fieldName: 'infoFile', string: 'This is some interesting file content.') &&
+                attrs(cr.fileItems[2], fieldName: 'dataFile', size: 7)
+        }
+        responder {
+            content 'ok'
+        }
+    }
+}
+----
+
+This expectation will match a `POST` request to `/upload` that has multipart content matching the specified criteria. The `MultipartContentHelper`
+provides additional functions to aid in creating these `FileItem`-based conditions.
+
+Alternately, you may use the `MultipartContentMatcher`:
+
+[source,groovy]
+----
+server.expectations {
+    post('/upload') {
+        condition multipart {
+            field(0, fieldName: 'something', string: 'interesting') &&
+                field(1, fieldName: 'infoFile', string: 'This is some interesting file content.') &&
+                field(2, fieldName: 'dataFile', size: 7)
+        }
+        responder {
+            content 'ok'
+        }
+    }
+}
+----
+
+which provides some additional helper methods.
+
 == Feature Extensions
 
 Additional server functionality may be added/configured on the server before startup. The `ServerFeature` interface provides this extension point;
