@@ -41,6 +41,7 @@ interface RequestWithContent extends Request {
      * @return a reference to this request
      */
     RequestWithContent body(final Object body, String contentType)
+    RequestWithContent body(final Object body, ContentType contentType)
 
     /**
      * Configures the expected content type (header) of the request.
@@ -49,6 +50,7 @@ interface RequestWithContent extends Request {
      * @return a reference to this request
      */
     RequestWithContent contentType(final String contentType)
+    RequestWithContent contentType(final ContentType contentType)
 
     /**
      * Specifies a custom body content converter function. The function will have the client request body content as a byte array and it will be
@@ -60,4 +62,5 @@ interface RequestWithContent extends Request {
      * @return a reference to this request
      */
     RequestWithContent converter(final String contentType, final Function<byte[], Object> converter)
+    RequestWithContent converter(final ContentType contentType, final Function<byte[], Object> converter)
 }

@@ -16,13 +16,14 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.ContentType
 import com.stehno.ersatz.RequestWithContent
 import groovy.json.JsonSlurper
 
-import javax.activation.MimeType
 import java.util.function.Function
 
 import static com.stehno.ersatz.Conditions.bodyEquals
+import static com.stehno.ersatz.ContentType.*
 import static java.net.URLDecoder.decode
 
 /**
@@ -32,16 +33,13 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     public static final String CONTENT_TYPE_HEADER = 'Content-Type'
 
-    // TODO: document supported mimetypes
-    // TODO: pull functions into a shared class for reuse
-    // TOOD: consider using mimetypes throughout
-
+    // TODO: should this be global (off the server object) rather than per request? or both
     @SuppressWarnings('GroovyAssignabilityCheck')
     private final RequestContentConverters converters = new RequestContentConverters({
-        register(new MimeType('text/plain'), { byte[] m -> new String(m, 'UTF-8') })
-        register(new MimeType('application/json'), { byte[] m -> new JsonSlurper().parse(m) })
-        register(new MimeType('text/json'), { byte[] m -> new JsonSlurper().parse(m) })
-        register(new MimeType('application/x-www-form-urlencoded'), { byte[] m ->
+        register(TEXT_PLAIN, { byte[] m -> new String(m, 'UTF-8') })
+        register(APPLICATION_JSON, { byte[] m -> new JsonSlurper().parse(m) })
+        register(TEXT_JSON, { byte[] m -> new JsonSlurper().parse(m) })
+        register(APPLICATION_URLENCODED, { byte[] m ->
             new String(m, 'UTF-8').split('&').collectEntries { String nvp ->
                 def (name, value) = nvp.split('=')
                 [decode(name, 'UTF-8'), decode(value, 'UTF-8')]
@@ -74,9 +72,20 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
     }
 
     @Override
+    RequestWithContent body(final Object body, final ContentType contentType) {
+        this.body(body)
+        this.contentType(contentType)
+    }
+
+    @Override
     RequestWithContent contentType(final String contentType) {
         header(CONTENT_TYPE_HEADER, contentType)
         this
+    }
+
+    @Override
+    RequestWithContent contentType(final ContentType contentType) {
+        this.contentType(contentType.value)
     }
 
     String getContentType() {
@@ -85,7 +94,13 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     @Override
     RequestWithContent converter(final String contentType, final Function<byte[], Object> converter) {
-        converters.register(new MimeType(contentType), converter)
+        converters.register(contentType, converter)
+        this
+    }
+
+    @Override
+    RequestWithContent converter(final ContentType contentType, final Function<byte[], Object> converter) {
+        converters.register(contentType, converter)
         this
     }
 
@@ -119,7 +134,12 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
      */
     boolean matches(final ClientRequest clientRequest) {
         boolean matches = super.matches(clientRequest)
-        conditions ? matches : matches && bodyEquals(body, converters.findConverter(contentType)).apply(clientRequest)
+        if (conditions) {
+            return matches
+        } else {
+            Function<byte[], Object> converter = contentType ? converters.findConverter(contentType) : converters.findConverter(TEXT_PLAIN)
+            return matches && bodyEquals(body, converter).apply(clientRequest)
+        }
     }
 
     @Override String toString() {

@@ -15,19 +15,21 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ContentType
 import groovy.transform.Immutable
 
 import javax.activation.MimeType
 import java.util.function.Function
 
+import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+
 /**
  * Content converters for request body content based on content-type.
+ *
+ * Instances of this class should not be used directly, but rather populated through the `RequestWithContent` `converter` method.
  */
 class RequestContentConverters {
 
-    // FIXME: needs testing
-
-    private static final String DEFAULT_CONTENT_TYPE = 'text/plain'
     private final List<MimeTypeConverter> converters = []
 
     RequestContentConverters(@DelegatesTo(RequestContentConverters) Closure closure) {
@@ -35,23 +37,43 @@ class RequestContentConverters {
         closure.call()
     }
 
-    void register(final MimeType contentType, final Function<byte[], Object> converter) {
-        converters.add(new MimeTypeConverter(contentType, converter))
+    void register(final ContentType contentType, final Function<byte[], Object> converter) {
+        register contentType.value, converter
+    }
+
+    void register(final String contentType, final Function<byte[], Object> converter) {
+        MimeTypeConverter existing = converters.find { c -> c.mimeType.toString() == contentType }
+        if (existing) {
+            converters.remove(existing)
+        }
+
+        converters.add(new MimeTypeConverter(new MimeType(contentType), converter))
+    }
+
+    Function<byte[], Object> findConverter(final ContentType contentType) {
+        findConverter(contentType.value)
     }
 
     Function<byte[], Object> findConverter(final String contentType) {
         if (!contentType) {
-            return findConverter(DEFAULT_CONTENT_TYPE)
+            return findConverter(TEXT_PLAIN)
         }
 
         MimeType mimeType = new MimeType(contentType)
-        converters.find { c -> c.mimeType.match(mimeType) }?.converter ?: findConverter(DEFAULT_CONTENT_TYPE)
+
+        def found = converters.findAll { c -> c.mimeType.match(mimeType) }
+
+        if (found.size() > 1) {
+            found = [found.find { c -> c.mimeType.toString() == contentType }]
+        }
+
+        found[0]?.converter ?: findConverter(TEXT_PLAIN)
     }
-}
 
-@Immutable(knownImmutableClasses = [MimeType, Function])
-class MimeTypeConverter {
+    @Immutable(knownImmutableClasses = [MimeType, Function])
+    private static class MimeTypeConverter {
 
-    MimeType mimeType
-    Function<byte[], Object> converter
+        MimeType mimeType
+        Function<byte[], Object> converter
+    }
 }

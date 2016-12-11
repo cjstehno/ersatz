@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ContentType
 import com.stehno.ersatz.ErsatzServer
 import com.stehno.ersatz.InMemoryCookieJar
 import groovy.json.JsonSlurper
@@ -25,6 +26,7 @@ import okhttp3.Response
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
+import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
 import static com.stehno.ersatz.MultipartContentHelper.eq
 import static okhttp3.MediaType.parse
@@ -56,7 +58,7 @@ class ErsatzRequestWithContentSpec extends Specification {
 
     def 'body with content-type'() {
         when:
-        request.body(BODY_CONTENT, 'text/plain')
+        request.body(BODY_CONTENT, TEXT_PLAIN)
 
         then:
         request.body == BODY_CONTENT
