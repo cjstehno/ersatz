@@ -33,7 +33,6 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     public static final String CONTENT_TYPE_HEADER = 'Content-Type'
 
-    // TODO: should this be global (off the server object) rather than per request? or both
     @SuppressWarnings('GroovyAssignabilityCheck')
     private final RequestContentConverters converters = new RequestContentConverters({
         register(TEXT_PLAIN, { byte[] m -> new String(m, 'UTF-8') })
