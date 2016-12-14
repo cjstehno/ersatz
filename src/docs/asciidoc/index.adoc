@@ -294,9 +294,9 @@ Alternately, you may use the `MultipartContentMatcher`:
 server.expectations {
     post('/upload') {
         condition multipart {
-            field(0, fieldName: 'something', string: 'interesting') &&
-                field(1, fieldName: 'infoFile', string: 'This is some interesting file content.') &&
-                field(2, fieldName: 'dataFile', size: 7)
+            field(0, 'something', 'interesting') &&
+                file(1, 'infoFile', 'info.txt', 'text/plain', 'This is some interesting file content.') &&
+                part(2, fieldName: 'dataFile', size: 7, fileName: 'data.bin', contentType: 'image/png', bytes: [8, 6, 7, 5, 3, 0, 9] as byte[])
         }
         responder {
             content 'ok'

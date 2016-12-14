@@ -25,7 +25,6 @@ import okhttp3.Response
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.MULTIPART_FORMDATA
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
 import static com.stehno.ersatz.MultipartContentMatcher.attrs
@@ -213,9 +212,9 @@ class ErsatzRequestWithContentSpec extends Specification {
         server.expectations {
             post('/upload') {
                 condition multipart {
-                    field(0, fieldName: 'something', string: 'interesting') &&
-                        field(1, fieldName: 'infoFile', string: 'This is some interesting file content.') &&
-                        field(2, fieldName: 'dataFile', size: 7)
+                    field(0, 'something', 'interesting') &&
+                        file(1, 'infoFile', 'info.txt', 'text/plain', 'This is some interesting file content.') &&
+                        part(2, fieldName: 'dataFile', size: 7, fileName: 'data.bin', contentType: 'image/png', bytes: [8, 6, 7, 5, 3, 0, 9] as byte[])
                 }
                 responder {
                     content 'ok'
