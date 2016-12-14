@@ -24,19 +24,19 @@ import groovy.transform.Immutable
 @Immutable @CompileStatic @SuppressWarnings('GroovyUnusedDeclaration')
 class ContentType {
 
-    static final String CONTENT_TYPE_HEADER = 'Content-Type'
+    public static final String CONTENT_TYPE_HEADER = 'Content-Type'
 
-    static final ContentType TEXT_PLAIN = new ContentType('text/plain')
-    static final ContentType TEXT_HTML = new ContentType('text/html')
-    static final ContentType TEXT_JAVASCRIPT = new ContentType('text/javascript')
-    static final ContentType APPLICATION_JAVASCRIPT = new ContentType('application/javascript')
-    static final ContentType TEXT_XML = new ContentType('text/xml')
-    static final ContentType APPLICATION_XML = new ContentType('application/xml')
-    static final ContentType APPLICATION_JSON = new ContentType('application/json')
-    static final ContentType TEXT_JSON = new ContentType('text/json')
-    static final ContentType APPLICATION_URLENCODED = new ContentType('application/x-www-form-urlencoded')
-    static final ContentType MULTIPART_FORMDATA = new ContentType('multipart/form-data')
-    static final ContentType MULTIPART_MIXED = new ContentType('multipart/mixed')
+    public static final ContentType TEXT_PLAIN = new ContentType('text/plain')
+    public static final ContentType TEXT_HTML = new ContentType('text/html')
+    public static final ContentType TEXT_JAVASCRIPT = new ContentType('text/javascript')
+    public static final ContentType APPLICATION_JAVASCRIPT = new ContentType('application/javascript')
+    public static final ContentType TEXT_XML = new ContentType('text/xml')
+    public static final ContentType APPLICATION_XML = new ContentType('application/xml')
+    public static final ContentType APPLICATION_JSON = new ContentType('application/json')
+    public static final ContentType TEXT_JSON = new ContentType('text/json')
+    public static final ContentType APPLICATION_URLENCODED = new ContentType('application/x-www-form-urlencoded')
+    public static final ContentType MULTIPART_FORMDATA = new ContentType('multipart/form-data')
+    public static final ContentType MULTIPART_MIXED = new ContentType('multipart/mixed')
 
     String value
 }
