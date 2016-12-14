@@ -45,9 +45,9 @@ class MultipartContentMatcher implements Function<ClientRequest, Boolean> {
             closure.delegate = fileItemMatcher
             return headerMatch && closure.call(clientRequest)
 
-        } else {
-            return headerMatch && function.apply(fileItemMatcher)
         }
+
+        return headerMatch && function.apply(fileItemMatcher)
     }
 
     /**

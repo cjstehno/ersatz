@@ -26,8 +26,8 @@ For Gradle:
 For Maven:
 
     <dependency>
-        <group>com.stehno.ersatz</group>
-        <artifact>ersatz</artifact>
+        <groupId>com.stehno.ersatz</groupId>
+        <artifactId>ersatz</artifactId>
         <version>0.1.0</version>
     </dependency>
 

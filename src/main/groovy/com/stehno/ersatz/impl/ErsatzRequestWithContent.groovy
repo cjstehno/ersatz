@@ -17,14 +17,14 @@ package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.ContentType
+import com.stehno.ersatz.Converters
 import com.stehno.ersatz.RequestWithContent
-import groovy.json.JsonSlurper
 
 import java.util.function.Function
 
 import static com.stehno.ersatz.Conditions.bodyEquals
 import static com.stehno.ersatz.ContentType.*
-import static java.net.URLDecoder.decode
+
 
 /**
  * Ersatz implementation of a <code>Request</code> with request body content.
@@ -33,17 +33,11 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     public static final String CONTENT_TYPE_HEADER = 'Content-Type'
 
-    @SuppressWarnings('GroovyAssignabilityCheck')
     private final RequestContentConverters converters = new RequestContentConverters({
-        register(TEXT_PLAIN, { byte[] m -> new String(m, 'UTF-8') })
-        register(APPLICATION_JSON, { byte[] m -> new JsonSlurper().parse(m) })
-        register(TEXT_JSON, { byte[] m -> new JsonSlurper().parse(m) })
-        register(APPLICATION_URLENCODED, { byte[] m ->
-            new String(m, 'UTF-8').split('&').collectEntries { String nvp ->
-                def (name, value) = nvp.split('=')
-                [decode(name, 'UTF-8'), decode(value, 'UTF-8')]
-            }
-        })
+        register TEXT_PLAIN, Converters.utf8String
+        register APPLICATION_JSON, Converters.parseJson
+        register TEXT_JSON, Converters.parseJson
+        register APPLICATION_URLENCODED, Converters.urlEncoded
     })
 
     private Object body
@@ -70,7 +64,7 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         this.contentType(contentType)
     }
 
-    @Override
+    @Override @SuppressWarnings('ConfusingMethodName')
     RequestWithContent body(final Object body, final ContentType contentType) {
         this.body(body)
         this.contentType(contentType)
@@ -135,10 +129,10 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         boolean matches = super.matches(clientRequest)
         if (conditions) {
             return matches
-        } else {
-            Function<byte[], Object> converter = contentType ? converters.findConverter(contentType) : converters.findConverter(TEXT_PLAIN)
-            return matches && bodyEquals(body, converter).apply(clientRequest)
         }
+
+        return matches &&
+            bodyEquals(body, contentType ? converters.findConverter(contentType) : converters.findConverter(TEXT_PLAIN)).apply(clientRequest)
     }
 
     @Override String toString() {

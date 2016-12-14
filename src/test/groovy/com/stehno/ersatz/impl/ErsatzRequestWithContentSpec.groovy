@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ContentType
 import com.stehno.ersatz.ErsatzServer
 import com.stehno.ersatz.InMemoryCookieJar
 import groovy.json.JsonSlurper
@@ -63,6 +64,14 @@ class ErsatzRequestWithContentSpec extends Specification {
         then:
         request.body == BODY_CONTENT
         request.contentType == 'text/plain'
+    }
+
+    def 'to string'() {
+        setup:
+        request.body('Some body')
+
+        expect:
+        request.toString() == '{ POST /posting (query=[:], headers=[:], cookies=[:]): counted=0 }: Some body'
     }
 
     def 'matching: body'() {
@@ -132,7 +141,7 @@ class ErsatzRequestWithContentSpec extends Specification {
             post('/posting') {
                 body([label: "Body Content", text: "This is some body content."])
                 contentType 'some/json; charset=utf-8'
-                converter('some/json; charset=utf-8', { b -> new JsonSlurper().parse b })
+                converter(new ContentType('some/json; charset=utf-8'), { b -> new JsonSlurper().parse b })
                 responder {
                     content responseContent
                 }

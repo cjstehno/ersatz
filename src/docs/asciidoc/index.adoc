@@ -256,7 +256,7 @@ server.expectations {
 }
 ----
 
-where the `POST`ed content data would look like:
+where the `POST` content data would look like:
 
     alpha=some+data&bravo=42
 
@@ -273,9 +273,9 @@ server.expectations {
     post('/upload') {
         contentType MULTIPART_FORMDATA
         condition { cr ->
-            attrs(cr.fileItems[0], fieldName: 'something', string: 'interesting') &&
-                attrs(cr.fileItems[1], fieldName: 'infoFile', string: 'This is some interesting file content.') &&
-                attrs(cr.fileItems[2], fieldName: 'dataFile', size: 7)
+            attrs(cr.fileItems[0], fieldName:'something', string:'interesting') &&
+            attrs(cr.fileItems[1], fieldName:'infoFile', string:'This is some interesting file content.') &&
+            attrs(cr.fileItems[2], fieldName:'dataFile', size:7)
         }
         responder {
             content 'ok'
@@ -295,8 +295,8 @@ server.expectations {
     post('/upload') {
         condition multipart {
             field(0, 'something', 'interesting') &&
-                file(1, 'infoFile', 'info.txt', 'text/plain', 'This is some interesting file content.') &&
-                part(2, fieldName: 'dataFile', size: 7, fileName: 'data.bin', contentType: 'image/png', bytes: [8, 6, 7, 5, 3, 0, 9] as byte[])
+            file(1, 'infoFile', 'info.txt', 'text/plain', 'This is some interesting file content.') &&
+            part(2, fieldName:'dataFile', size:7, fileName:'data.bin', contentType:'image/png', bytes:[8,6,7,5,3,0,9] as byte[])
         }
         responder {
             content 'ok'
