@@ -31,7 +31,7 @@ For Maven:
 
 ## Build Instructions
 
-Ersatz is build using Gradle with no custom build tasks:
+Ersatz is built using Gradle with no custom build tasks:
 
     ./gradlew clean build
 
