@@ -62,5 +62,10 @@ class SimpleIdentityManager implements IdentityManager {
     Account verify(Credential credential) {
 <span class="nc" id="L63">        throw new UnsupportedOperationException()</span>
     }
+
+    static String encodedCredential(final String user, final String pass) {
+<span class="fc" id="L67">        String encoded = &quot;$user:$pass&quot;.bytes.encodeBase64()</span>
+<span class="pc" id="L68">        &quot;Basic $encoded&quot;</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

@@ -16,32 +16,30 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.ContentType
+import com.stehno.ersatz.Converters
 import com.stehno.ersatz.RequestWithContent
-import groovy.json.JsonSlurper
-import groovy.transform.CompileStatic
 
 import java.util.function.Function
 
 import static com.stehno.ersatz.Conditions.bodyEquals
+import static com.stehno.ersatz.ContentType.*
+
 
 /**
  * Ersatz implementation of a &lt;code&gt;Request&lt;/code&gt; with request body content.
  */
-@CompileStatic
 class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
     public static final String CONTENT_TYPE_HEADER = 'Content-Type'
 
-    private static final String DEFAULT_CONTENT_TYPE = 'text/plain; charset=utf-8'
+<span class="fc" id="L36">    private final RequestContentConverters converters = new RequestContentConverters({</span>
+<span class="fc" id="L37">        register TEXT_PLAIN, Converters.utf8String</span>
+<span class="fc" id="L38">        register APPLICATION_JSON, Converters.parseJson</span>
+<span class="fc" id="L39">        register TEXT_JSON, Converters.parseJson</span>
+<span class="pc" id="L40">        register APPLICATION_URLENCODED, Converters.urlEncoded</span>
+    })
 
-    // TODO: a better way to map these would be nice - reduce duplication
-    private final Map&lt;String, Function&lt;byte[], Object&gt;&gt; converters = [
-<span class="nc" id="L39">        'text/plain'                : { byte[] m -&gt; new String(m, 'UTF-8') } as Function&lt;byte[], Object&gt;,</span>
-<span class="pc" id="L40">        'text/plain; charset=utf-8' : { byte[] m -&gt; new String(m, 'UTF-8') } as Function&lt;byte[], Object&gt;,</span>
-<span class="nc" id="L41">        'text/plain; charset=utf-16': { byte[] m -&gt; new String(m, 'UTF-16') } as Function&lt;byte[], Object&gt;,</span>
-<span class="nc" id="L42">        'application/json'          : { byte[] m -&gt; new JsonSlurper().parse(m) } as Function&lt;byte[], Object&gt;,</span>
-<span class="nc" id="L43">        'text/json'                 : { byte[] m -&gt; new JsonSlurper().parse(m) } as Function&lt;byte[], Object&gt;</span>
-    ]
     private Object body
 
     /**
@@ -51,35 +49,52 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
      * @param path the request path
      */
     ErsatzRequestWithContent(final String method, final String path) {
-<span class="fc" id="L54">        super(method, path)</span>
+<span class="fc" id="L52">        super(method, path)</span>
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
     RequestWithContent body(final Object body) {
-<span class="fc" id="L59">        this.body = body</span>
-<span class="pc" id="L60">        this</span>
+<span class="fc" id="L57">        this.body = body</span>
+<span class="pc" id="L58">        this</span>
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
     RequestWithContent body(final Object body, final String contentType) {
-<span class="fc" id="L65">        this.body(body)</span>
-<span class="pc" id="L66">        this.contentType(contentType)</span>
+<span class="fc" id="L63">        this.body(body)</span>
+<span class="pc bpc" id="L64" title="2 of 4 branches missed.">        this.contentType(contentType)</span>
+    }
+
+    @Override @SuppressWarnings('ConfusingMethodName')
+    RequestWithContent body(final Object body, final ContentType contentType) {
+<span class="fc" id="L69">        this.body(body)</span>
+<span class="pc bpc" id="L70" title="2 of 4 branches missed.">        this.contentType(contentType)</span>
     }
 
     @Override
     RequestWithContent contentType(final String contentType) {
-<span class="fc" id="L71">        header(CONTENT_TYPE_HEADER, contentType)</span>
-<span class="pc" id="L72">        this</span>
+<span class="fc" id="L75">        header(CONTENT_TYPE_HEADER, contentType)</span>
+<span class="pc" id="L76">        this</span>
+    }
+
+    @Override
+    RequestWithContent contentType(final ContentType contentType) {
+<span class="pc" id="L81">        this.contentType(contentType.value)</span>
     }
 
     String getContentType() {
-<span class="pc" id="L76">        getHeader(CONTENT_TYPE_HEADER)</span>
+<span class="pc" id="L85">        getHeader(CONTENT_TYPE_HEADER)</span>
     }
 
     @Override
     RequestWithContent converter(final String contentType, final Function&lt;byte[], Object&gt; converter) {
-<span class="fc" id="L81">        converters[contentType] = converter</span>
-<span class="pc" id="L82">        this</span>
+<span class="fc" id="L90">        converters.register(contentType, converter)</span>
+<span class="pc" id="L91">        this</span>
+    }
+
+    @Override
+    RequestWithContent converter(final ContentType contentType, final Function&lt;byte[], Object&gt; converter) {
+<span class="fc" id="L96">        converters.register(contentType, converter)</span>
+<span class="pc" id="L97">        this</span>
     }
 
     /**
@@ -88,13 +103,13 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
      * @return the configured body content
      */
     Object getBody() {
-<span class="pc" id="L91">        body</span>
+<span class="pc" id="L106">        body</span>
     }
 
     /**
      * Used to determine whether or not the incoming client request matches this configured request. If there are configured &lt;code&gt;conditions&lt;/code&gt;,
-     * they will override the default match conditions, and only those configured conditions will be applied. The default conditions may be added
-     * back in using the &lt;code&gt;Conditions&lt;/code&gt; functions.
+     * they will override the default match conditions (except for path and request method matching, and only those configured conditions will be
+     * applied. The default conditions may be added back in using the &lt;code&gt;Conditions&lt;/code&gt; functions.
      *
      * The default match criteria are:
      *
@@ -111,16 +126,17 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
      * @return true if the incoming request matches the configured request
      */
     boolean matches(final ClientRequest clientRequest) {
-<span class="fc" id="L114">        boolean matches = super.matches(clientRequest)</span>
-<span class="pc bpc" id="L115" title="1 of 6 branches missed.">        conditions ? matches : matches &amp;&amp; bodyEquals(body, findConverter(contentType)).apply(clientRequest)</span>
-    }
+<span class="fc" id="L129">        boolean matches = super.matches(clientRequest)</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        if (conditions) {</span>
+<span class="fc" id="L131">            return matches</span>
+        }
 
-    private Function&lt;byte[], Object&gt; findConverter(final String contentType) {
-<span class="pc bpc" id="L119" title="1 of 4 branches missed.">        converters[contentType ?: DEFAULT_CONTENT_TYPE] ?: converters[DEFAULT_CONTENT_TYPE]</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        return matches &amp;&amp;</span>
+<span class="pc bfc" id="L135" title="All 4 branches covered.">            bodyEquals(body, contentType ? converters.findConverter(contentType) : converters.findConverter(TEXT_PLAIN)).apply(clientRequest)</span>
     }
 
     @Override String toString() {
-<span class="nc" id="L123">        &quot;${super.toString()}: $body&quot;</span>
+<span class="pc" id="L139">        &quot;${super.toString()}: $body&quot;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

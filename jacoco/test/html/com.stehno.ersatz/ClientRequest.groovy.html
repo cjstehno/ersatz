@@ -22,6 +22,10 @@ import io.undertow.io.Receiver
 import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.Cookie
 import io.undertow.util.HeaderMap
+import org.apache.commons.fileupload.FileItem
+import org.apache.commons.fileupload.FileUpload
+import org.apache.commons.fileupload.UploadContext
+import org.apache.commons.fileupload.disk.DiskFileItemFactory
 
 import java.util.function.Function
 
@@ -42,7 +46,7 @@ class ClientRequest {
      * @return the HTTP method for the request
      */
     String getMethod() {
-<span class="pc" id="L45">        exchange.requestMethod.toString()</span>
+<span class="pc" id="L49">        exchange.requestMethod.toString()</span>
     }
 
     /**
@@ -51,7 +55,7 @@ class ClientRequest {
      * @return the request path
      */
     String getPath() {
-<span class="pc" id="L54">        exchange.requestPath</span>
+<span class="pc" id="L58">        exchange.requestPath</span>
     }
 
     /**
@@ -60,7 +64,7 @@ class ClientRequest {
      * @return the query string parameters
      */
     Map&lt;String, Deque&lt;String&gt;&gt; getQueryParams() {
-<span class="pc" id="L63">        exchange.queryParameters</span>
+<span class="pc" id="L67">        exchange.queryParameters</span>
     }
 
     /**
@@ -69,7 +73,7 @@ class ClientRequest {
      * @return the request headers
      */
     HeaderMap getHeaders() {
-<span class="pc" id="L72">        exchange.requestHeaders</span>
+<span class="pc" id="L76">        exchange.requestHeaders</span>
     }
 
     /**
@@ -78,7 +82,7 @@ class ClientRequest {
      * @return the request cookies
      */
     Map&lt;String, Cookie&gt; getCookies() {
-<span class="pc" id="L81">        exchange.requestCookies</span>
+<span class="pc" id="L85">        exchange.requestCookies</span>
     }
 
     /**
@@ -88,16 +92,16 @@ class ClientRequest {
      */
     @Memoized
     byte[] getBodyAsBytes() {
-<span class="fc" id="L91">        byte[] bytes = null</span>
+<span class="fc" id="L95">        byte[] bytes = null</span>
 
-<span class="fc" id="L93">        exchange.requestReceiver.receiveFullBytes(new Receiver.FullBytesCallback() {</span>
+<span class="fc" id="L97">        exchange.requestReceiver.receiveFullBytes(new Receiver.FullBytesCallback() {</span>
             @Override
             void handle(final HttpServerExchange exch, byte[] message) {
-<span class="fc" id="L96">                bytes = message</span>
+<span class="fc" id="L100">                bytes = message</span>
             }
         })
 
-<span class="pc" id="L100">        bytes</span>
+<span class="pc" id="L104">        bytes</span>
     }
 
     /**
@@ -108,8 +112,8 @@ class ClientRequest {
      * @return the converted request body content (or null)
      */
     @Memoized
-<span class="nc" id="L111">    Object getBody(final Function&lt;byte[], Object&gt; converter = { b -&gt; b }) {</span>
-<span class="pc bfc" id="L112" title="All 2 branches covered.">        bodyAsBytes ? converter.apply(bodyAsBytes) : null</span>
+<span class="nc" id="L115">    Object getBody(final Function&lt;byte[], Object&gt; converter = { b -&gt; b }) {</span>
+<span class="pc bfc" id="L116" title="All 2 branches covered.">        bodyAsBytes ? converter.apply(bodyAsBytes) : null</span>
     }
 
     /**
@@ -118,12 +122,47 @@ class ClientRequest {
      * @return the body content as a string (or null)
      */
     String getBodyAsString() {
-<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        getBody { b -&gt; b ? new String(b as byte[]) : '' }</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        getBody { b -&gt; b ? new String(b as byte[]) : '' }</span>
     }
 
     @Override
     String toString() {
-<span class="pc bfc" id="L126" title="All 2 branches covered.">        &quot;{ $method $path (query=$queryParams, headers=$headers, cookies=$cookies): ${bodyAsString ?: '&lt;empty&gt;'} }&quot;</span>
+<span class="pc bfc" id="L130" title="All 2 branches covered.">        &quot;{ $method $path (query=$queryParams, headers=$headers, cookies=$cookies): ${bodyAsString ?: '&lt;empty&gt;'} }&quot;</span>
+    }
+
+    /**
+     * Used to retrieve the list of FileItems contained in a &lt;code&gt;multipart/form-data&lt;/code&gt; request.
+     *
+     * @return the list of &lt;code&gt;FileItem&lt;/code&gt; objects representing the multipart request content.
+     */
+    @Memoized
+    List&lt;FileItem&gt; getFileItems() {
+<span class="pc" id="L140">        new FileUpload(new DiskFileItemFactory(1000, File.createTempDir())).parseRequest(new UploadContext() {</span>
+            @Override
+            long contentLength() {
+<span class="pc" id="L143">                exchange.requestContentLength</span>
+            }
+
+            @Override
+            String getCharacterEncoding() {
+<span class="pc" id="L148">                exchange.requestCharset</span>
+            }
+
+            @Override
+            String getContentType() {
+<span class="pc" id="L153">                exchange.requestHeaders.get('Content-Type').first</span>
+            }
+
+            @Override
+            int getContentLength() {
+<span class="pc" id="L158">                exchange.requestContentLength</span>
+            }
+
+            @Override
+            InputStream getInputStream() throws IOException {
+<span class="pc" id="L163">                new ByteArrayInputStream(bodyAsBytes as byte[])</span>
+            }
+        })
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

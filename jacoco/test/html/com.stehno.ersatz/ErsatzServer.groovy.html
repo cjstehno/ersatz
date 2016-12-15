@@ -188,17 +188,20 @@ class ErsatzServer {
     }
 
     private static void send(final HttpServerExchange exchange, final Response response) {
-<span class="fc" id="L191">        exchange.statusCode = response.code</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        if (response) {</span>
+<span class="fc" id="L192">            exchange.statusCode = response.code</span>
 
-<span class="fc" id="L193">        response.headers.each { k, v -&gt;</span>
-<span class="pc" id="L194">            exchange.responseHeaders.put(new HttpString(k), v)</span>
+<span class="fc" id="L194">            response.headers.each { k, v -&gt;</span>
+<span class="pc" id="L195">                exchange.responseHeaders.put(new HttpString(k), v)</span>
+            }
+
+<span class="fc" id="L198">            response.cookies.each { k, v -&gt;</span>
+<span class="pc" id="L199">                exchange.responseCookies.put(k, new CookieImpl(k, v))</span>
+            }
         }
 
-<span class="fc" id="L197">        response.cookies.each { k, v -&gt;</span>
-<span class="pc" id="L198">            exchange.responseCookies.put(k, new CookieImpl(k, v))</span>
-        }
-
-<span class="fc bfc" id="L201" title="All 4 branches covered.">        exchange.responseSender.send(response.content?.toString() ?: '')</span>
+        // FIXME: how does this handle binary response content?
+<span class="pc bpc" id="L204" title="1 of 6 branches missed.">        exchange.responseSender.send(response?.content?.toString() ?: '')</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

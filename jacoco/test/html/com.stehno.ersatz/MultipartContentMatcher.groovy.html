@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MultipartContentMatcher.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz</a> &gt; <span class="el_source">MultipartContentMatcher.groovy</span></div><h1>MultipartContentMatcher.groovy</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2016 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz
+
+import groovy.transform.TupleConstructor
+import org.apache.commons.fileupload.FileItem
+
+import java.util.function.Function
+
+/**
+ * Content matcher (condition) used to assist in matching multipart request content.
+ */
+class MultipartContentMatcher implements Function&lt;ClientRequest, Boolean&gt; {
+
+    private Closure&lt;Boolean&gt; closure
+    private Function&lt;FileItemMatcher, Boolean&gt; function
+
+    static MultipartContentMatcher multipart(@DelegatesTo(FileItemMatcher) final Closure&lt;Boolean&gt; closure) {
+<span class="pc" id="L32">        new MultipartContentMatcher(closure: closure)</span>
+    }
+
+    static MultipartContentMatcher multipart(final Function&lt;FileItemMatcher, Boolean&gt; function) {
+<span class="nc" id="L36">        new MultipartContentMatcher(function: function)</span>
+    }
+
+    @Override
+    Boolean apply(final ClientRequest clientRequest) {
+<span class="fc" id="L41">        FileItemMatcher fileItemMatcher = new FileItemMatcher(clientRequest)</span>
+<span class="fc" id="L42">        boolean headerMatch = clientRequest.headers.get(ContentType.CONTENT_TYPE_HEADER, 0).startsWith(ContentType.MULTIPART_MIXED.value)</span>
+
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        if (closure) {</span>
+<span class="fc" id="L45">            closure.delegate = fileItemMatcher</span>
+<span class="pc bpc" id="L46" title="2 of 4 branches missed.">            return headerMatch &amp;&amp; closure.call(clientRequest)</span>
+
+        }
+
+<span class="nc bnc" id="L50" title="All 4 branches missed.">        return headerMatch &amp;&amp; function.apply(fileItemMatcher)</span>
+    }
+
+    /**
+     * Used to determine whether or not the given &lt;code&gt;FileItem&lt;/code&gt; has the specified attributes. The allowed attributes are: 'fieldName' to
+     * match the file field name, 'string' to match the item value as a string, 'fileName' to match the name of the file if the content is a file,
+     * 'contentType' to match the content type of the entry, 'bytes' to match the content as a byte array, and 'size' to match the item size value.
+     *
+     * @param attrs the map of attributes to be matched
+     * @param fileItem the multipart file item
+     * @return true if the specified conditions are matched
+     */
+    static boolean attrs(final Map&lt;String, Object&gt; attrs, final FileItem fileItem) {
+<span class="pc" id="L63">        attrs.every { k, v -&gt;</span>
+<span class="fc" id="L64">            switch (k) {</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">                case 'fieldName':</span>
+<span class="pc" id="L66">                    return v == fileItem.fieldName</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                case 'fileName':</span>
+<span class="pc" id="L68">                    return v == fileItem.name</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">                case 'string':</span>
+<span class="pc" id="L70">                    return v == fileItem.getString('UTF-8')</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">                case 'size':</span>
+<span class="pc" id="L72">                    return v == fileItem.size</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">                case 'contentType':</span>
+<span class="pc" id="L74">                    return fileItem.contentType?.startsWith(v)</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                case 'bytes':</span>
+<span class="fc" id="L76">                    return v == fileItem.get()</span>
+                default:
+<span class="nc" id="L78">                    return false</span>
+            }
+        }
+    }
+
+    /**
+     * DSL model for matching &lt;code&gt;FileItem&lt;/code&gt; parts in a multipart request.
+     */
+    @TupleConstructor
+    static class FileItemMatcher {
+
+        final ClientRequest clientRequest
+
+        /**
+         * Matches a part at the specified index that must match the given attributes. See the &lt;code&gt;attrs(Map&lt;String,Object&gt;,FileItem)&lt;/code&gt; method
+         * for more details about the supported match fields.
+         *
+         * @param map the map of matched attributes
+         * @param index the index of the part being matched
+         * @return &lt;code&gt;true&lt;/code&gt; if the part matches the expected criteria
+         */
+        boolean part(final Map&lt;String, Object&gt; map, final int index) {
+<span class="pc" id="L100">            attrs(map, clientRequest.fileItems[index])</span>
+        }
+
+        /**
+         * Matches a field part at the specified index with the given name and value content.
+         *
+         * @param index the part index
+         * @param name the field name
+         * @param value the field value
+         */
+        boolean field(final int index, final String name, final String value) {
+<span class="pc" id="L111">            part(index, fieldName: name, string: value)</span>
+        }
+
+        /**
+         * Matches a file part at the specified index with the given attributes.
+         *
+         * @param index the part index
+         * @param fieldName the field name
+         * @param fileName the file name
+         * @param contentType the content type (matched as &quot;starts with&quot;)
+         * @param fileSize the expected file size
+         * @return &lt;code&gt;true&lt;/code&gt; if the part matches the expected criteria
+         */
+        boolean file(final int index, final String fieldName, final String fileName, String contentType, long fileSize) {
+<span class="nc" id="L125">            part(index, fieldName: fieldName, fileName: fileName, contentType: contentType, size: fileSize)</span>
+        }
+
+        /**
+         * Matches a file part at the specified index with the given attributes.
+         *
+         * @param index the part index
+         * @param fieldName the field name
+         * @param fileName the file name
+         * @param contentType the content type (matched as &quot;starts with&quot;)
+         * @param bytes the content of the part as a byte array
+         * @return &lt;code&gt;true&lt;/code&gt; if the part matches the expected criteria
+         */
+        boolean file(final int index, final String fieldName, final String fileName, String contentType, byte[] bytes) {
+<span class="nc" id="L139">            part(index, fieldName: fieldName, fileName: fileName, contentType: contentType, bytes: bytes)</span>
+        }
+
+        /**
+         * Matches a file part at the specified index with the given attributes.
+         *
+         * @param index the part index
+         * @param fieldName the field name
+         * @param fileName the file name
+         * @param contentType the content type (matched as &quot;starts with&quot;)
+         * @param text the content of the part as a string of text.
+         * @return &lt;code&gt;true&lt;/code&gt; if the part matches the expected criteria
+         */
+        boolean file(final int index, final String fieldName, final String fileName, String contentType, String text) {
+<span class="pc" id="L153">            part(index, fieldName: fieldName, fileName: fileName, contentType: contentType, string: text)</span>
+        }
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

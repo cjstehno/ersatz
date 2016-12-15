@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">1.075s</div>
+<div class="counter">1.179s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,7 +79,7 @@
 </thead>
 <tr>
 <td class="success">BASIC auth</td>
-<td>1.075s</td>
+<td>1.179s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -87,34 +87,34 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>17:18:45.447 [Test worker] DEBUG org.jboss.logging - Logging Provider: org.jboss.logging.Slf4jLoggerProvider
-17:18:45.464 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@72afec20
-17:18:45.476 [Test worker] INFO org.xnio - XNIO version 3.3.6.Final
-17:18:45.497 [Test worker] INFO org.xnio.nio - XNIO NIO Implementation Version 3.3.6.Final
-17:18:45.544 [XNIO-1 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-1', selector sun.nio.ch.EPollSelectorImpl@3e43a001
-17:18:45.544 [XNIO-1 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-2', selector sun.nio.ch.EPollSelectorImpl@7c938bc6
-17:18:45.544 [XNIO-1 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-3', selector sun.nio.ch.EPollSelectorImpl@7150ca74
-17:18:45.544 [XNIO-1 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-4', selector sun.nio.ch.EPollSelectorImpl@43d2e3cc
-17:18:45.544 [XNIO-1 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-6', selector sun.nio.ch.EPollSelectorImpl@1cf05afc
-17:18:45.544 [XNIO-1 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-5', selector sun.nio.ch.EPollSelectorImpl@5638f455
-17:18:45.544 [XNIO-1 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-7', selector sun.nio.ch.EPollSelectorImpl@1ebad05
-17:18:45.546 [XNIO-1 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-8', selector sun.nio.ch.EPollSelectorImpl@79f8ef2
-17:18:45.546 [XNIO-1 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 Accept', selector sun.nio.ch.EPollSelectorImpl@117fb263
-17:18:45.549 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-17:18:45.717 [XNIO-1 I/O-6] DEBUG io.undertow.request.security - Setting authentication required for exchange HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:36583]} response {}}
-17:18:45.718 [XNIO-1 task-1] DEBUG io.undertow.request.security - Attempting to authenticate HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:36583]} response {}}, authentication required: true
-17:18:45.720 [XNIO-1 task-1] DEBUG io.undertow.request.security - Authentication outcome was NOT_ATTEMPTED with method io.undertow.security.impl.BasicAuthenticationMechanism@79dff94d for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:36583]} response {}}
-17:18:45.720 [XNIO-1 task-1] DEBUG io.undertow.request.security - Sending authentication challenge for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:36583]} response {}}
-17:18:45.721 [XNIO-1 task-1] DEBUG io.undertow.request.security - Sending basic auth challenge Basic realm=&quot;BasicTesting&quot; for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:36583]} response {WWW-Authenticate=[Basic realm=&quot;BasicTesting&quot;]}}
-17:18:45.722 [XNIO-1 task-1] DEBUG io.undertow.request.security - Authentication result was CHALLENGE_SENT for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:36583]} response {WWW-Authenticate=[Basic realm=&quot;BasicTesting&quot;]}}
-17:18:45.745 [XNIO-1 I/O-6] DEBUG io.undertow.request.security - Setting authentication required for exchange HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Basic YWRtaW46JDNjcjN0], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:36583]} response {}}
-17:18:45.746 [XNIO-1 task-2] DEBUG io.undertow.request.security - Attempting to authenticate HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Basic YWRtaW46JDNjcjN0], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:36583]} response {}}, authentication required: true
-17:18:45.749 [XNIO-1 task-2] DEBUG io.undertow.request.security - Found basic auth header admin:$3cr3t (decoded using charset UTF-8) in HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Basic YWRtaW46JDNjcjN0], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:36583]} response {}}
-17:18:45.764 [XNIO-1 task-2] DEBUG io.undertow.request.security - Authenticated as admin, roles [TESTER]
-17:18:45.771 [XNIO-1 task-2] DEBUG io.undertow.request.security - Authentication outcome was AUTHENTICATED with method io.undertow.security.impl.BasicAuthenticationMechanism@79dff94d for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Basic YWRtaW46JDNjcjN0], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:36583]} response {}}
-17:18:45.771 [XNIO-1 task-2] DEBUG io.undertow.request.security - Authentication result was AUTHENTICATED for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Basic YWRtaW46JDNjcjN0], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:36583]} response {}}
-17:18:45.780 [XNIO-1 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /secrets (query=[:], headers={Connection=[Keep-Alive], Authorization=[Basic YWRtaW46JDNjcjN0], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:36583]}, cookies=[:]): &lt;empty&gt; }
-17:18:45.833 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@72afec20
+<pre>05:50:44.386 [Test worker] DEBUG org.jboss.logging - Logging Provider: org.jboss.logging.Slf4jLoggerProvider
+05:50:44.410 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@6b5d97c3
+05:50:44.426 [Test worker] INFO org.xnio - XNIO version 3.3.6.Final
+05:50:44.451 [Test worker] INFO org.xnio.nio - XNIO NIO Implementation Version 3.3.6.Final
+05:50:44.513 [XNIO-1 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-1', selector sun.nio.ch.EPollSelectorImpl@2e7ff5b0
+05:50:44.514 [XNIO-1 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-3', selector sun.nio.ch.EPollSelectorImpl@37e6c491
+05:50:44.514 [XNIO-1 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-4', selector sun.nio.ch.EPollSelectorImpl@2b68b84f
+05:50:44.514 [XNIO-1 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-2', selector sun.nio.ch.EPollSelectorImpl@7de645a7
+05:50:44.515 [XNIO-1 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-5', selector sun.nio.ch.EPollSelectorImpl@56d1d7d1
+05:50:44.515 [XNIO-1 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-6', selector sun.nio.ch.EPollSelectorImpl@560cb72c
+05:50:44.516 [XNIO-1 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 Accept', selector sun.nio.ch.EPollSelectorImpl@4564d4d0
+05:50:44.517 [XNIO-1 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-8', selector sun.nio.ch.EPollSelectorImpl@2f51d559
+05:50:44.517 [XNIO-1 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-7', selector sun.nio.ch.EPollSelectorImpl@3ead7dea
+05:50:44.518 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+05:50:44.693 [XNIO-1 I/O-2] DEBUG io.undertow.request.security - Setting authentication required for exchange HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35881]} response {}}
+05:50:44.694 [XNIO-1 task-1] DEBUG io.undertow.request.security - Attempting to authenticate HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35881]} response {}}, authentication required: true
+05:50:44.696 [XNIO-1 task-1] DEBUG io.undertow.request.security - Authentication outcome was NOT_ATTEMPTED with method io.undertow.security.impl.BasicAuthenticationMechanism@452cb603 for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35881]} response {}}
+05:50:44.696 [XNIO-1 task-1] DEBUG io.undertow.request.security - Sending authentication challenge for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35881]} response {}}
+05:50:44.697 [XNIO-1 task-1] DEBUG io.undertow.request.security - Sending basic auth challenge Basic realm=&quot;BasicTesting&quot; for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35881]} response {WWW-Authenticate=[Basic realm=&quot;BasicTesting&quot;]}}
+05:50:44.697 [XNIO-1 task-1] DEBUG io.undertow.request.security - Authentication result was CHALLENGE_SENT for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35881]} response {WWW-Authenticate=[Basic realm=&quot;BasicTesting&quot;]}}
+05:50:44.722 [XNIO-1 I/O-2] DEBUG io.undertow.request.security - Setting authentication required for exchange HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Basic YWRtaW46JDNjcjN0], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35881]} response {}}
+05:50:44.723 [XNIO-1 task-2] DEBUG io.undertow.request.security - Attempting to authenticate HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Basic YWRtaW46JDNjcjN0], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35881]} response {}}, authentication required: true
+05:50:44.725 [XNIO-1 task-2] DEBUG io.undertow.request.security - Found basic auth header admin:$3cr3t (decoded using charset UTF-8) in HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Basic YWRtaW46JDNjcjN0], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35881]} response {}}
+05:50:44.744 [XNIO-1 task-2] DEBUG io.undertow.request.security - Authenticated as admin, roles [TESTER]
+05:50:44.751 [XNIO-1 task-2] DEBUG io.undertow.request.security - Authentication outcome was AUTHENTICATED with method io.undertow.security.impl.BasicAuthenticationMechanism@452cb603 for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Basic YWRtaW46JDNjcjN0], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35881]} response {}}
+05:50:44.751 [XNIO-1 task-2] DEBUG io.undertow.request.security - Authentication result was AUTHENTICATED for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Basic YWRtaW46JDNjcjN0], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35881]} response {}}
+05:50:44.764 [XNIO-1 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /secrets (query=[:], headers={Connection=[Keep-Alive], Authorization=[Basic YWRtaW46JDNjcjN0], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35881]}, cookies=[:]): &lt;empty&gt; }
+05:50:44.831 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@6b5d97c3
 </pre>
 </span>
 </div>
@@ -126,7 +126,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 3.2.1</a> at Dec 7, 2016 5:18:46 PM</p>
+<a href="http://www.gradle.org">Gradle 3.2.1</a> at Dec 15, 2016 5:50:46 AM</p>
 </div>
 </div>
 </body>

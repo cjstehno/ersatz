@@ -49,7 +49,7 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request get(String path, Consumer&lt;Request&gt; config) {
-<span class="nc" id="L52">        expect new ErsatzRequest(GET, path), config</span>
+<span class="pc" id="L52">        expect new ErsatzRequest(GET, path), config</span>
     }
 
     @Override
@@ -59,12 +59,12 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request head(String path, @DelegatesTo(Request) Closure closure) {
-<span class="nc" id="L62">        expect new ErsatzRequest(HEAD, path, true), closure</span>
+<span class="pc" id="L62">        expect new ErsatzRequest(HEAD, path, true), closure</span>
     }
 
     @Override
     Request head(String path, Consumer&lt;Request&gt; config) {
-<span class="nc" id="L67">        expect new ErsatzRequest(HEAD, path), config</span>
+<span class="pc" id="L67">        expect new ErsatzRequest(HEAD, path), config</span>
     }
 
     @Override
@@ -79,7 +79,7 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     RequestWithContent post(String path, Consumer&lt;RequestWithContent&gt; config) {
-<span class="nc" id="L82">        expect(new ErsatzRequestWithContent(POST, path), config) as RequestWithContent</span>
+<span class="pc" id="L82">        expect(new ErsatzRequestWithContent(POST, path), config) as RequestWithContent</span>
     }
 
     @Override
@@ -89,12 +89,12 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     RequestWithContent put(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-<span class="nc" id="L92">        expect(new ErsatzRequestWithContent(PUT, path), closure) as RequestWithContent</span>
+<span class="pc" id="L92">        expect(new ErsatzRequestWithContent(PUT, path), closure) as RequestWithContent</span>
     }
 
     @Override
     RequestWithContent put(String path, Consumer&lt;RequestWithContent&gt; config) {
-<span class="nc" id="L97">        expect(new ErsatzRequestWithContent(PUT, path), config) as RequestWithContent</span>
+<span class="pc" id="L97">        expect(new ErsatzRequestWithContent(PUT, path), config) as RequestWithContent</span>
     }
 
     @Override
@@ -104,27 +104,27 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request delete(String path, @DelegatesTo(Request) Closure closure) {
-<span class="nc" id="L107">        expect new ErsatzRequest(DELETE, path), closure</span>
+<span class="pc" id="L107">        expect new ErsatzRequest(DELETE, path), closure</span>
     }
 
     @Override
     Request delete(String path, Consumer&lt;Request&gt; config) {
-<span class="nc" id="L112">        expect new ErsatzRequest(DELETE, path), config</span>
+<span class="pc" id="L112">        expect new ErsatzRequest(DELETE, path), config</span>
     }
 
     @Override
     RequestWithContent patch(String path) {
-<span class="nc" id="L117">        expect(new ErsatzRequestWithContent(PATCH, path)) as RequestWithContent</span>
+<span class="pc" id="L117">        expect(new ErsatzRequestWithContent(PATCH, path)) as RequestWithContent</span>
     }
 
     @Override
     RequestWithContent patch(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-<span class="nc" id="L122">        expect(new ErsatzRequestWithContent(PATCH, path), closure) as RequestWithContent</span>
+<span class="pc" id="L122">        expect(new ErsatzRequestWithContent(PATCH, path), closure) as RequestWithContent</span>
     }
 
     @Override
     RequestWithContent patch(String path, Consumer&lt;RequestWithContent&gt; config) {
-<span class="nc" id="L127">        expect(new ErsatzRequestWithContent(PATCH, path), config) as RequestWithContent</span>
+<span class="pc" id="L127">        expect(new ErsatzRequestWithContent(PATCH, path), config) as RequestWithContent</span>
     }
 
     /**
@@ -163,9 +163,9 @@ class ExpectationsImpl implements Expectations {
     }
 
     private Request expect(final Request request, final Consumer&lt;? extends Request&gt; consumer) {
-<span class="nc" id="L166">        consumer.accept(request)</span>
-<span class="nc" id="L167">        requests.add(request)</span>
-<span class="nc" id="L168">        request</span>
+<span class="fc" id="L166">        consumer.accept(request)</span>
+<span class="fc" id="L167">        requests.add(request)</span>
+<span class="pc" id="L168">        request</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

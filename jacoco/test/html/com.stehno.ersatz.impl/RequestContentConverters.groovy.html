@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RequestContentConverters.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.impl</a> &gt; <span class="el_source">RequestContentConverters.groovy</span></div><h1>RequestContentConverters.groovy</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2016 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.impl
+
+import com.stehno.ersatz.ContentType
+import groovy.transform.Immutable
+
+import javax.activation.MimeType
+import java.util.function.Function
+
+import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+
+/**
+ * Content converters for request body content based on content-type.
+ *
+ * Instances of this class should not be used directly, but rather populated through the `RequestWithContent` `converter` method.
+ */
+class RequestContentConverters {
+
+<span class="fc" id="L33">    private final List&lt;MimeTypeConverter&gt; converters = []</span>
+
+    RequestContentConverters(@DelegatesTo(RequestContentConverters) Closure closure) {
+<span class="fc" id="L36">        closure.delegate = this</span>
+<span class="fc" id="L37">        closure.call()</span>
+    }
+
+    void register(final ContentType contentType, final Function&lt;byte[], Object&gt; converter) {
+<span class="fc" id="L41">        register contentType.value, converter</span>
+    }
+
+    void register(final String contentType, final Function&lt;byte[], Object&gt; converter) {
+<span class="pc" id="L45">        MimeTypeConverter existing = converters.find { c -&gt; c.mimeType.toString() == contentType }</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (existing) {</span>
+<span class="fc" id="L47">            converters.remove(existing)</span>
+        }
+
+<span class="fc" id="L50">        converters.add(new MimeTypeConverter(new MimeType(contentType), converter))</span>
+    }
+
+    Function&lt;byte[], Object&gt; findConverter(final ContentType contentType) {
+<span class="pc" id="L54">        findConverter(contentType.value)</span>
+    }
+
+    Function&lt;byte[], Object&gt; findConverter(final String contentType) {
+<span class="pc bpc" id="L58" title="2 of 4 branches missed.">        if (!contentType) {</span>
+<span class="nc" id="L59">            return findConverter(TEXT_PLAIN)</span>
+        }
+
+<span class="fc" id="L62">        MimeType mimeType = new MimeType(contentType)</span>
+
+<span class="pc" id="L64">        def found = converters.findAll { c -&gt; c.mimeType.match(mimeType) }</span>
+
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (found.size() &gt; 1) {</span>
+<span class="pc" id="L67">            found = [found.find { c -&gt; c.mimeType.toString() == contentType }]</span>
+        }
+
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        found[0]?.converter ?: findConverter(TEXT_PLAIN)</span>
+    }
+
+    @Immutable(knownImmutableClasses = [MimeType, Function])
+    private static class MimeTypeConverter {
+
+        MimeType mimeType
+        Function&lt;byte[], Object&gt; converter
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

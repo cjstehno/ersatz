@@ -187,8 +187,8 @@ class ErsatzRequest implements Request {
 
     /**
      * Used to determine whether or not the incoming client request matches this configured request. If there are configured &lt;code&gt;conditions&lt;/code&gt;,
-     * they will override the default match conditions, and only those configured conditions will be applied. The default conditions may be added
-     * back in using the &lt;code&gt;Conditions&lt;/code&gt; functions.
+     * they will override the default match conditions (except for path and request method matching, and only those configured conditions will be
+     * applied. The default conditions may be added back in using the &lt;code&gt;Conditions&lt;/code&gt; functions.
      *
      * The default match criteria are:
      *
@@ -230,7 +230,7 @@ class ErsatzRequest implements Request {
      */
     Response getCurrentResponse() {
 <span class="fc bfc" id="L232" title="All 4 branches covered.">        int index = callCount &gt;= responses.size() ? responses.size() - 1 : callCount</span>
-<span class="pc" id="L233">        responses.get(index)</span>
+<span class="pc bpc" id="L233" title="2 of 4 branches missed.">        index &gt;= 0 ? responses[index] : null</span>
     }
 
     /**

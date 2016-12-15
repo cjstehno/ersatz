@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ContentType
 import com.stehno.ersatz.Response
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
@@ -39,79 +40,90 @@ class ErsatzResponse implements Response {
 
     @Override @SuppressWarnings('ConfusingMethodName')
     Response content(final Object content) {
-<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (empty) {</span>
-<span class="fc" id="L43">            throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (empty) {</span>
+<span class="fc" id="L44">            throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')</span>
         }
 
-<span class="fc" id="L46">        this.content = content</span>
-<span class="pc" id="L47">        this</span>
+<span class="fc" id="L47">        this.content = content</span>
+<span class="pc" id="L48">        this</span>
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
     Response content(final Object content, final String contentType) {
-<span class="fc" id="L52">        this.content(content)</span>
-<span class="pc" id="L53">        this.contentType(contentType)</span>
+<span class="fc" id="L53">        this.content(content)</span>
+<span class="pc" id="L54">        this.contentType(contentType)</span>
+    }
+
+    @Override @SuppressWarnings('ConfusingMethodName')
+    Response content(final Object content, final ContentType contentType) {
+<span class="nc" id="L59">        this.content(content, contentType.value)</span>
     }
 
     @Override
     Response header(final String name, final String value) {
-<span class="fc" id="L58">        headers[name] = value</span>
-<span class="pc" id="L59">        this</span>
-    }
-
-    @Override @SuppressWarnings('ConfusingMethodName')
-    Response headers(final Map&lt;String, String&gt; headers) {
-<span class="fc" id="L64">        this.headers.putAll(headers)</span>
+<span class="fc" id="L64">        headers[name] = value</span>
 <span class="pc" id="L65">        this</span>
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
-    Response cookies(final Map&lt;String, String&gt; cookies) {
-<span class="fc" id="L70">        this.cookies.putAll(cookies)</span>
+    Response headers(final Map&lt;String, String&gt; headers) {
+<span class="fc" id="L70">        this.headers.putAll(headers)</span>
 <span class="pc" id="L71">        this</span>
     }
 
-    @Override
-    Response cookie(final String name, final String value) {
-<span class="fc" id="L76">        cookies[name] = value</span>
+    @Override @SuppressWarnings('ConfusingMethodName')
+    Response cookies(final Map&lt;String, String&gt; cookies) {
+<span class="fc" id="L76">        this.cookies.putAll(cookies)</span>
 <span class="pc" id="L77">        this</span>
     }
 
     @Override
-    Response contentType(final String contentType) {
-<span class="fc" id="L82">        header(CONTENT_TYPE_HEADER, contentType)</span>
+    Response cookie(final String name, final String value) {
+<span class="fc" id="L82">        cookies[name] = value</span>
 <span class="pc" id="L83">        this</span>
     }
 
     @Override
+    Response contentType(final String contentType) {
+<span class="fc" id="L88">        header(CONTENT_TYPE_HEADER, contentType)</span>
+<span class="pc" id="L89">        this</span>
+    }
+
+    @Override
+    Response contentType(final ContentType contentType) {
+<span class="nc" id="L94">        header(CONTENT_TYPE_HEADER, contentType.value)</span>
+<span class="nc" id="L95">        this</span>
+    }
+
+    @Override
     String getContentType() {
-<span class="pc" id="L88">        headers[CONTENT_TYPE_HEADER]</span>
+<span class="pc" id="L100">        headers[CONTENT_TYPE_HEADER]</span>
     }
 
     @SuppressWarnings('ConfusingMethodName')
     Response code(int code) {
-<span class="fc" id="L93">        this.code = code</span>
-<span class="pc" id="L94">        this</span>
+<span class="fc" id="L105">        this.code = code</span>
+<span class="pc" id="L106">        this</span>
     }
 
     @Override
     Map&lt;String, String&gt; getHeaders() {
-<span class="pc" id="L99">        headers.asImmutable()</span>
+<span class="pc" id="L111">        headers.asImmutable()</span>
     }
 
     @Override
     Map&lt;String, String&gt; getCookies() {
-<span class="pc" id="L104">        cookies.asImmutable()</span>
+<span class="pc" id="L116">        cookies.asImmutable()</span>
     }
 
     @Override
     Object getContent() {
-<span class="pc" id="L109">        content</span>
+<span class="pc" id="L121">        content</span>
     }
 
     @Override
     Integer getCode() {
-<span class="pc" id="L114">        code</span>
+<span class="pc" id="L126">        code</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

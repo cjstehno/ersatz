@@ -515,7 +515,7 @@ table.CodeRay td.code>pre{padding:0}
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
 <span id="email" class="email"><a href="mailto:chris@stehno.com">chris@stehno.com</a></span><br>
-<span id="revnumber">version 0.1.0,</span>
+<span id="revnumber">version 0.2.0,</span>
 <span id="revdate">December 2016</span>
 </div>
 <div id="toc" class="toc2">
@@ -532,6 +532,8 @@ table.CodeRay td.code>pre{padding:0}
 </ul>
 </li>
 <li><a href="#_expectations">Expectations</a></li>
+<li><a href="#_url_encoded_form_requests">Url-Encoded Form Requests</a></li>
+<li><a href="#_multipart_request_content">Multipart Request Content</a></li>
 <li><a href="#_feature_extensions">Feature Extensions</a></li>
 </ul>
 </div>
@@ -574,7 +576,7 @@ frameworks.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:0.1.0'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:0.2.0'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -857,6 +859,90 @@ will fail (and with that, the test).</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_url_encoded_form_requests">Url-Encoded Form Requests</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Url-encoded form requests are supported by default when the request content-type is specified as <code>application/x-www-form-urlencoded</code>. The request
+<code>body</code> expectation configuration will expect a <code>Map&lt;String,String&gt;</code> equivalent to the name-value pairs specified in the request body content. An
+example would be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
+    post(<span class="string"><span class="delimiter">'</span><span class="content">/form</span><span class="delimiter">'</span></span>) {
+        body([<span class="key">alpha</span>: <span class="string"><span class="delimiter">'</span><span class="content">some data</span><span class="delimiter">'</span></span>, <span class="key">bravo</span>: <span class="string"><span class="delimiter">'</span><span class="content">42</span><span class="delimiter">'</span></span>], <span class="string"><span class="delimiter">'</span><span class="content">application/x-www-form-urlencoded</span><span class="delimiter">'</span></span>)
+        responder {
+            content <span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where the <code>POST</code> content data would look like:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>alpha=some+data&amp;bravo=42</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_multipart_request_content">Multipart Request Content</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Ersatz server supports file upload requests (<code>multipart/form-data</code> content-type) using the
+<a href="https://commons.apache.org/proper/commons-fileupload/">Apache File Upload</a> library on the "server" side; however, due to the complexity of file upload
+content, the standard body matching cannot be used, instead a custom <code>condition</code> must be specified to determine the match, such as this example from
+the unit tests:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
+    post(<span class="string"><span class="delimiter">'</span><span class="content">/upload</span><span class="delimiter">'</span></span>) {
+        contentType MULTIPART_FORMDATA
+        condition { cr -&gt;
+            attrs(cr.fileItems[<span class="integer">0</span>], <span class="key">fieldName</span>:<span class="string"><span class="delimiter">'</span><span class="content">something</span><span class="delimiter">'</span></span>, <span class="key">string</span>:<span class="string"><span class="delimiter">'</span><span class="content">interesting</span><span class="delimiter">'</span></span>) &amp;&amp;
+            attrs(cr.fileItems[<span class="integer">1</span>], <span class="key">fieldName</span>:<span class="string"><span class="delimiter">'</span><span class="content">infoFile</span><span class="delimiter">'</span></span>, <span class="key">string</span>:<span class="string"><span class="delimiter">'</span><span class="content">This is some interesting file content.</span><span class="delimiter">'</span></span>) &amp;&amp;
+            attrs(cr.fileItems[<span class="integer">2</span>], <span class="key">fieldName</span>:<span class="string"><span class="delimiter">'</span><span class="content">dataFile</span><span class="delimiter">'</span></span>, <span class="key">size</span>:<span class="integer">7</span>)
+        }
+        responder {
+            content <span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This expectation will match a <code>POST</code> request to <code>/upload</code> that has multipart content matching the specified criteria. The <code>MultipartContentHelper</code>
+provides additional functions to aid in creating these <code>FileItem</code>-based conditions.</p>
+</div>
+<div class="paragraph">
+<p>Alternately, you may use the <code>MultipartContentMatcher</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
+    post(<span class="string"><span class="delimiter">'</span><span class="content">/upload</span><span class="delimiter">'</span></span>) {
+        condition multipart {
+            field(<span class="integer">0</span>, <span class="string"><span class="delimiter">'</span><span class="content">something</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">interesting</span><span class="delimiter">'</span></span>) &amp;&amp;
+            file(<span class="integer">1</span>, <span class="string"><span class="delimiter">'</span><span class="content">infoFile</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">info.txt</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">text/plain</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">This is some interesting file content.</span><span class="delimiter">'</span></span>) &amp;&amp;
+            part(<span class="integer">2</span>, <span class="key">fieldName</span>:<span class="string"><span class="delimiter">'</span><span class="content">dataFile</span><span class="delimiter">'</span></span>, <span class="key">size</span>:<span class="integer">7</span>, <span class="key">fileName</span>:<span class="string"><span class="delimiter">'</span><span class="content">data.bin</span><span class="delimiter">'</span></span>, <span class="key">contentType</span>:<span class="string"><span class="delimiter">'</span><span class="content">image/png</span><span class="delimiter">'</span></span>, <span class="key">bytes</span>:[<span class="integer">8</span>,<span class="integer">6</span>,<span class="integer">7</span>,<span class="integer">5</span>,<span class="integer">3</span>,<span class="integer">0</span>,<span class="integer">9</span>] <span class="keyword">as</span> <span class="type">byte</span><span class="type">[]</span>)
+        }
+        responder {
+            content <span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>which provides some additional helper methods.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_feature_extensions">Feature Extensions</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -872,8 +958,8 @@ authentication (username and password) as part of their matching.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.1.0<br>
-Last updated 2016-12-07 17:18:13 -06:00
+Version 0.2.0<br>
+Last updated 2016-12-15 05:48:52 -06:00
 </div>
 </div>
 </body>
