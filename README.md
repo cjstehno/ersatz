@@ -6,8 +6,8 @@
 
 * Site: http://stehno.com/ersatz
 * Project: https://github.com/cjstehno/ersatz
-* User Guide: https://github.com/cjstehno/ersatz/guide/html5
-* Groovy Docs: https://github.com/cjstehno/ersatz/groovydoc
+* User Guide: http://stehno.com/ersatz/guide/html5/
+* Groovy Docs: http://stehno.com/ersatz/groovydoc/
 
 ## Introduction
 
