@@ -15,12 +15,16 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.RequestWithContent
+import io.undertow.util.HeaderMap
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.function.Consumer
+
+import static com.stehno.ersatz.Verifiers.once
 
 class ExpectationsImplSpec extends Specification {
 
@@ -101,6 +105,58 @@ class ExpectationsImplSpec extends Specification {
 
         where:
         method << ['POST', 'PUT', 'PATCH']
+    }
+
+    def 'matching'() {
+        setup:
+        expectations.post('/alpha')
+        expectations.post('/bravo')
+        expectations.delete('/alpha')
+        expectations.get('/alpha')
+
+        ClientRequest cr = GroovyMock(ClientRequest) { r ->
+            _ * r.getMethod() >> method
+            _ * r.getPath() >> path
+            _ * r.getQueryParams() >> [:]
+            _ * r.getHeaders() >> new HeaderMap()
+            _ * r.getCookies() >> [:]
+        }
+
+        when:
+        Request req = expectations.findMatch(cr)
+
+        then:
+        req.method == method
+        req.path == path
+
+        where:
+        method   | path
+        'GET'    | '/alpha'
+        'POST'   | '/alpha'
+        'POST'   | '/bravo'
+        'DELETE' | '/alpha'
+    }
+
+    def 'verification (success)'() {
+        setup:
+        RequestWithContent req = expectations.post('/alpha').verifier(once())
+        ((ErsatzRequestWithContent) req).mark()
+
+        expect:
+        expectations.verify()
+    }
+
+    def 'verification (failure)'() {
+        setup:
+        expectations.post('/alpha').verifier(once())
+
+        when:
+        expectations.verify()
+
+        then:
+        def ae = thrown(AssertionError)
+        ae.message == 'Expectations for { POST /alpha (query=[:], headers=[:], cookies=[:]): counted=0 }: null were not met.. Expression: ' +
+            '(com.stehno.ersatz.impl.ErsatzRequest -> com.stehno.ersatz.impl.ErsatzRequest) r.verify()'
     }
 
     private boolean assertExpectedRequest(final String method) {
