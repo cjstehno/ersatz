@@ -16,32 +16,30 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.ContentType
+import com.stehno.ersatz.Converters
 import com.stehno.ersatz.RequestWithContent
-import groovy.json.JsonSlurper
-import groovy.transform.CompileStatic
 
 import java.util.function.Function
 
 import static com.stehno.ersatz.Conditions.bodyEquals
+import static com.stehno.ersatz.ContentType.*
+
 
 /**
  * Ersatz implementation of a <code>Request</code> with request body content.
  */
-@CompileStatic
 class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
     public static final String CONTENT_TYPE_HEADER = 'Content-Type'
 
-    private static final String DEFAULT_CONTENT_TYPE = 'text/plain; charset=utf-8'
+    private final RequestContentConverters converters = new RequestContentConverters({
+        register TEXT_PLAIN, Converters.utf8String
+        register APPLICATION_JSON, Converters.parseJson
+        register TEXT_JSON, Converters.parseJson
+        register APPLICATION_URLENCODED, Converters.urlEncoded
+    })
 
-    // TODO: a better way to map these would be nice - reduce duplication
-    private final Map<String, Function<byte[], Object>> converters = [
-        'text/plain'                : { byte[] m -> new String(m, 'UTF-8') } as Function<byte[], Object>,
-        'text/plain; charset=utf-8' : { byte[] m -> new String(m, 'UTF-8') } as Function<byte[], Object>,
-        'text/plain; charset=utf-16': { byte[] m -> new String(m, 'UTF-16') } as Function<byte[], Object>,
-        'application/json'          : { byte[] m -> new JsonSlurper().parse(m) } as Function<byte[], Object>,
-        'text/json'                 : { byte[] m -> new JsonSlurper().parse(m) } as Function<byte[], Object>
-    ]
     private Object body
 
     /**
@@ -66,10 +64,21 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         this.contentType(contentType)
     }
 
+    @Override @SuppressWarnings('ConfusingMethodName')
+    RequestWithContent body(final Object body, final ContentType contentType) {
+        this.body(body)
+        this.contentType(contentType)
+    }
+
     @Override
     RequestWithContent contentType(final String contentType) {
         header(CONTENT_TYPE_HEADER, contentType)
         this
+    }
+
+    @Override
+    RequestWithContent contentType(final ContentType contentType) {
+        this.contentType(contentType.value)
     }
 
     String getContentType() {
@@ -78,7 +87,13 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     @Override
     RequestWithContent converter(final String contentType, final Function<byte[], Object> converter) {
-        converters[contentType] = converter
+        converters.register(contentType, converter)
+        this
+    }
+
+    @Override
+    RequestWithContent converter(final ContentType contentType, final Function<byte[], Object> converter) {
+        converters.register(contentType, converter)
         this
     }
 
@@ -93,8 +108,8 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     /**
      * Used to determine whether or not the incoming client request matches this configured request. If there are configured <code>conditions</code>,
-     * they will override the default match conditions, and only those configured conditions will be applied. The default conditions may be added
-     * back in using the <code>Conditions</code> functions.
+     * they will override the default match conditions (except for path and request method matching, and only those configured conditions will be
+     * applied. The default conditions may be added back in using the <code>Conditions</code> functions.
      *
      * The default match criteria are:
      *
@@ -112,11 +127,12 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
      */
     boolean matches(final ClientRequest clientRequest) {
         boolean matches = super.matches(clientRequest)
-        conditions ? matches : matches && bodyEquals(body, findConverter(contentType)).apply(clientRequest)
-    }
+        if (conditions) {
+            return matches
+        }
 
-    private Function<byte[], Object> findConverter(final String contentType) {
-        converters[contentType ?: DEFAULT_CONTENT_TYPE] ?: converters[DEFAULT_CONTENT_TYPE]
+        return matches &&
+            bodyEquals(body, contentType ? converters.findConverter(contentType) : converters.findConverter(TEXT_PLAIN)).apply(clientRequest)
     }
 
     @Override String toString() {

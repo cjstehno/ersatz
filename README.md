@@ -1,6 +1,8 @@
 # Ersatz Server
             
-[![Download](https://api.bintray.com/packages/cjstehno/stehno/ersatz/images/download.svg)](https://bintray.com/cjstehno/stehno/ersatz/_latestVersion)[![Build Status](https://travis-ci.org/cjstehno/ersatz.svg?branch=master)](https://travis-ci.org/cjstehno/ersatz)[![Coverage Status](https://coveralls.io/repos/github/cjstehno/ersatz/badge.svg?branch=master)](https://coveralls.io/github/cjstehno/ersatz?branch=master)
+[![Download](https://api.bintray.com/packages/cjstehno/stehno/ersatz/images/download.svg)](https://bintray.com/cjstehno/stehno/ersatz/_latestVersion)            
+[![Build Status](https://travis-ci.org/cjstehno/ersatz.svg?branch=master)](https://travis-ci.org/cjstehno/ersatz)
+[![Coverage Status](https://coveralls.io/repos/github/cjstehno/ersatz/badge.svg?branch=master)](https://coveralls.io/github/cjstehno/ersatz?branch=master)
 
 ## Quick Links
 
@@ -24,8 +26,8 @@ For Gradle:
 For Maven:
 
     <dependency>
-        <group>com.stehno.ersatz</group>
-        <artifact>ersatz</artifact>
+        <groupId>com.stehno.ersatz</groupId>
+        <artifactId>ersatz</artifactId>
         <version>0.1.0</version>
     </dependency>
 

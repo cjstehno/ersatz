@@ -39,6 +39,7 @@ interface Response {
      * @return this response
      */
     Response content(final Object content, final String contentType)
+    Response content(final Object content, final ContentType contentType)
 
     /**
      * Used to add a header to the response with the given name and value.
@@ -81,6 +82,7 @@ interface Response {
      * @return this response
      */
     Response contentType(final String contentType)
+    Response contentType(final ContentType contentType)
 
     /**
      * Used to retrieve the content type of the response.

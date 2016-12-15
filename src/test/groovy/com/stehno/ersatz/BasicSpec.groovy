@@ -17,7 +17,10 @@ package com.stehno.ersatz
 
 import com.stehno.ersatz.feat.BasicAuthFeature
 import okhttp3.OkHttpClient
+import okhttp3.Request.Builder
 import spock.lang.Specification
+
+import static com.stehno.ersatz.feat.SimpleIdentityManager.encodedCredential
 
 class BasicSpec extends Specification {
 
@@ -30,17 +33,17 @@ class BasicSpec extends Specification {
             get('/secrets').responds().content('Something secure')
         }.start()
 
-        String encodedCred = "Basic ${'admin:$3cr3t'.bytes.encodeBase64()}"
-
         when:
-        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().url("${ersatzServer.serverUrl}/secrets").build()).execute()
+        okhttp3.Response response = client.newCall(new Builder().url("${ersatzServer.serverUrl}/secrets").build()).execute()
 
         then:
         response.code() == 401
         response.body().string() == ''
 
         when:
-        response = client.newCall(new okhttp3.Request.Builder().url("${ersatzServer.serverUrl}/secrets").addHeader('Authorization',encodedCred).build()).execute()
+        response = client.newCall(
+            new Builder().url("${ersatzServer.serverUrl}/secrets").addHeader('Authorization', encodedCredential('admin', '$3cr3t')).build()
+        ).execute()
 
         then:
         response.code() == 200
