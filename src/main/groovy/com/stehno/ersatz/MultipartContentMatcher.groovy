@@ -20,6 +20,8 @@ import org.apache.commons.fileupload.FileItem
 
 import java.util.function.Function
 
+import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
+
 /**
  * Content matcher (condition) used to assist in matching multipart request content.
  */
@@ -39,12 +41,11 @@ class MultipartContentMatcher implements Function<ClientRequest, Boolean> {
     @Override
     Boolean apply(final ClientRequest clientRequest) {
         FileItemMatcher fileItemMatcher = new FileItemMatcher(clientRequest)
-        boolean headerMatch = clientRequest.headers.get(ContentType.CONTENT_TYPE_HEADER, 0).startsWith(ContentType.MULTIPART_MIXED.value)
+        boolean headerMatch = clientRequest.headers.get(CONTENT_TYPE_HEADER, 0)?.startsWith('multipart/')
 
         if (closure) {
             closure.delegate = fileItemMatcher
             return headerMatch && closure.call(clientRequest)
-
         }
 
         return headerMatch && function.apply(fileItemMatcher)
@@ -112,6 +113,30 @@ class MultipartContentMatcher implements Function<ClientRequest, Boolean> {
         }
 
         /**
+         * Matches a field part at the specified index with the given name, value content and content-type.
+         *
+         * @param index the part index
+         * @param name the field name
+         * @param value the field value
+         * @param contentType the content-type
+         */
+        boolean field(final int index, final String name, final String value, final String contentType) {
+            part(index, fieldName: name, string: value, contentType: contentType)
+        }
+
+        /**
+         * Matches a field part at the specified index with the given name, value content and content-type.
+         *
+         * @param index the part index
+         * @param name the field name
+         * @param value the field value
+         * @param contentType the content-type
+         */
+        boolean field(final int index, final String name, final String value, final ContentType contentType) {
+            field(index, name, value, contentType.value)
+        }
+
+        /**
          * Matches a file part at the specified index with the given attributes.
          *
          * @param index the part index
@@ -123,6 +148,20 @@ class MultipartContentMatcher implements Function<ClientRequest, Boolean> {
          */
         boolean file(final int index, final String fieldName, final String fileName, String contentType, long fileSize) {
             part(index, fieldName: fieldName, fileName: fileName, contentType: contentType, size: fileSize)
+        }
+
+        /**
+         * Matches a file part at the specified index with the given attributes.
+         *
+         * @param index the part index
+         * @param fieldName the field name
+         * @param fileName the file name
+         * @param contentType the content type (matched as "starts with")
+         * @param fileSize the expected file size
+         * @return <code>true</code> if the part matches the expected criteria
+         */
+        boolean file(final int index, final String fieldName, final String fileName, ContentType contentType, long fileSize) {
+            file(index, fieldName, fileName, contentType.value, fileSize)
         }
 
         /**
@@ -146,11 +185,40 @@ class MultipartContentMatcher implements Function<ClientRequest, Boolean> {
          * @param fieldName the field name
          * @param fileName the file name
          * @param contentType the content type (matched as "starts with")
+         * @param bytes the content of the part as a byte array
+         * @return <code>true</code> if the part matches the expected criteria
+         */
+        boolean file(final int index, final String fieldName, final String fileName, ContentType contentType, byte[] bytes) {
+            file index, fieldName, fileName, contentType.value, bytes
+        }
+
+
+        /**
+         * Matches a file part at the specified index with the given attributes.
+         *
+         * @param index the part index
+         * @param fieldName the field name
+         * @param fileName the file name
+         * @param contentType the content type (matched as "starts with")
          * @param text the content of the part as a string of text.
          * @return <code>true</code> if the part matches the expected criteria
          */
         boolean file(final int index, final String fieldName, final String fileName, String contentType, String text) {
             part(index, fieldName: fieldName, fileName: fileName, contentType: contentType, string: text)
+        }
+
+        /**
+         * Matches a file part at the specified index with the given attributes.
+         *
+         * @param index the part index
+         * @param fieldName the field name
+         * @param fileName the file name
+         * @param contentType the content type (matched as "starts with")
+         * @param text the content of the part as a string of text.
+         * @return <code>true</code> if the part matches the expected criteria
+         */
+        boolean file(final int index, final String fieldName, final String fileName, ContentType contentType, String text) {
+            file index, fieldName, fileName, contentType.value, text
         }
     }
 }
