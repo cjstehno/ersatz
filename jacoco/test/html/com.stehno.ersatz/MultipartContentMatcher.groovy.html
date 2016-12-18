@@ -20,6 +20,8 @@ import org.apache.commons.fileupload.FileItem
 
 import java.util.function.Function
 
+import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
+
 /**
  * Content matcher (condition) used to assist in matching multipart request content.
  */
@@ -29,25 +31,24 @@ class MultipartContentMatcher implements Function&lt;ClientRequest, Boolean&gt; 
     private Function&lt;FileItemMatcher, Boolean&gt; function
 
     static MultipartContentMatcher multipart(@DelegatesTo(FileItemMatcher) final Closure&lt;Boolean&gt; closure) {
-<span class="pc" id="L32">        new MultipartContentMatcher(closure: closure)</span>
+<span class="pc" id="L34">        new MultipartContentMatcher(closure: closure)</span>
     }
 
     static MultipartContentMatcher multipart(final Function&lt;FileItemMatcher, Boolean&gt; function) {
-<span class="nc" id="L36">        new MultipartContentMatcher(function: function)</span>
+<span class="nc" id="L38">        new MultipartContentMatcher(function: function)</span>
     }
 
     @Override
     Boolean apply(final ClientRequest clientRequest) {
-<span class="fc" id="L41">        FileItemMatcher fileItemMatcher = new FileItemMatcher(clientRequest)</span>
-<span class="fc" id="L42">        boolean headerMatch = clientRequest.headers.get(ContentType.CONTENT_TYPE_HEADER, 0).startsWith(ContentType.MULTIPART_MIXED.value)</span>
+<span class="fc" id="L43">        FileItemMatcher fileItemMatcher = new FileItemMatcher(clientRequest)</span>
+<span class="fc" id="L44">        boolean headerMatch = clientRequest.headers.get(CONTENT_TYPE_HEADER, 0)?.startsWith('multipart/')</span>
 
-<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        if (closure) {</span>
-<span class="fc" id="L45">            closure.delegate = fileItemMatcher</span>
-<span class="pc bpc" id="L46" title="2 of 4 branches missed.">            return headerMatch &amp;&amp; closure.call(clientRequest)</span>
-
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if (closure) {</span>
+<span class="fc" id="L47">            closure.delegate = fileItemMatcher</span>
+<span class="pc bpc" id="L48" title="2 of 4 branches missed.">            return headerMatch &amp;&amp; closure.call(clientRequest)</span>
         }
 
-<span class="nc bnc" id="L50" title="All 4 branches missed.">        return headerMatch &amp;&amp; function.apply(fileItemMatcher)</span>
+<span class="nc bnc" id="L51" title="All 4 branches missed.">        return headerMatch &amp;&amp; function.apply(fileItemMatcher)</span>
     }
 
     /**
@@ -60,22 +61,22 @@ class MultipartContentMatcher implements Function&lt;ClientRequest, Boolean&gt; 
      * @return true if the specified conditions are matched
      */
     static boolean attrs(final Map&lt;String, Object&gt; attrs, final FileItem fileItem) {
-<span class="pc" id="L63">        attrs.every { k, v -&gt;</span>
-<span class="fc" id="L64">            switch (k) {</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">                case 'fieldName':</span>
-<span class="pc" id="L66">                    return v == fileItem.fieldName</span>
-<span class="fc bfc" id="L67" title="All 2 branches covered.">                case 'fileName':</span>
-<span class="pc" id="L68">                    return v == fileItem.name</span>
-<span class="fc bfc" id="L69" title="All 2 branches covered.">                case 'string':</span>
-<span class="pc" id="L70">                    return v == fileItem.getString('UTF-8')</span>
-<span class="fc bfc" id="L71" title="All 2 branches covered.">                case 'size':</span>
-<span class="pc" id="L72">                    return v == fileItem.size</span>
-<span class="fc bfc" id="L73" title="All 2 branches covered.">                case 'contentType':</span>
-<span class="pc" id="L74">                    return fileItem.contentType?.startsWith(v)</span>
-<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                case 'bytes':</span>
-<span class="fc" id="L76">                    return v == fileItem.get()</span>
+<span class="pc" id="L64">        attrs.every { k, v -&gt;</span>
+<span class="fc" id="L65">            switch (k) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                case 'fieldName':</span>
+<span class="pc" id="L67">                    return v == fileItem.fieldName</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                case 'fileName':</span>
+<span class="pc" id="L69">                    return v == fileItem.name</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">                case 'string':</span>
+<span class="pc" id="L71">                    return v == fileItem.getString('UTF-8')</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">                case 'size':</span>
+<span class="pc" id="L73">                    return v == fileItem.size</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">                case 'contentType':</span>
+<span class="pc" id="L75">                    return fileItem.contentType?.startsWith(v)</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">                case 'bytes':</span>
+<span class="fc" id="L77">                    return v == fileItem.get()</span>
                 default:
-<span class="nc" id="L78">                    return false</span>
+<span class="nc" id="L79">                    return false</span>
             }
         }
     }
@@ -97,7 +98,7 @@ class MultipartContentMatcher implements Function&lt;ClientRequest, Boolean&gt; 
          * @return &lt;code&gt;true&lt;/code&gt; if the part matches the expected criteria
          */
         boolean part(final Map&lt;String, Object&gt; map, final int index) {
-<span class="pc" id="L100">            attrs(map, clientRequest.fileItems[index])</span>
+<span class="pc" id="L101">            attrs(map, clientRequest.fileItems[index])</span>
         }
 
         /**
@@ -108,7 +109,31 @@ class MultipartContentMatcher implements Function&lt;ClientRequest, Boolean&gt; 
          * @param value the field value
          */
         boolean field(final int index, final String name, final String value) {
-<span class="pc" id="L111">            part(index, fieldName: name, string: value)</span>
+<span class="pc" id="L112">            part(index, fieldName: name, string: value)</span>
+        }
+
+        /**
+         * Matches a field part at the specified index with the given name, value content and content-type.
+         *
+         * @param index the part index
+         * @param name the field name
+         * @param value the field value
+         * @param contentType the content-type
+         */
+        boolean field(final int index, final String name, final String value, final String contentType) {
+<span class="nc" id="L124">            part(index, fieldName: name, string: value, contentType: contentType)</span>
+        }
+
+        /**
+         * Matches a field part at the specified index with the given name, value content and content-type.
+         *
+         * @param index the part index
+         * @param name the field name
+         * @param value the field value
+         * @param contentType the content-type
+         */
+        boolean field(final int index, final String name, final String value, final ContentType contentType) {
+<span class="nc" id="L136">            field(index, name, value, contentType.value)</span>
         }
 
         /**
@@ -122,7 +147,21 @@ class MultipartContentMatcher implements Function&lt;ClientRequest, Boolean&gt; 
          * @return &lt;code&gt;true&lt;/code&gt; if the part matches the expected criteria
          */
         boolean file(final int index, final String fieldName, final String fileName, String contentType, long fileSize) {
-<span class="nc" id="L125">            part(index, fieldName: fieldName, fileName: fileName, contentType: contentType, size: fileSize)</span>
+<span class="nc" id="L150">            part(index, fieldName: fieldName, fileName: fileName, contentType: contentType, size: fileSize)</span>
+        }
+
+        /**
+         * Matches a file part at the specified index with the given attributes.
+         *
+         * @param index the part index
+         * @param fieldName the field name
+         * @param fileName the file name
+         * @param contentType the content type (matched as &quot;starts with&quot;)
+         * @param fileSize the expected file size
+         * @return &lt;code&gt;true&lt;/code&gt; if the part matches the expected criteria
+         */
+        boolean file(final int index, final String fieldName, final String fileName, ContentType contentType, long fileSize) {
+<span class="nc" id="L164">            file(index, fieldName, fileName, contentType.value, fileSize)</span>
         }
 
         /**
@@ -136,8 +175,23 @@ class MultipartContentMatcher implements Function&lt;ClientRequest, Boolean&gt; 
          * @return &lt;code&gt;true&lt;/code&gt; if the part matches the expected criteria
          */
         boolean file(final int index, final String fieldName, final String fileName, String contentType, byte[] bytes) {
-<span class="nc" id="L139">            part(index, fieldName: fieldName, fileName: fileName, contentType: contentType, bytes: bytes)</span>
+<span class="nc" id="L178">            part(index, fieldName: fieldName, fileName: fileName, contentType: contentType, bytes: bytes)</span>
         }
+
+        /**
+         * Matches a file part at the specified index with the given attributes.
+         *
+         * @param index the part index
+         * @param fieldName the field name
+         * @param fileName the file name
+         * @param contentType the content type (matched as &quot;starts with&quot;)
+         * @param bytes the content of the part as a byte array
+         * @return &lt;code&gt;true&lt;/code&gt; if the part matches the expected criteria
+         */
+        boolean file(final int index, final String fieldName, final String fileName, ContentType contentType, byte[] bytes) {
+<span class="nc" id="L192">            file index, fieldName, fileName, contentType.value, bytes</span>
+        }
+
 
         /**
          * Matches a file part at the specified index with the given attributes.
@@ -150,7 +204,21 @@ class MultipartContentMatcher implements Function&lt;ClientRequest, Boolean&gt; 
          * @return &lt;code&gt;true&lt;/code&gt; if the part matches the expected criteria
          */
         boolean file(final int index, final String fieldName, final String fileName, String contentType, String text) {
-<span class="pc" id="L153">            part(index, fieldName: fieldName, fileName: fileName, contentType: contentType, string: text)</span>
+<span class="pc" id="L207">            part(index, fieldName: fieldName, fileName: fileName, contentType: contentType, string: text)</span>
+        }
+
+        /**
+         * Matches a file part at the specified index with the given attributes.
+         *
+         * @param index the part index
+         * @param fieldName the field name
+         * @param fileName the file name
+         * @param contentType the content type (matched as &quot;starts with&quot;)
+         * @param text the content of the part as a string of text.
+         * @return &lt;code&gt;true&lt;/code&gt; if the part matches the expected criteria
+         */
+        boolean file(final int index, final String fieldName, final String fileName, ContentType contentType, String text) {
+<span class="nc" id="L221">            file index, fieldName, fileName, contentType.value, text</span>
         }
     }
 }
