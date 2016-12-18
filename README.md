@@ -1,15 +1,13 @@
 # Ersatz Server
             
-[![Download](https://api.bintray.com/packages/cjstehno/stehno/ersatz/images/download.svg)](https://bintray.com/cjstehno/stehno/ersatz/_latestVersion)            
-[![Build Status](https://travis-ci.org/cjstehno/ersatz.svg?branch=master)](https://travis-ci.org/cjstehno/ersatz)
-[![Coverage Status](https://coveralls.io/repos/github/cjstehno/ersatz/badge.svg?branch=master)](https://coveralls.io/github/cjstehno/ersatz?branch=master)
+[![Download](https://api.bintray.com/packages/cjstehno/stehno/ersatz/images/download.svg)](https://bintray.com/cjstehno/stehno/ersatz/_latestVersion)[![Build Status](https://travis-ci.org/cjstehno/ersatz.svg?branch=master)](https://travis-ci.org/cjstehno/ersatz)[![Coverage Status](https://coveralls.io/repos/github/cjstehno/ersatz/badge.svg?branch=master)](https://coveralls.io/github/cjstehno/ersatz?branch=master)
 
 ## Quick Links
 
 * Site: http://stehno.com/ersatz
 * Project: https://github.com/cjstehno/ersatz
-* User Guide: https://github.com/cjstehno/ersatz/guide/html5
-* Groovy Docs: https://github.com/cjstehno/ersatz/groovydoc
+* User Guide: http://stehno.com/ersatz/guide/html5/
+* Groovy Docs: http://stehno.com/ersatz/groovydoc/
 
 ## Introduction
 
@@ -21,19 +19,19 @@ boiler-plate code.
 
 For Gradle:
 
-    testCompile 'com.stehno.ersatz:ersatz:0.1.0'
+    testCompile 'com.stehno.ersatz:ersatz:0.2.0'
 
 For Maven:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
     </dependency>
 
 ## Build Instructions
 
-Ersatz is build using Gradle with no custom build tasks:
+Ersatz is built using Gradle with no custom build tasks:
 
     ./gradlew clean build
 
