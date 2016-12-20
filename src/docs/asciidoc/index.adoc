@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno <chris@stehno.com>
-v0.2.1, December 2016
+v0.2.2, December 2016
 :toc: left
 :toclevels: 3
 
@@ -29,7 +29,7 @@ frameworks.
 
 Add the `ersatz` library to your project, for Gradle, this would mean adding the following to your `dependencies` block:
 
-    testCompile 'com.stehno.ersatz:ersatz:0.2.1'
+    testCompile 'com.stehno.ersatz:ersatz:0.2.2'
 
 You could then use Ersatz in a Spock test as follows:
 
@@ -262,7 +262,7 @@ where the `POST` content data would look like:
 
 == Multipart Request Content
 
-Ersatz server supports file upload requests (`multipart/form-data` content-type) using the
+Ersatz server supports multipart file upload requests (`multipart/form-data` content-type) using the
 https://commons.apache.org/proper/commons-fileupload/[Apache File Upload] library on the "server" side; however, due to the complexity of file upload
 content, the standard body matching cannot be used, instead a custom `condition` must be specified to determine the match, such as this example from
 the unit tests:
@@ -306,6 +306,59 @@ server.expectations {
 ----
 
 which provides some additional helper methods.
+
+== Multipart Response Content
+
+Multipart response content is supported, though most browsers do not fully support it - the expected use case would be a RESTful or other HTTP-based
+API. The response content will have the standard `multipart/form-data` content type and format. The response content parts are provided using an
+instance of the `MultipartContent` class and configuring its parts and encoders.
+
+The content parts are provided as "field" parts with only a field name and value, or as "file" parts with a field name, content-type, file name and
+content object. These configurations are made on the `MultipartContent` object via DSL or functional interface.
+
+The part content objects are serialized for data transfer as `String` content using configured encoders, which are simply instances of
+`Function<Object,String>` used to do the object to string conversion. These are configured either on a per-response basis or by sharing a
+`ResponseEncoders` instance between multipart configurations - the shared encoders will be used if not explicitly overridden by the multipart
+response configuration. No part encoders are provided by default.
+
+An example multipart response with a field and an image file would be something like:
+
+[source,groovy]
+----
+ersatzServer.expectations {
+    get('/data') {
+        responds().content(multipart {
+            // configure the part encoders
+            encoder TEXT_PLAIN, CharSequence, { o -> o as String }
+            encoder IMAGE_JPG, File, { o -> ((File)o).bytes.encodeBase64(true) }
+
+            // a field part
+            field 'comments', 'This is a cool image.'
+
+            // a file part
+            part 'image', 'test-image.jpg', IMAGE_JPG, new File('/test-image.jpg')
+        })
+    }
+}
+----
+
+The resulting response body would look like the following (as a String):
+
+----
+--WyAJDTEVlYgGjdI13o
+Content-Disposition: form-data; name="comments"
+Content-Type: text/plain
+
+This is a cool image.
+--WyAJDTEVlYgGjdI13o
+Content-Disposition: form-data; name="image"; filename="test-image.jpg"
+Content-Type: image/jpeg
+
+... more content follows ...
+----
+
+which could be decoded in the same manner a multipart _request_ content (an example using the Apache File Upload multipart parser can be found in
+the unit tests).
 
 == Feature Extensions
 
