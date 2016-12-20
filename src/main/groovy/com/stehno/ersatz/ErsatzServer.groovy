@@ -200,7 +200,10 @@ class ErsatzServer {
             }
         }
 
-        // FIXME: how does this handle binary response content?
-        exchange.responseSender.send(response?.content?.toString() ?: '')
+        String responseContent = response?.content?.toString() ?: ''
+
+        log.debug 'Response: {}', responseContent.take(1000)
+
+        exchange.responseSender.send(responseContent)
     }
 }

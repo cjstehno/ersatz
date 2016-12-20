@@ -25,7 +25,6 @@ import java.util.function.Function
 import static com.stehno.ersatz.Conditions.bodyEquals
 import static com.stehno.ersatz.ContentType.*
 
-
 /**
  * Ersatz implementation of a <code>Request</code> with request body content.
  */
