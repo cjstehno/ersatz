@@ -515,7 +515,7 @@ table.CodeRay td.code>pre{padding:0}
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
 <span id="email" class="email"><a href="mailto:chris@stehno.com">chris@stehno.com</a></span><br>
-<span id="revnumber">version 0.2.1,</span>
+<span id="revnumber">version 0.2.2,</span>
 <span id="revdate">December 2016</span>
 </div>
 <div id="toc" class="toc2">
@@ -534,6 +534,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_expectations">Expectations</a></li>
 <li><a href="#_url_encoded_form_requests">Url-Encoded Form Requests</a></li>
 <li><a href="#_multipart_request_content">Multipart Request Content</a></li>
+<li><a href="#_multipart_response_content">Multipart Response Content</a></li>
 <li><a href="#_feature_extensions">Feature Extensions</a></li>
 </ul>
 </div>
@@ -576,7 +577,7 @@ frameworks.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:0.2.1'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:0.2.2'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -892,7 +893,7 @@ example would be:</p>
 <h2 id="_multipart_request_content">Multipart Request Content</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Ersatz server supports file upload requests (<code>multipart/form-data</code> content-type) using the
+<p>Ersatz server supports multipart file upload requests (<code>multipart/form-data</code> content-type) using the
 <a href="https://commons.apache.org/proper/commons-fileupload/">Apache File Upload</a> library on the "server" side; however, due to the complexity of file upload
 content, the standard body matching cannot be used, instead a custom <code>condition</code> must be specified to determine the match, such as this example from
 the unit tests:</p>
@@ -943,6 +944,70 @@ provides additional functions to aid in creating these <code>FileItem</code>-bas
 </div>
 </div>
 <div class="sect1">
+<h2 id="_multipart_response_content">Multipart Response Content</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Multipart response content is supported, though most browsers do not fully support it - the expected use case would be a RESTful or other HTTP-based
+API. The response content will have the standard <code>multipart/form-data</code> content type and format. The response content parts are provided using an
+instance of the <code>MultipartContent</code> class and configuring its parts and encoders.</p>
+</div>
+<div class="paragraph">
+<p>The content parts are provided as "field" parts with only a field name and value, or as "file" parts with a field name, content-type, file name and
+content object. These configurations are made on the <code>MultipartContent</code> object via DSL or functional interface.</p>
+</div>
+<div class="paragraph">
+<p>The part content objects are serialized for data transfer as <code>String</code> content using configured encoders, which are simply instances of
+<code>Function&lt;Object,String&gt;</code> used to do the object to string conversion. These are configured either on a per-response basis or by sharing a
+<code>ResponseEncoders</code> instance between multipart configurations - the shared encoders will be used if not explicitly overridden by the multipart
+response configuration. No part encoders are provided by default.</p>
+</div>
+<div class="paragraph">
+<p>An example multipart response with a field and an image file would be something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ersatzServer.expectations {
+    get(<span class="string"><span class="delimiter">'</span><span class="content">/data</span><span class="delimiter">'</span></span>) {
+        responds().content(multipart {
+            <span class="comment">// configure the part encoders</span>
+            encoder TEXT_PLAIN, <span class="predefined-type">CharSequence</span>, { o -&gt; o <span class="keyword">as</span> <span class="predefined-type">String</span> }
+            encoder IMAGE_JPG, <span class="predefined-type">File</span>, { o -&gt; ((<span class="predefined-type">File</span>)o).bytes.encodeBase64() }
+
+            <span class="comment">// a field part</span>
+            field <span class="string"><span class="delimiter">'</span><span class="content">comments</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">This is a cool image.</span><span class="delimiter">'</span></span>
+
+            <span class="comment">// a file part</span>
+            part <span class="string"><span class="delimiter">'</span><span class="content">image</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">test-image.jpg</span><span class="delimiter">'</span></span>, IMAGE_JPG, <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">'</span><span class="content">/test-image.jpg</span><span class="delimiter">'</span></span>), <span class="string"><span class="delimiter">'</span><span class="content">base64</span><span class="delimiter">'</span></span>
+        })
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The resulting response body would look like the following (as a String):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>--WyAJDTEVlYgGjdI13o
+Content-Disposition: form-data; name="comments"
+Content-Type: text/plain
+
+This is a cool image.
+--WyAJDTEVlYgGjdI13o
+Content-Disposition: form-data; name="image"; filename="test-image.jpg"
+Content-Transfer-Encoding: base64
+Content-Type: image/jpeg
+
+... more content follows ...</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>which could be decoded in the same manner a multipart <em>request</em> content (an example using the Apache File Upload multipart parser can be found in
+the unit tests).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_feature_extensions">Feature Extensions</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -958,8 +1023,8 @@ authentication (username and password) as part of their matching.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.2.1<br>
-Last updated 2016-12-18 09:49:04 -06:00
+Version 0.2.2<br>
+Last updated 2016-12-20 09:59:59 -06:00
 </div>
 </div>
 </body>

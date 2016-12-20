@@ -127,7 +127,7 @@ class ClientRequest {
 
     @Override
     String toString() {
-<span class="pc bfc" id="L130" title="All 2 branches covered.">        &quot;{ $method $path (query=$queryParams, headers=$headers, cookies=$cookies): ${bodyAsString ?: '&lt;empty&gt;'} }&quot;</span>
+<span class="pc bfc" id="L130" title="All 2 branches covered.">        &quot;{ $method $path (query=$queryParams, headers=$headers, cookies=$cookies): ${bodyAsString ? bodyAsString.take(1000) : '&lt;empty&gt;'} }&quot;</span>
     }
 
     /**
@@ -137,7 +137,7 @@ class ClientRequest {
      */
     @Memoized
     List&lt;FileItem&gt; getFileItems() {
-<span class="pc" id="L140">        new FileUpload(new DiskFileItemFactory(1000, File.createTempDir())).parseRequest(new UploadContext() {</span>
+<span class="pc" id="L140">        new FileUpload(new DiskFileItemFactory(10_000, File.createTempDir())).parseRequest(new UploadContext() {</span>
             @Override
             long contentLength() {
 <span class="pc" id="L143">                exchange.requestContentLength</span>

@@ -25,7 +25,6 @@ import java.util.function.Function
 import static com.stehno.ersatz.Conditions.bodyEquals
 import static com.stehno.ersatz.ContentType.*
 
-
 /**
  * Ersatz implementation of a &lt;code&gt;Request&lt;/code&gt; with request body content.
  */
@@ -33,11 +32,11 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     public static final String CONTENT_TYPE_HEADER = 'Content-Type'
 
-<span class="fc" id="L36">    private final RequestContentConverters converters = new RequestContentConverters({</span>
-<span class="fc" id="L37">        register TEXT_PLAIN, Converters.utf8String</span>
-<span class="fc" id="L38">        register APPLICATION_JSON, Converters.parseJson</span>
-<span class="fc" id="L39">        register TEXT_JSON, Converters.parseJson</span>
-<span class="pc" id="L40">        register APPLICATION_URLENCODED, Converters.urlEncoded</span>
+<span class="fc" id="L35">    private final RequestContentConverters converters = new RequestContentConverters({</span>
+<span class="fc" id="L36">        register TEXT_PLAIN, Converters.utf8String</span>
+<span class="fc" id="L37">        register APPLICATION_JSON, Converters.parseJson</span>
+<span class="fc" id="L38">        register TEXT_JSON, Converters.parseJson</span>
+<span class="pc" id="L39">        register APPLICATION_URLENCODED, Converters.urlEncoded</span>
     })
 
     private Object body
@@ -49,52 +48,52 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
      * @param path the request path
      */
     ErsatzRequestWithContent(final String method, final String path) {
-<span class="fc" id="L52">        super(method, path)</span>
+<span class="fc" id="L51">        super(method, path)</span>
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
     RequestWithContent body(final Object body) {
-<span class="fc" id="L57">        this.body = body</span>
-<span class="pc" id="L58">        this</span>
+<span class="fc" id="L56">        this.body = body</span>
+<span class="pc" id="L57">        this</span>
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
     RequestWithContent body(final Object body, final String contentType) {
-<span class="fc" id="L63">        this.body(body)</span>
-<span class="pc bpc" id="L64" title="2 of 4 branches missed.">        this.contentType(contentType)</span>
+<span class="fc" id="L62">        this.body(body)</span>
+<span class="pc bpc" id="L63" title="2 of 4 branches missed.">        this.contentType(contentType)</span>
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
     RequestWithContent body(final Object body, final ContentType contentType) {
-<span class="fc" id="L69">        this.body(body)</span>
-<span class="pc bpc" id="L70" title="2 of 4 branches missed.">        this.contentType(contentType)</span>
+<span class="fc" id="L68">        this.body(body)</span>
+<span class="pc bpc" id="L69" title="2 of 4 branches missed.">        this.contentType(contentType)</span>
     }
 
     @Override
     RequestWithContent contentType(final String contentType) {
-<span class="fc" id="L75">        header(CONTENT_TYPE_HEADER, contentType)</span>
-<span class="pc" id="L76">        this</span>
+<span class="fc" id="L74">        header(CONTENT_TYPE_HEADER, contentType)</span>
+<span class="pc" id="L75">        this</span>
     }
 
     @Override
     RequestWithContent contentType(final ContentType contentType) {
-<span class="pc" id="L81">        this.contentType(contentType.value)</span>
+<span class="pc" id="L80">        this.contentType(contentType.value)</span>
     }
 
     String getContentType() {
-<span class="pc" id="L85">        getHeader(CONTENT_TYPE_HEADER)</span>
+<span class="pc" id="L84">        getHeader(CONTENT_TYPE_HEADER)</span>
     }
 
     @Override
     RequestWithContent converter(final String contentType, final Function&lt;byte[], Object&gt; converter) {
-<span class="fc" id="L90">        converters.register(contentType, converter)</span>
-<span class="pc" id="L91">        this</span>
+<span class="fc" id="L89">        converters.register(contentType, converter)</span>
+<span class="pc" id="L90">        this</span>
     }
 
     @Override
     RequestWithContent converter(final ContentType contentType, final Function&lt;byte[], Object&gt; converter) {
-<span class="fc" id="L96">        converters.register(contentType, converter)</span>
-<span class="pc" id="L97">        this</span>
+<span class="fc" id="L95">        converters.register(contentType, converter)</span>
+<span class="pc" id="L96">        this</span>
     }
 
     /**
@@ -103,7 +102,7 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
      * @return the configured body content
      */
     Object getBody() {
-<span class="pc" id="L106">        body</span>
+<span class="pc" id="L105">        body</span>
     }
 
     /**
@@ -126,17 +125,17 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
      * @return true if the incoming request matches the configured request
      */
     boolean matches(final ClientRequest clientRequest) {
-<span class="fc" id="L129">        boolean matches = super.matches(clientRequest)</span>
-<span class="fc bfc" id="L130" title="All 2 branches covered.">        if (conditions) {</span>
-<span class="fc" id="L131">            return matches</span>
+<span class="fc" id="L128">        boolean matches = super.matches(clientRequest)</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        if (conditions) {</span>
+<span class="fc" id="L130">            return matches</span>
         }
 
-<span class="fc bfc" id="L134" title="All 2 branches covered.">        return matches &amp;&amp;</span>
-<span class="pc bfc" id="L135" title="All 4 branches covered.">            bodyEquals(body, contentType ? converters.findConverter(contentType) : converters.findConverter(TEXT_PLAIN)).apply(clientRequest)</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        return matches &amp;&amp;</span>
+<span class="pc bfc" id="L134" title="All 4 branches covered.">            bodyEquals(body, contentType ? converters.findConverter(contentType) : converters.findConverter(TEXT_PLAIN)).apply(clientRequest)</span>
     }
 
     @Override String toString() {
-<span class="pc" id="L139">        &quot;${super.toString()}: $body&quot;</span>
+<span class="pc" id="L138">        &quot;${super.toString()}: $body&quot;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

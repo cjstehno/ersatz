@@ -192,7 +192,6 @@ class MultipartContentMatcher implements Function&lt;ClientRequest, Boolean&gt; 
 <span class="nc" id="L192">            file index, fieldName, fileName, contentType.value, bytes</span>
         }
 
-
         /**
          * Matches a file part at the specified index with the given attributes.
          *
@@ -204,7 +203,7 @@ class MultipartContentMatcher implements Function&lt;ClientRequest, Boolean&gt; 
          * @return &lt;code&gt;true&lt;/code&gt; if the part matches the expected criteria
          */
         boolean file(final int index, final String fieldName, final String fileName, String contentType, String text) {
-<span class="pc" id="L207">            part(index, fieldName: fieldName, fileName: fileName, contentType: contentType, string: text)</span>
+<span class="pc" id="L206">            part(index, fieldName: fieldName, fileName: fileName, contentType: contentType, string: text)</span>
         }
 
         /**
@@ -218,7 +217,7 @@ class MultipartContentMatcher implements Function&lt;ClientRequest, Boolean&gt; 
          * @return &lt;code&gt;true&lt;/code&gt; if the part matches the expected criteria
          */
         boolean file(final int index, final String fieldName, final String fileName, ContentType contentType, String text) {
-<span class="nc" id="L221">            file index, fieldName, fileName, contentType.value, text</span>
+<span class="nc" id="L220">            file index, fieldName, fileName, contentType.value, text</span>
         }
     }
 }

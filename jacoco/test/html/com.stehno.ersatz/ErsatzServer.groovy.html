@@ -200,8 +200,11 @@ class ErsatzServer {
             }
         }
 
-        // FIXME: how does this handle binary response content?
-<span class="pc bpc" id="L204" title="1 of 6 branches missed.">        exchange.responseSender.send(response?.content?.toString() ?: '')</span>
+<span class="pc bpc" id="L203" title="1 of 6 branches missed.">        String responseContent = response?.content?.toString() ?: ''</span>
+
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        log.debug 'Response: {}', responseContent.take(1000)</span>
+
+<span class="fc" id="L207">        exchange.responseSender.send(responseContent)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
