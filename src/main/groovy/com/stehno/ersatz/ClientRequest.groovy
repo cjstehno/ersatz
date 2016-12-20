@@ -137,7 +137,7 @@ class ClientRequest {
      */
     @Memoized
     List<FileItem> getFileItems() {
-        new FileUpload(new DiskFileItemFactory(1000, File.createTempDir())).parseRequest(new UploadContext() {
+        new FileUpload(new DiskFileItemFactory(10_000, File.createTempDir())).parseRequest(new UploadContext() {
             @Override
             long contentLength() {
                 exchange.requestContentLength

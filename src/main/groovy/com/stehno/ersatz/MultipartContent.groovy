@@ -84,6 +84,7 @@ class MultipartContent {
      * @param value the boundary label to be used
      * @return a reference to this MultipartContent instance
      */
+    @SuppressWarnings('ConfusingMethodName')
     MultipartContent boundary(final String value) {
         this.boundary = value
         this
@@ -262,8 +263,8 @@ class MultipartContent {
         def encoder = encoders.findEncoder(contentType, obj.class)
         if (encoder) {
             return encoder.apply(obj)
-        } else {
-            throw new IllegalArgumentException("No encoder found for content-type ($contentType) and object type (${obj.class.simpleName}).")
         }
+
+        throw new IllegalArgumentException("No encoder found for content-type ($contentType) and object type (${obj.class.simpleName}).")
     }
 }

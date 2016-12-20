@@ -330,13 +330,13 @@ ersatzServer.expectations {
         responds().content(multipart {
             // configure the part encoders
             encoder TEXT_PLAIN, CharSequence, { o -> o as String }
-            encoder IMAGE_JPG, File, { o -> ((File)o).bytes.encodeBase64(true) }
+            encoder IMAGE_JPG, File, { o -> ((File)o).bytes.encodeBase64() }
 
             // a field part
             field 'comments', 'This is a cool image.'
 
             // a file part
-            part 'image', 'test-image.jpg', IMAGE_JPG, new File('/test-image.jpg')
+            part 'image', 'test-image.jpg', IMAGE_JPG, new File('/test-image.jpg'), 'base64'
         })
     }
 }
@@ -352,6 +352,7 @@ Content-Type: text/plain
 This is a cool image.
 --WyAJDTEVlYgGjdI13o
 Content-Disposition: form-data; name="image"; filename="test-image.jpg"
+Content-Transfer-Encoding: base64
 Content-Type: image/jpeg
 
 ... more content follows ...

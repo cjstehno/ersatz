@@ -15,6 +15,8 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ContentType
+import groovy.transform.Immutable
 import groovy.transform.TypeChecked
 
 import javax.activation.MimeType
@@ -64,6 +66,17 @@ class ResponseEncoders {
     }
 
     /**
+     * Used to register an encoder for a content-type, part object type.
+     *
+     * @param contentType the part content-type
+     * @param objectType the part object type
+     * @param encoder the encoder function
+     */
+    void register(final ContentType contentType, final Class objectType, final Function<Object, String> encoder) {
+        register contentType.value, objectType, encoder
+    }
+
+    /**
      * Used to find an encoder for the given content-type and object type. If a parent is configured on this encoder collection, it will be checked
      * for a match if one is not found in this collection.
      *
@@ -73,8 +86,31 @@ class ResponseEncoders {
      */
     Function<Object, String> findEncoder(final String contentType, final Class objectType) {
         MimeType mime = new MimeType(contentType)
-        Function<Object,String> encoder = encoders.find { em -> em.contentType.match(mime) && em.objectType.isAssignableFrom(objectType) }?.encoder
+        Function<Object, String> encoder = encoders.find { em -> em.contentType.match(mime) && em.objectType.isAssignableFrom(objectType) }?.encoder
 
-        encoder ? encoder : (parentEncoders ? parentEncoders.findEncoder(contentType, objectType) : null)
+        encoder ?: (parentEncoders ? parentEncoders.findEncoder(contentType, objectType) : null)
+    }
+
+    /**
+     * Used to find an encoder for the given content-type and object type. If a parent is configured on this encoder collection, it will be checked
+     * for a match if one is not found in this collection.
+     *
+     * param contentType the part content-type
+     * @param objectType the part object type
+     * @return the encoder function if one exists or null
+     */
+    Function<Object, String> findEncoder(final ContentType contentType, final Class objectType) {
+        findEncoder contentType.value, objectType
+    }
+
+    /**
+     * Immutable mapping of a content-type and object type to an encoder.
+     */
+    @Immutable(knownImmutableClasses = [MimeType, Function])
+    private static class EncoderMapping {
+
+        MimeType contentType
+        Class objectType
+        Function<Object, String> encoder
     }
 }

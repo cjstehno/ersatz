@@ -202,7 +202,7 @@ class ErsatzServer {
 
         String responseContent = response?.content?.toString() ?: ''
 
-        log.debug "Response: {}", responseContent.take(1000)
+        log.debug 'Response: {}', responseContent.take(1000)
 
         exchange.responseSender.send(responseContent)
     }
