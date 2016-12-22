@@ -28,6 +28,7 @@ import java.util.function.Function
  */
 @TypeChecked
 class ResponseEncoders {
+    // FIXME: pull this into public api
 
     private final List<EncoderMapping> encoders = []
     private ResponseEncoders parentEncoders

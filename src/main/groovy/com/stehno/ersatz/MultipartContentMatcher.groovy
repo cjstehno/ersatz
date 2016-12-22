@@ -30,14 +30,6 @@ class MultipartContentMatcher implements Function<ClientRequest, Boolean> {
     private Closure<Boolean> closure
     private Function<FileItemMatcher, Boolean> function
 
-    static MultipartContentMatcher multipart(@DelegatesTo(FileItemMatcher) final Closure<Boolean> closure) {
-        new MultipartContentMatcher(closure: closure)
-    }
-
-    static MultipartContentMatcher multipart(final Function<FileItemMatcher, Boolean> function) {
-        new MultipartContentMatcher(function: function)
-    }
-
     @Override
     Boolean apply(final ClientRequest clientRequest) {
         FileItemMatcher fileItemMatcher = new FileItemMatcher(clientRequest)

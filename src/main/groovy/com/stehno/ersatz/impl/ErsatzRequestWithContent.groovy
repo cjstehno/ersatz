@@ -15,126 +15,64 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.ContentType
-import com.stehno.ersatz.Converters
+import com.stehno.ersatz.RequestDecoders
 import com.stehno.ersatz.RequestWithContent
+import org.hamcrest.Matcher
 
+import java.util.function.BiFunction
 import java.util.function.Function
 
-import static com.stehno.ersatz.Conditions.bodyEquals
-import static com.stehno.ersatz.ContentType.*
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.startsWith
 
 /**
  * Ersatz implementation of a <code>Request</code> with request body content.
  */
 class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
-    public static final String CONTENT_TYPE_HEADER = 'Content-Type'
-
-    private final RequestContentConverters converters = new RequestContentConverters({
-        register TEXT_PLAIN, Converters.utf8String
-        register APPLICATION_JSON, Converters.parseJson
-        register TEXT_JSON, Converters.parseJson
-        register APPLICATION_URLENCODED, Converters.urlEncoded
-    })
-
-    private Object body
+    private final RequestDecoders decoders = new RequestDecoders()
 
     /**
      * Creates a request with the specified method and path.
      *
      * @param method the request method
-     * @param path the request path
+     * @param pathMatcher the request path matcher
      */
-    ErsatzRequestWithContent(final String method, final String path) {
-        super(method, path)
+    ErsatzRequestWithContent(final String method, final Matcher<String> pathMatcher) {
+        super(method, pathMatcher)
     }
 
-    @Override @SuppressWarnings('ConfusingMethodName')
-    RequestWithContent body(final Object body) {
-        this.body = body
-        this
-    }
-
+    // FIXME: update docs
     @Override @SuppressWarnings('ConfusingMethodName')
     RequestWithContent body(final Object body, final String contentType) {
-        this.body(body)
-        this.contentType(contentType)
+        addMatcher(RequestMatcher.contentType(startsWith(contentType)))
+        addMatcher(RequestMatcher.body(decoders, contentType, body instanceof Matcher ? body : equalTo(body)))
+        this
     }
 
+    // FIXME: update docs
     @Override @SuppressWarnings('ConfusingMethodName')
     RequestWithContent body(final Object body, final ContentType contentType) {
-        this.body(body)
-        this.contentType(contentType)
+        this.body(body, contentType.value)
     }
 
     @Override
-    RequestWithContent contentType(final String contentType) {
-        header(CONTENT_TYPE_HEADER, contentType)
+    RequestWithContent decoder(final String contentType, final BiFunction<byte[],RequestDecoders, Object> decoder) {
+        decoders.register(contentType, decoder)
         this
     }
 
     @Override
-    RequestWithContent contentType(final ContentType contentType) {
-        this.contentType(contentType.value)
-    }
-
-    String getContentType() {
-        getHeader(CONTENT_TYPE_HEADER)
-    }
-
-    @Override
-    RequestWithContent converter(final String contentType, final Function<byte[], Object> converter) {
-        converters.register(contentType, converter)
+    RequestWithContent decoder(final ContentType contentType, final BiFunction<byte[],RequestDecoders, Object> decoder) {
+        decoders.register(contentType, decoder)
         this
     }
 
     @Override
-    RequestWithContent converter(final ContentType contentType, final Function<byte[], Object> converter) {
-        converters.register(contentType, converter)
+    RequestWithContent decoders(final RequestDecoders requestDecoders) {
+        decoders.parent = requestDecoders
         this
-    }
-
-    /**
-     * Used to retrieve the configured body content.
-     *
-     * @return the configured body content
-     */
-    Object getBody() {
-        body
-    }
-
-    /**
-     * Used to determine whether or not the incoming client request matches this configured request. If there are configured <code>conditions</code>,
-     * they will override the default match conditions (except for path and request method matching, and only those configured conditions will be
-     * applied. The default conditions may be added back in using the <code>Conditions</code> functions.
-     *
-     * The default match criteria are:
-     *
-     * <ul>
-     *  <li>The request methods must match.</li>
-     *  <li>The request paths must match.</li>
-     *  <li>The request query parameters must match (inclusive).</li>
-     *  <li>The incoming request headers must contain all of the configured headers (non-inclusive).</li>
-     *  <li>The incoming request cookies must contain all of the configured cookies (non-inclusive).</li>
-     *  <li>The incoming request body content must match the configured body content (after conversion).</li>
-     * </ul>
-     *
-     * @param clientRequest the incoming client request
-     * @return true if the incoming request matches the configured request
-     */
-    boolean matches(final ClientRequest clientRequest) {
-        boolean matches = super.matches(clientRequest)
-        if (conditions) {
-            return matches
-        }
-
-        return matches &&
-            bodyEquals(body, contentType ? converters.findConverter(contentType) : converters.findConverter(TEXT_PLAIN)).apply(clientRequest)
-    }
-
-    @Override String toString() {
-        "${super.toString()}: $body"
     }
 }
+

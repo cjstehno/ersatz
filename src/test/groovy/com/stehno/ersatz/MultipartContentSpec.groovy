@@ -25,7 +25,7 @@ class MultipartContentSpec extends Specification {
 
     def 'multipart: closure'() {
         when:
-        MultipartContent mc = MultipartContent.multipart {
+        MultipartResponseContent mc = MultipartResponseContent.multipart {
             boundary 'abc123'
 
             encoder 'text/plain', String, { o -> o as String }

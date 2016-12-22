@@ -16,7 +16,7 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ContentType
-import com.stehno.ersatz.MultipartContent
+import com.stehno.ersatz.MultipartResponseContent
 import com.stehno.ersatz.Response
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
@@ -47,7 +47,7 @@ class ErsatzResponse implements Response {
 
         this.content = content
 
-        if (content instanceof MultipartContent) {
+        if (content instanceof MultipartResponseContent) {
             contentType(content.contentType)
         }
 

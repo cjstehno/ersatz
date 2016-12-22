@@ -17,6 +17,7 @@ package com.stehno.ersatz
 
 import com.stehno.ersatz.impl.ErsatzRequest
 import com.stehno.ersatz.impl.ExpectationsImpl
+import com.stehno.ersatz.impl.UndertowClientRequest
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.undertow.Undertow
@@ -135,14 +136,14 @@ class ErsatzServer {
         server = Undertow.builder().addHttpListener(0, 'localhost').setHandler(applyFeatures(new HttpHandler() {
             @Override
             void handleRequest(final HttpServerExchange exchange) throws Exception {
-                ClientRequest clientRequest = new ClientRequest(exchange)
+                ClientRequest clientRequest = new UndertowClientRequest(exchange)
 
                 log.debug 'Request: {}', clientRequest
 
                 ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
                 if (request) {
                     send(exchange, request.currentResponse)
-                    request.mark()
+                    request.mark(clientRequest)
 
                 } else {
                     log.warn 'Unmatched-Request: {}', clientRequest

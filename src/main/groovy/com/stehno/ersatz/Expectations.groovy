@@ -16,6 +16,7 @@
 package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
+import org.hamcrest.Matcher
 
 import java.util.function.Consumer
 
@@ -23,7 +24,7 @@ import java.util.function.Consumer
  * The <code>Expectations</code> interface is the root element of the expectation configuration, which provides the ability to define request
  * expectations and responses for test interactions.
  */
-@CompileStatic
+@CompileStatic @SuppressWarnings('MethodCount')
 interface Expectations {
 
     /**
@@ -34,6 +35,8 @@ interface Expectations {
      */
     Request get(String path)
 
+    Request get(Matcher<String> matcher)
+
     /**
      * Allows configuration of a GET request expectation using the Groovy DSL.
      *
@@ -42,6 +45,8 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      */
     Request get(String path, @DelegatesTo(Request) Closure closure)
+
+    Request get(Matcher<String> matcher, @DelegatesTo(Request) Closure closure)
 
     /**
      * Allows configuration of a GET request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
@@ -53,6 +58,8 @@ interface Expectations {
      */
     Request get(String path, Consumer<Request> config)
 
+    Request get(Matcher<String> matcher, Consumer<Request> config)
+
     /**
      * Allows configuration of a HEAD request expectation.
      *
@@ -60,6 +67,8 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      */
     Request head(String path)
+
+    Request head(Matcher<String> matcher)
 
     /**
      * Allows configuration of a HEAD request expectation using the Groovy DSL.
@@ -69,6 +78,8 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      */
     Request head(String path, @DelegatesTo(Request) Closure closure)
+
+    Request head(Matcher<String> matcher, @DelegatesTo(Request) Closure closure)
 
     /**
      * Allows configuration of a HEAD request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
@@ -80,6 +91,8 @@ interface Expectations {
      */
     Request head(String path, Consumer<Request> config)
 
+    Request head(Matcher<String> matcher, Consumer<Request> config)
+
     /**
      * Allows configuration of a POST request expectation.
      *
@@ -87,6 +100,8 @@ interface Expectations {
      * @return a <code>RequestWithContent</code> configuration object
      */
     RequestWithContent post(String path)
+
+    RequestWithContent post(Matcher<String> matcher)
 
     /**
      * Allows configuration of a POST request expectation using the Groovy DSL.
@@ -96,6 +111,8 @@ interface Expectations {
      * @return a <code>RequestWithContent</code> configuration object
      */
     RequestWithContent post(String path, @DelegatesTo(RequestWithContent) Closure closure)
+
+    RequestWithContent post(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure)
 
     /**
      * Allows configuration of a POST request expectation using the provided <code>Consumer<Request></code>. The
@@ -107,6 +124,8 @@ interface Expectations {
      */
     RequestWithContent post(String path, Consumer<RequestWithContent> config)
 
+    RequestWithContent post(Matcher<String> matcher, Consumer<RequestWithContent> config)
+
     /**
      * Allows configuration of a PUT request expectation.
      *
@@ -114,6 +133,8 @@ interface Expectations {
      * @return a <code>RequestWithContent</code> configuration object
      */
     RequestWithContent put(String path)
+
+    RequestWithContent put(Matcher<String> matcher)
 
     /**
      * Allows configuration of a PUT request expectation using the Groovy DSL.
@@ -123,6 +144,8 @@ interface Expectations {
      * @return a <code>RequestWithContent</code> configuration object
      */
     RequestWithContent put(String path, @DelegatesTo(RequestWithContent) Closure closure)
+
+    RequestWithContent put(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure)
 
     /**
      * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
@@ -134,6 +157,8 @@ interface Expectations {
      */
     RequestWithContent put(String path, Consumer<RequestWithContent> config)
 
+    RequestWithContent put(Matcher<String> matcher, Consumer<RequestWithContent> config)
+
     /**
      * Allows configuration of a DELETE request expectation.
      *
@@ -141,6 +166,8 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      */
     Request delete(String path)
+
+    Request delete(Matcher<String> matcher)
 
     /**
      * Allows configuration of a DELETE request expectation using the Groovy DSL.
@@ -150,6 +177,8 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      */
     Request delete(String path, @DelegatesTo(Request) Closure closure)
+
+    Request delete(Matcher<String> matcher, @DelegatesTo(Request) Closure closure)
 
     /**
      * Allows configuration of a DELETE request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
@@ -161,6 +190,8 @@ interface Expectations {
      */
     Request delete(String path, Consumer<Request> config)
 
+    Request delete(Matcher<String> matcher, Consumer<Request> config)
+
     /**
      * Allows configuration of a PATCH request expectation.
      *
@@ -168,6 +199,8 @@ interface Expectations {
      * @return a <code>RequestWithContent</code> configuration object
      */
     RequestWithContent patch(String path)
+
+    RequestWithContent patch(Matcher<String> matcher)
 
     /**
      * Allows configuration of a PATCH request expectation using the Groovy DSL.
@@ -178,6 +211,8 @@ interface Expectations {
      */
     RequestWithContent patch(String path, @DelegatesTo(RequestWithContent) Closure closure)
 
+    RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure)
+
     /**
      * Allows configuration of a PATCH request expectation using the provided <code>Consumer<Request></code>. The
      * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
@@ -187,4 +222,6 @@ interface Expectations {
      * @return a <code>RequestWithContent</code> configuration object
      */
     RequestWithContent patch(String path, Consumer<RequestWithContent> config)
+
+    RequestWithContent patch(Matcher<String> matcher, Consumer<RequestWithContent> config)
 }
