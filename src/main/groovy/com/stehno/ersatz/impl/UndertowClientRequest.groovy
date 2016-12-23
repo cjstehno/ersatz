@@ -24,8 +24,10 @@ import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.Cookie
 import io.undertow.util.HeaderMap
 
+import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
+
 /**
- * FIXME: document
+ *
  */
 @CompileStatic @TupleConstructor
 class UndertowClientRequest implements ClientRequest {
@@ -104,18 +106,33 @@ class UndertowClientRequest implements ClientRequest {
         "{ $method $path (query=$queryParams, headers=$headers, cookies=$cookies): ${body ? new String(body).take(1000) : '<empty>'} }"
     }
 
+    /**
+     * Retrieves the content length of the request.
+     *
+     * @return the request content length
+     */
     @Override
     long getContentLength() {
         exchange.requestContentLength
     }
 
+    /**
+     * Retrieves the request character encoding.
+     *
+     * @return the request character encoding
+     */
     @Override
     String getCharacterEncoding() {
         exchange.requestCharset
     }
 
+    /**
+     * Retrieves the request content type. Generally this will only be present for requests with body content.
+     *
+     * @return the request content type
+     */
     @Override
     String getContentType() {
-        exchange.requestHeaders.get('Content-Type').first
+        exchange.requestHeaders.get(CONTENT_TYPE_HEADER).first
     }
 }

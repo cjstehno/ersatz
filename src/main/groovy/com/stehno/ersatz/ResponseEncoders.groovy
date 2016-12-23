@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl
+package com.stehno.ersatz
 
-import com.stehno.ersatz.ContentType
-import groovy.transform.Immutable
+import groovy.transform.CompileStatic
+import groovy.transform.TupleConstructor
 import groovy.transform.TypeChecked
 
 import javax.activation.MimeType
@@ -28,7 +28,6 @@ import java.util.function.Function
  */
 @TypeChecked
 class ResponseEncoders {
-    // FIXME: pull this into public api
 
     private final List<EncoderMapping> encoders = []
     private ResponseEncoders parentEncoders
@@ -107,7 +106,7 @@ class ResponseEncoders {
     /**
      * Immutable mapping of a content-type and object type to an encoder.
      */
-    @Immutable(knownImmutableClasses = [MimeType, Function])
+    @CompileStatic @TupleConstructor
     private static class EncoderMapping {
 
         MimeType contentType

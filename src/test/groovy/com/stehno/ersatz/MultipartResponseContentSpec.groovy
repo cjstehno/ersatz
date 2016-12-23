@@ -21,7 +21,7 @@ import static com.stehno.ersatz.ContentType.APPLICATION_JSON
 import static com.stehno.ersatz.ContentType.IMAGE_JPG
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
-class MultipartContentSpec extends Specification {
+class MultipartResponseContentSpec extends Specification {
 
     def 'multipart: closure'() {
         when:

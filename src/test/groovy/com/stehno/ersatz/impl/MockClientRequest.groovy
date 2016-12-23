@@ -21,6 +21,8 @@ import io.undertow.server.handlers.CookieImpl
 import io.undertow.util.HeaderMap
 import io.undertow.util.HttpString
 
+import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
+
 class MockClientRequest implements ClientRequest {
 
     String method
@@ -31,7 +33,6 @@ class MockClientRequest implements ClientRequest {
     Map<String, Cookie> cookies = [:]
     long contentLength
     String characterEncoding
-    String contentType
 
     MockClientRequest header(String name, String value) {
         headers.add(new HttpString(name), value)
@@ -46,5 +47,14 @@ class MockClientRequest implements ClientRequest {
     MockClientRequest cookie(String name, String value) {
         cookies[name] = new CookieImpl(name, value)
         this
+    }
+
+    void setContentType(final String contentType) {
+        header(CONTENT_TYPE_HEADER, contentType)
+    }
+
+    @Override
+    String getContentType() {
+        headers.getFirst(CONTENT_TYPE_HEADER)
     }
 }

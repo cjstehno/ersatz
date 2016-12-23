@@ -13,34 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz.impl
 
 import groovy.transform.CompileStatic
-import groovy.transform.TupleConstructor
+import groovy.transform.Immutable
 
 /**
- * Request-specific contextual information used by request content decoders.
+ * Representation of a multipart part for requests and responses.
  */
-@CompileStatic @TupleConstructor
-class DecodingContext {
+@CompileStatic @Immutable(knownImmutables = ['value'])
+class MultipartPart {
 
-    /**
-     * The request content length.
-     */
-    long contentLength
-
-    /**
-     * The request content type.
-     */
+    String fieldName
+    String fileName
     String contentType
-
-    /**
-     * The request character encoding.
-     */
-    String characterEncoding
-
-    /**
-     * The available request decoders.
-     */
-    RequestDecoders decoders
+    String transferEncoding
+    Object value
 }

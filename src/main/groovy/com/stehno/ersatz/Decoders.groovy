@@ -28,7 +28,9 @@ import static java.net.URLDecoder.decode
 import static java.nio.charset.StandardCharsets.UTF_8
 
 /**
- * Reusable request content decoder functions.
+ * Reusable request content decoder functions. Decoders are simply implementations of the <code>BiFunction<byte[], DecodingContext, Object></code>
+ * interface, which takes the request content as a byte array along with the <code>DecodingContext</code> to return an <code>Object</code>
+ * representation of the request data.
  */
 @SuppressWarnings('PropertyName')
 class Decoders {
@@ -41,21 +43,21 @@ class Decoders {
     }
 
     /**
-     * Converts request content bytes into a UTF-8 string.
+     * Decoder that converts request content bytes into a UTF-8 string.
      */
     static final BiFunction<byte[], DecodingContext, Object> utf8String = { byte[] content, DecodingContext ctx ->
         content ? new String(content, UTF_8) : ''
     }
 
     /**
-     * Converts request content bytes into a string of JSON and then parses it with <code>JsonSlurper</code> to return parsed JSON data.
+     * Decoder that converts request content bytes into a string of JSON and then parses it with <code>JsonSlurper</code> to return parsed JSON data.
      */
     static final BiFunction<byte[], DecodingContext, Object> parseJson = { byte[] content, DecodingContext ctx ->
         new JsonSlurper().parse(content ?: '{}'.bytes)
     }
 
     /**
-     * Converts request content bytes in a url-encoded format into a map of name/value pairs.
+     * Decoder that converts request content bytes in a url-encoded format into a map of name/value pairs.
      */
     static final BiFunction<byte[], DecodingContext, Object> urlEncoded = { byte[] content, DecodingContext ctx ->
         if (content) {
@@ -69,7 +71,7 @@ class Decoders {
     }
 
     /**
-     * FIXME: document
+     * Decoder that converts request content bytes into a <code>MultipartRequestContent</code> object populated with the multipart request content.
      */
     static final BiFunction<byte[], DecodingContext, Object> multipart = { byte[] content, DecodingContext ctx ->
         List<FileItem> parts = new FileUpload(new DiskFileItemFactory(10_000, File.createTempDir())).parseRequest(new UploadContext() {

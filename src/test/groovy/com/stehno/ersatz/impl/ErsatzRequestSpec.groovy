@@ -38,8 +38,6 @@ class ErsatzRequestSpec extends Specification {
     private final ErsatzRequest request = new ErsatzRequest('TEST', equalTo('/testing'))
     @AutoCleanup('stop') private final ErsatzServer server = new ErsatzServer()
 
-    // FIXME: test with hamcrest matchers
-
     def 'to string'() {
         expect:
         request.toString() == 'Expectations (ErsatzRequest): "TEST", "/testing", '

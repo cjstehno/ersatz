@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ResponseEncoders
 import spock.lang.Specification
 
 import java.util.function.Function

@@ -21,13 +21,13 @@ import com.stehno.ersatz.Response
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 
+import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
+
 /**
  * Implementation of the <code>Response</code> interface.
  */
 @CompileStatic @TupleConstructor
 class ErsatzResponse implements Response {
-
-    static final String CONTENT_TYPE_HEADER = 'Content-Type'
 
     /**
      * Whether or not this instance defines an empty response.

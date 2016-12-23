@@ -33,10 +33,19 @@ interface Request {
      * @param value the header value
      * @return this request
      */
-    Request header(final String name, final Object value)
+    Request header(final String name, final String value)
 
     /**
-     * Specifies request headers as a Map of names to values to be configured in the expected request.
+     * Specifies a request header matcher to be configured in the expected request.
+     *
+     * @param name the header name
+     * @param matcher the header value matcher
+     * @return this request
+     */
+    Request header(final String name, final Matcher<String> matcher)
+
+    /**
+     * Specifies request headers as a Map of names to values to be configured in the expected request. The map values may be Strings or Matchers.
      *
      * @param heads the map of headers
      * @return this request
@@ -51,10 +60,30 @@ interface Request {
      * @param value the parameter value
      * @return this request
      */
-    Request query(final String name, final Object value)
+    Request query(final String name, final String value)
 
     /**
-     * Used to specify a map of request query parameters for configuration on the expected request.
+     * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
+     * specified multiple times with different values to denote a parameter with multiple values.
+     *
+     * @param name the parameter name
+     * @param values the list of values
+     * @return this request
+     */
+    Request query(final String name, final Iterable<String> values)
+
+    /**
+     * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
+     * specified multiple times with different values to denote a parameter with multiple values.
+     *
+     * @param name the parameter name
+     * @param matcher the query string matcher
+     * @return this request
+     */
+    Request query(final String name, final Matcher<Iterable<String>> matcher)
+
+    /**
+     * Used to specify a map of request query parameters for configuration on the expected request. The map values may be Strings or Matchers.
      *
      * @param map the map of query parameters
      * @return this request
@@ -68,10 +97,19 @@ interface Request {
      * @param value the cookie value
      * @return this request
      */
-    Request cookie(final String name, final Object value)
+    Request cookie(final String name, final String value)
 
     /**
-     * Used to configure a map of cookies on the request.
+     * Specifies a request cookie to be configured with the given name and value.
+     *
+     * @param name the cookie name
+     * @param matcher the cookie value matcher
+     * @return this request
+     */
+    Request cookie(final String name, final Matcher<String> matcher)
+
+    /**
+     * Used to configure a map of cookies on the request. The map values may be Strings or Matchers.
      *
      * @param cookies the map of cookies
      * @return this request

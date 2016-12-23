@@ -15,8 +15,8 @@
  */
 package com.stehno.ersatz
 
-import com.stehno.ersatz.impl.ResponseEncoders
-import groovy.transform.TypeChecked
+import com.stehno.ersatz.impl.MultipartPart
+import groovy.transform.CompileStatic
 
 import java.util.function.Consumer
 import java.util.function.Function
@@ -32,38 +32,22 @@ import static java.util.Collections.shuffle
  * <code>ResponseEncoders</code> is provided, they will be used as defaults and overridden by any encoders specified on the response configuration
  * itself.
  */
-@TypeChecked
+@CompileStatic
 class MultipartResponseContent {
 
-    /// FIXME: refactoring along lines of the multipart request
-
     private static final String ALPHANUMERICS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-    private final List<Map<String, Object>> parts = []
+    private final List<MultipartPart> parts = []
     private String boundary = generateBoundary()
     private final ResponseEncoders encoders = new ResponseEncoders()
 
     /**
-     * Creates a multipart content response object with the optional parent part encoders. The parent encoders will be used if no matching encoder
-     * is found in the configured encoders.
-     *
-     * @param parentEncoders optional parent part encoders
-     */
-    MultipartResponseContent(final ResponseEncoders parentEncoders = null) {
-        encoders.parent = parentEncoders
-    }
-
-    /**
      * Creates a new multipart response content object with the optional boundary (random default) and a Closure used to configure the parts.
      *
-     * @param encoders the parent response encoders to be used
      * @param closure the configuration closure (Delegates to MultipartContent instance)
-     * @return a reference to this MultipartContent instance
+     * @return a reference to this MultipartResponseContent instance
      */
-    static MultipartResponseContent multipart(
-        final ResponseEncoders encoders = new ResponseEncoders(),
-        final @DelegatesTo(MultipartResponseContent) Closure closure
-    ) {
-        MultipartResponseContent content = new MultipartResponseContent(encoders)
+    static MultipartResponseContent multipart(final @DelegatesTo(MultipartResponseContent) Closure closure) {
+        MultipartResponseContent content = new MultipartResponseContent()
         closure.delegate = content
         closure.call()
         content
@@ -73,24 +57,33 @@ class MultipartResponseContent {
      * Creates a new multipart response content object with the optional boundary (random default) and a Consumer used to configure the parts. The
      * Consumer will have an instance of MultipartContent passed into it for configuration.
      *
-     * @param encoders the parent response encoders to be used
      * @param closure the configuration consumer (given an instance of MultipartContent)
-     * @return a reference to this MultipartContent instance
+     * @return a reference to this MultipartResponseContent instance
      */
-    static MultipartResponseContent multipart(
-        final ResponseEncoders encoders = new ResponseEncoders(),
-        final Consumer<MultipartResponseContent> consumer
-    ) {
-        MultipartResponseContent content = new MultipartResponseContent(encoders)
+    static MultipartResponseContent multipart(final Consumer<MultipartResponseContent> consumer) {
+        MultipartResponseContent content = new MultipartResponseContent()
         consumer.accept(content)
         content
+    }
+
+    /**
+     * Used to specify the set of shared (parent) encoders used - this encoder collection will be called when no encoder is specified in the current
+     * response configuration.
+     *
+     * @param responseEncoders the parent set of shared encoders
+     * @return a reference to this MultipartResponseContent instance
+     */
+    @SuppressWarnings('ConfusingMethodName')
+    MultipartResponseContent encoders(final ResponseEncoders responseEncoders) {
+        this.encoders.parent = responseEncoders
+        this
     }
 
     /**
      * Used to override the default random boundary value with the provided one.
      *
      * @param value the boundary label to be used
-     * @return a reference to this MultipartContent instance
+     * @return a reference to this MultipartResponseContent instance
      */
     @SuppressWarnings('ConfusingMethodName')
     MultipartResponseContent boundary(final String value) {
@@ -104,7 +97,7 @@ class MultipartResponseContent {
      * @param contentType the response content-type
      * @param type the response object type
      * @param closure the closure to be used as the encoder
-     * @return a reference to this MultipartContent instance
+     * @return a reference to this MultipartResponseContent instance
      */
     MultipartResponseContent encoder(final String contentType, final Class type, final Closure<String> closure) {
         encoder(contentType, type, closure as Function<Object, String>)
@@ -116,7 +109,7 @@ class MultipartResponseContent {
      * @param contentType the response content-type
      * @param type the response object type
      * @param encoder the encoder
-     * @return a reference to this MultipartContent instance
+     * @return a reference to this MultipartResponseContent instance
      */
     MultipartResponseContent encoder(final String contentType, final Class type, final Function<Object, String> encoder) {
         encoders.register(contentType, type, encoder)
@@ -129,7 +122,7 @@ class MultipartResponseContent {
      * @param contentType the response content-type
      * @param type the response object type
      * @param closure the closure to be used as the encoder
-     * @return a reference to this MultipartContent instance
+     * @return a reference to this MultipartResponseContent instance
      */
     MultipartResponseContent encoder(final ContentType contentType, final Class type, final Closure<String> closure) {
         encoder(contentType.value, type, closure as Function<Object, String>)
@@ -141,7 +134,7 @@ class MultipartResponseContent {
      * @param contentType the response content-type
      * @param type the response object type
      * @param encoder the encoder
-     * @return a reference to this MultipartContent instance
+     * @return a reference to this MultipartResponseContent instance
      */
     MultipartResponseContent encoder(final ContentType contentType, final Class type, final Function<Object, String> encoder) {
         encoders.register(contentType.value, type, encoder)
@@ -153,7 +146,7 @@ class MultipartResponseContent {
      *
      * @param fieldName the field name
      * @param value the field value
-     * @return a reference to this MultipartContent instance
+     * @return a reference to this MultipartResponseContent instance
      */
     MultipartResponseContent field(final String fieldName, final String value) {
         part fieldName, TEXT_PLAIN, value
@@ -165,10 +158,10 @@ class MultipartResponseContent {
      * @param fieldName the field name
      * @param contentType the response part content-type
      * @param value the field value
-     * @return a reference to this MultipartContent instance
+     * @return a reference to this MultipartResponseContent instance
      */
     MultipartResponseContent part(final String fieldName, final String contentType, final Object value) {
-        parts << [fieldName: fieldName, contentType: contentType, value: value]
+        parts << new MultipartPart(fieldName, null, contentType, null, value)
         this
     }
 
@@ -179,10 +172,10 @@ class MultipartResponseContent {
      * @param contentType the response part content-type
      * @param value the field value
      * @param transferEncoding the content-transfer-encoding value (defaults to none)
-     * @return a reference to this MultipartContent instance
+     * @return a reference to this MultipartResponseContent instance
      */
     MultipartResponseContent part(final String fieldName, final ContentType contentType, final Object value, final String transferEncoding = null) {
-        parts << [fieldName: fieldName, contentType: contentType.value, value: value, transferEncoding: transferEncoding]
+        parts << new MultipartPart(fieldName, null, contentType.value, transferEncoding, value)
         this
     }
 
@@ -194,10 +187,10 @@ class MultipartResponseContent {
      * @param contentType the response part content-type
      * @param value the field value
      * @param transferEncoding the content-transfer-encoding value (defaults to none)
-     * @return a reference to this MultipartContent instance
+     * @return a reference to this MultipartResponseContent instance
      */
     MultipartResponseContent part(String fieldName, String fileName, String contentType, Object value, String transferEncoding = null) {
-        parts << [fieldName: fieldName, fileName: fileName, contentType: contentType, value: value, transferEncoding: transferEncoding]
+        parts << new MultipartPart(fieldName, fileName, contentType, transferEncoding, value)
         this
     }
 
@@ -209,10 +202,10 @@ class MultipartResponseContent {
      * @param contentType the response part content-type
      * @param value the field value
      * @param transferEncoding the content-transfer-encoding value (defaults to none)
-     * @return a reference to this MultipartContent instance
+     * @return a reference to this MultipartResponseContent instance
      */
     MultipartResponseContent part(String fieldName, String fileName, ContentType contentType, Object value, String transferEncoding = null) {
-        parts << [fieldName: fieldName, fileName: fileName, contentType: contentType.value, value: value, transferEncoding: transferEncoding]
+        parts << new MultipartPart(fieldName, fileName, contentType.value, transferEncoding, value)
         this
     }
 

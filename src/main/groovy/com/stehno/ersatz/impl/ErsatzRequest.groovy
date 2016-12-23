@@ -19,7 +19,6 @@ import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.Response
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers
 import org.hamcrest.StringDescription
 
 import java.util.function.Consumer
@@ -42,7 +41,7 @@ class ErsatzRequest implements Request {
     private final List<Consumer<ClientRequest>> listeners = []
     private final List<Response> responses = []
     private final boolean emptyResponse
-    private Matcher<?> callVerifier = Matchers.anything()
+    private Matcher<?> callVerifier = anything()
     private int callCount
 
     /**
@@ -58,7 +57,6 @@ class ErsatzRequest implements Request {
         this.emptyResponse = emptyResponse
     }
 
-    // FIXME: update docs
     @Override @SuppressWarnings('ConfusingMethodName')
     Request headers(final Map<String, Object> heads) {
         heads.each { k, v ->
@@ -67,30 +65,33 @@ class ErsatzRequest implements Request {
         this
     }
 
-    // FIXME: update docs
     @Override
-    Request header(final String name, final Object value) {
-        matchers << RequestMatcher.header(name, value instanceof Matcher ? value : equalTo(value as String))
+    Request header(final String name, final String value) {
+        header name, equalTo(value)
+    }
+
+    @Override
+    Request header(final String name, final Matcher<String> value) {
+        matchers << RequestMatcher.header(name, value)
         this
     }
 
-    // FIXME: update docs
     @Override
-    Request query(final String name, final Object value) {
-        Matcher<Iterable<String>> matcher
-        if (value instanceof Matcher) {
-            matcher = value as Matcher
-        } else if (value instanceof Collection) {
-            matcher = containsInAnyOrder((value as Collection<String>).collect { equalTo(it) })
-        } else {
-            matcher = contains(value as String)
-        }
+    Request query(final String name, final String value) {
+        query name, contains(value)
+    }
 
+    @Override
+    Request query(final String name, final Iterable<String> value) {
+        query name, containsInAnyOrder((value as Collection<String>).collect { equalTo(it) })
+    }
+
+    @Override
+    Request query(final String name, final Matcher<Iterable<String>> matcher) {
         matchers << RequestMatcher.query(name, matcher)
         this
     }
 
-    // FIXME: update docs
     @Override
     Request queries(final Map<String, Object> map) {
         map.each { k, v ->
@@ -99,14 +100,17 @@ class ErsatzRequest implements Request {
         this
     }
 
-    // FIXME: update docs
     @Override
-    Request cookie(final String name, final Object value) {
-        matchers << RequestMatcher.cookie(name, value instanceof Matcher ? value : equalTo(value as String))
+    Request cookie(final String name, final String value) {
+        cookie name, equalTo(value)
+    }
+
+    @Override
+    Request cookie(final String name, final Matcher<String> value) {
+        matchers << RequestMatcher.cookie(name, value)
         this
     }
 
-    // FIXME: update docs
     @Override @SuppressWarnings('ConfusingMethodName')
     Request cookies(Map<String, Object> cookies) {
         cookies.each { k, v ->
@@ -147,7 +151,6 @@ class ErsatzRequest implements Request {
         this
     }
 
-    // FIXME: update docs
     @Override @SuppressWarnings('ConfusingMethodName')
     Request called(final Matcher<Integer> callVerifier) {
         this.callVerifier = callVerifier
@@ -183,7 +186,6 @@ class ErsatzRequest implements Request {
      * @param clientRequest the incoming client request
      * @return true if the incoming request matches the configured request
      */
-    // FIXME: update docs
     boolean matches(final ClientRequest clientRequest) {
         // FIXME: assert here to get descriptions?
         matchers.every { m ->

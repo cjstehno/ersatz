@@ -29,8 +29,8 @@ import io.undertow.util.HttpString
 import java.util.function.Consumer
 
 /**
- * The main entry point for an Ersatz server, used to configure the expectations and manage the server itself. This is the class that should be
- * instantiated in unit tests.
+ * The main entry point for configuring an Ersatz server, which allows configuring of the expectations and management of the server itself. This is
+ * the class that should be instantiated in unit tests.
  *
  * The server will be started on an ephemeral port so as not to collide with itself or other server applications running in the test environment. In
  * your tests, you can retrieve the server port or URL using the <code>getPort()</code> and <code>getServerUrl()</code> methods respectively.
@@ -46,7 +46,7 @@ import java.util.function.Consumer
  *     <li>Stop the server.</li>
  * </ol>
  *
- * See the User Guide for more detailed information.
+ * See the <a href="http://stehno.com/ersatz/guide/html5/" target="_blank">User Guide</a> for more detailed information.
  */
 @CompileStatic @Slf4j
 class ErsatzServer {
@@ -159,7 +159,7 @@ class ErsatzServer {
     }
 
     /**
-     * Used to stop the HTTP server.
+     * Used to stop the HTTP server. The server may be restarted after it has been stopped.
      */
     void stop() {
         actualPort = -1
@@ -168,9 +168,9 @@ class ErsatzServer {
     }
 
     /**
-     * Used to verify all of the HTTP server interaction for their expected call criteria (if any). This method should be called after any test
-     * interactions have been performed. This is an optional step since generally you will also be receiving the expected response back from the
-     * server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
+     * Used to verify that all of the expected request interactions were called the appropriate number of times. This method should be called after
+     * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back from
+     * the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
      *
      * @return <code>true</code> if all call criteria were met during test execution.
      */

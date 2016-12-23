@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.impl.MultipartPart
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 
@@ -23,17 +24,23 @@ import java.util.function.Consumer
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
 /**
- * FIXME: document
+ * Defines the request body content for a multipart request. An instance of this class may be created directly or by using the Groovy DSL closure or
+ * Consumer configuration methods to build up the expected multipart request parts.
+ *
+ * If partial or more flexible content matching is preferred, the <code>MultipartRequestMatcher</code> class provides a Hamcrest matcher for matching
+ * multipart content, based on the model presented by this class.
  */
 @CompileStatic @EqualsAndHashCode(includeFields = true)
 class MultipartRequestContent {
 
-    // FIXME: is there shared code between this and multipart response object?
-    // FIXME: may want to reuse the part object here too
-    // FIXME: consider adding typed methods rather than Object
+    private final Map<String, MultipartPart> parts = [:]
 
-    private final List<Map<String, Object>> parts = []
-
+    /**
+     * Creates and configures a multipart request object using the Groovy DSL closure (delegated to an instance of MultipartRequestContent).
+     *
+     * @param closure the configuration closure
+     * @return a configured instance of MultipartRequestContent
+     */
     static MultipartRequestContent multipart(@DelegatesTo(MultipartRequestContent) final Closure closure) {
         MultipartRequestContent request = new MultipartRequestContent()
         closure.delegate = request
@@ -41,38 +48,91 @@ class MultipartRequestContent {
         request
     }
 
+    /**
+     * Creates and configures a multipart request object using the provided consumer, which will be given an instance of the MultipartRequestContent
+     * to configure. This instance will then be returned from the method.
+     *
+     * @param closure the configuration consumer
+     * @return a configured instance of MultipartRequestContent
+     */
     static MultipartRequestContent multipart(final Consumer<MultipartRequestContent> config) {
         MultipartRequestContent request = new MultipartRequestContent()
         config.accept(request)
         request
     }
 
+    /**
+     * Configures a field part with the given field name and value (as text/plain).
+     *
+     * @param fieldName the field name
+     * @param value the value
+     * @return a reference to this multipart request instance
+     */
     MultipartRequestContent part(final String fieldName, final String value) {
         part fieldName, TEXT_PLAIN, value
     }
 
+    /**
+     * Configures a part with the given field name and value as the specified content type.
+     *
+     * @param fieldName the field name
+     * @param contentType the content type
+     * @param value the value
+     * @return a reference to this multipart request instance
+     */
     MultipartRequestContent part(final String fieldName, final String contentType, final Object value) {
-        parts << [fieldName: fieldName, contentType: contentType, value: value]
+        parts[fieldName] = new MultipartPart(fieldName, null, contentType, null, value)
         this
     }
 
+    /**
+     * Configures a part with the given field name and value as the specified content type.
+     *
+     * @param fieldName the field name
+     * @param contentType the content type
+     * @param value the value
+     * @return a reference to this multipart request instance
+     */
     MultipartRequestContent part(final String fieldName, final ContentType contentType, final Object value) {
-        parts << [fieldName: fieldName, contentType: contentType.value, value: value]
+        parts[fieldName] = new MultipartPart(fieldName, null, contentType.value, null, value)
         this
     }
 
+    /**
+     * Configures a part with the given field name, file name and value as the specified content type.
+     *
+     * @param fieldName the field name
+     * @param fileName the file name
+     * @param contentType the content type
+     * @param value the value
+     * @return a reference to this multipart request instance
+     */
     MultipartRequestContent part(String fieldName, String fileName, String contentType, Object value) {
-        parts << [fieldName: fieldName, fileName: fileName, contentType: contentType, value: value]
+        parts[fieldName] = new MultipartPart(fieldName, fileName, contentType, null, value)
         this
     }
 
+    /**
+     * Configures a part with the given field name, file name and value as the specified content type.
+     *
+     * @param fieldName the field name
+     * @param fileName the file name
+     * @param contentType the content type
+     * @param value the value
+     * @return a reference to this multipart request instance
+     */
     MultipartRequestContent part(String fieldName, String fileName, ContentType contentType, Object value) {
-        parts << [fieldName: fieldName, fileName: fileName, contentType: contentType.value, value: value]
+        parts[fieldName] = new MultipartPart(fieldName, fileName, contentType.value, null, value)
         this
     }
 
-    protected Map<String, Object> getAt(String fieldName) {
-        (parts.find { p -> p.fieldName == fieldName }?.asImmutable() ?: [:]) as Map<String, Object>
+    /**
+     * Retrieves the part with the specified field name.
+     *
+     * @param fieldName the field name
+     * @return the part or null if none is configured
+     */
+    protected MultipartPart getAt(final String fieldName) {
+        parts[fieldName]
     }
 }
-

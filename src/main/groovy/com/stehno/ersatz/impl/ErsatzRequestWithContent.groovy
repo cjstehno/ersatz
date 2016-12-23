@@ -16,12 +16,12 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ContentType
+import com.stehno.ersatz.DecodingContext
 import com.stehno.ersatz.RequestDecoders
 import com.stehno.ersatz.RequestWithContent
 import org.hamcrest.Matcher
 
 import java.util.function.BiFunction
-import java.util.function.Function
 
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.startsWith
@@ -29,6 +29,7 @@ import static org.hamcrest.Matchers.startsWith
 /**
  * Ersatz implementation of a <code>Request</code> with request body content.
  */
+@SuppressWarnings('ConfusingMethodName')
 class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
     private final RequestDecoders decoders = new RequestDecoders()
@@ -43,28 +44,36 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         super(method, pathMatcher)
     }
 
-    // FIXME: update docs
-    @Override @SuppressWarnings('ConfusingMethodName')
-    RequestWithContent body(final Object body, final String contentType) {
-        addMatcher(RequestMatcher.contentType(startsWith(contentType)))
-        addMatcher(RequestMatcher.body(decoders, contentType, body instanceof Matcher ? body : equalTo(body)))
+    @Override
+    RequestWithContent body(final Matcher<Object> bodyMatcher, final String contentType) {
+        addMatcher RequestMatcher.contentType(startsWith(contentType))
+        addMatcher RequestMatcher.body(decoders, contentType, bodyMatcher)
         this
     }
 
-    // FIXME: update docs
-    @Override @SuppressWarnings('ConfusingMethodName')
-    RequestWithContent body(final Object body, final ContentType contentType) {
-        this.body(body, contentType.value)
+    @Override
+    RequestWithContent body(final Object obj, final String contentType) {
+        body equalTo(obj), contentType
     }
 
     @Override
-    RequestWithContent decoder(final String contentType, final BiFunction<byte[],RequestDecoders, Object> decoder) {
+    RequestWithContent body(final Matcher<Object> bodyMatcher, final ContentType contentType) {
+        body bodyMatcher, contentType.value
+    }
+
+    @Override
+    RequestWithContent body(final Object obj, final ContentType contentType) {
+        body obj, contentType.value
+    }
+
+    @Override
+    RequestWithContent decoder(final String contentType, final BiFunction<byte[], DecodingContext, Object> decoder) {
         decoders.register(contentType, decoder)
         this
     }
 
     @Override
-    RequestWithContent decoder(final ContentType contentType, final BiFunction<byte[],RequestDecoders, Object> decoder) {
+    RequestWithContent decoder(final ContentType contentType, final BiFunction<byte[], DecodingContext, Object> decoder) {
         decoders.register(contentType, decoder)
         this
     }

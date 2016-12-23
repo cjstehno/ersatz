@@ -30,7 +30,7 @@ import static org.hamcrest.Matchers.equalTo
 /**
  * Implementation of the <code>Expectations</code> interface.
  */
-@CompileStatic @SuppressWarnings(['ConfusingMethodName','MethodCount'])
+@CompileStatic @SuppressWarnings(['ConfusingMethodName', 'MethodCount'])
 class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = []
@@ -202,17 +202,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     RequestWithContent patch(Matcher<String> matcher) {
-        expect(new ErsatzRequestWithContent(ErsatzRequest.PATCH, matcher)) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PATCH, matcher)) as RequestWithContent
     }
 
     @Override
     RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure) {
-        expect(new ErsatzRequestWithContent(ErsatzRequest.PATCH, matcher), closure) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PATCH, matcher), closure) as RequestWithContent
     }
 
     @Override
     RequestWithContent patch(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        expect(new ErsatzRequestWithContent(ErsatzRequest.PATCH, matcher), config) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PATCH, matcher), config) as RequestWithContent
     }
 
     /**

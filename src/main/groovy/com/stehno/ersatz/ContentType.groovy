@@ -19,7 +19,8 @@ import groovy.transform.CompileStatic
 import groovy.transform.Immutable
 
 /**
- * A content-type representation. Some of the standard content-types are provided as static constants for use elsewhere.
+ * A content-type representation. Some of the standard content-types are provided as static constants for use elsewhere, others may be created as
+ * instances of this class as needed.
  */
 @Immutable @CompileStatic @SuppressWarnings('GroovyUnusedDeclaration')
 class ContentType {

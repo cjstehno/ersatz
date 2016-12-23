@@ -67,10 +67,24 @@ interface ClientRequest {
      */
     byte[] getBody()
 
-    // FIXME: document these
+    /**
+     * Retrieves the content length of the request.
+     *
+     * @return the request content length
+     */
     long getContentLength()
 
+    /**
+     * Retrieves the request character encoding.
+     *
+     * @return the request character encoding
+     */
     String getCharacterEncoding()
 
+    /**
+     * Retrieves the request content type. Generally this will only be present for requests with body content.
+     *
+     * @return the request content type
+     */
     String getContentType()
 }
