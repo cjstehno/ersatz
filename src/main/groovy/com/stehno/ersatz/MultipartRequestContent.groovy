@@ -20,6 +20,8 @@ import groovy.transform.EqualsAndHashCode
 
 import java.util.function.Consumer
 
+import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+
 /**
  * FIXME: document
  */
@@ -27,9 +29,10 @@ import java.util.function.Consumer
 class MultipartRequestContent {
 
     // FIXME: is there shared code between this and multipart response object?
-    // FIXME: also make a matcher for multipart content?
+    // FIXME: may want to reuse the part object here too
+    // FIXME: consider adding typed methods rather than Object
 
-    private final List<Map<String,Object>> parts = []
+    private final List<Map<String, Object>> parts = []
 
     static MultipartRequestContent multipart(@DelegatesTo(MultipartRequestContent) final Closure closure) {
         MultipartRequestContent request = new MultipartRequestContent()
@@ -42,6 +45,10 @@ class MultipartRequestContent {
         MultipartRequestContent request = new MultipartRequestContent()
         config.accept(request)
         request
+    }
+
+    MultipartRequestContent part(final String fieldName, final String value) {
+        part fieldName, TEXT_PLAIN, value
     }
 
     MultipartRequestContent part(final String fieldName, final String contentType, final Object value) {
@@ -63,4 +70,9 @@ class MultipartRequestContent {
         parts << [fieldName: fieldName, fileName: fileName, contentType: contentType.value, value: value]
         this
     }
+
+    protected Map<String, Object> getAt(String fieldName) {
+        (parts.find { p -> p.fieldName == fieldName }?.asImmutable() ?: [:]) as Map<String, Object>
+    }
 }
+

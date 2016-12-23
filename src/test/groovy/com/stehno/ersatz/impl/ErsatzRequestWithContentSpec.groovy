@@ -16,24 +16,28 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.*
-import groovy.json.JsonSlurper
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import org.hamcrest.Matcher
+import org.hamcrest.Matchers
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
-import java.util.function.BiFunction
-
 import static com.stehno.ersatz.ContentType.*
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
-import static com.stehno.ersatz.MultipartContentMatcher.multipart
+import static com.stehno.ersatz.MultipartRequestMatcher.multipartMatcher
 import static com.stehno.ersatz.impl.ErsatzRequest.POST
 import static okhttp3.MediaType.parse
 import static okhttp3.Request.Builder
 import static okhttp3.RequestBody.create
+import static org.hamcrest.Matchers.allOf
+import static org.hamcrest.Matchers.any
+import static org.hamcrest.Matchers.arrayWithSize
 import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.notNullValue
+import static org.hamcrest.Matchers.startsWith
 
 class ErsatzRequestWithContentSpec extends Specification {
 
@@ -214,10 +218,10 @@ class ErsatzRequestWithContentSpec extends Specification {
                 decoders decoders
                 decoder MULTIPART_MIXED, Decoders.multipart
                 decoder IMAGE_PNG, Decoders.passthrough
-                body MultipartRequestContent.multipart {
-                    part 'something', TEXT_PLAIN, 'interesting'
-                    part 'infoFile', 'info.txt', 'text/plain; charset=utf-8', 'This is some interesting file content.'
-                    part 'dataFile', 'data.bin', IMAGE_PNG, [8, 6, 7, 5, 3, 0, 9] as byte[]
+                body multipartMatcher {
+                    part 'something', 'interesting'
+                    part 'infoFile', 'info.txt', 'text/plain', equalTo('This is some interesting file content.')
+                    part 'dataFile', 'data.bin', IMAGE_PNG, notNullValue()
                 }, MULTIPART_MIXED
                 responder {
                     content 'ok'
