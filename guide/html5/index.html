@@ -515,7 +515,7 @@ table.CodeRay td.code>pre{padding:0}
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
 <span id="email" class="email"><a href="mailto:chris@stehno.com">chris@stehno.com</a></span><br>
-<span id="revnumber">version 0.2.2,</span>
+<span id="revnumber">version 0.3.0,</span>
 <span id="revdate">December 2016</span>
 </div>
 <div id="toc" class="toc2">
@@ -551,12 +551,12 @@ boiler-plate code.</p>
 <div class="paragraph">
 <p>The "mock" server is not really mock at all, it is an embedded Undertow HTTP server which registers the configured expectations as routes and then
 responds according to the expected behavior. This approach may seem overly heavy; however, testing an HTTP client can involve a lot of internal state
-and interactions that the developer is generally unaware of (and should be) - trying to mock those interactions with a pure mocking framework can get
+and interactions that the developer is generally unaware of (and should be) - trying to mock those interactions with a pure mocking framework will get
 out of hand very quickly.</p>
 </div>
 <div class="paragraph">
-<p>Ersatz provides a balance of mock-like known behavior with a real HTTP interface with all of the underlying interactions in place. This allows for
-testing, which is what you were trying to do in the first place.</p>
+<p>Ersatz provides a balance of mock-like expectation behavior with a real HTTP interface and all of the underlying interactions in place. This allows
+for rich unit testing, which is what you were trying to do in the first place.</p>
 </div>
 <div class="paragraph">
 <p>Ersatz is written in Groovy 2.4.x and requires a Java 8 VM due to its use of the modern functional libraries; however, the Ersatz library is written
@@ -577,7 +577,7 @@ frameworks.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:0.2.2'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:0.3.0'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -594,7 +594,7 @@ frameworks.</p>
 
         server.expectations {
             get(<span class="string"><span class="delimiter">'</span><span class="content">/say/hello</span><span class="delimiter">'</span></span>){
-                verifier once()
+                called equalTo(<span class="integer">1</span>)
                 query <span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">Ersatz</span><span class="delimiter">'</span></span>
                 responder {
                     content <span class="string"><span class="delimiter">'</span><span class="content">Hello Ersatz</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">text/plain</span><span class="delimiter">'</span></span>
@@ -630,7 +630,7 @@ the verification and likewise the test, would fail.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java">server.expectations(expect -&gt; {
-    expect.get(<span class="string"><span class="delimiter">&quot;</span><span class="content">/say/hello</span><span class="delimiter">&quot;</span></span>).verifier(once()).query(<span class="string"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>,<span class="string"><span class="delimiter">&quot;</span><span class="content">Ersatz</span><span class="delimiter">&quot;</span></span>)
+    expect.get(<span class="string"><span class="delimiter">&quot;</span><span class="content">/say/hello</span><span class="delimiter">&quot;</span></span>).called(equalTo(<span class="integer">1</span>)).query(<span class="string"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>,<span class="string"><span class="delimiter">&quot;</span><span class="content">Ersatz</span><span class="delimiter">&quot;</span></span>)
         .responds().content(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello Ersatz</span><span class="delimiter">&quot;</span></span>,<span class="string"><span class="delimiter">&quot;</span><span class="content">text/plain</span><span class="delimiter">&quot;</span></span>);
 ))</code></pre>
 </div>
@@ -668,14 +668,9 @@ the verification and likewise the test, would fail.</p>
 <div class="sect2">
 <h3 id="_configure">Configure</h3>
 <div class="paragraph">
-<p>The first step is "configuration", where the server is instantiated, request expectations are configured and the server is started.</p>
-</div>
-<div class="paragraph">
-<p>An Ersatz server is created by creating an instance of <code>ErsatzServer</code>. No HTTP server is started at this point, but the server is ready for
-configuration.</p>
-</div>
-<div class="paragraph">
-<p>Configuring the expectations on the server consists of calling one of the following methods:</p>
+<p>The first step is "configuration", where the server is instantiated, request expectations are configured and the server is started. An Ersatz server
+is created by creating an instance of <code>ErsatzServer</code>. No HTTP server is started at this point, but the server is ready for configuration. Configuring
+the expectations on the server consists of calling one of the following methods:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -707,28 +702,25 @@ embedded HTTP server and register the configured expectations. If the server is 
 <div class="paragraph">
 <p>After configuration, the server is running and ready for test interactions. Any HTTP client can make HTTP requests against the server to retrieve
 configured responses. The <code>ErsatzServer</code> object provides helper methods to retrieve the server port and URL, with <code>getPort()</code> and <code>getServerUrl()</code>
-respectively.</p>
-</div>
-<div class="paragraph">
-<p>Note that the server will <em>always</em> be started on an ephemeral port so that a random one will be chosen to avoid collisions.</p>
+respectively. Note that the server will <em>always</em> be started on an ephemeral port so that a random one will be chosen to avoid collisions.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_verify">Verify</h3>
 <div class="paragraph">
 <p>Once testing has been performed, it may be desirable to verify whether or not the expected number of request calls were matched. The <code>Expectations</code>
-interface provides a <code>verifier</code> method to add call count verification per configured request, something like:</p>
+interface provides a <code>called</code> method to add call count verification per configured request, something like:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">post(<span class="string"><span class="delimiter">'</span><span class="content">/user</span><span class="delimiter">'</span></span>).body(content, <span class="string"><span class="delimiter">'</span><span class="content">application/json</span><span class="delimiter">'</span></span>).verifier(once())
+<pre class="CodeRay highlight"><code data-lang="groovy">post(<span class="string"><span class="delimiter">'</span><span class="content">/user</span><span class="delimiter">'</span></span>).body(content, <span class="string"><span class="delimiter">'</span><span class="content">application/json</span><span class="delimiter">'</span></span>).called(<span class="integer">1</span>)
     .responds().content(successContent, <span class="string"><span class="delimiter">'</span><span class="content">application/json</span><span class="delimiter">'</span></span>)</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This would match a POST request to "/user" with request body content matching the provided content and expect that matched call only once. When <code>verify()</code>
-is called it will return <code>true</code> if this request has only been matched once, otherwise it will return <code>false</code>. This allows testing to ensure that
-requests are not made more often than expected or at unexpected times.</p>
+<p>This would match a POST request to "/user" with request body content matching the provided content and expect that matched call only once. When
+<code>verify()</code> is called it will return <code>true</code> if this request has only been matched once, otherwise it will return <code>false</code>. This allows testing to
+ensure that requests are not made more often than expected or at unexpected times.</p>
 </div>
 <div class="paragraph">
 <p>Verification is optional and may simply be skipped if not needed.</p>
@@ -739,7 +731,16 @@ requests are not made more often than expected or at unexpected times.</p>
 <div class="paragraph">
 <p>After testing and verification, when all test interactions have completed, the server must be stopped in order to free up resources. This is done by
 calling the <code>stop()</code> method of the <code>ErsatzServer</code> class. This is an important step as odd test failures have been noticed during multi-test runs if
-the server is not properly stopped.</p>
+the server is not properly stopped. In Spock you can create the <code>ErsatzServer</code> with the <code>@AutoCleanup</code> annotation to aid in proper management:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@AutoCleanup</span>(<span class="string"><span class="delimiter">'</span><span class="content">stop</span><span class="delimiter">'</span></span>) ErsatzServer server = <span class="keyword">new</span> ErsatzServer()</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The server may be restarted after it has been stopped; however, be aware that expectation configuration is additive and existing configuration will
+remain on server start even if new expectations are configured.</p>
 </div>
 </div>
 </div>
@@ -750,8 +751,8 @@ the server is not properly stopped.</p>
 <div class="paragraph">
 <p>Request expectations are the core of the Ersatz server functionality; conceptually, they are HTTP server request routes which are used to match
 incoming request with request handlers or respond with status 404 if no matching request was configured. The expectations are configured off of an
-instance of the <code>Expectations</code> interface, which provides three configuration methods for each HTTP request method (GET, HEAD, POST, PUT, DELETE, and
-PATCH), with the method signature name corresponding to the HTTP request method name. The three general types of methods are:</p>
+instance of the <code>Expectations</code> interface, which provides multiple configuration methods for each HTTP request method (GET, HEAD, POST, PUT, DELETE,
+and PATCH), with the method name corresponding to the HTTP request method name. The four general types of methods are:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -764,6 +765,9 @@ PATCH), with the method signature name corresponding to the HTTP request method 
 <li>
 <p>One taking a <code>String path</code> and a Groovy <code>Closure</code> returning an instance of the <code>Request</code> interface</p>
 </li>
+<li>
+<p>All of the above with the <code>String path</code> replaced by a Hamcrest <code>Matcher&lt;String&gt;</code> for matching the path</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -775,18 +779,22 @@ the consumer function.</p>
 a <code>Request</code> instance in order to configure the request.</p>
 </div>
 <div class="paragraph">
-<p>All three method types return an instance of the request being configured.</p>
+<p>All of the expectation method types return an instance of the request being configured (<code>Request</code> or <code>RequestWithContent</code>).</p>
 </div>
 <div class="paragraph">
 <p>The primary role of expectations is to provide a means of matching incoming requests in order to respond in a desired and repeatable manner. They are
-used to build up matching rules based on request properties to help filter and route the incoming request properly.</p>
+used to build up matching rules based on request properties to help filter and route the incoming request properly. <a href="http://hamcrest.org/">Hamcrest</a>
+Matcher support allows for flexible request matching based on various request properties.</p>
 </div>
 <div class="paragraph">
 <p>The configuration interfaces support three main approaches to configuration, a chained builder approach, such as:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">head(<span class="string"><span class="delimiter">'</span><span class="content">/foo</span><span class="delimiter">'</span></span>).query(<span class="string"><span class="delimiter">'</span><span class="content">a</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">42</span><span class="delimiter">'</span></span>).cookie(<span class="string"><span class="delimiter">'</span><span class="content">stamp</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">1234</span><span class="delimiter">'</span></span>).respond().header(<span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">true</span><span class="delimiter">'</span></span>)</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">head(<span class="string"><span class="delimiter">'</span><span class="content">/foo</span><span class="delimiter">'</span></span>)
+    .query(<span class="string"><span class="delimiter">'</span><span class="content">a</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">42</span><span class="delimiter">'</span></span>)
+    .cookie(<span class="string"><span class="delimiter">'</span><span class="content">stamp</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">1234</span><span class="delimiter">'</span></span>)
+    .respond().header(<span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">true</span><span class="delimiter">'</span></span>)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -829,8 +837,8 @@ Groovy DSL, using the <code>Consumer&lt;?&gt;</code> methods of the interface, t
 <div class="title">Tip</div>
 </td>
 <td class="content">
-The matching of expectations is perform in the order the expectations are configured, such that if an incoming request could be matched by more than
-one expectation, the first one configured will be applied.
+The matching of expectations is perform in the order the expectations are configured, such that if an incoming request could be matched by more
+than one expectation, the first one configured will be applied.
 </td>
 </tr>
 </table>
@@ -849,12 +857,12 @@ configure multiple responses, in order:</p>
     responder {
         content <span class="string"><span class="delimiter">'</span><span class="content">Goodbye</span><span class="delimiter">'</span></span>
     }
-    verifier exactly(<span class="integer">2</span>)
+    called <span class="integer">2</span>
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Adding the <code>verifier</code> configuration adds the extra safety of ensuring that if the request is called more than our expected two times, the verification
+<p>Adding the <code>called</code> configuration adds the extra safety of ensuring that if the request is called more than our expected two times, the verification
 will fail (and with that, the test).</p>
 </div>
 </div>
@@ -894,20 +902,21 @@ example would be:</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Ersatz server supports multipart file upload requests (<code>multipart/form-data</code> content-type) using the
-<a href="https://commons.apache.org/proper/commons-fileupload/">Apache File Upload</a> library on the "server" side; however, due to the complexity of file upload
-content, the standard body matching cannot be used, instead a custom <code>condition</code> must be specified to determine the match, such as this example from
-the unit tests:</p>
+<a href="https://commons.apache.org/proper/commons-fileupload/">Apache File Upload</a> library on the "server" side. The expectations for multipart requests are
+configured using the <code>MultipartRequestContent</code> class to build up an equivalent multipart matcher:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
+<pre class="CodeRay highlight"><code data-lang="groovy">ersatz.expectataions {
     post(<span class="string"><span class="delimiter">'</span><span class="content">/upload</span><span class="delimiter">'</span></span>) {
-        contentType MULTIPART_FORMDATA
-        condition { cr -&gt;
-            attrs(cr.fileItems[<span class="integer">0</span>], <span class="key">fieldName</span>:<span class="string"><span class="delimiter">'</span><span class="content">something</span><span class="delimiter">'</span></span>, <span class="key">string</span>:<span class="string"><span class="delimiter">'</span><span class="content">interesting</span><span class="delimiter">'</span></span>) &amp;&amp;
-            attrs(cr.fileItems[<span class="integer">1</span>], <span class="key">fieldName</span>:<span class="string"><span class="delimiter">'</span><span class="content">infoFile</span><span class="delimiter">'</span></span>, <span class="key">string</span>:<span class="string"><span class="delimiter">'</span><span class="content">This is some interesting file content.</span><span class="delimiter">'</span></span>) &amp;&amp;
-            attrs(cr.fileItems[<span class="integer">2</span>], <span class="key">fieldName</span>:<span class="string"><span class="delimiter">'</span><span class="content">dataFile</span><span class="delimiter">'</span></span>, <span class="key">size</span>:<span class="integer">7</span>)
-        }
+        decoders decoders
+        decoder MULTIPART_MIXED, Decoders.multipart
+        decoder IMAGE_PNG, Decoders.passthrough
+        body multipart {
+            part <span class="string"><span class="delimiter">'</span><span class="content">something</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">interesting</span><span class="delimiter">'</span></span>
+            part <span class="string"><span class="delimiter">'</span><span class="content">infoFile</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">info.txt</span><span class="delimiter">'</span></span>, TEXT_PLAIN, infoText
+            part <span class="string"><span class="delimiter">'</span><span class="content">imageFile</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">image.png</span><span class="delimiter">'</span></span>, IMAGE_PNG, imageBytes
+        }, MULTIPART_MIXED
         responder {
             content <span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>
         }
@@ -916,21 +925,21 @@ the unit tests:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This expectation will match a <code>POST</code> request to <code>/upload</code> that has multipart content matching the specified criteria. The <code>MultipartContentHelper</code>
-provides additional functions to aid in creating these <code>FileItem</code>-based conditions.</p>
-</div>
-<div class="paragraph">
-<p>Alternately, you may use the <code>MultipartContentMatcher</code>:</p>
+<p>which will need to exactly match the incoming request body in order to be considered a match. There is also a <code>MultipartRequestMatcher</code> used to
+provide a more flexible Hamcrest-based matching of the request body:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
     post(<span class="string"><span class="delimiter">'</span><span class="content">/upload</span><span class="delimiter">'</span></span>) {
-        condition multipart {
-            field(<span class="integer">0</span>, <span class="string"><span class="delimiter">'</span><span class="content">something</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">interesting</span><span class="delimiter">'</span></span>) &amp;&amp;
-            file(<span class="integer">1</span>, <span class="string"><span class="delimiter">'</span><span class="content">infoFile</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">info.txt</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">text/plain</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">This is some interesting file content.</span><span class="delimiter">'</span></span>) &amp;&amp;
-            part(<span class="integer">2</span>, <span class="key">fieldName</span>:<span class="string"><span class="delimiter">'</span><span class="content">dataFile</span><span class="delimiter">'</span></span>, <span class="key">size</span>:<span class="integer">7</span>, <span class="key">fileName</span>:<span class="string"><span class="delimiter">'</span><span class="content">data.bin</span><span class="delimiter">'</span></span>, <span class="key">contentType</span>:<span class="string"><span class="delimiter">'</span><span class="content">image/png</span><span class="delimiter">'</span></span>, <span class="key">bytes</span>:[<span class="integer">8</span>,<span class="integer">6</span>,<span class="integer">7</span>,<span class="integer">5</span>,<span class="integer">3</span>,<span class="integer">0</span>,<span class="integer">9</span>] <span class="keyword">as</span> <span class="type">byte</span><span class="type">[]</span>)
-        }
+        decoders decoders
+        decoder MULTIPART_MIXED, Decoders.multipart
+        decoder IMAGE_PNG, Decoders.passthrough
+        body multipartMatcher {
+            part <span class="string"><span class="delimiter">'</span><span class="content">something</span><span class="delimiter">'</span></span>, notNullValue()
+            part <span class="string"><span class="delimiter">'</span><span class="content">infoFile</span><span class="delimiter">'</span></span>, endsWith(<span class="string"><span class="delimiter">'</span><span class="content">.txt</span><span class="delimiter">'</span></span>), TEXT_PLAIN, notNullValue()
+            part <span class="string"><span class="delimiter">'</span><span class="content">imageFile</span><span class="delimiter">'</span></span>, endsWith(<span class="string"><span class="delimiter">'</span><span class="content">.png</span><span class="delimiter">'</span></span>), IMAGE_PNG, notNullValue()
+        }, MULTIPART_MIXED
         responder {
             content <span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>
         }
@@ -939,7 +948,27 @@ provides additional functions to aid in creating these <code>FileItem</code>-bas
 </div>
 </div>
 <div class="paragraph">
-<p>which provides some additional helper methods.</p>
+<p>This will configure a match of the request body content based on the individual matchers, rather than overall equivalence.</p>
+</div>
+<div class="paragraph">
+<p>A key point in multipart request support are the "decoders", which are used to decode the incoming request content into an expected object type.
+Decoders are simply <code>BiFunction&lt;byte[], DecodingContext, Object&gt;</code> implementations - taking the incoming byte array, and a <code>DecodingContext</code> and
+returning the decoded <code>Object</code> instance. Decoders may be registered in a shared instance of <code>RequestDecoders</code> or configured on a per-request basis.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+No decoders are provided by default, any used in the request content <em>must</em> be provided in configuration.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Some common reusable decoders are provided in the <code>Decoders</code> utility class.</p>
 </div>
 </div>
 </div>
@@ -949,11 +978,11 @@ provides additional functions to aid in creating these <code>FileItem</code>-bas
 <div class="paragraph">
 <p>Multipart response content is supported, though most browsers do not fully support it - the expected use case would be a RESTful or other HTTP-based
 API. The response content will have the standard <code>multipart/form-data</code> content type and format. The response content parts are provided using an
-instance of the <code>MultipartContent</code> class and configuring its parts and encoders.</p>
+instance of the <code>MultipartResponseContent</code> class and configuring its parts and encoders.</p>
 </div>
 <div class="paragraph">
 <p>The content parts are provided as "field" parts with only a field name and value, or as "file" parts with a field name, content-type, file name and
-content object. These configurations are made on the <code>MultipartContent</code> object via DSL or functional interface.</p>
+content object. These configurations are made on the <code>MultipartResponseContent</code> object via DSL or functional interface.</p>
 </div>
 <div class="paragraph">
 <p>The part content objects are serialized for data transfer as <code>String</code> content using configured encoders, which are simply instances of
@@ -966,7 +995,7 @@ response configuration. No part encoders are provided by default.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">ersatzServer.expectations {
+<pre class="CodeRay highlight"><code data-lang="groovy">ersatz.expectations {
     get(<span class="string"><span class="delimiter">'</span><span class="content">/data</span><span class="delimiter">'</span></span>) {
         responds().content(multipart {
             <span class="comment">// configure the part encoders</span>
@@ -1023,8 +1052,8 @@ authentication (username and password) as part of their matching.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.2.2<br>
-Last updated 2016-12-20 09:59:59 -06:00
+Version 0.3.0<br>
+Last updated 2016-12-24 05:07:04 -06:00
 </div>
 </div>
 </body>

@@ -20,111 +20,199 @@ import com.stehno.ersatz.Expectations
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.RequestWithContent
 import groovy.transform.CompileStatic
+import org.hamcrest.Matcher
 
 import java.util.function.Consumer
+
+import static com.stehno.ersatz.impl.ErsatzRequest.*
+import static org.hamcrest.Matchers.equalTo
 
 /**
  * Implementation of the &lt;code&gt;Expectations&lt;/code&gt; interface.
  */
-@CompileStatic @SuppressWarnings('ConfusingMethodName')
+@CompileStatic @SuppressWarnings(['ConfusingMethodName', 'MethodCount'])
 class ExpectationsImpl implements Expectations {
 
-    private static final String GET = 'GET'
-    private static final String HEAD = 'HEAD'
-    private static final String POST = 'POST'
-    private static final String PUT = 'PUT'
-    private static final String DELETE = 'DELETE'
-    private static final String PATCH = 'PATCH'
-<span class="fc" id="L38">    private final List&lt;Request&gt; requests = []</span>
+<span class="fc" id="L36">    private final List&lt;Request&gt; requests = []</span>
 
     @Override
     Request get(final String path) {
-<span class="pc" id="L42">        expect new ErsatzRequest(GET, path)</span>
+<span class="pc" id="L40">        get equalTo(path)</span>
+    }
+
+    @Override
+    Request get(final Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L45">        expect new ErsatzRequest(GET, matcher)</span>
     }
 
     @Override
     Request get(final String path, @DelegatesTo(Request) final Closure closure) {
-<span class="pc" id="L47">        expect new ErsatzRequest(GET, path), closure</span>
+<span class="pc" id="L50">        get(equalTo(path), closure)</span>
+    }
+
+    @Override
+    Request get(final Matcher&lt;String&gt; matcher, @DelegatesTo(Request) final Closure closure) {
+<span class="pc" id="L55">        expect new ErsatzRequest(GET, matcher), closure</span>
     }
 
     @Override
     Request get(String path, Consumer&lt;Request&gt; config) {
-<span class="pc" id="L52">        expect new ErsatzRequest(GET, path), config</span>
+<span class="pc" id="L60">        get(equalTo(path), config)</span>
+    }
+
+    @Override
+    Request get(Matcher&lt;String&gt; matcher, Consumer&lt;Request&gt; config) {
+<span class="pc" id="L65">        expect new ErsatzRequest(GET, matcher), config</span>
     }
 
     @Override
     Request head(String path) {
-<span class="pc" id="L57">        expect new ErsatzRequest(HEAD, path, true)</span>
+<span class="pc" id="L70">        head(equalTo(path))</span>
     }
 
     @Override
     Request head(String path, @DelegatesTo(Request) Closure closure) {
-<span class="pc" id="L62">        expect new ErsatzRequest(HEAD, path, true), closure</span>
+<span class="pc" id="L75">        head(equalTo(path), closure)</span>
     }
 
     @Override
     Request head(String path, Consumer&lt;Request&gt; config) {
-<span class="pc" id="L67">        expect new ErsatzRequest(HEAD, path), config</span>
+<span class="pc" id="L80">        head(equalTo(path), config)</span>
+    }
+
+    @Override
+    Request head(Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L85">        expect new ErsatzRequest(HEAD, matcher, true)</span>
+    }
+
+    @Override
+    Request head(Matcher&lt;String&gt; matcher, @DelegatesTo(Request) Closure closure) {
+<span class="pc" id="L90">        expect new ErsatzRequest(HEAD, matcher, true), closure</span>
+    }
+
+    @Override
+    Request head(Matcher&lt;String&gt; matcher, Consumer&lt;Request&gt; config) {
+<span class="pc" id="L95">        expect new ErsatzRequest(HEAD, matcher), config</span>
     }
 
     @Override
     RequestWithContent post(String path) {
-<span class="pc" id="L72">        expect(new ErsatzRequestWithContent(POST, path)) as RequestWithContent</span>
+<span class="pc" id="L100">        post(equalTo(path))</span>
     }
 
     @Override
     RequestWithContent post(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-<span class="pc" id="L77">        expect(new ErsatzRequestWithContent(POST, path), closure) as RequestWithContent</span>
+<span class="pc" id="L105">        post(equalTo(path), closure)</span>
     }
 
     @Override
     RequestWithContent post(String path, Consumer&lt;RequestWithContent&gt; config) {
-<span class="pc" id="L82">        expect(new ErsatzRequestWithContent(POST, path), config) as RequestWithContent</span>
+<span class="pc" id="L110">        post(equalTo(path), config)</span>
+    }
+
+    @Override
+    RequestWithContent post(Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L115">        expect(new ErsatzRequestWithContent(POST, matcher)) as RequestWithContent</span>
+    }
+
+    @Override
+    RequestWithContent post(Matcher&lt;String&gt; matcher, @DelegatesTo(RequestWithContent) Closure closure) {
+<span class="pc" id="L120">        expect(new ErsatzRequestWithContent(POST, matcher), closure) as RequestWithContent</span>
+    }
+
+    @Override
+    RequestWithContent post(Matcher&lt;String&gt; matcher, Consumer&lt;RequestWithContent&gt; config) {
+<span class="pc" id="L125">        expect(new ErsatzRequestWithContent(POST, matcher), config) as RequestWithContent</span>
     }
 
     @Override
     RequestWithContent put(String path) {
-<span class="pc" id="L87">        expect(new ErsatzRequestWithContent(PUT, path)) as RequestWithContent</span>
+<span class="pc" id="L130">        put(equalTo(path))</span>
     }
 
     @Override
     RequestWithContent put(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-<span class="pc" id="L92">        expect(new ErsatzRequestWithContent(PUT, path), closure) as RequestWithContent</span>
+<span class="pc" id="L135">        put(equalTo(path), closure)</span>
     }
 
     @Override
     RequestWithContent put(String path, Consumer&lt;RequestWithContent&gt; config) {
-<span class="pc" id="L97">        expect(new ErsatzRequestWithContent(PUT, path), config) as RequestWithContent</span>
+<span class="pc" id="L140">        put(equalTo(path), config)</span>
+    }
+
+    @Override
+    RequestWithContent put(Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L145">        expect(new ErsatzRequestWithContent(PUT, matcher)) as RequestWithContent</span>
+    }
+
+    @Override
+    RequestWithContent put(Matcher&lt;String&gt; matcher, @DelegatesTo(RequestWithContent) Closure closure) {
+<span class="pc" id="L150">        expect(new ErsatzRequestWithContent(PUT, matcher), closure) as RequestWithContent</span>
+    }
+
+    @Override
+    RequestWithContent put(Matcher&lt;String&gt; matcher, Consumer&lt;RequestWithContent&gt; config) {
+<span class="pc" id="L155">        expect(new ErsatzRequestWithContent(PUT, matcher), config) as RequestWithContent</span>
     }
 
     @Override
     Request delete(String path) {
-<span class="pc" id="L102">        expect new ErsatzRequest(DELETE, path)</span>
+<span class="pc" id="L160">        delete(equalTo(path))</span>
     }
 
     @Override
     Request delete(String path, @DelegatesTo(Request) Closure closure) {
-<span class="pc" id="L107">        expect new ErsatzRequest(DELETE, path), closure</span>
+<span class="pc" id="L165">        delete(equalTo(path), closure)</span>
     }
 
     @Override
     Request delete(String path, Consumer&lt;Request&gt; config) {
-<span class="pc" id="L112">        expect new ErsatzRequest(DELETE, path), config</span>
+<span class="pc" id="L170">        delete(equalTo(path), config)</span>
+    }
+
+    @Override
+    Request delete(Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L175">        expect new ErsatzRequest(DELETE, matcher)</span>
+    }
+
+    @Override
+    Request delete(Matcher&lt;String&gt; matcher, @DelegatesTo(Request) Closure closure) {
+<span class="pc" id="L180">        expect new ErsatzRequest(DELETE, matcher), closure</span>
+    }
+
+    @Override
+    Request delete(Matcher&lt;String&gt; matcher, Consumer&lt;Request&gt; config) {
+<span class="pc" id="L185">        expect new ErsatzRequest(DELETE, matcher), config</span>
     }
 
     @Override
     RequestWithContent patch(String path) {
-<span class="pc" id="L117">        expect(new ErsatzRequestWithContent(PATCH, path)) as RequestWithContent</span>
+<span class="pc" id="L190">        patch(equalTo(path))</span>
     }
 
     @Override
     RequestWithContent patch(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-<span class="pc" id="L122">        expect(new ErsatzRequestWithContent(PATCH, path), closure) as RequestWithContent</span>
+<span class="pc" id="L195">        patch(equalTo(path), closure)</span>
     }
 
     @Override
     RequestWithContent patch(String path, Consumer&lt;RequestWithContent&gt; config) {
-<span class="pc" id="L127">        expect(new ErsatzRequestWithContent(PATCH, path), config) as RequestWithContent</span>
+<span class="pc" id="L200">        patch(equalTo(path), config)</span>
+    }
+
+    @Override
+    RequestWithContent patch(Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L205">        expect(new ErsatzRequestWithContent(PATCH, matcher)) as RequestWithContent</span>
+    }
+
+    @Override
+    RequestWithContent patch(Matcher&lt;String&gt; matcher, @DelegatesTo(RequestWithContent) Closure closure) {
+<span class="pc" id="L210">        expect(new ErsatzRequestWithContent(PATCH, matcher), closure) as RequestWithContent</span>
+    }
+
+    @Override
+    RequestWithContent patch(Matcher&lt;String&gt; matcher, Consumer&lt;RequestWithContent&gt; config) {
+<span class="pc" id="L215">        expect(new ErsatzRequestWithContent(PATCH, matcher), config) as RequestWithContent</span>
     }
 
     /**
@@ -134,7 +222,8 @@ class ExpectationsImpl implements Expectations {
      * @return the matching request expectation
      */
     Request findMatch(final ClientRequest clientRequest) {
-<span class="pc" id="L137">        requests.find { r -&gt; ((ErsatzRequest) r).matches(clientRequest) }</span>
+        // FIXME: maybe dump expectations if no match found
+<span class="pc" id="L226">        requests.find { r -&gt; ((ErsatzRequest) r).matches(clientRequest) }</span>
     }
 
     /**
@@ -143,29 +232,30 @@ class ExpectationsImpl implements Expectations {
      * @return a value of true if all requests are verified
      */
     boolean verify() {
-<span class="fc" id="L146">        requests.each { r -&gt;</span>
-<span class="pc bpc" id="L147" title="1 of 2 branches missed.">            assert ((ErsatzRequest) r).verify(), &quot;Expectations for $r were not met.&quot;</span>
+        // FIXME: move assert into requests
+<span class="fc" id="L236">        requests.each { r -&gt;</span>
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">            assert ((ErsatzRequest) r).verify(), &quot;Expectations for $r were not met.&quot;</span>
         }
-<span class="pc" id="L149">        true</span>
+<span class="pc" id="L239">        true</span>
     }
 
     private Request expect(final Request request) {
-<span class="fc" id="L153">        requests.add(request)</span>
-<span class="pc" id="L154">        request</span>
+<span class="fc" id="L243">        requests.add(request)</span>
+<span class="pc" id="L244">        request</span>
     }
 
     private Request expect(final Request request, final Closure closure) {
-<span class="fc" id="L158">        closure.setDelegate(request)</span>
-<span class="fc" id="L159">        closure.call()</span>
+<span class="fc" id="L248">        closure.setDelegate(request)</span>
+<span class="fc" id="L249">        closure.call()</span>
 
-<span class="fc" id="L161">        requests.add(request)</span>
-<span class="pc" id="L162">        request</span>
+<span class="fc" id="L251">        requests.add(request)</span>
+<span class="pc" id="L252">        request</span>
     }
 
     private Request expect(final Request request, final Consumer&lt;? extends Request&gt; consumer) {
-<span class="fc" id="L166">        consumer.accept(request)</span>
-<span class="fc" id="L167">        requests.add(request)</span>
-<span class="pc" id="L168">        request</span>
+<span class="fc" id="L256">        consumer.accept(request)</span>
+<span class="fc" id="L257">        requests.add(request)</span>
+<span class="pc" id="L258">        request</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

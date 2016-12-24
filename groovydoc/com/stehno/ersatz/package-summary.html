@@ -22,7 +22,7 @@
 <html>
 <head>
 
-<title>com.stehno.ersatz (ersatz 0.2.2 API)</title>
+<title>com.stehno.ersatz (ersatz 0.3.0 API)</title>
 <meta name="keywords" content="com.stehno.ersatz package">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" title="Style">
@@ -31,7 +31,7 @@
 <script type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="com.stehno.ersatz (ersatz 0.2.2 API)";
+    parent.document.title="com.stehno.ersatz (ersatz 0.3.0 API)";
 }
 </script>
 <noscript>
@@ -88,6 +88,14 @@ function windowTitle()
                     </tr>
 <tr class="altColor">
                             <td class="colOne">
+                                <strong><a href="ClientRequest.html" title="class in com/stehno/ersatz">
+                                    ClientRequest
+                                </a></strong>
+                            </td>
+                            <td>An abstraction around the underlying HTTP server request that aids in matching and working with requests.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
                                 <strong><a href="Expectations.html" title="class in com/stehno/ersatz">
                                     Expectations
                                 </a></strong>
@@ -109,7 +117,7 @@ function windowTitle()
                                     RequestWithContent
                                 </a></strong>
                             </td>
-                            <td>An expectation of a request with body content.</td>
+                            <td>Expectation configuration for a request with body content.</td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
@@ -149,22 +157,6 @@ function windowTitle()
                     </tr>
 <tr class="altColor">
                             <td class="colOne">
-                                <strong><a href="ClientRequest.html" title="class in com/stehno/ersatz">
-                                    ClientRequest
-                                </a></strong>
-                            </td>
-                            <td>An abstraction around the underlying HTTP server request that aids in matching and working with requests.</td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="Conditions.html" title="class in com/stehno/ersatz">
-                                    Conditions
-                                </a></strong>
-                            </td>
-                            <td>A handful of request matching conditions. </td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
                                 <strong><a href="ContentType.html" title="class in com/stehno/ersatz">
                                     ContentType
                                 </a></strong>
@@ -173,11 +165,19 @@ function windowTitle()
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
-                                <strong><a href="Converters.html" title="class in com/stehno/ersatz">
-                                    Converters
+                                <strong><a href="Decoders.html" title="class in com/stehno/ersatz">
+                                    Decoders
                                 </a></strong>
                             </td>
-                            <td>Reusable request content converter functions.</td>
+                            <td>Reusable request content decoder functions. </td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="DecodingContext.html" title="class in com/stehno/ersatz">
+                                    DecodingContext
+                                </a></strong>
+                            </td>
+                            <td>Request-specific contextual information used by request content decoders.</td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
@@ -185,39 +185,47 @@ function windowTitle()
                                     ErsatzServer
                                 </a></strong>
                             </td>
-                            <td>The main entry point for an Ersatz server, used to configure the expectations and manage the server itself. </td>
+                            <td>The main entry point for configuring an Ersatz server, which allows configuring of the expectations and management of the server itself. </td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
-                                <strong><a href="MultipartContent.html" title="class in com/stehno/ersatz">
-                                    MultipartContent
+                                <strong><a href="MultipartRequestContent.html" title="class in com/stehno/ersatz">
+                                    MultipartRequestContent
+                                </a></strong>
+                            </td>
+                            <td>Defines the request body content for a multipart request. </td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="MultipartRequestMatcher.html" title="class in com/stehno/ersatz">
+                                    MultipartRequestMatcher
+                                </a></strong>
+                            </td>
+                            <td>A Hamcrest matcher used to match <code>MultipartRequestContent</code>. </td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="MultipartResponseContent.html" title="class in com/stehno/ersatz">
+                                    MultipartResponseContent
                                 </a></strong>
                             </td>
                             <td>Response content object used to return a multipart response to a request. </td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
-                                <strong><a href="MultipartContentMatcher.html" title="class in com/stehno/ersatz">
-                                    MultipartContentMatcher
+                                <strong><a href="RequestDecoders.html" title="class in com/stehno/ersatz">
+                                    RequestDecoders
                                 </a></strong>
                             </td>
-                            <td>Content matcher (condition) used to assist in matching multipart request content.</td>
+                            <td>Configuration manager for a collection of request content decoders. </td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
-                                <strong><a href="MultipartContentMatcher.FileItemMatcher.html" title="class in com/stehno/ersatz">
-                                    MultipartContentMatcher.FileItemMatcher
+                                <strong><a href="ResponseEncoders.html" title="class in com/stehno/ersatz">
+                                    ResponseEncoders
                                 </a></strong>
                             </td>
-                            <td>DSL model for matching <code>FileItem</code> parts in a multipart request.</td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="Verifiers.html" title="class in com/stehno/ersatz">
-                                    Verifiers
-                                </a></strong>
-                            </td>
-                            <td>Some standard verifier functions.</td>
+                            <td>Provides management of response encoders. </td>
                         </tr>
 
                     </tbody>
