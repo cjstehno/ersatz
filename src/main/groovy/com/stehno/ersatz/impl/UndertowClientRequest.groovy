@@ -13,78 +13,126 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ClientRequest
 import groovy.transform.CompileStatic
+import groovy.transform.Memoized
+import groovy.transform.TupleConstructor
+import io.undertow.io.Receiver
+import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.Cookie
 import io.undertow.util.HeaderMap
 
+import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
+
 /**
- * An abstraction around the underlying HTTP server request that aids in matching and working with requests.
+ *
  */
-@CompileStatic
-interface ClientRequest {
+@CompileStatic @TupleConstructor
+class UndertowClientRequest implements ClientRequest {
+
+    /**
+     * The wrapped <code>HttpServerExchange</code> object.
+     */
+    final HttpServerExchange exchange
 
     /**
      * Retrieves the HTTP method for the request.
      *
      * @return the HTTP method for the request
      */
-    String getMethod()
+    String getMethod() {
+        exchange.requestMethod.toString()
+    }
 
     /**
      * Retrieves the request path.
      *
      * @return the request path
      */
-    String getPath()
+    String getPath() {
+        exchange.requestPath
+    }
 
     /**
      * Retrieves the URL query string parameters for the request.
      *
      * @return the query string parameters
      */
-    Map<String, Deque<String>> getQueryParams()
+    Map<String, Deque<String>> getQueryParams() {
+        exchange.queryParameters
+    }
 
     /**
      * Retrieves the request headers.
      *
      * @return the request headers
      */
-    HeaderMap getHeaders()
+    HeaderMap getHeaders() {
+        exchange.requestHeaders
+    }
 
     /**
      * Retrieves the cookies associated with the request.
      *
      * @return the request cookies
      */
-    Map<String, Cookie> getCookies()
+    Map<String, Cookie> getCookies() {
+        exchange.requestCookies
+    }
 
     /**
      * Retrieves the body content (if any) as a byte array (null for an empty request).
      *
      * @return the optional body content as a byte array.
      */
-    byte[] getBody()
+    @Memoized
+    byte[] getBody() {
+        byte[] bytes = null
+
+        exchange.requestReceiver.receiveFullBytes(new Receiver.FullBytesCallback() {
+            @Override
+            void handle(final HttpServerExchange exch, byte[] message) {
+                bytes = message
+            }
+        })
+
+        bytes
+    }
+
+    @Override
+    String toString() {
+        "{ $method $path (query=$queryParams, headers=$headers, cookies=$cookies): ${body ? new String(body).take(1000) : '<empty>'} }"
+    }
 
     /**
      * Retrieves the content length of the request.
      *
      * @return the request content length
      */
-    long getContentLength()
+    @Override
+    long getContentLength() {
+        exchange.requestContentLength
+    }
 
     /**
      * Retrieves the request character encoding.
      *
      * @return the request character encoding
      */
-    String getCharacterEncoding()
+    @Override
+    String getCharacterEncoding() {
+        exchange.requestCharset
+    }
 
     /**
      * Retrieves the request content type. Generally this will only be present for requests with body content.
      *
      * @return the request content type
      */
-    String getContentType()
+    @Override
+    String getContentType() {
+        exchange.requestHeaders.get(CONTENT_TYPE_HEADER).first
+    }
 }

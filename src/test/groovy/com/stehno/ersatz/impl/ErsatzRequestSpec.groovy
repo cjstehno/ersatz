@@ -15,7 +15,10 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.ErsatzServer
+import com.stehno.ersatz.InMemoryCookieJar
+import com.stehno.ersatz.Response
 import okhttp3.OkHttpClient
 import okhttp3.Request.Builder
 import spock.lang.AutoCleanup
@@ -24,26 +27,25 @@ import spock.lang.Unroll
 
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
-import java.util.function.Function
 
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
-import static com.stehno.ersatz.Verifiers.exactly
+import static org.hamcrest.Matchers.equalTo
 
 class ErsatzRequestSpec extends Specification {
 
     private static final String STRING_CONTENT = 'Some content'
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
-    private final ErsatzRequest request = new ErsatzRequest('TEST', '/testing')
+    private final ErsatzRequest request = new ErsatzRequest('TEST', equalTo('/testing'))
     @AutoCleanup('stop') private final ErsatzServer server = new ErsatzServer()
-
-    def 'method and path'() {
-        expect:
-        request.method == 'TEST' && request.path == '/testing'
-    }
 
     def 'to string'() {
         expect:
-        request.toString() == '{ TEST /testing (query=[:], headers=[:], cookies=[:]): counted=0 }'
+        request.toString() == 'Expectations (ErsatzRequest): "TEST", "/testing", '
+    }
+
+    def 'method and path'() {
+        expect:
+        request.matches(clientRequest())
     }
 
     def 'headers'() {
@@ -51,57 +53,42 @@ class ErsatzRequestSpec extends Specification {
         request.headers(alpha: 'bravo', charlie: 'delta').header('echo', 'foxtrot')
 
         then:
-        request.getHeader('alpha') == 'bravo'
-        request.getHeader('charlie') == 'delta'
-        request.getHeader('echo') == 'foxtrot'
-        !request.getHeader('nothing')
-    }
+        request.matches(cr) == result
 
-    def 'header'() {
-        expect:
-        request.header('something', 'interesting').getHeader('something') == 'interesting'
+        where:
+        cr                                                                                                                         || result
+        clientRequest().header('alpha', 'bravo').header('charlie', 'delta').header('echo', 'foxtrot')                              || true
+        clientRequest().header('alpha', 'bravo').header('echo', 'foxtrot')                                                         || false
+        clientRequest().header('alpha', 'bravo').header('charlie', 'delta').header('echo', 'foxtrot').header('nothing', 'nowhere') || true
+        clientRequest().header('alpha', 'bravo').header('charlie', 'not-right').header('echo', 'foxtrot')                          || false
     }
 
     def 'queries'() {
         when:
-        request.queries(one: ['two'], three: ['four', 'five'])
+        request.queries(one: ['two'], three: ['four', 'five']).query('foo', 'bar')
 
         then:
-        request.getQuery('one') == ['two']
-        request.getQuery('three') == ['four', 'five']
-        !request.getQuery('notthere')
-    }
+        request.matches(cr) == result
 
-    def 'query'() {
-        when:
-        request.query('answer', '42')
-
-        then:
-        request.getQuery('answer') == ['42']
-
-        when:
-        request.query('answer', '0')
-
-        then:
-        request.getQuery('answer') == ['42', '0']
+        where:
+        cr                                                                                     || result
+        clientRequest().query('one', 'two').query('three', 'four', 'five').query('foo', 'bar') || true
+        clientRequest().query('one', 'two').query('three', 'four', 'five')                     || false
+        clientRequest().query('one', 'two').query('three', 'xyz', 'five').query('foo', 'bar')  || false
     }
 
     def 'cookies'() {
         when:
-        request.cookies(chocolate: 'yes', amount: 'dozen')
+        request.cookies(chocolate: 'yes', amount: 'dozen').cookie('sugar', 'no')
 
         then:
-        request.getCookie('chocolate') == 'yes'
-        request.getCookie('amount') == 'dozen'
-        !request.getCookie('no-soup')
-    }
+        request.matches(cr) == result
 
-    def 'cookie'() {
-        when:
-        request.cookie('vanilla', 'no')
-
-        then:
-        request.getCookie('vanilla') == 'no'
+        where:
+        cr                                                                                                               || result
+        clientRequest().cookie('amount', 'dozen').cookie('sugar', 'no')                                                  || false
+        clientRequest().cookie('chocolate', 'yes').cookie('amount', 'dozen').cookie('sugar', 'no')                       || true
+        clientRequest().cookie('chocolate', 'yes').cookie('amount', 'dozen').cookie('sugar', 'no').cookie('more', 'fun') || true
     }
 
     def 'listener (closure)'() {
@@ -110,9 +97,11 @@ class ErsatzRequestSpec extends Specification {
 
         request.listener({ r -> counter.incrementAndGet() })
 
+        ClientRequest cr = clientRequest()
+
         when:
-        request.mark()
-        request.mark()
+        request.mark(cr)
+        request.mark(cr)
 
         then:
         counter.get() == 2
@@ -122,46 +111,29 @@ class ErsatzRequestSpec extends Specification {
         setup:
         AtomicInteger counter = new AtomicInteger(0)
 
-        request.listener(new Consumer<Request>() {
-            @Override void accept(Request r) {
+        request.listener(new Consumer<ClientRequest>() {
+            @Override void accept(ClientRequest r) {
                 counter.incrementAndGet()
             }
         })
 
+        ClientRequest cr = clientRequest()
+
         when:
-        request.mark()
-        request.mark()
+        request.mark(cr)
+        request.mark(cr)
 
         then:
         counter.get() == 2
     }
 
-    @Unroll def 'verifier (closure): called #calls expected #expected'() {
+    @Unroll 'called #calls expected #expected'() {
         setup:
-        request.verifier({ n -> n == expected })
+        request.called(equalTo(expected))
 
         when:
         calls.times {
-            request.mark()
-        }
-
-        then:
-        request.verify() == verified
-
-        where:
-        expected | calls || verified
-        2        | 1     || false
-        2        | 2     || true
-        2        | 3     || false
-    }
-
-    @Unroll def 'verifier (consumer): called #calls expected #expected'() {
-        setup:
-        request.verifier(exactly(expected))
-
-        when:
-        calls.times {
-            request.mark()
+            request.mark(clientRequest())
         }
 
         then:
@@ -311,17 +283,17 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: query'() {
         setup:
         server.expectations {
-            get('/test').query('alpha', 'blah').responds().content(STRING_CONTENT)
+            get('/testing').query('alpha', 'blah').responds().content(STRING_CONTENT)
         }.start()
 
         when:
-        String value = exec(clientGet('/test?alpha=blah').build()).body().string()
+        String value = exec(clientGet('/testing?alpha=blah').build()).body().string()
 
         then:
         value == STRING_CONTENT
 
         when:
-        value = exec(clientGet('/test').build()).body().string()
+        value = exec(clientGet('/testing').build()).body().string()
 
         then:
         value == NOT_FOUND_BODY
@@ -330,17 +302,17 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: queries'() {
         setup:
         server.expectations {
-            get('/test').queries(alpha: ['one'], bravo: ['two', 'three']).responds().content(STRING_CONTENT)
+            get('/testing').queries(alpha: ['one'], bravo: ['two', 'three']).responds().content(STRING_CONTENT)
         }.start()
 
         when:
-        String value = exec(clientGet('/test?alpha=one&bravo=two&bravo=three').build()).body().string()
+        String value = exec(clientGet('/testing?alpha=one&bravo=two&bravo=three').build()).body().string()
 
         then:
         value == STRING_CONTENT
 
         when:
-        value = exec(clientGet('/test').build()).body().string()
+        value = exec(clientGet('/testing').build()).body().string()
 
         then:
         value == NOT_FOUND_BODY
@@ -384,56 +356,15 @@ class ErsatzRequestSpec extends Specification {
         value == NOT_FOUND_BODY
     }
 
-    def 'condition (closure)'() {
-        setup:
-        server.expectations {
-            get('/test').condition({ r -> (r.headers.get('foo').first as int) < 50 }).responds().content(STRING_CONTENT)
-        }.start()
-
-        when:
-        String value = exec(clientGet('/test').addHeader('foo', '42').build()).body().string()
-
-        then:
-        value == STRING_CONTENT
-
-        when:
-        value = exec(clientGet('/test').addHeader('foo', '100').build()).body().string()
-
-        then:
-        value == NOT_FOUND_BODY
-    }
-
-    def 'condition (function)'() {
-        setup:
-        Function<ClientRequest, Boolean> fn = new Function<ClientRequest, Boolean>() {
-            @Override
-            Boolean apply(final ClientRequest ex) {
-                (ex.headers.get('foo').first as int) < 50
-            }
-        }
-
-        server.expectations {
-            get('/test').condition(fn).responds().content(STRING_CONTENT)
-        }.start()
-
-        when:
-        String value = exec(clientGet('/test').addHeader('foo', '42').build()).body().string()
-
-        then:
-        value == STRING_CONTENT
-
-        when:
-        value = exec(clientGet('/test').addHeader('foo', '100').build()).body().string()
-
-        then:
-        value == NOT_FOUND_BODY
-    }
-
     private Builder clientGet(final String path) {
         new Builder().get().url("${server.serverUrl}${path}")
     }
 
     private okhttp3.Response exec(okhttp3.Request req) {
         client.newCall(req).execute()
+    }
+
+    private static MockClientRequest clientRequest() {
+        new MockClientRequest(method: 'TEST', path: '/testing')
     }
 }

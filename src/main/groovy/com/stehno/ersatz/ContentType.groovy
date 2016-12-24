@@ -19,7 +19,8 @@ import groovy.transform.CompileStatic
 import groovy.transform.Immutable
 
 /**
- * A content-type representation. Some of the standard content-types are provided as static constants for use elsewhere.
+ * A content-type representation. Some of the standard content-types are provided as static constants for use elsewhere, others may be created as
+ * instances of this class as needed.
  */
 @Immutable @CompileStatic @SuppressWarnings('GroovyUnusedDeclaration')
 class ContentType {
@@ -36,6 +37,7 @@ class ContentType {
     public static final ContentType TEXT_JSON = new ContentType('text/json')
     public static final ContentType APPLICATION_URLENCODED = new ContentType('application/x-www-form-urlencoded')
     public static final ContentType MULTIPART_FORMDATA = new ContentType('multipart/form-data')
+    public static final ContentType MULTIPART_MIXED = new ContentType('multipart/mixed')
     public static final ContentType IMAGE_JPG = new ContentType('image/jpeg')
     public static final ContentType IMAGE_PNG = new ContentType('image/png')
     public static final ContentType IMAGE_GIF = new ContentType('image/gif')

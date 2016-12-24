@@ -15,69 +15,61 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ContentType
-import com.stehno.ersatz.ErsatzServer
-import com.stehno.ersatz.InMemoryCookieJar
-import groovy.json.JsonSlurper
+import com.stehno.ersatz.*
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import org.hamcrest.Matcher
+import org.hamcrest.Matchers
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.ContentType.*
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
-import static com.stehno.ersatz.MultipartContentMatcher.attrs
-import static com.stehno.ersatz.MultipartContentMatcher.multipart
+import static com.stehno.ersatz.MultipartRequestMatcher.multipartMatcher
+import static com.stehno.ersatz.impl.ErsatzRequest.POST
 import static okhttp3.MediaType.parse
 import static okhttp3.Request.Builder
 import static okhttp3.RequestBody.create
+import static org.hamcrest.Matchers.allOf
+import static org.hamcrest.Matchers.any
+import static org.hamcrest.Matchers.arrayWithSize
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.notNullValue
+import static org.hamcrest.Matchers.startsWith
 
 class ErsatzRequestWithContentSpec extends Specification {
 
     private static final String BODY_CONTENT = '{"label":"Body Content", "text":"This is some body content."}'
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
-    private final ErsatzRequestWithContent request = new ErsatzRequestWithContent('POST', '/posting')
+    private final ErsatzRequestWithContent request = new ErsatzRequestWithContent(POST, equalTo('/posting'))
     @AutoCleanup('stop') private final ErsatzServer server = new ErsatzServer()
 
-    def 'body'() {
-        when:
-        request.body(BODY_CONTENT)
-
-        then:
-        request.body == BODY_CONTENT
-    }
-
-    def 'contentType'() {
-        when:
-        request.contentType('image/jpeg')
-
-        then:
-        request.contentType == 'image/jpeg'
-    }
+    private final RequestDecoders decoders = new RequestDecoders({
+        register TEXT_PLAIN, Decoders.utf8String
+    })
 
     def 'body with content-type'() {
         when:
-        request.body(BODY_CONTENT, TEXT_PLAIN)
+        request.body(BODY_CONTENT, TEXT_PLAIN).decoders(decoders)
 
         then:
-        request.body == BODY_CONTENT
-        request.contentType == 'text/plain'
+        request.matches(new MockClientRequest(method: POST, path: '/posting', body: BODY_CONTENT.bytes).header('Content-Type', TEXT_PLAIN.value))
     }
 
     def 'to string'() {
         setup:
-        request.body('Some body')
+        request.body('Some body', TEXT_PLAIN)
 
         expect:
-        request.toString() == '{ POST /posting (query=[:], headers=[:], cookies=[:]): counted=0 }: Some body'
+        request.toString() == 'Expectations (ErsatzRequestWithContent): "POST", "/posting", a string starting with "text/plain", "Some body", '
     }
 
     def 'matching: body'() {
         setup:
         server.expectations {
-            post('/posting').body(BODY_CONTENT).responds().content('accepted')
+            post('/posting').body(BODY_CONTENT, TEXT_PLAIN).decoders(decoders).responds().content('accepted')
         }.start()
 
         when:
@@ -96,7 +88,7 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'matching: body and content-type'() {
         setup:
         server.expectations {
-            post('/posting').body(BODY_CONTENT, 'text/plain; charset=utf-8').responds().content('accepted')
+            post('/posting').body(BODY_CONTENT, 'text/plain; charset=utf-8').decoders(decoders).responds().content('accepted')
         }.start()
 
         when:
@@ -115,9 +107,9 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'matching: body with converter (builder)'() {
         setup:
         server.expectations {
-            post('/posting').body([label: "Body Content", text: "This is some body content."]).contentType('some/json; charset=utf-8').converter('some/json; charset=utf-8', { b ->
-                new JsonSlurper().parse(b)
-            }).responds().content('accepted')
+            post('/posting').body([label: "Body Content", text: "This is some body content."], 'some/json; charset=utf-8')
+                .decoder('some/json; charset=utf-8', Decoders.parseJson)
+                .responds().content('accepted')
         }.start()
 
         when:
@@ -139,9 +131,8 @@ class ErsatzRequestWithContentSpec extends Specification {
 
         server.expectations {
             post('/posting') {
-                body([label: "Body Content", text: "This is some body content."])
-                contentType 'some/json; charset=utf-8'
-                converter(new ContentType('some/json; charset=utf-8'), { b -> new JsonSlurper().parse b })
+                body([label: "Body Content", text: "This is some body content."], 'some/json; charset=utf-8')
+                decoder(new ContentType('some/json; charset=utf-8'), Decoders.parseJson)
                 responder {
                     content responseContent
                 }
@@ -165,6 +156,7 @@ class ErsatzRequestWithContentSpec extends Specification {
         setup:
         server.expectations {
             post('/form') {
+                decoder APPLICATION_URLENCODED, Decoders.urlEncoded
                 body([alpha: 'some data', bravo: '42', charlie: 'last'], 'application/x-www-form-urlencoded; charset=utf-8')
                 responder {
                     content 'ok'
@@ -189,11 +181,14 @@ class ErsatzRequestWithContentSpec extends Specification {
         setup:
         server.expectations {
             post('/upload') {
-                condition { cr ->
-                    attrs(cr.fileItems[0], fieldName: 'something', string: 'interesting') &&
-                        attrs(cr.fileItems[1], fieldName: 'infoFile', string: 'This is some interesting file content.') &&
-                        attrs(cr.fileItems[2], fieldName: 'dataFile', size: 7)
-                }
+                decoders decoders
+                decoder MULTIPART_MIXED, Decoders.multipart
+                decoder IMAGE_PNG, Decoders.passthrough
+                body MultipartRequestContent.multipart {
+                    part 'something', TEXT_PLAIN, 'interesting'
+                    part 'infoFile', 'info.txt', 'text/plain; charset=utf-8', 'This is some interesting file content.'
+                    part 'dataFile', 'data.bin', IMAGE_PNG, [8, 6, 7, 5, 3, 0, 9] as byte[]
+                }, MULTIPART_MIXED
                 responder {
                     content 'ok'
                 }
@@ -220,11 +215,14 @@ class ErsatzRequestWithContentSpec extends Specification {
         setup:
         server.expectations {
             post('/upload') {
-                condition multipart {
-                    field(0, 'something', 'interesting') &&
-                        file(1, 'infoFile', 'info.txt', 'text/plain', 'This is some interesting file content.') &&
-                        part(2, fieldName: 'dataFile', size: 7, fileName: 'data.bin', contentType: 'image/png', bytes: [8, 6, 7, 5, 3, 0, 9] as byte[])
-                }
+                decoders decoders
+                decoder MULTIPART_MIXED, Decoders.multipart
+                decoder IMAGE_PNG, Decoders.passthrough
+                body multipartMatcher {
+                    part 'something', 'interesting'
+                    part 'infoFile', 'info.txt', 'text/plain', equalTo('This is some interesting file content.')
+                    part 'dataFile', 'data.bin', IMAGE_PNG, notNullValue()
+                }, MULTIPART_MIXED
                 responder {
                     content 'ok'
                 }

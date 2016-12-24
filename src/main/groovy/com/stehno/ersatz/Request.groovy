@@ -16,9 +16,9 @@
 package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
+import org.hamcrest.Matcher
 
 import java.util.function.Consumer
-import java.util.function.Function
 
 /**
  * Configuration interface for HTTP request expectations.
@@ -36,20 +36,21 @@ interface Request {
     Request header(final String name, final String value)
 
     /**
-     * Specifies request headers as a Map of names to values to be configured in the expected request.
+     * Specifies a request header matcher to be configured in the expected request.
+     *
+     * @param name the header name
+     * @param matcher the header value matcher
+     * @return this request
+     */
+    Request header(final String name, final Matcher<String> matcher)
+
+    /**
+     * Specifies request headers as a Map of names to values to be configured in the expected request. The map values may be Strings or Matchers.
      *
      * @param heads the map of headers
      * @return this request
      */
-    Request headers(final Map<String, String> heads)
-
-    /**
-     * Used to retrieve a specific configured request header from the configuration.
-     *
-     * @param name the header name
-     * @return the header value
-     */
-    String getHeader(final String name)
+    Request headers(final Map<String, Object> heads)
 
     /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
@@ -62,20 +63,32 @@ interface Request {
     Request query(final String name, final String value)
 
     /**
-     * Used to specify a map of request query parameters for configuration on the expected request.
+     * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
+     * specified multiple times with different values to denote a parameter with multiple values.
+     *
+     * @param name the parameter name
+     * @param values the list of values
+     * @return this request
+     */
+    Request query(final String name, final Iterable<String> values)
+
+    /**
+     * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
+     * specified multiple times with different values to denote a parameter with multiple values.
+     *
+     * @param name the parameter name
+     * @param matcher the query string matcher
+     * @return this request
+     */
+    Request query(final String name, final Matcher<Iterable<String>> matcher)
+
+    /**
+     * Used to specify a map of request query parameters for configuration on the expected request. The map values may be Strings or Matchers.
      *
      * @param map the map of query parameters
      * @return this request
      */
-    Request queries(final Map<String, List<String>> map)
-
-    /**
-     * Retrieves the list of query parameters configured with the specified parameter name.
-     *
-     * @param name the parameter name
-     * @return the list of values associated with the parameter (or an empty list if there are none)
-     */
-    List<String> getQuery(final String name)
+    Request queries(final Map<String, Object> map)
 
     /**
      * Specifies a request cookie to be configured with the given name and value.
@@ -87,34 +100,21 @@ interface Request {
     Request cookie(final String name, final String value)
 
     /**
-     * Used to configure a map of cookies on the request.
+     * Specifies a request cookie to be configured with the given name and value.
+     *
+     * @param name the cookie name
+     * @param matcher the cookie value matcher
+     * @return this request
+     */
+    Request cookie(final String name, final Matcher<String> matcher)
+
+    /**
+     * Used to configure a map of cookies on the request. The map values may be Strings or Matchers.
      *
      * @param cookies the map of cookies
      * @return this request
      */
-    Request cookies(final Map<String, String> cookies)
-
-    /**
-     * Retrieves the value of the specified cookie, or <code>null</code> if the cookie is not present.
-     *
-     * @param name the cookie name
-     * @return the cookie value
-     */
-    String getCookie(final String name)
-
-    /**
-     * Retrieves the configured request path.
-     *
-     * @return the request path
-     */
-    String getPath()
-
-    /**
-     * Retrieves the configured request method for the request.
-     *
-     * @return the configured request method
-     */
-    String getMethod()
+    Request cookies(final Map<String, Object> cookies)
 
     /**
      * Specifies a listener which will be called with the active request whenever this request is matched at test-time.
@@ -122,16 +122,24 @@ interface Request {
      * @param listener the request call listener
      * @return a reference to this request
      */
-    Request listener(final Consumer<Request> listener)
+    Request listener(final Consumer<ClientRequest> listener)
 
     /**
-     * Allows the specification of a custom call verifier so that the number of times the request is called may be matched. See the
-     * <code>Verifiers</code> class for available implementations.
+     * Allows the specification of a custom call verifier so that the number of times the request is called may be matched.
      *
      * @param verifier the verifier to be used
      * @return a reference to this request
      */
-    Request verifier(final Function<Integer, Boolean> verifier)
+    Request called(final Matcher<Integer> callVerifier)
+
+    /**
+     * Configures a call count verifier such that the number of calls must be equivalent to the provided count. This is analogous to calling
+     * <code>called(equalTo(n))</code>.
+     *
+     * @param verifier the verifier to be used
+     * @return a reference to this request
+     */
+    Request called(final int count)
 
     /**
      * Initiates the definition of a response for this request.
@@ -157,25 +165,4 @@ interface Request {
      * @return a reference to this request
      */
     Request responder(@DelegatesTo(Response) final Closure closure)
-
-    /**
-     * Allows for additional configuration of request matching criteria. The provided <code>Function<ClientRequest,Boolean></code> will have the
-     * active request passed into it and the function will return a value of <code>true</code> if the condition is met. The standard matching
-     * criteria will not be applied if conditions are applied; however, they may be added back in using the <code>Conditions</code> functions.
-     *
-     * Multiple additional conditions may be applied.
-     *
-     * @param matcher the matching function to be added.
-     * @return a reference to this request
-     */
-    Request condition(final Function<ClientRequest, Boolean> matcher)
-
-    /**
-     * Allows multiple request matching conditions to be applied to the configuration. See <code>condition(Function<ClientRequest,Boolean>)</code> for
-     * more details.
-     *
-     * @param matchers the list of condition matchers to be applied
-     * @return this request
-     */
-    Request conditions(List<Function<ClientRequest, Boolean>> matchers)
 }

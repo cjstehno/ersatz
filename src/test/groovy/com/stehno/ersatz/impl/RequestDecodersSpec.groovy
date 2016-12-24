@@ -15,24 +15,25 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.RequestDecoders
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import static com.stehno.ersatz.ContentType.APPLICATION_JSON
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
-class RequestContentConvertersSpec extends Specification {
+class RequestDecodersSpec extends Specification {
 
-    private final RequestContentConverters converters = new RequestContentConverters({
-        register TEXT_PLAIN, { b -> 'text/plain' }
-        register 'text/plain; charset=utf-8', { b -> 'text/plain; charset=utf-8' }
-        register 'text/html', { b -> 'text/html' }
-        register 'image/png', { b -> 'image/png' }
+    private final RequestDecoders decoders = new RequestDecoders({
+        register TEXT_PLAIN, { b, dc -> 'text/plain' }
+        register 'text/plain; charset=utf-8', { b, dc -> 'text/plain; charset=utf-8' }
+        register 'text/html', { b, dc -> 'text/html' }
+        register 'image/png', { b, dc -> 'image/png' }
     })
 
-    @Unroll def 'converters(#type)'() {
+    @Unroll 'converters(#type)'() {
         expect:
-        converters.findConverter(type).apply(null) == result
+        decoders.findDecoder(type).apply(null,null) == result
 
         where:
         type                        || result
@@ -44,17 +45,17 @@ class RequestContentConvertersSpec extends Specification {
 
     def 'registering existing type'() {
         when:
-        converters.register('text/plain', { b -> 'modified' })
+        decoders.register('text/plain', { b, dc -> 'modified' })
 
         then:
-        converters.findConverter('text/plain').apply(null) == 'modified'
+        decoders.findDecoder('text/plain').apply(null,null) == 'modified'
     }
 
     def 'registering new type'() {
         when:
-        converters.register(APPLICATION_JSON, { b -> 'application/json' })
+        decoders.register(APPLICATION_JSON, { b, dc -> 'application/json' })
 
         then:
-        converters.findConverter('application/json').apply(null) == 'application/json'
+        decoders.findDecoder('application/json').apply(null,null) == 'application/json'
     }
 }
