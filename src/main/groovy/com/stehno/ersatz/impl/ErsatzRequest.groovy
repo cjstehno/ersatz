@@ -157,37 +157,30 @@ class ErsatzRequest implements Request {
         this
     }
 
+    @Override @SuppressWarnings('ConfusingMethodName')
+    Request called(final int count) {
+        called equalTo(count)
+    }
+
     /**
      * Used to verify that the request has been called the expected number of times. By default there is no verification criteria, they must be
-     * configured using the <code>verifier</code> methods.
+     * configured using one of the <code>called()</code> methods.
      *
      * @return true if the call count matches the expected verification criteria
      */
     boolean verify() {
-        // FIXME: see if should do assert here to get description
         callVerifier.matches(callCount)
     }
 
     /**
-     * Used to determine whether or not the incoming client request matches this configured request. If there are configured <code>conditions</code>,
-     * they will override the default match conditions (except for path and request method matching, and only those configured conditions will be
-     * applied. The default conditions may be added back in using the <code>Conditions</code> functions.
-     *
-     * The default match criteria are:
-     *
-     * <ul>
-     *  <li>The request methods must match.</li>
-     *  <li>The request paths must match.</li>
-     *  <li>The request query parameters must match (inclusive).</li>
-     *  <li>The incoming request headers must contain all of the configured headers (non-inclusive).</li>
-     *  <li>The incoming request cookies must contain all of the configured cookies (non-inclusive).</li>
-     * </ul>
+     * Used to determine whether or not the incoming client request matches this configured request. All configured matchers must return
+     * <code>true</code> in order for the match to be successful. By default, all request have a matcher for request method and request path, the
+     * others are optional.
      *
      * @param clientRequest the incoming client request
      * @return true if the incoming request matches the configured request
      */
     boolean matches(final ClientRequest clientRequest) {
-        // FIXME: assert here to get descriptions?
         matchers.every { m ->
             m.matches(clientRequest)
         }

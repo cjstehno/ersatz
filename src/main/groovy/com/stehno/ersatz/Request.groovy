@@ -125,13 +125,21 @@ interface Request {
     Request listener(final Consumer<ClientRequest> listener)
 
     /**
-     * Allows the specification of a custom call verifier so that the number of times the request is called may be matched. See the
-     * <code>Verifiers</code> class for available implementations.
+     * Allows the specification of a custom call verifier so that the number of times the request is called may be matched.
      *
      * @param verifier the verifier to be used
      * @return a reference to this request
      */
     Request called(final Matcher<Integer> callVerifier)
+
+    /**
+     * Configures a call count verifier such that the number of calls must be equivalent to the provided count. This is analogous to calling
+     * <code>called(equalTo(n))</code>.
+     *
+     * @param verifier the verifier to be used
+     * @return a reference to this request
+     */
+    Request called(final int count)
 
     /**
      * Initiates the definition of a response for this request.

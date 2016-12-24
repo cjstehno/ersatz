@@ -6,19 +6,17 @@ v0.3.0, December 2016
 
 == Introduction
 
-FIXME: update and add stuff
-
 The Ersatz Server is a HTTP client testing tool, which allows for request/response expectations to be configured in a flexible manner. The expectations
 will respond in a configured manner to requests and allow testing with different responses and/or error conditions without having to write a lot of
 boiler-plate code.
 
 The "mock" server is not really mock at all, it is an embedded Undertow HTTP server which registers the configured expectations as routes and then
 responds according to the expected behavior. This approach may seem overly heavy; however, testing an HTTP client can involve a lot of internal state
-and interactions that the developer is generally unaware of (and should be) - trying to mock those interactions with a pure mocking framework can get
+and interactions that the developer is generally unaware of (and should be) - trying to mock those interactions with a pure mocking framework will get
 out of hand very quickly.
 
-Ersatz provides a balance of mock-like known behavior with a real HTTP interface with all of the underlying interactions in place. This allows for
-testing, which is what you were trying to do in the first place.
+Ersatz provides a balance of mock-like expectation behavior with a real HTTP interface and all of the underlying interactions in place. This allows
+for rich unit testing, which is what you were trying to do in the first place.
 
 Ersatz is written in Groovy 2.4.x and requires a Java 8 VM due to its use of the modern functional libraries; however, the Ersatz library is written
 such that it may be used with Groovy or standard Java without pain or feature-loss. With that in mind, the expectation configuration allows two main
@@ -46,7 +44,7 @@ class HelloSpec extends Specification {
 
         server.expectations {
             get('/say/hello'){
-                verifier once()
+                called equalTo(1)
                 query 'name','Ersatz'
                 responder {
                     content 'Hello Ersatz','text/plain'
@@ -80,7 +78,7 @@ The expectation configured above could also be written using the chained builder
 [source,java]
 ----
 server.expectations(expect -> {
-    expect.get("/say/hello").verifier(once()).query("name","Ersatz")
+    expect.get("/say/hello").called(equalTo(1)).query("name","Ersatz")
         .responds().content("Hello Ersatz","text/plain");
 ))
 ----
@@ -100,12 +98,9 @@ they are detailed in the sections that follow.
 
 === Configure
 
-The first step is "configuration", where the server is instantiated, request expectations are configured and the server is started.
-
-An Ersatz server is created by creating an instance of `ErsatzServer`. No HTTP server is started at this point, but the server is ready for
-configuration.
-
-Configuring the expectations on the server consists of calling one of the following methods:
+The first step is "configuration", where the server is instantiated, request expectations are configured and the server is started. An Ersatz server
+is created by creating an instance of `ErsatzServer`. No HTTP server is started at this point, but the server is ready for configuration. Configuring
+the expectations on the server consists of calling one of the following methods:
 
 [source,groovy]
 ----
@@ -131,24 +126,22 @@ embedded HTTP server and register the configured expectations. If the server is 
 
 After configuration, the server is running and ready for test interactions. Any HTTP client can make HTTP requests against the server to retrieve
 configured responses. The `ErsatzServer` object provides helper methods to retrieve the server port and URL, with `getPort()` and `getServerUrl()`
-respectively.
-
-Note that the server will _always_ be started on an ephemeral port so that a random one will be chosen to avoid collisions.
+respectively. Note that the server will _always_ be started on an ephemeral port so that a random one will be chosen to avoid collisions.
 
 === Verify
 
 Once testing has been performed, it may be desirable to verify whether or not the expected number of request calls were matched. The `Expectations`
-interface provides a `verifier` method to add call count verification per configured request, something like:
+interface provides a `called` method to add call count verification per configured request, something like:
 
 [source,groovy]
 ----
-post('/user').body(content, 'application/json').verifier(once())
+post('/user').body(content, 'application/json').called(1)
     .responds().content(successContent, 'application/json')
 ----
 
-This would match a POST request to "/user" with request body content matching the provided content and expect that matched call only once. When `verify()`
-is called it will return `true` if this request has only been matched once, otherwise it will return `false`. This allows testing to ensure that
-requests are not made more often than expected or at unexpected times.
+This would match a POST request to "/user" with request body content matching the provided content and expect that matched call only once. When
+`verify()` is called it will return `true` if this request has only been matched once, otherwise it will return `false`. This allows testing to
+ensure that requests are not made more often than expected or at unexpected times.
 
 Verification is optional and may simply be skipped if not needed.
 
@@ -156,18 +149,27 @@ Verification is optional and may simply be skipped if not needed.
 
 After testing and verification, when all test interactions have completed, the server must be stopped in order to free up resources. This is done by
 calling the `stop()` method of the `ErsatzServer` class. This is an important step as odd test failures have been noticed during multi-test runs if
-the server is not properly stopped.
+the server is not properly stopped. In Spock you can create the `ErsatzServer` with the `@AutoCleanup` annotation to aid in proper management:
+
+[source,groovy]
+----
+@AutoCleanup('stop') ErsatzServer server = new ErsatzServer()
+----
+
+The server may be restarted after it has been stopped; however, be aware that expectation configuration is additive and existing configuration will
+remain on server start even if new expectations are configured.
 
 == Expectations
 
 Request expectations are the core of the Ersatz server functionality; conceptually, they are HTTP server request routes which are used to match
 incoming request with request handlers or respond with status 404 if no matching request was configured. The expectations are configured off of an
-instance of the `Expectations` interface, which provides three configuration methods for each HTTP request method (GET, HEAD, POST, PUT, DELETE, and
-PATCH), with the method signature name corresponding to the HTTP request method name. The three general types of methods are:
+instance of the `Expectations` interface, which provides multiple configuration methods for each HTTP request method (GET, HEAD, POST, PUT, DELETE,
+and PATCH), with the method name corresponding to the HTTP request method name. The four general types of methods are:
 
 * One taking a `String path` returning an instance of the `Request` interface
 * One taking a `String path` and a `Consumer<Request>` returning an instance of the `Request` interface
 * One taking a `String path` and a Groovy `Closure` returning an instance of the `Request` interface
+* All of the above with the `String path` replaced by a Hamcrest `Matcher<String>` for matching the path
 
 The `Consumer<Request>` methods will provide a `Consumer<Request>` implementation to perform the configuration on a `Request` instance passed into
 the consumer function.
@@ -175,16 +177,20 @@ the consumer function.
 The `Closure` support is similar to that of the consumer; however, this is a Groovy DSL approach where the `Closure` operations are delegated onto the
 a `Request` instance in order to configure the request.
 
-All three method types return an instance of the request being configured.
+All of the expectation method types return an instance of the request being configured (`Request` or `RequestWithContent`).
 
 The primary role of expectations is to provide a means of matching incoming requests in order to respond in a desired and repeatable manner. They are
-used to build up matching rules based on request properties to help filter and route the incoming request properly.
+used to build up matching rules based on request properties to help filter and route the incoming request properly. http://hamcrest.org/[Hamcrest]
+Matcher support allows for flexible request matching based on various request properties.
 
 The configuration interfaces support three main approaches to configuration, a chained builder approach, such as:
 
 [source,groovy]
 ----
-head('/foo').query('a','42').cookie('stamp','1234').respond().header('ok','true')
+head('/foo')
+    .query('a','42')
+    .cookie('stamp','1234')
+    .respond().header('ok','true')
 ----
 
 where the code is a chain of builder-style method calls used to wire up the request expectation. The second method is available to users of the Groovy
@@ -217,8 +223,8 @@ head('/foo', req -> {
 
 Any of the three may be used in conjunction with each other to build up expectations in the desired manner.
 
-TIP: The matching of expectations is perform in the order the expectations are configured, such that if an incoming request could be matched by more than
-one expectation, the first one configured will be applied.
+TIP: The matching of expectations is perform in the order the expectations are configured, such that if an incoming request could be matched by more
+than one expectation, the first one configured will be applied.
 
 Request expectations may be configured to respond differently based on how many times a request is matched, for example, if you wanted the first
 request of `GET /something` to respond with `Hello` and second (and all subsequent) request of the same URL to respond with `Goodbye`, you would
@@ -233,11 +239,11 @@ get('/something'){
     responder {
         content 'Goodbye'
     }
-    verifier exactly(2)
+    called 2
 }
 ----
 
-Adding the `verifier` configuration adds the extra safety of ensuring that if the request is called more than our expected two times, the verification
+Adding the `called` configuration adds the extra safety of ensuring that if the request is called more than our expected two times, the verification
 will fail (and with that, the test).
 
 == Url-Encoded Form Requests
@@ -265,20 +271,21 @@ where the `POST` content data would look like:
 == Multipart Request Content
 
 Ersatz server supports multipart file upload requests (`multipart/form-data` content-type) using the
-https://commons.apache.org/proper/commons-fileupload/[Apache File Upload] library on the "server" side; however, due to the complexity of file upload
-content, the standard body matching cannot be used, instead a custom `condition` must be specified to determine the match, such as this example from
-the unit tests:
+https://commons.apache.org/proper/commons-fileupload/[Apache File Upload] library on the "server" side. The expectations for multipart requests are
+configured using the `MultipartRequestContent` class to build up an equivalent multipart matcher:
 
 [source,groovy]
 ----
-server.expectations {
+ersatz.expectataions {
     post('/upload') {
-        contentType MULTIPART_FORMDATA
-        condition { cr ->
-            attrs(cr.fileItems[0], fieldName:'something', string:'interesting') &&
-            attrs(cr.fileItems[1], fieldName:'infoFile', string:'This is some interesting file content.') &&
-            attrs(cr.fileItems[2], fieldName:'dataFile', size:7)
-        }
+        decoders decoders
+        decoder MULTIPART_MIXED, Decoders.multipart
+        decoder IMAGE_PNG, Decoders.passthrough
+        body multipart {
+            part 'something', 'interesting'
+            part 'infoFile', 'info.txt', TEXT_PLAIN, infoText
+            part 'imageFile', 'image.png', IMAGE_PNG, imageBytes
+        }, MULTIPART_MIXED
         responder {
             content 'ok'
         }
@@ -286,20 +293,21 @@ server.expectations {
 }
 ----
 
-This expectation will match a `POST` request to `/upload` that has multipart content matching the specified criteria. The `MultipartContentHelper`
-provides additional functions to aid in creating these `FileItem`-based conditions.
-
-Alternately, you may use the `MultipartContentMatcher`:
+which will need to exactly match the incoming request body in order to be considered a match. There is also a `MultipartRequestMatcher` used to
+provide a more flexible Hamcrest-based matching of the request body:
 
 [source,groovy]
 ----
 server.expectations {
     post('/upload') {
-        condition multipart {
-            field(0, 'something', 'interesting') &&
-            file(1, 'infoFile', 'info.txt', 'text/plain', 'This is some interesting file content.') &&
-            part(2, fieldName:'dataFile', size:7, fileName:'data.bin', contentType:'image/png', bytes:[8,6,7,5,3,0,9] as byte[])
-        }
+        decoders decoders
+        decoder MULTIPART_MIXED, Decoders.multipart
+        decoder IMAGE_PNG, Decoders.passthrough
+        body multipartMatcher {
+            part 'something', notNullValue()
+            part 'infoFile', endsWith('.txt'), TEXT_PLAIN, notNullValue()
+            part 'imageFile', endsWith('.png'), IMAGE_PNG, notNullValue()
+        }, MULTIPART_MIXED
         responder {
             content 'ok'
         }
@@ -307,16 +315,24 @@ server.expectations {
 }
 ----
 
-which provides some additional helper methods.
+This will configure a match of the request body content based on the individual matchers, rather than overall equivalence.
+
+A key point in multipart request support are the "decoders", which are used to decode the incoming request content into an expected object type.
+Decoders are simply `BiFunction<byte[], DecodingContext, Object>` implementations - taking the incoming byte array, and a `DecodingContext` and
+returning the decoded `Object` instance. Decoders may be registered in a shared instance of `RequestDecoders` or configured on a per-request basis.
+
+TIP: No decoders are provided by default, any used in the request content _must_ be provided in configuration.
+
+Some common reusable decoders are provided in the `Decoders` utility class.
 
 == Multipart Response Content
 
 Multipart response content is supported, though most browsers do not fully support it - the expected use case would be a RESTful or other HTTP-based
 API. The response content will have the standard `multipart/form-data` content type and format. The response content parts are provided using an
-instance of the `MultipartContent` class and configuring its parts and encoders.
+instance of the `MultipartResponseContent` class and configuring its parts and encoders.
 
 The content parts are provided as "field" parts with only a field name and value, or as "file" parts with a field name, content-type, file name and
-content object. These configurations are made on the `MultipartContent` object via DSL or functional interface.
+content object. These configurations are made on the `MultipartResponseContent` object via DSL or functional interface.
 
 The part content objects are serialized for data transfer as `String` content using configured encoders, which are simply instances of
 `Function<Object,String>` used to do the object to string conversion. These are configured either on a per-response basis or by sharing a
@@ -327,7 +343,7 @@ An example multipart response with a field and an image file would be something 
 
 [source,groovy]
 ----
-ersatzServer.expectations {
+ersatz.expectations {
     get('/data') {
         responds().content(multipart {
             // configure the part encoders
@@ -370,4 +386,3 @@ however, the extension feature mechanism is experimental at this point and may c
 
 At this point there is only one feature extension, the `BasicAuthFeature`, which causes the configured request expectations to require BASIC
 authentication (username and password) as part of their matching.
-

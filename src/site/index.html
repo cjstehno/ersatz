@@ -32,7 +32,6 @@
         <a href="https://coveralls.io/github/cjstehno/ersatz?branch=master"><img
             src="https://coveralls.io/repos/github/cjstehno/ersatz/badge.svg?branch=master" alt="Coverage Status"></a>
 
-
     </div>
 </header>
 
@@ -57,7 +56,7 @@
 
 server.expectations {
     get('/say/hello'){
-        verifier once()
+        called equalTo(1)
         query 'name','Ersatz'
         responder {
             body 'Hello Ersatz','text/plain'
@@ -79,7 +78,7 @@ ersatz.stop()</code></pre>
                 builder form, such as:</p>
 
             <pre><code>server.expectations {
-    get('/say/hello').verifier(once()).query('name','Ersatz')
+    get('/say/hello').called(equalTo(1)).query('name','Ersatz')
         .responds().body('Hello Ersatz','text/plain')
 }</code></pre>
 
@@ -95,7 +94,8 @@ ersatz.stop()</code></pre>
                     frameworks
                 </li>
                 <li>Allows configuration of expectations for requests and expected responses</li>
-                <li>Provides call verification to ensure that expected requests are actually called (including specific call counts).</li>
+                <li>Support for <a href="http://hamcrest.org/" target="_blank">Hamcrest</a> matchers</li>
+                <li>Call verification to ensure that expected requests are actually called (including specific call counts).</li>
                 <li>Support for both multipart request <em>and</em> response body content.</li>
             </ul>
 
