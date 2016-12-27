@@ -20,111 +20,199 @@ import com.stehno.ersatz.Expectations
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.RequestWithContent
 import groovy.transform.CompileStatic
+import org.hamcrest.Matcher
 
 import java.util.function.Consumer
+
+import static com.stehno.ersatz.impl.ErsatzRequest.*
+import static org.hamcrest.Matchers.equalTo
 
 /**
  * Implementation of the <code>Expectations</code> interface.
  */
-@CompileStatic @SuppressWarnings('ConfusingMethodName')
+@CompileStatic @SuppressWarnings(['ConfusingMethodName', 'MethodCount'])
 class ExpectationsImpl implements Expectations {
 
-    private static final String GET = 'GET'
-    private static final String HEAD = 'HEAD'
-    private static final String POST = 'POST'
-    private static final String PUT = 'PUT'
-    private static final String DELETE = 'DELETE'
-    private static final String PATCH = 'PATCH'
     private final List<Request> requests = []
 
     @Override
     Request get(final String path) {
-        expect new ErsatzRequest(GET, path)
+        get equalTo(path)
+    }
+
+    @Override
+    Request get(final Matcher<String> matcher) {
+        expect new ErsatzRequest(GET, matcher)
     }
 
     @Override
     Request get(final String path, @DelegatesTo(Request) final Closure closure) {
-        expect new ErsatzRequest(GET, path), closure
+        get(equalTo(path), closure)
+    }
+
+    @Override
+    Request get(final Matcher<String> matcher, @DelegatesTo(Request) final Closure closure) {
+        expect new ErsatzRequest(GET, matcher), closure
     }
 
     @Override
     Request get(String path, Consumer<Request> config) {
-        expect new ErsatzRequest(GET, path), config
+        get(equalTo(path), config)
+    }
+
+    @Override
+    Request get(Matcher<String> matcher, Consumer<Request> config) {
+        expect new ErsatzRequest(GET, matcher), config
     }
 
     @Override
     Request head(String path) {
-        expect new ErsatzRequest(HEAD, path, true)
+        head(equalTo(path))
     }
 
     @Override
     Request head(String path, @DelegatesTo(Request) Closure closure) {
-        expect new ErsatzRequest(HEAD, path, true), closure
+        head(equalTo(path), closure)
     }
 
     @Override
     Request head(String path, Consumer<Request> config) {
-        expect new ErsatzRequest(HEAD, path), config
+        head(equalTo(path), config)
+    }
+
+    @Override
+    Request head(Matcher<String> matcher) {
+        expect new ErsatzRequest(HEAD, matcher, true)
+    }
+
+    @Override
+    Request head(Matcher<String> matcher, @DelegatesTo(Request) Closure closure) {
+        expect new ErsatzRequest(HEAD, matcher, true), closure
+    }
+
+    @Override
+    Request head(Matcher<String> matcher, Consumer<Request> config) {
+        expect new ErsatzRequest(HEAD, matcher), config
     }
 
     @Override
     RequestWithContent post(String path) {
-        expect(new ErsatzRequestWithContent(POST, path)) as RequestWithContent
+        post(equalTo(path))
     }
 
     @Override
     RequestWithContent post(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-        expect(new ErsatzRequestWithContent(POST, path), closure) as RequestWithContent
+        post(equalTo(path), closure)
     }
 
     @Override
     RequestWithContent post(String path, Consumer<RequestWithContent> config) {
-        expect(new ErsatzRequestWithContent(POST, path), config) as RequestWithContent
+        post(equalTo(path), config)
+    }
+
+    @Override
+    RequestWithContent post(Matcher<String> matcher) {
+        expect(new ErsatzRequestWithContent(POST, matcher)) as RequestWithContent
+    }
+
+    @Override
+    RequestWithContent post(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure) {
+        expect(new ErsatzRequestWithContent(POST, matcher), closure) as RequestWithContent
+    }
+
+    @Override
+    RequestWithContent post(Matcher<String> matcher, Consumer<RequestWithContent> config) {
+        expect(new ErsatzRequestWithContent(POST, matcher), config) as RequestWithContent
     }
 
     @Override
     RequestWithContent put(String path) {
-        expect(new ErsatzRequestWithContent(PUT, path)) as RequestWithContent
+        put(equalTo(path))
     }
 
     @Override
     RequestWithContent put(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-        expect(new ErsatzRequestWithContent(PUT, path), closure) as RequestWithContent
+        put(equalTo(path), closure)
     }
 
     @Override
     RequestWithContent put(String path, Consumer<RequestWithContent> config) {
-        expect(new ErsatzRequestWithContent(PUT, path), config) as RequestWithContent
+        put(equalTo(path), config)
+    }
+
+    @Override
+    RequestWithContent put(Matcher<String> matcher) {
+        expect(new ErsatzRequestWithContent(PUT, matcher)) as RequestWithContent
+    }
+
+    @Override
+    RequestWithContent put(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure) {
+        expect(new ErsatzRequestWithContent(PUT, matcher), closure) as RequestWithContent
+    }
+
+    @Override
+    RequestWithContent put(Matcher<String> matcher, Consumer<RequestWithContent> config) {
+        expect(new ErsatzRequestWithContent(PUT, matcher), config) as RequestWithContent
     }
 
     @Override
     Request delete(String path) {
-        expect new ErsatzRequest(DELETE, path)
+        delete(equalTo(path))
     }
 
     @Override
     Request delete(String path, @DelegatesTo(Request) Closure closure) {
-        expect new ErsatzRequest(DELETE, path), closure
+        delete(equalTo(path), closure)
     }
 
     @Override
     Request delete(String path, Consumer<Request> config) {
-        expect new ErsatzRequest(DELETE, path), config
+        delete(equalTo(path), config)
+    }
+
+    @Override
+    Request delete(Matcher<String> matcher) {
+        expect new ErsatzRequest(DELETE, matcher)
+    }
+
+    @Override
+    Request delete(Matcher<String> matcher, @DelegatesTo(Request) Closure closure) {
+        expect new ErsatzRequest(DELETE, matcher), closure
+    }
+
+    @Override
+    Request delete(Matcher<String> matcher, Consumer<Request> config) {
+        expect new ErsatzRequest(DELETE, matcher), config
     }
 
     @Override
     RequestWithContent patch(String path) {
-        expect(new ErsatzRequestWithContent(PATCH, path)) as RequestWithContent
+        patch(equalTo(path))
     }
 
     @Override
     RequestWithContent patch(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-        expect(new ErsatzRequestWithContent(PATCH, path), closure) as RequestWithContent
+        patch(equalTo(path), closure)
     }
 
     @Override
     RequestWithContent patch(String path, Consumer<RequestWithContent> config) {
-        expect(new ErsatzRequestWithContent(PATCH, path), config) as RequestWithContent
+        patch(equalTo(path), config)
+    }
+
+    @Override
+    RequestWithContent patch(Matcher<String> matcher) {
+        expect(new ErsatzRequestWithContent(PATCH, matcher)) as RequestWithContent
+    }
+
+    @Override
+    RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure) {
+        expect(new ErsatzRequestWithContent(PATCH, matcher), closure) as RequestWithContent
+    }
+
+    @Override
+    RequestWithContent patch(Matcher<String> matcher, Consumer<RequestWithContent> config) {
+        expect(new ErsatzRequestWithContent(PATCH, matcher), config) as RequestWithContent
     }
 
     /**
@@ -134,6 +222,7 @@ class ExpectationsImpl implements Expectations {
      * @return the matching request expectation
      */
     Request findMatch(final ClientRequest clientRequest) {
+        // FIXME: maybe dump expectations if no match found
         requests.find { r -> ((ErsatzRequest) r).matches(clientRequest) }
     }
 
@@ -143,6 +232,7 @@ class ExpectationsImpl implements Expectations {
      * @return a value of true if all requests are verified
      */
     boolean verify() {
+        // FIXME: move assert into requests
         requests.each { r ->
             assert ((ErsatzRequest) r).verify(), "Expectations for $r were not met."
         }

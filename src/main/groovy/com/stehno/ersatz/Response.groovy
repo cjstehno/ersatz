@@ -24,7 +24,7 @@ import groovy.transform.CompileStatic
 interface Response {
 
     /**
-     * Defines the request content to be sent back to the client.
+     * Defines the request content to be sent back to the client. In the case of <code>MultipartContent</code>, the content-type will also be set.
      *
      * @param content the content object
      * @return this response
@@ -32,13 +32,25 @@ interface Response {
     Response content(final Object content)
 
     /**
-     * Defines the request content to be sent back to the client, along with its content-type.
+     * Defines the request content to be sent back to the client, along with its content-type. Multipart responses may be specified using this method;
+     * however, the content-type will need to specify the boundary string and the boundary will need to be specified in the
+     * <code>MultipartContent</code> configuration as well.
      *
      * @param content the content object
      * @param contentType the content type
      * @return this response
      */
     Response content(final Object content, final String contentType)
+
+    /**
+     * Defines the request content to be sent back to the client, along with its content-type. Multipart responses may be specified using this method;
+     * however, the content-type will need to specify the boundary string and the boundary will need to be specified in the
+     * <code>MultipartContent</code> configuration as well.
+     *
+     * @param content the content object
+     * @param contentType the content type
+     * @return this response
+     */
     Response content(final Object content, final ContentType contentType)
 
     /**
@@ -82,6 +94,13 @@ interface Response {
      * @return this response
      */
     Response contentType(final String contentType)
+
+    /**
+     * Used to specify the content type of the response.
+     *
+     * @param contentType the response content type
+     * @return this response
+     */
     Response contentType(final ContentType contentType)
 
     /**

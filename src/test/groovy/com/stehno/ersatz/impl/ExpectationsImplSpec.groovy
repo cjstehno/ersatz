@@ -18,90 +18,91 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.RequestWithContent
-import io.undertow.util.HeaderMap
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.Verifiers.once
+import static org.hamcrest.Matchers.equalTo
 
 class ExpectationsImplSpec extends Specification {
 
     private static final String PATH = '/somewhere'
     private final ExpectationsImpl expectations = new ExpectationsImpl()
 
-    @Unroll def '#method(String)'() {
+    @Unroll '#method(String)'() {
         when:
         Request request = expectations."${method.toLowerCase()}"(PATH)
 
         then:
         request instanceof ErsatzRequest
-        assertExpectedRequest method
+        expectations.requests.size() == 1
+        expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH))
 
         where:
         method << ['GET', 'HEAD', 'DELETE']
     }
 
-    @Unroll def '#method(String,Closure)'() {
+    @Unroll '#method(String,Closure)'() {
         when:
         Request request = expectations."${method.toLowerCase()}"(PATH, { query('a', 'b') })
 
         then:
         request instanceof ErsatzRequest
-        assertExpectedRequest method
-        expectations.requests[0].getQuery('a') == ['b']
+        expectations.requests.size() == 1
+        expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH).query('a', 'b'))
 
         where:
         method << ['GET', 'HEAD', 'DELETE']
     }
 
-    @Unroll def '#method(String,Consumer)'() {
+    @Unroll '#method(String,Consumer)'() {
         when:
         Request request = expectations."${method.toLowerCase()}"(PATH, { req -> req.query('a', 'b') } as Consumer<Request>)
 
         then:
         request instanceof ErsatzRequest
-        assertExpectedRequest method
-        expectations.requests[0].getQuery('a') == ['b']
+        expectations.requests.size() == 1
+        expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH).query('a', 'b'))
 
         where:
         method << ['GET', 'HEAD', 'DELETE']
     }
 
-    @Unroll def '#method(String) (with content)'() {
+    @Unroll '#method(String) (with content)'() {
         when:
         Request request = expectations."${method.toLowerCase()}"(PATH)
 
         then:
         request instanceof ErsatzRequestWithContent
-        assertExpectedRequest method
+        expectations.requests.size() == 1
+        expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH))
 
         where:
         method << ['POST', 'PUT', 'PATCH']
     }
 
-    @Unroll def '#method(String,Closure) (with content)'() {
+    @Unroll '#method(String,Closure) (with content)'() {
         when:
         Request request = expectations."${method.toLowerCase()}"(PATH, { query('a', 'b') })
 
         then:
         request instanceof ErsatzRequestWithContent
-        assertExpectedRequest method
-        expectations.requests[0].getQuery('a') == ['b']
+        expectations.requests.size() == 1
+        expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH).query('a', 'b'))
 
         where:
         method << ['POST', 'PUT', 'PATCH']
     }
 
-    @Unroll def '#method(String,Consumer) (with content)'() {
+    @Unroll '#method(String,Consumer) (with content)'() {
         when:
         Request request = expectations."${method.toLowerCase()}"(PATH, { req -> req.query('a', 'b') } as Consumer<RequestWithContent>)
 
         then:
         request instanceof ErsatzRequestWithContent
-        assertExpectedRequest method
-        expectations.requests[0].getQuery('a') == ['b']
+        expectations.requests.size() == 1
+        expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH).query('a', 'b'))
 
         where:
         method << ['POST', 'PUT', 'PATCH']
@@ -114,20 +115,13 @@ class ExpectationsImplSpec extends Specification {
         expectations.delete('/alpha')
         expectations.get('/alpha')
 
-        ClientRequest cr = GroovyMock(ClientRequest) { r ->
-            _ * r.getMethod() >> method
-            _ * r.getPath() >> path
-            _ * r.getQueryParams() >> [:]
-            _ * r.getHeaders() >> new HeaderMap()
-            _ * r.getCookies() >> [:]
-        }
+        ClientRequest cr = new MockClientRequest(method: method, path: path)
 
         when:
         Request req = expectations.findMatch(cr)
 
         then:
-        req.method == method
-        req.path == path
+        req.matches(cr)
 
         where:
         method   | path
@@ -139,8 +133,8 @@ class ExpectationsImplSpec extends Specification {
 
     def 'verification (success)'() {
         setup:
-        RequestWithContent req = expectations.post('/alpha').verifier(once())
-        ((ErsatzRequestWithContent) req).mark()
+        RequestWithContent req = expectations.post('/alpha').called(equalTo(1))
+        ((ErsatzRequestWithContent) req).mark(new MockClientRequest())
 
         expect:
         expectations.verify()
@@ -148,21 +142,14 @@ class ExpectationsImplSpec extends Specification {
 
     def 'verification (failure)'() {
         setup:
-        expectations.post('/alpha').verifier(once())
+        expectations.post('/alpha').called(equalTo(1))
 
         when:
         expectations.verify()
 
         then:
         def ae = thrown(AssertionError)
-        ae.message == 'Expectations for { POST /alpha (query=[:], headers=[:], cookies=[:]): counted=0 }: null were not met.. Expression: ' +
-            '(com.stehno.ersatz.impl.ErsatzRequest -> com.stehno.ersatz.impl.ErsatzRequest) r.verify()'
-    }
-
-    private boolean assertExpectedRequest(final String method) {
-        assert expectations.requests.size() == 1
-        assert expectations.requests[0].method == method
-        assert expectations.requests[0].path == PATH
-        true
+        ae.message == 'Expectations for Expectations (ErsatzRequestWithContent): "POST", "/alpha",  were not met.. ' +
+            'Expression: (com.stehno.ersatz.impl.ErsatzRequest -> com.stehno.ersatz.impl.ErsatzRequest) r.verify()'
     }
 }

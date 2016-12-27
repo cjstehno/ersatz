@@ -18,115 +18,109 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.Response
-import com.stehno.ersatz.Verifiers
-import groovy.transform.CompileStatic
+import org.hamcrest.Matcher
+import org.hamcrest.StringDescription
 
 import java.util.function.Consumer
-import java.util.function.Function
 
-import static com.stehno.ersatz.Conditions.*
+import static org.hamcrest.Matchers.*
 
 /**
  * <code>Request</code> implementation representing requests without body content.
  */
-@CompileStatic
 class ErsatzRequest implements Request {
 
-    protected final Map<String, List<String>> queryParams = [:]
-    protected final Map<String, String> headers = [:]
-    protected final Map<String, String> cookies = [:]
-    protected final List<Function<ClientRequest, Boolean>> conditions = []
+    protected static final String GET = 'GET'
+    protected static final String HEAD = 'HEAD'
+    protected static final String POST = 'POST'
+    protected static final String PUT = 'PUT'
+    protected static final String DELETE = 'DELETE'
+    protected static final String PATCH = 'PATCH'
 
-    private final List<Consumer<Request>> listeners = []
+    private final List<RequestMatcher> matchers = []
+    private final List<Consumer<ClientRequest>> listeners = []
     private final List<Response> responses = []
     private final boolean emptyResponse
-    private final String path
-    private final String method
-    private Function<Integer, Boolean> verifier = Verifiers.any()
+    private Matcher<?> callVerifier = anything()
     private int callCount
 
     /**
-     * Creates a new request with the specified method, path and optional empty response flag (defaults to false).
+     * Creates a new request with the specified method, path matcher and optional empty response flag (defaults to false).
      *
      * @param method the request method
-     * @param path the request path
+     * @param pathMatcher the path matcher
      * @param emptyResponse whether or not this is a request with an empty response (defaults to false)
      */
-    ErsatzRequest(final String method, final String path, final boolean emptyResponse = false) {
-        this.method = method
-        this.path = path
+    ErsatzRequest(final String method, final Matcher<String> pathMatcher, final boolean emptyResponse = false) {
+        matchers << RequestMatcher.method(equalTo(method))
+        matchers << RequestMatcher.path(pathMatcher)
         this.emptyResponse = emptyResponse
     }
 
-    @Override
-    String getPath() {
-        path
-    }
-
-    @Override
-    String getMethod() {
-        method
-    }
-
     @Override @SuppressWarnings('ConfusingMethodName')
-    Request headers(final Map<String, String> heads) {
-        headers.putAll(heads)
-        this
-    }
-
-    @Override
-    Request queries(final Map<String, List<String>> map) {
-        map.each { k, v ->
-            if (queryParams.containsKey(k)) {
-                queryParams[k].addAll(v)
-            } else {
-                queryParams[k] = v
-            }
+    Request headers(final Map<String, Object> heads) {
+        heads.each { k, v ->
+            header k, v
         }
-        this
-    }
-
-    @Override @SuppressWarnings('ConfusingMethodName')
-    Request cookies(Map<String, String> cookies) {
-        this.cookies.putAll(cookies)
         this
     }
 
     @Override
     Request header(final String name, final String value) {
-        headers[name] = value
-        this
+        header name, equalTo(value)
     }
 
     @Override
-    String getHeader(final String name) {
-        headers[name]
+    Request header(final String name, final Matcher<String> value) {
+        matchers << RequestMatcher.header(name, value)
+        this
     }
 
     @Override
     Request query(final String name, final String value) {
-        queryParams.computeIfAbsent(name) { k -> [] }.add value
+        query name, contains(value)
+    }
+
+    @Override
+    Request query(final String name, final Iterable<String> value) {
+        query name, containsInAnyOrder((value as Collection<String>).collect { equalTo(it) })
+    }
+
+    @Override
+    Request query(final String name, final Matcher<Iterable<String>> matcher) {
+        matchers << RequestMatcher.query(name, matcher)
         this
     }
 
     @Override
-    List<String> getQuery(final String name) {
-        (queryParams[name] ?: []).asImmutable()
+    Request queries(final Map<String, Object> map) {
+        map.each { k, v ->
+            query k, v
+        }
+        this
     }
 
     @Override
     Request cookie(final String name, final String value) {
-        cookies[name] = value
+        cookie name, equalTo(value)
+    }
+
+    @Override
+    Request cookie(final String name, final Matcher<String> value) {
+        matchers << RequestMatcher.cookie(name, value)
+        this
+    }
+
+    @Override @SuppressWarnings('ConfusingMethodName')
+    Request cookies(Map<String, Object> cookies) {
+        cookies.each { k, v ->
+            cookie k, v
+        }
         this
     }
 
     @Override
-    String getCookie(final String name) {
-        cookies[name]
-    }
-
-    @Override
-    Request listener(final Consumer<Request> listener) {
+    Request listener(final Consumer<ClientRequest> listener) {
         listeners.add(listener)
         this
     }
@@ -157,65 +151,43 @@ class ErsatzRequest implements Request {
         this
     }
 
-    @Override
-    Request condition(final Function<ClientRequest, Boolean> matcher) {
-        conditions.add(matcher)
+    @Override @SuppressWarnings('ConfusingMethodName')
+    Request called(final Matcher<Integer> callVerifier) {
+        this.callVerifier = callVerifier
         this
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
-    Request conditions(List<Function<ClientRequest, Boolean>> matchers) {
-        conditions.addAll(matchers)
-        this
-    }
-
-    @Override @SuppressWarnings('ConfusingMethodName')
-    Request verifier(final Function<Integer, Boolean> verifier) {
-        this.verifier = verifier
-        this
+    Request called(final int count) {
+        called equalTo(count)
     }
 
     /**
      * Used to verify that the request has been called the expected number of times. By default there is no verification criteria, they must be
-     * configured using the <code>verifier</code> methods.
+     * configured using one of the <code>called()</code> methods.
      *
      * @return true if the call count matches the expected verification criteria
      */
     boolean verify() {
-        verifier.apply(callCount)
+        callVerifier.matches(callCount)
     }
 
     /**
-     * Used to determine whether or not the incoming client request matches this configured request. If there are configured <code>conditions</code>,
-     * they will override the default match conditions (except for path and request method matching, and only those configured conditions will be
-     * applied. The default conditions may be added back in using the <code>Conditions</code> functions.
-     *
-     * The default match criteria are:
-     *
-     * <ul>
-     *  <li>The request methods must match.</li>
-     *  <li>The request paths must match.</li>
-     *  <li>The request query parameters must match (inclusive).</li>
-     *  <li>The incoming request headers must contain all of the configured headers (non-inclusive).</li>
-     *  <li>The incoming request cookies must contain all of the configured cookies (non-inclusive).</li>
-     * </ul>
+     * Used to determine whether or not the incoming client request matches this configured request. All configured matchers must return
+     * <code>true</code> in order for the match to be successful. By default, all request have a matcher for request method and request path, the
+     * others are optional.
      *
      * @param clientRequest the incoming client request
      * @return true if the incoming request matches the configured request
      */
     boolean matches(final ClientRequest clientRequest) {
-        if (conditions) {
-            return methodEquals(this.method).apply(clientRequest) &&
-                pathEquals(this.path).apply(clientRequest) &&
-                conditions.every { it.apply(clientRequest) }
-
+        matchers.every { m ->
+            m.matches(clientRequest)
         }
+    }
 
-        return methodEquals(this.method).apply(clientRequest) &&
-            pathEquals(this.path).apply(clientRequest) &&
-            queriesEquals(this.queryParams).apply(clientRequest) &&
-            headersContains(this.headers).apply(clientRequest) &&
-            cookiesContains(this.cookies).apply(clientRequest)
+    protected void addMatcher(final RequestMatcher matcher) {
+        matchers << matcher
     }
 
     private Response newResponse() {
@@ -236,15 +208,24 @@ class ErsatzRequest implements Request {
     /**
      * Used to mark the request as having been called. Any configured listeners will be called after the call count has been incremented.
      */
-    void mark() {
+    void mark(final ClientRequest cr) {
         callCount++
 
-        for (final Consumer<Request> listener : listeners) {
-            listener.accept(this)
+        for (final Consumer<ClientRequest> listener : listeners) {
+            listener.accept(cr)
         }
     }
 
     @Override String toString() {
-        "{ $method $path (query=${queryParams}, headers=$headers, cookies=$cookies): counted=$callCount }"
+        StringBuilder str = new StringBuilder()
+        str.append "Expectations (${getClass().simpleName}): "
+
+        matchers.each { m ->
+            StringDescription desc = new StringDescription()
+            m.matcher.describeTo(desc)
+            str.append(desc).append(', ')
+        }
+
+        str.toString()
     }
 }

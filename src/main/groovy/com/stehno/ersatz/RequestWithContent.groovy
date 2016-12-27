@@ -16,22 +16,15 @@
 package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
+import org.hamcrest.Matcher
 
-import java.util.function.Function
+import java.util.function.BiFunction
 
 /**
- * An expectation of a request with body content.
+ * Expectation configuration for a request with body content.
  */
 @CompileStatic
 interface RequestWithContent extends Request {
-
-    /**
-     * Configures the expected body content of the request.
-     *
-     * @param body the body content
-     * @return a reference to this request
-     */
-    RequestWithContent body(final Object body)
 
     /**
      * Configures the expected body content of the request with the specified content type.
@@ -41,16 +34,33 @@ interface RequestWithContent extends Request {
      * @return a reference to this request
      */
     RequestWithContent body(final Object body, String contentType)
-    RequestWithContent body(final Object body, ContentType contentType)
 
     /**
-     * Configures the expected content type (header) of the request.
+     * Configures the expected body content of the request with the specified content type.
      *
+     * @param matcher the body content matcher
      * @param contentType the body content type
      * @return a reference to this request
      */
-    RequestWithContent contentType(final String contentType)
-    RequestWithContent contentType(final ContentType contentType)
+    RequestWithContent body(final Matcher<Object> body, String contentType)
+
+    /**
+     * Configures the expected body content of the request with the specified content type.
+     *
+     * @param body the body content
+     * @param contentType the body content type
+     * @return a reference to this request
+     */
+    RequestWithContent body(final Object body, ContentType contentType)
+
+    /**
+     * Configures the expected body content of the request with the specified content type.
+     *
+     * @param matcher the body content matcher
+     * @param contentType the body content type
+     * @return a reference to this request
+     */
+    RequestWithContent body(final Matcher<Object> body, ContentType contentType)
 
     /**
      * Specifies a custom body content converter function. The function will have the client request body content as a byte array and it will be
@@ -61,6 +71,24 @@ interface RequestWithContent extends Request {
      * @param converter the conversion function
      * @return a reference to this request
      */
-    RequestWithContent converter(final String contentType, final Function<byte[], Object> converter)
-    RequestWithContent converter(final ContentType contentType, final Function<byte[], Object> converter)
+    RequestWithContent decoder(final String contentType, final BiFunction<byte[], DecodingContext, Object> decoder)
+
+    /**
+     * Specifies a custom body content converter function. The function will have the client request body content as a byte array and it will be
+     * converted into the specified output type. Generally the conversion is used when comparing the client request with the configured request
+     * body expectation.
+     *
+     * @param contentType the content type that the convert will handle
+     * @param converter the conversion function
+     * @return a reference to this request
+     */
+    RequestWithContent decoder(final ContentType contentType, final BiFunction<byte[], DecodingContext, Object> decoder)
+
+    /**
+     * Configures a parent collection of decoders to be searched when a decoder is not configured on the request itself.
+     *
+     * @param decoders the parent decoder collection
+     * @return a reference to this request
+     */
+    RequestWithContent decoders(final RequestDecoders decoders)
 }
