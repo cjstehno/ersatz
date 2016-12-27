@@ -31,6 +31,7 @@ import java.util.function.Consumer
 import static MultipartResponseContent.multipart
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
+import static org.hamcrest.Matchers.startsWith
 
 class ErsatzServerSpec extends Specification {
 
@@ -97,7 +98,7 @@ class ErsatzServerSpec extends Specification {
         ]
 
         then:
-//        counter.get() == 2 TODO: this is twitchy
+        //        counter.get() == 2 TODO: this is twitchy
         results.every { it == 'This is Bar!!' }
 
         when:
@@ -178,6 +179,22 @@ class ErsatzServerSpec extends Specification {
         byte[] bytes = Base64.decoder.decode(items[1].get())
         bytes.length == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes.length
         bytes == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes
+    }
+
+    def 'alternate construction'() {
+        setup:
+        def server = new ErsatzServer({
+            expectations {
+                get(startsWith('/hello')).responds().content('ok')
+            }
+            start()
+        })
+
+        expect:
+        "${server.serverUrl}/hello/there".toURL().text == 'ok'
+
+        cleanup:
+        server.stop()
     }
 
     private String url(final String path) {

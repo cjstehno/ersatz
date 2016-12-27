@@ -31,6 +31,7 @@ import static com.stehno.ersatz.Decoders.getUtf8String;
 import static java.lang.String.format;
 import static okhttp3.MediaType.parse;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -126,6 +127,19 @@ public class ErsatzServerTest {
         assertEquals("patched", resp.body().string());
 
         assertTrue(ersatzServer.verify());
+    }
+
+    @Test
+    public void alternateConfiguration() throws IOException {
+        ErsatzServer server = new ErsatzServer(config -> {
+            config.expects().get(startsWith("/hello")).responds().content("ok");
+            config.start();
+        });
+
+        okhttp3.Request request = new okhttp3.Request.Builder().get().url(server.getServerUrl() + "/hello/there").build();
+        assertEquals("ok", client.newCall(request).execute().body().string());
+
+        server.stop();
     }
 
     private String url(final String path) {

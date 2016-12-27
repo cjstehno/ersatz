@@ -49,29 +49,49 @@ import java.util.function.Consumer
  * See the <a href="http://stehno.com/ersatz/guide/html5/" target="_blank">User Guide</a> for more detailed information.
  */
 @CompileStatic @Slf4j
-class ErsatzServer {
+class ErsatzServer implements ServerConfig {
 
     /**
      * The response body returned when no matching expectation could be found.
      */
     static final String NOT_FOUND_BODY = '404: Not Found'
 
-    /**
-     * The server feature extensions configured on the server.
-     */
-    List<ServerFeature> features = []
-
     private final ExpectationsImpl expectations = new ExpectationsImpl()
+    private final List<ServerFeature> features = []
     private Undertow server
     private int actualPort = -1
+
+    /**
+     * Creates a new Ersatz server instance with either the default configuration or a configuration provided by the Groovy DSL closure.
+     *
+     * @param closure the configuration closure (delegated to <code>ServerConfig</code>)
+     */
+    ErsatzServer(@DelegatesTo(ServerConfig) final Closure closure = null) {
+        if (closure) {
+            closure.delegate = this
+            closure.call()
+        }
+    }
+
+    /**
+     * Creates a new Ersatz server instance configured by the provided <code>Consumer</code>, which will have an instance of <code>ServerConfig</code>
+     * passed into it for server configuration.
+     *
+     * @param consumer the configuration consumer
+     */
+    ErsatzServer(final Consumer<ServerConfig> consumer) {
+        consumer.accept(this)
+    }
 
     /**
      * Used to enable support for a feature extension.
      *
      * @param feature the <code>ServerFeature</code> to be added
+     * @return a reference to this server instance
      */
-    void addFeature(ServerFeature feature) {
+    ServerConfig feature(final ServerFeature feature) {
         features << feature
+        this
     }
 
     /**
@@ -100,7 +120,7 @@ class ErsatzServer {
      * @return a reference to this server
      */
     @SuppressWarnings('ConfusingMethodName')
-    ErsatzServer expectations(final Consumer<Expectations> expects) {
+    ServerConfig expectations(final Consumer<Expectations> expects) {
         expects.accept(expectations)
         this
     }
@@ -122,7 +142,7 @@ class ErsatzServer {
      * @return a reference to this server
      */
     @SuppressWarnings('ConfusingMethodName')
-    ErsatzServer expectations(@DelegatesTo(Expectations) final Closure closure) {
+    ServerConfig expectations(@DelegatesTo(Expectations) final Closure closure) {
         closure.delegate = expectations
         closure.call()
         this
