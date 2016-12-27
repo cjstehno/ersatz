@@ -25,13 +25,42 @@ import java.util.function.Consumer
 @CompileStatic
 interface ServerConfig {
 
+    /**
+     * Configures the specified feature on the server.
+     *
+     * @param feature the feature to be configured
+     * @return a reference to the server being configured
+     */
     ServerConfig feature(ServerFeature feature)
 
+    /**
+     * Used to configure HTTP expectations on the server; the provided <code>Consumer<Expectations></code> implementation will have an active
+     * <code>Expectations</code> object passed into it for configuring server interaction expectations.
+     *
+     * @param expects the <code>Consumer<Expectations></code> instance to perform the configuration
+     * @return a reference to this server
+     */
     ServerConfig expectations(final Consumer<Expectations> expects)
 
+    /**
+     * Used to configure HTTP expectations on the server; the provided Groovy <code>Closure</code> will delegate to an <code>Expectations</code>
+     * instance for configuring server interaction expectations using the Groovy DSL.
+     *
+     * @param closure the Groovy <code>Closure</code> which will provide expectation configuration via DSL
+     * @return a reference to this server
+     */
     ServerConfig expectations(@DelegatesTo(Expectations) final Closure closure)
 
+    /**
+     * An alternate means of starting the expectation chain.
+     *
+     * @return the reference to the Expectation configuration object
+     */
     Expectations expects()
 
+    /**
+     * Used to start the HTTP server for test interactions. This method should be called after configuration of expectations and before the test
+     * interactions are executed against the server.
+     */
     void start()
 }
