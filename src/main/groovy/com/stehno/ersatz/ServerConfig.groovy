@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
 
+import java.util.function.BiFunction
 import java.util.function.Consumer
 
 /**
@@ -59,8 +60,25 @@ interface ServerConfig {
     Expectations expects()
 
     /**
-     * Used to start the HTTP server for test interactions. This method should be called after configuration of expectations and before the test
-     * interactions are executed against the server.
+     * Configures the given request content decoder for the specified request content-type. The decoder will be configured globally and used if no
+     * overriding decoder is provided during expectation configuration.
+     *
+     * @param contentType the request content-type
+     * @param decoder the request content decoder
+     * @return the reference to the server configuration
      */
-    void start()
+    ServerConfig decoder(final String contentType, final BiFunction<byte[], DecodingContext, Object> decoder)
+
+    /**
+     * Configures the given request content decoder for the specified request content-type. The decoder will be configured globally and used if no
+     * overriding decoder is provided during expectation configuration.
+     *
+     * @param contentType the request content-type
+     * @param decoder the request content decoder
+     * @return the reference to the server configuration
+     */
+    ServerConfig decoder(final ContentType contentType, final BiFunction<byte[], DecodingContext, Object> decoder)
+
+    // FIXME: Add encoders
+    // FIXME: global encoder/decoder testing
 }

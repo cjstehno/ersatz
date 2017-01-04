@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.impl.DecoderChain
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 
@@ -42,5 +43,5 @@ class DecodingContext {
     /**
      * The available request decoders.
      */
-    RequestDecoders decoders
+    DecoderChain decoderChain
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,8 @@ import static org.hamcrest.Matchers.startsWith
 @SuppressWarnings('ConfusingMethodName')
 class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
-    private final RequestDecoders decoders = new RequestDecoders()
+    private final RequestDecoders localDecoders = new RequestDecoders()
+    private final DecoderChain decoderChain = new DecoderChain(localDecoders)
 
     /**
      * Creates a request with the specified method and path.
@@ -40,14 +41,16 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
      * @param method the request method
      * @param pathMatcher the request path matcher
      */
-    ErsatzRequestWithContent(final String method, final Matcher<String> pathMatcher) {
+    ErsatzRequestWithContent(final String method, final Matcher<String> pathMatcher, final RequestDecoders globalDecoders = null) {
         super(method, pathMatcher)
+
+        if (globalDecoders) decoderChain.last globalDecoders
     }
 
     @Override
     RequestWithContent body(final Matcher<Object> bodyMatcher, final String contentType) {
         addMatcher RequestMatcher.contentType(startsWith(contentType))
-        addMatcher RequestMatcher.body(decoders, contentType, bodyMatcher)
+        addMatcher RequestMatcher.body(decoderChain, contentType, bodyMatcher)
         this
     }
 
@@ -68,19 +71,19 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     @Override
     RequestWithContent decoder(final String contentType, final BiFunction<byte[], DecodingContext, Object> decoder) {
-        decoders.register(contentType, decoder)
+        localDecoders.register(contentType, decoder)
         this
     }
 
     @Override
     RequestWithContent decoder(final ContentType contentType, final BiFunction<byte[], DecodingContext, Object> decoder) {
-        decoders.register(contentType, decoder)
+        localDecoders.register(contentType, decoder)
         this
     }
 
     @Override
     RequestWithContent decoders(final RequestDecoders requestDecoders) {
-        decoders.parent = requestDecoders
+        decoderChain.afterFirst(requestDecoders)
         this
     }
 }

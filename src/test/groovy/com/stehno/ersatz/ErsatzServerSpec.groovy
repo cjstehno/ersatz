@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -187,8 +187,9 @@ class ErsatzServerSpec extends Specification {
             expectations {
                 get(startsWith('/hello')).responds().content('ok')
             }
-            start()
         })
+
+        server.start()
 
         expect:
         "${server.serverUrl}/hello/there".toURL().text == 'ok'

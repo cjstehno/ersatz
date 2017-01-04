@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,11 @@ import javax.activation.MimeType
 import java.util.function.BiFunction
 
 /**
- * Configuration manager for a collection of request content decoders. If a "parent" is specified, it will be searched for decoders when one is not
- * found in the current decoder collection.
+ * Configuration manager for a collection of request content decoders.
  */
 class RequestDecoders {
 
-    private final List<DecoderMapping> converters = []
-    private RequestDecoders parent
+    private final List<DecoderMapping> decoders = []
 
     /**
      * Creates a new decoder collection optionally registering decoders with the Groovy DSL closure.
@@ -39,15 +37,6 @@ class RequestDecoders {
             closure.delegate = this
             closure.call()
         }
-    }
-
-    /**
-     * Specifies the parent of this decoder collection. If a parent is specified, it will be searched if a decoder is not found in this collection.
-     *
-     * @param parent the parent decoder collection
-     */
-    void setParent(final RequestDecoders parent) {
-        this.parent = parent
     }
 
     /**
@@ -67,16 +56,16 @@ class RequestDecoders {
      * @param decoder the decoder function
      */
     void register(final String contentType, final BiFunction<byte[], DecodingContext, Object> converter) {
-        DecoderMapping existing = converters.find { c -> c.mimeType.toString() == contentType }
+        DecoderMapping existing = decoders.find { c -> c.mimeType.toString() == contentType }
         if (existing) {
-            converters.remove(existing)
+            decoders.remove(existing)
         }
 
-        converters.add(new DecoderMapping(new MimeType(contentType), converter))
+        decoders.add(new DecoderMapping(new MimeType(contentType), converter))
     }
 
     /**
-     * Finds a decoder for the specified content type. It will check the parent collection if no decoder is found, and a parent is configured.
+     * Finds a decoder for the specified content type.
      *
      * @param contentType the content type
      * @return the decoder function
@@ -86,7 +75,7 @@ class RequestDecoders {
     }
 
     /**
-     * Finds a decoder for the specified content type. It will check the parent collection if no decoder is found, and a parent is configured.
+     * Finds a decoder for the specified content type.
      *
      * @param contentType the content type
      * @return the decoder function
@@ -94,19 +83,13 @@ class RequestDecoders {
     BiFunction<byte[], DecodingContext, Object> findDecoder(final String contentType) {
         MimeType mimeType = new MimeType(contentType)
 
-        def found = converters.findAll { c -> c.mimeType.match(mimeType) }
+        def found = decoders.findAll { c -> c.mimeType.match(mimeType) }
 
         if (found.size() > 1) {
             found = [found.find { c -> c.mimeType.toString() == contentType }]
         }
 
-        def decoder = found[0]?.decoder ?: (parent ? parent.findDecoder(contentType) : null)
-
-        if (decoder) {
-            return decoder
-        }
-
-        throw new IllegalArgumentException("No decoder was found for content-type (${contentType}) - did you configure one?")
+        found[0]?.decoder
     }
 
     @Immutable(knownImmutableClasses = [MimeType, BiFunction])

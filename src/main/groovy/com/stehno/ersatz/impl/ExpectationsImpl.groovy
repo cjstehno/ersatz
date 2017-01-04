@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.Expectations
-import com.stehno.ersatz.Request
-import com.stehno.ersatz.RequestWithContent
+import com.stehno.ersatz.*
 import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
 
@@ -34,6 +31,11 @@ import static org.hamcrest.Matchers.equalTo
 class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = []
+    private final RequestDecoders globalDecoders = new RequestDecoders()
+
+    ExpectationsImpl(final RequestDecoders globalDecoders) {
+        this.globalDecoders = globalDecoders
+    }
 
     @Override
     Request get(final String path) {
@@ -112,17 +114,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     RequestWithContent post(Matcher<String> matcher) {
-        expect(new ErsatzRequestWithContent(POST, matcher)) as RequestWithContent
+        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders)) as RequestWithContent
     }
 
     @Override
     RequestWithContent post(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure) {
-        expect(new ErsatzRequestWithContent(POST, matcher), closure) as RequestWithContent
+        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders), closure) as RequestWithContent
     }
 
     @Override
     RequestWithContent post(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        expect(new ErsatzRequestWithContent(POST, matcher), config) as RequestWithContent
+        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders), config) as RequestWithContent
     }
 
     @Override
@@ -142,17 +144,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     RequestWithContent put(Matcher<String> matcher) {
-        expect(new ErsatzRequestWithContent(PUT, matcher)) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders)) as RequestWithContent
     }
 
     @Override
     RequestWithContent put(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure) {
-        expect(new ErsatzRequestWithContent(PUT, matcher), closure) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders), closure) as RequestWithContent
     }
 
     @Override
     RequestWithContent put(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        expect(new ErsatzRequestWithContent(PUT, matcher), config) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders), config) as RequestWithContent
     }
 
     @Override
@@ -202,17 +204,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     RequestWithContent patch(Matcher<String> matcher) {
-        expect(new ErsatzRequestWithContent(PATCH, matcher)) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders)) as RequestWithContent
     }
 
     @Override
     RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure) {
-        expect(new ErsatzRequestWithContent(PATCH, matcher), closure) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders), closure) as RequestWithContent
     }
 
     @Override
     RequestWithContent patch(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        expect(new ErsatzRequestWithContent(PATCH, matcher), config) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders), config) as RequestWithContent
     }
 
     /**

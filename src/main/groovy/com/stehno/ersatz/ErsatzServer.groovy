@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.CookieImpl
 import io.undertow.util.HttpString
 
+import java.util.function.BiFunction
 import java.util.function.Consumer
 
 /**
@@ -56,7 +57,8 @@ class ErsatzServer implements ServerConfig {
      */
     static final String NOT_FOUND_BODY = '404: Not Found'
 
-    private final ExpectationsImpl expectations = new ExpectationsImpl()
+    private final RequestDecoders globalDecoders = new RequestDecoders()
+    private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders)
     private final List<ServerFeature> features = []
     private Undertow server
     private int actualPort = -1
@@ -89,7 +91,7 @@ class ErsatzServer implements ServerConfig {
      * @param feature the <code>ServerFeature</code> to be added
      * @return a reference to this server instance
      */
-    ServerConfig feature(final ServerFeature feature) {
+    ErsatzServer feature(final ServerFeature feature) {
         features << feature
         this
     }
@@ -120,7 +122,7 @@ class ErsatzServer implements ServerConfig {
      * @return a reference to this server
      */
     @SuppressWarnings('ConfusingMethodName')
-    ServerConfig expectations(final Consumer<Expectations> expects) {
+    ErsatzServer expectations(final Consumer<Expectations> expects) {
         expects.accept(expectations)
         this
     }
@@ -134,6 +136,17 @@ class ErsatzServer implements ServerConfig {
         expectations
     }
 
+    @Override
+    ErsatzServer decoder(String contentType, BiFunction<byte[], DecodingContext, Object> decoder) {
+        globalDecoders.register contentType, decoder
+        this
+    }
+
+    @Override
+    ErsatzServer decoder(ContentType contentType, BiFunction<byte[], DecodingContext, Object> decoder) {
+        globalDecoders.register contentType, decoder
+    }
+
     /**
      * Used to configure HTTP expectations on the server; the provided Groovy <code>Closure</code> will delegate to an <code>Expectations</code>
      * instance for configuring server interaction expectations using the Groovy DSL.
@@ -142,7 +155,7 @@ class ErsatzServer implements ServerConfig {
      * @return a reference to this server
      */
     @SuppressWarnings('ConfusingMethodName')
-    ServerConfig expectations(@DelegatesTo(Expectations) final Closure closure) {
+    ErsatzServer expectations(@DelegatesTo(Expectations) final Closure closure) {
         closure.delegate = expectations
         closure.call()
         this

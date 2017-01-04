@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@ class RequestMatcherSpec extends Specification {
         })
 
         expect:
-        body(decoders, ContentType.TEXT_PLAIN.value, equalTo('text content')).matches(cr) == result
+        body(new DecoderChain(decoders), ContentType.TEXT_PLAIN.value, equalTo('text content')).matches(cr) == result
 
         where:
         cr                                                || result
