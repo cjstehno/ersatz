@@ -31,22 +31,28 @@ class Encoders {
     /**
      * Encodes the object to JSON using the Groovy <code>JsonObject.toJson(Object)</code> method.
      */
-    static final Function<Object, String> json = { obj -> toJson(obj) }
+    static final Function<Object, String> json = { obj -> obj != null ? toJson(obj) : '{}' }
 
     /**
      * Encodes the object as a String of text.
      */
-    static final Function<Object, String> text = { obj -> obj as String }
+    static final Function<Object, String> text = { obj -> obj ? obj as String : '' }
 
     /**
      * Encodes a byte array, InputStream or other object with a "getBytes()" method into a base-64 string.
      */
     static final Function<Object, String> binaryBase64 = { obj ->
-        (obj instanceof byte[] ? obj as byte[] : obj.bytes).encodeBase64()
+        if (obj) {
+            return (obj instanceof byte[] ? obj as byte[] : obj.bytes).encodeBase64() as String
+        } else {
+            return ''
+        }
     }
 
     /**
-     * Encodes a <code>MultipartResponseContent</code> object to its multipart string representation.
+     * Encodes a <code>MultipartResponseContent</code> object to its multipart string representation. The generated multipart content is a simple
+     * message implementing the minimal multipart content specification - you may want to find a more robust implementation if you require a more
+     * detailed multipart API.
      */
     static final Function<Object, String> multipart = new Function<Object, String>() {
         @Override

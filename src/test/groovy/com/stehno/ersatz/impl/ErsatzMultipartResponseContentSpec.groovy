@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.Encoders
+import com.stehno.ersatz.MultipartResponseContent
 import spock.lang.Specification
 
 import static com.stehno.ersatz.ContentType.*
 
-class MultipartResponseContentSpec extends Specification {
+class ErsatzMultipartResponseContentSpec extends Specification {
 
     def 'multipart: closure'() {
         when:
