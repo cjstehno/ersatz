@@ -36,7 +36,9 @@ import static org.hamcrest.Matchers.startsWith
 class ErsatzServerSpec extends Specification {
 
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
-    @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer()
+    @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer({
+        encoder ContentType.MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
+    })
 
     def 'prototype: functional'() {
         setup:
@@ -115,7 +117,7 @@ class ErsatzServerSpec extends Specification {
         setup:
         ersatzServer.expectations {
             get('/data') {
-                responds().content(multipart() {
+                responds().content(multipart {
                     boundary 't8xOJjySKePdRgBHYD'
                     encoder TEXT_PLAIN.value, CharSequence, { o -> o as String }
                     field 'alpha', 'bravo'
@@ -147,7 +149,7 @@ class ErsatzServerSpec extends Specification {
         setup:
         ersatzServer.expectations {
             get('/data') {
-                responds().content(multipart() {
+                responds().content(multipart {
                     boundary 'WyAJDTEVlYgGjdI13o'
                     encoder TEXT_PLAIN, CharSequence, { o -> o as String }
                     encoder 'image/jpeg', InputStream, { o -> ((InputStream) o).bytes.encodeBase64() }

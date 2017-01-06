@@ -33,15 +33,12 @@ import static java.util.Collections.shuffle
  * <code>ResponseEncoders</code> is provided, they will be used as defaults and overridden by any encoders specified on the response configuration
  * itself.
  */
-@CompileStatic
+@CompileStatic @SuppressWarnings('ConfusingMethodName')
 class MultipartResponseContent {
-
-    // FIXME: how to get global encoders in here (or should this just be a simple object that has an encoder)
-    // ^^^^^ this is how I did it with multipart request content so yes do that
 
     private static final String ALPHANUMERICS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     private final List<MultipartPart> parts = []
-    private String boundary = generateBoundary()
+    private String boundaryTag = generateBoundary()
     private final ResponseEncoders localEncoders = new ResponseEncoders()
     private final EncoderChain encoderChain = new EncoderChain(localEncoders)
 
@@ -78,7 +75,6 @@ class MultipartResponseContent {
      * @param responseEncoders the parent set of shared encoders
      * @return a reference to this MultipartResponseContent instance
      */
-    @SuppressWarnings('ConfusingMethodName')
     MultipartResponseContent encoders(final ResponseEncoders responseEncoders) {
         encoderChain.second(responseEncoders)
         this
@@ -90,22 +86,9 @@ class MultipartResponseContent {
      * @param value the boundary label to be used
      * @return a reference to this MultipartResponseContent instance
      */
-    @SuppressWarnings('ConfusingMethodName')
     MultipartResponseContent boundary(final String value) {
-        this.boundary = value
+        this.boundaryTag = value
         this
-    }
-
-    /**
-     * Configures a response content encoder for the specified contentType and content class.
-     *
-     * @param contentType the response content-type
-     * @param type the response object type
-     * @param closure the closure to be used as the encoder
-     * @return a reference to this MultipartResponseContent instance
-     */
-    MultipartResponseContent encoder(final String contentType, final Class type, final Closure<String> closure) {
-        encoder(contentType, type, closure as Function<Object, String>)
     }
 
     /**
@@ -119,18 +102,6 @@ class MultipartResponseContent {
     MultipartResponseContent encoder(final String contentType, final Class type, final Function<Object, String> encoder) {
         localEncoders.register(contentType, type, encoder)
         this
-    }
-
-    /**
-     * Configures a response content encoder for the specified contentType and content class.
-     *
-     * @param contentType the response content-type
-     * @param type the response object type
-     * @param closure the closure to be used as the encoder
-     * @return a reference to this MultipartResponseContent instance
-     */
-    MultipartResponseContent encoder(final ContentType contentType, final Class type, final Closure<String> closure) {
-        encoder(contentType.value, type, closure as Function<Object, String>)
     }
 
     /**
@@ -220,38 +191,34 @@ class MultipartResponseContent {
      * @return the response content-type and boundary label
      */
     String getContentType() {
-        "multipart/mixed; boundary=$boundary"
+        "multipart/mixed; boundary=$boundaryTag"
     }
 
     /**
-     * Renders the multipart body content as a String, ready for transfer. The configured encoders will be used to encode the part content.
+     * Retrieves the multipart boundary tag.
      *
-     * @return the multipart content as a String
+     * @return the boundary tag
      */
-    @Override String toString() {
-        StringBuilder out = new StringBuilder()
+    String getBoundary() { boundaryTag }
 
-        parts.each { p ->
-            out.append("--$boundary\r\n")
+    /**
+     * Provides an immutable iterator over the parts.
+     *
+     * @return an immutable part iterator
+     */
+    Iterable<MultipartPart> parts() {
+        parts.asImmutable()
+    }
 
-            if (p.fileName) {
-                out.append("Content-Disposition: form-data; name=\"${p.fieldName}\"; filename=\"${p.fileName}\"\r\n")
-            } else {
-                out.append("Content-Disposition: form-data; name=\"${p.fieldName}\"\r\n")
-            }
+    // TODO: not really happy about having this here (on public api)
+    Function<Object, String> encoder(final String contentType, final Class objectType) {
+        Function<Object, String> encoder = encoderChain.resolve(contentType, objectType)
 
-            if (p.transferEncoding) {
-                out.append("Content-Transfer-Encoding: ${p.transferEncoding}\r\n")
-            }
-
-            out.append("Content-Type: ${p.contentType}\r\n\r\n")
-
-            out.append(encode(p.contentType as String, p.value)).append('\r\n')
+        if (encoder) {
+            return encoder
         }
 
-        out.append("--${boundary}--\r\n")
-
-        out.toString()
+        throw new IllegalArgumentException("No encoder found for content-type ($contentType) and object type (${objectType.simpleName}).")
     }
 
     /**
@@ -263,14 +230,5 @@ class MultipartResponseContent {
         def letters = ALPHANUMERICS as List
         shuffle(letters)
         letters[0..<18].join('')
-    }
-
-    private String encode(final String contentType, final Object obj) {
-        def encoder = encoderChain.resolve(contentType, obj.class)
-        if (encoder) {
-            return encoder.apply(obj)
-        }
-
-        throw new IllegalArgumentException("No encoder found for content-type ($contentType) and object type (${obj.class.simpleName}).")
     }
 }

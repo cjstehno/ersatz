@@ -39,7 +39,9 @@ class ErsatzResponse implements Response {
     ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders = null) {
         this.empty = empty
 
-        if (globalEncoders) encoderChain.last(globalEncoders)
+        if (globalEncoders) {
+            encoderChain.last(globalEncoders)
+        }
     }
 
     private final Map<String, String> headers = [:]
@@ -56,6 +58,12 @@ class ErsatzResponse implements Response {
         this.content = content
 
         if (content instanceof MultipartResponseContent) {
+            // apply the configured encoders
+            encoderChain.items().each { ResponseEncoders re ->
+                (content as MultipartResponseContent).encoders(re)
+            }
+
+            // apply the content type (with boundary)
             contentType(content.contentType)
         }
 

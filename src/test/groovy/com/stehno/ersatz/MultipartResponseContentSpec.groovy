@@ -17,9 +17,7 @@ package com.stehno.ersatz
 
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.APPLICATION_JSON
-import static com.stehno.ersatz.ContentType.IMAGE_JPG
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.ContentType.*
 
 class MultipartResponseContentSpec extends Specification {
 
@@ -30,7 +28,7 @@ class MultipartResponseContentSpec extends Specification {
 
             encoder 'text/plain', String, { o -> o as String }
             encoder APPLICATION_JSON, String, { o -> o as String }
-            encoder 'image/jpeg', InputStream, { o -> ((InputStream) o).bytes.encodeBase64() }
+            encoder 'image/jpeg', InputStream, Encoders.binaryBase64
 
             field 'foo', 'bar'
 
@@ -44,7 +42,7 @@ class MultipartResponseContentSpec extends Specification {
         mc.contentType == 'multipart/mixed; boundary=abc123'
 
         and:
-        mc.toString().trim().readLines() == '''
+        Encoders.multipart.apply(mc).trim().readLines() == '''
             --abc123
             Content-Disposition: form-data; name="foo"
             Content-Type: text/plain

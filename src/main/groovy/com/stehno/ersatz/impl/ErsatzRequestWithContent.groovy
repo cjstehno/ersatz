@@ -46,7 +46,9 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
     ) {
         super(method, pathMatcher, globalEncoders)
 
-        if (globalDecoders) decoderChain.last globalDecoders
+        if (globalDecoders) {
+            decoderChain.last globalDecoders
+        }
     }
 
     @Override
