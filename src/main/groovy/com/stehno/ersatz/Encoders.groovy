@@ -15,6 +15,8 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.impl.ErsatzMultipartResponseContent
+
 import java.util.function.Function
 
 import static groovy.json.JsonOutput.toJson
@@ -51,7 +53,7 @@ class Encoders {
         String apply(final Object obj) {
             assert obj instanceof MultipartResponseContent
 
-            MultipartResponseContent mrc = obj as MultipartResponseContent
+            ErsatzMultipartResponseContent mrc = obj as ErsatzMultipartResponseContent
 
             StringBuilder out = new StringBuilder()
 

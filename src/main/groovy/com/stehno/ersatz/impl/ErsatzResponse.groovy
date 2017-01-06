@@ -60,11 +60,11 @@ class ErsatzResponse implements Response {
         if (content instanceof MultipartResponseContent) {
             // apply the configured encoders
             encoderChain.items().each { ResponseEncoders re ->
-                (content as MultipartResponseContent).encoders(re)
+                (content as ErsatzMultipartResponseContent).encoders(re)
             }
 
             // apply the content type (with boundary)
-            contentType(content.contentType)
+            contentType((content as ErsatzMultipartResponseContent).contentType)
         }
 
         this

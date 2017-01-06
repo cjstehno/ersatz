@@ -15,14 +15,12 @@
  */
 package com.stehno.ersatz
 
-import com.stehno.ersatz.impl.EncoderChain
-import com.stehno.ersatz.impl.MultipartPart
+import com.stehno.ersatz.impl.ErsatzMultipartResponseContent
 import groovy.transform.CompileStatic
 
 import java.util.function.Consumer
 import java.util.function.Function
 
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 import static java.util.Collections.shuffle
 
 /**
@@ -32,15 +30,13 @@ import static java.util.Collections.shuffle
  * When configuring multipart content, encoders must be provided to convert the content objects into the serialized transfer format. If a shared
  * <code>ResponseEncoders</code> is provided, they will be used as defaults and overridden by any encoders specified on the response configuration
  * itself.
+ *
+ * Note that the globally configured encoders will be injected when this content object is added to the response body.
  */
 @CompileStatic @SuppressWarnings('ConfusingMethodName')
-class MultipartResponseContent {
+abstract class MultipartResponseContent {
 
     private static final String ALPHANUMERICS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-    private final List<MultipartPart> parts = []
-    private String boundaryTag = generateBoundary()
-    private final ResponseEncoders localEncoders = new ResponseEncoders()
-    private final EncoderChain encoderChain = new EncoderChain(localEncoders)
 
     /**
      * Creates a new multipart response content object with the optional boundary (random default) and a Closure used to configure the parts.
@@ -49,7 +45,7 @@ class MultipartResponseContent {
      * @return a reference to this MultipartResponseContent instance
      */
     static MultipartResponseContent multipart(final @DelegatesTo(MultipartResponseContent) Closure closure) {
-        MultipartResponseContent content = new MultipartResponseContent()
+        MultipartResponseContent content = new ErsatzMultipartResponseContent()
         closure.delegate = content
         closure.call()
         content
@@ -63,9 +59,20 @@ class MultipartResponseContent {
      * @return a reference to this MultipartResponseContent instance
      */
     static MultipartResponseContent multipart(final Consumer<MultipartResponseContent> consumer) {
-        MultipartResponseContent content = new MultipartResponseContent()
+        MultipartResponseContent content = new ErsatzMultipartResponseContent()
         consumer.accept(content)
         content
+    }
+
+    /**
+     * Used to generate a random boundary tag.
+     *
+     * @return a random boundary label
+     */
+    static String generateBoundary() {
+        def letters = ALPHANUMERICS as List
+        shuffle(letters)
+        letters[0..<18].join('')
     }
 
     /**
@@ -75,10 +82,7 @@ class MultipartResponseContent {
      * @param responseEncoders the parent set of shared encoders
      * @return a reference to this MultipartResponseContent instance
      */
-    MultipartResponseContent encoders(final ResponseEncoders responseEncoders) {
-        encoderChain.second(responseEncoders)
-        this
-    }
+    abstract MultipartResponseContent encoders(final ResponseEncoders responseEncoders)
 
     /**
      * Used to override the default random boundary value with the provided one.
@@ -86,10 +90,7 @@ class MultipartResponseContent {
      * @param value the boundary label to be used
      * @return a reference to this MultipartResponseContent instance
      */
-    MultipartResponseContent boundary(final String value) {
-        this.boundaryTag = value
-        this
-    }
+    abstract MultipartResponseContent boundary(final String value)
 
     /**
      * Configures a response content encoder for the specified contentType and content class.
@@ -99,10 +100,7 @@ class MultipartResponseContent {
      * @param encoder the encoder
      * @return a reference to this MultipartResponseContent instance
      */
-    MultipartResponseContent encoder(final String contentType, final Class type, final Function<Object, String> encoder) {
-        localEncoders.register(contentType, type, encoder)
-        this
-    }
+    abstract MultipartResponseContent encoder(final String contentType, final Class type, final Function<Object, String> encoder)
 
     /**
      * Configures a response content encoder for the specified contentType and content class.
@@ -112,10 +110,7 @@ class MultipartResponseContent {
      * @param encoder the encoder
      * @return a reference to this MultipartResponseContent instance
      */
-    MultipartResponseContent encoder(final ContentType contentType, final Class type, final Function<Object, String> encoder) {
-        localEncoders.register(contentType.value, type, encoder)
-        this
-    }
+    abstract MultipartResponseContent encoder(final ContentType contentType, final Class type, final Function<Object, String> encoder)
 
     /**
      * Used to add a "field" part to the response.
@@ -124,9 +119,7 @@ class MultipartResponseContent {
      * @param value the field value
      * @return a reference to this MultipartResponseContent instance
      */
-    MultipartResponseContent field(final String fieldName, final String value) {
-        part fieldName, TEXT_PLAIN, value
-    }
+    abstract MultipartResponseContent field(final String fieldName, final String value)
 
     /**
      * Used to add a "field" part to the response.
@@ -136,10 +129,7 @@ class MultipartResponseContent {
      * @param value the field value
      * @return a reference to this MultipartResponseContent instance
      */
-    MultipartResponseContent part(final String fieldName, final String contentType, final Object value) {
-        parts << new MultipartPart(fieldName, null, contentType, null, value)
-        this
-    }
+    abstract MultipartResponseContent part(final String fieldName, final String contentType, final Object value)
 
     /**
      * Used to add a "field" part to the response.
@@ -150,10 +140,8 @@ class MultipartResponseContent {
      * @param transferEncoding the content-transfer-encoding value (defaults to none)
      * @return a reference to this MultipartResponseContent instance
      */
-    MultipartResponseContent part(final String fieldName, final ContentType contentType, final Object value, final String transferEncoding = null) {
-        parts << new MultipartPart(fieldName, null, contentType.value, transferEncoding, value)
-        this
-    }
+    abstract MultipartResponseContent part(
+        final String fieldName, final ContentType contentType, final Object value, final String transferEncoding = null)
 
     /**
      * Used to add a "file" part to the response.
@@ -165,10 +153,7 @@ class MultipartResponseContent {
      * @param transferEncoding the content-transfer-encoding value (defaults to none)
      * @return a reference to this MultipartResponseContent instance
      */
-    MultipartResponseContent part(String fieldName, String fileName, String contentType, Object value, String transferEncoding = null) {
-        parts << new MultipartPart(fieldName, fileName, contentType, transferEncoding, value)
-        this
-    }
+    abstract MultipartResponseContent part(String fieldName, String fileName, String contentType, Object value, String transferEncoding = null)
 
     /**
      * Used to add a "file" part to the response.
@@ -180,55 +165,6 @@ class MultipartResponseContent {
      * @param transferEncoding the content-transfer-encoding value (defaults to none)
      * @return a reference to this MultipartResponseContent instance
      */
-    MultipartResponseContent part(String fieldName, String fileName, ContentType contentType, Object value, String transferEncoding = null) {
-        parts << new MultipartPart(fieldName, fileName, contentType.value, transferEncoding, value)
-        this
-    }
-
-    /**
-     * Used to retrieve the response content-type, including the configured boundary label.
-     *
-     * @return the response content-type and boundary label
-     */
-    String getContentType() {
-        "multipart/mixed; boundary=$boundaryTag"
-    }
-
-    /**
-     * Retrieves the multipart boundary tag.
-     *
-     * @return the boundary tag
-     */
-    String getBoundary() { boundaryTag }
-
-    /**
-     * Provides an immutable iterator over the parts.
-     *
-     * @return an immutable part iterator
-     */
-    Iterable<MultipartPart> parts() {
-        parts.asImmutable()
-    }
-
-    // TODO: not really happy about having this here (on public api)
-    Function<Object, String> encoder(final String contentType, final Class objectType) {
-        Function<Object, String> encoder = encoderChain.resolve(contentType, objectType)
-
-        if (encoder) {
-            return encoder
-        }
-
-        throw new IllegalArgumentException("No encoder found for content-type ($contentType) and object type (${objectType.simpleName}).")
-    }
-
-    /**
-     * Used to generate a random boundary label.
-     *
-     * @return a random boundary label
-     */
-    static String generateBoundary() {
-        def letters = ALPHANUMERICS as List
-        shuffle(letters)
-        letters[0..<18].join('')
-    }
+    abstract MultipartResponseContent part(String fieldName, String fileName, ContentType contentType, Object value, String transferEncoding = null)
 }
+
