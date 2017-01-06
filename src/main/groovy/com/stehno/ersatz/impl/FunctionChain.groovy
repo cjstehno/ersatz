@@ -20,7 +20,7 @@ import groovy.transform.CompileStatic
 /**
  * Abstraction for an object chain which will have method calls applied from "first" to "last" until a non-null result is returned.
  */
-@CompileStatic
+@CompileStatic @SuppressWarnings('AbstractClassWithoutAbstractMethod')
 abstract class FunctionChain<T> {
 
     private final List<T> items = []
