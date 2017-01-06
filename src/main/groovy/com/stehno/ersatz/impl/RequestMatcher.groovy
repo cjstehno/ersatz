@@ -101,7 +101,10 @@ class RequestMatcher {
      */
     static RequestMatcher body(final DecoderChain decoderChain, final String contentType, final Matcher<Object> m) {
         new RequestMatcher(m, { ClientRequest cr ->
-            decoderChain.resolve(contentType)?.apply(cr.body, new DecodingContext(cr.contentLength, cr.contentType, cr.characterEncoding, decoderChain))
+            decoderChain.resolve(contentType)?.apply(
+                cr.body,
+                new DecodingContext(cr.contentLength, cr.contentType, cr.characterEncoding, decoderChain)
+            )
         })
     }
 

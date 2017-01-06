@@ -19,6 +19,7 @@ import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.ErsatzServer
 import com.stehno.ersatz.InMemoryCookieJar
 import com.stehno.ersatz.Response
+import com.stehno.ersatz.ResponseEncoders
 import okhttp3.OkHttpClient
 import okhttp3.Request.Builder
 import spock.lang.AutoCleanup
@@ -35,7 +36,7 @@ class ErsatzRequestSpec extends Specification {
 
     private static final String STRING_CONTENT = 'Some content'
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
-    private final ErsatzRequest request = new ErsatzRequest('TEST', equalTo('/testing'))
+    private final ErsatzRequest request = new ErsatzRequest('TEST', equalTo('/testing'), new ResponseEncoders())
     @AutoCleanup('stop') private final ErsatzServer server = new ErsatzServer()
 
     def 'to string'() {
@@ -148,7 +149,7 @@ class ErsatzRequestSpec extends Specification {
 
     def 'responds'() {
         setup:
-        Object body = new Object()
+        String body = 'the-body'
 
         when:
         request.responds().contentType('something/else').content(body)
@@ -161,8 +162,8 @@ class ErsatzRequestSpec extends Specification {
 
     def 'responder (closure)'() {
         setup:
-        Object contentA = new Object()
-        Object contentB = new Object()
+        Object contentA = 'body-A'
+        Object contentB = 'body-B'
 
         request.responds().contentType('something/else').content(contentA)
         request.responder {
@@ -178,7 +179,7 @@ class ErsatzRequestSpec extends Specification {
         resp.content == contentA
 
         when:
-        request.mark()
+        request.mark(clientRequest())
         resp = request.currentResponse
 
         then:
@@ -186,7 +187,7 @@ class ErsatzRequestSpec extends Specification {
         resp.content == contentB
 
         when:
-        request.mark()
+        request.mark(clientRequest())
         resp = request.currentResponse
 
         then:
@@ -196,8 +197,8 @@ class ErsatzRequestSpec extends Specification {
 
     def 'responder (consumer)'() {
         setup:
-        Object contentA = new Object()
-        Object contentB = new Object()
+        Object contentA = 'body-A'
+        Object contentB = 'body-B'
 
         request.responds().contentType('something/else').content(contentA)
         request.responder(new Consumer<Response>() {
@@ -216,7 +217,7 @@ class ErsatzRequestSpec extends Specification {
         resp.content == contentA
 
         when:
-        request.mark()
+        request.mark(clientRequest())
         resp = request.currentResponse
 
         then:
@@ -224,7 +225,7 @@ class ErsatzRequestSpec extends Specification {
         resp.content == contentB
 
         when:
-        request.mark()
+        request.mark(clientRequest())
         resp = request.currentResponse
 
         then:

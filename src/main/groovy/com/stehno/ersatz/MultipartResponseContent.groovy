@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.impl.EncoderChain
 import com.stehno.ersatz.impl.MultipartPart
 import groovy.transform.CompileStatic
 
@@ -35,10 +36,14 @@ import static java.util.Collections.shuffle
 @CompileStatic
 class MultipartResponseContent {
 
+    // FIXME: how to get global encoders in here (or should this just be a simple object that has an encoder)
+    // ^^^^^ this is how I did it with multipart request content so yes do that
+
     private static final String ALPHANUMERICS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     private final List<MultipartPart> parts = []
     private String boundary = generateBoundary()
-    private final ResponseEncoders encoders = new ResponseEncoders()
+    private final ResponseEncoders localEncoders = new ResponseEncoders()
+    private final EncoderChain encoderChain = new EncoderChain(localEncoders)
 
     /**
      * Creates a new multipart response content object with the optional boundary (random default) and a Closure used to configure the parts.
@@ -75,7 +80,7 @@ class MultipartResponseContent {
      */
     @SuppressWarnings('ConfusingMethodName')
     MultipartResponseContent encoders(final ResponseEncoders responseEncoders) {
-        this.encoders.parent = responseEncoders
+        encoderChain.second(responseEncoders)
         this
     }
 
@@ -112,7 +117,7 @@ class MultipartResponseContent {
      * @return a reference to this MultipartResponseContent instance
      */
     MultipartResponseContent encoder(final String contentType, final Class type, final Function<Object, String> encoder) {
-        encoders.register(contentType, type, encoder)
+        localEncoders.register(contentType, type, encoder)
         this
     }
 
@@ -137,7 +142,7 @@ class MultipartResponseContent {
      * @return a reference to this MultipartResponseContent instance
      */
     MultipartResponseContent encoder(final ContentType contentType, final Class type, final Function<Object, String> encoder) {
-        encoders.register(contentType.value, type, encoder)
+        localEncoders.register(contentType.value, type, encoder)
         this
     }
 
@@ -261,7 +266,7 @@ class MultipartResponseContent {
     }
 
     private String encode(final String contentType, final Object obj) {
-        def encoder = encoders.findEncoder(contentType, obj.class)
+        def encoder = encoderChain.resolve(contentType, obj.class)
         if (encoder) {
             return encoder.apply(obj)
         }

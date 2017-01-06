@@ -19,6 +19,7 @@ import groovy.transform.CompileStatic
 
 import java.util.function.BiFunction
 import java.util.function.Consumer
+import java.util.function.Function
 
 /**
  * Configuration interface for an Ersatz server instance.
@@ -79,6 +80,23 @@ interface ServerConfig {
      */
     ServerConfig decoder(final ContentType contentType, final BiFunction<byte[], DecodingContext, Object> decoder)
 
-    // FIXME: Add encoders
-    // FIXME: global encoder/decoder testing
+    /**
+     * Registers a global response body encoder.
+     *
+     * param contentType the response content-type to be encoded
+     * @param objectType the response object type to be encoded
+     * @param encoder the encoder function
+     * @return a reference to this server configuration
+     */
+    ServerConfig encoder(String contentType, Class objectType, Function<Object,String> encoder)
+
+    /**
+     * Registers a global response body encoder.
+     *
+     * param contentType the response content-type to be encoded
+     * @param objectType the response object type to be encoded
+     * @param encoder the encoder function
+     * @return a reference to this server configuration
+     */
+    ServerConfig encoder(ContentType contentType, Class objectType, Function<Object,String> encoder)
 }

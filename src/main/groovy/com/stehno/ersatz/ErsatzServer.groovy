@@ -28,6 +28,7 @@ import io.undertow.util.HttpString
 
 import java.util.function.BiFunction
 import java.util.function.Consumer
+import java.util.function.Function
 
 /**
  * The main entry point for configuring an Ersatz server, which allows configuring of the expectations and management of the server itself. This is
@@ -58,7 +59,8 @@ class ErsatzServer implements ServerConfig {
     static final String NOT_FOUND_BODY = '404: Not Found'
 
     private final RequestDecoders globalDecoders = new RequestDecoders()
-    private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders)
+    private final ResponseEncoders globalEncoders = new ResponseEncoders()
+    private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders)
     private final List<ServerFeature> features = []
     private Undertow server
     private int actualPort = -1
@@ -145,6 +147,19 @@ class ErsatzServer implements ServerConfig {
     @Override
     ErsatzServer decoder(ContentType contentType, BiFunction<byte[], DecodingContext, Object> decoder) {
         globalDecoders.register contentType, decoder
+        this
+    }
+
+    @Override
+    ServerConfig encoder(String contentType, Class objectType, Function<Object, String> encoder) {
+        globalEncoders.register contentType, objectType, encoder
+        this
+    }
+
+    @Override
+    ServerConfig encoder(ContentType contentType, Class objectType, Function<Object, String> encoder) {
+        globalEncoders.register contentType, objectType, encoder
+        this
     }
 
     /**
@@ -234,7 +249,7 @@ class ErsatzServer implements ServerConfig {
             }
         }
 
-        String responseContent = response?.content?.toString() ?: ''
+        String responseContent = response?.content
 
         log.debug 'Response: {}', responseContent.take(1000)
 

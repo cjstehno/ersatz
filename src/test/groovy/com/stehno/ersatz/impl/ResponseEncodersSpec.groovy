@@ -20,15 +20,15 @@ import spock.lang.Specification
 
 import java.util.function.Function
 
-import static com.stehno.ersatz.ContentType.*
+import static com.stehno.ersatz.ContentType.IMAGE_GIF
+import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
 class ResponseEncodersSpec extends Specification {
 
     private static final Function<Object, String> ENCODER_A = { o -> }
     private static final Function<Object, String> ENCODER_B = { o -> }
-    private static final Function<Object, String> ENCODER_C = { o -> }
 
-    def 'no parent'() {
+    def 'encoders'() {
         setup:
         ResponseEncoders encoders = new ResponseEncoders({
             register 'text/plain', String, ENCODER_A
@@ -43,33 +43,5 @@ class ResponseEncodersSpec extends Specification {
 
         and:
         !encoders.findEncoder('text/plain', File)
-    }
-
-    def 'with parent'() {
-        setup:
-        ResponseEncoders encoders = new ResponseEncoders({
-            register 'text/plain', String, ENCODER_C
-            register APPLICATION_JSON, File, ENCODER_B
-        })
-
-        encoders.parent = new ResponseEncoders({
-            register 'text/plain', String, ENCODER_A
-            register IMAGE_GIF, InputStream, ENCODER_B
-        })
-
-        expect:
-        encoders.findEncoder(TEXT_PLAIN, String) == ENCODER_C
-
-        and:
-        encoders.findEncoder('text/plain', String) == ENCODER_C
-
-        and:
-        !encoders.findEncoder('text/plain', File)
-
-        and:
-        encoders.findEncoder(APPLICATION_JSON, File) == ENCODER_B
-
-        and:
-        encoders.findEncoder('image/gif', InputStream) == ENCODER_B
     }
 }

@@ -16,55 +16,51 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ContentType
-import com.stehno.ersatz.DecodingContext
-import com.stehno.ersatz.RequestDecoders
-import groovy.transform.CompileStatic
+import com.stehno.ersatz.ResponseEncoders
 
-import java.util.function.BiFunction
+import java.util.function.Function
 
 /**
- * FIXME: document
- *
- * operations are fired on items from first --> last until non-null result is found
+ * Created by cjstehno on 1/6/17.
  */
-@CompileStatic
-class DecoderChain {
+class EncoderChain {
+    // FIXME: resolve shared code between encoder/decoder chains
 
-    private final List<RequestDecoders> items = []
+    private final List<ResponseEncoders> items = []
 
-    DecoderChain(final RequestDecoders firstItem = null) {
+    EncoderChain(final ResponseEncoders firstItem = null) {
         if (firstItem) {
             first firstItem
         }
     }
 
     // the first item to be checked
-    void first(final RequestDecoders item) {
+    void first(final ResponseEncoders item) {
         items.add(0, item)
     }
 
     // the last item to be checked
-    void last(final RequestDecoders item) {
+    void last(final ResponseEncoders item) {
         items.add(item)
     }
 
-    void second(final RequestDecoders item) {
+    void second(final ResponseEncoders item) {
         items.add(items.size() > 0 ? 1 : 0, item)
     }
 
-    BiFunction<byte[], DecodingContext, Object> resolve(final String contentType) {
+    Function<Object, String> resolve(final String contentType, final Class objectType) {
         items.findResult { i ->
-            i.findDecoder(contentType)
+            i.findEncoder(contentType, objectType)
         }
     }
 
-    BiFunction<byte[], DecodingContext, Object> resolve(final ContentType contentType) {
+    Function<Object, String> resolve(final ContentType contentType, final Class objectType) {
         items.findResult { i ->
-            i.findDecoder(contentType)
+            i.findEncoder(contentType, objectType)
         }
     }
 
-    RequestDecoders getAt(int index) {
+    ResponseEncoders getAt(int index) {
         items[index]
     }
 

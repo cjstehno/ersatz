@@ -30,7 +30,6 @@ import java.util.function.Function
 class ResponseEncoders {
 
     private final List<EncoderMapping> encoders = []
-    private ResponseEncoders parentEncoders
 
     /**
      * Creates a response encoder collection with optionally specified configuration.
@@ -42,16 +41,6 @@ class ResponseEncoders {
             closure.delegate = this
             closure.call()
         }
-    }
-
-    /**
-     * Used to specify a parent encoder collection. If a parent is specified, any find operations will fist look in this collection and then, if no
-     * encoder is found, it will check the parent collection.
-     *
-     * @param parent the parent encoders
-     */
-    void setParent(final ResponseEncoders parent) {
-        this.parentEncoders = parent
     }
 
     /**
@@ -77,8 +66,7 @@ class ResponseEncoders {
     }
 
     /**
-     * Used to find an encoder for the given content-type and object type. If a parent is configured on this encoder collection, it will be checked
-     * for a match if one is not found in this collection.
+     * Used to find an encoder for the given content-type and object type.
      *
      * param contentType the part content-type
      * @param objectType the part object type
@@ -88,12 +76,11 @@ class ResponseEncoders {
         MimeType mime = new MimeType(contentType)
         Function<Object, String> encoder = encoders.find { em -> em.contentType.match(mime) && em.objectType.isAssignableFrom(objectType) }?.encoder
 
-        encoder ?: (parentEncoders ? parentEncoders.findEncoder(contentType, objectType) : null)
+        encoder
     }
 
     /**
-     * Used to find an encoder for the given content-type and object type. If a parent is configured on this encoder collection, it will be checked
-     * for a match if one is not found in this collection.
+     * Used to find an encoder for the given content-type and object type.
      *
      * param contentType the part content-type
      * @param objectType the part object type

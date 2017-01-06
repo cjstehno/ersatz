@@ -44,7 +44,7 @@ class DecoderChainSpec extends Specification {
         when:
         DecoderChain chain = new DecoderChain(global)
         chain.first(local)
-        chain.afterFirst(shared)
+        chain.second(shared)
 
         then:
         chain.size() == 3

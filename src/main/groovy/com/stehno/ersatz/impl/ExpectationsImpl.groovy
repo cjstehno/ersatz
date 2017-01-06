@@ -31,10 +31,12 @@ import static org.hamcrest.Matchers.equalTo
 class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = []
-    private final RequestDecoders globalDecoders = new RequestDecoders()
+    private final RequestDecoders globalDecoders
+    private final ResponseEncoders globalEncoders
 
-    ExpectationsImpl(final RequestDecoders globalDecoders) {
+    ExpectationsImpl(final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
         this.globalDecoders = globalDecoders
+        this.globalEncoders = globalEncoders
     }
 
     @Override
@@ -44,7 +46,7 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request get(final Matcher<String> matcher) {
-        expect new ErsatzRequest(GET, matcher)
+        expect new ErsatzRequest(GET, matcher, globalEncoders)
     }
 
     @Override
@@ -54,7 +56,7 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request get(final Matcher<String> matcher, @DelegatesTo(Request) final Closure closure) {
-        expect new ErsatzRequest(GET, matcher), closure
+        expect new ErsatzRequest(GET, matcher, globalEncoders), closure
     }
 
     @Override
@@ -64,7 +66,7 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request get(Matcher<String> matcher, Consumer<Request> config) {
-        expect new ErsatzRequest(GET, matcher), config
+        expect new ErsatzRequest(GET, matcher, globalEncoders), config
     }
 
     @Override
@@ -84,17 +86,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request head(Matcher<String> matcher) {
-        expect new ErsatzRequest(HEAD, matcher, true)
+        expect new ErsatzRequest(HEAD, matcher, globalEncoders, true)
     }
 
     @Override
     Request head(Matcher<String> matcher, @DelegatesTo(Request) Closure closure) {
-        expect new ErsatzRequest(HEAD, matcher, true), closure
+        expect new ErsatzRequest(HEAD, matcher, globalEncoders, true), closure
     }
 
     @Override
     Request head(Matcher<String> matcher, Consumer<Request> config) {
-        expect new ErsatzRequest(HEAD, matcher), config
+        expect new ErsatzRequest(HEAD, matcher, globalEncoders), config
     }
 
     @Override
@@ -114,17 +116,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     RequestWithContent post(Matcher<String> matcher) {
-        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders)) as RequestWithContent
+        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders, globalEncoders)) as RequestWithContent
     }
 
     @Override
     RequestWithContent post(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure) {
-        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders), closure) as RequestWithContent
+        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders, globalEncoders), closure) as RequestWithContent
     }
 
     @Override
     RequestWithContent post(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders), config) as RequestWithContent
+        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders, globalEncoders), config) as RequestWithContent
     }
 
     @Override
@@ -144,17 +146,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     RequestWithContent put(Matcher<String> matcher) {
-        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders)) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders, globalEncoders)) as RequestWithContent
     }
 
     @Override
     RequestWithContent put(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure) {
-        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders), closure) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders, globalEncoders), closure) as RequestWithContent
     }
 
     @Override
     RequestWithContent put(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders), config) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders, globalEncoders), config) as RequestWithContent
     }
 
     @Override
@@ -174,17 +176,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request delete(Matcher<String> matcher) {
-        expect new ErsatzRequest(DELETE, matcher)
+        expect new ErsatzRequest(DELETE, matcher, globalEncoders)
     }
 
     @Override
     Request delete(Matcher<String> matcher, @DelegatesTo(Request) Closure closure) {
-        expect new ErsatzRequest(DELETE, matcher), closure
+        expect new ErsatzRequest(DELETE, matcher, globalEncoders), closure
     }
 
     @Override
     Request delete(Matcher<String> matcher, Consumer<Request> config) {
-        expect new ErsatzRequest(DELETE, matcher), config
+        expect new ErsatzRequest(DELETE, matcher, globalEncoders), config
     }
 
     @Override
@@ -204,17 +206,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     RequestWithContent patch(Matcher<String> matcher) {
-        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders)) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders, globalEncoders)) as RequestWithContent
     }
 
     @Override
     RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure) {
-        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders), closure) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders, globalEncoders), closure) as RequestWithContent
     }
 
     @Override
     RequestWithContent patch(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders), config) as RequestWithContent
+        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders, globalEncoders), config) as RequestWithContent
     }
 
     /**
@@ -224,7 +226,6 @@ class ExpectationsImpl implements Expectations {
      * @return the matching request expectation
      */
     Request findMatch(final ClientRequest clientRequest) {
-        // FIXME: maybe dump expectations if no match found
         requests.find { r -> ((ErsatzRequest) r).matches(clientRequest) }
     }
 
@@ -234,7 +235,6 @@ class ExpectationsImpl implements Expectations {
      * @return a value of true if all requests are verified
      */
     boolean verify() {
-        // FIXME: move assert into requests
         requests.each { r ->
             assert ((ErsatzRequest) r).verify(), "Expectations for $r were not met."
         }

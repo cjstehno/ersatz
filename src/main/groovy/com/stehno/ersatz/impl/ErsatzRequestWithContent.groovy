@@ -15,10 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ContentType
-import com.stehno.ersatz.DecodingContext
-import com.stehno.ersatz.RequestDecoders
-import com.stehno.ersatz.RequestWithContent
+import com.stehno.ersatz.*
 import org.hamcrest.Matcher
 
 import java.util.function.BiFunction
@@ -41,8 +38,13 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
      * @param method the request method
      * @param pathMatcher the request path matcher
      */
-    ErsatzRequestWithContent(final String method, final Matcher<String> pathMatcher, final RequestDecoders globalDecoders = null) {
-        super(method, pathMatcher)
+    ErsatzRequestWithContent(
+        final String method,
+        final Matcher<String> pathMatcher,
+        final RequestDecoders globalDecoders = null,
+        final ResponseEncoders globalEncoders = null
+    ) {
+        super(method, pathMatcher, globalEncoders)
 
         if (globalDecoders) decoderChain.last globalDecoders
     }
@@ -83,7 +85,7 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
 
     @Override
     RequestWithContent decoders(final RequestDecoders requestDecoders) {
-        decoderChain.afterFirst(requestDecoders)
+        decoderChain.second(requestDecoders)
         this
     }
 }

@@ -17,7 +17,9 @@ package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.Request
+import com.stehno.ersatz.RequestDecoders
 import com.stehno.ersatz.RequestWithContent
+import com.stehno.ersatz.ResponseEncoders
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -28,7 +30,9 @@ import static org.hamcrest.Matchers.equalTo
 class ExpectationsImplSpec extends Specification {
 
     private static final String PATH = '/somewhere'
-    private final ExpectationsImpl expectations = new ExpectationsImpl()
+    private final RequestDecoders decoders = new RequestDecoders()
+    private final ResponseEncoders encoders = new ResponseEncoders()
+    private final ExpectationsImpl expectations = new ExpectationsImpl(decoders, encoders)
 
     @Unroll '#method(String)'() {
         when:
