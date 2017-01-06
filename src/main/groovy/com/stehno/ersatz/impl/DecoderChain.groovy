@@ -23,52 +23,33 @@ import groovy.transform.CompileStatic
 import java.util.function.BiFunction
 
 /**
- * FIXME: document
- *
- * operations are fired on items from first --> last until non-null result is found
+ * A function chain for request decoders.
  */
 @CompileStatic
-class DecoderChain {
-
-    private final List<RequestDecoders> items = []
+class DecoderChain extends FunctionChain<RequestDecoders> {
 
     DecoderChain(final RequestDecoders firstItem = null) {
-        if (firstItem) {
-            first firstItem
-        }
+        super(firstItem)
     }
 
-    // the first item to be checked
-    void first(final RequestDecoders item) {
-        items.add(0, item)
-    }
-
-    // the last item to be checked
-    void last(final RequestDecoders item) {
-        items.add(item)
-    }
-
-    void second(final RequestDecoders item) {
-        items.add(items.size() > 0 ? 1 : 0, item)
-    }
-
+    /**
+     * Resolves the decoder for the specified request content-type.
+     *
+     * @param contentType the request content-type
+     * @return the decoder function
+     */
     BiFunction<byte[], DecodingContext, Object> resolve(final String contentType) {
-        items.findResult { i ->
-            i.findDecoder(contentType)
-        }
+        resolveWith { RequestDecoders i -> i.findDecoder(contentType) } as BiFunction<byte[], DecodingContext, Object>
     }
 
+    /**
+     * Resolves the decoder for the specified request content-type.
+     *
+     * @param contentType the request content-type
+     * @return the decoder function
+     */
     BiFunction<byte[], DecodingContext, Object> resolve(final ContentType contentType) {
-        items.findResult { i ->
-            i.findDecoder(contentType)
-        }
-    }
-
-    RequestDecoders getAt(int index) {
-        items[index]
-    }
-
-    int size() {
-        items.size()
+        resolve contentType.value
     }
 }
+

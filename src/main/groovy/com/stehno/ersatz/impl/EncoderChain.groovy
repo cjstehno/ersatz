@@ -21,50 +21,33 @@ import com.stehno.ersatz.ResponseEncoders
 import java.util.function.Function
 
 /**
- * Created by cjstehno on 1/6/17.
+ * A function chain for response encoders.
  */
-class EncoderChain {
-    // FIXME: resolve shared code between encoder/decoder chains
-
-    private final List<ResponseEncoders> items = []
+class EncoderChain extends FunctionChain<ResponseEncoders> {
 
     EncoderChain(final ResponseEncoders firstItem = null) {
-        if (firstItem) {
-            first firstItem
-        }
+        super(firstItem)
     }
 
-    // the first item to be checked
-    void first(final ResponseEncoders item) {
-        items.add(0, item)
-    }
-
-    // the last item to be checked
-    void last(final ResponseEncoders item) {
-        items.add(item)
-    }
-
-    void second(final ResponseEncoders item) {
-        items.add(items.size() > 0 ? 1 : 0, item)
-    }
-
+    /**
+     * Resolves the encoder for the specified response content-type and object type.
+     *
+     * @param contentType the response content-type
+     * @param objectType the response object type
+     * @return the encoder
+     */
     Function<Object, String> resolve(final String contentType, final Class objectType) {
-        items.findResult { i ->
-            i.findEncoder(contentType, objectType)
-        }
+        resolveWith { ResponseEncoders i -> i.findEncoder(contentType, objectType) } as Function<Object, String>
     }
 
+    /**
+     * Resolves the encoder for the specified response content-type and object type.
+     *
+     * @param contentType the response content-type
+     * @param objectType the response object type
+     * @return the encoder
+     */
     Function<Object, String> resolve(final ContentType contentType, final Class objectType) {
-        items.findResult { i ->
-            i.findEncoder(contentType, objectType)
-        }
-    }
-
-    ResponseEncoders getAt(int index) {
-        items[index]
-    }
-
-    int size() {
-        items.size()
+        resolve contentType.value, objectType
     }
 }
