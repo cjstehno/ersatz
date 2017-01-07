@@ -26,6 +26,9 @@ import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.CookieImpl
 import io.undertow.util.HttpString
 
+import javax.net.ssl.KeyManagerFactory
+import javax.net.ssl.SSLContext
+import java.security.KeyStore
 import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Function
@@ -58,12 +61,18 @@ class ErsatzServer implements ServerConfig {
      */
     static final String NOT_FOUND_BODY = '404: Not Found'
 
+    private static final String LOCALHOST = 'localhost'
+    private static final int EPHEMERAL_PORT = 0
     private final RequestDecoders globalDecoders = new RequestDecoders()
     private final ResponseEncoders globalEncoders = new ResponseEncoders()
     private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders)
     private final List<ServerFeature> features = []
     private Undertow server
-    private int actualPort = -1
+    private boolean httpsEnabled
+    private String keystoreLocation
+    private String keystorePass
+    private int actualHttpPort = -1
+    private int actualHttpsPort = -1
 
     /**
      * Creates a new Ersatz server instance with either the default configuration or a configuration provided by the Groovy DSL closure.
@@ -98,13 +107,55 @@ class ErsatzServer implements ServerConfig {
         this
     }
 
+    ErsatzServer enableHttps() {
+        httpsEnabled = true
+        this
+    }
+
+    ServerConfig keystore(String location, String password='ersatz') {
+        keystoreLocation = location
+        keystorePass = password
+        this
+    }
+
     /**
      * Used to retrieve the port where the HTTP server is running.
      *
+     * @deprecated Use getHttpPort() instead
      * @return the HTTP server port
      */
+    @Deprecated
     int getPort() {
-        actualPort
+        actualHttpPort
+    }
+
+    /**
+     * Used to retrieve the port where the HTTP server is running.
+     *
+     * @return the HTTP port
+     */
+    int getHttpPort() {
+        actualHttpPort
+    }
+
+    /**
+     * Used to retrieve the port where the HTTPS server is running.
+     *
+     * @return the HTTPS port
+     */
+    int getHttpsPort() {
+        actualHttpsPort
+    }
+
+    /**
+     * Used to retrieve the full URL of the HTTP server.
+     *
+     * @deprecated Use getHttpUrl() instead
+     * @return the full URL of the HTTP server
+     */
+    @Deprecated
+    String getServerUrl() {
+        "http://localhost:$actualHttpPort"
     }
 
     /**
@@ -112,8 +163,17 @@ class ErsatzServer implements ServerConfig {
      *
      * @return the full URL of the HTTP server
      */
-    String getServerUrl() {
-        "http://localhost:$actualPort"
+    String getHttpUrl() {
+        "http://localhost:$actualHttpPort"
+    }
+
+    /**
+     * Used to retrieve the full URL of the HTTPS server.
+     *
+     * @return the full URL of the HTTP server
+     */
+    String getHttpsUrl() {
+        "https://localhost:$actualHttpsPort"
     }
 
     /**
@@ -181,9 +241,14 @@ class ErsatzServer implements ServerConfig {
      * interactions are executed against the server.
      */
     void start() {
-        server = Undertow.builder().addHttpListener(0, 'localhost').setHandler(applyFeatures(new HttpHandler() {
-            @Override
-            void handleRequest(final HttpServerExchange exchange) throws Exception {
+        Undertow.Builder builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST)
+
+        if (httpsEnabled) {
+            builder.addHttpsListener(EPHEMERAL_PORT, LOCALHOST, sslContext())
+        }
+
+        server = builder.setHandler(applyFeatures(new HttpHandler() {
+            @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
                 ClientRequest clientRequest = new UndertowClientRequest(exchange)
 
                 log.debug 'Request: {}', clientRequest
@@ -203,14 +268,18 @@ class ErsatzServer implements ServerConfig {
 
         server.start()
 
-        actualPort = (server.listenerInfo[0].address as InetSocketAddress).port
+        actualHttpPort = (server.listenerInfo[0].address as InetSocketAddress).port
+
+        if( httpsEnabled ){
+            actualHttpsPort = (server.listenerInfo[1].address as InetSocketAddress).port
+        }
     }
 
     /**
      * Used to stop the HTTP server. The server may be restarted after it has been stopped.
      */
     void stop() {
-        actualPort = -1
+        actualHttpPort = -1
 
         server?.stop()
     }
@@ -254,5 +323,18 @@ class ErsatzServer implements ServerConfig {
         log.debug 'Response: {}', responseContent.take(1000)
 
         exchange.responseSender.send(responseContent)
+    }
+
+    private SSLContext sslContext() {
+        KeyStore keyStore = KeyStore.getInstance('JKS')
+        keyStore.load(new FileInputStream(keystoreLocation), keystorePass.toCharArray())
+
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.defaultAlgorithm)
+        keyManagerFactory.init(keyStore, keystorePass.toCharArray())
+
+        SSLContext sslContext = SSLContext.getInstance('TLS')
+        sslContext.init(keyManagerFactory.keyManagers, null, null)
+
+        sslContext
     }
 }

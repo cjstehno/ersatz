@@ -1,0 +1,87 @@
+
+Create a keystore:
+
+    ./keytool -genkey -alias ersatz -keyalg RSA -keystore ~/Desktop/ersatz.keystore
+
+CN=Ersatz, OU=Ersatz, O=Ersatz, L=Nowhere, ST=Nowhere, C=US
+
+passwords are Ersatz
+
+
+
+
+	static void main(String[] args) throws Exception {
+
+		SSLContext sslContext = SSLContext.getInstance("TLS");
+		sslContext.init(getKeyManagers(), null, null);
+
+		Undertow.builder()
+                .addHttpListener(8080, "localhost")
+                .addHttpsListener(443, 'localhost', sslContext)
+				.setHandler(new HttpHandler() {
+					@Override
+					public void handleRequest(final HttpServerExchange exchange)throws Exception {
+						exchange.getResponseHeaders().put(Headers.CONTENT_TYPE,"text/plain");
+						exchange.getResponseSender().send("Hello World");
+					}
+				}).build().start();
+	}
+
+	private static KeyManager[] getKeyManagers() {
+		try {
+			KeyStore keyStore = KeyStore.getInstance("JKS");
+			keyStore.load(new FileInputStream("c:/Users/stehnoc/.keystore"), "underpass".toCharArray());
+
+			KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+			keyManagerFactory.init(keyStore, "underpass".toCharArray());
+			return keyManagerFactory.getKeyManagers();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+Client
+
+private static OkHttpClient httpsClient() {
+    // Create a trust manager that does not validate certificate chains
+    TrustManager[] trustAllCerts = [
+        new X509TrustManager() {
+            @Override
+            void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            }
+
+            @Override
+            void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            }
+
+            @Override
+            X509Certificate[] getAcceptedIssuers() {
+                return [] as X509Certificate[]
+            }
+        }
+    ] as TrustManager[]
+
+    // Install the all-trusting trust manager
+    final SSLContext sslContext = SSLContext.getInstance('SSL')
+    sslContext.init(null, trustAllCerts, new SecureRandom())
+
+    // Create an ssl socket factory with our all-trusting manager
+    final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+    OkHttpClient.Builder builder = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar())
+        .sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
+        .hostnameVerifier(new HostnameVerifier() {
+        @Override boolean verify(String s, SSLSession sslSession) {
+            return true
+        }
+    })
+
+    builder.build()
+}
+
+FIXME: document creating and using own keystore
+FIXME: document how to accept self-signed certs with okhttp
+
+this is http testing - may be limited to just accepting that a url is https
+- add a request matcher for determinine whether or not the request came in via https

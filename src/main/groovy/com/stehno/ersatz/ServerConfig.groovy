@@ -28,6 +28,16 @@ import java.util.function.Function
 interface ServerConfig {
 
     /**
+     * FIXME: document
+     * @return
+     */
+    ServerConfig enableHttps() // FIXME: should this accept a boolean?
+
+    // FIXME: document
+    ServerConfig keystore(String location, String password)
+    ServerConfig keystore(String location)
+
+    /**
      * Configures the specified feature on the server.
      *
      * @param feature the feature to be configured
