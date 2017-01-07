@@ -38,6 +38,11 @@ class RequestMatcher {
      */
     Closure<Object> getter
 
+    // FIXME: document
+    static RequestMatcher protocol(final Matcher<String> m) {
+        new RequestMatcher(m, { ClientRequest cr -> cr.protocol })
+    }
+
     /**
      * Creates a request matcher for the method property.
      *

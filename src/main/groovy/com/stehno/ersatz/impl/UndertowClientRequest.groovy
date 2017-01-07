@@ -38,6 +38,15 @@ class UndertowClientRequest implements ClientRequest {
     final HttpServerExchange exchange
 
     /**
+     * Used to retrieve the request protocol, generally HTTP or HTTPS.
+     *
+     * @return the request protocol
+     */
+    String getProtocol(){
+        exchange.getRequestScheme()
+    }
+
+    /**
      * Retrieves the HTTP method for the request.
      *
      * @return the HTTP method for the request

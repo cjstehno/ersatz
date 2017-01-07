@@ -65,6 +65,12 @@ class ErsatzRequest implements Request {
         this.emptyResponse = emptyResponse
     }
 
+    @Override
+    Request protocol(final String proto) {
+        matchers << RequestMatcher.protocol(equalToIgnoringCase(proto))
+        this
+    }
+
     @Override @SuppressWarnings('ConfusingMethodName')
     Request headers(final Map<String, Object> heads) {
         heads.each { k, v ->

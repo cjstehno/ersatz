@@ -27,6 +27,14 @@ import java.util.function.Consumer
 interface Request {
 
     /**
+     * Specifies that the request protocol be equal to (case-insensitive) the specified value.
+     *
+     * @param proto the request protocol
+     * @return this request
+     */
+    Request protocol(final String proto)
+
+    /**
      * Specifies a request header to be configured in the expected request.
      *
      * @param name the header name

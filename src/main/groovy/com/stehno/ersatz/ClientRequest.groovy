@@ -33,6 +33,13 @@ interface ClientRequest {
     String getMethod()
 
     /**
+     * Used to retrieve the request protocol, generally HTTP or HTTPS.
+     *
+     * @return the request protocol
+     */
+    String getProtocol()
+
+    /**
      * Retrieves the request path.
      *
      * @return the request path

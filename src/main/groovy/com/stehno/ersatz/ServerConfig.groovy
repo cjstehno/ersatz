@@ -31,11 +31,15 @@ interface ServerConfig {
      * FIXME: document
      * @return
      */
-    ServerConfig enableHttps() // FIXME: should this accept a boolean?
+    ServerConfig enableHttps(boolean enabled)
+    ServerConfig enableHttps()
+
+    // FIXME: should this accept a boolean?
 
     // FIXME: document
-    ServerConfig keystore(String location, String password)
-    ServerConfig keystore(String location)
+    ServerConfig keystore(URL location, String password)
+
+    ServerConfig keystore(URL location)
 
     /**
      * Configures the specified feature on the server.
@@ -98,7 +102,7 @@ interface ServerConfig {
      * @param encoder the encoder function
      * @return a reference to this server configuration
      */
-    ServerConfig encoder(String contentType, Class objectType, Function<Object,String> encoder)
+    ServerConfig encoder(String contentType, Class objectType, Function<Object, String> encoder)
 
     /**
      * Registers a global response body encoder.
@@ -108,5 +112,5 @@ interface ServerConfig {
      * @param encoder the encoder function
      * @return a reference to this server configuration
      */
-    ServerConfig encoder(ContentType contentType, Class objectType, Function<Object,String> encoder)
+    ServerConfig encoder(ContentType contentType, Class objectType, Function<Object, String> encoder)
 }

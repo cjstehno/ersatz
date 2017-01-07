@@ -26,6 +26,7 @@ import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
 class MockClientRequest implements ClientRequest {
 
     String method
+    String protocol
     String path
     byte[] body
     Map<String, Deque<String>> queryParams = [:]

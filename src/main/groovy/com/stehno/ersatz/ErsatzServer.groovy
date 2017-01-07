@@ -19,6 +19,7 @@ import com.stehno.ersatz.impl.ErsatzRequest
 import com.stehno.ersatz.impl.ExpectationsImpl
 import com.stehno.ersatz.impl.UndertowClientRequest
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import io.undertow.Undertow
 import io.undertow.server.HttpHandler
@@ -69,8 +70,8 @@ class ErsatzServer implements ServerConfig {
     private final List<ServerFeature> features = []
     private Undertow server
     private boolean httpsEnabled
-    private String keystoreLocation
-    private String keystorePass
+    private URL keystoreLocation
+    private String keystorePass = 'ersatz'
     private int actualHttpPort = -1
     private int actualHttpsPort = -1
 
@@ -107,12 +108,14 @@ class ErsatzServer implements ServerConfig {
         this
     }
 
-    ErsatzServer enableHttps() {
-        httpsEnabled = true
+    // FIXME: document
+    ErsatzServer enableHttps(boolean enabled=true) {
+        httpsEnabled = enabled
         this
     }
 
-    ServerConfig keystore(String location, String password='ersatz') {
+    // FIXME: document
+    ServerConfig keystore(final URL location, final String password = 'ersatz') {
         keystoreLocation = location
         keystorePass = password
         this
@@ -270,7 +273,7 @@ class ErsatzServer implements ServerConfig {
 
         actualHttpPort = (server.listenerInfo[0].address as InetSocketAddress).port
 
-        if( httpsEnabled ){
+        if (httpsEnabled) {
             actualHttpsPort = (server.listenerInfo[1].address as InetSocketAddress).port
         }
     }
@@ -325,9 +328,13 @@ class ErsatzServer implements ServerConfig {
         exchange.responseSender.send(responseContent)
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private SSLContext sslContext() {
         KeyStore keyStore = KeyStore.getInstance('JKS')
-        keyStore.load(new FileInputStream(keystoreLocation), keystorePass.toCharArray())
+
+        (keystoreLocation ?: ErsatzServer.getResource('/ersatz.keystore')).withInputStream { instr ->
+            keyStore.load(instr, keystorePass.toCharArray())
+        }
 
         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.defaultAlgorithm)
         keyManagerFactory.init(keyStore, keystorePass.toCharArray())
