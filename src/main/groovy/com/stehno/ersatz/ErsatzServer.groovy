@@ -108,13 +108,25 @@ class ErsatzServer implements ServerConfig {
         this
     }
 
-    // FIXME: document
+    /**
+     * Used to control the enabled/disabled state of HTTPS on the server. By default HTTPS is disabled.
+     *
+     * @param enabled whether or not HTTPS is enabled (defaults to true if omitted)
+     * @return a reference to the server being configured
+     */
     ErsatzServer enableHttps(boolean enabled=true) {
         httpsEnabled = enabled
         this
     }
 
-    // FIXME: document
+    /**
+     * Allows configuration of an external HTTPS keystore with the given location and password. By default, if this is not specified an internally
+     * provided keystore will be used for HTTPS certification. See the User Guide for details about configuring your own keystore.
+     *
+     * @param location the URL of the keystore file
+     * @param password the keystore file password (defaults to "ersatz" if omitted)
+     * @return a reference to the server being configured
+     */
     ServerConfig keystore(final URL location, final String password = 'ersatz') {
         keystoreLocation = location
         keystorePass = password

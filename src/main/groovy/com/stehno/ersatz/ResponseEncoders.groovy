@@ -96,8 +96,8 @@ class ResponseEncoders {
     @CompileStatic @TupleConstructor
     private static class EncoderMapping {
 
-        MimeType contentType
-        Class objectType
-        Function<Object, String> encoder
+        final MimeType contentType
+        final Class objectType
+        final Function<Object, String> encoder
     }
 }

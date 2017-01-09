@@ -28,17 +28,37 @@ import java.util.function.Function
 interface ServerConfig {
 
     /**
-     * FIXME: document
-     * @return
+     * Used to control the enabled/disabled state of HTTPS on the server. By default HTTPS is disabled.
+     *
+     * @return a reference to the server being configured
      */
     ServerConfig enableHttps(boolean enabled)
+
+    /**
+     * Used to enabled HTTPS on the server. By default HTTPS is disabled.
+     *
+     * @return a reference to the server being configured
+     */
     ServerConfig enableHttps()
 
-    // FIXME: should this accept a boolean?
-
-    // FIXME: document
+    /**
+     * Allows configuration of an external HTTPS keystore with the given location and password. By default, if this is not specified an internally
+     * provided keystore will be used for HTTPS certification. See the User Guide for details about configuring your own keystore.
+     *
+     * @param location the URL of the keystore file
+     * @param password the keystore file password
+     * @return a reference to the server being configured
+     */
     ServerConfig keystore(URL location, String password)
 
+    /**
+     * Allows configuration of an external HTTPS keystore with the given location (using the default password "ersatz"). By default, if this is not
+     * specified an internally provided keystore will be used for HTTPS certification. See the User Guide for details about configuring your own
+     * keystore.
+     *
+     * @param location the URL of the keystore file
+     * @return a reference to the server being configured
+     */
     ServerConfig keystore(URL location)
 
     /**

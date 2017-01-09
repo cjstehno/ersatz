@@ -396,6 +396,49 @@ instances without copying the configuration.
 * Encoders/Decoders configured in the request/response itself are considered "local" and will override any other configured handlers
 * Other configurations are applied in a layered order based on where they are applied in the configuration DSL - the handlers are maintained as separate isolated instances and the actual handler is resolved at runtime.
 
+== HTTPS Request Support
+
+The `ErsatzServer` supports HTTPS requests when the `enableHttps()` configuration is set. This will setup both an HTTP and HTTPS listener both of
+which will have access to all configured expectations. In order to limit a request expectation to HTTP or HTTPS, the `procotol(String)` matcher method
+may be specified with the desired protocol, for example:
+
+[source,groovy]
+----
+server.expectations {
+    get('/something').protocol('https').responding('thing')
+}
+----
+
+which will match an HTTPS request to `GET /something` and send a response of `thing`.
+
+NOTE: the HTTPS support is rudimentary and meant to test HTTPS endpoints, not any explicit features of HTTPS itself. Also your client will need to be able to ignore any self-signed certification issues in one way or another.
+
+=== Creating a Custom Keystore
+
+A default keystore is provided with the Ersatz library, and it should suffice for most cases; however, you may wish to provide your own custom keystore
+for whatever reason. A supported keystore file may be created using the following command:
+
+    ./keytool -genkey -alias <NAME> -keyalg RSA -keystore <FILE_LOCATION>
+
+where `<NAME>` is the key name and `<FILE_LOCATION>` is the location where the keystore file is to be created. You will be asked a few questions about
+the key being created. The default keystore name is `ersatz` and it has the following properties:
+
+    CN=Ersatz, OU=Ersatz, O=Ersatz, L=Nowhere, ST=Nowhere, C=US
+
+Obviously, it is only for testing purposes.
+
+The keystore should then be provided during server configuration as:
+
+[source,groovy]
+----
+ErsatzServer server = new ErsatzServer({
+    enableHttps()
+    keystore KEYSTORE_URL, KEYSTORE_PASS
+})
+----
+
+where `KEYSTORE_URL` is the URL to your custom keystore file, and `KEYSTORE_PASS` is the password (maybe omitted if you used `ersatz` as the password).
+
 == Feature Extensions
 
 Additional server functionality may be added/configured on the server before startup. The `ServerFeature` interface provides this extension point;

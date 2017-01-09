@@ -28,20 +28,20 @@ class DecodingContext {
     /**
      * The request content length.
      */
-    long contentLength
+    final long contentLength
 
     /**
      * The request content type.
      */
-    String contentType
+    final String contentType
 
     /**
      * The request character encoding.
      */
-    String characterEncoding
+    final String characterEncoding
 
     /**
      * The available request decoders.
      */
-    DecoderChain decoderChain
+    final DecoderChain decoderChain
 }

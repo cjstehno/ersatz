@@ -38,7 +38,12 @@ class RequestMatcher {
      */
     Closure<Object> getter
 
-    // FIXME: document
+    /**
+     * Creates a request matcher for the protocol property value.
+     *
+     * @param m the hamcrest matcher for the protocol property
+     * @return a configured RequestMatcher
+     */
     static RequestMatcher protocol(final Matcher<String> m) {
         new RequestMatcher(m, { ClientRequest cr -> cr.protocol })
     }
