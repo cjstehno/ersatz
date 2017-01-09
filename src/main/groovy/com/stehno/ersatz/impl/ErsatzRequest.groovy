@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.Response
+import com.stehno.ersatz.ResponseEncoders
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 
@@ -40,6 +41,7 @@ class ErsatzRequest implements Request {
     private final List<RequestMatcher> matchers = []
     private final List<Consumer<ClientRequest>> listeners = []
     private final List<Response> responses = []
+    private final ResponseEncoders globalEncoders
     private final boolean emptyResponse
     private Matcher<?> callVerifier = anything()
     private int callCount
@@ -51,10 +53,22 @@ class ErsatzRequest implements Request {
      * @param pathMatcher the path matcher
      * @param emptyResponse whether or not this is a request with an empty response (defaults to false)
      */
-    ErsatzRequest(final String method, final Matcher<String> pathMatcher, final boolean emptyResponse = false) {
+    ErsatzRequest(
+        final String method,
+        final Matcher<String> pathMatcher,
+        final ResponseEncoders globalEncoders,
+        final boolean emptyResponse = false
+    ) {
         matchers << RequestMatcher.method(equalTo(method))
         matchers << RequestMatcher.path(pathMatcher)
+        this.globalEncoders = globalEncoders
         this.emptyResponse = emptyResponse
+    }
+
+    @Override
+    Request protocol(final String proto) {
+        matchers << RequestMatcher.protocol(equalToIgnoringCase(proto))
+        this
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
@@ -191,7 +205,7 @@ class ErsatzRequest implements Request {
     }
 
     private Response newResponse() {
-        new ErsatzResponse(emptyResponse)
+        new ErsatzResponse(emptyResponse, globalEncoders)
     }
 
     /**

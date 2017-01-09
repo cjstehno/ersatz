@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,14 @@ import java.util.function.Consumer
 import static MultipartResponseContent.multipart
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
+import static org.hamcrest.Matchers.startsWith
 
 class ErsatzServerSpec extends Specification {
 
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
-    @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer()
+    @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer({
+        encoder ContentType.MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
+    })
 
     def 'prototype: functional'() {
         setup:
@@ -97,7 +100,7 @@ class ErsatzServerSpec extends Specification {
         ]
 
         then:
-//        counter.get() == 2 TODO: this is twitchy
+        //        counter.get() == 2 TODO: this is twitchy
         results.every { it == 'This is Bar!!' }
 
         when:
@@ -114,7 +117,7 @@ class ErsatzServerSpec extends Specification {
         setup:
         ersatzServer.expectations {
             get('/data') {
-                responds().content(multipart() {
+                responds().content(multipart {
                     boundary 't8xOJjySKePdRgBHYD'
                     encoder TEXT_PLAIN.value, CharSequence, { o -> o as String }
                     field 'alpha', 'bravo'
@@ -146,7 +149,7 @@ class ErsatzServerSpec extends Specification {
         setup:
         ersatzServer.expectations {
             get('/data') {
-                responds().content(multipart() {
+                responds().content(multipart {
                     boundary 'WyAJDTEVlYgGjdI13o'
                     encoder TEXT_PLAIN, CharSequence, { o -> o as String }
                     encoder 'image/jpeg', InputStream, { o -> ((InputStream) o).bytes.encodeBase64() }
@@ -178,6 +181,23 @@ class ErsatzServerSpec extends Specification {
         byte[] bytes = Base64.decoder.decode(items[1].get())
         bytes.length == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes.length
         bytes == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes
+    }
+
+    def 'alternate construction'() {
+        setup:
+        def server = new ErsatzServer({
+            expectations {
+                get(startsWith('/hello')).responds().content('ok')
+            }
+        })
+
+        server.start()
+
+        expect:
+        "${server.serverUrl}/hello/there".toURL().text == 'ok'
+
+        cleanup:
+        server.stop()
     }
 
     private String url(final String path) {

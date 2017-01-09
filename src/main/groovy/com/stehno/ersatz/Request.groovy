@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,14 @@ import java.util.function.Consumer
  */
 @CompileStatic
 interface Request {
+
+    /**
+     * Specifies that the request protocol be equal to (case-insensitive) the specified value.
+     *
+     * @param proto the request protocol
+     * @return this request
+     */
+    Request protocol(final String proto)
 
     /**
      * Specifies a request header to be configured in the expected request.

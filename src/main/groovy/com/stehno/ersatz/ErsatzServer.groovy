@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import com.stehno.ersatz.impl.ErsatzRequest
 import com.stehno.ersatz.impl.ExpectationsImpl
 import com.stehno.ersatz.impl.UndertowClientRequest
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import io.undertow.Undertow
 import io.undertow.server.HttpHandler
@@ -26,7 +27,12 @@ import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.CookieImpl
 import io.undertow.util.HttpString
 
+import javax.net.ssl.KeyManagerFactory
+import javax.net.ssl.SSLContext
+import java.security.KeyStore
+import java.util.function.BiFunction
 import java.util.function.Consumer
+import java.util.function.Function
 
 /**
  * The main entry point for configuring an Ersatz server, which allows configuring of the expectations and management of the server itself. This is
@@ -49,38 +55,122 @@ import java.util.function.Consumer
  * See the <a href="http://stehno.com/ersatz/guide/html5/" target="_blank">User Guide</a> for more detailed information.
  */
 @CompileStatic @Slf4j
-class ErsatzServer {
+class ErsatzServer implements ServerConfig {
 
     /**
      * The response body returned when no matching expectation could be found.
      */
     static final String NOT_FOUND_BODY = '404: Not Found'
 
-    /**
-     * The server feature extensions configured on the server.
-     */
-    List<ServerFeature> features = []
-
-    private final ExpectationsImpl expectations = new ExpectationsImpl()
+    private static final String LOCALHOST = 'localhost'
+    private static final int EPHEMERAL_PORT = 0
+    private final RequestDecoders globalDecoders = new RequestDecoders()
+    private final ResponseEncoders globalEncoders = new ResponseEncoders()
+    private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders)
+    private final List<ServerFeature> features = []
     private Undertow server
-    private int actualPort = -1
+    private boolean httpsEnabled
+    private URL keystoreLocation
+    private String keystorePass = 'ersatz'
+    private int actualHttpPort = -1
+    private int actualHttpsPort = -1
+
+    /**
+     * Creates a new Ersatz server instance with either the default configuration or a configuration provided by the Groovy DSL closure.
+     *
+     * @param closure the configuration closure (delegated to <code>ServerConfig</code>)
+     */
+    ErsatzServer(@DelegatesTo(ServerConfig) final Closure closure = null) {
+        if (closure) {
+            closure.delegate = this
+            closure.call()
+        }
+    }
+
+    /**
+     * Creates a new Ersatz server instance configured by the provided <code>Consumer</code>, which will have an instance of <code>ServerConfig</code>
+     * passed into it for server configuration.
+     *
+     * @param consumer the configuration consumer
+     */
+    ErsatzServer(final Consumer<ServerConfig> consumer) {
+        consumer.accept(this)
+    }
 
     /**
      * Used to enable support for a feature extension.
      *
      * @param feature the <code>ServerFeature</code> to be added
+     * @return a reference to this server instance
      */
-    void addFeature(ServerFeature feature) {
+    ErsatzServer feature(final ServerFeature feature) {
         features << feature
+        this
+    }
+
+    /**
+     * Used to control the enabled/disabled state of HTTPS on the server. By default HTTPS is disabled.
+     *
+     * @param enabled whether or not HTTPS is enabled (defaults to true if omitted)
+     * @return a reference to the server being configured
+     */
+    ErsatzServer enableHttps(boolean enabled=true) {
+        httpsEnabled = enabled
+        this
+    }
+
+    /**
+     * Allows configuration of an external HTTPS keystore with the given location and password. By default, if this is not specified an internally
+     * provided keystore will be used for HTTPS certification. See the User Guide for details about configuring your own keystore.
+     *
+     * @param location the URL of the keystore file
+     * @param password the keystore file password (defaults to "ersatz" if omitted)
+     * @return a reference to the server being configured
+     */
+    ServerConfig keystore(final URL location, final String password = 'ersatz') {
+        keystoreLocation = location
+        keystorePass = password
+        this
     }
 
     /**
      * Used to retrieve the port where the HTTP server is running.
      *
+     * @deprecated Use getHttpPort() instead
      * @return the HTTP server port
      */
+    @Deprecated
     int getPort() {
-        actualPort
+        actualHttpPort
+    }
+
+    /**
+     * Used to retrieve the port where the HTTP server is running.
+     *
+     * @return the HTTP port
+     */
+    int getHttpPort() {
+        actualHttpPort
+    }
+
+    /**
+     * Used to retrieve the port where the HTTPS server is running.
+     *
+     * @return the HTTPS port
+     */
+    int getHttpsPort() {
+        actualHttpsPort
+    }
+
+    /**
+     * Used to retrieve the full URL of the HTTP server.
+     *
+     * @deprecated Use getHttpUrl() instead
+     * @return the full URL of the HTTP server
+     */
+    @Deprecated
+    String getServerUrl() {
+        "http://localhost:$actualHttpPort"
     }
 
     /**
@@ -88,8 +178,17 @@ class ErsatzServer {
      *
      * @return the full URL of the HTTP server
      */
-    String getServerUrl() {
-        "http://localhost:$actualPort"
+    String getHttpUrl() {
+        "http://localhost:$actualHttpPort"
+    }
+
+    /**
+     * Used to retrieve the full URL of the HTTPS server.
+     *
+     * @return the full URL of the HTTP server
+     */
+    String getHttpsUrl() {
+        "https://localhost:$actualHttpsPort"
     }
 
     /**
@@ -114,6 +213,30 @@ class ErsatzServer {
         expectations
     }
 
+    @Override
+    ErsatzServer decoder(String contentType, BiFunction<byte[], DecodingContext, Object> decoder) {
+        globalDecoders.register contentType, decoder
+        this
+    }
+
+    @Override
+    ErsatzServer decoder(ContentType contentType, BiFunction<byte[], DecodingContext, Object> decoder) {
+        globalDecoders.register contentType, decoder
+        this
+    }
+
+    @Override
+    ServerConfig encoder(String contentType, Class objectType, Function<Object, String> encoder) {
+        globalEncoders.register contentType, objectType, encoder
+        this
+    }
+
+    @Override
+    ServerConfig encoder(ContentType contentType, Class objectType, Function<Object, String> encoder) {
+        globalEncoders.register contentType, objectType, encoder
+        this
+    }
+
     /**
      * Used to configure HTTP expectations on the server; the provided Groovy <code>Closure</code> will delegate to an <code>Expectations</code>
      * instance for configuring server interaction expectations using the Groovy DSL.
@@ -133,9 +256,14 @@ class ErsatzServer {
      * interactions are executed against the server.
      */
     void start() {
-        server = Undertow.builder().addHttpListener(0, 'localhost').setHandler(applyFeatures(new HttpHandler() {
-            @Override
-            void handleRequest(final HttpServerExchange exchange) throws Exception {
+        Undertow.Builder builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST)
+
+        if (httpsEnabled) {
+            builder.addHttpsListener(EPHEMERAL_PORT, LOCALHOST, sslContext())
+        }
+
+        server = builder.setHandler(applyFeatures(new HttpHandler() {
+            @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
                 ClientRequest clientRequest = new UndertowClientRequest(exchange)
 
                 log.debug 'Request: {}', clientRequest
@@ -155,14 +283,18 @@ class ErsatzServer {
 
         server.start()
 
-        actualPort = (server.listenerInfo[0].address as InetSocketAddress).port
+        actualHttpPort = (server.listenerInfo[0].address as InetSocketAddress).port
+
+        if (httpsEnabled) {
+            actualHttpsPort = (server.listenerInfo[1].address as InetSocketAddress).port
+        }
     }
 
     /**
      * Used to stop the HTTP server. The server may be restarted after it has been stopped.
      */
     void stop() {
-        actualPort = -1
+        actualHttpPort = -1
 
         server?.stop()
     }
@@ -201,10 +333,27 @@ class ErsatzServer {
             }
         }
 
-        String responseContent = response?.content?.toString() ?: ''
+        String responseContent = response?.content
 
         log.debug 'Response: {}', responseContent.take(1000)
 
         exchange.responseSender.send(responseContent)
+    }
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    private SSLContext sslContext() {
+        KeyStore keyStore = KeyStore.getInstance('JKS')
+
+        (keystoreLocation ?: ErsatzServer.getResource('/ersatz.keystore')).withInputStream { instr ->
+            keyStore.load(instr, keystorePass.toCharArray())
+        }
+
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.defaultAlgorithm)
+        keyManagerFactory.init(keyStore, keystorePass.toCharArray())
+
+        SSLContext sslContext = SSLContext.getInstance('TLS')
+        sslContext.init(keyManagerFactory.keyManagers, null, null)
+
+        sslContext
     }
 }

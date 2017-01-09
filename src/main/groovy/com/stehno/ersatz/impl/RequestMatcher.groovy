@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.DecodingContext
-import com.stehno.ersatz.RequestDecoders
 import groovy.transform.TupleConstructor
 import org.hamcrest.Matcher
 
@@ -38,6 +37,16 @@ class RequestMatcher {
      * The closure used to extract the matching data from the client request.
      */
     Closure<Object> getter
+
+    /**
+     * Creates a request matcher for the protocol property value.
+     *
+     * @param m the hamcrest matcher for the protocol property
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher protocol(final Matcher<String> m) {
+        new RequestMatcher(m, { ClientRequest cr -> cr.protocol })
+    }
 
     /**
      * Creates a request matcher for the method property.
@@ -100,9 +109,12 @@ class RequestMatcher {
      * @param m the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    static RequestMatcher body(final RequestDecoders decoders, final String contentType, final Matcher<Object> m) {
+    static RequestMatcher body(final DecoderChain decoderChain, final String contentType, final Matcher<Object> m) {
         new RequestMatcher(m, { ClientRequest cr ->
-            decoders.findDecoder(contentType)?.apply(cr.body, new DecodingContext(cr.contentLength, cr.contentType, cr.characterEncoding, decoders))
+            decoderChain.resolve(contentType)?.apply(
+                cr.body,
+                new DecodingContext(cr.contentLength, cr.contentType, cr.characterEncoding, decoderChain)
+            )
         })
     }
 

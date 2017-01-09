@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno <chris@stehno.com>
-v0.3.0, December 2016
+v0.4.0, January 2017
 :toc: left
 :toclevels: 3
 
@@ -29,7 +29,7 @@ frameworks.
 
 Add the `ersatz` library to your project, for Gradle, this would mean adding the following to your `dependencies` block:
 
-    testCompile 'com.stehno.ersatz:ersatz:0.3.0'
+    testCompile 'com.stehno.ersatz:ersatz:0.4.0'
 
 You could then use Ersatz in a Spock test as follows:
 
@@ -121,6 +121,9 @@ The third method is a simplified builder-style approach for single request metho
 
 Once the request expectations are configured, the server must be started by calling the `ErsatzServer` `start()` method. This will start the underlying
 embedded HTTP server and register the configured expectations. If the server is not started, you will receive connection errors during testing.
+
+TIP: Some server configuration may be applied at construction-time by supplying a `Closure` (delegated to `ServerConfig`) or `Consumer<ServerConfig>`
+which will allow configuration of expectations and global encoders/decoders.
 
 === Testing
 
@@ -319,7 +322,8 @@ This will configure a match of the request body content based on the individual 
 
 A key point in multipart request support are the "decoders", which are used to decode the incoming request content into an expected object type.
 Decoders are simply `BiFunction<byte[], DecodingContext, Object>` implementations - taking the incoming byte array, and a `DecodingContext` and
-returning the decoded `Object` instance. Decoders may be registered in a shared instance of `RequestDecoders` or configured on a per-request basis.
+returning the decoded `Object` instance. Decoders may be registered in a shared instance of `RequestDecoders`, configured globally across the server
+instance or configured on a per-request basis.
 
 TIP: No decoders are provided by default, any used in the request content _must_ be provided in configuration.
 
@@ -329,7 +333,8 @@ Some common reusable decoders are provided in the `Decoders` utility class.
 
 Multipart response content is supported, though most browsers do not fully support it - the expected use case would be a RESTful or other HTTP-based
 API. The response content will have the standard `multipart/form-data` content type and format. The response content parts are provided using an
-instance of the `MultipartResponseContent` class and configuring its parts and encoders.
+instance of the `MultipartResponseContent` class along with the `Encoders.multipart` multipart response content encoder (configured on the server or
+response).
 
 The content parts are provided as "field" parts with only a field name and value, or as "file" parts with a field name, content-type, file name and
 content object. These configurations are made on the `MultipartResponseContent` object via DSL or functional interface.
@@ -345,17 +350,20 @@ An example multipart response with a field and an image file would be something 
 ----
 ersatz.expectations {
     get('/data') {
-        responds().content(multipart {
-            // configure the part encoders
-            encoder TEXT_PLAIN, CharSequence, { o -> o as String }
-            encoder IMAGE_JPG, File, { o -> ((File)o).bytes.encodeBase64() }
+        responder {
+            encoder ContentType.MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
+            content(multipart {
+                // configure the part encoders
+                encoder TEXT_PLAIN, CharSequence, { o -> o as String }
+                encoder IMAGE_JPG, File, { o -> ((File)o).bytes.encodeBase64() }
 
-            // a field part
-            field 'comments', 'This is a cool image.'
+                // a field part
+                field 'comments', 'This is a cool image.'
 
-            // a file part
-            part 'image', 'test-image.jpg', IMAGE_JPG, new File('/test-image.jpg'), 'base64'
-        })
+                // a file part
+                part 'image', 'test-image.jpg', IMAGE_JPG, new File('/test-image.jpg'), 'base64'
+            })
+        }
     }
 }
 ----
@@ -378,6 +386,58 @@ Content-Type: image/jpeg
 
 which could be decoded in the same manner a multipart _request_ content (an example using the Apache File Upload multipart parser can be found in
 the unit tests).
+
+== Encoder/Decoder Chains
+
+The request/response content body decoders/encoders are configured in a layered manner so that they may be configured and shared across multiple
+instances without copying the configuration.
+
+* Encoders/Decoders configured in the `ErsatzServer` constructor are considered "global" and will be used if no overriding handlers are configured.
+* Encoders/Decoders configured in the request/response itself are considered "local" and will override any other configured handlers
+* Other configurations are applied in a layered order based on where they are applied in the configuration DSL - the handlers are maintained as separate isolated instances and the actual handler is resolved at runtime.
+
+== HTTPS Request Support
+
+The `ErsatzServer` supports HTTPS requests when the `enableHttps()` configuration is set. This will setup both an HTTP and HTTPS listener both of
+which will have access to all configured expectations. In order to limit a request expectation to HTTP or HTTPS, the `procotol(String)` matcher method
+may be specified with the desired protocol, for example:
+
+[source,groovy]
+----
+server.expectations {
+    get('/something').protocol('https').responding('thing')
+}
+----
+
+which will match an HTTPS request to `GET /something` and send a response of `thing`.
+
+NOTE: the HTTPS support is rudimentary and meant to test HTTPS endpoints, not any explicit features of HTTPS itself. Also your client will need to be able to ignore any self-signed certification issues in one way or another.
+
+=== Creating a Custom Keystore
+
+A default keystore is provided with the Ersatz library, and it should suffice for most cases; however, you may wish to provide your own custom keystore
+for whatever reason. A supported keystore file may be created using the following command:
+
+    ./keytool -genkey -alias <NAME> -keyalg RSA -keystore <FILE_LOCATION>
+
+where `<NAME>` is the key name and `<FILE_LOCATION>` is the location where the keystore file is to be created. You will be asked a few questions about
+the key being created. The default keystore name is `ersatz` and it has the following properties:
+
+    CN=Ersatz, OU=Ersatz, O=Ersatz, L=Nowhere, ST=Nowhere, C=US
+
+Obviously, it is only for testing purposes.
+
+The keystore should then be provided during server configuration as:
+
+[source,groovy]
+----
+ErsatzServer server = new ErsatzServer({
+    enableHttps()
+    keystore KEYSTORE_URL, KEYSTORE_PASS
+})
+----
+
+where `KEYSTORE_URL` is the URL to your custom keystore file, and `KEYSTORE_PASS` is the password (maybe omitted if you used `ersatz` as the password).
 
 == Feature Extensions
 

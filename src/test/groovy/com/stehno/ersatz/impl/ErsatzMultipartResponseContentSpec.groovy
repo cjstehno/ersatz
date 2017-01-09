@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.Encoders
+import com.stehno.ersatz.MultipartResponseContent
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.APPLICATION_JSON
-import static com.stehno.ersatz.ContentType.IMAGE_JPG
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.ContentType.*
 
-class MultipartResponseContentSpec extends Specification {
+class ErsatzMultipartResponseContentSpec extends Specification {
 
     def 'multipart: closure'() {
         when:
@@ -30,7 +30,7 @@ class MultipartResponseContentSpec extends Specification {
 
             encoder 'text/plain', String, { o -> o as String }
             encoder APPLICATION_JSON, String, { o -> o as String }
-            encoder 'image/jpeg', InputStream, { o -> ((InputStream) o).bytes.encodeBase64() }
+            encoder 'image/jpeg', InputStream, Encoders.binaryBase64
 
             field 'foo', 'bar'
 
@@ -44,7 +44,7 @@ class MultipartResponseContentSpec extends Specification {
         mc.contentType == 'multipart/mixed; boundary=abc123'
 
         and:
-        mc.toString().trim().readLines() == '''
+        Encoders.multipart.apply(mc).trim().readLines() == '''
             --abc123
             Content-Disposition: form-data; name="foo"
             Content-Type: text/plain

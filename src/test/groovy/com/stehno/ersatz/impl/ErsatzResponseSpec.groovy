@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,15 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ResponseEncoders
 import spock.lang.Specification
 
 class ErsatzResponseSpec extends Specification {
 
-    private final ErsatzResponse response = new ErsatzResponse()
-    private final Object CONTENT_A = new Object()
+    private final ErsatzResponse response = new ErsatzResponse(false, new ResponseEncoders())
+    private final String CONTENT_A = 'content-A'
 
-    def 'content when empty'(){
+    def 'content when empty'() {
         when:
         new ErsatzResponse(true).content(CONTENT_A)
 
@@ -31,7 +32,7 @@ class ErsatzResponseSpec extends Specification {
         ex.message == 'The response is configured as EMPTY and cannot have content.'
     }
 
-    def 'content'(){
+    def 'content'() {
         when:
         response.content(CONTENT_A)
 
@@ -39,7 +40,7 @@ class ErsatzResponseSpec extends Specification {
         response.content == CONTENT_A
     }
 
-    def 'content and content-type'(){
+    def 'content and content-type'() {
         when:
         response.content(CONTENT_A, 'text/info')
 
@@ -48,7 +49,7 @@ class ErsatzResponseSpec extends Specification {
         response.contentType == 'text/info'
     }
 
-    def 'content-type'(){
+    def 'content-type'() {
         when:
         response.contentType('text/info')
 
@@ -56,16 +57,16 @@ class ErsatzResponseSpec extends Specification {
         response.contentType == 'text/info'
     }
 
-    def 'headers'(){
+    def 'headers'() {
         when:
-        response.headers(alpha:'something', bravo:'other')
+        response.headers(alpha: 'something', bravo: 'other')
 
         then:
         response.headers.alpha == 'something'
         response.headers.bravo == 'other'
     }
 
-    def 'header'(){
+    def 'header'() {
         when:
         response.header('one', 'two')
 
@@ -73,16 +74,16 @@ class ErsatzResponseSpec extends Specification {
         response.headers.one == 'two'
     }
 
-    def 'cookies'(){
+    def 'cookies'() {
         when:
-        response.cookies(alpha:'something', bravo:'other')
+        response.cookies(alpha: 'something', bravo: 'other')
 
         then:
         response.cookies.alpha == 'something'
         response.cookies.bravo == 'other'
     }
 
-    def 'cookie'(){
+    def 'cookie'() {
         when:
         response.cookie('one', 'two')
 
@@ -90,7 +91,7 @@ class ErsatzResponseSpec extends Specification {
         response.cookies.one == 'two'
     }
 
-    def 'code'(){
+    def 'code'() {
         when:
         response.code(505)
 

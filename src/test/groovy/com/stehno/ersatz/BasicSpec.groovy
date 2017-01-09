@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,9 @@ import static com.stehno.ersatz.feat.SimpleIdentityManager.encodedCredential
 
 class BasicSpec extends Specification {
 
-    private final ErsatzServer ersatzServer = new ErsatzServer(features: [new BasicAuthFeature()])
+    private final ErsatzServer ersatzServer = new ErsatzServer({
+        feature new BasicAuthFeature()
+    })
     private final OkHttpClient client = new OkHttpClient()
 
     def 'BASIC auth'() {

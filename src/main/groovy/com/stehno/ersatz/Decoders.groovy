@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,16 +104,16 @@ class Decoders {
         MultipartRequestContent multipartRequest = new MultipartRequestContent()
 
         parts.each { part ->
-            DecodingContext partCtx = new DecodingContext(part.size, part.contentType, null, ctx.decoders)
+            DecodingContext partCtx = new DecodingContext(part.size, part.contentType, null, ctx.decoderChain)
 
             if (part.isFormField()) {
-                multipartRequest.part(part.fieldName, TEXT_PLAIN, ctx.decoders.findDecoder(TEXT_PLAIN).apply(part.get(), partCtx))
+                multipartRequest.part(part.fieldName, TEXT_PLAIN, ctx.decoderChain.resolve(TEXT_PLAIN).apply(part.get(), partCtx))
             } else {
                 multipartRequest.part(
                     part.fieldName,
                     part.name,
                     part.contentType,
-                    ctx.decoders.findDecoder(part.contentType).apply(part.get(), partCtx)
+                    ctx.decoderChain.resolve(part.contentType).apply(part.get(), partCtx)
                 )
             }
         }

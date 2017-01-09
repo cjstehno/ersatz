@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package com.stehno.ersatz;
 
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,8 +30,8 @@ import static com.stehno.ersatz.Decoders.getUtf8String;
 import static java.lang.String.format;
 import static okhttp3.MediaType.parse;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class ErsatzServerTest {
@@ -126,6 +125,19 @@ public class ErsatzServerTest {
         assertEquals("patched", resp.body().string());
 
         assertTrue(ersatzServer.verify());
+    }
+
+    @Test
+    public void alternateConfiguration() throws IOException {
+        ErsatzServer server = new ErsatzServer(config -> {
+            config.expects().get(startsWith("/hello")).responds().content("ok");
+        });
+        server.start();
+
+        okhttp3.Request request = new okhttp3.Request.Builder().get().url(server.getServerUrl() + "/hello/there").build();
+        assertEquals("ok", client.newCall(request).execute().body().string());
+
+        server.stop();
     }
 
     private String url(final String path) {

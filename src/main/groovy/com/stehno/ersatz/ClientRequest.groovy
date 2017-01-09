@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,13 @@ interface ClientRequest {
      * @return the HTTP method for the request
      */
     String getMethod()
+
+    /**
+     * Used to retrieve the request protocol, generally HTTP or HTTPS.
+     *
+     * @return the request protocol
+     */
+    String getProtocol()
 
     /**
      * Retrieves the request path.

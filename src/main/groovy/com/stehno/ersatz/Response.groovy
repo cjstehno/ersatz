@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
+
+import java.util.function.Function
 
 /**
  * Used to configure the provided response to an HTTP request.
@@ -133,11 +135,14 @@ interface Response {
     Map<String, String> getCookies()
 
     /**
-     * Used to retrieve the configured response content.
+     * Used to retrieve the configured response content. The content will be converted to a String based on the encoder configured for the
+     * content-type and content object type; if not encoder is found, the <code>toString()</code> method will be called on the content object.
      *
-     * @return the response content
+     * If no content exists, an empty string will be returned.
+     *
+     * @return the response content (encoded)
      */
-    Object getContent()
+    String getContent()
 
     /**
      * Used to retrieve the configured response code.
@@ -145,4 +150,33 @@ interface Response {
      * @return the response code
      */
     Integer getCode()
+
+    /**
+     * Registers a response body encoder for this response, which will override any matching encoders configured globally (or shared).
+     *
+     * param contentType the response content-type to be encoded
+     * @param objectType the response object type to be encoded
+     * @param encoder the encoder function
+     * @return a reference to this response configuration
+     */
+    Response encoder(String contentType, Class objectType, Function<Object, String> encoder)
+
+    /**
+     * Registers a response body encoder for this response, which will override any matching encoders configured globally (or shared).
+     *
+     * param contentType the response content-type to be encoded
+     * @param objectType the response object type to be encoded
+     * @param encoder the encoder function
+     * @return a reference to this response configuration
+     */
+    Response encoder(ContentType contentType, Class objectType, Function<Object, String> encoder)
+
+    /**
+     * Registers the collection of shared encoders. Encoders registered on the response itself, will override these, but the shared encoders will
+     * override any matching global encoders.
+     *
+     * @param encoders the shared encoders to be applied
+     * @return a reference to this response configuration
+     */
+    Response encoders(ResponseEncoders encoders)
 }
