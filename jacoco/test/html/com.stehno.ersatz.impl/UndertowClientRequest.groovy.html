@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UndertowClientRequest.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.impl</a> &gt; <span class="el_source">UndertowClientRequest.groovy</span></div><h1>UndertowClientRequest.groovy</h1><pre class="source lang-java linenums">/*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -38,12 +38,21 @@ class UndertowClientRequest implements ClientRequest {
     final HttpServerExchange exchange
 
     /**
+     * Used to retrieve the request protocol, generally HTTP or HTTPS.
+     *
+     * @return the request protocol
+     */
+    String getProtocol(){
+<span class="pc" id="L46">        exchange.getRequestScheme()</span>
+    }
+
+    /**
      * Retrieves the HTTP method for the request.
      *
      * @return the HTTP method for the request
      */
     String getMethod() {
-<span class="pc" id="L46">        exchange.requestMethod.toString()</span>
+<span class="pc" id="L55">        exchange.requestMethod.toString()</span>
     }
 
     /**
@@ -52,7 +61,7 @@ class UndertowClientRequest implements ClientRequest {
      * @return the request path
      */
     String getPath() {
-<span class="pc" id="L55">        exchange.requestPath</span>
+<span class="pc" id="L64">        exchange.requestPath</span>
     }
 
     /**
@@ -61,7 +70,7 @@ class UndertowClientRequest implements ClientRequest {
      * @return the query string parameters
      */
     Map&lt;String, Deque&lt;String&gt;&gt; getQueryParams() {
-<span class="pc" id="L64">        exchange.queryParameters</span>
+<span class="pc" id="L73">        exchange.queryParameters</span>
     }
 
     /**
@@ -70,7 +79,7 @@ class UndertowClientRequest implements ClientRequest {
      * @return the request headers
      */
     HeaderMap getHeaders() {
-<span class="pc" id="L73">        exchange.requestHeaders</span>
+<span class="pc" id="L82">        exchange.requestHeaders</span>
     }
 
     /**
@@ -79,7 +88,7 @@ class UndertowClientRequest implements ClientRequest {
      * @return the request cookies
      */
     Map&lt;String, Cookie&gt; getCookies() {
-<span class="pc" id="L82">        exchange.requestCookies</span>
+<span class="pc" id="L91">        exchange.requestCookies</span>
     }
 
     /**
@@ -89,21 +98,21 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Memoized
     byte[] getBody() {
-<span class="fc" id="L92">        byte[] bytes = null</span>
+<span class="fc" id="L101">        byte[] bytes = null</span>
 
-<span class="fc" id="L94">        exchange.requestReceiver.receiveFullBytes(new Receiver.FullBytesCallback() {</span>
+<span class="fc" id="L103">        exchange.requestReceiver.receiveFullBytes(new Receiver.FullBytesCallback() {</span>
             @Override
             void handle(final HttpServerExchange exch, byte[] message) {
-<span class="fc" id="L97">                bytes = message</span>
+<span class="fc" id="L106">                bytes = message</span>
             }
         })
 
-<span class="pc" id="L101">        bytes</span>
+<span class="pc" id="L110">        bytes</span>
     }
 
     @Override
     String toString() {
-<span class="pc bfc" id="L106" title="All 2 branches covered.">        &quot;{ $method $path (query=$queryParams, headers=$headers, cookies=$cookies): ${body ? new String(body).take(1000) : '&lt;empty&gt;'} }&quot;</span>
+<span class="pc bfc" id="L115" title="All 2 branches covered.">        &quot;{ $method $path (query=$queryParams, headers=$headers, cookies=$cookies): ${body ? new String(body).take(1000) : '&lt;empty&gt;'} }&quot;</span>
     }
 
     /**
@@ -113,7 +122,7 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Override
     long getContentLength() {
-<span class="pc" id="L116">        exchange.requestContentLength</span>
+<span class="pc" id="L125">        exchange.requestContentLength</span>
     }
 
     /**
@@ -123,7 +132,7 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Override
     String getCharacterEncoding() {
-<span class="pc" id="L126">        exchange.requestCharset</span>
+<span class="pc" id="L135">        exchange.requestCharset</span>
     }
 
     /**
@@ -133,7 +142,7 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Override
     String getContentType() {
-<span class="pc" id="L136">        exchange.requestHeaders.get(CONTENT_TYPE_HEADER).first</span>
+<span class="pc" id="L145">        exchange.requestHeaders.get(CONTENT_TYPE_HEADER).first</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

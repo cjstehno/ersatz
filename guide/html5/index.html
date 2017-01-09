@@ -515,8 +515,8 @@ table.CodeRay td.code>pre{padding:0}
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
 <span id="email" class="email"><a href="mailto:chris@stehno.com">chris@stehno.com</a></span><br>
-<span id="revnumber">version 0.3.0,</span>
-<span id="revdate">December 2016</span>
+<span id="revnumber">version 0.4.0,</span>
+<span id="revdate">January 2017</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -535,6 +535,12 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_url_encoded_form_requests">Url-Encoded Form Requests</a></li>
 <li><a href="#_multipart_request_content">Multipart Request Content</a></li>
 <li><a href="#_multipart_response_content">Multipart Response Content</a></li>
+<li><a href="#_encoder_decoder_chains">Encoder/Decoder Chains</a></li>
+<li><a href="#_https_request_support">HTTPS Request Support</a>
+<ul class="sectlevel2">
+<li><a href="#_creating_a_custom_keystore">Creating a Custom Keystore</a></li>
+</ul>
+</li>
 <li><a href="#_feature_extensions">Feature Extensions</a></li>
 </ul>
 </div>
@@ -577,7 +583,7 @@ frameworks.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:0.3.0'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:0.4.0'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -695,6 +701,19 @@ defining the configurations.</p>
 <div class="paragraph">
 <p>Once the request expectations are configured, the server must be started by calling the <code>ErsatzServer</code> <code>start()</code> method. This will start the underlying
 embedded HTTP server and register the configured expectations. If the server is not started, you will receive connection errors during testing.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Some server configuration may be applied at construction-time by supplying a <code>Closure</code> (delegated to <code>ServerConfig</code>) or <code>Consumer&lt;ServerConfig&gt;</code>
+which will allow configuration of expectations and global encoders/decoders.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -953,7 +972,8 @@ provide a more flexible Hamcrest-based matching of the request body:</p>
 <div class="paragraph">
 <p>A key point in multipart request support are the "decoders", which are used to decode the incoming request content into an expected object type.
 Decoders are simply <code>BiFunction&lt;byte[], DecodingContext, Object&gt;</code> implementations - taking the incoming byte array, and a <code>DecodingContext</code> and
-returning the decoded <code>Object</code> instance. Decoders may be registered in a shared instance of <code>RequestDecoders</code> or configured on a per-request basis.</p>
+returning the decoded <code>Object</code> instance. Decoders may be registered in a shared instance of <code>RequestDecoders</code>, configured globally across the server
+instance or configured on a per-request basis.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -978,7 +998,8 @@ No decoders are provided by default, any used in the request content <em>must</e
 <div class="paragraph">
 <p>Multipart response content is supported, though most browsers do not fully support it - the expected use case would be a RESTful or other HTTP-based
 API. The response content will have the standard <code>multipart/form-data</code> content type and format. The response content parts are provided using an
-instance of the <code>MultipartResponseContent</code> class and configuring its parts and encoders.</p>
+instance of the <code>MultipartResponseContent</code> class along with the <code>Encoders.multipart</code> multipart response content encoder (configured on the server or
+response).</p>
 </div>
 <div class="paragraph">
 <p>The content parts are provided as "field" parts with only a field name and value, or as "file" parts with a field name, content-type, file name and
@@ -997,17 +1018,20 @@ response configuration. No part encoders are provided by default.</p>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">ersatz.expectations {
     get(<span class="string"><span class="delimiter">'</span><span class="content">/data</span><span class="delimiter">'</span></span>) {
-        responds().content(multipart {
-            <span class="comment">// configure the part encoders</span>
-            encoder TEXT_PLAIN, <span class="predefined-type">CharSequence</span>, { o -&gt; o <span class="keyword">as</span> <span class="predefined-type">String</span> }
-            encoder IMAGE_JPG, <span class="predefined-type">File</span>, { o -&gt; ((<span class="predefined-type">File</span>)o).bytes.encodeBase64() }
+        responder {
+            encoder ContentType.MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
+            content(multipart {
+                <span class="comment">// configure the part encoders</span>
+                encoder TEXT_PLAIN, <span class="predefined-type">CharSequence</span>, { o -&gt; o <span class="keyword">as</span> <span class="predefined-type">String</span> }
+                encoder IMAGE_JPG, <span class="predefined-type">File</span>, { o -&gt; ((<span class="predefined-type">File</span>)o).bytes.encodeBase64() }
 
-            <span class="comment">// a field part</span>
-            field <span class="string"><span class="delimiter">'</span><span class="content">comments</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">This is a cool image.</span><span class="delimiter">'</span></span>
+                <span class="comment">// a field part</span>
+                field <span class="string"><span class="delimiter">'</span><span class="content">comments</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">This is a cool image.</span><span class="delimiter">'</span></span>
 
-            <span class="comment">// a file part</span>
-            part <span class="string"><span class="delimiter">'</span><span class="content">image</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">test-image.jpg</span><span class="delimiter">'</span></span>, IMAGE_JPG, <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">'</span><span class="content">/test-image.jpg</span><span class="delimiter">'</span></span>), <span class="string"><span class="delimiter">'</span><span class="content">base64</span><span class="delimiter">'</span></span>
-        })
+                <span class="comment">// a file part</span>
+                part <span class="string"><span class="delimiter">'</span><span class="content">image</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">test-image.jpg</span><span class="delimiter">'</span></span>, IMAGE_JPG, <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">'</span><span class="content">/test-image.jpg</span><span class="delimiter">'</span></span>), <span class="string"><span class="delimiter">'</span><span class="content">base64</span><span class="delimiter">'</span></span>
+            })
+        }
     }
 }</code></pre>
 </div>
@@ -1037,6 +1061,98 @@ the unit tests).</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_encoder_decoder_chains">Encoder/Decoder Chains</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The request/response content body decoders/encoders are configured in a layered manner so that they may be configured and shared across multiple
+instances without copying the configuration.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Encoders/Decoders configured in the <code>ErsatzServer</code> constructor are considered "global" and will be used if no overriding handlers are configured.</p>
+</li>
+<li>
+<p>Encoders/Decoders configured in the request/response itself are considered "local" and will override any other configured handlers</p>
+</li>
+<li>
+<p>Other configurations are applied in a layered order based on where they are applied in the configuration DSL - the handlers are maintained as separate isolated instances and the actual handler is resolved at runtime.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_https_request_support">HTTPS Request Support</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>ErsatzServer</code> supports HTTPS requests when the <code>enableHttps()</code> configuration is set. This will setup both an HTTP and HTTPS listener both of
+which will have access to all configured expectations. In order to limit a request expectation to HTTP or HTTPS, the <code>procotol(String)</code> matcher method
+may be specified with the desired protocol, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
+    get(<span class="string"><span class="delimiter">'</span><span class="content">/something</span><span class="delimiter">'</span></span>).protocol(<span class="string"><span class="delimiter">'</span><span class="content">https</span><span class="delimiter">'</span></span>).responding(<span class="string"><span class="delimiter">'</span><span class="content">thing</span><span class="delimiter">'</span></span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>which will match an HTTPS request to <code>GET /something</code> and send a response of <code>thing</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+the HTTPS support is rudimentary and meant to test HTTPS endpoints, not any explicit features of HTTPS itself. Also your client will need to be able to ignore any self-signed certification issues in one way or another.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_creating_a_custom_keystore">Creating a Custom Keystore</h3>
+<div class="paragraph">
+<p>A default keystore is provided with the Ersatz library, and it should suffice for most cases; however, you may wish to provide your own custom keystore
+for whatever reason. A supported keystore file may be created using the following command:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>./keytool -genkey -alias &lt;NAME&gt; -keyalg RSA -keystore &lt;FILE_LOCATION&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where <code>&lt;NAME&gt;</code> is the key name and <code>&lt;FILE_LOCATION&gt;</code> is the location where the keystore file is to be created. You will be asked a few questions about
+the key being created. The default keystore name is <code>ersatz</code> and it has the following properties:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>CN=Ersatz, OU=Ersatz, O=Ersatz, L=Nowhere, ST=Nowhere, C=US</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Obviously, it is only for testing purposes.</p>
+</div>
+<div class="paragraph">
+<p>The keystore should then be provided during server configuration as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ErsatzServer server = <span class="keyword">new</span> ErsatzServer({
+    enableHttps()
+    keystore KEYSTORE_URL, KEYSTORE_PASS
+})</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where <code>KEYSTORE_URL</code> is the URL to your custom keystore file, and <code>KEYSTORE_PASS</code> is the password (maybe omitted if you used <code>ersatz</code> as the password).</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_feature_extensions">Feature Extensions</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1052,8 +1168,8 @@ authentication (username and password) as part of their matching.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.3.0<br>
-Last updated 2016-12-24 05:07:04 -06:00
+Version 0.4.0<br>
+Last updated 2017-01-09 07:51:18 -06:00
 </div>
 </div>
 </body>

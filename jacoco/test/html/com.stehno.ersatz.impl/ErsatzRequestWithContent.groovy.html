@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzRequestWithContent.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.impl</a> &gt; <span class="el_source">ErsatzRequestWithContent.groovy</span></div><h1>ErsatzRequestWithContent.groovy</h1><pre class="source lang-java linenums">/*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ContentType
-import com.stehno.ersatz.DecodingContext
-import com.stehno.ersatz.RequestDecoders
-import com.stehno.ersatz.RequestWithContent
+import com.stehno.ersatz.*
 import org.hamcrest.Matcher
 
 import java.util.function.BiFunction
@@ -32,7 +29,8 @@ import static org.hamcrest.Matchers.startsWith
 @SuppressWarnings('ConfusingMethodName')
 class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
-<span class="fc" id="L35">    private final RequestDecoders decoders = new RequestDecoders()</span>
+<span class="fc" id="L32">    private final RequestDecoders localDecoders = new RequestDecoders()</span>
+<span class="fc" id="L33">    private final DecoderChain decoderChain = new DecoderChain(localDecoders)</span>
 
     /**
      * Creates a request with the specified method and path.
@@ -40,48 +38,57 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
      * @param method the request method
      * @param pathMatcher the request path matcher
      */
-    ErsatzRequestWithContent(final String method, final Matcher&lt;String&gt; pathMatcher) {
-<span class="fc" id="L44">        super(method, pathMatcher)</span>
+    ErsatzRequestWithContent(
+        final String method,
+        final Matcher&lt;String&gt; pathMatcher,
+        final RequestDecoders globalDecoders = null,
+        final ResponseEncoders globalEncoders = null
+    ) {
+<span class="fc" id="L47">        super(method, pathMatcher, globalEncoders)</span>
+
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (globalDecoders) {</span>
+<span class="fc" id="L50">            decoderChain.last globalDecoders</span>
+        }
     }
 
     @Override
     RequestWithContent body(final Matcher&lt;Object&gt; bodyMatcher, final String contentType) {
-<span class="fc" id="L49">        addMatcher RequestMatcher.contentType(startsWith(contentType))</span>
-<span class="fc" id="L50">        addMatcher RequestMatcher.body(decoders, contentType, bodyMatcher)</span>
-<span class="pc" id="L51">        this</span>
+<span class="fc" id="L56">        addMatcher RequestMatcher.contentType(startsWith(contentType))</span>
+<span class="fc" id="L57">        addMatcher RequestMatcher.body(decoderChain, contentType, bodyMatcher)</span>
+<span class="pc" id="L58">        this</span>
     }
 
     @Override
     RequestWithContent body(final Object obj, final String contentType) {
-<span class="pc" id="L56">        body equalTo(obj), contentType</span>
+<span class="pc" id="L63">        body equalTo(obj), contentType</span>
     }
 
     @Override
     RequestWithContent body(final Matcher&lt;Object&gt; bodyMatcher, final ContentType contentType) {
-<span class="pc" id="L61">        body bodyMatcher, contentType.value</span>
+<span class="pc" id="L68">        body bodyMatcher, contentType.value</span>
     }
 
     @Override
     RequestWithContent body(final Object obj, final ContentType contentType) {
-<span class="pc" id="L66">        body obj, contentType.value</span>
+<span class="pc" id="L73">        body obj, contentType.value</span>
     }
 
     @Override
     RequestWithContent decoder(final String contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {
-<span class="fc" id="L71">        decoders.register(contentType, decoder)</span>
-<span class="pc" id="L72">        this</span>
+<span class="fc" id="L78">        localDecoders.register(contentType, decoder)</span>
+<span class="pc" id="L79">        this</span>
     }
 
     @Override
     RequestWithContent decoder(final ContentType contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {
-<span class="fc" id="L77">        decoders.register(contentType, decoder)</span>
-<span class="pc" id="L78">        this</span>
+<span class="fc" id="L84">        localDecoders.register(contentType, decoder)</span>
+<span class="pc" id="L85">        this</span>
     }
 
     @Override
     RequestWithContent decoders(final RequestDecoders requestDecoders) {
-<span class="fc" id="L83">        decoders.parent = requestDecoders</span>
-<span class="pc" id="L84">        this</span>
+<span class="fc" id="L90">        decoderChain.second(requestDecoders)</span>
+<span class="pc" id="L91">        this</span>
     }
 }
 

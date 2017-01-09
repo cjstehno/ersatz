@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzResponse.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.impl</a> &gt; <span class="el_source">ErsatzResponse.groovy</span></div><h1>ErsatzResponse.groovy</h1><pre class="source lang-java linenums">/*
- * Copyright (C) 2016 Christopher J. Stehno
+ * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -18,118 +18,155 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.ContentType
 import com.stehno.ersatz.MultipartResponseContent
 import com.stehno.ersatz.Response
+import com.stehno.ersatz.ResponseEncoders
 import groovy.transform.CompileStatic
-import groovy.transform.TupleConstructor
+
+import java.util.function.Function
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
+import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
 /**
  * Implementation of the &lt;code&gt;Response&lt;/code&gt; interface.
  */
-@CompileStatic @TupleConstructor
+@CompileStatic @SuppressWarnings('ConfusingMethodName')
 class ErsatzResponse implements Response {
 
-    /**
-     * Whether or not this instance defines an empty response.
-     */
-    final boolean empty
+    private final boolean empty
+<span class="fc" id="L36">    private final ResponseEncoders localEncoders = new ResponseEncoders()</span>
+<span class="fc" id="L37">    private final EncoderChain encoderChain = new EncoderChain(localEncoders)</span>
+
+    ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders = null) {
+<span class="fc" id="L40">        this.empty = empty</span>
+
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (globalEncoders) {</span>
+<span class="fc" id="L43">            encoderChain.last(globalEncoders)</span>
+        }
+    }
 
     private final Map&lt;String, String&gt; headers = [:]
     private final Map&lt;String, String&gt; cookies = [:]
     private Object content
     private Integer code = 200
 
-    @Override @SuppressWarnings('ConfusingMethodName')
+    @Override
     Response content(final Object content) {
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (empty) {</span>
-<span class="fc" id="L45">            throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (empty) {</span>
+<span class="fc" id="L55">            throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')</span>
         }
 
-<span class="fc" id="L48">        this.content = content</span>
+<span class="fc" id="L58">        this.content = content</span>
 
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (content instanceof MultipartResponseContent) {</span>
-<span class="fc" id="L51">            contentType(content.contentType)</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (content instanceof MultipartResponseContent) {</span>
+            // apply the configured encoders
+<span class="fc" id="L62">            encoderChain.items().each { ResponseEncoders re -&gt;</span>
+<span class="pc" id="L63">                (content as ErsatzMultipartResponseContent).encoders(re)</span>
+            }
+
+            // apply the content type (with boundary)
+<span class="fc" id="L67">            contentType((content as ErsatzMultipartResponseContent).contentType)</span>
         }
 
-<span class="pc" id="L54">        this</span>
+<span class="pc" id="L70">        this</span>
     }
 
-    @Override @SuppressWarnings('ConfusingMethodName')
+    @Override
     Response content(final Object content, final String contentType) {
-<span class="fc" id="L59">        this.content(content)</span>
-<span class="pc" id="L60">        this.contentType(contentType)</span>
+<span class="fc" id="L75">        this.content(content)</span>
+<span class="pc" id="L76">        this.contentType(contentType)</span>
     }
 
-    @Override @SuppressWarnings('ConfusingMethodName')
+    @Override
     Response content(final Object content, final ContentType contentType) {
-<span class="nc" id="L65">        this.content(content, contentType.value)</span>
+<span class="nc" id="L81">        this.content(content, contentType.value)</span>
     }
 
     @Override
     Response header(final String name, final String value) {
-<span class="fc" id="L70">        headers[name] = value</span>
-<span class="pc" id="L71">        this</span>
+<span class="fc" id="L86">        headers[name] = value</span>
+<span class="pc" id="L87">        this</span>
     }
 
-    @Override @SuppressWarnings('ConfusingMethodName')
+    @Override
     Response headers(final Map&lt;String, String&gt; headers) {
-<span class="fc" id="L76">        this.headers.putAll(headers)</span>
-<span class="pc" id="L77">        this</span>
+<span class="fc" id="L92">        this.headers.putAll(headers)</span>
+<span class="pc" id="L93">        this</span>
     }
 
-    @Override @SuppressWarnings('ConfusingMethodName')
+    @Override
     Response cookies(final Map&lt;String, String&gt; cookies) {
-<span class="fc" id="L82">        this.cookies.putAll(cookies)</span>
-<span class="pc" id="L83">        this</span>
+<span class="fc" id="L98">        this.cookies.putAll(cookies)</span>
+<span class="pc" id="L99">        this</span>
     }
 
     @Override
     Response cookie(final String name, final String value) {
-<span class="fc" id="L88">        cookies[name] = value</span>
-<span class="pc" id="L89">        this</span>
+<span class="fc" id="L104">        cookies[name] = value</span>
+<span class="pc" id="L105">        this</span>
     }
 
     @Override
     Response contentType(final String contentType) {
-<span class="fc" id="L94">        header(CONTENT_TYPE_HEADER, contentType)</span>
-<span class="pc" id="L95">        this</span>
+<span class="fc" id="L110">        header(CONTENT_TYPE_HEADER, contentType)</span>
+<span class="pc" id="L111">        this</span>
     }
 
     @Override
     Response contentType(final ContentType contentType) {
-<span class="nc" id="L100">        header(CONTENT_TYPE_HEADER, contentType.value)</span>
-<span class="nc" id="L101">        this</span>
+<span class="nc" id="L116">        header(CONTENT_TYPE_HEADER, contentType.value)</span>
+<span class="nc" id="L117">        this</span>
     }
 
     @Override
     String getContentType() {
-<span class="pc" id="L106">        headers[CONTENT_TYPE_HEADER]</span>
+<span class="pc bfc" id="L122" title="All 2 branches covered.">        headers[CONTENT_TYPE_HEADER] ?: TEXT_PLAIN.value</span>
     }
 
-    @SuppressWarnings('ConfusingMethodName')
     Response code(int code) {
-<span class="fc" id="L111">        this.code = code</span>
-<span class="pc" id="L112">        this</span>
+<span class="fc" id="L126">        this.code = code</span>
+<span class="pc" id="L127">        this</span>
     }
 
     @Override
     Map&lt;String, String&gt; getHeaders() {
-<span class="pc" id="L117">        headers.asImmutable()</span>
+<span class="pc" id="L132">        headers.asImmutable()</span>
     }
 
     @Override
     Map&lt;String, String&gt; getCookies() {
-<span class="pc" id="L122">        cookies.asImmutable()</span>
+<span class="pc" id="L137">        cookies.asImmutable()</span>
     }
 
     @Override
-    Object getContent() {
-<span class="pc" id="L127">        content</span>
+    String getContent() {
+<span class="fc bfc" id="L142" title="All 4 branches covered.">        if (content != null) {</span>
+<span class="fc bfc" id="L143" title="All 4 branches covered.">            return encoderChain.resolve(contentType, content.class)?.apply(content) ?: (content as String)</span>
+
+        }
+<span class="pc" id="L146">        return ''</span>
     }
 
     @Override
     Integer getCode() {
-<span class="pc" id="L132">        code</span>
+<span class="pc" id="L151">        code</span>
+    }
+
+    @Override
+    Response encoder(final String contentType, final Class objectType, final Function&lt;Object, String&gt; encoder) {
+<span class="nc" id="L156">        localEncoders.register(contentType, objectType, encoder)</span>
+<span class="nc" id="L157">        this</span>
+    }
+
+    @Override
+    Response encoder(final ContentType contentType, final Class objectType, final Function&lt;Object, String&gt; encoder) {
+<span class="nc" id="L162">        localEncoders.register(contentType, objectType, encoder)</span>
+<span class="nc" id="L163">        this</span>
+    }
+
+    @Override
+    Response encoders(final ResponseEncoders encoders) {
+<span class="nc" id="L168">        encoderChain.second(encoders)</span>
+<span class="nc" id="L169">        this</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
