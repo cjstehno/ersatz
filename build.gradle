@@ -12,7 +12,7 @@ plugins {
 }
 
 group = 'com.stehno.ersatz'
-version = '0.4.1'
+version = '0.4.2'
 
 sourceCompatibility = 8
 targetCompatibility = 8
@@ -26,7 +26,7 @@ configurations {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile 'org.codehaus.groovy:groovy-all:2.4.8'
     compile 'io.undertow:undertow-core:1.4.6.Final'
 
     compile 'ch.qos.logback:logback-classic:1.1.7'
@@ -40,12 +40,12 @@ dependencies {
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'cglib:cglib-nodep:3.2.4'
 
-    groovyDoc 'org.codehaus.groovy:groovy-groovydoc:2.4.7'
-    groovyDoc 'org.codehaus.groovy:groovy-ant:2.4.7'
+    groovyDoc 'org.codehaus.groovy:groovy-groovydoc:2.4.8'
+    groovyDoc 'org.codehaus.groovy:groovy-ant:2.4.8'
 
     codenarc(
         'org.codenarc:CodeNarc:0.26.0',
-        'org.codehaus.groovy:groovy-all:2.4.7'
+        'org.codehaus.groovy:groovy-all:2.4.8'
     )
 }
 

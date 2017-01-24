@@ -19,14 +19,14 @@ boiler-plate code.
 
 For Gradle:
 
-    testCompile 'com.stehno.ersatz:ersatz:0.4.1'
+    testCompile 'com.stehno.ersatz:ersatz:0.4.2'
 
 For Maven:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>0.4.1</version>
+        <version>0.4.2</version>
     </dependency>
 
 ## Build Instructions
