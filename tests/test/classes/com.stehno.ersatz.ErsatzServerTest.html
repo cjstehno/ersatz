@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.133s</div>
+<div class="counter">0.131s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,12 +79,12 @@
 </thead>
 <tr>
 <td class="success">alternateConfiguration</td>
-<td>0.011s</td>
+<td>0.013s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">prototype</td>
-<td>0.122s</td>
+<td>0.118s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -92,56 +92,56 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>18:04:41.324 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@6aaa522a
-18:04:41.326 [XNIO-7 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-2', selector sun.nio.ch.EPollSelectorImpl@72172b1
-18:04:41.326 [XNIO-7 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-1', selector sun.nio.ch.EPollSelectorImpl@71c32b6e
-18:04:41.326 [XNIO-7 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-3', selector sun.nio.ch.EPollSelectorImpl@23d47255
-18:04:41.326 [XNIO-7 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-4', selector sun.nio.ch.EPollSelectorImpl@22fce376
-18:04:41.326 [XNIO-7 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-5', selector sun.nio.ch.EPollSelectorImpl@6ab852f9
-18:04:41.326 [XNIO-7 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-8', selector sun.nio.ch.EPollSelectorImpl@79efa4b0
-18:04:41.326 [XNIO-7 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-6', selector sun.nio.ch.EPollSelectorImpl@5e673c57
-18:04:41.326 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-18:04:41.326 [XNIO-7 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 Accept', selector sun.nio.ch.EPollSelectorImpl@519d5cda
-18:04:41.328 [XNIO-7 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /hello/there (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:44099]}, cookies=[:]): &lt;empty&gt; }
-18:04:41.329 [XNIO-7 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-7', selector sun.nio.ch.EPollSelectorImpl@46f80990
-18:04:41.329 [XNIO-7 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: ok
-18:04:41.329 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@6aaa522a
-18:04:41.393 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@4bf1c526
-18:04:41.394 [XNIO-8 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-2', selector sun.nio.ch.EPollSelectorImpl@6395ecfa
-18:04:41.394 [XNIO-8 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-1', selector sun.nio.ch.EPollSelectorImpl@3bf97527
-18:04:41.395 [XNIO-8 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-3', selector sun.nio.ch.EPollSelectorImpl@4a0e37ef
-18:04:41.395 [XNIO-8 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-4', selector sun.nio.ch.EPollSelectorImpl@522aadc6
-18:04:41.395 [XNIO-8 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-5', selector sun.nio.ch.EPollSelectorImpl@65e3995a
-18:04:41.395 [XNIO-8 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-6', selector sun.nio.ch.EPollSelectorImpl@4ccd1c23
-18:04:41.395 [XNIO-8 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-7', selector sun.nio.ch.EPollSelectorImpl@132671d4
-18:04:41.395 [XNIO-8 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-8', selector sun.nio.ch.EPollSelectorImpl@7c7bbaa9
-18:04:41.395 [XNIO-8 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 Accept', selector sun.nio.ch.EPollSelectorImpl@46436da8
-18:04:41.395 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-18:04:41.397 [XNIO-8 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:37913]}, cookies=[:]): &lt;empty&gt; }
-18:04:41.399 [XNIO-8 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Ersatz!!
-18:04:41.401 [XNIO-8 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:37913]}, cookies=[:]): &lt;empty&gt; }
-18:04:41.401 [XNIO-8 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is another response
-18:04:41.402 [XNIO-8 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bar (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:37913]}, cookies=[:]): &lt;empty&gt; }
-18:04:41.403 [XNIO-8 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Bar!!
-18:04:41.404 [XNIO-8 task-4] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bar (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:37913]}, cookies=[:]): &lt;empty&gt; }
-18:04:41.405 [XNIO-8 task-4] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Bar!!
-18:04:41.406 [XNIO-8 task-5] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /baz (query=[alpha:[42]], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:37913]}, cookies=[:]): &lt;empty&gt; }
-18:04:41.407 [XNIO-8 task-5] DEBUG com.stehno.ersatz.ErsatzServer - Response: The answer is 42
-18:04:41.408 [XNIO-8 task-6] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bing (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], bravo=[hello], User-Agent=[okhttp/3.5.0], Host=[localhost:37913]}, cookies=[:]): &lt;empty&gt; }
-18:04:41.412 [XNIO-8 task-6] DEBUG com.stehno.ersatz.ErsatzServer - Response: Heads up!
-18:04:41.414 [XNIO-8 task-7] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /cookie/monster (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Cookie=[flavor=chocolate-chip], User-Agent=[okhttp/3.5.0], Host=[localhost:37913]}, cookies=[flavor:io.undertow.server.handlers.CookieImpl@560beaeb]): &lt;empty&gt; }
-18:04:41.418 [XNIO-8 task-7] DEBUG com.stehno.ersatz.ErsatzServer - Response: I love cookies!
-18:04:41.421 [XNIO-8 task-8] DEBUG com.stehno.ersatz.ErsatzServer - Request: { HEAD /head (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:37913]}, cookies=[:]): &lt;empty&gt; }
-18:04:41.422 [XNIO-8 task-8] DEBUG com.stehno.ersatz.ErsatzServer - Response: 
-18:04:41.429 [XNIO-8 task-9] DEBUG com.stehno.ersatz.ErsatzServer - Request: { POST /form (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[12], User-Agent=[okhttp/3.5.0], Host=[localhost:37913]}, cookies=[:]): some content }
-18:04:41.441 [XNIO-8 task-9] DEBUG com.stehno.ersatz.ErsatzServer - Response: response
-18:04:41.444 [XNIO-8 task-10] DEBUG com.stehno.ersatz.ErsatzServer - Request: { PUT /update (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[12], User-Agent=[okhttp/3.5.0], Host=[localhost:37913]}, cookies=[:]): more content }
-18:04:41.445 [XNIO-8 task-10] DEBUG com.stehno.ersatz.ErsatzServer - Response: updated
-18:04:41.447 [XNIO-8 task-11] DEBUG com.stehno.ersatz.ErsatzServer - Request: { DELETE /remove (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Length=[0], User-Agent=[okhttp/3.5.0], Host=[localhost:37913]}, cookies=[:]): &lt;empty&gt; }
-18:04:41.448 [XNIO-8 task-11] DEBUG com.stehno.ersatz.ErsatzServer - Response: removed
-18:04:41.450 [XNIO-8 task-12] DEBUG com.stehno.ersatz.ErsatzServer - Request: { POST /patch (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[8], User-Agent=[okhttp/3.5.0], Host=[localhost:37913]}, cookies=[:]): a change }
-18:04:41.452 [XNIO-8 task-12] DEBUG com.stehno.ersatz.ErsatzServer - Response: patched
-18:04:41.452 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@4bf1c526
+<pre>18:40:49.343 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@3970a2c4
+18:40:49.345 [XNIO-7 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-1', selector sun.nio.ch.EPollSelectorImpl@4e4c9172
+18:40:49.345 [XNIO-7 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-2', selector sun.nio.ch.EPollSelectorImpl@7d9ac822
+18:40:49.345 [XNIO-7 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-6', selector sun.nio.ch.EPollSelectorImpl@3a83522b
+18:40:49.345 [XNIO-7 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-7', selector sun.nio.ch.EPollSelectorImpl@5e691193
+18:40:49.345 [XNIO-7 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-5', selector sun.nio.ch.EPollSelectorImpl@5a165c50
+18:40:49.346 [XNIO-7 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-8', selector sun.nio.ch.EPollSelectorImpl@f11da1a
+18:40:49.346 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+18:40:49.346 [XNIO-7 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-4', selector sun.nio.ch.EPollSelectorImpl@7fe163fc
+18:40:49.346 [XNIO-7 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-3', selector sun.nio.ch.EPollSelectorImpl@22c3aa15
+18:40:49.346 [XNIO-7 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 Accept', selector sun.nio.ch.EPollSelectorImpl@20d369a6
+18:40:49.349 [XNIO-7 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /hello/there (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:37815]}, cookies=[:]): &lt;empty&gt; }
+18:40:49.350 [XNIO-7 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: ok
+18:40:49.351 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@3970a2c4
+18:40:49.407 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@2f6be576
+18:40:49.409 [XNIO-8 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-2', selector sun.nio.ch.EPollSelectorImpl@7e4b4314
+18:40:49.409 [XNIO-8 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-1', selector sun.nio.ch.EPollSelectorImpl@c9dd87f
+18:40:49.409 [XNIO-8 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-3', selector sun.nio.ch.EPollSelectorImpl@1c97b0b5
+18:40:49.410 [XNIO-8 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-4', selector sun.nio.ch.EPollSelectorImpl@53203cc9
+18:40:49.410 [XNIO-8 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-5', selector sun.nio.ch.EPollSelectorImpl@2cfc758a
+18:40:49.413 [XNIO-8 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-6', selector sun.nio.ch.EPollSelectorImpl@ac10ab0
+18:40:49.413 [XNIO-8 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-7', selector sun.nio.ch.EPollSelectorImpl@f0cd6d6
+18:40:49.413 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+18:40:49.413 [XNIO-8 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 Accept', selector sun.nio.ch.EPollSelectorImpl@1a9fa5d5
+18:40:49.413 [XNIO-8 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-8', selector sun.nio.ch.EPollSelectorImpl@63e55942
+18:40:49.415 [XNIO-8 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35591]}, cookies=[:]): &lt;empty&gt; }
+18:40:49.416 [XNIO-8 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Ersatz!!
+18:40:49.417 [XNIO-8 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35591]}, cookies=[:]): &lt;empty&gt; }
+18:40:49.418 [XNIO-8 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is another response
+18:40:49.419 [XNIO-8 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bar (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35591]}, cookies=[:]): &lt;empty&gt; }
+18:40:49.420 [XNIO-8 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Bar!!
+18:40:49.421 [XNIO-8 task-4] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bar (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35591]}, cookies=[:]): &lt;empty&gt; }
+18:40:49.422 [XNIO-8 task-4] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Bar!!
+18:40:49.424 [XNIO-8 task-5] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /baz (query=[alpha:[42]], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35591]}, cookies=[:]): &lt;empty&gt; }
+18:40:49.426 [XNIO-8 task-5] DEBUG com.stehno.ersatz.ErsatzServer - Response: The answer is 42
+18:40:49.427 [XNIO-8 task-6] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bing (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], bravo=[hello], User-Agent=[okhttp/3.5.0], Host=[localhost:35591]}, cookies=[:]): &lt;empty&gt; }
+18:40:49.431 [XNIO-8 task-6] DEBUG com.stehno.ersatz.ErsatzServer - Response: Heads up!
+18:40:49.433 [XNIO-8 task-7] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /cookie/monster (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Cookie=[flavor=chocolate-chip], User-Agent=[okhttp/3.5.0], Host=[localhost:35591]}, cookies=[flavor:io.undertow.server.handlers.CookieImpl@52866e6]): &lt;empty&gt; }
+18:40:49.437 [XNIO-8 task-7] DEBUG com.stehno.ersatz.ErsatzServer - Response: I love cookies!
+18:40:49.440 [XNIO-8 task-8] DEBUG com.stehno.ersatz.ErsatzServer - Request: { HEAD /head (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35591]}, cookies=[:]): &lt;empty&gt; }
+18:40:49.441 [XNIO-8 task-8] DEBUG com.stehno.ersatz.ErsatzServer - Response: 
+18:40:49.447 [XNIO-8 task-9] DEBUG com.stehno.ersatz.ErsatzServer - Request: { POST /form (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[12], User-Agent=[okhttp/3.5.0], Host=[localhost:35591]}, cookies=[:]): some content }
+18:40:49.457 [XNIO-8 task-9] DEBUG com.stehno.ersatz.ErsatzServer - Response: response
+18:40:49.460 [XNIO-8 task-10] DEBUG com.stehno.ersatz.ErsatzServer - Request: { PUT /update (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[12], User-Agent=[okhttp/3.5.0], Host=[localhost:35591]}, cookies=[:]): more content }
+18:40:49.462 [XNIO-8 task-10] DEBUG com.stehno.ersatz.ErsatzServer - Response: updated
+18:40:49.464 [XNIO-8 task-11] DEBUG com.stehno.ersatz.ErsatzServer - Request: { DELETE /remove (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Length=[0], User-Agent=[okhttp/3.5.0], Host=[localhost:35591]}, cookies=[:]): &lt;empty&gt; }
+18:40:49.465 [XNIO-8 task-11] DEBUG com.stehno.ersatz.ErsatzServer - Response: removed
+18:40:49.467 [XNIO-8 task-12] DEBUG com.stehno.ersatz.ErsatzServer - Request: { POST /patch (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[8], User-Agent=[okhttp/3.5.0], Host=[localhost:35591]}, cookies=[:]): a change }
+18:40:49.469 [XNIO-8 task-12] DEBUG com.stehno.ersatz.ErsatzServer - Response: patched
+18:40:49.469 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@2f6be576
 </pre>
 </span>
 </div>
@@ -153,7 +153,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 3.2.1</a> at Jan 23, 2017 6:04:42 PM</p>
+<a href="http://www.gradle.org">Gradle 3.3</a> at Jan 23, 2017 6:40:50 PM</p>
 </div>
 </div>
 </body>

@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.448s</div>
+<div class="counter">0.466s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,27 +79,27 @@
 </thead>
 <tr>
 <td class="success">alternate construction</td>
-<td>0.014s</td>
+<td>0.015s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">multipart binary</td>
-<td>0.247s</td>
+<td>0.245s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">multipart text</td>
-<td>0.056s</td>
-<td class="success">passed</td>
-</tr>
-<tr>
-<td class="success">prototype: functional</td>
 <td>0.064s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
+<td class="success">prototype: functional</td>
+<td>0.056s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
 <td class="success">prototype: groovy</td>
-<td>0.067s</td>
+<td>0.086s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -107,55 +107,55 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>18:04:40.861 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@1c8c5a85
-18:04:40.863 [XNIO-2 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-2', selector sun.nio.ch.EPollSelectorImpl@1169d511
-18:04:40.864 [XNIO-2 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-1', selector sun.nio.ch.EPollSelectorImpl@32f8e330
-18:04:40.864 [XNIO-2 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-3', selector sun.nio.ch.EPollSelectorImpl@1ce39880
-18:04:40.864 [XNIO-2 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-5', selector sun.nio.ch.EPollSelectorImpl@6ff419f7
-18:04:40.864 [XNIO-2 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-6', selector sun.nio.ch.EPollSelectorImpl@64e996a1
-18:04:40.864 [XNIO-2 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-8', selector sun.nio.ch.EPollSelectorImpl@6a59103f
-18:04:40.864 [XNIO-2 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-4', selector sun.nio.ch.EPollSelectorImpl@4f06871f
-18:04:40.864 [XNIO-2 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-7', selector sun.nio.ch.EPollSelectorImpl@1b130f70
-18:04:40.865 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-18:04:40.865 [XNIO-2 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 Accept', selector sun.nio.ch.EPollSelectorImpl@381ae631
-18:04:40.885 [XNIO-2 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_102], Host=[localhost:40145]}, cookies=[:]): &lt;empty&gt; }
-18:04:40.887 [XNIO-2 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Ersatz!!
-18:04:40.892 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@1c8c5a85
-18:04:40.921 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@76f810fa
-18:04:40.923 [XNIO-3 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-1', selector sun.nio.ch.EPollSelectorImpl@5e3a2e05
-18:04:40.923 [XNIO-3 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-2', selector sun.nio.ch.EPollSelectorImpl@7578ef4a
-18:04:40.923 [XNIO-3 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-3', selector sun.nio.ch.EPollSelectorImpl@3d2cdab5
-18:04:40.923 [XNIO-3 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-4', selector sun.nio.ch.EPollSelectorImpl@2f27d9c5
-18:04:40.923 [XNIO-3 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-5', selector sun.nio.ch.EPollSelectorImpl@22cff41f
-18:04:40.924 [XNIO-3 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-6', selector sun.nio.ch.EPollSelectorImpl@7cacb317
-18:04:40.924 [XNIO-3 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-7', selector sun.nio.ch.EPollSelectorImpl@7acd6655
-18:04:40.924 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-18:04:40.924 [XNIO-3 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-8', selector sun.nio.ch.EPollSelectorImpl@370a1ec9
-18:04:40.924 [XNIO-3 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 Accept', selector sun.nio.ch.EPollSelectorImpl@3c176301
-18:04:40.927 [XNIO-3 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:41329]}, cookies=[:]): &lt;empty&gt; }
-18:04:40.927 [XNIO-3 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Ersatz!!
-18:04:40.929 [XNIO-3 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:41329]}, cookies=[:]): &lt;empty&gt; }
-18:04:40.930 [XNIO-3 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is another response
-18:04:40.931 [XNIO-3 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bar (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:41329]}, cookies=[:]): &lt;empty&gt; }
-18:04:40.931 [XNIO-3 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Bar!!
-18:04:40.934 [XNIO-3 task-4] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bar (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:41329]}, cookies=[:]): &lt;empty&gt; }
-18:04:40.940 [XNIO-3 task-4] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Bar!!
-18:04:40.944 [XNIO-3 task-5] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /baz (query=[alpha:[42]], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:41329]}, cookies=[:]): &lt;empty&gt; }
-18:04:40.955 [XNIO-3 task-5] DEBUG com.stehno.ersatz.ErsatzServer - Response: The answer is 42
-18:04:40.961 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@76f810fa
-18:04:40.981 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@46aab196
-18:04:40.982 [XNIO-4 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-2', selector sun.nio.ch.EPollSelectorImpl@68ff32da
-18:04:40.982 [XNIO-4 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-1', selector sun.nio.ch.EPollSelectorImpl@20f12915
-18:04:40.982 [XNIO-4 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-3', selector sun.nio.ch.EPollSelectorImpl@67c96ec1
-18:04:40.983 [XNIO-4 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-4', selector sun.nio.ch.EPollSelectorImpl@7124c91c
-18:04:40.983 [XNIO-4 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-5', selector sun.nio.ch.EPollSelectorImpl@48b8c129
-18:04:40.983 [XNIO-4 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-6', selector sun.nio.ch.EPollSelectorImpl@47944806
-18:04:40.983 [XNIO-4 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-7', selector sun.nio.ch.EPollSelectorImpl@587f45d7
-18:04:40.983 [XNIO-4 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-8', selector sun.nio.ch.EPollSelectorImpl@1ab44bda
-18:04:40.983 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-18:04:40.983 [XNIO-4 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 Accept', selector sun.nio.ch.EPollSelectorImpl@7f05d730
-18:04:40.986 [XNIO-4 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /data (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:38939]}, cookies=[:]): &lt;empty&gt; }
-18:04:41.011 [XNIO-4 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: --t8xOJjySKePdRgBHYD
+<pre>18:40:48.857 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@92fe0bc
+18:40:48.859 [XNIO-2 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-1', selector sun.nio.ch.EPollSelectorImpl@70f64856
+18:40:48.859 [XNIO-2 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-2', selector sun.nio.ch.EPollSelectorImpl@5f16f86a
+18:40:48.859 [XNIO-2 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-3', selector sun.nio.ch.EPollSelectorImpl@2b69282a
+18:40:48.859 [XNIO-2 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-5', selector sun.nio.ch.EPollSelectorImpl@36bcf087
+18:40:48.860 [XNIO-2 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-6', selector sun.nio.ch.EPollSelectorImpl@fb48952
+18:40:48.860 [XNIO-2 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-7', selector sun.nio.ch.EPollSelectorImpl@cd4dd46
+18:40:48.860 [XNIO-2 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-4', selector sun.nio.ch.EPollSelectorImpl@623adb58
+18:40:48.860 [XNIO-2 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-8', selector sun.nio.ch.EPollSelectorImpl@10a2af6d
+18:40:48.860 [XNIO-2 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 Accept', selector sun.nio.ch.EPollSelectorImpl@5afe38dd
+18:40:48.860 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+18:40:48.878 [XNIO-2 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_102], Host=[localhost:36201]}, cookies=[:]): &lt;empty&gt; }
+18:40:48.881 [XNIO-2 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Ersatz!!
+18:40:48.886 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@92fe0bc
+18:40:48.921 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@3fa3c170
+18:40:48.923 [XNIO-3 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-1', selector sun.nio.ch.EPollSelectorImpl@5416d333
+18:40:48.924 [XNIO-3 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-2', selector sun.nio.ch.EPollSelectorImpl@64e4f1ef
+18:40:48.924 [XNIO-3 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-3', selector sun.nio.ch.EPollSelectorImpl@585fbfaa
+18:40:48.924 [XNIO-3 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-4', selector sun.nio.ch.EPollSelectorImpl@4d99bd98
+18:40:48.924 [XNIO-3 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-5', selector sun.nio.ch.EPollSelectorImpl@60b58149
+18:40:48.924 [XNIO-3 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-6', selector sun.nio.ch.EPollSelectorImpl@aa6e971
+18:40:48.925 [XNIO-3 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-7', selector sun.nio.ch.EPollSelectorImpl@4d7426e0
+18:40:48.925 [XNIO-3 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-8', selector sun.nio.ch.EPollSelectorImpl@5918b2f4
+18:40:48.925 [XNIO-3 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 Accept', selector sun.nio.ch.EPollSelectorImpl@378626fe
+18:40:48.925 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+18:40:48.930 [XNIO-3 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:45687]}, cookies=[:]): &lt;empty&gt; }
+18:40:48.931 [XNIO-3 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Ersatz!!
+18:40:48.935 [XNIO-3 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:45687]}, cookies=[:]): &lt;empty&gt; }
+18:40:48.936 [XNIO-3 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is another response
+18:40:48.938 [XNIO-3 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bar (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:45687]}, cookies=[:]): &lt;empty&gt; }
+18:40:48.941 [XNIO-3 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Bar!!
+18:40:48.945 [XNIO-3 task-4] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bar (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:45687]}, cookies=[:]): &lt;empty&gt; }
+18:40:48.951 [XNIO-3 task-4] DEBUG com.stehno.ersatz.ErsatzServer - Response: This is Bar!!
+18:40:48.955 [XNIO-3 task-5] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /baz (query=[alpha:[42]], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:45687]}, cookies=[:]): &lt;empty&gt; }
+18:40:48.968 [XNIO-3 task-5] DEBUG com.stehno.ersatz.ErsatzServer - Response: The answer is 42
+18:40:48.976 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@3fa3c170
+18:40:49.003 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@8a4a8b
+18:40:49.004 [XNIO-4 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-1', selector sun.nio.ch.EPollSelectorImpl@5dee0bf2
+18:40:49.004 [XNIO-4 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-2', selector sun.nio.ch.EPollSelectorImpl@17926a5e
+18:40:49.005 [XNIO-4 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-3', selector sun.nio.ch.EPollSelectorImpl@b9e1f5d
+18:40:49.005 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+18:40:49.005 [XNIO-4 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-5', selector sun.nio.ch.EPollSelectorImpl@4d472b0b
+18:40:49.005 [XNIO-4 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-6', selector sun.nio.ch.EPollSelectorImpl@4f313545
+18:40:49.005 [XNIO-4 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-8', selector sun.nio.ch.EPollSelectorImpl@3c233246
+18:40:49.005 [XNIO-4 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-7', selector sun.nio.ch.EPollSelectorImpl@78c7df2b
+18:40:49.005 [XNIO-4 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 Accept', selector sun.nio.ch.EPollSelectorImpl@6f32415e
+18:40:49.005 [XNIO-4 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-4', selector sun.nio.ch.EPollSelectorImpl@54d783ed
+18:40:49.008 [XNIO-4 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /data (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:44049]}, cookies=[:]): &lt;empty&gt; }
+18:40:49.036 [XNIO-4 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: --t8xOJjySKePdRgBHYD
 Content-Disposition: form-data; name=&quot;alpha&quot;
 Content-Type: text/plain
 
@@ -167,20 +167,20 @@ Content-Type: text/plain
 This is some file data
 --t8xOJjySKePdRgBHYD--
 
-18:04:41.017 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@46aab196
-18:04:41.030 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@37827c1a
-18:04:41.032 [XNIO-5 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-1', selector sun.nio.ch.EPollSelectorImpl@5d4f342d
-18:04:41.032 [XNIO-5 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-3', selector sun.nio.ch.EPollSelectorImpl@412bcfb3
-18:04:41.032 [XNIO-5 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-2', selector sun.nio.ch.EPollSelectorImpl@70da827e
-18:04:41.032 [XNIO-5 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-4', selector sun.nio.ch.EPollSelectorImpl@2e60d044
-18:04:41.032 [XNIO-5 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-5', selector sun.nio.ch.EPollSelectorImpl@55996555
-18:04:41.033 [XNIO-5 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-6', selector sun.nio.ch.EPollSelectorImpl@73770356
-18:04:41.033 [XNIO-5 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-8', selector sun.nio.ch.EPollSelectorImpl@1b28959e
-18:04:41.033 [XNIO-5 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-7', selector sun.nio.ch.EPollSelectorImpl@8d7dfa4
-18:04:41.034 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-18:04:41.034 [XNIO-5 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 Accept', selector sun.nio.ch.EPollSelectorImpl@6228fa3
-18:04:41.036 [XNIO-5 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /data (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35451]}, cookies=[:]): &lt;empty&gt; }
-18:04:41.076 [XNIO-5 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: --WyAJDTEVlYgGjdI13o
+18:40:49.040 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@8a4a8b
+18:40:49.050 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@4e97757c
+18:40:49.052 [XNIO-5 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-1', selector sun.nio.ch.EPollSelectorImpl@2601c770
+18:40:49.052 [XNIO-5 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-2', selector sun.nio.ch.EPollSelectorImpl@2626b2f9
+18:40:49.053 [XNIO-5 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-3', selector sun.nio.ch.EPollSelectorImpl@1d61270c
+18:40:49.053 [XNIO-5 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-4', selector sun.nio.ch.EPollSelectorImpl@7fd41bee
+18:40:49.053 [XNIO-5 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-5', selector sun.nio.ch.EPollSelectorImpl@11dc5fe
+18:40:49.053 [XNIO-5 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-6', selector sun.nio.ch.EPollSelectorImpl@52e8fad5
+18:40:49.054 [XNIO-5 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-7', selector sun.nio.ch.EPollSelectorImpl@9663a37
+18:40:49.054 [XNIO-5 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-8', selector sun.nio.ch.EPollSelectorImpl@63faf73b
+18:40:49.054 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+18:40:49.056 [XNIO-5 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 Accept', selector sun.nio.ch.EPollSelectorImpl@17b0381a
+18:40:49.056 [XNIO-5 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /data (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:39673]}, cookies=[:]): &lt;empty&gt; }
+18:40:49.096 [XNIO-5 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: --WyAJDTEVlYgGjdI13o
 Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;data.txt&quot;
 Content-Type: text/plain
 
@@ -191,21 +191,21 @@ Content-Transfer-Encoding: base64
 Content-Type: image/jpeg
 
 /9j/4AAQSkZJRgABAQEASABIAAD/4TW/RXhpZgAASUkqAAgAAAALAA8BAgAHAAAAkgAAABABAgAGAAAAmgAAABIBAwABAAAAAQAAABoBBQABAAAAoAAAABsBBQABAAAAqAAAACgBAwABAAAAAgAAADEBAgAMAAAAsAAAADIBAgAUAAAAvAAAABMCAwABAAAAAQAAAGmHBAABAAAA0AAAACWIBAABAAAAmBQAALQVAABHb29nbGUAAFBpeGVsAEgAAAABAAAASAAAAAEAAABHSU1QIDIuOC4xOAAyMDE2OjEyOjE5IDExOjA1OjI2ACQAmoIFAAEAAACGAgAAnYIFAAEAAACOAgAAIogDAAEAAAACAAAAJ4gDAAEAAADfAAAAAJAHAAQAAAAwMjIwA5ACABQAAACWAgAABJACABQAAACqAgAAAZEHAAQAAAABAgMAAZIKAAEAAAC+AgAAApIFAAEAAADGAgAAA5IKAAEAAADOAgAABJIKAAEAAADWAgAABZIFAAEAAADeAgAABpIFAAEAAADmAgAAB5IDAAEAAAACAAAACZIDAAEAAAAYAAAACpIFAAEAAADuAgAAfJIHAGwRAAD2AgAAkJICAAcAAABiFAAAkZICAAcAAABqFAAAkpICAAcAAAByFAAAAKAHAAQAAAAwMTAwAaADAAEAAAABAAAAAqADAAEAAAAgAw
-18:04:41.264 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@37827c1a
-18:04:41.272 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@4ae3fef6
-18:04:41.273 [XNIO-6 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-1', selector sun.nio.ch.EPollSelectorImpl@2097686a
-18:04:41.273 [XNIO-6 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-3', selector sun.nio.ch.EPollSelectorImpl@2a6c2f8f
-18:04:41.273 [XNIO-6 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-2', selector sun.nio.ch.EPollSelectorImpl@71905a95
-18:04:41.273 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-18:04:41.273 [XNIO-6 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-4', selector sun.nio.ch.EPollSelectorImpl@1aecea45
-18:04:41.273 [XNIO-6 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-5', selector sun.nio.ch.EPollSelectorImpl@45be2afd
-18:04:41.273 [XNIO-6 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-7', selector sun.nio.ch.EPollSelectorImpl@31326c24
-18:04:41.273 [XNIO-6 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-6', selector sun.nio.ch.EPollSelectorImpl@7fa83dea
-18:04:41.273 [XNIO-6 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 Accept', selector sun.nio.ch.EPollSelectorImpl@1ca1bf87
-18:04:41.273 [XNIO-6 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-8', selector sun.nio.ch.EPollSelectorImpl@424464d8
-18:04:41.275 [XNIO-6 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /hello/there (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_102], Host=[localhost:37761]}, cookies=[:]): &lt;empty&gt; }
-18:04:41.278 [XNIO-6 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: ok
-18:04:41.278 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@4ae3fef6
+18:40:49.286 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@4e97757c
+18:40:49.294 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@7f15a9e8
+18:40:49.296 [XNIO-6 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-4', selector sun.nio.ch.EPollSelectorImpl@5ef99c1e
+18:40:49.296 [XNIO-6 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-3', selector sun.nio.ch.EPollSelectorImpl@7939f07c
+18:40:49.296 [XNIO-6 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-2', selector sun.nio.ch.EPollSelectorImpl@65e52c4f
+18:40:49.296 [XNIO-6 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-1', selector sun.nio.ch.EPollSelectorImpl@55ce02f3
+18:40:49.296 [XNIO-6 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-5', selector sun.nio.ch.EPollSelectorImpl@4a50a76e
+18:40:49.296 [XNIO-6 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-6', selector sun.nio.ch.EPollSelectorImpl@48190e56
+18:40:49.296 [XNIO-6 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-7', selector sun.nio.ch.EPollSelectorImpl@617f4cd6
+18:40:49.296 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+18:40:49.296 [XNIO-6 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 Accept', selector sun.nio.ch.EPollSelectorImpl@1889f53b
+18:40:49.296 [XNIO-6 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-8', selector sun.nio.ch.EPollSelectorImpl@7ce5a372
+18:40:49.298 [XNIO-6 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /hello/there (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_102], Host=[localhost:37401]}, cookies=[:]): &lt;empty&gt; }
+18:40:49.301 [XNIO-6 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response: ok
+18:40:49.301 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@7f15a9e8
 </pre>
 </span>
 </div>
@@ -217,7 +217,7 @@ Content-Type: image/jpeg
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 3.2.1</a> at Jan 23, 2017 6:04:42 PM</p>
+<a href="http://www.gradle.org">Gradle 3.3</a> at Jan 23, 2017 6:40:50 PM</p>
 </div>
 </div>
 </body>
