@@ -24,6 +24,7 @@ import groovy.util.logging.Slf4j
 import io.undertow.Undertow
 import io.undertow.server.HttpHandler
 import io.undertow.server.HttpServerExchange
+import io.undertow.server.handlers.BlockingHandler
 import io.undertow.server.handlers.CookieImpl
 import io.undertow.util.HttpString
 
@@ -64,10 +65,10 @@ class ErsatzServer implements ServerConfig {
 
     private static final String LOCALHOST = 'localhost'
     private static final int EPHEMERAL_PORT = 0
-<span class="fc" id="L67">    private final RequestDecoders globalDecoders = new RequestDecoders()</span>
-<span class="fc" id="L68">    private final ResponseEncoders globalEncoders = new ResponseEncoders()</span>
-<span class="fc" id="L69">    private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders)</span>
-<span class="fc" id="L70">    private final List&lt;ServerFeature&gt; features = []</span>
+<span class="fc" id="L68">    private final RequestDecoders globalDecoders = new RequestDecoders()</span>
+<span class="fc" id="L69">    private final ResponseEncoders globalEncoders = new ResponseEncoders()</span>
+<span class="fc" id="L70">    private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders)</span>
+<span class="fc" id="L71">    private final List&lt;ServerFeature&gt; features = []</span>
     private Undertow server
     private boolean httpsEnabled
     private URL keystoreLocation
@@ -81,9 +82,9 @@ class ErsatzServer implements ServerConfig {
      * @param closure the configuration closure (delegated to &lt;code&gt;ServerConfig&lt;/code&gt;)
      */
     ErsatzServer(@DelegatesTo(ServerConfig) final Closure closure = null) {
-<span class="fc bfc" id="L84" title="All 2 branches covered.">        if (closure) {</span>
-<span class="fc" id="L85">            closure.delegate = this</span>
-<span class="fc" id="L86">            closure.call()</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        if (closure) {</span>
+<span class="fc" id="L86">            closure.delegate = this</span>
+<span class="fc" id="L87">            closure.call()</span>
         }
     }
 
@@ -94,7 +95,7 @@ class ErsatzServer implements ServerConfig {
      * @param consumer the configuration consumer
      */
     ErsatzServer(final Consumer&lt;ServerConfig&gt; consumer) {
-<span class="fc" id="L97">        consumer.accept(this)</span>
+<span class="fc" id="L98">        consumer.accept(this)</span>
     }
 
     /**
@@ -104,8 +105,8 @@ class ErsatzServer implements ServerConfig {
      * @return a reference to this server instance
      */
     ErsatzServer feature(final ServerFeature feature) {
-<span class="fc" id="L107">        features &lt;&lt; feature</span>
-<span class="pc" id="L108">        this</span>
+<span class="fc" id="L108">        features &lt;&lt; feature</span>
+<span class="pc" id="L109">        this</span>
     }
 
     /**
@@ -114,9 +115,9 @@ class ErsatzServer implements ServerConfig {
      * @param enabled whether or not HTTPS is enabled (defaults to true if omitted)
      * @return a reference to the server being configured
      */
-    ErsatzServer enableHttps(boolean enabled=true) {
-<span class="fc" id="L118">        httpsEnabled = enabled</span>
-<span class="pc" id="L119">        this</span>
+    ErsatzServer enableHttps(boolean enabled = true) {
+<span class="fc" id="L119">        httpsEnabled = enabled</span>
+<span class="pc" id="L120">        this</span>
     }
 
     /**
@@ -128,9 +129,9 @@ class ErsatzServer implements ServerConfig {
      * @return a reference to the server being configured
      */
     ServerConfig keystore(final URL location, final String password = 'ersatz') {
-<span class="nc" id="L131">        keystoreLocation = location</span>
-<span class="nc" id="L132">        keystorePass = password</span>
-<span class="nc" id="L133">        this</span>
+<span class="nc" id="L132">        keystoreLocation = location</span>
+<span class="nc" id="L133">        keystorePass = password</span>
+<span class="nc" id="L134">        this</span>
     }
 
     /**
@@ -141,7 +142,7 @@ class ErsatzServer implements ServerConfig {
      */
     @Deprecated
     int getPort() {
-<span class="pc" id="L144">        actualHttpPort</span>
+<span class="pc" id="L145">        actualHttpPort</span>
     }
 
     /**
@@ -150,7 +151,7 @@ class ErsatzServer implements ServerConfig {
      * @return the HTTP port
      */
     int getHttpPort() {
-<span class="nc" id="L153">        actualHttpPort</span>
+<span class="nc" id="L154">        actualHttpPort</span>
     }
 
     /**
@@ -159,7 +160,7 @@ class ErsatzServer implements ServerConfig {
      * @return the HTTPS port
      */
     int getHttpsPort() {
-<span class="nc" id="L162">        actualHttpsPort</span>
+<span class="nc" id="L163">        actualHttpsPort</span>
     }
 
     /**
@@ -170,7 +171,7 @@ class ErsatzServer implements ServerConfig {
      */
     @Deprecated
     String getServerUrl() {
-<span class="pc" id="L173">        &quot;http://localhost:$actualHttpPort&quot;</span>
+<span class="pc" id="L174">        &quot;http://localhost:$actualHttpPort&quot;</span>
     }
 
     /**
@@ -179,7 +180,7 @@ class ErsatzServer implements ServerConfig {
      * @return the full URL of the HTTP server
      */
     String getHttpUrl() {
-<span class="nc" id="L182">        &quot;http://localhost:$actualHttpPort&quot;</span>
+<span class="nc" id="L183">        &quot;http://localhost:$actualHttpPort&quot;</span>
     }
 
     /**
@@ -188,7 +189,7 @@ class ErsatzServer implements ServerConfig {
      * @return the full URL of the HTTP server
      */
     String getHttpsUrl() {
-<span class="pc" id="L191">        &quot;https://localhost:$actualHttpsPort&quot;</span>
+<span class="pc" id="L192">        &quot;https://localhost:$actualHttpsPort&quot;</span>
     }
 
     /**
@@ -200,8 +201,8 @@ class ErsatzServer implements ServerConfig {
      */
     @SuppressWarnings('ConfusingMethodName')
     ErsatzServer expectations(final Consumer&lt;Expectations&gt; expects) {
-<span class="fc" id="L203">        expects.accept(expectations)</span>
-<span class="pc" id="L204">        this</span>
+<span class="fc" id="L204">        expects.accept(expectations)</span>
+<span class="pc" id="L205">        this</span>
     }
 
     /**
@@ -210,31 +211,31 @@ class ErsatzServer implements ServerConfig {
      * @return the reference to the Expectation configuration object
      */
     Expectations expects() {
-<span class="pc" id="L213">        expectations</span>
+<span class="pc" id="L214">        expectations</span>
     }
 
     @Override
     ErsatzServer decoder(String contentType, BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {
-<span class="nc" id="L218">        globalDecoders.register contentType, decoder</span>
-<span class="nc" id="L219">        this</span>
+<span class="nc" id="L219">        globalDecoders.register contentType, decoder</span>
+<span class="nc" id="L220">        this</span>
     }
 
     @Override
     ErsatzServer decoder(ContentType contentType, BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {
-<span class="nc" id="L224">        globalDecoders.register contentType, decoder</span>
-<span class="nc" id="L225">        this</span>
+<span class="nc" id="L225">        globalDecoders.register contentType, decoder</span>
+<span class="nc" id="L226">        this</span>
     }
 
     @Override
     ServerConfig encoder(String contentType, Class objectType, Function&lt;Object, String&gt; encoder) {
-<span class="nc" id="L230">        globalEncoders.register contentType, objectType, encoder</span>
-<span class="nc" id="L231">        this</span>
+<span class="nc" id="L231">        globalEncoders.register contentType, objectType, encoder</span>
+<span class="nc" id="L232">        this</span>
     }
 
     @Override
     ServerConfig encoder(ContentType contentType, Class objectType, Function&lt;Object, String&gt; encoder) {
-<span class="fc" id="L236">        globalEncoders.register contentType, objectType, encoder</span>
-<span class="pc" id="L237">        this</span>
+<span class="fc" id="L237">        globalEncoders.register contentType, objectType, encoder</span>
+<span class="pc" id="L238">        this</span>
     }
 
     /**
@@ -246,9 +247,9 @@ class ErsatzServer implements ServerConfig {
      */
     @SuppressWarnings('ConfusingMethodName')
     ErsatzServer expectations(@DelegatesTo(Expectations) final Closure closure) {
-<span class="fc" id="L249">        closure.delegate = expectations</span>
-<span class="fc" id="L250">        closure.call()</span>
-<span class="pc" id="L251">        this</span>
+<span class="fc" id="L250">        closure.delegate = expectations</span>
+<span class="fc" id="L251">        closure.call()</span>
+<span class="pc" id="L252">        this</span>
     }
 
     /**
@@ -256,37 +257,37 @@ class ErsatzServer implements ServerConfig {
      * interactions are executed against the server.
      */
     void start() {
-<span class="fc" id="L259">        Undertow.Builder builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST)</span>
+<span class="fc" id="L260">        Undertow.Builder builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST)</span>
 
-<span class="fc bfc" id="L261" title="All 2 branches covered.">        if (httpsEnabled) {</span>
-<span class="fc" id="L262">            builder.addHttpsListener(EPHEMERAL_PORT, LOCALHOST, sslContext())</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">        if (httpsEnabled) {</span>
+<span class="fc" id="L263">            builder.addHttpsListener(EPHEMERAL_PORT, LOCALHOST, sslContext())</span>
         }
 
-<span class="fc" id="L265">        server = builder.setHandler(applyFeatures(new HttpHandler() {</span>
+<span class="fc" id="L266">        server = builder.setHandler(new BlockingHandler(applyFeatures(new HttpHandler() {</span>
             @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
-<span class="fc" id="L267">                ClientRequest clientRequest = new UndertowClientRequest(exchange)</span>
+<span class="fc" id="L268">                ClientRequest clientRequest = new UndertowClientRequest(exchange)</span>
 
-<span class="fc" id="L269">                log.debug 'Request: {}', clientRequest</span>
+<span class="fc" id="L270">                log.debug 'Request: {}', clientRequest</span>
 
-<span class="fc" id="L271">                ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest</span>
-<span class="fc bfc" id="L272" title="All 2 branches covered.">                if (request) {</span>
-<span class="fc" id="L273">                    send(exchange, request.currentResponse)</span>
-<span class="fc" id="L274">                    request.mark(clientRequest)</span>
+<span class="fc" id="L272">                ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest</span>
+<span class="fc bfc" id="L273" title="All 2 branches covered.">                if (request) {</span>
+<span class="fc" id="L274">                    send(exchange, request.currentResponse)</span>
+<span class="fc" id="L275">                    request.mark(clientRequest)</span>
 
                 } else {
-<span class="fc" id="L277">                    log.warn 'Unmatched-Request: {}', clientRequest</span>
+<span class="fc" id="L278">                    log.warn 'Unmatched-Request: {}', clientRequest</span>
 
-<span class="fc" id="L279">                    exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)</span>
+<span class="fc" id="L280">                    exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)</span>
                 }
             }
-        })).build()
+        }))).build()
 
-<span class="fc" id="L284">        server.start()</span>
+<span class="fc" id="L285">        server.start()</span>
 
-<span class="fc" id="L286">        actualHttpPort = (server.listenerInfo[0].address as InetSocketAddress).port</span>
+<span class="fc" id="L287">        actualHttpPort = (server.listenerInfo[0].address as InetSocketAddress).port</span>
 
-<span class="fc bfc" id="L288" title="All 2 branches covered.">        if (httpsEnabled) {</span>
-<span class="fc" id="L289">            actualHttpsPort = (server.listenerInfo[1].address as InetSocketAddress).port</span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">        if (httpsEnabled) {</span>
+<span class="fc" id="L290">            actualHttpsPort = (server.listenerInfo[1].address as InetSocketAddress).port</span>
         }
     }
 
@@ -294,9 +295,10 @@ class ErsatzServer implements ServerConfig {
      * Used to stop the HTTP server. The server may be restarted after it has been stopped.
      */
     void stop() {
-<span class="fc" id="L297">        actualHttpPort = -1</span>
+<span class="fc" id="L298">        actualHttpPort = -1</span>
+<span class="fc" id="L299">        actualHttpsPort = -1</span>
 
-<span class="fc bfc" id="L299" title="All 2 branches covered.">        server?.stop()</span>
+<span class="fc bfc" id="L301" title="All 2 branches covered.">        server?.stop()</span>
     }
 
     /**
@@ -307,54 +309,54 @@ class ErsatzServer implements ServerConfig {
      * @return &lt;code&gt;true&lt;/code&gt; if all call criteria were met during test execution.
      */
     boolean verify() {
-<span class="pc" id="L310">        expectations.verify()</span>
+<span class="pc" id="L312">        expectations.verify()</span>
     }
 
     private HttpHandler applyFeatures(final HttpHandler handler) {
-<span class="fc" id="L314">        HttpHandler result = handler</span>
+<span class="fc" id="L316">        HttpHandler result = handler</span>
 
-<span class="pc bpc" id="L316" title="1 of 2 branches missed.">        features?.each { feat -&gt;</span>
-<span class="pc" id="L317">            result = feat.apply(result)</span>
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">        features?.each { feat -&gt;</span>
+<span class="pc" id="L319">            result = feat.apply(result)</span>
         }
 
-<span class="pc" id="L320">        result</span>
+<span class="pc" id="L322">        result</span>
     }
 
     private static void send(final HttpServerExchange exchange, final Response response) {
-<span class="pc bpc" id="L324" title="1 of 2 branches missed.">        if (response) {</span>
-<span class="fc" id="L325">            exchange.statusCode = response.code</span>
+<span class="pc bpc" id="L326" title="1 of 2 branches missed.">        if (response) {</span>
+<span class="fc" id="L327">            exchange.statusCode = response.code</span>
 
-<span class="fc" id="L327">            response.headers.each { k, v -&gt;</span>
-<span class="pc" id="L328">                exchange.responseHeaders.put(new HttpString(k), v)</span>
+<span class="fc" id="L329">            response.headers.each { k, v -&gt;</span>
+<span class="pc" id="L330">                exchange.responseHeaders.put(new HttpString(k), v)</span>
             }
 
-<span class="fc" id="L331">            response.cookies.each { k, v -&gt;</span>
-<span class="pc" id="L332">                exchange.responseCookies.put(k, new CookieImpl(k, v))</span>
+<span class="fc" id="L333">            response.cookies.each { k, v -&gt;</span>
+<span class="pc" id="L334">                exchange.responseCookies.put(k, new CookieImpl(k, v))</span>
             }
         }
 
-<span class="pc bpc" id="L336" title="1 of 2 branches missed.">        String responseContent = response?.content</span>
+<span class="pc bpc" id="L338" title="1 of 2 branches missed.">        String responseContent = response?.content</span>
 
-<span class="pc bpc" id="L338" title="1 of 2 branches missed.">        log.debug 'Response: {}', responseContent.take(1000)</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">        log.debug 'Response: {}', responseContent.take(1000)</span>
 
-<span class="fc" id="L340">        exchange.responseSender.send(responseContent)</span>
+<span class="fc" id="L342">        exchange.responseSender.send(responseContent)</span>
     }
 
     @CompileStatic(TypeCheckingMode.SKIP)
     private SSLContext sslContext() {
-<span class="fc" id="L345">        KeyStore keyStore = KeyStore.getInstance('JKS')</span>
+<span class="fc" id="L347">        KeyStore keyStore = KeyStore.getInstance('JKS')</span>
 
-<span class="pc bpc" id="L347" title="1 of 2 branches missed.">        (keystoreLocation ?: ErsatzServer.getResource('/ersatz.keystore')).withInputStream { instr -&gt;</span>
-<span class="pc" id="L348">            keyStore.load(instr, keystorePass.toCharArray())</span>
+<span class="pc bpc" id="L349" title="1 of 2 branches missed.">        (keystoreLocation ?: ErsatzServer.getResource('/ersatz.keystore')).withInputStream { instr -&gt;</span>
+<span class="pc" id="L350">            keyStore.load(instr, keystorePass.toCharArray())</span>
         }
 
-<span class="fc" id="L351">        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.defaultAlgorithm)</span>
-<span class="fc" id="L352">        keyManagerFactory.init(keyStore, keystorePass.toCharArray())</span>
+<span class="fc" id="L353">        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.defaultAlgorithm)</span>
+<span class="fc" id="L354">        keyManagerFactory.init(keyStore, keystorePass.toCharArray())</span>
 
-<span class="fc" id="L354">        SSLContext sslContext = SSLContext.getInstance('TLS')</span>
-<span class="fc" id="L355">        sslContext.init(keyManagerFactory.keyManagers, null, null)</span>
+<span class="fc" id="L356">        SSLContext sslContext = SSLContext.getInstance('TLS')</span>
+<span class="fc" id="L357">        sslContext.init(keyManagerFactory.keyManagers, null, null)</span>
 
-<span class="pc" id="L357">        sslContext</span>
+<span class="pc" id="L359">        sslContext</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
