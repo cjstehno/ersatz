@@ -24,6 +24,7 @@ import groovy.util.logging.Slf4j
 import io.undertow.Undertow
 import io.undertow.server.HttpHandler
 import io.undertow.server.HttpServerExchange
+import io.undertow.server.handlers.BlockingHandler
 import io.undertow.server.handlers.CookieImpl
 import io.undertow.util.HttpString
 
@@ -114,7 +115,7 @@ class ErsatzServer implements ServerConfig {
      * @param enabled whether or not HTTPS is enabled (defaults to true if omitted)
      * @return a reference to the server being configured
      */
-    ErsatzServer enableHttps(boolean enabled=true) {
+    ErsatzServer enableHttps(boolean enabled = true) {
         httpsEnabled = enabled
         this
     }
@@ -262,7 +263,7 @@ class ErsatzServer implements ServerConfig {
             builder.addHttpsListener(EPHEMERAL_PORT, LOCALHOST, sslContext())
         }
 
-        server = builder.setHandler(applyFeatures(new HttpHandler() {
+        server = builder.setHandler(new BlockingHandler(applyFeatures(new HttpHandler() {
             @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
                 ClientRequest clientRequest = new UndertowClientRequest(exchange)
 
@@ -279,7 +280,7 @@ class ErsatzServer implements ServerConfig {
                     exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
                 }
             }
-        })).build()
+        }))).build()
 
         server.start()
 
@@ -295,6 +296,7 @@ class ErsatzServer implements ServerConfig {
      */
     void stop() {
         actualHttpPort = -1
+        actualHttpsPort = -1
 
         server?.stop()
     }
