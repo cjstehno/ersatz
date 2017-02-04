@@ -15,13 +15,14 @@
  */
 package com.stehno.ersatz.feat
 
+import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import io.undertow.security.idm.Account
-import io.undertow.security.idm.Credential
-import io.undertow.security.idm.IdentityManager
-import io.undertow.security.idm.PasswordCredential
+import io.undertow.security.idm.*
+import io.undertow.util.HexConverter
 
 import java.security.Principal
+
+import static io.undertow.util.HexConverter.convertToHexBytes
 
 /**
  * IdentityManager used by the <code>BasicAuthFeature</code>. The default username is "admin" and the default password is "$3cr3t".
@@ -39,19 +40,18 @@ class SimpleIdentityManager implements IdentityManager {
 
     @Override
     Account verify(final String id, final Credential credential) {
-        if (username == id && password == String.valueOf(((PasswordCredential) credential).password)) {
-            return new Account() {
-                @Override
-                Principal getPrincipal() {
-                    new Principal() {
-                        @Override String getName() { id }
-                    }
-                }
+        if (credential instanceof PasswordCredential) {
+            if (username == id && password == String.valueOf(((PasswordCredential) credential).password)) {
+                return new SimpleAccount(id)
+            }
 
-                @Override
-                Set<String> getRoles() {
-                    ['TESTER'] as Set<String>
-                }
+        } else if (credential instanceof DigestCredential) {
+            DigestCredential digestCredential = credential as DigestCredential
+
+            byte[] bytes = digestCredential.algorithm.messageDigest.digest("${username}:${digestCredential.realm}:${password}".toString().bytes)
+
+            if (digestCredential.verifyHA1(convertToHexBytes(bytes))) {
+                return new SimpleAccount(id)
             }
         }
 
@@ -64,7 +64,28 @@ class SimpleIdentityManager implements IdentityManager {
     }
 
     static String encodedCredential(final String user, final String pass) {
-        String encoded = "$user:$pass".bytes.encodeBase64()
-        "Basic $encoded"
+        "Basic ${("$user:$pass".bytes.encodeBase64() as String)}"
+    }
+}
+
+@CompileStatic
+class SimpleAccount implements Account {
+
+    private final Principal principal
+
+    SimpleAccount(final String user) {
+        principal = new Principal() {
+            @Override String getName() { user }
+        }
+    }
+
+    @Override
+    Principal getPrincipal() {
+        principal
+    }
+
+    @Override
+    Set<String> getRoles() {
+        ['TESTER'] as Set<String>
     }
 }
