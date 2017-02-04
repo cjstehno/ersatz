@@ -12,7 +12,7 @@ plugins {
 }
 
 group = 'com.stehno.ersatz'
-version = '0.4.1'
+version = '0.4.3'
 
 sourceCompatibility = 8
 targetCompatibility = 8
@@ -26,7 +26,7 @@ configurations {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile 'org.codehaus.groovy:groovy-all:2.4.8'
     compile 'io.undertow:undertow-core:1.4.6.Final'
 
     compile 'ch.qos.logback:logback-classic:1.1.7'
@@ -40,12 +40,12 @@ dependencies {
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'cglib:cglib-nodep:3.2.4'
 
-    groovyDoc 'org.codehaus.groovy:groovy-groovydoc:2.4.7'
-    groovyDoc 'org.codehaus.groovy:groovy-ant:2.4.7'
+    groovyDoc 'org.codehaus.groovy:groovy-groovydoc:2.4.8'
+    groovyDoc 'org.codehaus.groovy:groovy-ant:2.4.8'
 
     codenarc(
         'org.codenarc:CodeNarc:0.26.0',
-        'org.codehaus.groovy:groovy-all:2.4.7'
+        'org.codehaus.groovy:groovy-all:2.4.8'
     )
 }
 
@@ -72,23 +72,53 @@ groovydoc {
 }
 
 task sourcesJar(type: Jar) {
-    description = 'Creates sources JAR.'
+    description = 'Creates sources jar.'
     classifier = 'sources'
     from project.sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    description = 'Creates API documentation jar.'
+    classifier = 'javadoc'
+    from groovydoc
 }
 
 artifacts {
     archives jar
     archives sourcesJar
+    archives javadocJar
 }
 
-project.publishing {
+publishing {
     publications {
-        mavenJava(MavenPublication) {
+        ersatzPublication(MavenPublication) {
             from components.java
             artifact sourcesJar
+            artifact javadocJar
             groupId project.group
+            artifactId 'ersatz'
             version project.version
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'Mock server library for testing HTTP clients.')
+                root.appendNode('name', 'ersatz')
+                root.appendNode('url', 'http://stehno.com/ersatz')
+
+                def licenseNode = root.appendNode('licenses').appendNode('license')
+                licenseNode.appendNode('name', 'The Apache Software License, Version 2.0')
+                licenseNode.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                licenseNode.appendNode('distribution', 'repo')
+
+                def developersNode = root.appendNode('developers').appendNode('developer')
+                developersNode.appendNode('id', 'cjstehno')
+                developersNode.appendNode('name', 'Christopher J Stehno')
+                developersNode.appendNode('email', 'chris@stehno.com')
+
+                def scmNode = root.appendNode('scm')
+                scmNode.appendNode('connection', 'scm:git:git@github.com:cjstehno/ersatz.git')
+                scmNode.appendNode('developerConnection', 'scm:git:git@github.com:cjstehno/ersatz.git')
+                scmNode.appendNode('url', 'https://github.com/cjstehno/ersatz')
+            }
         }
     }
 }
@@ -117,7 +147,7 @@ bintray {
         user = project.property('user')
         key = project.property('key')
 
-        publications = ['mavenJava']
+        publications = ['ersatzPublication']
 
         pkg {
             repo = 'stehno'
@@ -125,7 +155,23 @@ bintray {
             desc = 'Mock server library for testing HTTP clients.'
             licenses = ['Apache-2.0']
             labels = ['groovy']
+            websiteUrl = 'http://stehno.com/ersatz'
+            issueTrackerUrl = 'https://github.com/cjstehno/ersatz/issues'
             vcsUrl = 'https://github.com/cjstehno/ersatz'
+            publicDownloadNumbers = true
+
+            version {
+                name = project.version
+                vcsTag = "v${project.version}"
+                gpg {
+                    sign = true
+                }
+                mavenCentralSync {
+                    sync = true
+                    user = project.property('sonotypeUser')
+                    password = project.property('sonotypePass')
+                }
+            }
         }
     }
 }

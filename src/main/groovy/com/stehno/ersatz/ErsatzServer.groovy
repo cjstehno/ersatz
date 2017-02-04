@@ -271,8 +271,9 @@ class ErsatzServer implements ServerConfig {
 
                 ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
                 if (request) {
-                    send(exchange, request.currentResponse)
+                    Response currentResponse = request.currentResponse
                     request.mark(clientRequest)
+                    send(exchange, currentResponse)
 
                 } else {
                     log.warn 'Unmatched-Request: {}', clientRequest

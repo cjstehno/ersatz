@@ -17,16 +17,19 @@ boiler-plate code.
 
 ## Artifacts
 
+Project artifacts are available via the JCenter (Bintray) and Maven Central repositories.
+
 For Gradle:
 
-    testCompile 'com.stehno.ersatz:ersatz:0.4.1'
+    testCompile 'com.stehno.ersatz:ersatz:0.4.3'
 
 For Maven:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>0.4.1</version>
+        <version>0.4.3</version>
+        <scope>test</scope>
     </dependency>
 
 ## Build Instructions
@@ -39,7 +42,7 @@ Ersatz is built using Gradle with no custom build tasks:
 ## License
 
 ```
-Copyright (C) 2016 Christopher J. Stehno
+Copyright (C) 2017 Christopher J. Stehno
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
