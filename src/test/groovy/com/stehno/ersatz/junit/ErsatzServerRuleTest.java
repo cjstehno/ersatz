@@ -28,6 +28,4 @@ public class ErsatzServerRuleTest {
         assertEquals(200, response.code());
         assertEquals("ok", response.body().string());
     }
-
-    // FIXME: should also test the rule code in general
 }

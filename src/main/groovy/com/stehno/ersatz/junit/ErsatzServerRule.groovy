@@ -12,29 +12,31 @@ import java.util.function.Consumer
 /**
  * JUnit Rule implementation to simplify the use of Ersatz in JUnit tests. It may be used with <code>@Rule</code> or <code>@ClassRule</code>. It's is
  * a drop-in replacement for the <code>ErsatzServer</code> class which provides all of its configuration functionality and adds an automatic call to
- * <code>stop()</code> after each test method.
- *
- * FIXME: document this in the user guide and site features list
+ * <code>stop()</code> after each test method. The <code>start()</code> method must still be called manually by the test methods.
  */
 @CompileStatic
 class ErsatzServerRule extends ErsatzServer implements TestRule {
 
     /**
-     * FIXME: document
+     * Creates a server rule with the default server configuration.
      */
     ErsatzServerRule() {
         super()
     }
 
     /**
-     * FIXME: document
+     * Creates a server rul with the provided server configuration.
+     *
+     * @param closure the configuration closure delegating to <code>ServerConfig</code>.
      */
     ErsatzServerRule(@DelegatesTo(ServerConfig) final Closure closure) {
         super(closure)
     }
 
     /**
-     * FIXME: document
+     * Creates a server rul with the provided server configuration.
+     *
+     * @param consumer the configuration consumer based on a <code>ServerConfig</code> instance.
      */
     ErsatzServerRule(final Consumer<ServerConfig> consumer) {
         super(consumer)

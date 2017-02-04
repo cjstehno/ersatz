@@ -171,6 +171,28 @@ the server is not properly stopped. In Spock you can create the `ErsatzServer` w
 @AutoCleanup('stop') ErsatzServer server = new ErsatzServer()
 ----
 
+likewise, in a JUnit test (Groovy or Java) you may use the `ErsatzServerRule` class, which is a https://github.com/junit-team/junit4/wiki/Rules[JUnit Rule]
+implementation delegating to an `ErsatzServer`; it automatically calls the `stop()` method after each test method, though the `start()` method must
+still be called manually.
+
+[source,java]
+----
+@Rule ErsatzServerRule ersatzServer = new ErsatzServerRule()
+
+@Test public void hello(){
+    ersatzServer.expectations(expectations -> {
+        expectations.get("/testing").responds().content("ok");
+    }).start();
+
+    okhttp3.Response response = new OkHttpClient().newCall(
+        new Request.Builder().url(format("%s/testing", ersatzServer.getHttpUrl())).build()
+    ).execute();
+
+    assertEquals(200, response.code());
+    assertEquals("ok", response.body().string());
+}
+----
+
 The server may be restarted after it has been stopped; however, be aware that expectation configuration is additive and existing configuration will
 remain on server start even if new expectations are configured.
 
