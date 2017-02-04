@@ -42,8 +42,8 @@ class UndertowClientRequest implements ClientRequest {
      *
      * @return the request protocol
      */
-    String getProtocol(){
-        exchange.getRequestScheme()
+    String getProtocol() {
+        exchange.requestScheme
     }
 
     /**

@@ -18,7 +18,6 @@ package com.stehno.ersatz.feat
 import com.stehno.ersatz.ServerFeature
 import groovy.transform.CompileStatic
 import io.undertow.security.api.AuthenticationMechanism
-import io.undertow.security.api.AuthenticationMode
 import io.undertow.security.handlers.AuthenticationCallHandler
 import io.undertow.security.handlers.AuthenticationConstraintHandler
 import io.undertow.security.handlers.AuthenticationMechanismsHandler
@@ -30,7 +29,7 @@ import io.undertow.server.HttpHandler
 import static io.undertow.security.api.AuthenticationMode.PRO_ACTIVE
 
 /**
- * FIXME: document
+ * Server feature used to enable DIGEST authentication on the Ersatz server.
  */
 @CompileStatic
 class DigestAuthFeature implements ServerFeature {

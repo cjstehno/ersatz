@@ -44,9 +44,8 @@ class Encoders {
     static final Function<Object, String> binaryBase64 = { obj ->
         if (obj) {
             return (obj instanceof byte[] ? obj as byte[] : obj.bytes).encodeBase64() as String
-        } else {
-            return ''
         }
+        return ''
     }
 
     /**
