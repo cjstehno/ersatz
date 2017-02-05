@@ -27,9 +27,20 @@ frameworks.
 
 == Getting Started
 
-Add the `ersatz` library to your project, for Gradle, this would mean adding the following to your `dependencies` block:
+The `ersatz` library is available via Bintray (JCenter) and the Maven Central Repository; you can add it to your project using one of the following:
+
+For Gradle:
 
     testCompile 'com.stehno.ersatz:ersatz:0.4.3'
+
+For Maven:
+
+    <dependency>
+        <groupId>com.stehno.ersatz</groupId>
+        <artifactId>ersatz</artifactId>
+        <version>0.4.3</version>
+        <scope>test</scope>
+    </dependency>
 
 You could then use Ersatz in a Spock test as follows:
 
@@ -90,17 +101,20 @@ The two formats are interchangeable.
 The lifecycle of an Ersatz server is broken down into four main states:
 
 1. Configure
-1. Test
-1. Verify
-1. Cleanup
+2. Test
+3. Verify
+4. Cleanup
 
-they are detailed in the sections that follow.
+they are detailed in the next sections.
 
 === Configure
 
 The first step is "configuration", where the server is instantiated, request expectations are configured and the server is started. An Ersatz server
-is created by creating an instance of `ErsatzServer`. No HTTP server is started at this point, but the server is ready for configuration. Configuring
-the expectations on the server consists of calling one of the following methods:
+is created by creating an instance of `ErsatzServer` with an optional `ServerConfig` passed in to provide initial configurations (such as global
+encoder and decoder configurations).
+
+No HTTP server is started at this point, but the server is ready for configuration. Configuring the expectations on the server consists of calling one
+of the following methods:
 
 [source,groovy]
 ----
@@ -122,14 +136,12 @@ The third method is a simplified builder-style approach for single request metho
 Once the request expectations are configured, the server must be started by calling the `ErsatzServer` `start()` method. This will start the underlying
 embedded HTTP server and register the configured expectations. If the server is not started, you will receive connection errors during testing.
 
-TIP: Some server configuration may be applied at construction-time by supplying a `Closure` (delegated to `ServerConfig`) or `Consumer<ServerConfig>`
-which will allow configuration of expectations and global encoders/decoders.
-
 === Testing
 
 After configuration, the server is running and ready for test interactions. Any HTTP client can make HTTP requests against the server to retrieve
-configured responses. The `ErsatzServer` object provides helper methods to retrieve the server port and URL, with `getPort()` and `getServerUrl()`
-respectively. Note that the server will _always_ be started on an ephemeral port so that a random one will be chosen to avoid collisions.
+configured responses. The `ErsatzServer` object provides helper methods to retrieve the server port and URL, with `getHttpPort()` and `getHttpUrl()`
+respectively (there are also versions for HTTPS). Note that the server will _always_ be started on an ephemeral port so that a random one will be
+chosen to avoid collisions.
 
 === Verify
 
@@ -159,15 +171,38 @@ the server is not properly stopped. In Spock you can create the `ErsatzServer` w
 @AutoCleanup('stop') ErsatzServer server = new ErsatzServer()
 ----
 
+likewise, in a JUnit test (Groovy or Java) you may use the `ErsatzServerRule` class, which is a https://github.com/junit-team/junit4/wiki/Rules[JUnit Rule]
+implementation delegating to an `ErsatzServer`; it automatically calls the `stop()` method after each test method, though the `start()` method must
+still be called manually.
+
+[source,java]
+----
+@Rule ErsatzServerRule ersatzServer = new ErsatzServerRule()
+
+@Test public void hello(){
+    ersatzServer.expectations(expectations -> {
+        expectations.get("/testing").responds().content("ok");
+    }).start();
+
+    okhttp3.Response response = new OkHttpClient().newCall(
+        new Request.Builder().url(format("%s/testing", ersatzServer.getHttpUrl())).build()
+    ).execute();
+
+    assertEquals(200, response.code());
+    assertEquals("ok", response.body().string());
+}
+----
+
 The server may be restarted after it has been stopped; however, be aware that expectation configuration is additive and existing configuration will
 remain on server start even if new expectations are configured.
 
 == Expectations
 
-Request expectations are the core of the Ersatz server functionality; conceptually, they are HTTP server request routes which are used to match
-incoming request with request handlers or respond with status 404 if no matching request was configured. The expectations are configured off of an
-instance of the `Expectations` interface, which provides multiple configuration methods for each HTTP request method (GET, HEAD, POST, PUT, DELETE,
-and PATCH), with the method name corresponding to the HTTP request method name. The four general types of methods are:
+Request expectations are the core of the Ersatz server functionality; conceptually, they are HTTP server request routes which are used to match an
+incoming HTTP request with a request handler or to respond with a status of 404m, if no matching request was configured. The expectations are
+configured on an instance of the `Expectations` interface, which provides multiple configuration methods for each of the supported HTTP request
+methods (GET, HEAD, POST, PUT, DELETE, and PATCH), with the method name corresponding to the HTTP request method name. The four general types of
+methods are:
 
 * One taking a `String path` returning an instance of the `Request` interface
 * One taking a `String path` and a `Consumer<Request>` returning an instance of the `Request` interface
@@ -398,9 +433,9 @@ instances without copying the configuration.
 
 == HTTPS Request Support
 
-The `ErsatzServer` supports HTTPS requests when the `enableHttps()` configuration is set. This will setup both an HTTP and HTTPS listener both of
-which will have access to all configured expectations. In order to limit a request expectation to HTTP or HTTPS, the `procotol(String)` matcher method
-may be specified with the desired protocol, for example:
+The `ErsatzServer` supports HTTPS requests when the `enableHttps()` configuration is set (either as `enableHttps()` or as `enableHttps true`). This
+will setup both an HTTP and HTTPS listener both of which will have access to all configured expectations. In order to limit a specific request
+expectation to HTTP or HTTPS, apply the `procotol(String)` matcher method with the desired protocol, for example:
 
 [source,groovy]
 ----
@@ -442,7 +477,35 @@ where `KEYSTORE_URL` is the URL to your custom keystore file, and `KEYSTORE_PASS
 == Feature Extensions
 
 Additional server functionality may be added/configured on the server before startup. The `ServerFeature` interface provides this extension point;
-however, the extension feature mechanism is experimental at this point and may change in the future.
+however, the extension feature mechanism is experimental and may change in the future (efforts will be made to maintain a simple migration path if/when
+this happens).
 
-At this point there is only one feature extension, the `BasicAuthFeature`, which causes the configured request expectations to require BASIC
-authentication (username and password) as part of their matching.
+At this point there are two feature extension, the `BasicAuthFeature` and `DigestAuthFeature`, both discussed below.
+
+TIP: Features are additive, so be careful about how features are applied.
+
+=== BASIC Authentication
+
+https://en.wikipedia.org/wiki/Basic_access_authentication[HTTP BASIC Authentication] is supported by applying the `BasicAuthFeature` to the server.
+
+[source,groovy]
+----
+def ersatz = new ErsatzServer({
+    feature new BasicAuthFeature()
+})
+----
+
+This configuration causes the configured request expectations to require BASIC authentication (username and password) as part of their matching.
+
+=== DIGEST Authentication
+
+https://en.wikipedia.org/wiki/Digest_access_authentication[HTTP DIGEST Authentication] is supported by applying the `DigestAuthFeature` to the server.
+
+[source,groovy]
+----
+def ersatz = new ErsatzServer({
+    feature new BasicAuthFeature()
+})
+----
+
+This configuration causes the configured request expectations to require DIGEST authentication (username and password) as part of their matching.

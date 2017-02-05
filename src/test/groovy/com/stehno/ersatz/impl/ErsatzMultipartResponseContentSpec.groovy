@@ -19,32 +19,14 @@ import com.stehno.ersatz.Encoders
 import com.stehno.ersatz.MultipartResponseContent
 import spock.lang.Specification
 
+import java.util.function.Consumer
+
 import static com.stehno.ersatz.ContentType.*
 
 class ErsatzMultipartResponseContentSpec extends Specification {
 
-    def 'multipart: closure'() {
-        when:
-        MultipartResponseContent mc = MultipartResponseContent.multipart {
-            boundary 'abc123'
 
-            encoder 'text/plain', String, { o -> o as String }
-            encoder APPLICATION_JSON, String, { o -> o as String }
-            encoder 'image/jpeg', InputStream, Encoders.binaryBase64
-
-            field 'foo', 'bar'
-
-            part 'alpha', 'text/plain', 'This is some text'
-            part 'bravo', APPLICATION_JSON, '{"answer":42}'
-            part 'charlie', 'charlie.txt', TEXT_PLAIN, 'This is a text file'
-            part 'delta', 'delta.jpg', IMAGE_JPG, new ByteArrayInputStream('fake image content for testing'.bytes), 'base64'
-        }
-
-        then:
-        mc.contentType == 'multipart/mixed; boundary=abc123'
-
-        and:
-        Encoders.multipart.apply(mc).trim().readLines() == '''
+    private static final List<String> MULTIPART_RESPONSE_TEXT = '''
             --abc123
             Content-Disposition: form-data; name="foo"
             Content-Type: text/plain
@@ -72,6 +54,56 @@ class ErsatzMultipartResponseContentSpec extends Specification {
             
             ZmFrZSBpbWFnZSBjb250ZW50IGZvciB0ZXN0aW5n
             --abc123--
-        '''.stripIndent().trim().readLines()
+        '''.stripIndent().trim().readLines().asImmutable()
+
+    def 'multipart: closure'() {
+        when:
+        MultipartResponseContent mc = MultipartResponseContent.multipart {
+            boundary 'abc123'
+
+            encoder 'text/plain', String, { o -> o as String }
+            encoder APPLICATION_JSON, String, { o -> o as String }
+            encoder 'image/jpeg', InputStream, Encoders.binaryBase64
+
+            field 'foo', 'bar'
+
+            part 'alpha', 'text/plain', 'This is some text'
+            part 'bravo', APPLICATION_JSON, '{"answer":42}'
+            part 'charlie', 'charlie.txt', TEXT_PLAIN, 'This is a text file'
+            part 'delta', 'delta.jpg', IMAGE_JPG, new ByteArrayInputStream('fake image content for testing'.bytes), 'base64'
+        }
+
+        then:
+        mc.contentType == 'multipart/mixed; boundary=abc123'
+
+        and:
+        Encoders.multipart.apply(mc).trim().readLines() == MULTIPART_RESPONSE_TEXT
+    }
+
+    def 'multipart: consumer'() {
+        when:
+
+        MultipartResponseContent mc = MultipartResponseContent.multipart(new Consumer<MultipartResponseContent>() {
+            @Override void accept(final MultipartResponseContent mult) {
+                mult.boundary 'abc123'
+
+                mult.encoder 'text/plain', String, { o -> o as String }
+                mult.encoder APPLICATION_JSON, String, { o -> o as String }
+                mult.encoder 'image/jpeg', InputStream, Encoders.binaryBase64
+
+                mult.field 'foo', 'bar'
+
+                mult.part 'alpha', 'text/plain', 'This is some text'
+                mult.part 'bravo', APPLICATION_JSON, '{"answer":42}'
+                mult.part 'charlie', 'charlie.txt', TEXT_PLAIN, 'This is a text file'
+                mult.part 'delta', 'delta.jpg', IMAGE_JPG, new ByteArrayInputStream('fake image content for testing'.bytes), 'base64'
+            }
+        })
+
+        then:
+        mc.contentType == 'multipart/mixed; boundary=abc123'
+
+        and:
+        Encoders.multipart.apply(mc).trim().readLines() == MULTIPART_RESPONSE_TEXT
     }
 }

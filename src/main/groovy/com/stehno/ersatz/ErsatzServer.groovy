@@ -65,6 +65,7 @@ class ErsatzServer implements ServerConfig {
 
     private static final String LOCALHOST = 'localhost'
     private static final int EPHEMERAL_PORT = 0
+    private static final int UNSPECIFIED_PORT = -1
     private final RequestDecoders globalDecoders = new RequestDecoders()
     private final ResponseEncoders globalEncoders = new ResponseEncoders()
     private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders)
@@ -73,8 +74,8 @@ class ErsatzServer implements ServerConfig {
     private boolean httpsEnabled
     private URL keystoreLocation
     private String keystorePass = 'ersatz'
-    private int actualHttpPort = -1
-    private int actualHttpsPort = -1
+    private int actualHttpPort = UNSPECIFIED_PORT
+    private int actualHttpsPort = UNSPECIFIED_PORT
 
     /**
      * Creates a new Ersatz server instance with either the default configuration or a configuration provided by the Groovy DSL closure.
@@ -296,8 +297,8 @@ class ErsatzServer implements ServerConfig {
      * Used to stop the HTTP server. The server may be restarted after it has been stopped.
      */
     void stop() {
-        actualHttpPort = -1
-        actualHttpsPort = -1
+        actualHttpPort = UNSPECIFIED_PORT
+        actualHttpsPort = UNSPECIFIED_PORT
 
         server?.stop()
     }

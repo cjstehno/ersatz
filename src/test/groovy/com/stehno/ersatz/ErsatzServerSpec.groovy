@@ -100,7 +100,7 @@ class ErsatzServerSpec extends Specification {
         ]
 
         then:
-        //        counter.get() == 2 TODO: this is twitchy
+        counter.get() == 2
         results.every { it == 'This is Bar!!' }
 
         when:

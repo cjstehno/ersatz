@@ -23,28 +23,28 @@ import io.undertow.security.handlers.AuthenticationConstraintHandler
 import io.undertow.security.handlers.AuthenticationMechanismsHandler
 import io.undertow.security.handlers.SecurityInitialHandler
 import io.undertow.security.idm.IdentityManager
-import io.undertow.security.impl.BasicAuthenticationMechanism
+import io.undertow.security.impl.DigestAuthenticationMechanism
 import io.undertow.server.HttpHandler
 
 import static io.undertow.security.api.AuthenticationMode.PRO_ACTIVE
 
 /**
- * A <code>ServerFeature</code> providing support for HTTP BASIC authentication. This will apply BASIC authentication to all requests configured on
- * the server. To enable this feature, configure it on the <code>ErsatzServer</code> or <code>ServerConfig</code> instance:
+ * A <code>ServerFeature</code> used to enable DIGEST authentication on the Ersatz server. This will require all configured requests to be made using
+ * DIGEST authentication. To enable this feature, configure it on the <code>ErsatzServer</code> or <code>ServerConfig</code> instance:
  *
  * <pre><code>
  * ErsatzServer server = new ErsatzServer({
- *     feature new BasicAuthFeature()
+ *     feature new DigestAuthFeature()
  * })
  * </code></pre>
  */
 @CompileStatic
-class BasicAuthFeature implements ServerFeature {
+class DigestAuthFeature implements ServerFeature {
 
     /**
-     * The realm to be used. Defaults to "BasicTesting".
+     * The realm to be used. Defaults to "DigestTesting".
      */
-    String realm = 'BasicTesting'
+    String realm = 'DigestTesting'
 
     /**
      * The IdentityManager to be used. Defaults to the <code>SimpleIdentityManager</code>.
@@ -60,9 +60,8 @@ class BasicAuthFeature implements ServerFeature {
                 new AuthenticationConstraintHandler(
                     new AuthenticationCallHandler(handler)
                 ),
-                Collections.<AuthenticationMechanism> singletonList(new BasicAuthenticationMechanism(realm))
+                Collections.<AuthenticationMechanism> singletonList(new DigestAuthenticationMechanism(realm, 'localhost', 'DIGEST', identityManager))
             )
         )
     }
 }
-

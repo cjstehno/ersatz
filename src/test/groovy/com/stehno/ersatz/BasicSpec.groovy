@@ -36,7 +36,7 @@ class BasicSpec extends Specification {
         }.start()
 
         when:
-        okhttp3.Response response = client.newCall(new Builder().url("${ersatzServer.serverUrl}/secrets").build()).execute()
+        okhttp3.Response response = client.newCall(new Builder().url("${ersatzServer.httpUrl}/secrets").build()).execute()
 
         then:
         response.code() == 401
@@ -44,7 +44,7 @@ class BasicSpec extends Specification {
 
         when:
         response = client.newCall(
-            new Builder().url("${ersatzServer.serverUrl}/secrets").addHeader('Authorization', encodedCredential('admin', '$3cr3t')).build()
+            new Builder().url("${ersatzServer.httpUrl}/secrets").addHeader('Authorization', encodedCredential('admin', '$3cr3t')).build()
         ).execute()
 
         then:
