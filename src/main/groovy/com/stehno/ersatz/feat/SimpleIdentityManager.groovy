@@ -15,43 +15,49 @@
  */
 package com.stehno.ersatz.feat
 
-import groovy.transform.TupleConstructor
-import io.undertow.security.idm.Account
-import io.undertow.security.idm.Credential
-import io.undertow.security.idm.IdentityManager
-import io.undertow.security.idm.PasswordCredential
+import groovy.transform.CompileStatic
+import io.undertow.security.idm.*
 
-import java.security.Principal
+import static io.undertow.util.HexConverter.convertToHexBytes
+import static java.lang.String.valueOf
 
 /**
  * IdentityManager used by the <code>BasicAuthFeature</code>. The default username is "admin" and the default password is "$3cr3t".
  */
-@TupleConstructor
+@CompileStatic
 class SimpleIdentityManager implements IdentityManager {
 
-    String username = 'admin'
-    String password = '$3cr3t'
+    final String username
+    final String password
+
+    SimpleIdentityManager() {
+        this('admin', '$3cr3t')
+    }
+
+    SimpleIdentityManager(final String username, final String password) {
+        this.username = username
+        this.password = password
+    }
 
     @Override
-    Account verify(Account account) {
+    Account verify(final Account account) {
         throw new UnsupportedOperationException()
     }
 
     @Override
     Account verify(final String id, final Credential credential) {
-        if (username == id && password == String.valueOf(((PasswordCredential) credential).password)) {
-            return new Account() {
-                @Override
-                Principal getPrincipal() {
-                    new Principal() {
-                        @Override String getName() { id }
-                    }
-                }
+        if (credential instanceof PasswordCredential) {
+            if (username == id && password == valueOf(((PasswordCredential) credential).password)) {
+                return new SimpleAccount(id)
+            }
 
-                @Override
-                Set<String> getRoles() {
-                    ['TESTER'] as Set<String>
-                }
+        } else if (credential instanceof DigestCredential) {
+            DigestCredential digestCredential = credential as DigestCredential
+
+            byte[] bytes = digestCredential.algorithm.messageDigest.digest("${username}:${digestCredential.realm}:${password}".toString().bytes)
+
+            if (digestCredential.verifyHA1(convertToHexBytes(bytes))) {
+                return new SimpleAccount(id)
             }
         }
 
@@ -63,8 +69,15 @@ class SimpleIdentityManager implements IdentityManager {
         throw new UnsupportedOperationException()
     }
 
+    /**
+     * Creates the encoded credential string required for the BASIC authentication header.
+     *
+     * @param user the username
+     * @param pass the password
+     * @return the encoded credential string
+     */
     static String encodedCredential(final String user, final String pass) {
-        String encoded = "$user:$pass".bytes.encodeBase64()
-        "Basic $encoded"
+        "Basic ${("$user:$pass".bytes.encodeBase64() as String)}"
     }
 }
+

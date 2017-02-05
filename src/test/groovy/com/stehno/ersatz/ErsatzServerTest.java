@@ -88,7 +88,7 @@ public class ErsatzServerTest {
         request = new okhttp3.Request.Builder().url(url("/bar")).build();
         assertEquals("This is Bar!!", client.newCall(request).execute().body().string());
         assertEquals("This is Bar!!", client.newCall(request).execute().body().string());
-//        assertEquals(2, counter.get()); - TODO: this seems twitchy (race condition?)
+        assertEquals(2, counter.get());
 
         request = new okhttp3.Request.Builder().url(url("/baz?alpha=42")).build();
         assertEquals("The answer is 42", client.newCall(request).execute().body().string());
@@ -134,14 +134,14 @@ public class ErsatzServerTest {
         });
         server.start();
 
-        okhttp3.Request request = new okhttp3.Request.Builder().get().url(server.getServerUrl() + "/hello/there").build();
+        okhttp3.Request request = new okhttp3.Request.Builder().get().url(server.getHttpUrl() + "/hello/there").build();
         assertEquals("ok", client.newCall(request).execute().body().string());
 
         server.stop();
     }
 
     private String url(final String path) {
-        return format("http://localhost:%d%s", ersatzServer.getPort(), path);
+        return format("http://localhost:%d%s", ersatzServer.getHttpPort(), path);
     }
 
     @After

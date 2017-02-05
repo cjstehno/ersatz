@@ -18,6 +18,10 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.ResponseEncoders
 import spock.lang.Specification
 
+import static com.stehno.ersatz.ContentType.APPLICATION_JSON
+import static com.stehno.ersatz.ContentType.APPLICATION_XML
+import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+
 class ErsatzResponseSpec extends Specification {
 
     private final ErsatzResponse response = new ErsatzResponse(false, new ResponseEncoders())
@@ -49,12 +53,29 @@ class ErsatzResponseSpec extends Specification {
         response.contentType == 'text/info'
     }
 
+    def 'content and content-type object'() {
+        when:
+        response.content(CONTENT_A, APPLICATION_JSON)
+
+        then:
+        response.content == CONTENT_A
+        response.contentType == APPLICATION_JSON.value
+    }
+
     def 'content-type'() {
         when:
         response.contentType('text/info')
 
         then:
         response.contentType == 'text/info'
+    }
+
+    def 'content-type object'() {
+        when:
+        response.contentType(APPLICATION_XML)
+
+        then:
+        response.contentType == APPLICATION_XML.value
     }
 
     def 'headers'() {
@@ -97,5 +118,38 @@ class ErsatzResponseSpec extends Specification {
 
         then:
         response.code == 505
+    }
+
+    def 'register encoder (string)'(){
+        setup:
+        response.content = 'foo'
+        response.encoder('text/plain', String, { o-> "${o}-bar"})
+
+        expect:
+        response.content == 'foo-bar'
+    }
+
+    def 'register encoder (object)'(){
+        setup:
+        response.content = 'foo'
+        response.encoder(TEXT_PLAIN, String, { o-> "${o}-bar"})
+
+        expect:
+        response.content == 'foo-bar'
+    }
+
+    def 'register encoders'(){
+        setup:
+        ResponseEncoders encoders = new ResponseEncoders({
+            register TEXT_PLAIN, String, { o-> "${o}-baz"}
+        })
+
+        response.encoders encoders
+
+        when:
+        response.content = 'foo'
+
+        then:
+        response.content == 'foo-baz'
     }
 }
