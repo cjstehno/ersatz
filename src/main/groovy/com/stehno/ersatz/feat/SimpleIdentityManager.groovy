@@ -16,32 +16,38 @@
 package com.stehno.ersatz.feat
 
 import groovy.transform.CompileStatic
-import groovy.transform.TupleConstructor
 import io.undertow.security.idm.*
-import io.undertow.util.HexConverter
-
-import java.security.Principal
 
 import static io.undertow.util.HexConverter.convertToHexBytes
+import static java.lang.String.valueOf
 
 /**
  * IdentityManager used by the <code>BasicAuthFeature</code>. The default username is "admin" and the default password is "$3cr3t".
  */
-@TupleConstructor
+@CompileStatic
 class SimpleIdentityManager implements IdentityManager {
 
-    String username = 'admin'
-    String password = '$3cr3t'
+    final String username
+    final String password
+
+    SimpleIdentityManager() {
+        this('admin', '$3cr3t')
+    }
+
+    SimpleIdentityManager(final String username, final String password) {
+        this.username = username
+        this.password = password
+    }
 
     @Override
-    Account verify(Account account) {
+    Account verify(final Account account) {
         throw new UnsupportedOperationException()
     }
 
     @Override
     Account verify(final String id, final Credential credential) {
         if (credential instanceof PasswordCredential) {
-            if (username == id && password == String.valueOf(((PasswordCredential) credential).password)) {
+            if (username == id && password == valueOf(((PasswordCredential) credential).password)) {
                 return new SimpleAccount(id)
             }
 
@@ -63,29 +69,15 @@ class SimpleIdentityManager implements IdentityManager {
         throw new UnsupportedOperationException()
     }
 
+    /**
+     * Creates the encoded credential string required for the BASIC authentication header.
+     *
+     * @param user the username
+     * @param pass the password
+     * @return the encoded credential string
+     */
     static String encodedCredential(final String user, final String pass) {
         "Basic ${("$user:$pass".bytes.encodeBase64() as String)}"
     }
 }
 
-@CompileStatic
-class SimpleAccount implements Account {
-
-    private final Principal principal
-
-    SimpleAccount(final String user) {
-        principal = new Principal() {
-            @Override String getName() { user }
-        }
-    }
-
-    @Override
-    Principal getPrincipal() {
-        principal
-    }
-
-    @Override
-    Set<String> getRoles() {
-        ['TESTER'] as Set<String>
-    }
-}

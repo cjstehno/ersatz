@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2017 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,34 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.junit;
+package com.stehno.ersatz.junit
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import org.junit.Rule;
-import org.junit.Test;
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import org.junit.Rule
+import org.junit.Test
 
-import java.io.IOException;
+import static java.lang.String.format
+import static org.junit.Assert.assertEquals
 
-import static java.lang.String.format;
-import static org.junit.Assert.assertEquals;
+class ErsatzServerRuleGroovyTest {
 
-public class ErsatzServerRuleTest {
+    @Rule public ErsatzServerRule ersatzServer = new ErsatzServerRule({
+        expects().get('/testing').responds().content('ok')
+    })
 
-    @Rule
-    public ErsatzServerRule ersatzServer = new ErsatzServerRule(config -> {
-        config.expects().get("/testing").responds().content("ok");
-    });
+    @Test void testing() throws IOException {
+        ersatzServer.start()
 
-    @Test
-    public void testing() throws IOException {
-        ersatzServer.start();
-
-        okhttp3.Response response = new OkHttpClient().newCall(
+        Response response = new OkHttpClient().newCall(
             new Request.Builder().url(format("%s/testing", ersatzServer.getHttpUrl())).build()
-        ).execute();
+        ).execute()
 
-        assertEquals(200, response.code());
-        assertEquals("ok", response.body().string());
+        assertEquals(200, response.code())
+        assertEquals("ok", response.body().string())
     }
 }

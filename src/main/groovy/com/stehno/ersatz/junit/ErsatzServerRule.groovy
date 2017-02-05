@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2017 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.stehno.ersatz.junit
 
 import com.stehno.ersatz.ErsatzServer
@@ -18,18 +33,11 @@ import java.util.function.Consumer
 class ErsatzServerRule extends ErsatzServer implements TestRule {
 
     /**
-     * Creates a server rule with the default server configuration.
-     */
-    ErsatzServerRule() {
-        super()
-    }
-
-    /**
      * Creates a server rul with the provided server configuration.
      *
      * @param closure the configuration closure delegating to <code>ServerConfig</code>.
      */
-    ErsatzServerRule(@DelegatesTo(ServerConfig) final Closure closure) {
+    ErsatzServerRule(@DelegatesTo(ServerConfig) final Closure closure = null) {
         super(closure)
     }
 

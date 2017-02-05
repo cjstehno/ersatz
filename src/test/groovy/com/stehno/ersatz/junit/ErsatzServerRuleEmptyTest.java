@@ -25,16 +25,16 @@ import java.io.IOException;
 import static java.lang.String.format;
 import static org.junit.Assert.assertEquals;
 
-public class ErsatzServerRuleTest {
+public class ErsatzServerRuleEmptyTest {
 
     @Rule
-    public ErsatzServerRule ersatzServer = new ErsatzServerRule(config -> {
-        config.expects().get("/testing").responds().content("ok");
-    });
+    public ErsatzServerRule ersatzServer = new ErsatzServerRule();
 
     @Test
     public void testing() throws IOException {
-        ersatzServer.start();
+        ersatzServer.expectations(expectations -> {
+            expectations.get("/testing").responds().content("ok");
+        }).start();
 
         okhttp3.Response response = new OkHttpClient().newCall(
             new Request.Builder().url(format("%s/testing", ersatzServer.getHttpUrl())).build()

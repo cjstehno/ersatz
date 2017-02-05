@@ -29,7 +29,14 @@ import io.undertow.server.HttpHandler
 import static io.undertow.security.api.AuthenticationMode.PRO_ACTIVE
 
 /**
- * Server feature used to enable DIGEST authentication on the Ersatz server.
+ * A <code>ServerFeature</code> used to enable DIGEST authentication on the Ersatz server. This will require all configured requests to be made using
+ * DIGEST authentication. To enable this feature, configure it on the <code>ErsatzServer</code> or <code>ServerConfig</code> instance:
+ *
+ * <pre><code>
+ * ErsatzServer server = new ErsatzServer({
+ *     feature new DigestAuthFeature()
+ * })
+ * </code></pre>
  */
 @CompileStatic
 class DigestAuthFeature implements ServerFeature {

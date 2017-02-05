@@ -27,7 +27,7 @@ import io.undertow.util.HeaderMap
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
 
 /**
- *
+ *  The primary <code>ClientRequest</code> implementation used to wrap and expose the important parts of the underlying Undertow request context.
  */
 @CompileStatic @TupleConstructor
 class UndertowClientRequest implements ClientRequest {
