@@ -78,7 +78,7 @@ class ErsatzResponse implements Response {
 
     @Override
     Response content(final Object content, final ContentType contentType) {
-<span class="nc" id="L81">        this.content(content, contentType.value)</span>
+<span class="pc" id="L81">        this.content(content, contentType.value)</span>
     }
 
     @Override
@@ -113,8 +113,8 @@ class ErsatzResponse implements Response {
 
     @Override
     Response contentType(final ContentType contentType) {
-<span class="nc" id="L116">        header(CONTENT_TYPE_HEADER, contentType.value)</span>
-<span class="nc" id="L117">        this</span>
+<span class="fc" id="L116">        header(CONTENT_TYPE_HEADER, contentType.value)</span>
+<span class="pc" id="L117">        this</span>
     }
 
     @Override
@@ -153,20 +153,20 @@ class ErsatzResponse implements Response {
 
     @Override
     Response encoder(final String contentType, final Class objectType, final Function&lt;Object, String&gt; encoder) {
-<span class="nc" id="L156">        localEncoders.register(contentType, objectType, encoder)</span>
-<span class="nc" id="L157">        this</span>
+<span class="fc" id="L156">        localEncoders.register(contentType, objectType, encoder)</span>
+<span class="pc" id="L157">        this</span>
     }
 
     @Override
     Response encoder(final ContentType contentType, final Class objectType, final Function&lt;Object, String&gt; encoder) {
-<span class="nc" id="L162">        localEncoders.register(contentType, objectType, encoder)</span>
-<span class="nc" id="L163">        this</span>
+<span class="fc" id="L162">        localEncoders.register(contentType, objectType, encoder)</span>
+<span class="pc" id="L163">        this</span>
     }
 
     @Override
     Response encoders(final ResponseEncoders encoders) {
-<span class="nc" id="L168">        encoderChain.second(encoders)</span>
-<span class="nc" id="L169">        this</span>
+<span class="fc" id="L168">        encoderChain.second(encoders)</span>
+<span class="pc" id="L169">        this</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

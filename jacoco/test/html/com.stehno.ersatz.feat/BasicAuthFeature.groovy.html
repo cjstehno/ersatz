@@ -30,7 +30,13 @@ import static io.undertow.security.api.AuthenticationMode.PRO_ACTIVE
 
 /**
  * A &lt;code&gt;ServerFeature&lt;/code&gt; providing support for HTTP BASIC authentication. This will apply BASIC authentication to all requests configured on
- * the server.
+ * the server. To enable this feature, configure it on the &lt;code&gt;ErsatzServer&lt;/code&gt; or &lt;code&gt;ServerConfig&lt;/code&gt; instance:
+ *
+ * &lt;pre&gt;&lt;code&gt;
+ * ErsatzServer server = new ErsatzServer({
+ *     feature new BasicAuthFeature()
+ * })
+ * &lt;/code&gt;&lt;/pre&gt;
  */
 @CompileStatic
 class BasicAuthFeature implements ServerFeature {
@@ -43,18 +49,18 @@ class BasicAuthFeature implements ServerFeature {
     /**
      * The IdentityManager to be used. Defaults to the &lt;code&gt;SimpleIdentityManager&lt;/code&gt;.
      */
-<span class="fc" id="L46">    IdentityManager identityManager = new SimpleIdentityManager()</span>
+<span class="fc" id="L52">    IdentityManager identityManager = new SimpleIdentityManager()</span>
 
     @Override
     HttpHandler apply(final HttpHandler handler) {
-<span class="fc" id="L50">        new SecurityInitialHandler(</span>
+<span class="fc" id="L56">        new SecurityInitialHandler(</span>
             PRO_ACTIVE,
             identityManager,
-<span class="fc" id="L53">            new AuthenticationMechanismsHandler(</span>
-<span class="fc" id="L54">                new AuthenticationConstraintHandler(</span>
-<span class="fc" id="L55">                    new AuthenticationCallHandler(handler)</span>
+<span class="fc" id="L59">            new AuthenticationMechanismsHandler(</span>
+<span class="fc" id="L60">                new AuthenticationConstraintHandler(</span>
+<span class="fc" id="L61">                    new AuthenticationCallHandler(handler)</span>
                 ),
-<span class="pc" id="L57">                Collections.&lt;AuthenticationMechanism&gt; singletonList(new BasicAuthenticationMechanism(realm))</span>
+<span class="pc" id="L63">                Collections.&lt;AuthenticationMechanism&gt; singletonList(new BasicAuthenticationMechanism(realm))</span>
             )
         )
     }

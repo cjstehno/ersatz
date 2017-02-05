@@ -184,8 +184,8 @@ class MultipartRequestMatcher extends BaseMatcher&lt;MultipartRequestContent&gt;
      */
     @Override
     boolean matches(final Object item) {
-<span class="pc bpc" id="L187" title="2 of 4 branches missed.">        if (!(item instanceof MultipartRequestContent)) {</span>
-<span class="nc" id="L188">            return false</span>
+<span class="fc bfc" id="L187" title="All 4 branches covered.">        if (!(item instanceof MultipartRequestContent)) {</span>
+<span class="fc" id="L188">            return false</span>
         }
 
 <span class="fc" id="L191">        def results = []</span>
@@ -222,13 +222,13 @@ class MultipartRequestMatcher extends BaseMatcher&lt;MultipartRequestContent&gt;
      */
     @Override
     void describeTo(final Description description) {
-<span class="nc" id="L225">        description.appendText('MultipartRequestMatcher: ')</span>
+<span class="fc" id="L225">        description.appendText('MultipartRequestMatcher: ')</span>
 
-<span class="nc" id="L227">        matchers.each { fn, map -&gt;</span>
-<span class="nc" id="L228">            map.each { f, m -&gt;</span>
-<span class="nc" id="L229">                description.appendText(&quot;${f}(&quot;)</span>
-<span class="nc" id="L230">                m.describeTo(description)</span>
-<span class="nc" id="L231">                description.appendText(') ')</span>
+<span class="fc" id="L227">        matchers.each { fn, map -&gt;</span>
+<span class="pc" id="L228">            map.each { f, m -&gt;</span>
+<span class="fc" id="L229">                description.appendText(&quot;${f}(&quot;)</span>
+<span class="fc" id="L230">                m.describeTo(description)</span>
+<span class="pc" id="L231">                description.appendText(') ')</span>
             }
         }
     }

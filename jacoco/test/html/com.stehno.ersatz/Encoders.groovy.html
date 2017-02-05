@@ -43,10 +43,9 @@ class Encoders {
      */
     static final Function&lt;Object, String&gt; binaryBase64 = { obj -&gt;
 <span class="fc bfc" id="L45" title="All 2 branches covered.">        if (obj) {</span>
-<span class="pc bfc" id="L46" title="All 2 branches covered.">            return (obj instanceof byte[] ? obj as byte[] : obj.bytes).encodeBase64() as String</span>
-        } else {
-<span class="pc" id="L48">            return ''</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">            return (obj instanceof byte[] ? obj as byte[] : obj.bytes).encodeBase64() as String</span>
         }
+<span class="pc" id="L48">        return ''</span>
     }
 
     /**
@@ -54,36 +53,36 @@ class Encoders {
      * message implementing the minimal multipart content specification - you may want to find a more robust implementation if you require a more
      * detailed multipart API.
      */
-<span class="fc" id="L57">    static final Function&lt;Object, String&gt; multipart = new Function&lt;Object, String&gt;() {</span>
+<span class="fc" id="L56">    static final Function&lt;Object, String&gt; multipart = new Function&lt;Object, String&gt;() {</span>
         @Override
         String apply(final Object obj) {
-<span class="pc bpc" id="L60" title="1 of 2 branches missed.">            assert obj instanceof MultipartResponseContent</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">            assert obj instanceof MultipartResponseContent</span>
 
-<span class="fc" id="L62">            ErsatzMultipartResponseContent mrc = obj as ErsatzMultipartResponseContent</span>
+<span class="fc" id="L61">            ErsatzMultipartResponseContent mrc = obj as ErsatzMultipartResponseContent</span>
 
-<span class="fc" id="L64">            StringBuilder out = new StringBuilder()</span>
+<span class="fc" id="L63">            StringBuilder out = new StringBuilder()</span>
 
-<span class="fc" id="L66">            mrc.parts().each { p -&gt;</span>
-<span class="fc" id="L67">                out.append(&quot;--${mrc.boundary}\r\n&quot;)</span>
+<span class="fc" id="L65">            mrc.parts().each { p -&gt;</span>
+<span class="fc" id="L66">                out.append(&quot;--${mrc.boundary}\r\n&quot;)</span>
 
-<span class="fc bfc" id="L69" title="All 2 branches covered.">                if (p.fileName) {</span>
-<span class="fc" id="L70">                    out.append(&quot;Content-Disposition: form-data; name=\&quot;${p.fieldName}\&quot;; filename=\&quot;${p.fileName}\&quot;\r\n&quot;)</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                if (p.fileName) {</span>
+<span class="fc" id="L69">                    out.append(&quot;Content-Disposition: form-data; name=\&quot;${p.fieldName}\&quot;; filename=\&quot;${p.fileName}\&quot;\r\n&quot;)</span>
                 } else {
-<span class="fc" id="L72">                    out.append(&quot;Content-Disposition: form-data; name=\&quot;${p.fieldName}\&quot;\r\n&quot;)</span>
+<span class="fc" id="L71">                    out.append(&quot;Content-Disposition: form-data; name=\&quot;${p.fieldName}\&quot;\r\n&quot;)</span>
                 }
 
-<span class="fc bfc" id="L75" title="All 2 branches covered.">                if (p.transferEncoding) {</span>
-<span class="fc" id="L76">                    out.append(&quot;Content-Transfer-Encoding: ${p.transferEncoding}\r\n&quot;)</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">                if (p.transferEncoding) {</span>
+<span class="fc" id="L75">                    out.append(&quot;Content-Transfer-Encoding: ${p.transferEncoding}\r\n&quot;)</span>
                 }
 
-<span class="fc" id="L79">                out.append(&quot;Content-Type: ${p.contentType}\r\n\r\n&quot;)</span>
+<span class="fc" id="L78">                out.append(&quot;Content-Type: ${p.contentType}\r\n\r\n&quot;)</span>
 
-<span class="pc" id="L81">                out.append(mrc.encoder(p.contentType as String, p.value.class).apply(p.value)).append('\r\n')</span>
+<span class="pc" id="L80">                out.append(mrc.encoder(p.contentType as String, p.value.class).apply(p.value)).append('\r\n')</span>
             }
 
-<span class="fc" id="L84">            out.append(&quot;--${mrc.boundary}--\r\n&quot;)</span>
+<span class="fc" id="L83">            out.append(&quot;--${mrc.boundary}--\r\n&quot;)</span>
 
-<span class="pc" id="L86">            out.toString()</span>
+<span class="pc" id="L85">            out.toString()</span>
         }
     }
 }

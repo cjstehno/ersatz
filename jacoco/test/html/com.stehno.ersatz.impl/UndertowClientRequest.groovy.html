@@ -27,7 +27,7 @@ import io.undertow.util.HeaderMap
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
 
 /**
- *
+ *  The primary &lt;code&gt;ClientRequest&lt;/code&gt; implementation used to wrap and expose the important parts of the underlying Undertow request context.
  */
 @CompileStatic @TupleConstructor
 class UndertowClientRequest implements ClientRequest {
@@ -42,8 +42,8 @@ class UndertowClientRequest implements ClientRequest {
      *
      * @return the request protocol
      */
-    String getProtocol(){
-<span class="pc" id="L46">        exchange.getRequestScheme()</span>
+    String getProtocol() {
+<span class="pc" id="L46">        exchange.requestScheme</span>
     }
 
     /**

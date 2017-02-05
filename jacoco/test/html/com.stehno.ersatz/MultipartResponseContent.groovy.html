@@ -59,9 +59,9 @@ abstract class MultipartResponseContent {
      * @return a reference to this MultipartResponseContent instance
      */
     static MultipartResponseContent multipart(final Consumer&lt;MultipartResponseContent&gt; consumer) {
-<span class="nc" id="L62">        MultipartResponseContent content = new ErsatzMultipartResponseContent()</span>
-<span class="nc" id="L63">        consumer.accept(content)</span>
-<span class="nc" id="L64">        content</span>
+<span class="fc" id="L62">        MultipartResponseContent content = new ErsatzMultipartResponseContent()</span>
+<span class="fc" id="L63">        consumer.accept(content)</span>
+<span class="pc" id="L64">        content</span>
     }
 
     /**
