@@ -15,6 +15,8 @@
  */
 package com.stehno.ersatz
 
+import org.hamcrest.Description
+import org.hamcrest.StringDescription
 import spock.lang.Specification
 
 import java.util.function.Consumer
@@ -29,6 +31,13 @@ class MultipartRequestMatcherSpec extends Specification {
     private final MultipartRequestContent content = multipart {
         part 'alpha', 'one'
         part 'bravo', 'bravo.dat', APPLICATION_JSON, '{"label":"This is content!"}'
+    }
+
+    def 'matching wrong type'() {
+        expect:
+        !multipartMatcher {
+            part 'alpha', equalTo('one')
+        }.matches('This will fail')
     }
 
     def 'configured with closure'() {
@@ -148,6 +157,19 @@ class MultipartRequestMatcherSpec extends Specification {
         newMatcher().part('bravo', 'bravo.dat', APPLICATION_JSON, equalTo('{"label":"This is content!"}')) || true
         newMatcher().part('bravo', 'bravo.dat', APPLICATION_JSON, equalTo('something else'))               || false
         newMatcher().part('bravo', 'bravo.dat', TEXT_PLAIN, equalTo('{"label":"This is content!"}'))       || false
+    }
+
+    def 'matching description'() {
+        setup:
+        Description description = new StringDescription()
+
+        when:
+        multipartMatcher {
+            part 'alpha', equalTo('one')
+        }.describeTo(description)
+
+        then:
+        description.toString() == 'MultipartRequestMatcher: value("one") '
     }
 
     private static MultipartRequestMatcher newMatcher() {
