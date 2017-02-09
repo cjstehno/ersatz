@@ -26,6 +26,10 @@ import io.undertow.server.HttpHandler
 import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.BlockingHandler
 import io.undertow.server.handlers.CookieImpl
+import io.undertow.server.handlers.encoding.ContentEncodingRepository
+import io.undertow.server.handlers.encoding.DeflateEncodingProvider
+import io.undertow.server.handlers.encoding.EncodingHandler
+import io.undertow.server.handlers.encoding.GzipEncodingProvider
 import io.undertow.util.HttpString
 
 import javax.net.ssl.KeyManagerFactory
@@ -57,6 +61,8 @@ import java.util.function.Function
  */
 @CompileStatic @Slf4j
 class ErsatzServer implements ServerConfig {
+
+    // FIXME: BASIC/DIGEST should just be config options, not features (?)
 
     /**
      * The response body returned when no matching expectation could be found.
@@ -264,25 +270,32 @@ class ErsatzServer implements ServerConfig {
             builder.addHttpsListener(EPHEMERAL_PORT, LOCALHOST, sslContext())
         }
 
-        server = builder.setHandler(new BlockingHandler(applyFeatures(new HttpHandler() {
-            @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
-                ClientRequest clientRequest = new UndertowClientRequest(exchange)
+        BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(
+            applyFeatures(new HttpHandler() {
+                @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
+                    ClientRequest clientRequest = new UndertowClientRequest(exchange)
 
-                log.debug 'Request: {}', clientRequest
+                    log.debug 'Request: {}', clientRequest
 
-                ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
-                if (request) {
-                    Response currentResponse = request.currentResponse
-                    request.mark(clientRequest)
-                    send(exchange, currentResponse)
+                    ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
+                    if (request) {
+                        Response currentResponse = request.currentResponse
+                        request.mark(clientRequest)
+                        send(exchange, currentResponse)
 
-                } else {
-                    log.warn 'Unmatched-Request: {}', clientRequest
+                    } else {
+                        log.warn 'Unmatched-Request: {}', clientRequest
 
-                    exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
+                        exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
+                    }
                 }
-            }
-        }))).build()
+            }),
+            new ContentEncodingRepository()
+                .addEncodingHandler('gzip', new GzipEncodingProvider(), 50)
+                .addEncodingHandler('deflate', new DeflateEncodingProvider(), 50)
+        ))
+
+        server = builder.setHandler(blockingHandler).build()
 
         server.start()
 
@@ -339,7 +352,7 @@ class ErsatzServer implements ServerConfig {
 
         String responseContent = response?.content
 
-        log.debug 'Response: {}', responseContent.take(1000)
+        log.debug 'Response({}): {}', exchange.responseHeaders, responseContent.take(1000)
 
         exchange.responseSender.send(responseContent)
     }
