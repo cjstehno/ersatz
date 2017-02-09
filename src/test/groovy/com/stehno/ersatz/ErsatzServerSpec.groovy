@@ -39,6 +39,7 @@ class ErsatzServerSpec extends Specification {
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
 
     @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer({
+        enableAutoStart()
         encoder MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
     })
 
@@ -206,7 +207,7 @@ class ErsatzServerSpec extends Specification {
         setup:
         ersatzServer.expectations {
             get('/gzip').header('Accept-Encoding', 'gzip').responds().content('x' * 1000, TEXT_PLAIN)
-        }.start()
+        }
 
         when:
         okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).build()).execute()
@@ -220,7 +221,7 @@ class ErsatzServerSpec extends Specification {
         setup:
         ersatzServer.expectations {
             get('/gzip').header('Accept-Encoding', '').responds().content('x' * 1000, TEXT_PLAIN)
-        }.start()
+        }
 
         when:
         okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).header('Accept-Encoding','').build()).execute()
@@ -234,7 +235,7 @@ class ErsatzServerSpec extends Specification {
         setup:
         ersatzServer.expectations {
             get('/gzip').header('Accept-Encoding', 'deflate').responds().content('x' * 1000, TEXT_PLAIN)
-        }.start()
+        }
 
         when:
         okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).header('Accept-Encoding','deflate').build()).execute()

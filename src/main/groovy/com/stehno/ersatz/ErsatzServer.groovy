@@ -78,6 +78,8 @@ class ErsatzServer implements ServerConfig {
     private final List<ServerFeature> features = []
     private Undertow server
     private boolean httpsEnabled
+    private boolean autoStartEnabled
+    private boolean started
     private URL keystoreLocation
     private String keystorePass = 'ersatz'
     private int actualHttpPort = UNSPECIFIED_PORT
@@ -124,6 +126,22 @@ class ErsatzServer implements ServerConfig {
      */
     ErsatzServer enableHttps(boolean enabled = true) {
         httpsEnabled = enabled
+        this
+    }
+
+    /**
+     * Used to enable/disable the auto-start feature, which will start the server after any call to either of the <code>expectations</code>
+     * configuration methods. With this setting enabled, any other calls to the <code>start()</code> method are ignored. Further configuration is
+     * allowed.
+     *
+     * Auto-start is disabled by default.
+     *
+     * @param autoStart whether or not auto-start is enabled
+     * @return a reference to the server being configured
+     */
+    @Override
+    ServerConfig enableAutoStart(boolean autoStart = true) {
+        autoStartEnabled = autoStart
         this
     }
 
@@ -203,17 +221,48 @@ class ErsatzServer implements ServerConfig {
      * Used to configure HTTP expectations on the server; the provided <code>Consumer<Expectations></code> implementation will have an active
      * <code>Expectations</code> object passed into it for configuring server interaction expectations.
      *
+     * Calling this method when auto-start is enabled will start the server.
+     *
      * @param expects the <code>Consumer<Expectations></code> instance to perform the configuration
      * @return a reference to this server
      */
     @SuppressWarnings('ConfusingMethodName')
     ErsatzServer expectations(final Consumer<Expectations> expects) {
         expects.accept(expectations)
+
+        if (autoStartEnabled) {
+            start()
+        }
+
+        this
+    }
+
+    /**
+     * Used to configure HTTP expectations on the server; the provided Groovy <code>Closure</code> will delegate to an <code>Expectations</code>
+     * instance for configuring server interaction expectations using the Groovy DSL.
+     *
+     * Calling this method when auto-start is enabled will start the server.
+     *
+     * @param closure the Groovy <code>Closure</code> which will provide expectation configuration via DSL
+     * @return a reference to this server
+     */
+    @SuppressWarnings('ConfusingMethodName')
+    ErsatzServer expectations(@DelegatesTo(Expectations) final Closure closure) {
+        closure.delegate = expectations
+        closure.call()
+
+        if (autoStartEnabled) {
+            start()
+        }
+
         this
     }
 
     /**
      * An alternate means of starting the expectation chain.
+     *
+     * Calling this method when auto-start is enabled will <b>NOT</b> start the server. Use one of the other expectation configuration method if
+     * auto-start functionality is desired.
      *
      * @return the reference to the Expectation configuration object
      */
@@ -246,63 +295,53 @@ class ErsatzServer implements ServerConfig {
     }
 
     /**
-     * Used to configure HTTP expectations on the server; the provided Groovy <code>Closure</code> will delegate to an <code>Expectations</code>
-     * instance for configuring server interaction expectations using the Groovy DSL.
-     *
-     * @param closure the Groovy <code>Closure</code> which will provide expectation configuration via DSL
-     * @return a reference to this server
-     */
-    @SuppressWarnings('ConfusingMethodName')
-    ErsatzServer expectations(@DelegatesTo(Expectations) final Closure closure) {
-        closure.delegate = expectations
-        closure.call()
-        this
-    }
-
-    /**
      * Used to start the HTTP server for test interactions. This method should be called after configuration of expectations and before the test
      * interactions are executed against the server.
      */
     void start() {
-        Undertow.Builder builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST)
+        if (!started) {
+            Undertow.Builder builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST)
 
-        if (httpsEnabled) {
-            builder.addHttpsListener(EPHEMERAL_PORT, LOCALHOST, sslContext())
-        }
+            if (httpsEnabled) {
+                builder.addHttpsListener(EPHEMERAL_PORT, LOCALHOST, sslContext())
+            }
 
-        BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(
-            applyFeatures(new HttpHandler() {
-                @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
-                    ClientRequest clientRequest = new UndertowClientRequest(exchange)
+            BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(
+                applyFeatures(new HttpHandler() {
+                    @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
+                        ClientRequest clientRequest = new UndertowClientRequest(exchange)
 
-                    log.debug 'Request: {}', clientRequest
+                        log.debug 'Request: {}', clientRequest
 
-                    ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
-                    if (request) {
-                        Response currentResponse = request.currentResponse
-                        request.mark(clientRequest)
-                        send(exchange, currentResponse)
+                        ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
+                        if (request) {
+                            Response currentResponse = request.currentResponse
+                            request.mark(clientRequest)
+                            send(exchange, currentResponse)
 
-                    } else {
-                        log.warn 'Unmatched-Request: {}', clientRequest
+                        } else {
+                            log.warn 'Unmatched-Request: {}', clientRequest
 
-                        exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
+                            exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
+                        }
                     }
-                }
-            }),
-            new ContentEncodingRepository()
-                .addEncodingHandler('gzip', new GzipEncodingProvider(), 50)
-                .addEncodingHandler('deflate', new DeflateEncodingProvider(), 50)
-        ))
+                }),
+                new ContentEncodingRepository()
+                    .addEncodingHandler('gzip', new GzipEncodingProvider(), 50)
+                    .addEncodingHandler('deflate', new DeflateEncodingProvider(), 50)
+            ))
 
-        server = builder.setHandler(blockingHandler).build()
+            server = builder.setHandler(blockingHandler).build()
 
-        server.start()
+            server.start()
 
-        actualHttpPort = (server.listenerInfo[0].address as InetSocketAddress).port
+            actualHttpPort = (server.listenerInfo[0].address as InetSocketAddress).port
 
-        if (httpsEnabled) {
-            actualHttpsPort = (server.listenerInfo[1].address as InetSocketAddress).port
+            if (httpsEnabled) {
+                actualHttpsPort = (server.listenerInfo[1].address as InetSocketAddress).port
+            }
+
+            started = true
         }
     }
 
@@ -310,10 +349,14 @@ class ErsatzServer implements ServerConfig {
      * Used to stop the HTTP server. The server may be restarted after it has been stopped.
      */
     void stop() {
-        actualHttpPort = UNSPECIFIED_PORT
-        actualHttpsPort = UNSPECIFIED_PORT
+        if (started) {
+            actualHttpPort = UNSPECIFIED_PORT
+            actualHttpsPort = UNSPECIFIED_PORT
 
-        server?.stop()
+            server?.stop()
+
+            started = false
+        }
     }
 
     /**

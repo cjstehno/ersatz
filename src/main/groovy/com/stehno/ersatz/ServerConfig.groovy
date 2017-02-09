@@ -42,6 +42,29 @@ interface ServerConfig {
     ServerConfig enableHttps()
 
     /**
+     * Used to enable/disable the auto-start feature, which will start the server after any call to either of the <code>expectations</code>
+     * configuration methods. With this setting enabled, any other calls to the <code>start()</code> method are ignored. Further configuration is
+     * allowed.
+     *
+     * Auto-start is disabled by default.
+     *
+     * @param autoStart whether or not auto-start is enabled
+     * @return a reference to the server being configured
+     */
+    ServerConfig enableAutoStart(boolean autoStart)
+
+    /**
+     * Used to enable the auto-start feature, which will start the server after any call to either of the <code>expectations</code> configuration
+     * methods. With this setting enabled, any other calls to the <code>start()</code> method are ignored. Further configuration is
+     * allowed.
+     *
+     * Auto-start is disabled by default.
+     *
+     * @return a reference to the server being configured
+     */
+    ServerConfig enableAutoStart()
+
+    /**
      * Allows configuration of an external HTTPS keystore with the given location and password. By default, if this is not specified an internally
      * provided keystore will be used for HTTPS certification. See the User Guide for details about configuring your own keystore.
      *
