@@ -431,6 +431,11 @@ instances without copying the configuration.
 * Encoders/Decoders configured in the request/response itself are considered "local" and will override any other configured handlers
 * Other configurations are applied in a layered order based on where they are applied in the configuration DSL - the handlers are maintained as separate isolated instances and the actual handler is resolved at runtime.
 
+== Request / Response Compression
+
+Ersatz supports GZip and Deflate compression seamlessly as long as the `Accept-Encoding` header is specified as `gzip` or `deflate`. If the response
+is compressed, a `Content-Encoding` header will be added to the response with the appropriate compression type as the value.
+
 == HTTPS Request Support
 
 The `ErsatzServer` supports HTTPS requests when the `enableHttps()` configuration is set (either as `enableHttps()` or as `enableHttps true`). This
