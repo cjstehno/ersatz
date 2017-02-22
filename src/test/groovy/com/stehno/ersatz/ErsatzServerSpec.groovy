@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
 import static MultipartResponseContent.multipart
+import static com.stehno.ersatz.ContentType.MULTIPART_MIXED
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
 import static org.hamcrest.Matchers.startsWith
@@ -36,8 +37,10 @@ import static org.hamcrest.Matchers.startsWith
 class ErsatzServerSpec extends Specification {
 
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
+
     @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer({
-        encoder ContentType.MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
+        enableAutoStart()
+        encoder MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
     })
 
     def 'prototype: functional'() {
@@ -93,7 +96,7 @@ class ErsatzServerSpec extends Specification {
         client.newCall(request).execute().body().string() == 'This is another response'
 
         when:
-        request = new okhttp3.Request.Builder().url(url("/bar")).build();
+        request = new okhttp3.Request.Builder().url(url("/bar")).build()
         def results = [
             client.newCall(request).execute().body().string(),
             client.newCall(request).execute().body().string()
@@ -104,7 +107,7 @@ class ErsatzServerSpec extends Specification {
         results.every { it == 'This is Bar!!' }
 
         when:
-        request = new okhttp3.Request.Builder().url(url('/baz?alpha=42')).build();
+        request = new okhttp3.Request.Builder().url(url('/baz?alpha=42')).build()
 
         then:
         client.newCall(request).execute().body().string() == 'The answer is 42'
@@ -194,14 +197,56 @@ class ErsatzServerSpec extends Specification {
         server.start()
 
         expect:
-        "${server.serverUrl}/hello/there".toURL().text == 'ok'
+        "${server.httpUrl}/hello/there".toURL().text == 'ok'
 
         cleanup:
         server.stop()
     }
 
+    def 'gzip compression supported'(){
+        setup:
+        ersatzServer.expectations {
+            get('/gzip').header('Accept-Encoding', 'gzip').responds().content('x' * 1000, TEXT_PLAIN)
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).build()).execute()
+
+        then:
+        response.code() == 200
+        response.networkResponse().headers('Content-Encoding').contains('gzip')
+    }
+
+    def 'non-compression supported'(){
+        setup:
+        ersatzServer.expectations {
+            get('/gzip').header('Accept-Encoding', '').responds().content('x' * 1000, TEXT_PLAIN)
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).header('Accept-Encoding','').build()).execute()
+
+        then:
+        response.code() == 200
+        !response.networkResponse().headers('Content-Encoding').contains('gzip')
+    }
+
+    def 'deflate supported'(){
+        setup:
+        ersatzServer.expectations {
+            get('/gzip').header('Accept-Encoding', 'deflate').responds().content('x' * 1000, TEXT_PLAIN)
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).header('Accept-Encoding','deflate').build()).execute()
+
+        then:
+        response.code() == 200
+        response.networkResponse().headers('Content-Encoding').contains('deflate')
+    }
+
     private String url(final String path) {
-        "http://localhost:${ersatzServer.port}${path}"
+        "http://localhost:${ersatzServer.httpPort}${path}"
     }
 
     @TupleConstructor

@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno <chris@stehno.com>
-v0.5.0, February 2017
+v0.6.0, February 2017
 :toc: left
 :toclevels: 3
 
@@ -31,14 +31,14 @@ The `ersatz` library is available via Bintray (JCenter) and the Maven Central Re
 
 For Gradle:
 
-    testCompile 'com.stehno.ersatz:ersatz:0.5.0'
+    testCompile 'com.stehno.ersatz:ersatz:0.6.0'
 
 For Maven:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>0.5.0</version>
+        <version>0.6.0</version>
         <scope>test</scope>
     </dependency>
 
@@ -199,7 +199,7 @@ remain on server start even if new expectations are configured.
 == Expectations
 
 Request expectations are the core of the Ersatz server functionality; conceptually, they are HTTP server request routes which are used to match an
-incoming HTTP request with a request handler or to respond with a status of 404m, if no matching request was configured. The expectations are
+incoming HTTP request with a request handler or to respond with a status of 404, if no matching request was configured. The expectations are
 configured on an instance of the `Expectations` interface, which provides multiple configuration methods for each of the supported HTTP request
 methods (GET, HEAD, POST, PUT, DELETE, and PATCH), with the method name corresponding to the HTTP request method name. The four general types of
 methods are:
@@ -430,6 +430,11 @@ instances without copying the configuration.
 * Encoders/Decoders configured in the `ErsatzServer` constructor are considered "global" and will be used if no overriding handlers are configured.
 * Encoders/Decoders configured in the request/response itself are considered "local" and will override any other configured handlers
 * Other configurations are applied in a layered order based on where they are applied in the configuration DSL - the handlers are maintained as separate isolated instances and the actual handler is resolved at runtime.
+
+== Request / Response Compression
+
+Ersatz supports GZip and Deflate compression seamlessly as long as the `Accept-Encoding` header is specified as `gzip` or `deflate`. If the response
+is compressed, a `Content-Encoding` header will be added to the response with the appropriate compression type as the value.
 
 == HTTPS Request Support
 
