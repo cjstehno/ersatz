@@ -515,7 +515,7 @@ table.CodeRay td.code>pre{padding:0}
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
 <span id="email" class="email"><a href="mailto:chris@stehno.com">chris@stehno.com</a></span><br>
-<span id="revnumber">version 0.5.0,</span>
+<span id="revnumber">version 0.6.0,</span>
 <span id="revdate">February 2017</span>
 </div>
 <div id="toc" class="toc2">
@@ -536,6 +536,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_multipart_request_content">Multipart Request Content</a></li>
 <li><a href="#_multipart_response_content">Multipart Response Content</a></li>
 <li><a href="#_encoder_decoder_chains">Encoder/Decoder Chains</a></li>
+<li><a href="#_request_response_compression">Request / Response Compression</a></li>
 <li><a href="#_https_request_support">HTTPS Request Support</a>
 <ul class="sectlevel2">
 <li><a href="#_creating_a_custom_keystore">Creating a Custom Keystore</a></li>
@@ -591,7 +592,7 @@ frameworks.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:0.5.0'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:0.6.0'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -602,7 +603,7 @@ frameworks.</p>
 <pre>&lt;dependency&gt;
     &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
-    &lt;version&gt;0.5.0&lt;/version&gt;
+    &lt;version&gt;0.6.0&lt;/version&gt;
     &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</pre>
 </div>
@@ -805,7 +806,7 @@ remain on server start even if new expectations are configured.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Request expectations are the core of the Ersatz server functionality; conceptually, they are HTTP server request routes which are used to match an
-incoming HTTP request with a request handler or to respond with a status of 404m, if no matching request was configured. The expectations are
+incoming HTTP request with a request handler or to respond with a status of 404, if no matching request was configured. The expectations are
 configured on an instance of the <code>Expectations</code> interface, which provides multiple configuration methods for each of the supported HTTP request
 methods (GET, HEAD, POST, PUT, DELETE, and PATCH), with the method name corresponding to the HTTP request method name. The four general types of
 methods are:</p>
@@ -1120,6 +1121,15 @@ instances without copying the configuration.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_request_response_compression">Request / Response Compression</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Ersatz supports GZip and Deflate compression seamlessly as long as the <code>Accept-Encoding</code> header is specified as <code>gzip</code> or <code>deflate</code>. If the response
+is compressed, a <code>Content-Encoding</code> header will be added to the response with the appropriate compression type as the value.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_https_request_support">HTTPS Request Support</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1249,8 +1259,8 @@ Features are additive, so be careful about how features are applied.
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.5.0<br>
-Last updated 2017-02-05 10:20:43 -06:00
+Version 0.6.0<br>
+Last updated 2017-02-22 15:52:39 -06:00
 </div>
 </div>
 </body>
