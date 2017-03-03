@@ -304,6 +304,31 @@ get('/something'){
 Adding the `called` configuration adds the extra safety of ensuring that if the request is called more than our expected two times, the verification
 will fail (and with that, the test).
 
+=== Hamcrest Matchers
+
+Many of the expectation methods accept http://hamcrest.org/[Hamcrest] `Matcher` instances as an alternate argument. Hamcrest matchers allow for a more
+rich and expressive matching configuration. Consider the following configuration:
+
+[source,groovy]
+----
+server.expectations {
+    get( startsWith('/foo') ){
+        called greaterThanOrEqualTo(2)
+        query 'user-key', notNullValue()
+        responder {
+            content 'ok', TEXT_PLAIN
+        }
+    }
+}
+----
+
+This configuration would match a `GET` request to a URL starting with `/foo`, with a non-null query string "user-key" value. This request matcher is
+ expected to be called at least twice and it will respond with a `text/plain` response of `ok`.
+
+The methods that accept matchers will have a non-matcher version which provides a sensible default matcher (e.g. `get(Matcher)` has `get(String)` which
+provides delegates to `get( equalTo( string ) )` to wrap the provided path string in a matcher.
+
+
 == Url-Encoded Form Requests
 
 Url-encoded form requests are supported by default when the request content-type is specified as `application/x-www-form-urlencoded`. The request
