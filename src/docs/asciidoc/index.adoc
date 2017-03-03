@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno <chris@stehno.com>
-v0.6.0, February 2017
+v1.0.0, March 2017
 :toc: left
 :toclevels: 3
 
@@ -31,14 +31,14 @@ The `ersatz` library is available via Bintray (JCenter) and the Maven Central Re
 
 For Gradle:
 
-    testCompile 'com.stehno.ersatz:ersatz:0.6.0'
+    testCompile 'com.stehno.ersatz:ersatz:1.0.0'
 
 For Maven:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>0.6.0</version>
+        <version>1.0.0</version>
         <scope>test</scope>
     </dependency>
 
@@ -84,17 +84,37 @@ The server is expecting a single call to `GET /say/hello?name=Ersatz`, and when 
 `Hello Ersatz`. This code also verifies that the expected request was only called once (as requested) - if it was not called or called more than once,
 the verification and likewise the test, would fail.
 
-The expectation configured above could also be written using the chained builder approach (in Java), as follows:
+A similar test could be written in JUnit with Java 8, as follows (using the provided `ErsatzServerRule` helper class:
 
 [source,java]
+.HelloTest.java
 ----
-server.expectations(expect -> {
-    expect.get("/say/hello").called(equalTo(1)).query("name","Ersatz")
-        .responds().content("Hello Ersatz","text/plain");
-))
+public class HelloTest {
+
+    @Rule public ErsatzServerRule ersatzServer = new ErsatzServerRule(ServerConfig::enableAutoStart);
+
+    private OkHttpClient client;
+
+    @Before
+    public void before() {
+        client = new OkHttpClient.Builder().build();
+    }
+
+    @Test
+    public sayHello(){
+        ersatzServer.expectations(expectations -> {
+            expectations.get("/say/hello").called(1).query("name","Ersatz")
+                .responder().content("Hello Ersatz", ContentType.TEXT_PLAIN)
+        })
+
+        String url = ersatzServer.getHttpUrl() + "/say/hello?name=Ersatz";
+        okhttp3.Request request = new okhttp3.Request.Builder().url(url)).build();
+        assertEquals("Hello Ersatz", client.newCall(request).execute().body().string());
+    }
+}
 ----
 
-The two formats are interchangeable.
+The two formats are interchangeable and equally supported.
 
 == Server Lifecycle
 
