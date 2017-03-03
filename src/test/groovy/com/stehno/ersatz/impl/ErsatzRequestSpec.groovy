@@ -21,6 +21,7 @@ import com.stehno.ersatz.InMemoryCookieJar
 import com.stehno.ersatz.Response
 import com.stehno.ersatz.ResponseEncoders
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.Request.Builder
 import spock.lang.AutoCleanup
 import spock.lang.Specification
@@ -358,10 +359,10 @@ class ErsatzRequestSpec extends Specification {
     }
 
     private Builder clientGet(final String path) {
-        new Builder().get().url("${server.serverUrl}${path}")
+        new Builder().get().url("${server.httpUrl}${path}")
     }
 
-    private okhttp3.Response exec(okhttp3.Request req) {
+    private okhttp3.Response exec(Request req) {
         client.newCall(req).execute()
     }
 

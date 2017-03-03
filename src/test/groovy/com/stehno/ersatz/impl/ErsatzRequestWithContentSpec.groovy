@@ -168,7 +168,7 @@ class ErsatzRequestWithContentSpec extends Specification {
         OkHttpClient client = new OkHttpClient()
 
         Builder builder = new Builder().post(create(parse('application/x-www-form-urlencoded'), 'alpha=some+data&bravo=42&charlie=last'))
-            .url("${server.serverUrl}/form")
+            .url("${server.httpUrl}/form")
             .addHeader('Content-Type', 'application/x-www-form-urlencoded')
 
         Response response = client.newCall(builder.build()).execute()
@@ -203,7 +203,7 @@ class ErsatzRequestWithContentSpec extends Specification {
             .addFormDataPart('infoFile', 'info.txt', create(parse('text/plain'), 'This is some interesting file content.'))
             .addFormDataPart('dataFile', 'data.bin', create(parse('image/png'), [8, 6, 7, 5, 3, 0, 9] as byte[]))
 
-        Builder builder = new Builder().post(bodyBuilder.build()).url("${server.serverUrl}/upload").addHeader('Content-Type', 'multipart/form-data')
+        Builder builder = new Builder().post(bodyBuilder.build()).url("${server.httpUrl}/upload").addHeader('Content-Type', 'multipart/form-data')
 
         Response response = client.newCall(builder.build()).execute()
 
@@ -237,7 +237,7 @@ class ErsatzRequestWithContentSpec extends Specification {
             .addFormDataPart('infoFile', 'info.txt', create(parse('text/plain'), 'This is some interesting file content.'))
             .addFormDataPart('dataFile', 'data.bin', create(parse('image/png'), [8, 6, 7, 5, 3, 0, 9] as byte[]))
 
-        Builder builder = new Builder().post(bodyBuilder.build()).url("${server.serverUrl}/upload").addHeader('Content-Type', 'multipart/form-data')
+        Builder builder = new Builder().post(bodyBuilder.build()).url("${server.httpUrl}/upload").addHeader('Content-Type', 'multipart/form-data')
 
         Response response = client.newCall(builder.build()).execute()
 
@@ -246,7 +246,7 @@ class ErsatzRequestWithContentSpec extends Specification {
     }
 
     private Builder clientPost(final String path, final String contentType, final String content) {
-        new Builder().post(create(parse(contentType), content)).url("${server.serverUrl}${path}")
+        new Builder().post(create(parse(contentType), content)).url("${server.httpUrl}${path}")
     }
 
     private Response exec(Request req) {

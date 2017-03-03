@@ -38,7 +38,8 @@ import static org.junit.Assert.assertTrue;
 
 public class ErsatzServerTest {
 
-    @Rule public ErsatzServerRule ersatzServer = new ErsatzServerRule(ServerConfig::enableAutoStart);
+    @Rule
+    public ErsatzServerRule ersatzServer = new ErsatzServerRule(ServerConfig::autoStart);
 
     private OkHttpClient client;
 

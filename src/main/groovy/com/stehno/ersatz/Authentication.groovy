@@ -13,28 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.feat
+package com.stehno.ersatz
 
-import groovy.transform.Canonical
 import groovy.transform.CompileStatic
-import groovy.transform.Memoized
-import io.undertow.security.idm.Account
-
-import java.security.Principal
 
 /**
- * Simple implementation of the <code>Account</code> interface used for BASIC and DIGEST authentication testing.
+ * Enumerates the supported authentication types.
  */
-@CompileStatic @Canonical
-class SimpleAccount implements Account {
-
-    final String user
-    final Set<String> roles = ['TESTER'] as Set<String>
-
-    @Memoized(protectedCacheSize = 1, maxCacheSize = 1)
-    Principal getPrincipal() {
-        new Principal() {
-            @Override String getName() { user }
-        }
-    }
+@CompileStatic
+enum Authentication {
+    BASIC, DIGEST
 }

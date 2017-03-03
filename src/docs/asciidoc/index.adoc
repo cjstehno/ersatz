@@ -91,7 +91,8 @@ A similar test could be written in JUnit with Java 8, as follows (using the prov
 ----
 public class HelloTest {
 
-    @Rule public ErsatzServerRule ersatzServer = new ErsatzServerRule(ServerConfig::enableAutoStart);
+    @Rule
+    public ErsatzServerRule ersatzServer = new ErsatzServerRule(ServerConfig::enableAutoStart);
 
     private OkHttpClient client;
 
@@ -483,7 +484,7 @@ is compressed, a `Content-Encoding` header will be added to the response with th
 
 == HTTPS Request Support
 
-The `ErsatzServer` supports HTTPS requests when the `enableHttps()` configuration is set (either as `enableHttps()` or as `enableHttps true`). This
+The `ErsatzServer` supports HTTPS requests when the `https()` configuration is set (either as `https()` or as `https true`). This
 will setup both an HTTP and HTTPS listener both of which will have access to all configured expectations. In order to limit a specific request
 expectation to HTTP or HTTPS, apply the `procotol(String)` matcher method with the desired protocol, for example:
 
@@ -517,31 +518,31 @@ The keystore should then be provided during server configuration as:
 [source,groovy]
 ----
 ErsatzServer server = new ErsatzServer({
-    enableHttps()
+    https()
     keystore KEYSTORE_URL, KEYSTORE_PASS
 })
 ----
 
 where `KEYSTORE_URL` is the URL to your custom keystore file, and `KEYSTORE_PASS` is the password (maybe omitted if you used `ersatz` as the password).
 
-== Feature Extensions
+== Authentication
 
-Additional server functionality may be added/configured on the server before startup. The `ServerFeature` interface provides this extension point;
-however, the extension feature mechanism is experimental and may change in the future (efforts will be made to maintain a simple migration path if/when
-this happens).
+Ersatz support two forms of built-in server authentication, BASIC and DIGEST. Both authentication methods are exclusive and global meaning that they
+cannot be configured together on the same server and that when configured, they apply to all end points configured on the server.
 
-At this point there are two feature extension, the `BasicAuthFeature` and `DigestAuthFeature`, both discussed below.
-
-TIP: Features are additive, so be careful about how features are applied.
+If more fine-grained control of which URLs are authenticated is desired, you will need to configured multiple Ersatz Servers for the different
+configuration sets.
 
 === BASIC Authentication
 
-https://en.wikipedia.org/wiki/Basic_access_authentication[HTTP BASIC Authentication] is supported by applying the `BasicAuthFeature` to the server.
+https://en.wikipedia.org/wiki/Basic_access_authentication[HTTP BASIC Authentication] is supported by applying the `basic` `authentication` configuration to the server.
 
 [source,groovy]
 ----
 def ersatz = new ErsatzServer({
-    feature new BasicAuthFeature()
+    authentication {
+        basic 'admin', 'my-password'
+    }
 })
 ----
 
@@ -549,12 +550,14 @@ This configuration causes the configured request expectations to require BASIC a
 
 === DIGEST Authentication
 
-https://en.wikipedia.org/wiki/Digest_access_authentication[HTTP DIGEST Authentication] is supported by applying the `DigestAuthFeature` to the server.
+https://en.wikipedia.org/wiki/Digest_access_authentication[HTTP DIGEST Authentication] is supported by applying the `digest` `authentication` to the server.
 
 [source,groovy]
 ----
 def ersatz = new ErsatzServer({
-    feature new BasicAuthFeature()
+    authentication {
+        digest 'guest', 'other-password'
+    }
 })
 ----
 

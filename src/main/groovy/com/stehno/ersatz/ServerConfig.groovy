@@ -32,14 +32,14 @@ interface ServerConfig {
      *
      * @return a reference to the server being configured
      */
-    ServerConfig enableHttps(boolean enabled)
+    ServerConfig https(boolean enabled)
 
     /**
      * Used to enabled HTTPS on the server. By default HTTPS is disabled.
      *
      * @return a reference to the server being configured
      */
-    ServerConfig enableHttps()
+    ServerConfig https()
 
     /**
      * Used to enable/disable the auto-start feature, which will start the server after any call to either of the <code>expectations</code>
@@ -51,7 +51,7 @@ interface ServerConfig {
      * @param autoStart whether or not auto-start is enabled
      * @return a reference to the server being configured
      */
-    ServerConfig enableAutoStart(boolean autoStart)
+    ServerConfig autoStart(boolean enabled)
 
     /**
      * Used to enable the auto-start feature, which will start the server after any call to either of the <code>expectations</code> configuration
@@ -62,7 +62,7 @@ interface ServerConfig {
      *
      * @return a reference to the server being configured
      */
-    ServerConfig enableAutoStart()
+    ServerConfig autoStart()
 
     /**
      * Allows configuration of an external HTTPS keystore with the given location and password. By default, if this is not specified an internally
@@ -83,14 +83,6 @@ interface ServerConfig {
      * @return a reference to the server being configured
      */
     ServerConfig keystore(URL location)
-
-    /**
-     * Configures the specified feature on the server.
-     *
-     * @param feature the feature to be configured
-     * @return a reference to the server being configured
-     */
-    ServerConfig feature(ServerFeature feature)
 
     /**
      * Used to configure HTTP expectations on the server; the provided <code>Consumer<Expectations></code> implementation will have an active
@@ -156,4 +148,8 @@ interface ServerConfig {
      * @return a reference to this server configuration
      */
     ServerConfig encoder(ContentType contentType, Class objectType, Function<Object, String> encoder)
+
+    ServerConfig authentication(@DelegatesTo(AuthenticationConfig) Closure closure)
+
+    ServerConfig authentication(Consumer<AuthenticationConfig> config)
 }

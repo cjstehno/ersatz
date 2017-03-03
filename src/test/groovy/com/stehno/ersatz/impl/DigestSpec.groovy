@@ -21,7 +21,6 @@ import com.burgstaller.okhttp.digest.CachingAuthenticator
 import com.burgstaller.okhttp.digest.Credentials
 import com.burgstaller.okhttp.digest.DigestAuthenticator
 import com.stehno.ersatz.ErsatzServer
-import com.stehno.ersatz.feat.DigestAuthFeature
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -34,7 +33,9 @@ class DigestSpec extends Specification {
 
     @AutoCleanup('stop')
     private final ErsatzServer ersatzServer = new ErsatzServer({
-        feature new DigestAuthFeature()
+        authentication {
+            digest()
+        }
     })
 
     def 'DIGEST no-auth'() {

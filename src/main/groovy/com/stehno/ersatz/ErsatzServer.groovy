@@ -15,6 +15,9 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.auth.BasicAuthHandler
+import com.stehno.ersatz.auth.DigestAuthHandler
+import com.stehno.ersatz.auth.SimpleIdentityManager
 import com.stehno.ersatz.impl.ErsatzRequest
 import com.stehno.ersatz.impl.ExpectationsImpl
 import com.stehno.ersatz.impl.UndertowClientRequest
@@ -62,8 +65,6 @@ import java.util.function.Function
 @CompileStatic @Slf4j
 class ErsatzServer implements ServerConfig {
 
-    // FIXME: BASIC/DIGEST should just be config options, not features (?)
-
     /**
      * The response body returned when no matching expectation could be found.
      */
@@ -75,7 +76,6 @@ class ErsatzServer implements ServerConfig {
     private final RequestDecoders globalDecoders = new RequestDecoders()
     private final ResponseEncoders globalEncoders = new ResponseEncoders()
     private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders)
-    private final List<ServerFeature> features = []
     private Undertow server
     private boolean httpsEnabled
     private boolean autoStartEnabled
@@ -84,6 +84,7 @@ class ErsatzServer implements ServerConfig {
     private String keystorePass = 'ersatz'
     private int actualHttpPort = UNSPECIFIED_PORT
     private int actualHttpsPort = UNSPECIFIED_PORT
+    private AuthenticationConfig authenticationConfig
 
     /**
      * Creates a new Ersatz server instance with either the default configuration or a configuration provided by the Groovy DSL closure.
@@ -108,23 +109,12 @@ class ErsatzServer implements ServerConfig {
     }
 
     /**
-     * Used to enable support for a feature extension.
-     *
-     * @param feature the <code>ServerFeature</code> to be added
-     * @return a reference to this server instance
-     */
-    ErsatzServer feature(final ServerFeature feature) {
-        features << feature
-        this
-    }
-
-    /**
      * Used to control the enabled/disabled state of HTTPS on the server. By default HTTPS is disabled.
      *
-     * @param enabled whether or not HTTPS is enabled (defaults to true if omitted)
+     * @param enabled optional toggle value (true if not specified)
      * @return a reference to the server being configured
      */
-    ErsatzServer enableHttps(boolean enabled = true) {
+    ErsatzServer https(boolean enabled = true) {
         httpsEnabled = enabled
         this
     }
@@ -136,11 +126,10 @@ class ErsatzServer implements ServerConfig {
      *
      * Auto-start is disabled by default.
      *
-     * @param autoStart whether or not auto-start is enabled
+     * @param autoStart whether or not auto-start is enabled (true if not specified)
      * @return a reference to the server being configured
      */
-    @Override
-    ServerConfig enableAutoStart(boolean autoStart = true) {
+    ServerConfig autoStart(boolean autoStart = true) {
         autoStartEnabled = autoStart
         this
     }
@@ -162,17 +151,6 @@ class ErsatzServer implements ServerConfig {
     /**
      * Used to retrieve the port where the HTTP server is running.
      *
-     * @deprecated Use getHttpPort() instead
-     * @return the HTTP server port
-     */
-    @Deprecated
-    int getPort() {
-        actualHttpPort
-    }
-
-    /**
-     * Used to retrieve the port where the HTTP server is running.
-     *
      * @return the HTTP port
      */
     int getHttpPort() {
@@ -186,17 +164,6 @@ class ErsatzServer implements ServerConfig {
      */
     int getHttpsPort() {
         actualHttpsPort
-    }
-
-    /**
-     * Used to retrieve the full URL of the HTTP server.
-     *
-     * @deprecated Use getHttpUrl() instead
-     * @return the full URL of the HTTP server
-     */
-    @Deprecated
-    String getServerUrl() {
-        "http://localhost:$actualHttpPort"
     }
 
     /**
@@ -294,6 +261,21 @@ class ErsatzServer implements ServerConfig {
         this
     }
 
+    @Override
+    ServerConfig authentication(@DelegatesTo(AuthenticationConfig) final Closure closure) {
+        authenticationConfig = new AuthenticationConfig()
+        closure.delegate = authenticationConfig
+        closure.call()
+        this
+    }
+
+    @Override
+    ServerConfig authentication(final Consumer<AuthenticationConfig> config) {
+        authenticationConfig = new AuthenticationConfig()
+        config.accept(authenticationConfig)
+        return this
+    }
+
     /**
      * Used to start the HTTP server for test interactions. This method should be called after configuration of expectations and before the test
      * interactions are executed against the server.
@@ -307,7 +289,7 @@ class ErsatzServer implements ServerConfig {
             }
 
             BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(
-                applyFeatures(new HttpHandler() {
+                applyAuthentication(new HttpHandler() {
                     @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
                         ClientRequest clientRequest = new UndertowClientRequest(exchange)
 
@@ -370,11 +352,21 @@ class ErsatzServer implements ServerConfig {
         expectations.verify()
     }
 
-    private HttpHandler applyFeatures(final HttpHandler handler) {
+    private HttpHandler applyAuthentication(final HttpHandler handler) {
         HttpHandler result = handler
 
-        features?.each { feat ->
-            result = feat.apply(result)
+        if (authenticationConfig) {
+            SimpleIdentityManager identityManager = new SimpleIdentityManager(authenticationConfig.username, authenticationConfig.password)
+            switch (authenticationConfig.type) {
+                case Authentication.BASIC:
+                    result = new BasicAuthHandler(identityManager).apply(result)
+                    break
+                case Authentication.DIGEST:
+                    result = new DigestAuthHandler(identityManager).apply(result)
+                    break
+                default:
+                    throw new IllegalArgumentException('Invalid authentication configuration.')
+            }
         }
 
         result

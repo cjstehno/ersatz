@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.feat
+package com.stehno.ersatz.auth
 
-import com.stehno.ersatz.ServerFeature
 import groovy.transform.CompileStatic
+import groovy.transform.TupleConstructor
 import io.undertow.security.api.AuthenticationMechanism
 import io.undertow.security.handlers.AuthenticationCallHandler
 import io.undertow.security.handlers.AuthenticationConstraintHandler
@@ -29,29 +29,21 @@ import io.undertow.server.HttpHandler
 import static io.undertow.security.api.AuthenticationMode.PRO_ACTIVE
 
 /**
- * A <code>ServerFeature</code> used to enable DIGEST authentication on the Ersatz server. This will require all configured requests to be made using
- * DIGEST authentication. To enable this feature, configure it on the <code>ErsatzServer</code> or <code>ServerConfig</code> instance:
- *
- * <pre><code>
- * ErsatzServer server = new ErsatzServer({
- *     feature new DigestAuthFeature()
- * })
- * </code></pre>
+ * Server handler factory for DIGEST authentication. See <code>ServerConfig</code> for authentication configuration details.
  */
-@CompileStatic
-class DigestAuthFeature implements ServerFeature {
+@CompileStatic @TupleConstructor
+class DigestAuthHandler {
+
+    /**
+     * The IdentityManager to be used.
+     */
+    final IdentityManager identityManager
 
     /**
      * The realm to be used. Defaults to "DigestTesting".
      */
-    String realm = 'DigestTesting'
+    private final String realm = 'DigestTesting'
 
-    /**
-     * The IdentityManager to be used. Defaults to the <code>SimpleIdentityManager</code>.
-     */
-    IdentityManager identityManager = new SimpleIdentityManager()
-
-    @Override
     HttpHandler apply(final HttpHandler handler) {
         new SecurityInitialHandler(
             PRO_ACTIVE,

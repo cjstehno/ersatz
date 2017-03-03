@@ -39,7 +39,7 @@ class ErsatzServerSpec extends Specification {
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
 
     @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer({
-        enableAutoStart()
+        autoStart()
         encoder MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
     })
 
@@ -53,7 +53,7 @@ class ErsatzServerSpec extends Specification {
         ersatzServer.start()
 
         when:
-        String text = "http://localhost:${ersatzServer.port}/foo".toURL().text
+        String text = "http://localhost:${ersatzServer.httpPort}/foo".toURL().text
 
         then:
         text == 'This is Ersatz!!'
