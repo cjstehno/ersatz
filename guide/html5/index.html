@@ -515,8 +515,8 @@ table.CodeRay td.code>pre{padding:0}
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
 <span id="email" class="email"><a href="mailto:chris@stehno.com">chris@stehno.com</a></span><br>
-<span id="revnumber">version 0.6.0,</span>
-<span id="revdate">February 2017</span>
+<span id="revnumber">version 1.0.0,</span>
+<span id="revdate">March 2017</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -531,7 +531,11 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_cleanup">Cleanup</a></li>
 </ul>
 </li>
-<li><a href="#_expectations">Expectations</a></li>
+<li><a href="#_expectations">Expectations</a>
+<ul class="sectlevel2">
+<li><a href="#_hamcrest_matchers">Hamcrest Matchers</a></li>
+</ul>
+</li>
 <li><a href="#_url_encoded_form_requests">Url-Encoded Form Requests</a></li>
 <li><a href="#_multipart_request_content">Multipart Request Content</a></li>
 <li><a href="#_multipart_response_content">Multipart Response Content</a></li>
@@ -542,7 +546,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_creating_a_custom_keystore">Creating a Custom Keystore</a></li>
 </ul>
 </li>
-<li><a href="#_feature_extensions">Feature Extensions</a>
+<li><a href="#_authentication">Authentication</a>
 <ul class="sectlevel2">
 <li><a href="#_basic_authentication">BASIC Authentication</a></li>
 <li><a href="#_digest_authentication">DIGEST Authentication</a></li>
@@ -592,7 +596,7 @@ frameworks.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:0.6.0'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:1.0.0'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -603,7 +607,7 @@ frameworks.</p>
 <pre>&lt;dependency&gt;
     &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
-    &lt;version&gt;0.6.0&lt;/version&gt;
+    &lt;version&gt;1.0.0&lt;/version&gt;
     &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</pre>
 </div>
@@ -653,18 +657,39 @@ frameworks.</p>
 the verification and likewise the test, would fail.</p>
 </div>
 <div class="paragraph">
-<p>The expectation configured above could also be written using the chained builder approach (in Java), as follows:</p>
+<p>A similar test could be written in JUnit with Java 8, as follows (using the provided <code>ErsatzServerRule</code> helper class:</p>
 </div>
 <div class="listingblock">
+<div class="title">HelloTest.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">server.expectations(expect -&gt; {
-    expect.get(<span class="string"><span class="delimiter">&quot;</span><span class="content">/say/hello</span><span class="delimiter">&quot;</span></span>).called(equalTo(<span class="integer">1</span>)).query(<span class="string"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>,<span class="string"><span class="delimiter">&quot;</span><span class="content">Ersatz</span><span class="delimiter">&quot;</span></span>)
-        .responds().content(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello Ersatz</span><span class="delimiter">&quot;</span></span>,<span class="string"><span class="delimiter">&quot;</span><span class="content">text/plain</span><span class="delimiter">&quot;</span></span>);
-))</code></pre>
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">HelloTest</span> {
+
+    <span class="annotation">@Rule</span>
+    <span class="directive">public</span> ErsatzServerRule ersatzServer = <span class="keyword">new</span> ErsatzServerRule(ServerConfig::enableAutoStart);
+
+    <span class="directive">private</span> OkHttpClient client;
+
+    <span class="annotation">@Before</span>
+    <span class="directive">public</span> <span class="type">void</span> before() {
+        client = <span class="keyword">new</span> OkHttpClient.Builder().build();
+    }
+
+    <span class="annotation">@Test</span>
+    <span class="directive">public</span> sayHello(){
+        ersatzServer.expectations(expectations -&gt; {
+            expectations.get(<span class="string"><span class="delimiter">&quot;</span><span class="content">/say/hello</span><span class="delimiter">&quot;</span></span>).called(<span class="integer">1</span>).query(<span class="string"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>,<span class="string"><span class="delimiter">&quot;</span><span class="content">Ersatz</span><span class="delimiter">&quot;</span></span>)
+                .responder().content(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello Ersatz</span><span class="delimiter">&quot;</span></span>, ContentType.TEXT_PLAIN)
+        })
+
+        <span class="predefined-type">String</span> url = ersatzServer.getHttpUrl() + <span class="string"><span class="delimiter">&quot;</span><span class="content">/say/hello?name=Ersatz</span><span class="delimiter">&quot;</span></span>;
+        okhttp3.Request request = <span class="keyword">new</span> okhttp3.Request.Builder().url(url)).build();
+        assertEquals(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello Ersatz</span><span class="delimiter">&quot;</span></span>, client.newCall(request).execute().body().string());
+    }
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The two formats are interchangeable.</p>
+<p>The two formats are interchangeable and equally supported.</p>
 </div>
 </div>
 </div>
@@ -922,6 +947,34 @@ configure multiple responses, in order:</p>
 <p>Adding the <code>called</code> configuration adds the extra safety of ensuring that if the request is called more than our expected two times, the verification
 will fail (and with that, the test).</p>
 </div>
+<div class="sect2">
+<h3 id="_hamcrest_matchers">Hamcrest Matchers</h3>
+<div class="paragraph">
+<p>Many of the expectation methods accept <a href="http://hamcrest.org/">Hamcrest</a> <code>Matcher</code> instances as an alternate argument. Hamcrest matchers allow for a more
+rich and expressive matching configuration. Consider the following configuration:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
+    get( startsWith(<span class="string"><span class="delimiter">'</span><span class="content">/foo</span><span class="delimiter">'</span></span>) ){
+        called greaterThanOrEqualTo(<span class="integer">2</span>)
+        query <span class="string"><span class="delimiter">'</span><span class="content">user-key</span><span class="delimiter">'</span></span>, notNullValue()
+        responder {
+            content <span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>, TEXT_PLAIN
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This configuration would match a <code>GET</code> request to a URL starting with <code>/foo</code>, with a non-null query string "user-key" value. This request matcher is
+ expected to be called at least twice and it will respond with a <code>text/plain</code> response of <code>ok</code>.</p>
+</div>
+<div class="paragraph">
+<p>The methods that accept matchers will have a non-matcher version which provides a sensible default matcher (e.g. <code>get(Matcher)</code> has <code>get(String)</code> which
+provides delegates to <code>get( equalTo( string ) )</code> to wrap the provided path string in a matcher.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1133,7 +1186,7 @@ is compressed, a <code>Content-Encoding</code> header will be added to the respo
 <h2 id="_https_request_support">HTTPS Request Support</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>ErsatzServer</code> supports HTTPS requests when the <code>enableHttps()</code> configuration is set (either as <code>enableHttps()</code> or as <code>enableHttps true</code>). This
+<p>The <code>ErsatzServer</code> supports HTTPS requests when the <code>https()</code> configuration is set (either as <code>https()</code> or as <code>https true</code>). This
 will setup both an HTTP and HTTPS listener both of which will have access to all configured expectations. In order to limit a specific request
 expectation to HTTP or HTTPS, apply the <code>procotol(String)</code> matcher method with the desired protocol, for example:</p>
 </div>
@@ -1188,7 +1241,7 @@ the key being created. The default keystore name is <code>ersatz</code> and it h
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">ErsatzServer server = <span class="keyword">new</span> ErsatzServer({
-    enableHttps()
+    https()
     keystore KEYSTORE_URL, KEYSTORE_PASS
 })</code></pre>
 </div>
@@ -1200,37 +1253,27 @@ the key being created. The default keystore name is <code>ersatz</code> and it h
 </div>
 </div>
 <div class="sect1">
-<h2 id="_feature_extensions">Feature Extensions</h2>
+<h2 id="_authentication">Authentication</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Additional server functionality may be added/configured on the server before startup. The <code>ServerFeature</code> interface provides this extension point;
-however, the extension feature mechanism is experimental and may change in the future (efforts will be made to maintain a simple migration path if/when
-this happens).</p>
+<p>Ersatz support two forms of built-in server authentication, BASIC and DIGEST. Both authentication methods are exclusive and global meaning that they
+cannot be configured together on the same server and that when configured, they apply to all end points configured on the server.</p>
 </div>
 <div class="paragraph">
-<p>At this point there are two feature extension, the <code>BasicAuthFeature</code> and <code>DigestAuthFeature</code>, both discussed below.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Tip</div>
-</td>
-<td class="content">
-Features are additive, so be careful about how features are applied.
-</td>
-</tr>
-</table>
+<p>If more fine-grained control of which URLs are authenticated is desired, you will need to configured multiple Ersatz Servers for the different
+configuration sets.</p>
 </div>
 <div class="sect2">
 <h3 id="_basic_authentication">BASIC Authentication</h3>
 <div class="paragraph">
-<p><a href="https://en.wikipedia.org/wiki/Basic_access_authentication">HTTP BASIC Authentication</a> is supported by applying the <code>BasicAuthFeature</code> to the server.</p>
+<p><a href="https://en.wikipedia.org/wiki/Basic_access_authentication">HTTP BASIC Authentication</a> is supported by applying the <code>basic</code> <code>authentication</code> configuration to the server.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> ersatz = <span class="keyword">new</span> ErsatzServer({
-    feature <span class="keyword">new</span> BasicAuthFeature()
+    authentication {
+        basic <span class="string"><span class="delimiter">'</span><span class="content">admin</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">my-password</span><span class="delimiter">'</span></span>
+    }
 })</code></pre>
 </div>
 </div>
@@ -1241,12 +1284,14 @@ Features are additive, so be careful about how features are applied.
 <div class="sect2">
 <h3 id="_digest_authentication">DIGEST Authentication</h3>
 <div class="paragraph">
-<p><a href="https://en.wikipedia.org/wiki/Digest_access_authentication">HTTP DIGEST Authentication</a> is supported by applying the <code>DigestAuthFeature</code> to the server.</p>
+<p><a href="https://en.wikipedia.org/wiki/Digest_access_authentication">HTTP DIGEST Authentication</a> is supported by applying the <code>digest</code> <code>authentication</code> to the server.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> ersatz = <span class="keyword">new</span> ErsatzServer({
-    feature <span class="keyword">new</span> BasicAuthFeature()
+    authentication {
+        digest <span class="string"><span class="delimiter">'</span><span class="content">guest</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">other-password</span><span class="delimiter">'</span></span>
+    }
 })</code></pre>
 </div>
 </div>
@@ -1259,8 +1304,8 @@ Features are additive, so be careful about how features are applied.
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.6.0<br>
-Last updated 2017-02-22 15:52:39 -06:00
+Version 1.0.0<br>
+Last updated 2017-03-05 09:52:07 -06:00
 </div>
 </div>
 </body>
