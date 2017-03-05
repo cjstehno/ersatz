@@ -82,6 +82,19 @@ ersatz.stop()</code></pre>
         .responds().body('Hello Ersatz','text/plain')
 }</code></pre>
 
+            <p>Standard Java 8 may also be used; the example above would look very similar in Java:</p>
+
+            <pre><code>ErsatzServer ersatz = new ErsatzServer();
+
+server.expectations(expectations -> {
+    expectations.get("/say/hello", req -> {
+        req.called(1)
+        req.query("name","Ersatz")
+        req.responder().body("Hello Ersatz","text/plain")
+    }
+}).start();
+</code></pre>
+
             <p>Both forms are equivalent and may be used together.</p>
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Features</h2>

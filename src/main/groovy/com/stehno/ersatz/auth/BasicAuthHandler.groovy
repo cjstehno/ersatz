@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.feat
+package com.stehno.ersatz.auth
 
-import com.stehno.ersatz.ServerFeature
 import groovy.transform.CompileStatic
+import groovy.transform.TupleConstructor
 import io.undertow.security.api.AuthenticationMechanism
 import io.undertow.security.handlers.AuthenticationCallHandler
 import io.undertow.security.handlers.AuthenticationConstraintHandler
@@ -29,29 +29,21 @@ import io.undertow.server.HttpHandler
 import static io.undertow.security.api.AuthenticationMode.PRO_ACTIVE
 
 /**
- * A <code>ServerFeature</code> providing support for HTTP BASIC authentication. This will apply BASIC authentication to all requests configured on
- * the server. To enable this feature, configure it on the <code>ErsatzServer</code> or <code>ServerConfig</code> instance:
- *
- * <pre><code>
- * ErsatzServer server = new ErsatzServer({
- *     feature new BasicAuthFeature()
- * })
- * </code></pre>
+ * Server handler factory for BASIC authentication. See <code>ServerConfig</code> for authentication configuration details.
  */
-@CompileStatic
-class BasicAuthFeature implements ServerFeature {
+@CompileStatic @TupleConstructor
+class BasicAuthHandler {
+
+    /**
+     * The IdentityManager to be used.
+     */
+    final IdentityManager identityManager
 
     /**
      * The realm to be used. Defaults to "BasicTesting".
      */
-    String realm = 'BasicTesting'
+    private final String realm = 'BasicTesting'
 
-    /**
-     * The IdentityManager to be used. Defaults to the <code>SimpleIdentityManager</code>.
-     */
-    IdentityManager identityManager = new SimpleIdentityManager()
-
-    @Override
     HttpHandler apply(final HttpHandler handler) {
         new SecurityInitialHandler(
             PRO_ACTIVE,
@@ -65,4 +57,3 @@ class BasicAuthFeature implements ServerFeature {
         )
     }
 }
-

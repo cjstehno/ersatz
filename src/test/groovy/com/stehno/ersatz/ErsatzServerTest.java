@@ -15,10 +15,12 @@
  */
 package com.stehno.ersatz;
 
+import com.stehno.ersatz.junit.ErsatzServerRule;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -36,13 +38,14 @@ import static org.junit.Assert.assertTrue;
 
 public class ErsatzServerTest {
 
+    @Rule
+    public ErsatzServerRule ersatzServer = new ErsatzServerRule(ServerConfig::autoStart);
+
     private OkHttpClient client;
-    private ErsatzServer ersatzServer;
 
     @Before
     public void before() {
         client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build();
-        ersatzServer = new ErsatzServer();
     }
 
     @Test
@@ -76,8 +79,6 @@ public class ErsatzServerTest {
             expectations.post("/patch").body("a change", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, getUtf8String())
                 .responds().content("patched");
         });
-
-        ersatzServer.start();
 
         okhttp3.Request request = new okhttp3.Request.Builder().url(url("/foo")).build();
         assertEquals("This is Ersatz!!", client.newCall(request).execute().body().string());

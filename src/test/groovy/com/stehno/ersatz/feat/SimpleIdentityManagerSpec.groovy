@@ -15,6 +15,8 @@
  */
 package com.stehno.ersatz.feat
 
+import com.stehno.ersatz.auth.SimpleAccount
+import com.stehno.ersatz.auth.SimpleIdentityManager
 import io.undertow.security.idm.PasswordCredential
 import spock.lang.Specification
 import spock.lang.Unroll

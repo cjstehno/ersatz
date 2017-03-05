@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz.feat
 
+import com.stehno.ersatz.auth.SimpleAccount
 import spock.lang.Specification
 
 import static com.stehno.vanilla.test.Assertions.assertValidEqualsAndHashcode
@@ -40,7 +41,7 @@ class SimpleAccountSpec extends Specification {
 
     def 'as string'() {
         expect:
-        new SimpleAccount('someuser') as String == 'com.stehno.ersatz.feat.SimpleAccount(someuser, [TESTER])'
+        new SimpleAccount('someuser') as String == 'com.stehno.ersatz.auth.SimpleAccount(someuser, [TESTER])'
     }
 
     def 'equals and hashCode'() {

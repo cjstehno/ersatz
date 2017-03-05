@@ -29,7 +29,7 @@ class HttpsSpec extends Specification {
     private final OkHttpClient client = httpsClient()
 
     @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer({
-        enableHttps()
+        https()
     })
 
     def 'https'() {

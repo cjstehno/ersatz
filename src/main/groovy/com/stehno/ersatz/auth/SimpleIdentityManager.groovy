@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.feat
+package com.stehno.ersatz.auth
 
 import groovy.transform.CompileStatic
 import io.undertow.security.idm.*
@@ -29,10 +29,6 @@ class SimpleIdentityManager implements IdentityManager {
 
     final String username
     final String password
-
-    SimpleIdentityManager() {
-        this('admin', '$3cr3t')
-    }
 
     SimpleIdentityManager(final String username, final String password) {
         this.username = username

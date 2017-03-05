@@ -15,17 +15,18 @@
  */
 package com.stehno.ersatz
 
-import com.stehno.ersatz.feat.BasicAuthFeature
 import okhttp3.OkHttpClient
 import okhttp3.Request.Builder
 import spock.lang.Specification
 
-import static com.stehno.ersatz.feat.SimpleIdentityManager.encodedCredential
+import static com.stehno.ersatz.auth.SimpleIdentityManager.encodedCredential
 
 class BasicSpec extends Specification {
 
     private final ErsatzServer ersatzServer = new ErsatzServer({
-        feature new BasicAuthFeature()
+        authentication {
+            basic()
+        }
     })
     private final OkHttpClient client = new OkHttpClient()
 
