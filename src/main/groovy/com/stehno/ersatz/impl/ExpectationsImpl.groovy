@@ -40,6 +40,36 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
+    Request any(final String path) {
+        any equalTo(path)
+    }
+
+    @Override
+    Request any(final Matcher<String> matcher) {
+        expect new ErsatzRequestWithContent(ANY, matcher, globalDecoders, globalEncoders)
+    }
+
+    @Override
+    Request any(final String path, @DelegatesTo(Request) final Closure closure) {
+        any equalTo(path), closure
+    }
+
+    @Override
+    Request any(final Matcher<String> matcher, @DelegatesTo(Request) final Closure closure) {
+        expect new ErsatzRequestWithContent(ANY, matcher, globalDecoders, globalEncoders), closure
+    }
+
+    @Override
+    Request any(final String path, final Consumer<Request> consumer) {
+        any equalTo(path), consumer
+    }
+
+    @Override
+    Request any(final Matcher<String> matcher, final Consumer<Request> consumer) {
+        expect new ErsatzRequestWithContent(ANY, matcher, globalDecoders, globalEncoders), consumer
+    }
+
+    @Override
     Request get(final String path) {
         get equalTo(path)
     }

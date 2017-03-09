@@ -33,6 +33,60 @@ import java.util.function.Consumer
 interface Expectations {
 
     /**
+     * Allows configuration of a request expectation matching any request method.
+     *
+     * @param path the expected request path
+     * @return a <code>Request</code> configuration object
+     */
+    Request any(String path)
+
+    /**
+     * Allows configuration of a request expectation matching any request method.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     */
+    Request any(Matcher<String> matcher)
+
+    /**
+     * Allows configuration of a request expectation matching any request method using the Groovy DSL.
+     *
+     * @param path the expected request path.
+     * @pram closure the Groovy closure containing the configuration
+     * @return a <code>Request</code> configuration object
+     */
+    Request any(String path, @DelegatesTo(Request) Closure closure)
+
+    /**
+     * Allows configuration of a request expectation matching any request method using the Groovy DSL.
+     *
+     * @param matcher the path matcher
+     * @pram closure the Groovy closure containing the configuration
+     * @return a <code>Request</code> configuration object
+     */
+    Request any(Matcher<String> matcher, @DelegatesTo(Request) Closure closure)
+
+    /**
+     * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<Request></code> will have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param path the expected request path
+     * @pram config the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    Request any(String path, Consumer<Request> consumer)
+
+    /**
+     * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<Request></code> will have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @pram config the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    Request any(Matcher<String> matcher, Consumer<Request> consumer)
+
+    /**
      * Allows configuration of a GET request expectation.
      *
      * @param path the expected request path

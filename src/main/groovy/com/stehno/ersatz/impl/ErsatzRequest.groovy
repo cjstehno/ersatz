@@ -31,6 +31,7 @@ import static org.hamcrest.Matchers.*
  */
 class ErsatzRequest implements Request {
 
+    protected static final String ANY = '*'
     protected static final String GET = 'GET'
     protected static final String HEAD = 'HEAD'
     protected static final String POST = 'POST'
@@ -49,20 +50,16 @@ class ErsatzRequest implements Request {
     /**
      * Creates a new request with the specified method, path matcher and optional empty response flag (defaults to false).
      *
-     * @param method the request method
+     * @param meth the request method
      * @param pathMatcher the path matcher
-     * @param emptyResponse whether or not this is a request with an empty response (defaults to false)
+     * @param noResponse whether or not this is a request with an empty response (defaults to false)
      */
-    ErsatzRequest(
-        final String method,
-        final Matcher<String> pathMatcher,
-        final ResponseEncoders globalEncoders,
-        final boolean emptyResponse = false
-    ) {
-        matchers << RequestMatcher.method(equalTo(method))
+    ErsatzRequest(final String meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse = false) {
+        matchers << RequestMatcher.method(meth == ANY ? isOneOf(GET, HEAD, POST, PUT, DELETE, PATCH) : equalTo(meth))
         matchers << RequestMatcher.path(pathMatcher)
+
         this.globalEncoders = globalEncoders
-        this.emptyResponse = emptyResponse
+        this.emptyResponse = noResponse
     }
 
     @Override

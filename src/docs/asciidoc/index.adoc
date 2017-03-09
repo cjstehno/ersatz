@@ -238,6 +238,9 @@ a `Request` instance in order to configure the request.
 
 All of the expectation method types return an instance of the request being configured (`Request` or `RequestWithContent`).
 
+There is also an `any` request method matcher configuration which will match a request regardless of the request method, if it matches the rest of the
+configured criteria.
+
 The primary role of expectations is to provide a means of matching incoming requests in order to respond in a desired and repeatable manner. They are
 used to build up matching rules based on request properties to help filter and route the incoming request properly. http://hamcrest.org/[Hamcrest]
 Matcher support allows for flexible request matching based on various request properties.
