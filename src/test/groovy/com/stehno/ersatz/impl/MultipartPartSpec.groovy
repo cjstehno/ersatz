@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.vanilla.test.Assertions
 import spock.lang.Specification
 
 import static com.stehno.vanilla.test.Assertions.assertValidEqualsAndHashcode
