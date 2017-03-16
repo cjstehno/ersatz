@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno <chris@stehno.com>
-v1.0.0, March 2017
+v1.1.0, March 2017
 :toc: left
 :toclevels: 3
 
@@ -31,14 +31,14 @@ The `ersatz` library is available via Bintray (JCenter) and the Maven Central Re
 
 For Gradle:
 
-    testCompile 'com.stehno.ersatz:ersatz:1.0.0'
+    testCompile 'com.stehno.ersatz:ersatz:1.1.0'
 
 For Maven:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
         <scope>test</scope>
     </dependency>
 
@@ -237,6 +237,9 @@ The `Closure` support is similar to that of the consumer; however, this is a Gro
 a `Request` instance in order to configure the request.
 
 All of the expectation method types return an instance of the request being configured (`Request` or `RequestWithContent`).
+
+There is also an `any` request method matcher configuration which will match a request regardless of the request method, if it matches the rest of the
+configured criteria.
 
 The primary role of expectations is to provide a means of matching incoming requests in order to respond in a desired and repeatable manner. They are
 used to build up matching rules based on request properties to help filter and route the incoming request properly. http://hamcrest.org/[Hamcrest]

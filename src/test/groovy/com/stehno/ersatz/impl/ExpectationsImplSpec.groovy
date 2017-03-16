@@ -15,16 +15,13 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.Request
-import com.stehno.ersatz.RequestDecoders
-import com.stehno.ersatz.RequestWithContent
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.*
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.function.Consumer
 
+import static com.stehno.ersatz.impl.ErsatzRequest.*
 import static org.hamcrest.Matchers.equalTo
 
 class ExpectationsImplSpec extends Specification {
@@ -36,7 +33,7 @@ class ExpectationsImplSpec extends Specification {
 
     @Unroll '#method(String)'() {
         when:
-        Request request = expectations."${method.toLowerCase()}"(PATH)
+        Request request = expectations."$code"(PATH)
 
         then:
         request instanceof ErsatzRequest
@@ -44,12 +41,18 @@ class ExpectationsImplSpec extends Specification {
         expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH))
 
         where:
-        method << ['GET', 'HEAD', 'DELETE']
+        code     | method
+        'any'    | GET
+        'any'    | HEAD
+        'any'    | DELETE
+        'get'    | GET
+        'head'   | HEAD
+        'delete' | DELETE
     }
 
     @Unroll '#method(String,Closure)'() {
         when:
-        Request request = expectations."${method.toLowerCase()}"(PATH, { query('a', 'b') })
+        Request request = expectations."$code"(PATH, { query('a', 'b') })
 
         then:
         request instanceof ErsatzRequest
@@ -57,12 +60,18 @@ class ExpectationsImplSpec extends Specification {
         expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH).query('a', 'b'))
 
         where:
-        method << ['GET', 'HEAD', 'DELETE']
+        code     | method
+        'any'    | GET
+        'any'    | HEAD
+        'any'    | DELETE
+        'get'    | GET
+        'head'   | HEAD
+        'delete' | DELETE
     }
 
     @Unroll '#method(String,Consumer)'() {
         when:
-        Request request = expectations."${method.toLowerCase()}"(PATH, { req -> req.query('a', 'b') } as Consumer<Request>)
+        Request request = expectations."$code"(PATH, { req -> req.query('a', 'b') } as Consumer<Request>)
 
         then:
         request instanceof ErsatzRequest
@@ -70,12 +79,18 @@ class ExpectationsImplSpec extends Specification {
         expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH).query('a', 'b'))
 
         where:
-        method << ['GET', 'HEAD', 'DELETE']
+        code     | method
+        'any'    | GET
+        'any'    | HEAD
+        'any'    | DELETE
+        'get'    | GET
+        'head'   | HEAD
+        'delete' | DELETE
     }
 
     @Unroll '#method(String) (with content)'() {
         when:
-        Request request = expectations."${method.toLowerCase()}"(PATH)
+        Request request = expectations."$code"(PATH)
 
         then:
         request instanceof ErsatzRequestWithContent
@@ -83,12 +98,18 @@ class ExpectationsImplSpec extends Specification {
         expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH))
 
         where:
-        method << ['POST', 'PUT', 'PATCH']
+        code    | method
+        'any'   | POST
+        'any'   | PUT
+        'any'   | PATCH
+        'post'  | POST
+        'put'   | PUT
+        'patch' | PATCH
     }
 
     @Unroll '#method(String,Closure) (with content)'() {
         when:
-        Request request = expectations."${method.toLowerCase()}"(PATH, { query('a', 'b') })
+        Request request = expectations."$code"(PATH, { query('a', 'b') })
 
         then:
         request instanceof ErsatzRequestWithContent
@@ -96,12 +117,18 @@ class ExpectationsImplSpec extends Specification {
         expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH).query('a', 'b'))
 
         where:
-        method << ['POST', 'PUT', 'PATCH']
+        code    | method
+        'any'   | POST
+        'any'   | PUT
+        'any'   | PATCH
+        'post'  | POST
+        'put'   | PUT
+        'patch' | PATCH
     }
 
     @Unroll '#method(String,Consumer) (with content)'() {
         when:
-        Request request = expectations."${method.toLowerCase()}"(PATH, { req -> req.query('a', 'b') } as Consumer<RequestWithContent>)
+        Request request = expectations."$code"(PATH, { req -> req.query('a', 'b') } as Consumer<RequestWithContent>)
 
         then:
         request instanceof ErsatzRequestWithContent
@@ -109,11 +136,18 @@ class ExpectationsImplSpec extends Specification {
         expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH).query('a', 'b'))
 
         where:
-        method << ['POST', 'PUT', 'PATCH']
+        code    | method
+        'any'   | POST
+        'any'   | PUT
+        'any'   | PATCH
+        'post'  | POST
+        'put'   | PUT
+        'patch' | PATCH
     }
 
     def 'matching'() {
         setup:
+        expectations.any('/charlie')
         expectations.post('/alpha')
         expectations.post('/bravo')
         expectations.delete('/alpha')
@@ -128,11 +162,16 @@ class ExpectationsImplSpec extends Specification {
         req.matches(cr)
 
         where:
-        method   | path
-        'GET'    | '/alpha'
-        'POST'   | '/alpha'
-        'POST'   | '/bravo'
-        'DELETE' | '/alpha'
+        method | path
+        GET    | '/charlie'
+        POST   | '/charlie'
+        PUT    | '/charlie'
+        PATCH  | '/charlie'
+        DELETE | '/charlie'
+        GET    | '/alpha'
+        POST   | '/alpha'
+        POST   | '/bravo'
+        DELETE | '/alpha'
     }
 
     def 'verification (success)'() {
