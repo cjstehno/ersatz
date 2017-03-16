@@ -515,7 +515,7 @@ table.CodeRay td.code>pre{padding:0}
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
 <span id="email" class="email"><a href="mailto:chris@stehno.com">chris@stehno.com</a></span><br>
-<span id="revnumber">version 1.0.0,</span>
+<span id="revnumber">version 1.1.0,</span>
 <span id="revdate">March 2017</span>
 </div>
 <div id="toc" class="toc2">
@@ -596,7 +596,7 @@ frameworks.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:1.0.0'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:1.1.0'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -607,7 +607,7 @@ frameworks.</p>
 <pre>&lt;dependency&gt;
     &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
-    &lt;version&gt;1.0.0&lt;/version&gt;
+    &lt;version&gt;1.1.0&lt;/version&gt;
     &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</pre>
 </div>
@@ -862,6 +862,10 @@ a <code>Request</code> instance in order to configure the request.</p>
 </div>
 <div class="paragraph">
 <p>All of the expectation method types return an instance of the request being configured (<code>Request</code> or <code>RequestWithContent</code>).</p>
+</div>
+<div class="paragraph">
+<p>There is also an <code>any</code> request method matcher configuration which will match a request regardless of the request method, if it matches the rest of the
+configured criteria.</p>
 </div>
 <div class="paragraph">
 <p>The primary role of expectations is to provide a means of matching incoming requests in order to respond in a desired and repeatable manner. They are
@@ -1304,8 +1308,8 @@ configuration sets.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.0<br>
-Last updated 2017-03-05 09:52:07 -06:00
+Version 1.1.0<br>
+Last updated 2017-03-16 16:47:12 -05:00
 </div>
 </div>
 </body>
