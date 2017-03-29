@@ -16,6 +16,7 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.Cookie
 import com.stehno.ersatz.DecodingContext
 import groovy.transform.TupleConstructor
 import org.hamcrest.Matcher
@@ -91,14 +92,26 @@ class RequestMatcher {
     }
 
     /**
-     * Creates a request matcher for a cookie value.
+     * Creates a request matcher for a cookie.
      *
      * @param name the cookie name
      * @param m the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    static RequestMatcher cookie(final String name, final Matcher<String> m) {
-        new RequestMatcher(m, { ClientRequest cr -> cr.cookies.get(name)?.value })
+    static RequestMatcher cookie(final String name, final Matcher<Cookie> m) {
+        new RequestMatcher(m, { ClientRequest cr ->
+            io.undertow.server.handlers.Cookie undertowCookie = cr.cookies.get(name)
+            new Cookie(
+                value: undertowCookie.value,
+                comment: undertowCookie.comment,
+                domain: undertowCookie.domain,
+                path: undertowCookie.path,
+                maxAge: undertowCookie.maxAge,
+                httpOnly: undertowCookie.httpOnly,
+                secure: undertowCookie.secure,
+                version: undertowCookie.version
+            )
+        })
     }
 
     /**

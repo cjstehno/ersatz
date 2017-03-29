@@ -45,8 +45,28 @@ class MockClientRequest implements ClientRequest {
         this
     }
 
-    MockClientRequest cookie(String name, String value) {
-        cookies[name] = new CookieImpl(name, value)
+    MockClientRequest cookie(
+        String name,
+        String value,
+        String comment = null,
+        String domain = null,
+        String path = null,
+        Integer maxAge = null,
+        Boolean httpOnly = null,
+        Boolean secure = null,
+        Integer version = null
+    ) {
+        CookieImpl cookie = new CookieImpl(name, value)
+
+        if (comment) cookie.comment = comment
+        if (domain) cookie.domain = domain
+        if (path) cookie.path = path
+        if (maxAge) cookie.maxAge = maxAge
+        if (httpOnly) cookie.httpOnly = httpOnly
+        if (secure) cookie.secure = secure
+        if (version) cookie.version = version
+
+        cookies[name] = cookie
         this
     }
 

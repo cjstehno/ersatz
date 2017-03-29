@@ -16,6 +16,9 @@
 package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
+import groovyjarjarantlr.CommonHiddenStreamToken
+import org.hamcrest.BaseMatcher
+import org.hamcrest.Description
 import org.hamcrest.Matcher
 
 import java.util.function.Consumer
@@ -108,16 +111,19 @@ interface Request {
     Request cookie(final String name, final String value)
 
     /**
-     * Specifies a request cookie to be configured with the given name and value.
+     * Specifies a request cookie to be configured with the given name and matcher.
      *
      * @param name the cookie name
-     * @param matcher the cookie value matcher
+     * @param matcher the cookie matcher
      * @return this request
      */
-    Request cookie(final String name, final Matcher<String> matcher)
+    Request cookie(final String name, final Matcher<Cookie> matcher)
+
+    // FIXME: add cookies(Matcher<Cookie>) - should be able to match whole scope of cookies in request (pos and neg)
 
     /**
-     * Used to configure a map of cookies on the request. The map values may be Strings or Matchers.
+     * Used to configure a map of cookies on the request. The map values may be Strings or Matchers. All of the configured matchers must be successful
+     * in order for the request to be matched.
      *
      * @param cookies the map of cookies
      * @return this request
@@ -174,3 +180,5 @@ interface Request {
      */
     Request responder(@DelegatesTo(Response) final Closure closure)
 }
+
+
