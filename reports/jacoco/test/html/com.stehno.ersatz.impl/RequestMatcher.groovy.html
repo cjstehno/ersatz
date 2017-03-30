@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RequestMatcher.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.impl</a> &gt; <span class="el_source">RequestMatcher.groovy</span></div><h1>RequestMatcher.groovy</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2017 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.impl
+
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.Cookie
+import com.stehno.ersatz.DecodingContext
+import groovy.transform.TupleConstructor
+import org.hamcrest.Matcher
+
+import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
+
+/**
+ * Request-specific wrapper around hamcrest matchers to provide property-based matching based on request attributes.
+ */
+@TupleConstructor
+class RequestMatcher {
+
+    /**
+     * The wrapped hamcrest matcher.
+     */
+    Matcher&lt;Object&gt; matcher
+
+    /**
+     * The closure used to extract the matching data from the client request.
+     */
+    Closure&lt;Object&gt; getter
+
+    /**
+     * Creates a request matcher for the protocol property value.
+     *
+     * @param m the hamcrest matcher for the protocol property
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher protocol(final Matcher&lt;String&gt; m) {
+<span class="pc" id="L49">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.protocol })</span>
+    }
+
+    /**
+     * Creates a request matcher for the method property.
+     *
+     * @param m the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher method(final Matcher&lt;String&gt; m) {
+<span class="pc" id="L59">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.method })</span>
+    }
+
+    /**
+     * Creates a request matcher for the path property.
+     *
+     * @param m the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher path(final Matcher&lt;String&gt; m) {
+<span class="pc" id="L69">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.path })</span>
+    }
+
+    /**
+     * Creates a request matcher for a request header.
+     *
+     * @param name the header name
+     * @param m the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher header(final String name, final Matcher&lt;String&gt; m) {
+<span class="pc" id="L80">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.headers.getFirst(name) })</span>
+    }
+
+    /**
+     * Creates a request matcher for a query parameter.
+     *
+     * @param name the query parameter name
+     * @param m the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher query(final String name, final Matcher&lt;Iterable&lt;String&gt;&gt; m) {
+<span class="pc" id="L91">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.queryParams.get(name) as List })</span>
+    }
+
+    /**
+     * Creates a request matcher for a cookie.
+     *
+     * @param name the cookie name
+     * @param m the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher cookie(final String name, final Matcher&lt;Cookie&gt; m) {
+<span class="pc" id="L102">        new RequestMatcher(m, { ClientRequest cr -&gt;</span>
+<span class="fc" id="L103">            io.undertow.server.handlers.Cookie undertowCookie = cr.cookies.get(name)</span>
+<span class="pc bfc" id="L104" title="All 2 branches covered.">            return undertowCookie ? bake(undertowCookie) : null</span>
+        })
+    }
+
+    private static Cookie bake(final io.undertow.server.handlers.Cookie cookie) {
+<span class="pc" id="L109">        new Cookie(</span>
+            value: cookie.value,
+            comment: cookie.comment,
+            domain: cookie.domain,
+            path: cookie.path,
+            maxAge: cookie.maxAge,
+            httpOnly: cookie.httpOnly,
+            secure: cookie.secure,
+            version: cookie.version
+        )
+    }
+
+    static RequestMatcher cookies(final Matcher&lt;Map&lt;String, Cookie&gt;&gt; matcher) {
+<span class="pc" id="L122">        new RequestMatcher(matcher, { ClientRequest cr -&gt;</span>
+<span class="pc" id="L123">            cr.cookies.collectEntries { name, cookie -&gt;</span>
+<span class="pc" id="L124">                [name, bake(cookie)]</span>
+            }
+        })
+    }
+
+    /**
+     * Creates a request matcher for request body content.
+     *
+     * @param decoders the available request decoders
+     * @param contentType the request content-type
+     * @param m the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher body(final DecoderChain decoderChain, final String contentType, final Matcher&lt;Object&gt; m) {
+<span class="pc" id="L138">        new RequestMatcher(m, { ClientRequest cr -&gt;</span>
+<span class="fc" id="L139">            decoderChain.resolve(contentType)?.apply(</span>
+                cr.body,
+<span class="pc" id="L141">                new DecodingContext(cr.contentLength, cr.contentType, cr.characterEncoding, decoderChain)</span>
+            )
+        })
+    }
+
+    /**
+     * Creates a request matcher for the request content-type property.
+     *
+     * @param m the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher contentType(final Matcher&lt;String&gt; m) {
+<span class="pc" id="L153">        header(CONTENT_TYPE_HEADER, m)</span>
+    }
+
+    /**
+     * Performs the hamcrest matching using the wrapped matcher and property extractor.
+     *
+     * @param cr the client request
+     * @return true if the matcher is successful
+     */
+    boolean matches(final ClientRequest cr) {
+<span class="pc" id="L163">        matcher.matches(getter.call(cr))</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
