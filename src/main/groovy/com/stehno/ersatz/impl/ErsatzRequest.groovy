@@ -15,10 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.Request
-import com.stehno.ersatz.Response
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.*
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 
@@ -113,12 +110,18 @@ class ErsatzRequest implements Request {
 
     @Override
     Request cookie(final String name, final String value) {
-        cookie name, equalTo(value)
+        cookie name, new CookieMatcher().value(value)
     }
 
     @Override
-    Request cookie(final String name, final Matcher<String> value) {
+    Request cookie(final String name, final Matcher<Cookie> value) {
         matchers << RequestMatcher.cookie(name, value)
+        this
+    }
+
+    @Override
+    Request cookies(Matcher<Map<String, Cookie>> matcher) {
+        matchers << RequestMatcher.cookies(matcher)
         this
     }
 

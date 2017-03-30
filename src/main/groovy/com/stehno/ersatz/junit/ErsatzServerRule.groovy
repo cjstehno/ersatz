@@ -50,6 +50,7 @@ class ErsatzServerRule extends ErsatzServer implements TestRule {
         super(consumer)
     }
 
+    @SuppressWarnings('UnusedMethodParameter')
     Statement apply(final Statement base, final Description description) {
         return new Statement() {
             @Override void evaluate() throws Throwable {

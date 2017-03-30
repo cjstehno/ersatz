@@ -15,11 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.ErsatzServer
-import com.stehno.ersatz.InMemoryCookieJar
-import com.stehno.ersatz.Response
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Request.Builder
@@ -30,8 +26,12 @@ import spock.lang.Unroll
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
+import static com.stehno.ersatz.Cookie.cookie
+import static com.stehno.ersatz.CookieMatcher.cookieMatcher
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
+import static com.stehno.ersatz.NoCookiesMatcher.noCookies
 import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.nullValue
 
 class ErsatzRequestSpec extends Specification {
 
@@ -91,6 +91,94 @@ class ErsatzRequestSpec extends Specification {
         clientRequest().cookie('amount', 'dozen').cookie('sugar', 'no')                                                  || false
         clientRequest().cookie('chocolate', 'yes').cookie('amount', 'dozen').cookie('sugar', 'no')                       || true
         clientRequest().cookie('chocolate', 'yes').cookie('amount', 'dozen').cookie('sugar', 'no').cookie('more', 'fun') || true
+    }
+
+    def 'ensure matcher cookies'() {
+        when:
+        request.cookies([
+            foo: cookieMatcher {
+                value 'one'
+            },
+            bar: cookieMatcher {
+                value equalTo('two')
+            }
+        ])
+
+        then:
+        request.matches(cr) == result
+
+        where:
+        cr                                                         || result
+        clientRequest().cookie('foo', 'one').cookie('bar', 'two')  || true
+        clientRequest().cookie('foo', 'one').cookie('bar', 'blah') || false
+    }
+
+    def 'cookie equals matching'() {
+        when:
+        request.cookie('bar', equalTo(cookie {
+            value 'blah-blah'
+        }))
+
+        then:
+        request.matches(cr) == result
+
+        where:
+        cr                                         || result
+        clientRequest().cookie('bar', 'boo-boo')   || false
+        clientRequest().cookie('bar', 'blah-blah') || true
+    }
+
+    def 'match one cookie present and one not'() {
+        when:
+        request.cookies([
+            foo: nullValue(),
+            bar: cookieMatcher {
+                value equalTo('two')
+            }
+        ])
+
+        then:
+        request.matches(cr) == result
+
+        where:
+        cr                                                        || result
+        clientRequest().cookie('foo', 'one').cookie('bar', 'two') || false
+        clientRequest().cookie('bar', 'two')                      || true
+    }
+
+    def 'match with no cookies'() {
+        when:
+        request.cookies(noCookies())
+
+        then:
+        request.matches(cr) == result
+
+        where:
+        cr                                       || result
+        clientRequest()                          || true
+        clientRequest().cookie('alpha', 'bravo') || false
+    }
+
+    def 'deep cookie properties'() {
+        when:
+        request.cookie('foo', cookieMatcher {
+            value 'alpha'
+            comment 'a comment'
+            domain 'blah.com'
+            path '/some/path'
+            maxAge 12345
+            version 1
+            httpOnly true
+            secure true
+        })
+
+        then:
+        request.matches(cr) == result
+
+        where:
+        cr                                                                                                  || result
+        clientRequest().cookie('foo', 'alpha')                                                              || false
+        clientRequest().cookie('foo', 'alpha', 'a comment', 'blah.com', '/some/path', 12345, true, true, 1) || true
     }
 
     def 'listener (closure)'() {
