@@ -16,6 +16,7 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ContentType
+import com.stehno.ersatz.CookieMatcher
 import com.stehno.ersatz.Decoders
 import com.stehno.ersatz.RequestDecoders
 import spock.lang.Specification
@@ -82,7 +83,7 @@ class RequestMatcherSpec extends Specification {
 
     def 'cookie'() {
         expect:
-        cookie('id', equalTo('asdf89s7g')).matches(cr) == result
+        cookie('id', new CookieMatcher().value(equalTo('asdf89s7g'))).matches(cr) == result
 
         where:
         cr                                                || result

@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno <chris@stehno.com>
-v1.1.0, March 2017
+v1.2.0, March 2017
 :toc: left
 :toclevels: 3
 
@@ -31,14 +31,14 @@ The `ersatz` library is available via Bintray (JCenter) and the Maven Central Re
 
 For Gradle:
 
-    testCompile 'com.stehno.ersatz:ersatz:1.1.0'
+    testCompile 'com.stehno.ersatz:ersatz:1.2.0'
 
 For Maven:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
         <scope>test</scope>
     </dependency>
 
@@ -470,6 +470,93 @@ Content-Type: image/jpeg
 
 which could be decoded in the same manner a multipart _request_ content (an example using the Apache File Upload multipart parser can be found in
 the unit tests).
+
+== Matching Cookies
+
+There are four methods for matching cookies associated with a request (found in the `com.stehno.ersatz.Request` interface):
+
+=== By Name and Matcher
+
+The `cookie(String name, Matcher<Cookie> matcher)` method configures the specified matcher for the cookie with the given name.
+
+[source,groovy]
+----
+server.expectations {
+    get('/somewhere'){
+        cookie 'user-key', CookieMatcher.cookieMatcher {
+            value startsWith('key-')
+            domain 'mydomain.com'
+        }
+        responds().code(200)
+    }
+}
+----
+
+The Hamcrest matcher used may be a custom `Matcher` implementation, or the provided `com.stehno.ersatz.CookieMatcher`.
+
+=== By Name and Value
+
+The `cookie(String name, String value)` method is a shortcut for configuring simple name/value matching where the cookie value must be equal to the
+specified value. An example:
+
+[source,groovy]
+----
+server.expectations {
+    get('/somewhere').cookie('user-key', 'key-23435HJKSDGF86').responds().code(200)
+}
+----
+
+This is equivalent to calling the matcher-based version of the method:
+
+[source,groovy]
+----
+server.expectations {
+    get('/somewhere'){
+        cookie 'user-key', CookieMatcher.cookieMatcher {
+            value equalTo('key-23435HJKSDGF86')
+        }
+        responds().code(200)
+    }
+}
+----
+
+=== Multiple Cookies
+
+The `cookies(Map<String,Object>)` method provides a means of configuring multiple cookie matchers (as value `String`s or cookie `Matcher`s). In the
+following example matchers are configured to match the 'user-key' cookie for values "starting with" the specified value, the request should also have
+an 'app-id' cookie with a value of "user-manager", and finally the request should _not_ have the 'timeout' cookie specified.
+
+[source,groovy]
+----
+server.expectations {
+    get('/something'){
+        cookies([
+            'user-key': cookieMatcher {
+                value startsWith('key-')
+            },
+            'appid': 'user-manager',
+            'timeout': nullValue()
+        ])
+        responds().code(200)
+    }
+}
+----
+
+=== Overall Matcher
+
+The `cookies(Matcher<Map<String,Cookie>)` method is used to specify a `Matcher` for the map of cookie names to `com.stehno.ersatz.Cookie` objects. The
+matcher may be any custom matcher, or the `com.stehno.ersatz.NoCookiesMatcher` may be used to match for the case where no cookies should be defined
+in the request:
+
+[source,groovy]
+----
+server.expectations {
+    get('/something'){
+        cookies NoCookiesMatcher.noCookies()
+        responds().code(200)
+    }
+}
+----
 
 == Encoder/Decoder Chains
 

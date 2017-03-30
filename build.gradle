@@ -9,12 +9,12 @@ plugins {
     id 'com.jfrog.bintray' version '1.7.3'
     id "org.asciidoctor.convert" version "1.5.3"
     id "com.stehno.gradle.webpreview" version "0.2.0"
-    id "com.stehno.gradle.site" version "0.0.2"
+    id "com.stehno.gradle.site" version "0.0.3"
 
 }
 
 group = 'com.stehno.ersatz'
-version = '1.1.0'
+version = '1.2.0'
 
 sourceCompatibility = 8
 targetCompatibility = 8
@@ -192,6 +192,10 @@ asciidoctor {
         icon: 'font',
         linkattrs: true,
         encoding: 'utf-8'
+}
+
+site {
+    versionedFile 'src/docs/asciidoc/index.adoc'
 }
 
 tasks.site.dependsOn = ['build', 'groovydoc', 'jacocoTestReport', 'asciidoctor']

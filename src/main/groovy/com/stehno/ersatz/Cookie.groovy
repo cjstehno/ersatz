@@ -25,6 +25,7 @@ import java.util.function.Consumer
  * Ersatz abstraction of a request cookie. See also the <code>CookieMatcher</code>.
  */
 @CompileStatic @EqualsAndHashCode @ToString(includeNames = true)
+@SuppressWarnings('ConfusingMethodName')
 class Cookie {
 
     String value

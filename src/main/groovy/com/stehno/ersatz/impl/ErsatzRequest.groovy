@@ -119,6 +119,12 @@ class ErsatzRequest implements Request {
         this
     }
 
+    @Override
+    Request cookies(Matcher<Map<String, Cookie>> matcher) {
+        matchers << RequestMatcher.cookies(matcher)
+        this
+    }
+
     @Override @SuppressWarnings('ConfusingMethodName')
     Request cookies(Map<String, Object> cookies) {
         cookies.each { k, v ->

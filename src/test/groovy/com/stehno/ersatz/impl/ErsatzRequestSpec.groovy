@@ -26,9 +26,12 @@ import spock.lang.Unroll
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
+import static com.stehno.ersatz.Cookie.cookie
 import static com.stehno.ersatz.CookieMatcher.cookieMatcher
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
+import static com.stehno.ersatz.NoCookiesMatcher.noCookies
 import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.nullValue
 
 class ErsatzRequestSpec extends Specification {
 
@@ -108,6 +111,52 @@ class ErsatzRequestSpec extends Specification {
         cr                                                         || result
         clientRequest().cookie('foo', 'one').cookie('bar', 'two')  || true
         clientRequest().cookie('foo', 'one').cookie('bar', 'blah') || false
+    }
+
+    def 'cookie equals matching'() {
+        when:
+        request.cookie('bar', equalTo(cookie {
+            value 'blah-blah'
+        }))
+
+        then:
+        request.matches(cr) == result
+
+        where:
+        cr                                         || result
+        clientRequest().cookie('bar', 'boo-boo')   || false
+        clientRequest().cookie('bar', 'blah-blah') || true
+    }
+
+    def 'match one cookie present and one not'() {
+        when:
+        request.cookies([
+            foo: nullValue(),
+            bar: cookieMatcher {
+                value equalTo('two')
+            }
+        ])
+
+        then:
+        request.matches(cr) == result
+
+        where:
+        cr                                                        || result
+        clientRequest().cookie('foo', 'one').cookie('bar', 'two') || false
+        clientRequest().cookie('bar', 'two')                      || true
+    }
+
+    def 'match with no cookies'() {
+        when:
+        request.cookies(noCookies())
+
+        then:
+        request.matches(cr) == result
+
+        where:
+        cr                                       || result
+        clientRequest()                          || true
+        clientRequest().cookie('alpha', 'bravo') || false
     }
 
     def 'deep cookie properties'() {

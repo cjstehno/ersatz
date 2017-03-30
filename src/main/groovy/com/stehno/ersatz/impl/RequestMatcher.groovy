@@ -101,16 +101,28 @@ class RequestMatcher {
     static RequestMatcher cookie(final String name, final Matcher<Cookie> m) {
         new RequestMatcher(m, { ClientRequest cr ->
             io.undertow.server.handlers.Cookie undertowCookie = cr.cookies.get(name)
-            new Cookie(
-                value: undertowCookie.value,
-                comment: undertowCookie.comment,
-                domain: undertowCookie.domain,
-                path: undertowCookie.path,
-                maxAge: undertowCookie.maxAge,
-                httpOnly: undertowCookie.httpOnly,
-                secure: undertowCookie.secure,
-                version: undertowCookie.version
-            )
+            return undertowCookie ? bake(undertowCookie) : null
+        })
+    }
+
+    private static Cookie bake(final io.undertow.server.handlers.Cookie cookie) {
+        new Cookie(
+            value: cookie.value,
+            comment: cookie.comment,
+            domain: cookie.domain,
+            path: cookie.path,
+            maxAge: cookie.maxAge,
+            httpOnly: cookie.httpOnly,
+            secure: cookie.secure,
+            version: cookie.version
+        )
+    }
+
+    static RequestMatcher cookies(final Matcher<Map<String, Cookie>> matcher) {
+        new RequestMatcher(matcher, { ClientRequest cr ->
+            cr.cookies.collectEntries { name, cookie ->
+                [name, bake(cookie)]
+            }
         })
     }
 
