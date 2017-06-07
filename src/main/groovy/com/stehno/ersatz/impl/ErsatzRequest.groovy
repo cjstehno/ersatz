@@ -31,9 +31,11 @@ import static com.stehno.ersatz.HttpMethod.ANY
 import static com.stehno.ersatz.HttpMethod.DELETE
 import static com.stehno.ersatz.HttpMethod.GET
 import static com.stehno.ersatz.HttpMethod.HEAD
+import static com.stehno.ersatz.HttpMethod.OPTIONS
 import static com.stehno.ersatz.HttpMethod.PATCH
 import static com.stehno.ersatz.HttpMethod.POST
 import static com.stehno.ersatz.HttpMethod.PUT
+import static com.stehno.ersatz.HttpMethod.TRACE
 import static org.hamcrest.Matchers.anything
 import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.containsInAnyOrder
@@ -54,8 +56,6 @@ class ErsatzRequest implements Request {
     private Matcher<?> callVerifier = anything()
     private int callCount
 
-    // FIXME: change method usages to use enum rather than string
-
     /**
      * Creates a new request with the specified method, path matcher and optional empty response flag (defaults to false).
      *
@@ -64,7 +64,7 @@ class ErsatzRequest implements Request {
      * @param noResponse whether or not this is a request with an empty response (defaults to false)
      */
     ErsatzRequest(final HttpMethod meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse = false) {
-        matchers << RequestMatcher.method(meth == ANY ? isOneOf(GET, HEAD, POST, PUT, DELETE, PATCH) : equalTo(meth))
+        matchers << RequestMatcher.method(meth == ANY ? isOneOf(GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, TRACE) : equalTo(meth))
         matchers << RequestMatcher.path(pathMatcher)
 
         this.globalEncoders = globalEncoders
