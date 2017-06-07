@@ -43,8 +43,6 @@ import static org.hamcrest.Matchers.notNullValue
 
 class ErsatzRequestWithContentSpec extends Specification {
 
-    // FIXME: test with all content methods
-
     private static final String BODY_CONTENT = '{"label":"Body Content", "text":"This is some body content."}'
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
     private final ErsatzRequestWithContent request = new ErsatzRequestWithContent(POST, equalTo('/posting'))

@@ -40,8 +40,6 @@ import static org.hamcrest.Matchers.nullValue
 
 class ErsatzRequestSpec extends Specification {
 
-    // FIXME: test with each method?
-
     private static final String STRING_CONTENT = 'Some content'
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
     private final ErsatzRequest request = new ErsatzRequest(POST, equalTo('/testing'), new ResponseEncoders())
