@@ -24,6 +24,7 @@ import org.apache.commons.fileupload.UploadContext
 import org.apache.commons.fileupload.disk.DiskFileItemFactory
 import spock.lang.AutoCleanup
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
@@ -31,6 +32,10 @@ import java.util.function.Consumer
 import static MultipartResponseContent.multipart
 import static com.stehno.ersatz.ContentType.MULTIPART_MIXED
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.HttpMethod.DELETE
+import static com.stehno.ersatz.HttpMethod.GET
+import static com.stehno.ersatz.HttpMethod.OPTIONS
+import static com.stehno.ersatz.HttpMethod.POST
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
 import static org.hamcrest.Matchers.startsWith
 
@@ -203,7 +208,7 @@ class ErsatzServerSpec extends Specification {
         server.stop()
     }
 
-    def 'gzip compression supported'(){
+    def 'gzip compression supported'() {
         setup:
         ersatzServer.expectations {
             get('/gzip').header('Accept-Encoding', 'gzip').responds().content('x' * 1000, TEXT_PLAIN)
@@ -217,32 +222,54 @@ class ErsatzServerSpec extends Specification {
         response.networkResponse().headers('Content-Encoding').contains('gzip')
     }
 
-    def 'non-compression supported'(){
+    def 'non-compression supported'() {
         setup:
         ersatzServer.expectations {
             get('/gzip').header('Accept-Encoding', '').responds().content('x' * 1000, TEXT_PLAIN)
         }
 
         when:
-        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).header('Accept-Encoding','').build()).execute()
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).header('Accept-Encoding', '').build()).execute()
 
         then:
         response.code() == 200
         !response.networkResponse().headers('Content-Encoding').contains('gzip')
     }
 
-    def 'deflate supported'(){
+    def 'deflate supported'() {
         setup:
         ersatzServer.expectations {
             get('/gzip').header('Accept-Encoding', 'deflate').responds().content('x' * 1000, TEXT_PLAIN)
         }
 
         when:
-        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).header('Accept-Encoding','deflate').build()).execute()
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).header('Accept-Encoding', 'deflate').build()).execute()
 
         then:
         response.code() == 200
         response.networkResponse().headers('Content-Encoding').contains('deflate')
+    }
+
+    @Unroll 'OPTIONS #path allows #allowed'() {
+        setup:
+        ersatzServer.expectations {
+            options('/options').responds().allows(GET, POST).code(200)
+            options('/*').responds().allows(DELETE, GET, OPTIONS).code(200)
+        }
+
+        when:
+        HttpURLConnection connection = new URL("${ersatzServer.httpUrl}/$path").openConnection() as HttpURLConnection
+        connection.requestMethod = 'OPTIONS'
+
+        then:
+        connection.responseCode == 200
+        connection.headerFields['Allow'][0] == allowed
+        !connection.inputStream.text
+
+        where:
+        path      || allowed
+        'options' || 'GET,POST'
+        '*'       || 'DELETE,GET,OPTIONS'
     }
 
     private String url(final String path) {

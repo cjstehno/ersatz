@@ -222,8 +222,8 @@ remain on server start even if new expectations are configured.
 Request expectations are the core of the Ersatz server functionality; conceptually, they are HTTP server request routes which are used to match an
 incoming HTTP request with a request handler or to respond with a status of 404, if no matching request was configured. The expectations are
 configured on an instance of the `Expectations` interface, which provides multiple configuration methods for each of the supported HTTP request
-methods (GET, HEAD, POST, PUT, DELETE, and PATCH), with the method name corresponding to the HTTP request method name. The four general types of
-methods are:
+methods (GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, and TRACE), with the method name corresponding to the HTTP request method name. The four
+general types of methods are:
 
 * One taking a `String path` returning an instance of the `Request` interface
 * One taking a `String path` and a `Consumer<Request>` returning an instance of the `Request` interface
@@ -307,6 +307,58 @@ get('/something'){
 
 Adding the `called` configuration adds the extra safety of ensuring that if the request is called more than our expected two times, the verification
 will fail (and with that, the test).
+
+=== Request Methods
+
+The Ersatz server supports all of the standard HTTP request headers along with a few non-standard ones. The table below denotes the supported methods
+their contents.
+
+|====
+|Method  |Request Body |Response Body
+|GET     | N           | Y
+|HEAD    | N           | N
+|OPTIONS | N           | N
+|POST    | Y           | Y
+|PUT     | Y           | N
+|DELETE  | N           | N
+|PATCH   | Y           | N
+|TRACE   | ?           | ?
+|====
+
+The following sections describe how each method is supported with a simple example.
+
+==== HEAD
+
+==== GET
+
+==== OPTIONS
+
+The `OPTIONS` HTTP request method is similar to an `HEAD` request, having no request or response body. The primary response value in an `OPTIONS` request
+is the content of the `Allow` response header, which will contain a comma-separated list of the request methods supported by the server. The request
+may be made against a specific URL path, or against `*` in order to determine what methods are available to the entire server.
+
+In order to mock out an `OPTIONS` request, you will want to respond with a provided `Allow` header. This may be done using the
+`Response.allows(HttpMethod...)` method in the responder. An example would be something like:
+
+[source,groovy]
+----
+ersatzServer.expectations {
+    options('/options').responds().allows(GET, POST).code(200)
+    options('/*').responds().allows(DELETE, GET, OPTIONS).code(200)
+}
+----
+
+This will provide different allowed options for `/options` and for the "entire server" (`*`). You can also specify the `Allow` header as a standard response header.
+
+==== POST
+
+==== PUT
+
+==== DELETE
+
+==== PATCH
+
+==== TRACE
 
 === Hamcrest Matchers
 

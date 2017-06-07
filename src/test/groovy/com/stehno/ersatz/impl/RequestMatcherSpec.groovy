@@ -21,10 +21,18 @@ import com.stehno.ersatz.Decoders
 import com.stehno.ersatz.RequestDecoders
 import spock.lang.Specification
 
-import static com.stehno.ersatz.impl.ErsatzRequest.GET
-import static com.stehno.ersatz.impl.ErsatzRequest.HEAD
-import static com.stehno.ersatz.impl.RequestMatcher.*
-import static org.hamcrest.Matchers.*
+import static com.stehno.ersatz.HttpMethod.GET
+import static com.stehno.ersatz.HttpMethod.HEAD
+import static com.stehno.ersatz.impl.RequestMatcher.body
+import static com.stehno.ersatz.impl.RequestMatcher.contentType
+import static com.stehno.ersatz.impl.RequestMatcher.cookie
+import static com.stehno.ersatz.impl.RequestMatcher.header
+import static com.stehno.ersatz.impl.RequestMatcher.method
+import static com.stehno.ersatz.impl.RequestMatcher.path
+import static com.stehno.ersatz.impl.RequestMatcher.query
+import static org.hamcrest.Matchers.contains
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.startsWith
 
 class RequestMatcherSpec extends Specification {
 

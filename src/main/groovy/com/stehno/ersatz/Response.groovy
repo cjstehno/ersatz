@@ -73,6 +73,14 @@ interface Response {
     Response headers(final Map<String, String> headers)
 
     /**
+     * Shortcut method for adding values to the "Allow" header. These values will be appended to the existing header.
+     *
+     * @param methods the allowed HTTP methods
+     * @return this response
+     */
+    Response allows(final HttpMethod... methods)
+
+    /**
      * Used to add a cookie to the response with the given name and value.
      *
      * @param name the cookie name

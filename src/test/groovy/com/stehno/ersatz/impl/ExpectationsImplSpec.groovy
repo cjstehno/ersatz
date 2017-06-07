@@ -15,13 +15,23 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.Request
+import com.stehno.ersatz.RequestDecoders
+import com.stehno.ersatz.RequestWithContent
+import com.stehno.ersatz.ResponseEncoders
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.impl.ErsatzRequest.*
+import static com.stehno.ersatz.HttpMethod.DELETE
+import static com.stehno.ersatz.HttpMethod.GET
+import static com.stehno.ersatz.HttpMethod.HEAD
+import static com.stehno.ersatz.HttpMethod.OPTIONS
+import static com.stehno.ersatz.HttpMethod.PATCH
+import static com.stehno.ersatz.HttpMethod.POST
+import static com.stehno.ersatz.HttpMethod.PUT
 import static org.hamcrest.Matchers.equalTo
 
 class ExpectationsImplSpec extends Specification {
@@ -41,13 +51,14 @@ class ExpectationsImplSpec extends Specification {
         expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH))
 
         where:
-        code     | method
-        'any'    | GET
-        'any'    | HEAD
-        'any'    | DELETE
-        'get'    | GET
-        'head'   | HEAD
-        'delete' | DELETE
+        code      | method
+        'any'     | GET
+        'any'     | HEAD
+        'any'     | DELETE
+        'get'     | GET
+        'head'    | HEAD
+        'delete'  | DELETE
+        'options' | OPTIONS
     }
 
     @Unroll '#method(String,Closure)'() {
@@ -60,13 +71,14 @@ class ExpectationsImplSpec extends Specification {
         expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH).query('a', 'b'))
 
         where:
-        code     | method
-        'any'    | GET
-        'any'    | HEAD
-        'any'    | DELETE
-        'get'    | GET
-        'head'   | HEAD
-        'delete' | DELETE
+        code      | method
+        'any'     | GET
+        'any'     | HEAD
+        'any'     | DELETE
+        'get'     | GET
+        'head'    | HEAD
+        'delete'  | DELETE
+        'options' | OPTIONS
     }
 
     @Unroll '#method(String,Consumer)'() {
@@ -79,13 +91,14 @@ class ExpectationsImplSpec extends Specification {
         expectations.requests[0].matches(new MockClientRequest(method: method, path: PATH).query('a', 'b'))
 
         where:
-        code     | method
-        'any'    | GET
-        'any'    | HEAD
-        'any'    | DELETE
-        'get'    | GET
-        'head'   | HEAD
-        'delete' | DELETE
+        code      | method
+        'any'     | GET
+        'any'     | HEAD
+        'any'     | DELETE
+        'get'     | GET
+        'head'    | HEAD
+        'delete'  | DELETE
+        'options' | OPTIONS
     }
 
     @Unroll '#method(String) (with content)'() {
@@ -192,7 +205,7 @@ class ExpectationsImplSpec extends Specification {
 
         then:
         def ae = thrown(AssertionError)
-        ae.message == 'Expectations for Expectations (ErsatzRequestWithContent): "POST", "/alpha",  were not met.. ' +
+        ae.message == 'Expectations for Expectations (ErsatzRequestWithContent): <POST>, "/alpha",  were not met.. ' +
             'Expression: (com.stehno.ersatz.impl.ErsatzRequest -> com.stehno.ersatz.impl.ErsatzRequest) r.verify()'
     }
 }

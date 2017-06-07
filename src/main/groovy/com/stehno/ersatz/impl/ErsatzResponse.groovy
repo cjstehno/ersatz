@@ -16,6 +16,7 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ContentType
+import com.stehno.ersatz.HttpMethod
 import com.stehno.ersatz.MultipartResponseContent
 import com.stehno.ersatz.Response
 import com.stehno.ersatz.ResponseEncoders
@@ -32,6 +33,7 @@ import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 @CompileStatic @SuppressWarnings('ConfusingMethodName')
 class ErsatzResponse implements Response {
 
+    private static final String ALLOW_HEADER = 'Allow'
     private final boolean empty
     private final ResponseEncoders localEncoders = new ResponseEncoders()
     private final EncoderChain encoderChain = new EncoderChain(localEncoders)
@@ -90,6 +92,15 @@ class ErsatzResponse implements Response {
     @Override
     Response headers(final Map<String, String> headers) {
         this.headers.putAll(headers)
+        this
+    }
+
+    @Override
+    Response allows(final HttpMethod... methods) {
+        String values = methods.collect { HttpMethod m -> m.value }.join(',')
+
+        headers[ALLOW_HEADER] = (headers.containsKey(ALLOW_HEADER) ? "${headers[ALLOW_HEADER]},$values" : values) as String
+
         this
     }
 

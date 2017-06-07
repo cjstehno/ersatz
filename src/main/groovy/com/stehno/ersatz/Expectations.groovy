@@ -409,4 +409,58 @@ interface Expectations {
      * @return a <code>RequestWithContent</code> configuration object
      */
     RequestWithContent patch(Matcher<String> matcher, Consumer<RequestWithContent> config)
+
+    /**
+     * Allows configuration of a OPTIONS request expectation.
+     *
+     * @param path the expected request path.
+     * @return a <code>Request</code> configuration object
+     */
+    Request options(String path)
+
+    /**
+     * Allows configuration of a OPTIONS request expectation.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     */
+    Request options(Matcher<String> matcher)
+
+    /**
+     * Allows configuration of a OPTIONS request expectation using the Groovy DSL.
+     *
+     * @param path the expected request path
+     * @pram closure the Groovy closure containing the configuration
+     * @return a <code>Request</code> configuration object
+     */
+    Request options(String path, @DelegatesTo(Request) Closure closure)
+
+    /**
+     * Allows configuration of a OPTIONS request expectation using the Groovy DSL.
+     *
+     * @param matcher the path matcher
+     * @pram closure the Groovy closure containing the configuration
+     * @return a <code>Request</code> configuration object
+     */
+    Request options(Matcher<String> matcher, @DelegatesTo(Request) Closure closure)
+
+    /**
+     * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param path the expected request path
+     * @pram config the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    Request options(String path, Consumer<Request> config)
+
+    /**
+     * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @pram config the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    Request options(Matcher<String> matcher, Consumer<Request> config)
 }

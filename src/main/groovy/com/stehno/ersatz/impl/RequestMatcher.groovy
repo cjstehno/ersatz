@@ -18,6 +18,7 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.Cookie
 import com.stehno.ersatz.DecodingContext
+import com.stehno.ersatz.HttpMethod
 import groovy.transform.TupleConstructor
 import org.hamcrest.Matcher
 
@@ -55,7 +56,7 @@ class RequestMatcher {
      * @param m the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    static RequestMatcher method(final Matcher<String> m) {
+    static RequestMatcher method(final Matcher<HttpMethod> m) {
         new RequestMatcher(m, { ClientRequest cr -> cr.method })
     }
 

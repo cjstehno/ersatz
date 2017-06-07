@@ -15,7 +15,11 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.ErsatzServer
+import com.stehno.ersatz.InMemoryCookieJar
+import com.stehno.ersatz.Response
+import com.stehno.ersatz.ResponseEncoders
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Request.Builder
@@ -29,20 +33,23 @@ import java.util.function.Consumer
 import static com.stehno.ersatz.Cookie.cookie
 import static com.stehno.ersatz.CookieMatcher.cookieMatcher
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
+import static com.stehno.ersatz.HttpMethod.POST
 import static com.stehno.ersatz.NoCookiesMatcher.noCookies
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.nullValue
 
 class ErsatzRequestSpec extends Specification {
 
+    // FIXME: test with each method?
+
     private static final String STRING_CONTENT = 'Some content'
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
-    private final ErsatzRequest request = new ErsatzRequest('TEST', equalTo('/testing'), new ResponseEncoders())
+    private final ErsatzRequest request = new ErsatzRequest(POST, equalTo('/testing'), new ResponseEncoders())
     @AutoCleanup('stop') private final ErsatzServer server = new ErsatzServer()
 
     def 'to string'() {
         expect:
-        request.toString() == 'Expectations (ErsatzRequest): "TEST", "/testing", '
+        request.toString() == 'Expectations (ErsatzRequest): <POST>, "/testing", '
     }
 
     def 'method and path'() {
@@ -455,6 +462,6 @@ class ErsatzRequestSpec extends Specification {
     }
 
     private static MockClientRequest clientRequest() {
-        new MockClientRequest(method: 'TEST', path: '/testing')
+        new MockClientRequest(method: POST, path: '/testing')
     }
 }

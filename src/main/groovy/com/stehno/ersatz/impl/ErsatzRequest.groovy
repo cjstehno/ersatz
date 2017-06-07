@@ -15,26 +15,36 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.Cookie
+import com.stehno.ersatz.CookieMatcher
+import com.stehno.ersatz.HttpMethod
+import com.stehno.ersatz.Request
+import com.stehno.ersatz.Response
+import com.stehno.ersatz.ResponseEncoders
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 
 import java.util.function.Consumer
 
-import static org.hamcrest.Matchers.*
+import static com.stehno.ersatz.HttpMethod.ANY
+import static com.stehno.ersatz.HttpMethod.DELETE
+import static com.stehno.ersatz.HttpMethod.GET
+import static com.stehno.ersatz.HttpMethod.HEAD
+import static com.stehno.ersatz.HttpMethod.PATCH
+import static com.stehno.ersatz.HttpMethod.POST
+import static com.stehno.ersatz.HttpMethod.PUT
+import static org.hamcrest.Matchers.anything
+import static org.hamcrest.Matchers.contains
+import static org.hamcrest.Matchers.containsInAnyOrder
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.equalToIgnoringCase
+import static org.hamcrest.Matchers.isOneOf
 
 /**
  * <code>Request</code> implementation representing requests without body content.
  */
 class ErsatzRequest implements Request {
-
-    protected static final String ANY = '*'
-    protected static final String GET = 'GET'
-    protected static final String HEAD = 'HEAD'
-    protected static final String POST = 'POST'
-    protected static final String PUT = 'PUT'
-    protected static final String DELETE = 'DELETE'
-    protected static final String PATCH = 'PATCH'
 
     private final List<RequestMatcher> matchers = []
     private final List<Consumer<ClientRequest>> listeners = []
@@ -44,6 +54,8 @@ class ErsatzRequest implements Request {
     private Matcher<?> callVerifier = anything()
     private int callCount
 
+    // FIXME: change method usages to use enum rather than string
+
     /**
      * Creates a new request with the specified method, path matcher and optional empty response flag (defaults to false).
      *
@@ -51,7 +63,7 @@ class ErsatzRequest implements Request {
      * @param pathMatcher the path matcher
      * @param noResponse whether or not this is a request with an empty response (defaults to false)
      */
-    ErsatzRequest(final String meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse = false) {
+    ErsatzRequest(final HttpMethod meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse = false) {
         matchers << RequestMatcher.method(meth == ANY ? isOneOf(GET, HEAD, POST, PUT, DELETE, PATCH) : equalTo(meth))
         matchers << RequestMatcher.path(pathMatcher)
 
