@@ -314,22 +314,48 @@ The Ersatz server supports all of the standard HTTP request headers along with a
 their contents.
 
 |====
-|Method  |Request Body |Response Body
-|GET     | N           | Y
-|HEAD    | N           | N
-|OPTIONS | N           | N
-|POST    | Y           | Y
-|PUT     | Y           | N
-|DELETE  | N           | N
-|PATCH   | Y           | N
-|TRACE   | ?           | ?
+|Method  |Request Body |Response Body |Reference
+|GET     | N           | Y            | ?
+|HEAD    | N           | N            | ?
+|OPTIONS | N           | N            | ?
+|POST    | Y           | Y            | ?
+|PUT     | Y           | N            | ?
+|DELETE  | N           | N            | ?
+|PATCH   | Y           | N            | ?
+|TRACE   | N           | Y            | ?
 |====
 
 The following sections describe how each method is supported with a simple example.
 
+While Ersatz does constrain the request methods content and their resulting response contents based on the method type, it is generally up to the mocker to
+provide the desired and/or appropriate responses (including most headers). This implementation leniency is intentional, and is meant to allow for endpoint
+implementations that do not necessarily follow the published specification, but likewise still need to be tested as they really exist rather than how they
+_should_ exist.
+
 ==== HEAD
 
+A `HEAD` request is used to retrieve the headers for a URL, basically a `GET` request without any response body. An Ersatz mocking example would be:
+
+[source,groovy]
+----
+ersatzServer.expectations {
+    head('/something').responds().header('X-Alpha','Interesting-data').code(200)
+}
+----
+
+which would respond to `HEAD /something` with an empty response and the response header `X-Alpha` with the specified value.
+
 ==== GET
+
+The `GET` request is a common HTTP request, and what browsers do by default. It has no request body, but it does have response content. You mock `GET` requests
+using the `get()` methods, as follows:
+
+[source,groovy]
+----
+ersatzServer.expectations {
+    get('/something').responds().content('This is INTERESTING!', 'text/plain').code(200)
+}
+----
 
 ==== OPTIONS
 
@@ -350,15 +376,65 @@ ersatzServer.expectations {
 
 This will provide different allowed options for `/options` and for the "entire server" (`*`). You can also specify the `Allow` header as a standard response header.
 
+Note that not all client and servers will support the `OPTIONS` request method.
+
 ==== POST
+
+The `POST` request is often used to send browser form data to a backend server. It can have both request and response content.
+
+[source,groovy]
+----
+ersatzServer.expectations {
+    post('/form').body([first:'John', last:'Doe'], APPLICATION_URLENCODED).responds().content('{ status:'saved' }', APPLICATION_JSON)
+}
+----
 
 ==== PUT
 
+A `PUT` request is similar to a `POST` except that while there is request content, there is no response body content.
+
+[source,groovy]
+----
+ersatzServer.expectations {
+    put('/form').query('id','1234').body([middle:'Q'], APPLICATION_URLENCODED).responds().code(200)
+}
+----
+
 ==== DELETE
+
+A `DELETE` request has not request or response content. It would look something like:
+
+[source,groovy]
+----
+ersatzServer.expectations {
+    delete('/user').query('id','1234').responds().code(200)
+}
+----
 
 ==== PATCH
 
+The `PATCH` request method creates a request that can have body content; however, the response will have no content.
+
+[source,groovy]
+----
+ersatzServer.expectations {
+    patch('/user').query('id','1234').body('{ "middle":"Q"}', APPLICATION_JSON).responds().code(200)
+}
+----
+
 ==== TRACE
+
+The `TRACE` method is generally meant for debugging and diagnostics. The request will have no request content; however, if the request is valid,
+the response SHOULD contain the entire request message in the entity-body, with a Content-Type of "message/http". A `TRACE` could be mocked as:
+
+[source,groovy]
+----
+ersatzServer.expectations {
+    trace('/info').responds().???
+}
+----
+
+TODO: implement
 
 === Hamcrest Matchers
 
