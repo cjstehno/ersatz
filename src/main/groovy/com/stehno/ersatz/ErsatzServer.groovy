@@ -29,6 +29,7 @@ import io.undertow.server.HttpHandler
 import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.BlockingHandler
 import io.undertow.server.handlers.CookieImpl
+import io.undertow.server.handlers.HttpTraceHandler
 import io.undertow.server.handlers.encoding.ContentEncodingRepository
 import io.undertow.server.handlers.encoding.DeflateEncodingProvider
 import io.undertow.server.handlers.encoding.EncodingHandler
@@ -289,25 +290,29 @@ class ErsatzServer implements ServerConfig {
             }
 
             BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(
-                applyAuthentication(new HttpHandler() {
-                    @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
-                        ClientRequest clientRequest = new UndertowClientRequest(exchange)
+                applyAuthentication(
+                    new HttpTraceHandler(
+                        new HttpHandler() {
+                            @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
+                                ClientRequest clientRequest = new UndertowClientRequest(exchange)
 
-                        log.debug 'Request: {}', clientRequest
+                                log.debug 'Request: {}', clientRequest
 
-                        ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
-                        if (request) {
-                            Response currentResponse = request.currentResponse
-                            request.mark(clientRequest)
-                            send(exchange, currentResponse)
+                                ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
+                                if (request) {
+                                    Response currentResponse = request.currentResponse
+                                    request.mark(clientRequest)
+                                    send(exchange, currentResponse)
 
-                        } else {
-                            log.warn 'Unmatched-Request: {}', clientRequest
+                                } else {
+                                    log.warn 'Unmatched-Request: {}', clientRequest
 
-                            exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
+                                    exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
+                                }
+                            }
                         }
-                    }
-                }),
+                    )
+                ),
                 new ContentEncodingRepository()
                     .addEncodingHandler('gzip', new GzipEncodingProvider(), 50)
                     .addEncodingHandler('deflate', new DeflateEncodingProvider(), 50)

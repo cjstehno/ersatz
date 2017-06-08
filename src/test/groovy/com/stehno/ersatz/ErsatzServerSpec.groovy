@@ -30,12 +30,8 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
 import static MultipartResponseContent.multipart
-import static com.stehno.ersatz.ContentType.MULTIPART_MIXED
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
-import static com.stehno.ersatz.HttpMethod.DELETE
-import static com.stehno.ersatz.HttpMethod.GET
-import static com.stehno.ersatz.HttpMethod.OPTIONS
-import static com.stehno.ersatz.HttpMethod.POST
+import static com.stehno.ersatz.ContentType.*
+import static com.stehno.ersatz.HttpMethod.*
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
 import static org.hamcrest.Matchers.startsWith
 
@@ -270,6 +266,26 @@ class ErsatzServerSpec extends Specification {
         path      || allowed
         'options' || 'GET,POST'
         '*'       || 'DELETE,GET,OPTIONS'
+    }
+
+    def 'TRACE sends back request'() {
+        setup:
+        ersatzServer.start()
+
+        when:
+        HttpURLConnection connection = new URL("${ersatzServer.httpUrl}/info?data=foo+bar").openConnection() as HttpURLConnection
+        connection.requestMethod = 'TRACE'
+
+        then:
+        connection.contentType == MESSAGE_HTTP.value
+        connection.inputStream.text.readLines()*.trim() == """TRACE /info?data=foo+barHTTP/1.1
+            Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+            Connection: keep-alive
+            User-Agent: Java/1.8.0_121
+            Host: localhost:${ersatzServer.httpPort}
+        """.readLines()*.trim()
+
+        connection.responseCode == 200
     }
 
     private String url(final String path) {
