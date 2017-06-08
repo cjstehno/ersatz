@@ -379,6 +379,10 @@ class ErsatzServer implements ServerConfig {
 
     private static void send(final HttpServerExchange exchange, final Response response) {
         if (response) {
+            if (response.delay) {
+                sleep response.delay
+            }
+
             exchange.statusCode = response.code
 
             response.headers.each { k, v ->

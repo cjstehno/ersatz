@@ -288,6 +288,27 @@ class ErsatzServerSpec extends Specification {
         connection.responseCode == 200
     }
 
+    @Unroll 'delayed response (#delay)'() {
+        setup:
+        ersatzServer.expectations {
+            get('/slow').responds().delay(delay).content('Done').code(200)
+        }
+
+        when:
+        long started = System.currentTimeMillis()
+        String response = "${ersatzServer.httpUrl}/slow".toURL().text
+        long elapsed = System.currentTimeMillis() - started
+
+        then:
+        response == 'Done'
+        elapsed >= time
+
+        where:
+        delay   | time
+        1000    | 1000
+        '1 sec' | 1000
+    }
+
     private String url(final String path) {
         "http://localhost:${ersatzServer.httpPort}${path}"
     }

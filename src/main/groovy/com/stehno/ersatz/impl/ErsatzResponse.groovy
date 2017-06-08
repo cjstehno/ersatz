@@ -15,17 +15,16 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ContentType
-import com.stehno.ersatz.HttpMethod
-import com.stehno.ersatz.MultipartResponseContent
-import com.stehno.ersatz.Response
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.*
+import com.stehno.vanilla.util.TimeSpan
 import groovy.transform.CompileStatic
 
+import java.util.concurrent.TimeUnit
 import java.util.function.Function
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
  * Implementation of the <code>Response</code> interface.
@@ -50,6 +49,7 @@ class ErsatzResponse implements Response {
     private final Map<String, String> cookies = [:]
     private Object content
     private Integer code = 200
+    private long delayTime
 
     @Override
     Response content(final Object content) {
@@ -133,9 +133,26 @@ class ErsatzResponse implements Response {
         headers[CONTENT_TYPE_HEADER] ?: TEXT_PLAIN.value
     }
 
-    Response code(int code) {
+    Response code(final int code) {
         this.code = code
         this
+    }
+
+    @Override
+    Response delay(final long time, final TimeUnit unit = MILLISECONDS) {
+        this.delayTime = MILLISECONDS.convert(time, unit)
+        this
+    }
+
+    @Override
+    Response delay(final String time) {
+        this.delayTime = TimeSpan.parse(time).toMillis()
+        this
+    }
+
+    @Override
+    long getDelay() {
+        this.delayTime
     }
 
     @Override
