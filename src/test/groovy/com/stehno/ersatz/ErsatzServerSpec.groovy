@@ -22,6 +22,7 @@ import org.apache.commons.fileupload.FileItem
 import org.apache.commons.fileupload.FileUpload
 import org.apache.commons.fileupload.UploadContext
 import org.apache.commons.fileupload.disk.DiskFileItemFactory
+import org.hamcrest.Matcher
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -307,6 +308,23 @@ class ErsatzServerSpec extends Specification {
         delay   | time
         1000    | 1000
         '1 sec' | 1000
+    }
+
+    @Unroll 'using closure as matcher (#path)'() {
+        setup:
+        ersatzServer.expectations {
+            get({ p -> p.startsWith('/general') } as Matcher<String>).responds().content('ok').code(200)
+            get('/other').responds().content('err').code(200)
+        }
+
+        expect:
+        url(path).toURL().text == response
+
+        where:
+        path           || response
+        '/general/one' || 'ok'
+        '/general/two' || 'ok'
+        '/other'       || 'err'
     }
 
     private String url(final String path) {
