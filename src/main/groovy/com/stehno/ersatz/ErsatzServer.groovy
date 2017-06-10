@@ -396,7 +396,7 @@ class ErsatzServer implements ServerConfig {
 
         String responseContent = response?.content
 
-        log.debug 'Response({}): {}', exchange.responseHeaders, responseContent.take(1000)
+        log.debug 'Response({}): {}', exchange.responseHeaders ?: '<no-headers>', responseContent.take(1000) ?: '<empty>'
 
         exchange.responseSender.send(responseContent)
     }
