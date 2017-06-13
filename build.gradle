@@ -27,7 +27,7 @@ configurations {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.9'
+    compile "org.codehaus.groovy:groovy-all:$groovyVersion"
     compile 'io.undertow:undertow-core:1.4.6.Final'
 
     compile 'ch.qos.logback:logback-classic:1.1.7'
@@ -45,12 +45,12 @@ dependencies {
     testCompile 'cglib:cglib-nodep:3.2.4'
     testCompile 'com.burgstaller:okhttp-digest:1.10'
 
-    groovyDoc 'org.codehaus.groovy:groovy-groovydoc:2.4.9'
-    groovyDoc 'org.codehaus.groovy:groovy-ant:2.4.9'
+    groovyDoc "org.codehaus.groovy:groovy-groovydoc:$groovyVersion"
+    groovyDoc "org.codehaus.groovy:groovy-ant:$groovyVersion"
 
     codenarc(
         'org.codenarc:CodeNarc:0.26.0',
-        'org.codehaus.groovy:groovy-all:2.4.9'
+        "org.codehaus.groovy:groovy-all:$groovyVersion"
     )
 }
 

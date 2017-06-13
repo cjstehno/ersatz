@@ -282,7 +282,7 @@ class ErsatzServerSpec extends Specification {
         connection.inputStream.text.readLines()*.trim() == """TRACE /info?data=foo+barHTTP/1.1
             Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
             Connection: keep-alive
-            User-Agent: Java/1.8.0_121
+            User-Agent: Java/${System.getProperty('java.version')}
             Host: localhost:${ersatzServer.httpPort}
         """.readLines()*.trim()
 
