@@ -28,7 +28,7 @@ configurations {
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.8'
-    compile 'io.undertow:undertow-core:1.4.6.Final'
+    compile "io.undertow:undertow-core:${System.getenv('UNDERTOW_VERSION') ?: '1.4.6.Final'}"
 
     compile 'ch.qos.logback:logback-classic:1.1.7'
 

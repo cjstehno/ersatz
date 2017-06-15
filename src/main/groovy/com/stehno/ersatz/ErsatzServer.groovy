@@ -282,10 +282,12 @@ class ErsatzServer implements ServerConfig {
      */
     void start() {
         if (!started) {
-            Undertow.Builder builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST)
+            actualHttpPort = generateRandomPort()
+            Undertow.Builder builder = Undertow.builder().addHttpListener(actualHttpPort, LOCALHOST)
 
             if (httpsEnabled) {
-                builder.addHttpsListener(EPHEMERAL_PORT, LOCALHOST, sslContext())
+                actualHttpsPort = generateRandomPort()
+                builder.addHttpsListener(actualHttpsPort, LOCALHOST, sslContext())
             }
 
             BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(
@@ -316,12 +318,6 @@ class ErsatzServer implements ServerConfig {
             server = builder.setHandler(blockingHandler).build()
 
             server.start()
-
-            actualHttpPort = (server.listenerInfo[0].address as InetSocketAddress).port
-
-            if (httpsEnabled) {
-                actualHttpsPort = (server.listenerInfo[1].address as InetSocketAddress).port
-            }
 
             started = true
         }
@@ -390,6 +386,16 @@ class ErsatzServer implements ServerConfig {
         log.debug 'Response({}): {}', exchange.responseHeaders, responseContent.take(1000)
 
         exchange.responseSender.send(responseContent)
+    }
+
+    private static int generateRandomPort() {
+        ServerSocket httpTestSocket = null
+        try {
+            httpTestSocket = new ServerSocket(EPHEMERAL_PORT)
+            return httpTestSocket.getLocalPort()
+        } finally {
+            httpTestSocket?.close()
+        }
     }
 
     @CompileStatic(TypeCheckingMode.SKIP)
