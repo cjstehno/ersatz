@@ -239,30 +239,66 @@ class ErsatzServer implements ServerConfig {
         expectations
     }
 
+    /**
+     * Configures the given request content decoder for the specified request content-type.
+     *
+     * @param contentType the request content-type
+     * @param decoder the request content decoder
+     * @return the reference to the server configuration
+     */
     @Override
     ErsatzServer decoder(String contentType, BiFunction<byte[], DecodingContext, Object> decoder) {
         globalDecoders.register contentType, decoder
         this
     }
 
+    /**
+     * Configures the given request content decoder for the specified request content-type.
+     *
+     * @param contentType the request content-type
+     * @param decoder the request content decoder
+     * @return the reference to the server configuration
+     */
     @Override
     ErsatzServer decoder(ContentType contentType, BiFunction<byte[], DecodingContext, Object> decoder) {
         globalDecoders.register contentType, decoder
         this
     }
 
+    /**
+     * Registers a response body encoder.
+     *
+     * param contentType the response content-type to be encoded
+     * @param objectType the response object type to be encoded
+     * @param encoder the encoder function
+     * @return a reference to this server configuration
+     */
     @Override
     ServerConfig encoder(String contentType, Class objectType, Function<Object, String> encoder) {
         globalEncoders.register contentType, objectType, encoder
         this
     }
 
+    /**
+     * Registers a response body encoder.
+     *
+     * param contentType the response content-type to be encoded
+     * @param objectType the response object type to be encoded
+     * @param encoder the encoder function
+     * @return a reference to this server configuration
+     */
     @Override
     ServerConfig encoder(ContentType contentType, Class objectType, Function<Object, String> encoder) {
         globalEncoders.register contentType, objectType, encoder
         this
     }
 
+    /**
+     * Registers authentication configuration as a Groovy Closure.
+     *
+     * @param closure the configuration closure
+     * @return a reference to this server configuration
+     */
     @Override
     ServerConfig authentication(@DelegatesTo(AuthenticationConfig) final Closure closure) {
         authenticationConfig = new AuthenticationConfig()
@@ -271,6 +307,12 @@ class ErsatzServer implements ServerConfig {
         this
     }
 
+    /**
+     * Registers authentication configuration as a <code>Consumer<AuthenticationConfig></code>.
+     *
+     * @param config the configuration Consumer
+     * @return a reference to this server configuration
+     */
     @Override
     ServerConfig authentication(final Consumer<AuthenticationConfig> config) {
         authenticationConfig = new AuthenticationConfig()
@@ -326,15 +368,6 @@ class ErsatzServer implements ServerConfig {
             applyPorts()
 
             started = true
-        }
-    }
-
-    @CompileStatic(SKIP)
-    private void applyPorts() {
-        actualHttpPort = server.channels[0].channel.localAddress.holder.port
-
-        if (httpsEnabled) {
-            actualHttpsPort = server.channels[1].tcpServer.channel.localAddress.holder.port
         }
     }
 
@@ -405,6 +438,15 @@ class ErsatzServer implements ServerConfig {
         log.debug 'Response({}): {}', exchange.responseHeaders ?: '<no-headers>', responseContent.take(1000) ?: '<empty>'
 
         exchange.responseSender.send(responseContent)
+    }
+
+    @CompileStatic(SKIP)
+    private void applyPorts() {
+        actualHttpPort = server.channels[0].channel.localAddress.holder.port
+
+        if (httpsEnabled) {
+            actualHttpsPort = server.channels[1].tcpServer.channel.localAddress.holder.port
+        }
     }
 
     @CompileStatic(SKIP)

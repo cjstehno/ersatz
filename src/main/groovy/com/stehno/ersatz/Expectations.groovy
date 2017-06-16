@@ -445,8 +445,8 @@ interface Expectations {
     Request options(Matcher<String> matcher, @DelegatesTo(Request) Closure closure)
 
     /**
-     * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
-     * have an instance of <code>Request</code> passed into it for configuration.
+     * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code>
+     * will have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param path the expected request path
      * @pram config the configuration consumer
@@ -455,8 +455,8 @@ interface Expectations {
     Request options(String path, Consumer<Request> config)
 
     /**
-     * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
-     * have an instance of <code>Request</code> passed into it for configuration.
+     * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code>
+     * will have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param matcher the path matcher
      * @pram config the configuration consumer

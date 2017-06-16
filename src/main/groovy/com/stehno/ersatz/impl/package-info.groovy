@@ -13,30 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
-
-import groovy.transform.CompileStatic
-import groovy.transform.TupleConstructor
-
 /**
- * Enumeration of the supported HTTP request methods.
+ * The <code>impl</code> package provides the internal implementation classes for the API. Generally, test-writers will want to avoid directly
+ * using anything from this package.
  */
-@CompileStatic @TupleConstructor
-enum HttpMethod {
-
-    ANY('*'),
-    GET('GET'),
-    HEAD('HEAD'),
-    POST('POST'),
-    PUT('PUT'),
-    DELETE('DELETE'),
-    PATCH('PATCH'),
-    OPTIONS('OPTIONS'),
-    TRACE('TRACE')
-
-    final String value
-
-    @Override String toString() {
-        value
-    }
-}
+package com.stehno.ersatz.impl

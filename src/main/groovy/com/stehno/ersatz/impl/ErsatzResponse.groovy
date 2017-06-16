@@ -97,7 +97,7 @@ class ErsatzResponse implements Response {
 
     @Override
     Response allows(final HttpMethod... methods) {
-        String values = methods.collect { HttpMethod m -> m.value }.join(',')
+        String values = methods*.value.join(',')
 
         headers[ALLOW_HEADER] = (headers.containsKey(ALLOW_HEADER) ? "${headers[ALLOW_HEADER]},$values" : values) as String
 

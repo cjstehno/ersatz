@@ -20,7 +20,7 @@ import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 
 /**
- * A Hamcrest matcher for matching the case when there should be no cookies configured in a request..
+ * A Hamcrest matcher for matching the case when there should be no cookies configured in a request.
  */
 @CompileStatic
 class NoCookiesMatcher extends BaseMatcher<Map<String, Cookie>> {

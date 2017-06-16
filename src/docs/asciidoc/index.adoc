@@ -993,9 +993,7 @@ the unit tests).
 
 == Usage Examples
 
-
-
-TODO: Use case examples (and conversions)
+This section contains some recipe-style usage examples.
 
 
 === Url-Encoded Form Requests
@@ -1019,3 +1017,50 @@ server.expectations {
 where the `POST` content data would look like:
 
     alpha=some+data&bravo=42
+
+=== File Upload (POST)
+
+[source,groovy]
+----
+ersatz.expectations {
+
+}
+----
+
+TODO: example
+
+=== File Download (GET)
+
+Setting up an expectation for a GET request to respond with a file to download can be done as follows:
+
+[source,groovy]
+----
+import com.stehno.erstaz.ErsatzServer
+import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+
+def ersatz = new ErsatzServer({
+    autoStart()
+    encoder TEXT_PLAIN, File, Encoders.text
+})
+
+def file = new File(/* some file */)
+
+ersatz.expectations {
+    get('/download'){
+        responder {
+            content file, TEXT_PLAIN
+        }
+    }
+}
+----
+
+=== Send/Receive JSON (POST)
+
+[source,groovy]
+----
+ersatz.expectations {
+
+}
+----
+
+TODO: example

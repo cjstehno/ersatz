@@ -13,30 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
-
-import groovy.transform.CompileStatic
-import groovy.transform.TupleConstructor
-
 /**
- * Enumeration of the supported HTTP request methods.
+ * The Ersatz Mock Server API.
  */
-@CompileStatic @TupleConstructor
-enum HttpMethod {
-
-    ANY('*'),
-    GET('GET'),
-    HEAD('HEAD'),
-    POST('POST'),
-    PUT('PUT'),
-    DELETE('DELETE'),
-    PATCH('PATCH'),
-    OPTIONS('OPTIONS'),
-    TRACE('TRACE')
-
-    final String value
-
-    @Override String toString() {
-        value
-    }
-}
+package com.stehno.ersatz

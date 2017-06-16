@@ -78,56 +78,128 @@ class CookieMatcher extends BaseMatcher<Cookie> {
         this
     }
 
+    /**
+     * Applies a matcher for the specified cookie comment value. This is equivalent to calling <code>comment(Matchers.equalTo('some value'))</code>.
+     *
+     * @param str the comment string
+     * @return a reference to the matcher being configured
+     */
     CookieMatcher comment(final String str) {
         comment equalTo(str)
     }
 
+    /**
+     * Applies the specified matcher to the cookie comment.
+     *
+     * @param matcher the matcher to be used
+     * @return a reference to the matcher being configured
+     */
     CookieMatcher comment(final Matcher<String> matcher) {
         matchers['comment'] = matcher
         this
     }
 
+    /**
+     * Applies a matcher for the specified cookie domain value. This is equivalent to calling <code>domain(Matchers.equalTo('some value'))</code>.
+     *
+     * @param str the domain string
+     * @return a reference to the matcher being configured
+     */
     CookieMatcher domain(final String str) {
         domain equalTo(str)
     }
 
+    /**
+     * Applies the specified matcher to the cookie domain.
+     *
+     * @param matcher the matcher to be used
+     * @return a reference to the matcher being configured
+     */
     CookieMatcher domain(final Matcher<String> matcher) {
         matchers['domain'] = matcher
         this
     }
 
+    /**
+     * Applies a matcher for the specified cookie path value. This is equivalent to calling <code>path(Matchers.equalTo('some value'))</code>.
+     *
+     * @param str the path string
+     * @return a reference to the matcher being configured
+     */
     CookieMatcher path(final String str) {
         path equalTo(str)
     }
 
+    /**
+     * Applies the specified matcher to the cookie path.
+     *
+     * @param matcher the matcher to be used
+     * @return a reference to the matcher being configured
+     */
     CookieMatcher path(final Matcher<String> matcher) {
         matchers['path'] = matcher
         this
     }
 
+    /**
+     * Applies a matcher for the specified cookie version value. This is equivalent to calling <code>version(Matchers.equalTo(1))</code>.
+     *
+     * @param str the version string
+     * @return a reference to the matcher being configured
+     */
     CookieMatcher version(final int vers) {
         version equalTo(vers)
     }
 
+    /**
+     * Applies the specified matcher to the cookie version.
+     *
+     * @param matcher the matcher to be used
+     * @return a reference to the matcher being configured
+     */
     CookieMatcher version(final Matcher<Integer> matcher) {
         matchers['version'] = matcher
         this
     }
 
+    /**
+     * Applies a matcher for the specified cookie http-only value.
+     *
+     * @param str the httpOnly state
+     * @return a reference to the matcher being configured
+     */
     CookieMatcher httpOnly(final boolean httpOnly) {
         matchers['httpOnly'] = equalTo(httpOnly)
         this
     }
 
+    /**
+     * Applies a matcher for the specified cookie max-age value. This is equivalent to calling <code>maxAge(Matchers.equalTo(age))</code>.
+     *
+     * @param str the max-age value
+     * @return a reference to the matcher being configured
+     */
     CookieMatcher maxAge(final int age) {
         maxAge equalTo(age)
     }
 
+    /**
+     * Applies the specified matcher to the cookie max-age value.
+     *
+     * @param matcher the matcher to be used
+     * @return a reference to the matcher being configured
+     */
     CookieMatcher maxAge(final Matcher<Integer> matcher) {
         matchers['maxAge'] = matcher
         this
     }
 
+    /**
+     * Applies a matcher for the specified cookie secure value.
+     *
+     * @param str the secure state
+     * @return a reference to the matcher being configured
+     */
     CookieMatcher secure(final boolean secure) {
         matchers['secure'] = equalTo(secure)
         this

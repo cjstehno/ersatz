@@ -149,7 +149,19 @@ interface ServerConfig {
      */
     ServerConfig encoder(ContentType contentType, Class objectType, Function<Object, String> encoder)
 
+    /**
+     * Registers authentication configuration as a Groovy Closure.
+     *
+     * @param closure the configuration closure
+     * @return a reference to this server configuration
+     */
     ServerConfig authentication(@DelegatesTo(AuthenticationConfig) Closure closure)
 
+    /**
+     * Registers authentication configuration as a <code>Consumer<AuthenticationConfig></code>.
+     *
+     * @param config the configuration Consumer
+     * @return a reference to this server configuration
+     */
     ServerConfig authentication(Consumer<AuthenticationConfig> config)
 }
