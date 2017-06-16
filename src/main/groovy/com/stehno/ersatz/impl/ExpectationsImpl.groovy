@@ -51,6 +51,13 @@ class ExpectationsImpl implements Expectations {
         this.globalEncoders = globalEncoders
     }
 
+    /**
+     * Removes all expectation configuration, but does not modify global encoders or decoders.
+     */
+    void clear(){
+        requests.clear()
+    }
+
     @Override
     Request any(final String path) {
         any equalTo(path)

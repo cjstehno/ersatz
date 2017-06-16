@@ -372,6 +372,13 @@ class ErsatzServer implements ServerConfig {
     }
 
     /**
+     * Clears all configured expectations from the server. Does not affect global encoders or decoders.
+     */
+    void clearExpectations(){
+        expectations.clear()
+    }
+
+    /**
      * Used to stop the HTTP server. The server may be restarted after it has been stopped.
      */
     void stop() {

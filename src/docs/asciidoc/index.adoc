@@ -495,6 +495,9 @@ get('/something'){
 Adding the `called` configuration adds the extra safety of ensuring that if the request is called more than our expected two times, the verification
 will fail (and with that, the test).
 
+Expectations may be cleared from the server using the `clearExpectations()` method. This is useful when you need to redefine expectations for one
+test only, but all of the others have a common set of expectations.
+
 ==== Request Methods
 
 The Ersatz server supports all of the standard HTTP request headers along with a few non-standard ones. The table below denotes the supported methods
