@@ -22,7 +22,6 @@ import com.stehno.ersatz.impl.ErsatzRequest
 import com.stehno.ersatz.impl.ExpectationsImpl
 import com.stehno.ersatz.impl.UndertowClientRequest
 import groovy.transform.CompileStatic
-import groovy.transform.TypeCheckingMode
 import groovy.util.logging.Slf4j
 import io.undertow.Undertow
 import io.undertow.server.HttpHandler
@@ -41,6 +40,8 @@ import java.security.KeyStore
 import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Function
+
+import static groovy.transform.TypeCheckingMode.SKIP
 
 /**
  * The main entry point for configuring an Ersatz server, which allows configuring of the expectations and management of the server itself. This is
@@ -317,13 +318,18 @@ class ErsatzServer implements ServerConfig {
 
             server.start()
 
-            actualHttpPort = (server.listenerInfo[0].address as InetSocketAddress).port
-
-            if (httpsEnabled) {
-                actualHttpsPort = (server.listenerInfo[1].address as InetSocketAddress).port
-            }
+            applyPorts()
 
             started = true
+        }
+    }
+
+    @CompileStatic(SKIP)
+    private void applyPorts() {
+        actualHttpPort = server.channels[0].channel.localAddress.holder.port
+
+        if (httpsEnabled) {
+            actualHttpsPort = server.channels[1].tcpServer.channel.localAddress.holder.port
         }
     }
 
@@ -392,7 +398,7 @@ class ErsatzServer implements ServerConfig {
         exchange.responseSender.send(responseContent)
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
+    @CompileStatic(SKIP)
     private SSLContext sslContext() {
         KeyStore keyStore = KeyStore.getInstance('JKS')
 
