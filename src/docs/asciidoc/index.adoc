@@ -995,7 +995,6 @@ the unit tests).
 
 This section contains some recipe-style usage examples.
 
-
 === Url-Encoded Form Requests
 
 Url-encoded form requests are supported by default when the request content-type is specified as `application/x-www-form-urlencoded`. The request
@@ -1020,14 +1019,39 @@ where the `POST` content data would look like:
 
 === File Upload (POST)
 
+You can setup an expectation for a file upload POST using the `multipart` support, something like:
+
 [source,groovy]
 ----
-ersatz.expectations {
+import com.stehno.erstaz.ErsatzServer
+import com.stehno.ersatz.MultipartRequestContent
+import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
+def ersatz = new ErsatzServer({
+    autoStart()
+    encoder TEXT_PLAIN, File, Encoders.text
+})
+
+def file = new File(/* some file */)
+
+ersatz.expectations {
+    post('/upload') {
+        decoders TEXT_PLAIN, Decoders.utf8String
+        decoder MULTIPART_MIXED, Decoders.multipart
+
+        body MultipartRequestContent.multipart {
+            part 'fileName', file.name
+            part 'file', file.name, 'text/plain; charset=utf-8', file.text
+        }, MULTIPART_MIXED
+
+        responder {
+            content 'ok'
+        }
+    }
 }
 ----
 
-TODO: example
+This will expect the posting of the given file content to the `/upload` path of the server.
 
 === File Download (GET)
 
@@ -1048,19 +1072,11 @@ def file = new File(/* some file */)
 ersatz.expectations {
     get('/download'){
         responder {
+            header 'Content-Disposition', "attachment; filename=\"${file.name}\""
             content file, TEXT_PLAIN
         }
     }
 }
 ----
 
-=== Send/Receive JSON (POST)
-
-[source,groovy]
-----
-ersatz.expectations {
-
-}
-----
-
-TODO: example
+This will respond to the request with file download content.
