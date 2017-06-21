@@ -15,29 +15,31 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+import com.stehno.ersatz.ContentType
+import com.stehno.ersatz.Decoders
+import com.stehno.ersatz.ErsatzServer
+import com.stehno.ersatz.InMemoryCookieJar
+import com.stehno.ersatz.MultipartRequestContent
+import com.stehno.ersatz.RequestDecoders
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import org.hamcrest.Matcher
-import org.hamcrest.Matchers
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.*
+import static com.stehno.ersatz.ContentType.APPLICATION_URLENCODED
+import static com.stehno.ersatz.ContentType.IMAGE_PNG
+import static com.stehno.ersatz.ContentType.MULTIPART_MIXED
+import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
+import static com.stehno.ersatz.HttpMethod.POST
 import static com.stehno.ersatz.MultipartRequestMatcher.multipartMatcher
-import static com.stehno.ersatz.impl.ErsatzRequest.POST
 import static okhttp3.MediaType.parse
 import static okhttp3.Request.Builder
 import static okhttp3.RequestBody.create
-import static org.hamcrest.Matchers.allOf
-import static org.hamcrest.Matchers.any
-import static org.hamcrest.Matchers.arrayWithSize
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
-import static org.hamcrest.Matchers.startsWith
 
 class ErsatzRequestWithContentSpec extends Specification {
 
@@ -63,7 +65,7 @@ class ErsatzRequestWithContentSpec extends Specification {
         request.body('Some body', TEXT_PLAIN)
 
         expect:
-        request.toString() == 'Expectations (ErsatzRequestWithContent): "POST", "/posting", a string starting with "text/plain", "Some body", '
+        request.toString() == 'Expectations (ErsatzRequestWithContent): <POST>, "/posting", a string starting with "text/plain", "Some body", '
     }
 
     def 'matching: body'() {

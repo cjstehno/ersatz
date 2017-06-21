@@ -16,6 +16,7 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.HttpMethod
 import groovy.transform.CompileStatic
 import groovy.transform.Memoized
 import groovy.transform.TupleConstructor
@@ -51,8 +52,8 @@ class UndertowClientRequest implements ClientRequest {
      *
      * @return the HTTP method for the request
      */
-    String getMethod() {
-        exchange.requestMethod.toString()
+    HttpMethod getMethod() {
+        HttpMethod.valueOf(exchange.requestMethod.toString())
     }
 
     /**

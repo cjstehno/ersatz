@@ -41,6 +41,7 @@ class ContentType {
     public static final ContentType IMAGE_JPG = new ContentType('image/jpeg')
     public static final ContentType IMAGE_PNG = new ContentType('image/png')
     public static final ContentType IMAGE_GIF = new ContentType('image/gif')
+    public static final ContentType MESSAGE_HTTP = new ContentType('message/http')
 
     String value
 }

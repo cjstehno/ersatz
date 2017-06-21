@@ -22,15 +22,17 @@ import org.apache.commons.fileupload.FileItem
 import org.apache.commons.fileupload.FileUpload
 import org.apache.commons.fileupload.UploadContext
 import org.apache.commons.fileupload.disk.DiskFileItemFactory
+import org.hamcrest.Matcher
 import spock.lang.AutoCleanup
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
 import static MultipartResponseContent.multipart
-import static com.stehno.ersatz.ContentType.MULTIPART_MIXED
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.ContentType.*
+import static com.stehno.ersatz.HttpMethod.*
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
 import static org.hamcrest.Matchers.startsWith
 
@@ -203,7 +205,7 @@ class ErsatzServerSpec extends Specification {
         server.stop()
     }
 
-    def 'gzip compression supported'(){
+    def 'gzip compression supported'() {
         setup:
         ersatzServer.expectations {
             get('/gzip').header('Accept-Encoding', 'gzip').responds().content('x' * 1000, TEXT_PLAIN)
@@ -217,32 +219,112 @@ class ErsatzServerSpec extends Specification {
         response.networkResponse().headers('Content-Encoding').contains('gzip')
     }
 
-    def 'non-compression supported'(){
+    def 'non-compression supported'() {
         setup:
         ersatzServer.expectations {
             get('/gzip').header('Accept-Encoding', '').responds().content('x' * 1000, TEXT_PLAIN)
         }
 
         when:
-        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).header('Accept-Encoding','').build()).execute()
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).header('Accept-Encoding', '').build()).execute()
 
         then:
         response.code() == 200
         !response.networkResponse().headers('Content-Encoding').contains('gzip')
     }
 
-    def 'deflate supported'(){
+    def 'deflate supported'() {
         setup:
         ersatzServer.expectations {
             get('/gzip').header('Accept-Encoding', 'deflate').responds().content('x' * 1000, TEXT_PLAIN)
         }
 
         when:
-        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).header('Accept-Encoding','deflate').build()).execute()
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/gzip')).header('Accept-Encoding', 'deflate').build()).execute()
 
         then:
         response.code() == 200
         response.networkResponse().headers('Content-Encoding').contains('deflate')
+    }
+
+    @Unroll 'OPTIONS #path allows #allowed'() {
+        setup:
+        ersatzServer.expectations {
+            options('/options').responds().allows(GET, POST).code(200)
+            options('/*').responds().allows(DELETE, GET, OPTIONS).code(200)
+        }
+
+        when:
+        HttpURLConnection connection = new URL("${ersatzServer.httpUrl}/$path").openConnection() as HttpURLConnection
+        connection.requestMethod = 'OPTIONS'
+
+        then:
+        connection.responseCode == 200
+        connection.headerFields['Allow'][0] == allowed
+        !connection.inputStream.text
+
+        where:
+        path      || allowed
+        'options' || 'GET,POST'
+        '*'       || 'DELETE,GET,OPTIONS'
+    }
+
+    def 'TRACE sends back request'() {
+        setup:
+        ersatzServer.start()
+
+        when:
+        HttpURLConnection connection = new URL("${ersatzServer.httpUrl}/info?data=foo+bar").openConnection() as HttpURLConnection
+        connection.requestMethod = 'TRACE'
+
+        then:
+        connection.contentType == MESSAGE_HTTP.value
+        connection.inputStream.text.readLines()*.trim() == """TRACE /info?data=foo+barHTTP/1.1
+            Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+            Connection: keep-alive
+            User-Agent: Java/${System.getProperty('java.version')}
+            Host: localhost:${ersatzServer.httpPort}
+        """.readLines()*.trim()
+
+        connection.responseCode == 200
+    }
+
+    @Unroll 'delayed response (#delay)'() {
+        setup:
+        ersatzServer.expectations {
+            get('/slow').responds().delay(delay).content('Done').code(200)
+        }
+
+        when:
+        long started = System.currentTimeMillis()
+        String response = "${ersatzServer.httpUrl}/slow".toURL().text
+        long elapsed = System.currentTimeMillis() - started
+
+        then:
+        response == 'Done'
+        elapsed >= time
+
+        where:
+        delay   | time
+        1000    | 1000
+        '1 sec' | 1000
+    }
+
+    @Unroll 'using closure as matcher (#path)'() {
+        setup:
+        ersatzServer.expectations {
+            get({ p -> p.startsWith('/general') } as Matcher<String>).responds().content('ok').code(200)
+            get('/other').responds().content('err').code(200)
+        }
+
+        expect:
+        url(path).toURL().text == response
+
+        where:
+        path           || response
+        '/general/one' || 'ok'
+        '/general/two' || 'ok'
+        '/other'       || 'err'
     }
 
     private String url(final String path) {

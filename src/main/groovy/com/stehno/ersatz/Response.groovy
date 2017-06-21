@@ -17,6 +17,7 @@ package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
 
+import java.util.concurrent.TimeUnit
 import java.util.function.Function
 
 /**
@@ -73,6 +74,14 @@ interface Response {
     Response headers(final Map<String, String> headers)
 
     /**
+     * Shortcut method for adding values to the "Allow" header. These values will be appended to the existing header.
+     *
+     * @param methods the allowed HTTP methods
+     * @return this response
+     */
+    Response allows(final HttpMethod... methods)
+
+    /**
      * Used to add a cookie to the response with the given name and value.
      *
      * @param name the cookie name
@@ -119,6 +128,38 @@ interface Response {
      * @return this response
      */
     Response code(int code)
+
+    /**
+     * Used to specify a delay in the response time for the request. The response will not be returned to the client until the delay has passed.
+     *
+     * @param time the response delay in milliseconds
+     * @return this response
+     */
+    Response delay(final long time)
+
+    /**
+     * Used to specify a delay in the response time for the request. The response will not be returned to the client until the delay has passed.
+     *
+     * @param time the response delay in the specified unit
+     * @param unit the time unit to use
+     * @return this response
+     */
+    Response delay(final long time, TimeUnit unit)
+
+    /**
+     * Used to specify a delay in the response time for the request as a <code>com.stehno.vanilla.util.TimeSpan</code> string (e.g. '2 s').
+     *
+     * @param time the delay time as a string
+     * @return this response
+     */
+    Response delay(final String time)
+
+    /**
+     * Used to retrieve the response delay time.
+     *
+     * @return the response delay time in milliseconds
+     */
+    long getDelay()
 
     /**
      * Used to retrieve the configured response headers.

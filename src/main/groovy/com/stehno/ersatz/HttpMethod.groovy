@@ -16,30 +16,27 @@
 package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
-import org.hamcrest.BaseMatcher
-import org.hamcrest.Description
+import groovy.transform.TupleConstructor
 
 /**
- * A Hamcrest matcher for matching the case when there should be no cookies configured in a request.
+ * Enumeration of the supported HTTP request methods.
  */
-@CompileStatic
-class NoCookiesMatcher extends BaseMatcher<Map<String, Cookie>> {
+@CompileStatic @TupleConstructor
+enum HttpMethod {
 
-    static NoCookiesMatcher noCookies() {
-        new NoCookiesMatcher()
-    }
+    ANY('*'),
+    GET('GET'),
+    HEAD('HEAD'),
+    POST('POST'),
+    PUT('PUT'),
+    DELETE('DELETE'),
+    PATCH('PATCH'),
+    OPTIONS('OPTIONS'),
+    TRACE('TRACE')
 
-    @Override
-    boolean matches(final Object item) {
-        if (!(item instanceof Map)) {
-            return false
-        }
+    final String value
 
-        (item as Map).isEmpty()
-    }
-
-    @Override
-    void describeTo(Description description) {
-        description.appendText('NoCookiesMatcher: ')
+    @Override String toString() {
+        value
     }
 }

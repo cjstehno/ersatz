@@ -62,41 +62,89 @@ class Cookie {
         cookie
     }
 
+    /**
+     * Used to configure the value of the cookie as a String.
+     *
+     * @param value the cookie value
+     * @return this cookie
+     */
     Cookie value(String value) {
         this.value = value
         this
     }
 
+    /**
+     * Used to configure the cookie comment.
+     *
+     * @param comment the cookie comment
+     * @return this cookie
+     */
     Cookie comment(final String comment) {
         this.comment = comment
         this
     }
 
+    /**
+     * Used to configure the domain of the cookie.
+     *
+     * @param domain the cookie domain
+     * @return this cookie
+     */
     Cookie domain(final String domain) {
         this.domain = domain
         this
     }
 
+    /**
+     * Used to configure the cookie path.
+     *
+     * @param path the cookie path
+     * @return this cookie
+     */
     Cookie path(final String path) {
         this.path = path
         this
     }
 
+    /**
+     * Used to configure the cookie API version.
+     *
+     * @param version the cookie version
+     * @return this cookie
+     */
     Cookie version(final int version) {
         this.version = version
         this
     }
 
+    /**
+     * Used to configure the <code>httpOnly</code> property of the cookie.
+     *
+     * @param httpOnly the httpOnly property value
+     * @return this cookie
+     */
     Cookie httpOnly(final boolean httpOnly) {
         this.httpOnly = httpOnly
         this
     }
 
+    /**
+     * Used to configure the max age value for the cookie.
+     *
+     * @param maxAge the max cookie age
+     * @return this cookie
+     */
     Cookie maxAge(final Integer maxAge) {
         this.maxAge = maxAge
         this
     }
 
+    /**
+     * Used to configure whether or not the cookie is marked as secure.
+     *
+     * @param secure the value
+     * @return this cookie
+     */
     Cookie secure(final boolean secure) {
         this.secure = secure
         this

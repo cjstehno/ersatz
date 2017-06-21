@@ -28,6 +28,7 @@ import io.undertow.server.HttpHandler
 import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.BlockingHandler
 import io.undertow.server.handlers.CookieImpl
+import io.undertow.server.handlers.HttpTraceHandler
 import io.undertow.server.handlers.encoding.ContentEncodingRepository
 import io.undertow.server.handlers.encoding.DeflateEncodingProvider
 import io.undertow.server.handlers.encoding.EncodingHandler
@@ -238,30 +239,66 @@ class ErsatzServer implements ServerConfig {
         expectations
     }
 
+    /**
+     * Configures the given request content decoder for the specified request content-type.
+     *
+     * @param contentType the request content-type
+     * @param decoder the request content decoder
+     * @return the reference to the server configuration
+     */
     @Override
     ErsatzServer decoder(String contentType, BiFunction<byte[], DecodingContext, Object> decoder) {
         globalDecoders.register contentType, decoder
         this
     }
 
+    /**
+     * Configures the given request content decoder for the specified request content-type.
+     *
+     * @param contentType the request content-type
+     * @param decoder the request content decoder
+     * @return the reference to the server configuration
+     */
     @Override
     ErsatzServer decoder(ContentType contentType, BiFunction<byte[], DecodingContext, Object> decoder) {
         globalDecoders.register contentType, decoder
         this
     }
 
+    /**
+     * Registers a response body encoder.
+     *
+     * param contentType the response content-type to be encoded
+     * @param objectType the response object type to be encoded
+     * @param encoder the encoder function
+     * @return a reference to this server configuration
+     */
     @Override
     ServerConfig encoder(String contentType, Class objectType, Function<Object, String> encoder) {
         globalEncoders.register contentType, objectType, encoder
         this
     }
 
+    /**
+     * Registers a response body encoder.
+     *
+     * param contentType the response content-type to be encoded
+     * @param objectType the response object type to be encoded
+     * @param encoder the encoder function
+     * @return a reference to this server configuration
+     */
     @Override
     ServerConfig encoder(ContentType contentType, Class objectType, Function<Object, String> encoder) {
         globalEncoders.register contentType, objectType, encoder
         this
     }
 
+    /**
+     * Registers authentication configuration as a Groovy Closure.
+     *
+     * @param closure the configuration closure
+     * @return a reference to this server configuration
+     */
     @Override
     ServerConfig authentication(@DelegatesTo(AuthenticationConfig) final Closure closure) {
         authenticationConfig = new AuthenticationConfig()
@@ -270,6 +307,12 @@ class ErsatzServer implements ServerConfig {
         this
     }
 
+    /**
+     * Registers authentication configuration as a <code>Consumer<AuthenticationConfig></code>.
+     *
+     * @param config the configuration Consumer
+     * @return a reference to this server configuration
+     */
     @Override
     ServerConfig authentication(final Consumer<AuthenticationConfig> config) {
         authenticationConfig = new AuthenticationConfig()
@@ -290,25 +333,29 @@ class ErsatzServer implements ServerConfig {
             }
 
             BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(
-                applyAuthentication(new HttpHandler() {
-                    @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
-                        ClientRequest clientRequest = new UndertowClientRequest(exchange)
+                applyAuthentication(
+                    new HttpTraceHandler(
+                        new HttpHandler() {
+                            @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
+                                ClientRequest clientRequest = new UndertowClientRequest(exchange)
 
-                        log.debug 'Request: {}', clientRequest
+                                log.debug 'Request: {}', clientRequest
 
-                        ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
-                        if (request) {
-                            Response currentResponse = request.currentResponse
-                            request.mark(clientRequest)
-                            send(exchange, currentResponse)
+                                ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
+                                if (request) {
+                                    Response currentResponse = request.currentResponse
+                                    request.mark(clientRequest)
+                                    send(exchange, currentResponse)
 
-                        } else {
-                            log.warn 'Unmatched-Request: {}', clientRequest
+                                } else {
+                                    log.warn 'Unmatched-Request: {}', clientRequest
 
-                            exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
+                                    exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
+                                }
+                            }
                         }
-                    }
-                }),
+                    )
+                ),
                 new ContentEncodingRepository()
                     .addEncodingHandler('gzip', new GzipEncodingProvider(), 50)
                     .addEncodingHandler('deflate', new DeflateEncodingProvider(), 50)
@@ -324,13 +371,11 @@ class ErsatzServer implements ServerConfig {
         }
     }
 
-    @CompileStatic(SKIP)
-    private void applyPorts() {
-        actualHttpPort = server.channels[0].channel.localAddress.holder.port
-
-        if (httpsEnabled) {
-            actualHttpsPort = server.channels[1].tcpServer.channel.localAddress.holder.port
-        }
+    /**
+     * Clears all configured expectations from the server. Does not affect global encoders or decoders.
+     */
+    void clearExpectations(){
+        expectations.clear()
     }
 
     /**
@@ -380,6 +425,10 @@ class ErsatzServer implements ServerConfig {
 
     private static void send(final HttpServerExchange exchange, final Response response) {
         if (response) {
+            if (response.delay) {
+                sleep response.delay
+            }
+
             exchange.statusCode = response.code
 
             response.headers.each { k, v ->
@@ -393,9 +442,18 @@ class ErsatzServer implements ServerConfig {
 
         String responseContent = response?.content
 
-        log.debug 'Response({}): {}', exchange.responseHeaders, responseContent.take(1000)
+        log.debug 'Response({}): {}', exchange.responseHeaders ?: '<no-headers>', responseContent.take(1000) ?: '<empty>'
 
         exchange.responseSender.send(responseContent)
+    }
+
+    @CompileStatic(SKIP)
+    private void applyPorts() {
+        actualHttpPort = server.channels[0].channel.localAddress.holder.port
+
+        if (httpsEnabled) {
+            actualHttpsPort = server.channels[1].tcpServer.channel.localAddress.holder.port
+        }
     }
 
     @CompileStatic(SKIP)

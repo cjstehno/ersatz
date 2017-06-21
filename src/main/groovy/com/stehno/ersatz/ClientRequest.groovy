@@ -30,7 +30,7 @@ interface ClientRequest {
      *
      * @return the HTTP method for the request
      */
-    String getMethod()
+    HttpMethod getMethod()
 
     /**
      * Used to retrieve the request protocol, generally HTTP or HTTPS.

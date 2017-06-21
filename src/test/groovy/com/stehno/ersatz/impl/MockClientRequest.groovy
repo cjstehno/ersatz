@@ -16,6 +16,7 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.HttpMethod
 import io.undertow.server.handlers.Cookie
 import io.undertow.server.handlers.CookieImpl
 import io.undertow.util.HeaderMap
@@ -25,7 +26,7 @@ import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
 
 class MockClientRequest implements ClientRequest {
 
-    String method
+    HttpMethod method
     String protocol
     String path
     byte[] body

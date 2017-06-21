@@ -15,13 +15,25 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.Expectations
+import com.stehno.ersatz.Request
+import com.stehno.ersatz.RequestDecoders
+import com.stehno.ersatz.RequestWithContent
+import com.stehno.ersatz.ResponseEncoders
 import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.impl.ErsatzRequest.*
+import static com.stehno.ersatz.HttpMethod.ANY
+import static com.stehno.ersatz.HttpMethod.DELETE
+import static com.stehno.ersatz.HttpMethod.GET
+import static com.stehno.ersatz.HttpMethod.HEAD
+import static com.stehno.ersatz.HttpMethod.OPTIONS
+import static com.stehno.ersatz.HttpMethod.PATCH
+import static com.stehno.ersatz.HttpMethod.POST
+import static com.stehno.ersatz.HttpMethod.PUT
 import static org.hamcrest.Matchers.equalTo
 
 /**
@@ -37,6 +49,13 @@ class ExpectationsImpl implements Expectations {
     ExpectationsImpl(final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
         this.globalDecoders = globalDecoders
         this.globalEncoders = globalEncoders
+    }
+
+    /**
+     * Removes all expectation configuration, but does not modify global encoders or decoders.
+     */
+    void clear(){
+        requests.clear()
     }
 
     @Override
@@ -247,6 +266,36 @@ class ExpectationsImpl implements Expectations {
     @Override
     RequestWithContent patch(Matcher<String> matcher, Consumer<RequestWithContent> config) {
         expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders, globalEncoders), config) as RequestWithContent
+    }
+
+    @Override
+    Request options(String path) {
+        options(equalTo(path))
+    }
+
+    @Override
+    Request options(String path, @DelegatesTo(Request) Closure closure) {
+        options(equalTo(path), closure)
+    }
+
+    @Override
+    Request options(String path, Consumer<Request> config) {
+        options(equalTo(path), config)
+    }
+
+    @Override
+    Request options(Matcher<String> matcher) {
+        expect new ErsatzRequest(OPTIONS, matcher, globalEncoders, true)
+    }
+
+    @Override
+    Request options(Matcher<String> matcher, @DelegatesTo(Request) Closure closure) {
+        expect new ErsatzRequest(OPTIONS, matcher, globalEncoders, true), closure
+    }
+
+    @Override
+    Request options(Matcher<String> matcher, Consumer<Request> config) {
+        expect new ErsatzRequest(OPTIONS, matcher, globalEncoders), config
     }
 
     /**
