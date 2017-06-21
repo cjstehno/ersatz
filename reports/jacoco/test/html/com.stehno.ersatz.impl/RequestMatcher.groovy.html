@@ -18,6 +18,7 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.Cookie
 import com.stehno.ersatz.DecodingContext
+import com.stehno.ersatz.HttpMethod
 import groovy.transform.TupleConstructor
 import org.hamcrest.Matcher
 
@@ -46,7 +47,7 @@ class RequestMatcher {
      * @return a configured RequestMatcher
      */
     static RequestMatcher protocol(final Matcher&lt;String&gt; m) {
-<span class="pc" id="L49">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.protocol })</span>
+<span class="pc" id="L50">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.protocol })</span>
     }
 
     /**
@@ -55,8 +56,8 @@ class RequestMatcher {
      * @param m the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    static RequestMatcher method(final Matcher&lt;String&gt; m) {
-<span class="pc" id="L59">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.method })</span>
+    static RequestMatcher method(final Matcher&lt;HttpMethod&gt; m) {
+<span class="pc" id="L60">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.method })</span>
     }
 
     /**
@@ -66,7 +67,7 @@ class RequestMatcher {
      * @return a configured RequestMatcher
      */
     static RequestMatcher path(final Matcher&lt;String&gt; m) {
-<span class="pc" id="L69">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.path })</span>
+<span class="pc" id="L70">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.path })</span>
     }
 
     /**
@@ -77,7 +78,7 @@ class RequestMatcher {
      * @return a configured RequestMatcher
      */
     static RequestMatcher header(final String name, final Matcher&lt;String&gt; m) {
-<span class="pc" id="L80">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.headers.getFirst(name) })</span>
+<span class="pc" id="L81">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.headers.getFirst(name) })</span>
     }
 
     /**
@@ -88,7 +89,7 @@ class RequestMatcher {
      * @return a configured RequestMatcher
      */
     static RequestMatcher query(final String name, final Matcher&lt;Iterable&lt;String&gt;&gt; m) {
-<span class="pc" id="L91">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.queryParams.get(name) as List })</span>
+<span class="pc" id="L92">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.queryParams.get(name) as List })</span>
     }
 
     /**
@@ -99,14 +100,14 @@ class RequestMatcher {
      * @return a configured RequestMatcher
      */
     static RequestMatcher cookie(final String name, final Matcher&lt;Cookie&gt; m) {
-<span class="pc" id="L102">        new RequestMatcher(m, { ClientRequest cr -&gt;</span>
-<span class="fc" id="L103">            io.undertow.server.handlers.Cookie undertowCookie = cr.cookies.get(name)</span>
-<span class="pc bfc" id="L104" title="All 2 branches covered.">            return undertowCookie ? bake(undertowCookie) : null</span>
+<span class="pc" id="L103">        new RequestMatcher(m, { ClientRequest cr -&gt;</span>
+<span class="fc" id="L104">            io.undertow.server.handlers.Cookie undertowCookie = cr.cookies.get(name)</span>
+<span class="pc bfc" id="L105" title="All 2 branches covered.">            return undertowCookie ? bake(undertowCookie) : null</span>
         })
     }
 
     private static Cookie bake(final io.undertow.server.handlers.Cookie cookie) {
-<span class="pc" id="L109">        new Cookie(</span>
+<span class="pc" id="L110">        new Cookie(</span>
             value: cookie.value,
             comment: cookie.comment,
             domain: cookie.domain,
@@ -119,9 +120,9 @@ class RequestMatcher {
     }
 
     static RequestMatcher cookies(final Matcher&lt;Map&lt;String, Cookie&gt;&gt; matcher) {
-<span class="pc" id="L122">        new RequestMatcher(matcher, { ClientRequest cr -&gt;</span>
-<span class="pc" id="L123">            cr.cookies.collectEntries { name, cookie -&gt;</span>
-<span class="pc" id="L124">                [name, bake(cookie)]</span>
+<span class="pc" id="L123">        new RequestMatcher(matcher, { ClientRequest cr -&gt;</span>
+<span class="pc" id="L124">            cr.cookies.collectEntries { name, cookie -&gt;</span>
+<span class="pc" id="L125">                [name, bake(cookie)]</span>
             }
         })
     }
@@ -135,10 +136,10 @@ class RequestMatcher {
      * @return a configured RequestMatcher
      */
     static RequestMatcher body(final DecoderChain decoderChain, final String contentType, final Matcher&lt;Object&gt; m) {
-<span class="pc" id="L138">        new RequestMatcher(m, { ClientRequest cr -&gt;</span>
-<span class="fc" id="L139">            decoderChain.resolve(contentType)?.apply(</span>
+<span class="pc" id="L139">        new RequestMatcher(m, { ClientRequest cr -&gt;</span>
+<span class="fc" id="L140">            decoderChain.resolve(contentType)?.apply(</span>
                 cr.body,
-<span class="pc" id="L141">                new DecodingContext(cr.contentLength, cr.contentType, cr.characterEncoding, decoderChain)</span>
+<span class="pc" id="L142">                new DecodingContext(cr.contentLength, cr.contentType, cr.characterEncoding, decoderChain)</span>
             )
         })
     }
@@ -150,7 +151,7 @@ class RequestMatcher {
      * @return a configured RequestMatcher
      */
     static RequestMatcher contentType(final Matcher&lt;String&gt; m) {
-<span class="pc" id="L153">        header(CONTENT_TYPE_HEADER, m)</span>
+<span class="pc" id="L154">        header(CONTENT_TYPE_HEADER, m)</span>
     }
 
     /**
@@ -160,7 +161,7 @@ class RequestMatcher {
      * @return true if the matcher is successful
      */
     boolean matches(final ClientRequest cr) {
-<span class="pc" id="L163">        matcher.matches(getter.call(cr))</span>
+<span class="pc" id="L164">        matcher.matches(getter.call(cr))</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

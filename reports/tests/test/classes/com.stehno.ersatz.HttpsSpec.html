@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.180s</div>
+<div class="counter">0.199s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,7 +79,7 @@
 </thead>
 <tr>
 <td class="success">https</td>
-<td>0.180s</td>
+<td>0.199s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -87,17 +87,34 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>07:27:37.130 [XNIO-12 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-1', selector sun.nio.ch.EPollSelectorImpl@42c6dcbb
-07:27:37.130 [XNIO-12 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-2', selector sun.nio.ch.EPollSelectorImpl@f15bebc
-07:27:37.131 [XNIO-12 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-3', selector sun.nio.ch.EPollSelectorImpl@6d6de54e
-07:27:37.131 [XNIO-12 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-4', selector sun.nio.ch.EPollSelectorImpl@49151792
-07:27:37.133 [XNIO-12 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-5', selector sun.nio.ch.EPollSelectorImpl@708665cc
-07:27:37.133 [XNIO-12 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-8', selector sun.nio.ch.EPollSelectorImpl@65827648
-07:27:37.133 [XNIO-12 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 Accept', selector sun.nio.ch.EPollSelectorImpl@7a133435
-07:27:37.133 [XNIO-12 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-7', selector sun.nio.ch.EPollSelectorImpl@12a9645f
-07:27:37.133 [XNIO-12 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-6', selector sun.nio.ch.EPollSelectorImpl@6f395e1b
-07:27:37.247 [XNIO-12 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /hello (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:44959]}, cookies=[:]): &lt;empty&gt; }
-07:27:37.251 [XNIO-12 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Response({}): This is HTTPS!
+<pre>12:30:08.420 [XNIO-20 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-2', selector sun.nio.ch.EPollSelectorImpl@6f6b3dfb
+12:30:08.420 [XNIO-20 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-4', selector sun.nio.ch.EPollSelectorImpl@4ee4c909
+12:30:08.420 [XNIO-20 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-3', selector sun.nio.ch.EPollSelectorImpl@26b52285
+12:30:08.420 [XNIO-20 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-1', selector sun.nio.ch.EPollSelectorImpl@48da8d57
+12:30:08.421 [XNIO-20 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-5', selector sun.nio.ch.EPollSelectorImpl@67e6cba
+12:30:08.422 [XNIO-20 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-7', selector sun.nio.ch.EPollSelectorImpl@b6348c6
+12:30:08.422 [XNIO-20 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-6', selector sun.nio.ch.EPollSelectorImpl@15d20afa
+12:30:08.423 [XNIO-20 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 Accept', selector sun.nio.ch.EPollSelectorImpl@51d56279
+12:30:08.422 [XNIO-20 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-8', selector sun.nio.ch.EPollSelectorImpl@7c6dbdb6
+12:30:08.540 [XNIO-20 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /hello (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:45939]}, cookies=[:]): &lt;empty&gt; }
+12:30:08.543 [XNIO-20 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Response({}): This is HTTPS!
+12:30:08.546 [XNIO-20 I/O-6] DEBUG io.undertow.request.io - UT005013: An IOException occurred
+java.io.IOException: javax.net.ssl.SSLException: Inbound closed before receiving peer's close_notify: possible truncation attack?
+	at io.undertow.protocols.ssl.SslConduit.notifyReadClosed(SslConduit.java:577)
+	at io.undertow.protocols.ssl.SslConduit.terminateReads(SslConduit.java:178)
+	at org.xnio.conduits.ConduitStreamSourceChannel.close(ConduitStreamSourceChannel.java:168)
+	at org.xnio.IoUtils.safeClose(IoUtils.java:134)
+	at org.xnio.conduits.ReadReadyHandler$ChannelListenerHandler.forceTermination(ReadReadyHandler.java:58)
+	at io.undertow.protocols.ssl.SslConduit$SslReadReadyHandler.forceTermination(SslConduit.java:1091)
+	at org.xnio.nio.NioSocketConduit.forceTermination(NioSocketConduit.java:105)
+	at org.xnio.nio.WorkerThread.run(WorkerThread.java:492)
+Caused by: javax.net.ssl.SSLException: Inbound closed before receiving peer's close_notify: possible truncation attack?
+	at sun.security.ssl.Alerts.getSSLException(Alerts.java:208)
+	at sun.security.ssl.SSLEngineImpl.fatal(SSLEngineImpl.java:1666)
+	at sun.security.ssl.SSLEngineImpl.fatal(SSLEngineImpl.java:1634)
+	at sun.security.ssl.SSLEngineImpl.closeInbound(SSLEngineImpl.java:1561)
+	at io.undertow.protocols.ssl.SslConduit.notifyReadClosed(SslConduit.java:575)
+	... 7 common frames omitted
 </pre>
 </span>
 </div>
@@ -109,7 +126,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 4.0</a> at Jun 16, 2017 7:27:39 AM</p>
+<a href="http://www.gradle.org">Gradle 4.0</a> at Jun 21, 2017 12:30:09 PM</p>
 </div>
 </div>
 </body>

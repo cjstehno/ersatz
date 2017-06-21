@@ -515,49 +515,85 @@ table.CodeRay td.code>pre{padding:0}
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
 <span id="email" class="email"><a href="mailto:chris@stehno.com">chris@stehno.com</a></span><br>
-<span id="revnumber">version 1.2.1,</span>
-<span id="revdate">March 2017</span>
+<span id="revnumber">version 1.3.0,</span>
+<span id="revdate">June 2017</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_introduction">Introduction</a></li>
 <li><a href="#_getting_started">Getting Started</a></li>
-<li><a href="#_server_lifecycle">Server Lifecycle</a>
+<li><a href="#_ersatz_server">Ersatz Server</a>
 <ul class="sectlevel2">
-<li><a href="#_configure">Configure</a></li>
+<li><a href="#_lifecycle">Lifecycle</a>
+<ul class="sectlevel3">
+<li><a href="#_configuration">Configuration</a></li>
 <li><a href="#_testing">Testing</a></li>
-<li><a href="#_verify">Verify</a></li>
+<li><a href="#_verification">Verification</a></li>
 <li><a href="#_cleanup">Cleanup</a></li>
 </ul>
 </li>
-<li><a href="#_expectations">Expectations</a>
-<ul class="sectlevel2">
-<li><a href="#_hamcrest_matchers">Hamcrest Matchers</a></li>
 </ul>
 </li>
-<li><a href="#_url_encoded_form_requests">Url-Encoded Form Requests</a></li>
-<li><a href="#_multipart_request_content">Multipart Request Content</a></li>
-<li><a href="#_multipart_response_content">Multipart Response Content</a></li>
-<li><a href="#_matching_cookies">Matching Cookies</a>
+<li><a href="#_configuration_2">Configuration</a>
 <ul class="sectlevel2">
+<li><a href="#_authentication">Authentication</a>
+<ul class="sectlevel3">
+<li><a href="#_basic_authentication">BASIC Authentication</a></li>
+<li><a href="#_digest_authentication">DIGEST Authentication</a></li>
+</ul>
+</li>
+<li><a href="#_auto_start">Auto-Start</a></li>
+<li><a href="#_content_translation">Content Translation</a>
+<ul class="sectlevel3">
+<li><a href="#_decoders">Decoders</a></li>
+<li><a href="#_encoders">Encoders</a></li>
+</ul>
+</li>
+<li><a href="#_expectations">Expectations</a>
+<ul class="sectlevel3">
+<li><a href="#_request_methods">Request Methods</a>
+<ul class="sectlevel4">
+<li><a href="#_head">HEAD</a></li>
+<li><a href="#_get">GET</a></li>
+<li><a href="#_options">OPTIONS</a></li>
+<li><a href="#_post">POST</a></li>
+<li><a href="#_put">PUT</a></li>
+<li><a href="#_delete">DELETE</a></li>
+<li><a href="#_patch">PATCH</a></li>
+<li><a href="#_trace">TRACE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_request_matching">Request Matching</a>
+<ul class="sectlevel3">
+<li><a href="#_hamcrest_matchers">Hamcrest Matchers</a></li>
+<li><a href="#_matching_cookies">Matching Cookies</a>
+<ul class="sectlevel4">
 <li><a href="#_by_name_and_matcher">By Name and Matcher</a></li>
 <li><a href="#_by_name_and_value">By Name and Value</a></li>
 <li><a href="#_multiple_cookies">Multiple Cookies</a></li>
+</ul>
+</li>
 <li><a href="#_overall_matcher">Overall Matcher</a></li>
 </ul>
 </li>
-<li><a href="#_encoder_decoder_chains">Encoder/Decoder Chains</a></li>
-<li><a href="#_request_response_compression">Request / Response Compression</a></li>
-<li><a href="#_https_request_support">HTTPS Request Support</a>
-<ul class="sectlevel2">
+<li><a href="#_https">HTTPS</a>
+<ul class="sectlevel3">
 <li><a href="#_creating_a_custom_keystore">Creating a Custom Keystore</a></li>
 </ul>
 </li>
-<li><a href="#_authentication">Authentication</a>
+<li><a href="#_request_response_compression">Request / Response Compression</a></li>
+<li><a href="#_multipart_request_content">Multipart Request Content</a></li>
+<li><a href="#_multipart_response_content">Multipart Response Content</a></li>
+</ul>
+</li>
+<li><a href="#_usage_examples">Usage Examples</a>
 <ul class="sectlevel2">
-<li><a href="#_basic_authentication">BASIC Authentication</a></li>
-<li><a href="#_digest_authentication">DIGEST Authentication</a></li>
+<li><a href="#_url_encoded_form_requests">Url-Encoded Form Requests</a></li>
+<li><a href="#_file_upload_post">File Upload (POST)</a></li>
+<li><a href="#_file_download_get">File Download (GET)</a></li>
 </ul>
 </li>
 </ul>
@@ -576,7 +612,7 @@ boiler-plate code.</p>
 <p>The "mock" server is not really mock at all, it is an embedded Undertow HTTP server which registers the configured expectations as routes and then
 responds according to the expected behavior. This approach may seem overly heavy; however, testing an HTTP client can involve a lot of internal state
 and interactions that the developer is generally unaware of (and should be) - trying to mock those interactions with a pure mocking framework will get
-out of hand very quickly.</p>
+out of hand very quickly, and Undertow starts up very quickly.</p>
 </div>
 <div class="paragraph">
 <p>Ersatz provides a balance of mock-like expectation behavior with a real HTTP interface and all of the underlying interactions in place. This allows
@@ -597,25 +633,26 @@ frameworks.</p>
 <h2 id="_getting_started">Getting Started</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>ersatz</code> library is available via Bintray (JCenter) and the Maven Central Repository; you can add it to your project using one of the following:</p>
+<p>The <code>ersatz</code> library is available via Bintray (JCenter) and the Maven Central Repository; you can add it to your project using one of the following
+methods:</p>
 </div>
 <div class="paragraph">
-<p>For Gradle:</p>
+<p>For Gradle add the following to your <code>build.gradle</code> file:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:1.2.1'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:1.3.0'</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>For Maven:</p>
+<p>For Maven add the code below to your <code>pom.xml</code> file:</p>
 </div>
 <div class="literalblock">
 <div class="content">
 <pre>&lt;dependency&gt;
     &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
-    &lt;version&gt;1.2.1&lt;/version&gt;
+    &lt;version&gt;1.3.0&lt;/version&gt;
     &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</pre>
 </div>
@@ -626,7 +663,10 @@ frameworks.</p>
 <div class="listingblock">
 <div class="title">HelloSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">HelloSpec</span> <span class="directive">extends</span> Specification {
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+<span class="keyword">import</span> <span class="include">com.stehno.ersatz.ErsatzServer</span>
+
+<span class="type">class</span> <span class="class">HelloSpec</span> <span class="directive">extends</span> Specification {
 
     <span class="keyword">def</span> <span class="string"><span class="delimiter">'</span><span class="content">say hello</span><span class="delimiter">'</span></span>(){
         <span class="key">setup</span>:
@@ -660,17 +700,27 @@ frameworks.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The server is expecting a single call to <code>GET /say/hello?name=Ersatz</code>, and when it is received, the server will respond with the <code>text/plain</code> content
-<code>Hello Ersatz</code>. This code also verifies that the expected request was only called once (as requested) - if it was not called or called more than once,
-the verification and likewise the test, would fail.</p>
+<p>The configured server is expecting a single call to <code>GET /say/hello?name=Ersatz</code>. When that call is received, the server will respond with the
+<code>text/plain</code> content <code>Hello Ersatz</code>. This code also verifies that the expected request was only called once (as requested) - if it was not called or
+called more than once, the verification and likewise the test, would fail.</p>
 </div>
 <div class="paragraph">
-<p>A similar test could be written in JUnit with Java 8, as follows (using the provided <code>ErsatzServerRule</code> helper class:</p>
+<p>A similar test could be written in JUnit with Java 8, as follows (using the provided <code>ErsatzServerRule</code> helper class):</p>
 </div>
 <div class="listingblock">
 <div class="title">HelloTest.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">HelloTest</span> {
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">com.stehno.ersatz.ErsatzServer</span>;
+<span class="keyword">import</span> <span class="include">com.stehno.ersatz.ContentType</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Rule</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Test</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Before</span>;
+<span class="keyword">import</span> <span class="include">okhttp3.OkHttpClient</span>;
+<span class="keyword">import</span> <span class="include">okhttp3.Request</span>;
+
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.junit.Assert.assertEquals</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">HelloTest</span> {
 
     <span class="annotation">@Rule</span>
     <span class="directive">public</span> ErsatzServerRule ersatzServer = <span class="keyword">new</span> ErsatzServerRule(ServerConfig::enableAutoStart);
@@ -691,32 +741,39 @@ the verification and likewise the test, would fail.</p>
 
         <span class="predefined-type">String</span> url = ersatzServer.getHttpUrl() + <span class="string"><span class="delimiter">&quot;</span><span class="content">/say/hello?name=Ersatz</span><span class="delimiter">&quot;</span></span>;
         okhttp3.Request request = <span class="keyword">new</span> okhttp3.Request.Builder().url(url)).build();
+
         assertEquals(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello Ersatz</span><span class="delimiter">&quot;</span></span>, client.newCall(request).execute().body().string());
     }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The two formats are interchangeable and equally supported.</p>
+<p>The two testing approaches are interchangeable and equally supported.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_server_lifecycle">Server Lifecycle</h2>
+<h2 id="_ersatz_server">Ersatz Server</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>The core component for the Ersatz Mock Server is the <code>com.stehno.erstaz.ErsatzServer</code> class. It is used to manage the server lifecycle as well as
+provide a configuration interface.</p>
+</div>
+<div class="sect2">
+<h3 id="_lifecycle">Lifecycle</h3>
 <div class="paragraph">
 <p>The lifecycle of an Ersatz server is broken down into four main states:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Configure</p>
+<p>Configuration</p>
 </li>
 <li>
-<p>Test</p>
+<p>Testing</p>
 </li>
 <li>
-<p>Verify</p>
+<p>Verification</p>
 </li>
 <li>
 <p>Cleanup</p>
@@ -724,18 +781,31 @@ the verification and likewise the test, would fail.</p>
 </ol>
 </div>
 <div class="paragraph">
-<p>they are detailed in the next sections.</p>
+<p>they are detailed in the following sections.</p>
 </div>
-<div class="sect2">
-<h3 id="_configure">Configure</h3>
+<div class="sect3">
+<h4 id="_configuration">Configuration</h4>
 <div class="paragraph">
-<p>The first step is "configuration", where the server is instantiated, request expectations are configured and the server is started. An Ersatz server
-is created by creating an instance of <code>ErsatzServer</code> with an optional <code>ServerConfig</code> passed in to provide initial configurations (such as global
-encoder and decoder configurations).</p>
+<p>The first lifecycle step is "configuration", where the server is instantiated, request expectations are configured and the server is started. An
+Ersatz server is created by creating an instance of <code>ErsatzServer</code> with optional configuration performed by providing a <code>Closure</code> or
+<code>Consumer&lt;ServerConfig&gt;</code>, both of which will be given a <code>ServerConfig</code> instance to perform configuration operations on.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Configuration of encoders and decoders via the global configuration mechanism are considered global and will be used as defaults across all
+expectation configurations.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>No HTTP server is started at this point, but the server is ready for configuration. Configuring the expectations on the server consists of calling one
-of the following methods:</p>
+<p>At this point there is no HTTP server running and it is ready for further configuration. Configuring the expectations on the server consists of
+calling one of the following methods:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -758,21 +828,37 @@ defining the configurations.</p>
 <p>The third method is a simplified builder-style approach for single request method expectation-building.</p>
 </div>
 <div class="paragraph">
-<p>Once the request expectations are configured, the server must be started by calling the <code>ErsatzServer</code> <code>start()</code> method. This will start the underlying
+<p>Once the request expectations are configured, the server must be started by calling the <code>ErsatzServer::start()</code> method. This will start the underlying
 embedded HTTP server and register the configured expectations. If the server is not started, you will receive connection errors during testing.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+You can set the server to start automatically after expectations are applied by adding the <code>autoStart()</code> configuration to the global configuration
+closure.
+</td>
+</tr>
+</table>
 </div>
-<div class="sect2">
-<h3 id="_testing">Testing</h3>
+<div class="paragraph">
+<p>Further details about configuration options and examples can be found in the Configuration section of this user guide.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_testing">Testing</h4>
 <div class="paragraph">
 <p>After configuration, the server is running and ready for test interactions. Any HTTP client can make HTTP requests against the server to retrieve
 configured responses. The <code>ErsatzServer</code> object provides helper methods to retrieve the server port and URL, with <code>getHttpPort()</code> and <code>getHttpUrl()</code>
-respectively (there are also versions for HTTPS). Note that the server will <em>always</em> be started on an ephemeral port so that a random one will be
-chosen to avoid collisions.</p>
+respectively (there are also versions for HTTPS, <code>getHttpsPort()</code> and <code>getHttpsUrl()</code> respectively). Note that the server will <em>always</em> be started on
+an ephemeral port so that a random one will be chosen to avoid collisions.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_verify">Verify</h3>
+<div class="sect3">
+<h4 id="_verification">Verification</h4>
 <div class="paragraph">
 <p>Once testing has been performed, it may be desirable to verify whether or not the expected number of request calls were matched. The <code>Expectations</code>
 interface provides a <code>called</code> method to add call count verification per configured request, something like:</p>
@@ -784,7 +870,7 @@ interface provides a <code>called</code> method to add call count verification p
 </div>
 </div>
 <div class="paragraph">
-<p>This would match a POST request to "/user" with request body content matching the provided content and expect that matched call only once. When
+<p>This would match a <code>POST</code> request to <code>/user</code> with request body content matching the provided content and expect that matched call only once. When
 <code>verify()</code> is called it will return <code>true</code> if this request has only been matched once, otherwise it will return <code>false</code>. This allows testing to
 ensure that requests are not made more often than expected or at unexpected times.</p>
 </div>
@@ -792,12 +878,12 @@ ensure that requests are not made more often than expected or at unexpected time
 <p>Verification is optional and may simply be skipped if not needed.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_cleanup">Cleanup</h3>
+<div class="sect3">
+<h4 id="_cleanup">Cleanup</h4>
 <div class="paragraph">
 <p>After testing and verification, when all test interactions have completed, the server must be stopped in order to free up resources. This is done by
-calling the <code>stop()</code> method of the <code>ErsatzServer</code> class. This is an important step as odd test failures have been noticed during multi-test runs if
-the server is not properly stopped. In Spock you can create the <code>ErsatzServer</code> with the <code>@AutoCleanup</code> annotation to aid in proper management:</p>
+calling the <code>ErsatzServer::stop()</code> method. This is an important step, as odd test failures have been noticed during multi-test runs if the server is
+not properly stopped. In Spock you can create the <code>ErsatzServer</code> with the <code>@AutoCleanup</code> annotation to aid in proper management:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -805,9 +891,9 @@ the server is not properly stopped. In Spock you can create the <code>ErsatzServ
 </div>
 </div>
 <div class="paragraph">
-<p>likewise, in a JUnit test (Groovy or Java) you may use the <code>ErsatzServerRule</code> class, which is a <a href="https://github.com/junit-team/junit4/wiki/Rules">JUnit Rule</a>
-implementation delegating to an <code>ErsatzServer</code>; it automatically calls the <code>stop()</code> method after each test method, though the <code>start()</code> method must
-still be called manually.</p>
+<p>likewise, in a JUnit test (Groovy or Java) you may use the <code>ErsatzServerRule</code> class, which is a
+<a href="https://github.com/junit-team/junit4/wiki/Rules">JUnit Rule</a> implementation delegating to an <code>ErsatzServer</code>; it automatically calls the <code>stop()</code> method
+after each test method, though the <code>start()</code> method must still be called manually.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -834,15 +920,232 @@ remain on server start even if new expectations are configured.</p>
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
-<h2 id="_expectations">Expectations</h2>
+<h2 id="_configuration_2">Configuration</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>The <code>ServerConfig</code> interface provides the configuration methods for the server, both in the constructor and on the server instance itself. In most
+cases, there is no difference in functionality (save where noted).</p>
+</div>
+<div class="sect2">
+<h3 id="_authentication">Authentication</h3>
+<div class="paragraph">
+<p>The Ersatz server supports two forms of built-in authentication, BASIC and DIGEST. Both authentication methods are exclusive and global, meaning that
+they cannot be configured together on the same server and that when configured, they apply to all end points configured on the server.</p>
+</div>
+<div class="paragraph">
+<p>If more fine-grained control of which URLs are authenticated is desired, you will need to configured multiple Ersatz Servers for the different
+configuration sets.</p>
+</div>
+<div class="sect3">
+<h4 id="_basic_authentication">BASIC Authentication</h4>
+<div class="paragraph">
+<p><a href="https://en.wikipedia.org/wiki/Basic_access_authentication">HTTP BASIC Authentication</a> is supported by applying the <code>basic</code> <code>authentication</code>
+configuration to the server.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> ersatz = <span class="keyword">new</span> ErsatzServer({
+    authentication {
+        basic <span class="string"><span class="delimiter">'</span><span class="content">admin</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">my-password</span><span class="delimiter">'</span></span>
+    }
+})</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This configuration causes the configured request expectations to require BASIC authentication (username and password) as part of their matching.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_digest_authentication">DIGEST Authentication</h4>
+<div class="paragraph">
+<p><a href="https://en.wikipedia.org/wiki/Digest_access_authentication">HTTP DIGEST Authentication</a> is supported by applying the <code>digest</code> <code>authentication</code> to the
+server.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> ersatz = <span class="keyword">new</span> ErsatzServer({
+    authentication {
+        digest <span class="string"><span class="delimiter">'</span><span class="content">guest</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">other-password</span><span class="delimiter">'</span></span>
+    }
+})</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This configuration causes the configured request expectations to require DIGEST authentication (username and password) as part of their matching.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_auto_start">Auto-Start</h3>
+<div class="paragraph">
+<p>An auto-start feature is provided to allow the server to start automatically once expectations have been applied (e.g. after the <code>expectations()</code>
+method is called. This can simplify the code by removing explicit calls to the <code>start()</code> method. There are two configuration methods for the
+auto-start feature. The first one, is simply a means of enabling auto-start:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> ersatz = <span class="keyword">new</span> ErsatzServer({
+    autoStart()
+})</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>while the second provides a way to toggle the feature on (<code>true</code>) or off (<code>false</code>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> ersatz = <span class="keyword">new</span> ErsatzServer({
+    autoStart <span class="predefined-constant">true</span>
+})</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This toggling capability allows for an external configuration source to determine whether or not auto-start is enabled.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+While the auto-start methods may be used in the constructor or instance configuration, it is generally meant for use in the constructor, as a
+global configuration.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_content_translation">Content Translation</h3>
+<div class="paragraph">
+<p>The translation of request/response body content between types is performed using:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Decoders to convert incoming request body content into an expected comparison type</p>
+</li>
+<li>
+<p>Encoders to convert outgoing response body configuration types into HTTP string data</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The request/response content body decoders/encoders are configured in a layered manner so that they may be configured and shared across multiple
+instances without copying the configuration.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Encoders/Decoders configured in the <code>ErsatzServer</code> constructor are considered "global" and will be used if no overriding handlers are configured.</p>
+</li>
+<li>
+<p>Encoders/Decoders configured in the request/response itself are considered "local" and will override any other configured handlers</p>
+</li>
+<li>
+<p>Other configurations are applied in a layered order based on where they are applied in the configuration DSL - the handlers are maintained as separate isolated instances and the actual handler is resolved at runtime.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The specifics of Decoders and Encoders are discussed in the following sections.</p>
+</div>
+<div class="sect3">
+<h4 id="_decoders">Decoders</h4>
+<div class="paragraph">
+<p>The Decoders are used to convert request content bytes into a specified configuration type for matching in Ersatz. Decoders are implemented as a
+<code>BiFunction&lt;byte[],DecodingContext, Object&gt;', which takes a `byte</code> array of request content and converts it to a specific <code>Object</code> type. The
+<code>DecodingContext</code> is used to provide additional information about the request being decoded (e.g. <code>contentLength</code>, <code>contentType</code>, <code>characterEncoding</code>,
+and a reference to the <code>decoderChain</code>).</p>
+</div>
+<div class="paragraph">
+<p>The various configuration levels have the same method signature:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ServerConfig decoder(<span class="directive">final</span> <span class="predefined-type">String</span> contentType, <span class="directive">final</span> BiFunction&lt;<span class="type">byte</span><span class="type">[]</span>, DecodingContext, <span class="predefined-type">Object</span>&gt; decoder)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As an example, the default JSON decoder (provided in <code>com.stehno.ersatz.Decoders</code>) looks like the following code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="directive">static</span> <span class="directive">final</span> BiFunction&lt;<span class="type">byte</span><span class="type">[]</span>, DecodingContext, <span class="predefined-type">Object</span>&gt; parseJson = { <span class="type">byte</span><span class="type">[]</span> content, DecodingContext ctx -&gt;
+    <span class="keyword">new</span> JsonSlurper().parse(content ?: <span class="string"><span class="delimiter">'</span><span class="content">{}</span><span class="delimiter">'</span></span>.bytes)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Likewise, in Groovy, you can provide a <code>Closure</code> instead of a <code>BiFunction</code>, as long as it provides the same expected inputs and outputs:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> server = <span class="keyword">new</span> ErsatzServer({
+    decoder(<span class="string"><span class="delimiter">'</span><span class="content">application/json</span><span class="delimiter">'</span></span>){ content, context -&gt;
+        <span class="keyword">new</span> JsonSlurper().parse(content ?: <span class="string"><span class="delimiter">'</span><span class="content">{}</span><span class="delimiter">'</span></span>.bytes)
+    }
+})</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The two approaches are functionally the same.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_encoders">Encoders</h4>
+<div class="paragraph">
+<p>The Encoders are used to convert response configuration data types into the outbound request content string. They are implemented as a
+<code>Function&lt;Object,String&gt;</code> with the input <code>Object</code> being the configuration object being converted, and the <code>String</code> is the return type.</p>
+</div>
+<div class="paragraph">
+<p>The various configuration levels have the same method signature:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ServerConfig encoder(<span class="predefined-type">String</span> contentType, <span class="predefined-type">Class</span> objectType, Function&lt;<span class="predefined-type">Object</span>, <span class="predefined-type">String</span>&gt; encoder)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>contentType</code> is the response content type to be encoded and the <code>objectType</code> is the type of configuration object to be encoded - this allows for
+the same content-type to have different encoders for different configuration object types.</p>
+</div>
+<div class="paragraph">
+<p>A simple example of an encoder would be the default JSON encoder (provided in the <code>com.stehno.ersatz.Encoders</code> class):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="directive">static</span> <span class="directive">final</span> Function&lt;<span class="predefined-type">Object</span>, <span class="predefined-type">String</span>&gt; json = { obj -&gt; obj != <span class="predefined-constant">null</span> ? toJson(obj) : <span class="string"><span class="delimiter">'</span><span class="content">{}</span><span class="delimiter">'</span></span> }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You may also configure encoders as Groovy `Closure`s with the same parameters:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> server = <span class="keyword">new</span> ErsatzServer({
+    encoder(<span class="string"><span class="delimiter">'</span><span class="content">application/json</span><span class="delimiter">'</span></span>,<span class="predefined-type">Map</span>){ obj-&gt;
+        obj != <span class="predefined-constant">null</span> ? toJson(obj) : <span class="string"><span class="delimiter">'</span><span class="content">{}</span><span class="delimiter">'</span></span>
+    }
+})</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The two approaches are functionally equivalent.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_expectations">Expectations</h3>
 <div class="paragraph">
 <p>Request expectations are the core of the Ersatz server functionality; conceptually, they are HTTP server request routes which are used to match an
 incoming HTTP request with a request handler or to respond with a status of 404, if no matching request was configured. The expectations are
 configured on an instance of the <code>Expectations</code> interface, which provides multiple configuration methods for each of the supported HTTP request
-methods (GET, HEAD, POST, PUT, DELETE, and PATCH), with the method name corresponding to the HTTP request method name. The four general types of
-methods are:</p>
+methods (GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, and TRACE), with the method name corresponding to the HTTP request method name. The four
+general types of methods are:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -959,8 +1262,312 @@ configure multiple responses, in order:</p>
 <p>Adding the <code>called</code> configuration adds the extra safety of ensuring that if the request is called more than our expected two times, the verification
 will fail (and with that, the test).</p>
 </div>
+<div class="paragraph">
+<p>Expectations may be cleared from the server using the <code>clearExpectations()</code> method. This is useful when you need to redefine expectations for one
+test only, but all of the others have a common set of expectations.</p>
+</div>
+<div class="sect3">
+<h4 id="_request_methods">Request Methods</h4>
+<div class="paragraph">
+<p>The Ersatz server supports all of the standard HTTP request headers along with a few non-standard ones. The table below denotes the supported methods
+their contents.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Method</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Request Body</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response Body</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reference</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Y</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.3">RFC2616 Sec 9.3</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HEAD</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.4">RFC2616 Sec 9.4</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OPTIONS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.2">RFC2616 Sec 9.2</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Y</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Y</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5">RFC2616 Sec 9.5</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Y</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6">RFC2616 Sec 9.6</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DELETE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.7">RFC2616 Sec 9.7</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PATCH</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Y</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://tools.ietf.org/html/rfc5789">RFC5789</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TRACE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Y</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.8">RFC2616 Sec 9.8</a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The following sections describe how each method is supported with a simple example.</p>
+</div>
+<div class="paragraph">
+<p>While Ersatz does constrain the content of the request and response based on the request method, it is generally up to the mocker to provide the
+desired and/or appropriate responses (including most headers). This implementation leniency is intentional, and is meant to allow for endpoint
+implementations that do not necessarily follow the published specification, but likewise still need to be tested as they really exist rather than how
+they <em>should</em> exist.</p>
+</div>
+<div class="sect4">
+<h5 id="_head">HEAD</h5>
+<div class="paragraph">
+<p>A <code>HEAD</code> request is used to retrieve the headers for a URL, basically a <code>GET</code> request without any response body. An Ersatz mocking example would be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ersatzServer.expectations {
+    head(<span class="string"><span class="delimiter">'</span><span class="content">/something</span><span class="delimiter">'</span></span>).responds().header(<span class="string"><span class="delimiter">'</span><span class="content">X-Alpha</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">Interesting-data</span><span class="delimiter">'</span></span>).code(<span class="integer">200</span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>which would respond to <code>HEAD /something</code> with an empty response and the response header <code>X-Alpha</code> with the specified value.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_get">GET</h5>
+<div class="paragraph">
+<p>The <code>GET</code> request is a common HTTP request, and what browsers do by default. It has no request body, but it does have response content. You mock <code>GET</code> requests
+using the <code>get()</code> methods, as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ersatzServer.expectations {
+    get(<span class="string"><span class="delimiter">'</span><span class="content">/something</span><span class="delimiter">'</span></span>).responds().content(<span class="string"><span class="delimiter">'</span><span class="content">This is INTERESTING!</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">text/plain</span><span class="delimiter">'</span></span>).code(<span class="integer">200</span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In a RESTful interface, a <code>GET</code> request is usually used to "read" or retrieve a resource representation.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_options">OPTIONS</h5>
+<div class="paragraph">
+<p>The <code>OPTIONS</code> HTTP request method is similar to an <code>HEAD</code> request, having no request or response body. The primary response value in an <code>OPTIONS</code> request
+is the content of the <code>Allow</code> response header, which will contain a comma-separated list of the request methods supported by the server. The request
+may be made against a specific URL path, or against <code>*</code> in order to determine what methods are available to the entire server.</p>
+</div>
+<div class="paragraph">
+<p>In order to mock out an <code>OPTIONS</code> request, you will want to respond with a provided <code>Allow</code> header. This may be done using the
+<code>Response.allows(HttpMethod&#8230;&#8203;)</code> method in the responder. An example would be something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ersatzServer.expectations {
+    options(<span class="string"><span class="delimiter">'</span><span class="content">/options</span><span class="delimiter">'</span></span>).responds().allows(GET, POST).code(<span class="integer">200</span>)
+    options(<span class="string"><span class="delimiter">'</span><span class="content">/*</span><span class="delimiter">'</span></span>).responds().allows(DELETE, GET, OPTIONS).code(<span class="integer">200</span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will provide different allowed options for <code>/options</code> and for the "entire server" (<code>*</code>). You can also specify the <code>Allow</code> header as a standard response header.</p>
+</div>
+<div class="paragraph">
+<p>Note that not all client and servers will support the <code>OPTIONS</code> request method.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_post">POST</h5>
+<div class="paragraph">
+<p>The <code>POST</code> request is often used to send browser form data to a backend server. It can have both request and response content.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ersatzServer.expectations {
+    post(<span class="string"><span class="delimiter">'</span><span class="content">/form</span><span class="delimiter">'</span></span>){
+        body([<span class="key">first</span>:<span class="string"><span class="delimiter">'</span><span class="content">John</span><span class="delimiter">'</span></span>, <span class="key">last</span>:<span class="string"><span class="delimiter">'</span><span class="content">Doe</span><span class="delimiter">'</span></span>], APPLICATION_URLENCODED)
+        responder {
+            content(<span class="string"><span class="delimiter">'</span><span class="content">{ status:</span><span class="delimiter">'</span></span>saved<span class="string"><span class="delimiter">'</span><span class="content"> }</span><span class="delimiter">'</span></span>, APPLICATION_JSON)
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In a RESTful interface, the <code>POST</code> method is generally used to "create" new resources.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_put">PUT</h5>
+<div class="paragraph">
+<p>A <code>PUT</code> request is similar to a <code>POST</code> except that while there is request content, there is no response body content.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ersatzServer.expectations {
+    put(<span class="string"><span class="delimiter">'</span><span class="content">/form</span><span class="delimiter">'</span></span>){
+        query(<span class="string"><span class="delimiter">'</span><span class="content">id</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">1234</span><span class="delimiter">'</span></span>)
+        body([<span class="key">middle</span>:<span class="string"><span class="delimiter">'</span><span class="content">Q</span><span class="delimiter">'</span></span>], APPLICATION_URLENCODED)
+        responder {
+            code(<span class="integer">200</span>)
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In a RESTful interface, a <code>PUT</code> request if most often used as an "update" operation.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_delete">DELETE</h5>
+<div class="paragraph">
+<p>A <code>DELETE</code> request has not request or response content. It would look something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ersatzServer.expectations {
+    delete(<span class="string"><span class="delimiter">'</span><span class="content">/user</span><span class="delimiter">'</span></span>).query(<span class="string"><span class="delimiter">'</span><span class="content">id</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">1234</span><span class="delimiter">'</span></span>).responds().code(<span class="integer">200</span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In a RESTful interface, a <code>DELETE</code> request may be used as a "delete" operation.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_patch">PATCH</h5>
+<div class="paragraph">
+<p>The <code>PATCH</code> request method creates a request that can have body content; however, the response will have no content.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ersatzServer.expectations {
+    patch(<span class="string"><span class="delimiter">'</span><span class="content">/user</span><span class="delimiter">'</span></span>){
+        query(<span class="string"><span class="delimiter">'</span><span class="content">id</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">1234</span><span class="delimiter">'</span></span>)
+        body(<span class="string"><span class="delimiter">'</span><span class="content">{ &quot;middle&quot;:&quot;Q&quot;}</span><span class="delimiter">'</span></span>, APPLICATION_JSON)
+        responder {
+            code(<span class="integer">200</span>)
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In a RESTful interface, a <code>PATCH</code> request may be used as a "modify" operation for an existing resource.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_trace">TRACE</h5>
+<div class="paragraph">
+<p>The <code>TRACE</code> method is generally meant for debugging and diagnostics. The request will have no request content; however, if the request is valid,
+the response will contain the entire request message in the entity-body, with a Content-Type of <code>message/http</code>. With that in mind, the <code>TRACE</code>
+method is implemented a bit differently than the other HTTP methods. It&#8217;s not available for mocking, but it will provide an echo of the request as
+it is supposed to. For example the following request (raw):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>TRACE / HTTP/1.1
+Host: www.something.com</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>would respond with something like the following response (raw):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Server: Microsoft-IIS/5.0
+Date: Tue, 31 Oct 2006 08:01:48 GMT
+Connection: close
+Content-Type: message/http
+Content-Length: 39
+
+TRACE / HTTP/1.1
+Host: www.something.com</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Since this functionality is already designed for diagnostics purposes, it was decided that it would be best to simply implement and support the
+request method rather than allow it to be mocked.</p>
+</div>
+<div class="paragraph">
+<p>Making a <code>TRACE</code> request to Ersatz looks like the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ersatzServer.start()
+
+<span class="predefined-type">URL</span> url = <span class="keyword">new</span> <span class="predefined-type">URL</span>(<span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">${</span>ersatzServer.httpUrl<span class="inline-delimiter">}</span></span><span class="content">/info?data=foo+bar</span><span class="delimiter">&quot;</span></span>)
+<span class="predefined-type">HttpURLConnection</span> connection = url.openConnection() <span class="keyword">as</span> <span class="predefined-type">HttpURLConnection</span>
+connection.requestMethod = <span class="string"><span class="delimiter">'</span><span class="content">TRACE</span><span class="delimiter">'</span></span>
+
+<span class="keyword">assert</span> connection.contentType == MESSAGE_HTTP.value
+<span class="keyword">assert</span> connection.responseCode == <span class="integer">200</span>
+
+<span class="keyword">assert</span> connection.inputStream.text.readLines()*.trim() == <span class="string"><span class="delimiter">&quot;&quot;&quot;</span><span class="content">TRACE /info?data=foo+barHTTP/1.1
+    Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+    Connection: keep-alive
+    User-Agent: Java/1.8.0_121
+    Host: localhost:</span><span class="inline"><span class="inline-delimiter">${</span>ersatzServer.httpPort<span class="inline-delimiter">}</span></span><span class="content">
+</span><span class="delimiter">&quot;&quot;&quot;</span></span>.readLines()*.trim()</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The explicit <code>start()</code> call is required since there are no expecations specified (auto-start wont fire). The <code>HttpUrlConnection</code> is used to make the
+request, and it can be seen that the response content is the same as the original request content.</p>
+</div>
+<div class="paragraph">
+<p>The <code>TRACE</code> method is supported using the built-in <code>HttpTraceHandler</code> provided by the embedded <a href="http://undertow.io">Undertow</a> server.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+At some point, if there are valid use cases for allowing mocks of <code>TRACE</code> it could be supported. Feel free to
+<a href="https://github.com/cjstehno/ersatz/issues/new">create an Issue ticket</a> describing your use case and it will be addressed.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
 <div class="sect2">
-<h3 id="_hamcrest_matchers">Hamcrest Matchers</h3>
+<h3 id="_request_matching">Request Matching</h3>
+<div class="sect3">
+<h4 id="_hamcrest_matchers">Hamcrest Matchers</h4>
 <div class="paragraph">
 <p>Many of the expectation methods accept <a href="http://hamcrest.org/">Hamcrest</a> <code>Matcher</code> instances as an alternate argument. Hamcrest matchers allow for a more
 rich and expressive matching configuration. Consider the following configuration:</p>
@@ -986,42 +1593,204 @@ rich and expressive matching configuration. Consider the following configuration
 <p>The methods that accept matchers will have a non-matcher version which provides a sensible default matcher (e.g. <code>get(Matcher)</code> has <code>get(String)</code> which
 provides delegates to <code>get( equalTo( string ) )</code> to wrap the provided path string in a matcher.</p>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_url_encoded_form_requests">Url-Encoded Form Requests</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Url-encoded form requests are supported by default when the request content-type is specified as <code>application/x-www-form-urlencoded</code>. The request
-<code>body</code> expectation configuration will expect a <code>Map&lt;String,String&gt;</code> equivalent to the name-value pairs specified in the request body content. An
-example would be:</p>
+<p>If you are using Groovy, you can actually replace Hamcrest matchers with a <code>Closure</code> emulating the same interface - basically a method that takes
+the parameter and returns whether or not the condition was matched. The same example above could be re-written as:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
-    post(<span class="string"><span class="delimiter">'</span><span class="content">/form</span><span class="delimiter">'</span></span>) {
-        body([<span class="key">alpha</span>: <span class="string"><span class="delimiter">'</span><span class="content">some data</span><span class="delimiter">'</span></span>, <span class="key">bravo</span>: <span class="string"><span class="delimiter">'</span><span class="content">42</span><span class="delimiter">'</span></span>], <span class="string"><span class="delimiter">'</span><span class="content">application/x-www-form-urlencoded</span><span class="delimiter">'</span></span>)
+    get({ p-&gt; p.startsWith(<span class="string"><span class="delimiter">'</span><span class="content">/foo</span><span class="delimiter">'</span></span>) }){
+        called { i-&gt; i &gt;= <span class="integer">2</span> }
+        query <span class="string"><span class="delimiter">'</span><span class="content">user-key</span><span class="delimiter">'</span></span>, notNullValue()
         responder {
-            content <span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>
+            content <span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>, TEXT_PLAIN
         }
     }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>where the <code>POST</code> content data would look like:</p>
+<p>This allows for additional flexibility in configuring expectations.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_matching_cookies">Matching Cookies</h4>
+<div class="paragraph">
+<p>There are four methods for matching cookies associated with a request (found in the <code>com.stehno.ersatz.Request</code> interface):</p>
+</div>
+<div class="sect4">
+<h5 id="_by_name_and_matcher">By Name and Matcher</h5>
+<div class="paragraph">
+<p>The <code>cookie(String name, Matcher&lt;Cookie&gt; matcher)</code> method configures the specified matcher for the cookie with the given name.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
+    get(<span class="string"><span class="delimiter">'</span><span class="content">/somewhere</span><span class="delimiter">'</span></span>){
+        cookie <span class="string"><span class="delimiter">'</span><span class="content">user-key</span><span class="delimiter">'</span></span>, CookieMatcher.cookieMatcher {
+            value startsWith(<span class="string"><span class="delimiter">'</span><span class="content">key-</span><span class="delimiter">'</span></span>)
+            domain <span class="string"><span class="delimiter">'</span><span class="content">mydomain.com</span><span class="delimiter">'</span></span>
+        }
+        responds().code(<span class="integer">200</span>)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The Hamcrest matcher used may be a custom <code>Matcher</code> implementation, or the provided <code>com.stehno.ersatz.CookieMatcher</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_by_name_and_value">By Name and Value</h5>
+<div class="paragraph">
+<p>The <code>cookie(String name, String value)</code> method is a shortcut for configuring simple name/value matching where the cookie value must be equal to the
+specified value. An example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
+    get(<span class="string"><span class="delimiter">'</span><span class="content">/somewhere</span><span class="delimiter">'</span></span>).cookie(<span class="string"><span class="delimiter">'</span><span class="content">user-key</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">key-23435HJKSDGF86</span><span class="delimiter">'</span></span>).responds().code(<span class="integer">200</span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is equivalent to calling the matcher-based version of the method:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
+    get(<span class="string"><span class="delimiter">'</span><span class="content">/somewhere</span><span class="delimiter">'</span></span>){
+        cookie <span class="string"><span class="delimiter">'</span><span class="content">user-key</span><span class="delimiter">'</span></span>, CookieMatcher.cookieMatcher {
+            value equalTo(<span class="string"><span class="delimiter">'</span><span class="content">key-23435HJKSDGF86</span><span class="delimiter">'</span></span>)
+        }
+        responds().code(<span class="integer">200</span>)
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_multiple_cookies">Multiple Cookies</h5>
+<div class="paragraph">
+<p>The <code>cookies(Map&lt;String,Object&gt;)</code> method provides a means of configuring multiple cookie matchers (as value `String`s or cookie `Matcher`s). In the
+following example matchers are configured to match the 'user-key' cookie for values "starting with" the specified value, the request should also have
+an 'app-id' cookie with a value of "user-manager", and finally the request should <em>not</em> have the 'timeout' cookie specified.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
+    get(<span class="string"><span class="delimiter">'</span><span class="content">/something</span><span class="delimiter">'</span></span>){
+        cookies([
+            <span class="string"><span class="delimiter">'</span><span class="content">user-key</span><span class="delimiter">'</span></span>: cookieMatcher {
+                value startsWith(<span class="string"><span class="delimiter">'</span><span class="content">key-</span><span class="delimiter">'</span></span>)
+            },
+            <span class="string"><span class="delimiter">'</span><span class="content">appid</span><span class="delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">user-manager</span><span class="delimiter">'</span></span>,
+            <span class="string"><span class="delimiter">'</span><span class="content">timeout</span><span class="delimiter">'</span></span>: nullValue()
+        ])
+        responds().code(<span class="integer">200</span>)
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_overall_matcher">Overall Matcher</h4>
+<div class="paragraph">
+<p>The <code>cookies(Matcher&lt;Map&lt;String,Cookie&gt;)</code> method is used to specify a <code>Matcher</code> for the map of cookie names to <code>com.stehno.ersatz.Cookie</code> objects. The
+matcher may be any custom matcher, or the <code>com.stehno.ersatz.NoCookiesMatcher</code> may be used to match for the case where no cookies should be defined
+in the request:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
+    get(<span class="string"><span class="delimiter">'</span><span class="content">/something</span><span class="delimiter">'</span></span>){
+        cookies NoCookiesMatcher.noCookies()
+        responds().code(<span class="integer">200</span>)
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_https">HTTPS</h3>
+<div class="paragraph">
+<p>The <code>ErsatzServer</code> supports HTTPS requests when the <code>https()</code> configuration is set (either as <code>https()</code> or as <code>https true</code>). This
+will setup both an HTTP and HTTPS listener both of which will have access to all configured expectations. In order to limit a specific request
+expectation to HTTP or HTTPS, apply the <code>procotol(String)</code> matcher method with the desired protocol, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
+    get(<span class="string"><span class="delimiter">'</span><span class="content">/something</span><span class="delimiter">'</span></span>).protocol(<span class="string"><span class="delimiter">'</span><span class="content">https</span><span class="delimiter">'</span></span>).responding(<span class="string"><span class="delimiter">'</span><span class="content">thing</span><span class="delimiter">'</span></span>)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>which will match an HTTPS request to <code>GET /something</code> and send a response of <code>thing</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+the HTTPS support is rudimentary and meant to test HTTPS endpoints, not any explicit features of HTTPS itself. Also your client will need to be able to ignore any self-signed certification issues in one way or another.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_creating_a_custom_keystore">Creating a Custom Keystore</h4>
+<div class="paragraph">
+<p>A default keystore is provided with the Ersatz library, and it should suffice for most cases; however, you may wish to provide your own custom keystore
+for whatever reason. A supported keystore file may be created using the following command:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>alpha=some+data&amp;bravo=42</pre>
+<pre>./keytool -genkey -alias &lt;NAME&gt; -keyalg RSA -keystore &lt;FILE_LOCATION&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where <code>&lt;NAME&gt;</code> is the key name and <code>&lt;FILE_LOCATION&gt;</code> is the location where the keystore file is to be created. You will be asked a few questions about
+the key being created. The default keystore name is <code>ersatz</code> and it has the following properties:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>CN=Ersatz, OU=Ersatz, O=Ersatz, L=Nowhere, ST=Nowhere, C=US</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Obviously, it is only for testing purposes.</p>
+</div>
+<div class="paragraph">
+<p>The keystore should then be provided during server configuration as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ErsatzServer server = <span class="keyword">new</span> ErsatzServer({
+    https()
+    keystore KEYSTORE_URL, KEYSTORE_PASS
+})</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where <code>KEYSTORE_URL</code> is the URL to your custom keystore file, and <code>KEYSTORE_PASS</code> is the password (maybe omitted if you used <code>ersatz</code> as the password).</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_request_response_compression">Request / Response Compression</h3>
+<div class="paragraph">
+<p>Ersatz supports GZip and Deflate compression seamlessly as long as the <code>Accept-Encoding</code> header is specified as <code>gzip</code> or <code>deflate</code>. If the response
+is compressed, a <code>Content-Encoding</code> header will be added to the response with the appropriate compression type as the value.</p>
 </div>
-<div class="sect1">
-<h2 id="_multipart_request_content">Multipart Request Content</h2>
-<div class="sectionbody">
+</div>
+<div class="sect2">
+<h3 id="_multipart_request_content">Multipart Request Content</h3>
 <div class="paragraph">
 <p>Ersatz server supports multipart file upload requests (<code>multipart/form-data</code> content-type) using the
 <a href="https://commons.apache.org/proper/commons-fileupload/">Apache File Upload</a> library on the "server" side. The expectations for multipart requests are
@@ -1094,10 +1863,8 @@ No decoders are provided by default, any used in the request content <em>must</e
 <p>Some common reusable decoders are provided in the <code>Decoders</code> utility class.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_multipart_response_content">Multipart Response Content</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_multipart_response_content">Multipart Response Content</h3>
 <div class="paragraph">
 <p>Multipart response content is supported, though most browsers do not fully support it - the expected use case would be a RESTful or other HTTP-based
 API. The response content will have the standard <code>multipart/form-data</code> content type and format. The response content parts are provided using an
@@ -1163,253 +1930,109 @@ the unit tests).</p>
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
-<h2 id="_matching_cookies">Matching Cookies</h2>
+<h2 id="_usage_examples">Usage Examples</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>There are four methods for matching cookies associated with a request (found in the <code>com.stehno.ersatz.Request</code> interface):</p>
+<p>This section contains some recipe-style usage examples.</p>
 </div>
 <div class="sect2">
-<h3 id="_by_name_and_matcher">By Name and Matcher</h3>
+<h3 id="_url_encoded_form_requests">Url-Encoded Form Requests</h3>
 <div class="paragraph">
-<p>The <code>cookie(String name, Matcher&lt;Cookie&gt; matcher)</code> method configures the specified matcher for the cookie with the given name.</p>
+<p>Url-encoded form requests are supported by default when the request content-type is specified as <code>application/x-www-form-urlencoded</code>. The request
+<code>body</code> expectation configuration will expect a <code>Map&lt;String,String&gt;</code> equivalent to the name-value pairs specified in the request body content. An
+example would be:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
-    get(<span class="string"><span class="delimiter">'</span><span class="content">/somewhere</span><span class="delimiter">'</span></span>){
-        cookie <span class="string"><span class="delimiter">'</span><span class="content">user-key</span><span class="delimiter">'</span></span>, CookieMatcher.cookieMatcher {
-            value startsWith(<span class="string"><span class="delimiter">'</span><span class="content">key-</span><span class="delimiter">'</span></span>)
-            domain <span class="string"><span class="delimiter">'</span><span class="content">mydomain.com</span><span class="delimiter">'</span></span>
+    post(<span class="string"><span class="delimiter">'</span><span class="content">/form</span><span class="delimiter">'</span></span>) {
+        body([<span class="key">alpha</span>: <span class="string"><span class="delimiter">'</span><span class="content">some data</span><span class="delimiter">'</span></span>, <span class="key">bravo</span>: <span class="string"><span class="delimiter">'</span><span class="content">42</span><span class="delimiter">'</span></span>], <span class="string"><span class="delimiter">'</span><span class="content">application/x-www-form-urlencoded</span><span class="delimiter">'</span></span>)
+        responder {
+            content <span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>
         }
-        responds().code(<span class="integer">200</span>)
     }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The Hamcrest matcher used may be a custom <code>Matcher</code> implementation, or the provided <code>com.stehno.ersatz.CookieMatcher</code>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_by_name_and_value">By Name and Value</h3>
-<div class="paragraph">
-<p>The <code>cookie(String name, String value)</code> method is a shortcut for configuring simple name/value matching where the cookie value must be equal to the
-specified value. An example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
-    get(<span class="string"><span class="delimiter">'</span><span class="content">/somewhere</span><span class="delimiter">'</span></span>).cookie(<span class="string"><span class="delimiter">'</span><span class="content">user-key</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">key-23435HJKSDGF86</span><span class="delimiter">'</span></span>).responds().code(<span class="integer">200</span>)
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This is equivalent to calling the matcher-based version of the method:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
-    get(<span class="string"><span class="delimiter">'</span><span class="content">/somewhere</span><span class="delimiter">'</span></span>){
-        cookie <span class="string"><span class="delimiter">'</span><span class="content">user-key</span><span class="delimiter">'</span></span>, CookieMatcher.cookieMatcher {
-            value equalTo(<span class="string"><span class="delimiter">'</span><span class="content">key-23435HJKSDGF86</span><span class="delimiter">'</span></span>)
-        }
-        responds().code(<span class="integer">200</span>)
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_multiple_cookies">Multiple Cookies</h3>
-<div class="paragraph">
-<p>The <code>cookies(Map&lt;String,Object&gt;)</code> method provides a means of configuring multiple cookie matchers (as value `String`s or cookie `Matcher`s). In the
-following example matchers are configured to match the 'user-key' cookie for values "starting with" the specified value, the request should also have
-an 'app-id' cookie with a value of "user-manager", and finally the request should <em>not</em> have the 'timeout' cookie specified.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
-    get(<span class="string"><span class="delimiter">'</span><span class="content">/something</span><span class="delimiter">'</span></span>){
-        cookies([
-            <span class="string"><span class="delimiter">'</span><span class="content">user-key</span><span class="delimiter">'</span></span>: cookieMatcher {
-                value startsWith(<span class="string"><span class="delimiter">'</span><span class="content">key-</span><span class="delimiter">'</span></span>)
-            },
-            <span class="string"><span class="delimiter">'</span><span class="content">appid</span><span class="delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">user-manager</span><span class="delimiter">'</span></span>,
-            <span class="string"><span class="delimiter">'</span><span class="content">timeout</span><span class="delimiter">'</span></span>: nullValue()
-        ])
-        responds().code(<span class="integer">200</span>)
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_overall_matcher">Overall Matcher</h3>
-<div class="paragraph">
-<p>The <code>cookies(Matcher&lt;Map&lt;String,Cookie&gt;)</code> method is used to specify a <code>Matcher</code> for the map of cookie names to <code>com.stehno.ersatz.Cookie</code> objects. The
-matcher may be any custom matcher, or the <code>com.stehno.ersatz.NoCookiesMatcher</code> may be used to match for the case where no cookies should be defined
-in the request:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
-    get(<span class="string"><span class="delimiter">'</span><span class="content">/something</span><span class="delimiter">'</span></span>){
-        cookies NoCookiesMatcher.noCookies()
-        responds().code(<span class="integer">200</span>)
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_encoder_decoder_chains">Encoder/Decoder Chains</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The request/response content body decoders/encoders are configured in a layered manner so that they may be configured and shared across multiple
-instances without copying the configuration.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Encoders/Decoders configured in the <code>ErsatzServer</code> constructor are considered "global" and will be used if no overriding handlers are configured.</p>
-</li>
-<li>
-<p>Encoders/Decoders configured in the request/response itself are considered "local" and will override any other configured handlers</p>
-</li>
-<li>
-<p>Other configurations are applied in a layered order based on where they are applied in the configuration DSL - the handlers are maintained as separate isolated instances and the actual handler is resolved at runtime.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_request_response_compression">Request / Response Compression</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Ersatz supports GZip and Deflate compression seamlessly as long as the <code>Accept-Encoding</code> header is specified as <code>gzip</code> or <code>deflate</code>. If the response
-is compressed, a <code>Content-Encoding</code> header will be added to the response with the appropriate compression type as the value.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_https_request_support">HTTPS Request Support</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>ErsatzServer</code> supports HTTPS requests when the <code>https()</code> configuration is set (either as <code>https()</code> or as <code>https true</code>). This
-will setup both an HTTP and HTTPS listener both of which will have access to all configured expectations. In order to limit a specific request
-expectation to HTTP or HTTPS, apply the <code>procotol(String)</code> matcher method with the desired protocol, for example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">server.expectations {
-    get(<span class="string"><span class="delimiter">'</span><span class="content">/something</span><span class="delimiter">'</span></span>).protocol(<span class="string"><span class="delimiter">'</span><span class="content">https</span><span class="delimiter">'</span></span>).responding(<span class="string"><span class="delimiter">'</span><span class="content">thing</span><span class="delimiter">'</span></span>)
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>which will match an HTTPS request to <code>GET /something</code> and send a response of <code>thing</code>.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-the HTTPS support is rudimentary and meant to test HTTPS endpoints, not any explicit features of HTTPS itself. Also your client will need to be able to ignore any self-signed certification issues in one way or another.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_creating_a_custom_keystore">Creating a Custom Keystore</h3>
-<div class="paragraph">
-<p>A default keystore is provided with the Ersatz library, and it should suffice for most cases; however, you may wish to provide your own custom keystore
-for whatever reason. A supported keystore file may be created using the following command:</p>
+<p>where the <code>POST</code> content data would look like:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>./keytool -genkey -alias &lt;NAME&gt; -keyalg RSA -keystore &lt;FILE_LOCATION&gt;</pre>
+<pre>alpha=some+data&amp;bravo=42</pre>
 </div>
-</div>
-<div class="paragraph">
-<p>where <code>&lt;NAME&gt;</code> is the key name and <code>&lt;FILE_LOCATION&gt;</code> is the location where the keystore file is to be created. You will be asked a few questions about
-the key being created. The default keystore name is <code>ersatz</code> and it has the following properties:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>CN=Ersatz, OU=Ersatz, O=Ersatz, L=Nowhere, ST=Nowhere, C=US</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Obviously, it is only for testing purposes.</p>
-</div>
-<div class="paragraph">
-<p>The keystore should then be provided during server configuration as:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">ErsatzServer server = <span class="keyword">new</span> ErsatzServer({
-    https()
-    keystore KEYSTORE_URL, KEYSTORE_PASS
-})</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where <code>KEYSTORE_URL</code> is the URL to your custom keystore file, and <code>KEYSTORE_PASS</code> is the password (maybe omitted if you used <code>ersatz</code> as the password).</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_authentication">Authentication</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Ersatz support two forms of built-in server authentication, BASIC and DIGEST. Both authentication methods are exclusive and global meaning that they
-cannot be configured together on the same server and that when configured, they apply to all end points configured on the server.</p>
-</div>
-<div class="paragraph">
-<p>If more fine-grained control of which URLs are authenticated is desired, you will need to configured multiple Ersatz Servers for the different
-configuration sets.</p>
-</div>
-<div class="sect2">
-<h3 id="_basic_authentication">BASIC Authentication</h3>
-<div class="paragraph">
-<p><a href="https://en.wikipedia.org/wiki/Basic_access_authentication">HTTP BASIC Authentication</a> is supported by applying the <code>basic</code> <code>authentication</code> configuration to the server.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> ersatz = <span class="keyword">new</span> ErsatzServer({
-    authentication {
-        basic <span class="string"><span class="delimiter">'</span><span class="content">admin</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">my-password</span><span class="delimiter">'</span></span>
-    }
-})</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This configuration causes the configured request expectations to require BASIC authentication (username and password) as part of their matching.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_digest_authentication">DIGEST Authentication</h3>
+<h3 id="_file_upload_post">File Upload (POST)</h3>
 <div class="paragraph">
-<p><a href="https://en.wikipedia.org/wiki/Digest_access_authentication">HTTP DIGEST Authentication</a> is supported by applying the <code>digest</code> <code>authentication</code> to the server.</p>
+<p>You can setup an expectation for a file upload POST using the <code>multipart</code> support, something like:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> ersatz = <span class="keyword">new</span> ErsatzServer({
-    authentication {
-        digest <span class="string"><span class="delimiter">'</span><span class="content">guest</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">other-password</span><span class="delimiter">'</span></span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">com.stehno.erstaz.ErsatzServer</span>
+<span class="keyword">import</span> <span class="include">com.stehno.ersatz.MultipartRequestContent</span>
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">com.stehno.ersatz.ContentType.TEXT_PLAIN</span>
+
+<span class="keyword">def</span> ersatz = <span class="keyword">new</span> ErsatzServer({
+    autoStart()
+    encoder TEXT_PLAIN, <span class="predefined-type">File</span>, Encoders.text
+})
+
+<span class="keyword">def</span> file = <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="comment">/* some file */</span>)
+
+ersatz.expectations {
+    post(<span class="string"><span class="delimiter">'</span><span class="content">/upload</span><span class="delimiter">'</span></span>) {
+        decoders TEXT_PLAIN, Decoders.utf8String
+        decoder MULTIPART_MIXED, Decoders.multipart
+
+        body MultipartRequestContent.multipart {
+            part <span class="string"><span class="delimiter">'</span><span class="content">fileName</span><span class="delimiter">'</span></span>, file.name
+            part <span class="string"><span class="delimiter">'</span><span class="content">file</span><span class="delimiter">'</span></span>, file.name, <span class="string"><span class="delimiter">'</span><span class="content">text/plain; charset=utf-8</span><span class="delimiter">'</span></span>, file.text
+        }, MULTIPART_MIXED
+
+        responder {
+            content <span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>
+        }
     }
-})</code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This configuration causes the configured request expectations to require DIGEST authentication (username and password) as part of their matching.</p>
+<p>This will expect the posting of the given file content to the <code>/upload</code> path of the server.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_file_download_get">File Download (GET)</h3>
+<div class="paragraph">
+<p>Setting up an expectation for a GET request to respond with a file to download can be done as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">com.stehno.erstaz.ErsatzServer</span>
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">com.stehno.ersatz.ContentType.TEXT_PLAIN</span>
+
+<span class="keyword">def</span> ersatz = <span class="keyword">new</span> ErsatzServer({
+    autoStart()
+    encoder TEXT_PLAIN, <span class="predefined-type">File</span>, Encoders.text
+})
+
+<span class="keyword">def</span> file = <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="comment">/* some file */</span>)
+
+ersatz.expectations {
+    get(<span class="string"><span class="delimiter">'</span><span class="content">/download</span><span class="delimiter">'</span></span>){
+        responder {
+            header <span class="string"><span class="delimiter">'</span><span class="content">Content-Disposition</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">attachment; filename=</span><span class="char">\&quot;</span><span class="inline"><span class="inline-delimiter">${</span>file.name<span class="inline-delimiter">}</span></span><span class="char">\&quot;</span><span class="delimiter">&quot;</span></span>
+            content file, TEXT_PLAIN
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will respond to the request with file download content.</p>
 </div>
 </div>
 </div>
@@ -1417,8 +2040,8 @@ configuration sets.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.2.1<br>
-Last updated 2017-06-16 07:16:17 -05:00
+Version 1.3.0<br>
+Last updated 2017-06-21 12:28:25 -05:00
 </div>
 </div>
 </body>

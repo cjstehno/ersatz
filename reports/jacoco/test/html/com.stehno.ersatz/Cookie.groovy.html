@@ -62,44 +62,92 @@ class Cookie {
 <span class="nc" id="L62">        cookie</span>
     }
 
+    /**
+     * Used to configure the value of the cookie as a String.
+     *
+     * @param value the cookie value
+     * @return this cookie
+     */
     Cookie value(String value) {
-<span class="fc" id="L66">        this.value = value</span>
-<span class="pc" id="L67">        this</span>
+<span class="fc" id="L72">        this.value = value</span>
+<span class="pc" id="L73">        this</span>
     }
 
+    /**
+     * Used to configure the cookie comment.
+     *
+     * @param comment the cookie comment
+     * @return this cookie
+     */
     Cookie comment(final String comment) {
-<span class="nc" id="L71">        this.comment = comment</span>
-<span class="nc" id="L72">        this</span>
+<span class="nc" id="L83">        this.comment = comment</span>
+<span class="nc" id="L84">        this</span>
     }
 
+    /**
+     * Used to configure the domain of the cookie.
+     *
+     * @param domain the cookie domain
+     * @return this cookie
+     */
     Cookie domain(final String domain) {
-<span class="nc" id="L76">        this.domain = domain</span>
-<span class="nc" id="L77">        this</span>
+<span class="nc" id="L94">        this.domain = domain</span>
+<span class="nc" id="L95">        this</span>
     }
 
+    /**
+     * Used to configure the cookie path.
+     *
+     * @param path the cookie path
+     * @return this cookie
+     */
     Cookie path(final String path) {
-<span class="nc" id="L81">        this.path = path</span>
-<span class="nc" id="L82">        this</span>
+<span class="nc" id="L105">        this.path = path</span>
+<span class="nc" id="L106">        this</span>
     }
 
+    /**
+     * Used to configure the cookie API version.
+     *
+     * @param version the cookie version
+     * @return this cookie
+     */
     Cookie version(final int version) {
-<span class="nc" id="L86">        this.version = version</span>
-<span class="nc" id="L87">        this</span>
+<span class="nc" id="L116">        this.version = version</span>
+<span class="nc" id="L117">        this</span>
     }
 
+    /**
+     * Used to configure the &lt;code&gt;httpOnly&lt;/code&gt; property of the cookie.
+     *
+     * @param httpOnly the httpOnly property value
+     * @return this cookie
+     */
     Cookie httpOnly(final boolean httpOnly) {
-<span class="nc" id="L91">        this.httpOnly = httpOnly</span>
-<span class="nc" id="L92">        this</span>
+<span class="nc" id="L127">        this.httpOnly = httpOnly</span>
+<span class="nc" id="L128">        this</span>
     }
 
+    /**
+     * Used to configure the max age value for the cookie.
+     *
+     * @param maxAge the max cookie age
+     * @return this cookie
+     */
     Cookie maxAge(final Integer maxAge) {
-<span class="nc" id="L96">        this.maxAge = maxAge</span>
-<span class="nc" id="L97">        this</span>
+<span class="nc" id="L138">        this.maxAge = maxAge</span>
+<span class="nc" id="L139">        this</span>
     }
 
+    /**
+     * Used to configure whether or not the cookie is marked as secure.
+     *
+     * @param secure the value
+     * @return this cookie
+     */
     Cookie secure(final boolean secure) {
-<span class="nc" id="L101">        this.secure = secure</span>
-<span class="nc" id="L102">        this</span>
+<span class="nc" id="L149">        this.secure = secure</span>
+<span class="nc" id="L150">        this</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

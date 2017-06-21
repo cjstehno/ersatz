@@ -39,7 +39,7 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
      * @param pathMatcher the request path matcher
      */
     ErsatzRequestWithContent(
-        final String method,
+        final HttpMethod method,
         final Matcher&lt;String&gt; pathMatcher,
         final RequestDecoders globalDecoders = null,
         final ResponseEncoders globalEncoders = null

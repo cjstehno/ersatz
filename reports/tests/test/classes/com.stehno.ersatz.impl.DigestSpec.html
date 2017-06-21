@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.086s</div>
+<div class="counter">0.096s</div>
 <p>duration</p>
 </div>
 </td>
@@ -82,12 +82,12 @@
 </thead>
 <tr>
 <td class="success">DIGEST auth</td>
-<td>0.014s</td>
+<td>0.020s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">DIGEST no-auth</td>
-<td>0.072s</td>
+<td>0.076s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -95,50 +95,33 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>07:27:37.257 [XNIO-12 I/O-4] DEBUG io.undertow.request.io - UT005013: An IOException occurred
-java.io.IOException: javax.net.ssl.SSLException: Inbound closed before receiving peer's close_notify: possible truncation attack?
-	at io.undertow.protocols.ssl.SslConduit.notifyReadClosed(SslConduit.java:577)
-	at io.undertow.protocols.ssl.SslConduit.terminateReads(SslConduit.java:178)
-	at org.xnio.conduits.ConduitStreamSourceChannel.close(ConduitStreamSourceChannel.java:168)
-	at org.xnio.IoUtils.safeClose(IoUtils.java:134)
-	at org.xnio.conduits.ReadReadyHandler$ChannelListenerHandler.forceTermination(ReadReadyHandler.java:58)
-	at io.undertow.protocols.ssl.SslConduit$SslReadReadyHandler.forceTermination(SslConduit.java:1091)
-	at org.xnio.nio.NioSocketConduit.forceTermination(NioSocketConduit.java:105)
-	at org.xnio.nio.WorkerThread.run(WorkerThread.java:492)
-Caused by: javax.net.ssl.SSLException: Inbound closed before receiving peer's close_notify: possible truncation attack?
-	at sun.security.ssl.Alerts.getSSLException(Alerts.java:208)
-	at sun.security.ssl.SSLEngineImpl.fatal(SSLEngineImpl.java:1666)
-	at sun.security.ssl.SSLEngineImpl.fatal(SSLEngineImpl.java:1634)
-	at sun.security.ssl.SSLEngineImpl.closeInbound(SSLEngineImpl.java:1561)
-	at io.undertow.protocols.ssl.SslConduit.notifyReadClosed(SslConduit.java:575)
-	... 7 common frames omitted
-07:27:37.280 [XNIO-13 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-1', selector sun.nio.ch.EPollSelectorImpl@3fbf179c
-07:27:37.280 [XNIO-13 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-2', selector sun.nio.ch.EPollSelectorImpl@27550f3
-07:27:37.281 [XNIO-13 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-3', selector sun.nio.ch.EPollSelectorImpl@1463e1ca
-07:27:37.281 [XNIO-13 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-6', selector sun.nio.ch.EPollSelectorImpl@4bbc6ef6
-07:27:37.281 [XNIO-13 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-4', selector sun.nio.ch.EPollSelectorImpl@29664ace
-07:27:37.281 [XNIO-13 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-5', selector sun.nio.ch.EPollSelectorImpl@54024be4
-07:27:37.281 [XNIO-13 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-7', selector sun.nio.ch.EPollSelectorImpl@564abc86
-07:27:37.281 [XNIO-13 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-8', selector sun.nio.ch.EPollSelectorImpl@28224cf4
-07:27:37.283 [XNIO-13 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 Accept', selector sun.nio.ch.EPollSelectorImpl@3ecb04a5
-07:27:37.332 [XNIO-14 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-2', selector sun.nio.ch.EPollSelectorImpl@32d7c1c7
-07:27:37.332 [XNIO-14 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-1', selector sun.nio.ch.EPollSelectorImpl@10667a58
-07:27:37.332 [XNIO-14 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-3', selector sun.nio.ch.EPollSelectorImpl@15a3d253
-07:27:37.332 [XNIO-14 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-4', selector sun.nio.ch.EPollSelectorImpl@38182172
-07:27:37.332 [XNIO-14 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-5', selector sun.nio.ch.EPollSelectorImpl@252b1728
-07:27:37.332 [XNIO-14 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-7', selector sun.nio.ch.EPollSelectorImpl@2e1de2a4
-07:27:37.332 [XNIO-14 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-6', selector sun.nio.ch.EPollSelectorImpl@6b3b94ed
-07:27:37.332 [XNIO-14 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-8', selector sun.nio.ch.EPollSelectorImpl@543adff
-07:27:37.333 [XNIO-14 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 Accept', selector sun.nio.ch.EPollSelectorImpl@418c7f32
-07:27:37.340 [XNIO-14 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /secrets (query=[:], headers={Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;YS+L4nE1sBgNMTQ5NzYxNjA1NzMzN7fT+FRKps9Cp+/LcaFoEy4=&quot;, uri=&quot;/secrets&quot;, response=&quot;625c0f8e8d93d6f157b4e4b3e7aad51c&quot;, qop=auth, nc=00000001, cnonce=&quot;534bf89669ffa94f&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:42731]}, cookies=[:]): &lt;empty&gt; }
-07:27:37.341 [XNIO-14 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response({Authentication-Info=[nextnonce=&quot;YS+L4nE1sBgNMTQ5NzYxNjA1NzMzN7fT+FRKps9Cp+/LcaFoEy4=&quot;,qop=&quot;auth&quot;,rspauth=&quot;137965f66f17b8e481fd8de5f2aa8ae4&quot;,cnonce=&quot;534bf89669ffa94f&quot;,nc=00000001]}): Something secure
+<pre>12:30:08.571 [XNIO-21 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-21 I/O-1', selector sun.nio.ch.EPollSelectorImpl@4c79b1e
+12:30:08.572 [XNIO-21 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-21 I/O-3', selector sun.nio.ch.EPollSelectorImpl@518d9078
+12:30:08.572 [XNIO-21 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-21 I/O-4', selector sun.nio.ch.EPollSelectorImpl@67275183
+12:30:08.572 [XNIO-21 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-21 I/O-5', selector sun.nio.ch.EPollSelectorImpl@2a5095f9
+12:30:08.572 [XNIO-21 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-21 I/O-2', selector sun.nio.ch.EPollSelectorImpl@7e3c1e4c
+12:30:08.572 [XNIO-21 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-21 I/O-6', selector sun.nio.ch.EPollSelectorImpl@6951a9ce
+12:30:08.572 [XNIO-21 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-21 I/O-7', selector sun.nio.ch.EPollSelectorImpl@10b004e4
+12:30:08.572 [XNIO-21 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-21 I/O-8', selector sun.nio.ch.EPollSelectorImpl@39c5ba61
+12:30:08.572 [XNIO-21 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-21 Accept', selector sun.nio.ch.EPollSelectorImpl@5bcf7fa3
+12:30:08.631 [XNIO-22 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-22 I/O-1', selector sun.nio.ch.EPollSelectorImpl@2de1ebc4
+12:30:08.632 [XNIO-22 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-22 I/O-2', selector sun.nio.ch.EPollSelectorImpl@219ce25f
+12:30:08.632 [XNIO-22 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-22 I/O-3', selector sun.nio.ch.EPollSelectorImpl@1b19f42f
+12:30:08.632 [XNIO-22 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-22 I/O-5', selector sun.nio.ch.EPollSelectorImpl@7194f5d6
+12:30:08.632 [XNIO-22 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-22 I/O-4', selector sun.nio.ch.EPollSelectorImpl@61559d4d
+12:30:08.633 [XNIO-22 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-22 I/O-6', selector sun.nio.ch.EPollSelectorImpl@6b643d44
+12:30:08.633 [XNIO-22 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-22 I/O-7', selector sun.nio.ch.EPollSelectorImpl@30d98ce4
+12:30:08.634 [XNIO-22 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-22 I/O-8', selector sun.nio.ch.EPollSelectorImpl@6b9a4463
+12:30:08.636 [XNIO-22 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-22 Accept', selector sun.nio.ch.EPollSelectorImpl@2ee074d9
+12:30:08.645 [XNIO-22 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /secrets (query=[:], headers={Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;x91jrQn6zSYNMTQ5ODA2NjIwODY0MVBnVpBXe+imCAa6oXmqMCg=&quot;, uri=&quot;/secrets&quot;, response=&quot;89c9e27ddd3c7aacb50a33b80462a5bb&quot;, qop=auth, nc=00000001, cnonce=&quot;4a854dc01116935a&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:45889]}, cookies=[:]): &lt;empty&gt; }
+12:30:08.646 [XNIO-22 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response({Authentication-Info=[nextnonce=&quot;x91jrQn6zSYNMTQ5ODA2NjIwODY0MVBnVpBXe+imCAa6oXmqMCg=&quot;,qop=&quot;auth&quot;,rspauth=&quot;06138f1cf610eb03bb12891f67e27c7d&quot;,cnonce=&quot;4a854dc01116935a&quot;,nc=00000001]}): Something secure
 </pre>
 </span>
 </div>
 <div id="tab2" class="tab">
 <h2>Standard error</h2>
 <span class="code">
-<pre>Jun 16, 2017 7:27:37 AM okhttp3.internal.platform.Platform log
+<pre>Jun 21, 2017 12:30:08 PM okhttp3.internal.platform.Platform log
 WARNING: previous digest authentication with same nonce failed, returning null
 </pre>
 </span>
@@ -151,7 +134,7 @@ WARNING: previous digest authentication with same nonce failed, returning null
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 4.0</a> at Jun 16, 2017 7:27:39 AM</p>
+<a href="http://www.gradle.org">Gradle 4.0</a> at Jun 21, 2017 12:30:09 PM</p>
 </div>
 </div>
 </body>
