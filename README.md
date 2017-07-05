@@ -6,7 +6,7 @@
 
 * Site: http://stehno.com/ersatz
 * Project: https://github.com/cjstehno/ersatz
-* User Guide: http://stehno.com/ersatz/guide/html5/
+* User Guide: http://stehno.com/ersatz/asciidoc/html5/
 * Groovy Docs: http://stehno.com/ersatz/groovydoc/
 * Twitter: [@ErsatzServer](https://twitter.com/ersatzserver)
 
