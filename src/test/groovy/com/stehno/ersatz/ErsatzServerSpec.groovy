@@ -327,6 +327,34 @@ class ErsatzServerSpec extends Specification {
         '/other'       || 'err'
     }
 
+    def 'proxied request should return proxy not original'(){
+        setup:
+        ErsatzServer proxyServer = new ErsatzServer({ autoStart() })
+        proxyServer.expectations {
+            get('/proxied').called(1).responds().content('forwarded').code(200)
+        }
+
+        ersatzServer.expectations {
+            get('/proxied').called(0).responds().content('original').code(200)
+        }
+
+        OkHttpClient proxiedClient = new OkHttpClient.Builder()
+            .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress('localhost', proxyServer.httpPort)))
+            .cookieJar(new InMemoryCookieJar())
+            .build()
+
+        when:
+        okhttp3.Response response = proxiedClient.newCall(new okhttp3.Request.Builder().get().url(url('/proxied')).build()).execute()
+
+        then:
+        response.code() == 200
+        response.body().bytes() == 'forwarded'.bytes
+
+        and:
+        proxyServer.verify()
+        ersatzServer.verify()
+    }
+
     private String url(final String path) {
         "http://localhost:${ersatzServer.httpPort}${path}"
     }
