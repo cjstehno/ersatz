@@ -327,12 +327,14 @@ class ErsatzServerSpec extends Specification {
         '/other'       || 'err'
     }
 
-    def 'proxied request should return proxy not original'(){
+    def 'proxied request should return proxy not original'() {
         setup:
-        ErsatzServer proxyServer = new ErsatzServer({ autoStart() })
-        proxyServer.expectations {
-            get('/proxied').called(1).responds().content('forwarded').code(200)
-        }
+        ErsatzServer proxyServer = new ErsatzServer({
+            autoStart()
+            expectations {
+                get('/proxied').called(1).responds().content('forwarded').code(200)
+            }
+        })
 
         ersatzServer.expectations {
             get('/proxied').called(0).responds().content('original').code(200)
