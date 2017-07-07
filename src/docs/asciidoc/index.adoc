@@ -418,7 +418,8 @@ general types of methods are:
 * All of the above with the `String path` replaced by a Hamcrest `Matcher<String>` for matching the path
 
 The `Consumer<Request>` methods will provide a `Consumer<Request>` implementation to perform the configuration on a `Request` instance passed into
-the consumer function.
+the consumer function. The `path` strings in the verb methods may be called with `*` as a wildcard value - this will match any request with that
+request method (e.g. `get('*')` would match any GET request while `any('*')` could be used to match _any_ request made on the server).
 
 The `Closure` support is similar to that of the consumer; however, this is a Groovy DSL approach where the `Closure` operations are delegated onto the
 a `Request` instance in order to configure the request.
