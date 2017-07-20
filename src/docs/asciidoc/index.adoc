@@ -1084,3 +1084,24 @@ ersatz.expectations {
 ----
 
 This will respond to the request with file download content.
+
+=== Kotlin Usage
+
+You can use the Ersatz Server from the Kotlin programming language just as easily as Java or Groovy:
+
+[source,kotlin]
+----
+val ersatz = ErsatzServer { config -> config.autoStart() }
+
+ersatz.expectations { expectations ->
+    expectations.get("/kotlin").called(1).responder { response ->
+        response.content("Hello Kotlin!", ContentType.TEXT_PLAIN).code(200)
+    }
+}
+
+val http = OkHttpClient.Builder().build()
+val request: okhttp3.Request = okhttp3.Request.Builder().url("${ersatz.httpUrl}/kotlin").build()
+println( http.newCall(request).execute().body().string() )
+----
+
+which will print out "Hello Kotlin!" when executed.
