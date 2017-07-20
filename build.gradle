@@ -10,10 +10,11 @@ plugins {
     id "org.asciidoctor.convert" version "1.5.3"
     id "com.stehno.gradle.webpreview" version "0.2.0"
     id "com.stehno.gradle.site" version "0.0.3"
+    id 'org.jetbrains.kotlin.jvm' version '1.1.3-2'
 }
 
 group = 'com.stehno.ersatz'
-version = '1.3.0'
+version = '1.4.0'
 
 sourceCompatibility = 8
 targetCompatibility = 8
@@ -44,6 +45,7 @@ dependencies {
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'cglib:cglib-nodep:3.2.4'
     testCompile 'com.burgstaller:okhttp-digest:1.10'
+    testCompile  "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.3-2"
 
     groovyDoc "org.codehaus.groovy:groovy-groovydoc:$groovyVersion"
     groovyDoc "org.codehaus.groovy:groovy-ant:$groovyVersion"
@@ -202,4 +204,16 @@ tasks.site.dependsOn = ['build', 'groovydoc', 'jacocoTestReport', 'asciidoctor']
 task publishSite(type: GradleBuild, group: 'Publishing', description: 'Publishes the documentation web site.', dependsOn: ['site']) {
     buildFile = 'publish.gradle'
     tasks = ['publishGhPages']
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }

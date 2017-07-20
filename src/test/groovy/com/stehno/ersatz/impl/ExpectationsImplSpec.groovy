@@ -15,23 +15,13 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.Request
-import com.stehno.ersatz.RequestDecoders
-import com.stehno.ersatz.RequestWithContent
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.*
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.HttpMethod.DELETE
-import static com.stehno.ersatz.HttpMethod.GET
-import static com.stehno.ersatz.HttpMethod.HEAD
-import static com.stehno.ersatz.HttpMethod.OPTIONS
-import static com.stehno.ersatz.HttpMethod.PATCH
-import static com.stehno.ersatz.HttpMethod.POST
-import static com.stehno.ersatz.HttpMethod.PUT
+import static com.stehno.ersatz.HttpMethod.*
 import static org.hamcrest.Matchers.equalTo
 
 class ExpectationsImplSpec extends Specification {
@@ -207,5 +197,38 @@ class ExpectationsImplSpec extends Specification {
         def ae = thrown(AssertionError)
         ae.message == 'Expectations for Expectations (ErsatzRequestWithContent): <POST>, "/alpha",  were not met.. ' +
             'Expression: (com.stehno.ersatz.impl.ErsatzRequest -> com.stehno.ersatz.impl.ErsatzRequest) r.verify()'
+    }
+
+    @Unroll 'wildcard path (#path)'() {
+        setup:
+        expectations.get('*')
+
+        ClientRequest cr = new MockClientRequest(method: GET, path: path)
+
+        expect:
+        expectations.findMatch(cr).matches(cr)
+
+        where:
+        path << ['/alpha', '/bravo', '/charlie/delta']
+    }
+
+
+    @Unroll 'matching wildcarded any (#method)'() {
+        setup:
+        expectations.any('*')
+
+        ClientRequest cr = new MockClientRequest(method: method, path: path)
+
+        expect:
+        expectations.findMatch(cr).matches(cr)
+
+        where:
+        method  | path
+        GET     | '/alpha'
+        POST    | '/bravo'
+        PUT     | '/charlie'
+        PATCH   | '/delta'
+        DELETE  | '/echo'
+        OPTIONS | '/foxtrot'
     }
 }

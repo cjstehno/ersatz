@@ -23,6 +23,7 @@ import com.stehno.ersatz.RequestWithContent
 import com.stehno.ersatz.ResponseEncoders
 import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
+import org.hamcrest.Matchers
 
 import java.util.function.Consumer
 
@@ -60,7 +61,7 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request any(final String path) {
-        any equalTo(path)
+        any pathMatcher(path)
     }
 
     @Override
@@ -70,7 +71,7 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request any(final String path, @DelegatesTo(Request) final Closure closure) {
-        any equalTo(path), closure
+        any pathMatcher(path), closure
     }
 
     @Override
@@ -80,7 +81,7 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request any(final String path, final Consumer<Request> consumer) {
-        any equalTo(path), consumer
+        any pathMatcher(path), consumer
     }
 
     @Override
@@ -90,7 +91,7 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request get(final String path) {
-        get equalTo(path)
+        get pathMatcher(path)
     }
 
     @Override
@@ -100,7 +101,7 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request get(final String path, @DelegatesTo(Request) final Closure closure) {
-        get(equalTo(path), closure)
+        get(pathMatcher(path), closure)
     }
 
     @Override
@@ -110,7 +111,7 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request get(String path, Consumer<Request> config) {
-        get(equalTo(path), config)
+        get(pathMatcher(path), config)
     }
 
     @Override
@@ -120,17 +121,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request head(String path) {
-        head(equalTo(path))
+        head(pathMatcher(path))
     }
 
     @Override
     Request head(String path, @DelegatesTo(Request) Closure closure) {
-        head(equalTo(path), closure)
+        head(pathMatcher(path), closure)
     }
 
     @Override
     Request head(String path, Consumer<Request> config) {
-        head(equalTo(path), config)
+        head(pathMatcher(path), config)
     }
 
     @Override
@@ -150,17 +151,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     RequestWithContent post(String path) {
-        post(equalTo(path))
+        post(pathMatcher(path))
     }
 
     @Override
     RequestWithContent post(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-        post(equalTo(path), closure)
+        post(pathMatcher(path), closure)
     }
 
     @Override
     RequestWithContent post(String path, Consumer<RequestWithContent> config) {
-        post(equalTo(path), config)
+        post(pathMatcher(path), config)
     }
 
     @Override
@@ -180,17 +181,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     RequestWithContent put(String path) {
-        put(equalTo(path))
+        put(pathMatcher(path))
     }
 
     @Override
     RequestWithContent put(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-        put(equalTo(path), closure)
+        put(pathMatcher(path), closure)
     }
 
     @Override
     RequestWithContent put(String path, Consumer<RequestWithContent> config) {
-        put(equalTo(path), config)
+        put(pathMatcher(path), config)
     }
 
     @Override
@@ -210,17 +211,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request delete(String path) {
-        delete(equalTo(path))
+        delete(pathMatcher(path))
     }
 
     @Override
     Request delete(String path, @DelegatesTo(Request) Closure closure) {
-        delete(equalTo(path), closure)
+        delete(pathMatcher(path), closure)
     }
 
     @Override
     Request delete(String path, Consumer<Request> config) {
-        delete(equalTo(path), config)
+        delete(pathMatcher(path), config)
     }
 
     @Override
@@ -240,17 +241,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     RequestWithContent patch(String path) {
-        patch(equalTo(path))
+        patch(pathMatcher(path))
     }
 
     @Override
     RequestWithContent patch(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-        patch(equalTo(path), closure)
+        patch(pathMatcher(path), closure)
     }
 
     @Override
     RequestWithContent patch(String path, Consumer<RequestWithContent> config) {
-        patch(equalTo(path), config)
+        patch(pathMatcher(path), config)
     }
 
     @Override
@@ -270,17 +271,17 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     Request options(String path) {
-        options(equalTo(path))
+        options(pathMatcher(path))
     }
 
     @Override
     Request options(String path, @DelegatesTo(Request) Closure closure) {
-        options(equalTo(path), closure)
+        options(pathMatcher(path), closure)
     }
 
     @Override
     Request options(String path, Consumer<Request> config) {
-        options(equalTo(path), config)
+        options(pathMatcher(path), config)
     }
 
     @Override
@@ -337,5 +338,9 @@ class ExpectationsImpl implements Expectations {
         consumer.accept(request)
         requests.add(request)
         request
+    }
+
+    private static Matcher<String> pathMatcher(final String path){
+        path == '*' ? Matchers.any(String) : equalTo(path)
     }
 }
