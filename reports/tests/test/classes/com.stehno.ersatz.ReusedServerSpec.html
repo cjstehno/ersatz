@@ -79,12 +79,12 @@
 </thead>
 <tr>
 <td class="success">clear expectations and add new ones</td>
-<td>0.008s</td>
+<td>0.011s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">clear expectations and they should be not-found</td>
-<td>0.008s</td>
+<td>0.007s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
@@ -94,7 +94,7 @@
 </tr>
 <tr>
 <td class="success">same calls again to ensure that server resets normally</td>
-<td>0.015s</td>
+<td>0.013s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -102,60 +102,60 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>12:30:09.484 [XNIO-40 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-40 I/O-4', selector sun.nio.ch.EPollSelectorImpl@21924a7a
-12:30:09.484 [XNIO-40 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-40 I/O-3', selector sun.nio.ch.EPollSelectorImpl@26a2996c
-12:30:09.484 [XNIO-40 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-40 I/O-1', selector sun.nio.ch.EPollSelectorImpl@114fcdf9
-12:30:09.484 [XNIO-40 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-40 I/O-2', selector sun.nio.ch.EPollSelectorImpl@65e27ca8
-12:30:09.484 [XNIO-40 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-40 I/O-5', selector sun.nio.ch.EPollSelectorImpl@723e7a66
-12:30:09.485 [XNIO-40 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-40 I/O-6', selector sun.nio.ch.EPollSelectorImpl@2dbc4a58
-12:30:09.486 [XNIO-40 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-40 I/O-7', selector sun.nio.ch.EPollSelectorImpl@3a783de8
-12:30:09.486 [XNIO-40 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-40 I/O-8', selector sun.nio.ch.EPollSelectorImpl@76816104
-12:30:09.486 [XNIO-40 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-40 Accept', selector sun.nio.ch.EPollSelectorImpl@71f58f56
-12:30:09.487 [XNIO-40 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /alpha (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:43135]}, cookies=[:]): &lt;empty&gt; }
-12:30:09.488 [XNIO-40 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): alpha-response
-12:30:09.488 [XNIO-40 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bravo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:43135]}, cookies=[:]): &lt;empty&gt; }
-12:30:09.489 [XNIO-40 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): bravo-response
-12:30:09.489 [XNIO-40 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bravo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:43135]}, cookies=[:]): &lt;empty&gt; }
-12:30:09.490 [XNIO-40 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): bravo-response
-12:30:09.492 [XNIO-41 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-41 I/O-2', selector sun.nio.ch.EPollSelectorImpl@399455b7
-12:30:09.492 [XNIO-41 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-41 I/O-3', selector sun.nio.ch.EPollSelectorImpl@7c8dea72
-12:30:09.492 [XNIO-41 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-41 I/O-1', selector sun.nio.ch.EPollSelectorImpl@6105d6bd
-12:30:09.494 [XNIO-41 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-41 I/O-5', selector sun.nio.ch.EPollSelectorImpl@63879553
-12:30:09.494 [XNIO-41 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-41 I/O-4', selector sun.nio.ch.EPollSelectorImpl@18053092
-12:30:09.494 [XNIO-41 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-41 I/O-6', selector sun.nio.ch.EPollSelectorImpl@2b2f993e
-12:30:09.494 [XNIO-41 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-41 I/O-7', selector sun.nio.ch.EPollSelectorImpl@4ce2f007
-12:30:09.494 [XNIO-41 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-41 I/O-8', selector sun.nio.ch.EPollSelectorImpl@4a816ec5
-12:30:09.494 [XNIO-41 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-41 Accept', selector sun.nio.ch.EPollSelectorImpl@76430752
-12:30:09.496 [XNIO-41 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /alpha (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:41507]}, cookies=[:]): &lt;empty&gt; }
-12:30:09.496 [XNIO-41 task-1] WARN com.stehno.ersatz.ErsatzServer - Unmatched-Request: { GET /alpha (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:41507]}, cookies=[:]): &lt;empty&gt; }
-12:30:09.497 [XNIO-41 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bravo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:41507]}, cookies=[:]): &lt;empty&gt; }
-12:30:09.498 [XNIO-41 task-2] WARN com.stehno.ersatz.ErsatzServer - Unmatched-Request: { GET /bravo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:41507]}, cookies=[:]): &lt;empty&gt; }
-12:30:09.501 [XNIO-42 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-42 I/O-1', selector sun.nio.ch.EPollSelectorImpl@417354bc
-12:30:09.501 [XNIO-42 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-42 I/O-2', selector sun.nio.ch.EPollSelectorImpl@124a67e6
-12:30:09.502 [XNIO-42 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-42 I/O-3', selector sun.nio.ch.EPollSelectorImpl@7babc8ea
-12:30:09.502 [XNIO-42 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-42 I/O-4', selector sun.nio.ch.EPollSelectorImpl@5bdc4afd
-12:30:09.502 [XNIO-42 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-42 I/O-5', selector sun.nio.ch.EPollSelectorImpl@34c601f4
-12:30:09.502 [XNIO-42 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-42 I/O-6', selector sun.nio.ch.EPollSelectorImpl@3240611a
-12:30:09.502 [XNIO-42 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-42 I/O-7', selector sun.nio.ch.EPollSelectorImpl@112052f
-12:30:09.502 [XNIO-42 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-42 I/O-8', selector sun.nio.ch.EPollSelectorImpl@3e7348d5
-12:30:09.502 [XNIO-42 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-42 Accept', selector sun.nio.ch.EPollSelectorImpl@417854ef
-12:30:09.504 [XNIO-42 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /charlie (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:42389]}, cookies=[:]): &lt;empty&gt; }
-12:30:09.505 [XNIO-42 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): charlie-response
-12:30:09.510 [XNIO-43 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-1', selector sun.nio.ch.EPollSelectorImpl@4750553b
-12:30:09.510 [XNIO-43 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-2', selector sun.nio.ch.EPollSelectorImpl@445d20c7
-12:30:09.510 [XNIO-43 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-3', selector sun.nio.ch.EPollSelectorImpl@5549726d
-12:30:09.510 [XNIO-43 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-4', selector sun.nio.ch.EPollSelectorImpl@46a8f69d
-12:30:09.510 [XNIO-43 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-5', selector sun.nio.ch.EPollSelectorImpl@613a50ad
-12:30:09.510 [XNIO-43 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-6', selector sun.nio.ch.EPollSelectorImpl@4e6e5697
-12:30:09.510 [XNIO-43 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-8', selector sun.nio.ch.EPollSelectorImpl@a5373cf
-12:30:09.511 [XNIO-43 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-7', selector sun.nio.ch.EPollSelectorImpl@7986f2b7
-12:30:09.511 [XNIO-43 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 Accept', selector sun.nio.ch.EPollSelectorImpl@193889e2
-12:30:09.512 [XNIO-43 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /alpha (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:35945]}, cookies=[:]): &lt;empty&gt; }
-12:30:09.513 [XNIO-43 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): alpha-response
-12:30:09.517 [XNIO-43 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bravo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:35945]}, cookies=[:]): &lt;empty&gt; }
-12:30:09.518 [XNIO-43 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): bravo-response
-12:30:09.518 [XNIO-43 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bravo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:35945]}, cookies=[:]): &lt;empty&gt; }
-12:30:09.519 [XNIO-43 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): bravo-response
+<pre>14:03:25.156 [XNIO-43 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-2', selector sun.nio.ch.EPollSelectorImpl@474d5bd
+14:03:25.156 [XNIO-43 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-3', selector sun.nio.ch.EPollSelectorImpl@63e7b786
+14:03:25.156 [XNIO-43 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-1', selector sun.nio.ch.EPollSelectorImpl@2dc59616
+14:03:25.156 [XNIO-43 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-4', selector sun.nio.ch.EPollSelectorImpl@3b30a79f
+14:03:25.156 [XNIO-43 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-5', selector sun.nio.ch.EPollSelectorImpl@4e4c7f5b
+14:03:25.156 [XNIO-43 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-6', selector sun.nio.ch.EPollSelectorImpl@77733628
+14:03:25.156 [XNIO-43 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-7', selector sun.nio.ch.EPollSelectorImpl@2c15d3be
+14:03:25.156 [XNIO-43 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 I/O-8', selector sun.nio.ch.EPollSelectorImpl@4f792614
+14:03:25.156 [XNIO-43 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-43 Accept', selector sun.nio.ch.EPollSelectorImpl@5f07c3e8
+14:03:25.158 [XNIO-43 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /alpha (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:38985]}, cookies=[:]): &lt;empty&gt; }
+14:03:25.159 [XNIO-43 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): alpha-response
+14:03:25.159 [XNIO-43 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bravo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:38985]}, cookies=[:]): &lt;empty&gt; }
+14:03:25.160 [XNIO-43 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): bravo-response
+14:03:25.161 [XNIO-43 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bravo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:38985]}, cookies=[:]): &lt;empty&gt; }
+14:03:25.161 [XNIO-43 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): bravo-response
+14:03:25.164 [XNIO-44 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-44 I/O-1', selector sun.nio.ch.EPollSelectorImpl@4ea04aa0
+14:03:25.164 [XNIO-44 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-44 I/O-2', selector sun.nio.ch.EPollSelectorImpl@35f7baa9
+14:03:25.164 [XNIO-44 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-44 I/O-3', selector sun.nio.ch.EPollSelectorImpl@768d245b
+14:03:25.164 [XNIO-44 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-44 I/O-4', selector sun.nio.ch.EPollSelectorImpl@6e6f1d97
+14:03:25.164 [XNIO-44 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-44 I/O-5', selector sun.nio.ch.EPollSelectorImpl@38d91268
+14:03:25.164 [XNIO-44 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-44 I/O-6', selector sun.nio.ch.EPollSelectorImpl@17950562
+14:03:25.165 [XNIO-44 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-44 Accept', selector sun.nio.ch.EPollSelectorImpl@154d04cb
+14:03:25.165 [XNIO-44 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-44 I/O-8', selector sun.nio.ch.EPollSelectorImpl@33273512
+14:03:25.164 [XNIO-44 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-44 I/O-7', selector sun.nio.ch.EPollSelectorImpl@538e9469
+14:03:25.166 [XNIO-44 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /alpha (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:33601]}, cookies=[:]): &lt;empty&gt; }
+14:03:25.167 [XNIO-44 task-1] WARN com.stehno.ersatz.ErsatzServer - Unmatched-Request: { GET /alpha (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:33601]}, cookies=[:]): &lt;empty&gt; }
+14:03:25.168 [XNIO-44 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bravo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:33601]}, cookies=[:]): &lt;empty&gt; }
+14:03:25.168 [XNIO-44 task-2] WARN com.stehno.ersatz.ErsatzServer - Unmatched-Request: { GET /bravo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:33601]}, cookies=[:]): &lt;empty&gt; }
+14:03:25.170 [XNIO-45 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-45 I/O-1', selector sun.nio.ch.EPollSelectorImpl@69b4cc14
+14:03:25.170 [XNIO-45 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-45 I/O-2', selector sun.nio.ch.EPollSelectorImpl@71e6940b
+14:03:25.170 [XNIO-45 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-45 I/O-4', selector sun.nio.ch.EPollSelectorImpl@428c401f
+14:03:25.170 [XNIO-45 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-45 I/O-3', selector sun.nio.ch.EPollSelectorImpl@1d5c9e31
+14:03:25.172 [XNIO-45 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-45 I/O-5', selector sun.nio.ch.EPollSelectorImpl@b486947
+14:03:25.172 [XNIO-45 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-45 I/O-7', selector sun.nio.ch.EPollSelectorImpl@3d00d46b
+14:03:25.172 [XNIO-45 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-45 I/O-6', selector sun.nio.ch.EPollSelectorImpl@b0fdc61
+14:03:25.175 [XNIO-45 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-45 I/O-8', selector sun.nio.ch.EPollSelectorImpl@c261a17
+14:03:25.175 [XNIO-45 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-45 Accept', selector sun.nio.ch.EPollSelectorImpl@4fe85b52
+14:03:25.178 [XNIO-45 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /charlie (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:33595]}, cookies=[:]): &lt;empty&gt; }
+14:03:25.179 [XNIO-45 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): charlie-response
+14:03:25.182 [XNIO-46 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-46 I/O-1', selector sun.nio.ch.EPollSelectorImpl@11b07808
+14:03:25.182 [XNIO-46 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-46 I/O-2', selector sun.nio.ch.EPollSelectorImpl@49c81485
+14:03:25.184 [XNIO-46 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-46 I/O-3', selector sun.nio.ch.EPollSelectorImpl@1d0ff114
+14:03:25.184 [XNIO-46 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-46 I/O-4', selector sun.nio.ch.EPollSelectorImpl@8854a88
+14:03:25.184 [XNIO-46 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-46 I/O-5', selector sun.nio.ch.EPollSelectorImpl@1acdede9
+14:03:25.184 [XNIO-46 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-46 I/O-6', selector sun.nio.ch.EPollSelectorImpl@5f3c6438
+14:03:25.184 [XNIO-46 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-46 I/O-7', selector sun.nio.ch.EPollSelectorImpl@cbd20af
+14:03:25.184 [XNIO-46 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-46 I/O-8', selector sun.nio.ch.EPollSelectorImpl@4d0a9a4
+14:03:25.187 [XNIO-46 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-46 Accept', selector sun.nio.ch.EPollSelectorImpl@d7facc9
+14:03:25.188 [XNIO-46 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /alpha (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:37103]}, cookies=[:]): &lt;empty&gt; }
+14:03:25.189 [XNIO-46 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): alpha-response
+14:03:25.190 [XNIO-46 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bravo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:37103]}, cookies=[:]): &lt;empty&gt; }
+14:03:25.190 [XNIO-46 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): bravo-response
+14:03:25.191 [XNIO-46 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /bravo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:37103]}, cookies=[:]): &lt;empty&gt; }
+14:03:25.192 [XNIO-46 task-3] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): bravo-response
 </pre>
 </span>
 </div>
@@ -167,7 +167,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 4.0</a> at Jun 21, 2017 12:30:09 PM</p>
+<a href="http://www.gradle.org">Gradle 4.0</a> at Jul 20, 2017 2:03:25 PM</p>
 </div>
 </div>
 </body>
