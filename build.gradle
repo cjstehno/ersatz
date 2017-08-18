@@ -1,16 +1,17 @@
 plugins {
     id 'groovy'
-    id "com.github.hierynomus.license" version "0.13.1"
+    id "com.github.hierynomus.license" version '0.13.1'
     id 'jacoco'
     id 'codenarc'
     id 'maven'
     id 'maven-publish'
     id 'com.github.kt3k.coveralls' version '2.8.1'
     id 'com.jfrog.bintray' version '1.7.3'
-    id "org.asciidoctor.convert" version "1.5.3"
-    id "com.stehno.gradle.webpreview" version "0.3.0"
-    id "com.stehno.gradle.site" version "0.0.3"
+    id "org.asciidoctor.convert" version '1.5.3'
+    id "com.stehno.gradle.webpreview" version '0.3.0'
+    id "com.stehno.gradle.site" version '0.0.3'
     id 'org.jetbrains.kotlin.jvm' version '1.1.3-2'
+    id "com.github.johnrengelman.shadow" version '2.0.1'
 }
 
 group = 'com.stehno.ersatz'
@@ -29,7 +30,7 @@ configurations {
 
 dependencies {
     compile "org.codehaus.groovy:groovy-all:$groovyVersion"
-    compile 'io.undertow:undertow-core:1.3.15.Final' // track with boot/grails supported version
+    compile 'io.undertow:undertow-core:1.3.15.Final' // TODO: update this after shadow jar
 
     compile 'ch.qos.logback:logback-classic:1.1.7'
 
@@ -216,4 +217,8 @@ compileTestKotlin {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+}
+
+shadowJar {
+    relocate 'io.undertow', 'ersatz.undertow'
 }
