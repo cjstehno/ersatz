@@ -15,33 +15,14 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.Cookie
-import com.stehno.ersatz.CookieMatcher
-import com.stehno.ersatz.HttpMethod
-import com.stehno.ersatz.Request
-import com.stehno.ersatz.Response
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.*
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.HttpMethod.ANY
-import static com.stehno.ersatz.HttpMethod.DELETE
-import static com.stehno.ersatz.HttpMethod.GET
-import static com.stehno.ersatz.HttpMethod.HEAD
-import static com.stehno.ersatz.HttpMethod.OPTIONS
-import static com.stehno.ersatz.HttpMethod.PATCH
-import static com.stehno.ersatz.HttpMethod.POST
-import static com.stehno.ersatz.HttpMethod.PUT
-import static com.stehno.ersatz.HttpMethod.TRACE
-import static org.hamcrest.Matchers.anything
-import static org.hamcrest.Matchers.contains
-import static org.hamcrest.Matchers.containsInAnyOrder
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.equalToIgnoringCase
-import static org.hamcrest.Matchers.isOneOf
+import static com.stehno.ersatz.HttpMethod.*
+import static org.hamcrest.Matchers.*
 
 /**
  * <code>Request</code> implementation representing requests without body content.
@@ -87,11 +68,11 @@ class ErsatzRequest implements Request {
 
     @Override
     Request header(final String name, final String value) {
-        header name, equalTo(value)
+        header name, hasItem(value)
     }
 
     @Override
-    Request header(final String name, final Matcher<String> value) {
+    Request header(final String name, final Matcher<Iterable<String>> value) {
         matchers << RequestMatcher.header(name, value)
         this
     }

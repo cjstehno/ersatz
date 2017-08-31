@@ -65,7 +65,7 @@ class ErsatzRequestWithContentSpec extends Specification {
         request.body('Some body', TEXT_PLAIN)
 
         expect:
-        request.toString() == 'Expectations (ErsatzRequestWithContent): <POST>, "/posting", a string starting with "text/plain", "Some body", '
+        request.toString() == 'Expectations (ErsatzRequestWithContent): <POST>, "/posting", A request header matching a string starting with "text/plain", "Some body", '
     }
 
     def 'matching: body'() {

@@ -357,6 +357,98 @@ class ErsatzServerSpec extends Specification {
         ersatzServer.verify()
     }
 
+    // FIXME: support header(String, String...), header(String, Collection<String>), or multiple header calls
+    // the headers would be required (AND) if need an OR style then use matcher (maybe I should create one or define an example)
+    // FIXME: should these be moved to matcher spec?
+
+    def 'multiple header matching support'() {
+        setup:
+        ersatzServer.expectations {
+            get('/api/hello') {
+                called 1
+                header 'Accept', 'application/json'
+                header 'Accept', 'application/vnd.company+json'
+                responder {
+                    code 200
+                    content 'msg': 'World', 'application/vnd.company+json'
+                }
+            }
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/api/hello'))
+            .addHeader('Accept', 'application/json')
+            .addHeader('Accept', 'application/vnd.company+json')
+            .build()
+        ).execute()
+
+        then:
+        response.code() == 200
+        response.body().string() == '[msg:World]'
+
+        and:
+        ersatzServer.verify()
+    }
+
+    def 'multiple header matching support (using matcher)'() {
+        setup:
+        ersatzServer.expectations {
+            get('/api/hello') {
+                called 1
+                header 'Accept', { x ->
+                    'application/vnd.company+json' in x || 'application/json' in x
+                } as Matcher<Iterable<String>>
+                responder {
+                    code 200
+                    content 'msg': 'World', 'application/vnd.company+json'
+                }
+            }
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/api/hello'))
+            .addHeader('Accept', headerValue)
+            .build()
+        ).execute()
+
+        then:
+        response.code() == 200
+        response.body().string() == '[msg:World]'
+
+        and:
+        ersatzServer.verify()
+
+        where:
+        headerValue << ['application/vnd.company+json', 'application/json']
+    }
+
+    def 'multiple header matching support (expecting two headers and had one)'() {
+        setup:
+        ersatzServer.expectations {
+            get('/api/hello') {
+                called 0
+                header 'Accept', 'application/json'
+                header 'Accept', 'application/vnd.company+json'
+                responder {
+                    code 200
+                    content 'msg': 'World', 'application/vnd.company+json'
+                }
+            }
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/api/hello'))
+            .addHeader('Accept', 'application/json')
+            .build()
+        ).execute()
+
+        then:
+        response.code() == 404
+
+        and:
+        ersatzServer.verify()
+    }
+
     private String url(final String path) {
         "http://localhost:${ersatzServer.httpPort}${path}"
     }
