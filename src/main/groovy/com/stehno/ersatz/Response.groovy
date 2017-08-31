@@ -63,7 +63,7 @@ interface Response {
      * @param value the header value
      * @return this response
      */
-    Response header(final String name, final String value)
+    Response header(final String name, final String... value)
 
     /**
      * Used to add multiple headers to the response.
@@ -71,7 +71,7 @@ interface Response {
      * @param headers the headers
      * @return this response
      */
-    Response headers(final Map<String, String> headers)
+    Response headers(final Map<String, Object> headers)
 
     /**
      * Shortcut method for adding values to the "Allow" header. These values will be appended to the existing header.
@@ -166,7 +166,7 @@ interface Response {
      *
      * @return the response headers
      */
-    Map<String, String> getHeaders()
+    Map<String, List<String>> getHeaders()
 
     /**
      * Used to retrieve the configured response cookies.

@@ -33,7 +33,6 @@ import io.undertow.server.handlers.encoding.ContentEncodingRepository
 import io.undertow.server.handlers.encoding.DeflateEncodingProvider
 import io.undertow.server.handlers.encoding.EncodingHandler
 import io.undertow.server.handlers.encoding.GzipEncodingProvider
-import io.undertow.util.HttpString
 
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
@@ -43,6 +42,7 @@ import java.util.function.Consumer
 import java.util.function.Function
 
 import static groovy.transform.TypeCheckingMode.SKIP
+import static io.undertow.util.HttpString.tryFromString
 
 /**
  * The main entry point for configuring an Ersatz server, which allows configuring of the expectations and management of the server itself. This is
@@ -374,7 +374,7 @@ class ErsatzServer implements ServerConfig {
     /**
      * Clears all configured expectations from the server. Does not affect global encoders or decoders.
      */
-    void clearExpectations(){
+    void clearExpectations() {
         expectations.clear()
     }
 
@@ -431,8 +431,10 @@ class ErsatzServer implements ServerConfig {
 
             exchange.statusCode = response.code
 
-            response.headers.each { k, v ->
-                exchange.responseHeaders.put(new HttpString(k), v)
+            response.headers.each { String k, List<String> v ->
+                v.each { String value ->
+                    exchange.responseHeaders.add(tryFromString(k), value)
+                }
             }
 
             response.cookies.each { k, v ->

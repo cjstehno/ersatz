@@ -80,11 +80,12 @@ class ErsatzResponseSpec extends Specification {
 
     def 'headers'() {
         when:
-        response.headers(alpha: 'something', bravo: 'other')
+        response.headers(alpha: 'something', bravo: 'other', charlie:['one', 'two'])
 
         then:
-        response.headers.alpha == 'something'
-        response.headers.bravo == 'other'
+        response.headers.alpha[0] == 'something'
+        response.headers.bravo[0] == 'other'
+        response.headers.charlie == ['one', 'two']
     }
 
     def 'header'() {
@@ -92,7 +93,15 @@ class ErsatzResponseSpec extends Specification {
         response.header('one', 'two')
 
         then:
-        response.headers.one == 'two'
+        response.headers.one[0] == 'two'
+    }
+
+    def 'header (multiple)'() {
+        when:
+        response.header('one', 'two', 'three')
+
+        then:
+        response.headers.one == ['two', 'three']
     }
 
     def 'cookies'() {

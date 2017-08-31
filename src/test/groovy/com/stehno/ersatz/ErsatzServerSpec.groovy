@@ -260,13 +260,14 @@ class ErsatzServerSpec extends Specification {
 
         then:
         connection.responseCode == 200
-        connection.headerFields['Allow'][0] == allowed
+        connection.headerFields['Allow'].size() == allowed.size()
+        connection.headerFields['Allow'].containsAll(allowed)
         !connection.inputStream.text
 
         where:
         path      || allowed
-        'options' || 'GET,POST'
-        '*'       || 'DELETE,GET,OPTIONS'
+        'options' || ['GET', 'POST']
+        '*'       || ['OPTIONS', 'GET', 'DELETE']
     }
 
     def 'TRACE sends back request'() {
@@ -356,10 +357,6 @@ class ErsatzServerSpec extends Specification {
         proxyServer.verify()
         ersatzServer.verify()
     }
-
-    // FIXME: support header(String, String...), header(String, Collection<String>), or multiple header calls
-    // the headers would be required (AND) if need an OR style then use matcher (maybe I should create one or define an example)
-    // FIXME: should these be moved to matcher spec?
 
     def 'multiple header matching support'() {
         setup:

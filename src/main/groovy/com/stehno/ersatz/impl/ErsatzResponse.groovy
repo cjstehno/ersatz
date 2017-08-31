@@ -45,7 +45,7 @@ class ErsatzResponse implements Response {
         }
     }
 
-    private final Map<String, String> headers = [:]
+    private final Map<String, List<String>> headers = [:]
     private final Map<String, String> cookies = [:]
     private Object content
     private Integer code = 200
@@ -84,23 +84,35 @@ class ErsatzResponse implements Response {
     }
 
     @Override
-    Response header(final String name, final String value) {
-        headers[name] = value
+    Response header(final String name, final String... value) {
+        List<String> list = headers.computeIfAbsent(name, { k -> [] })
+        value.each { String v ->
+            list << v
+        }
+        this
+    }
+
+    Response header(final String name, final List<String> values) {
+        List<String> list = headers.computeIfAbsent(name, { k -> [] })
+        list.addAll(values)
         this
     }
 
     @Override
-    Response headers(final Map<String, String> headers) {
-        this.headers.putAll(headers)
+    Response headers(final Map<String, Object> headers) {
+        headers.each { k, v ->
+            if (v instanceof List) {
+                header k, (v as List<String>)
+            } else {
+                header k, (v as String)
+            }
+        }
         this
     }
 
     @Override
     Response allows(final HttpMethod... methods) {
-        String values = methods*.value.join(',')
-
-        headers[ALLOW_HEADER] = (headers.containsKey(ALLOW_HEADER) ? "${headers[ALLOW_HEADER]},$values" : values) as String
-
+        header ALLOW_HEADER, methods*.value
         this
     }
 
@@ -130,7 +142,7 @@ class ErsatzResponse implements Response {
 
     @Override
     String getContentType() {
-        headers[CONTENT_TYPE_HEADER] ?: TEXT_PLAIN.value
+        headers[CONTENT_TYPE_HEADER]?.join(',') ?: TEXT_PLAIN.value
     }
 
     Response code(final int code) {
@@ -156,7 +168,7 @@ class ErsatzResponse implements Response {
     }
 
     @Override
-    Map<String, String> getHeaders() {
+    Map<String, List<String>> getHeaders() {
         headers.asImmutable()
     }
 
