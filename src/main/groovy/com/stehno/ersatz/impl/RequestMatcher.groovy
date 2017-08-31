@@ -19,15 +19,11 @@ import com.stehno.ersatz.ClientRequest
 import com.stehno.ersatz.Cookie
 import com.stehno.ersatz.DecodingContext
 import com.stehno.ersatz.HttpMethod
-import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import org.hamcrest.BaseMatcher
-import org.hamcrest.Description
 import org.hamcrest.Matcher
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
-import static com.stehno.ersatz.impl.HeaderMatcher.headerContainsMatch
-import static org.hamcrest.Matchers.equalTo
+import static com.stehno.ersatz.ErsatzMatchers.collectionContainsMatch
 
 /**
  * Request-specific wrapper around hamcrest matchers to provide property-based matching based on request attributes.
@@ -158,7 +154,7 @@ class RequestMatcher {
      * @return a configured RequestMatcher
      */
     static RequestMatcher contentType(final Matcher<String> m) {
-        header(CONTENT_TYPE_HEADER, headerContainsMatch(m))
+        header(CONTENT_TYPE_HEADER, collectionContainsMatch(m))
     }
 
     /**
@@ -172,48 +168,4 @@ class RequestMatcher {
     }
 }
 
-// FIXME: relocate this (maybe make a useful matchers util)
-@CompileStatic
-class HeaderMatcher extends BaseMatcher<Iterable<String>> {
 
-    Matcher<String> stringMatcher
-
-    static Matcher<Iterable<String>> headerContainsMatch(final Matcher<String> matcher) {
-        new HeaderMatcher(stringMatcher: matcher)
-    }
-
-    @Override
-    boolean matches(final Object item) {
-        (item as Iterable<String>)?.any { s ->
-            stringMatcher.matches(s)
-        }
-    }
-
-    @Override
-    void describeTo(Description description) {
-        description.appendText('A request header matching ')
-        description.appendDescriptionOf(stringMatcher)
-    }
-}
-
-@CompileStatic
-class HeaderValueMatcher extends BaseMatcher<Iterable<String>> {
-
-    String string
-
-    static Matcher<Iterable<String>> headerContains(final String value) {
-        new HeaderValueMatcher(string: value)
-    }
-
-    @Override
-    boolean matches(final Object item) {
-        (item as Iterable<String>)?.any { s ->
-            equalTo(string).matches(s)
-        }
-    }
-
-    @Override
-    void describeTo(Description description) {
-        description.appendText("A request header matching the string '$string'")
-    }
-}

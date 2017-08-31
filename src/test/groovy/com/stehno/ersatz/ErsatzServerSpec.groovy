@@ -446,6 +446,11 @@ class ErsatzServerSpec extends Specification {
         ersatzServer.verify()
     }
 
+//    // FIXME: this will probably move somewhere else
+//    def 'non-matching logging'(){
+//
+//    }
+
     private String url(final String path) {
         "http://localhost:${ersatzServer.httpPort}${path}"
     }
