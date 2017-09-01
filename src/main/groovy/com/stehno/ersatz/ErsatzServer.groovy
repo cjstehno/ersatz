@@ -21,6 +21,7 @@ import com.stehno.ersatz.auth.SimpleIdentityManager
 import com.stehno.ersatz.impl.ErsatzRequest
 import com.stehno.ersatz.impl.ExpectationsImpl
 import com.stehno.ersatz.impl.UndertowClientRequest
+import com.stehno.ersatz.impl.UnmatchedRequestReport
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.undertow.Undertow
@@ -332,6 +333,8 @@ class ErsatzServer implements ServerConfig {
                 builder.addHttpsListener(EPHEMERAL_PORT, LOCALHOST, sslContext())
             }
 
+            // FIXME: create report for every un-matched request
+
             BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(
                 applyAuthentication(
                     new HttpTraceHandler(
@@ -349,6 +352,10 @@ class ErsatzServer implements ServerConfig {
 
                                 } else {
                                     log.warn 'Unmatched-Request: {}', clientRequest
+
+                                    // TODO: working here
+
+                                    println new UnmatchedRequestReport(clientRequest, expectations.requests)
 
                                     exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
                                 }
@@ -400,6 +407,7 @@ class ErsatzServer implements ServerConfig {
      * @return <code>true</code> if all call criteria were met during test execution.
      */
     boolean verify() {
+        // FIXME: how to interact with the report?
         expectations.verify()
     }
 

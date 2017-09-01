@@ -446,10 +446,29 @@ class ErsatzServerSpec extends Specification {
         ersatzServer.verify()
     }
 
-//    // FIXME: this will probably move somewhere else
-//    def 'non-matching logging'(){
-//
-//    }
+    //    // FIXME: this will probably move somewhere else
+    def 'non-matching logging'() {
+        setup:
+        ersatzServer.expectations {
+            get('/foo') {
+                called 1
+                query 'alpha', 'one'
+                responder {
+                    code 200
+                    content 'done'
+                }
+            }
+        }
+
+        when:
+        String response = "${ersatzServer.httpUrl}/foo?alpha=one".toURL().text
+
+        then:
+        response == 'done'
+
+        and:
+        ersatzServer.verify()
+    }
 
     private String url(final String path) {
         "http://localhost:${ersatzServer.httpPort}${path}"
