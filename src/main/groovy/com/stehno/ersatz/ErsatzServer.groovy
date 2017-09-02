@@ -83,6 +83,7 @@ class ErsatzServer implements ServerConfig {
     private boolean httpsEnabled
     private boolean autoStartEnabled
     private boolean started
+    private boolean mismatchToConsole
     private URL keystoreLocation
     private String keystorePass = 'ersatz'
     private int actualHttpPort = UNSPECIFIED_PORT
@@ -134,6 +135,19 @@ class ErsatzServer implements ServerConfig {
      */
     ServerConfig autoStart(boolean autoStart = true) {
         autoStartEnabled = autoStart
+        this
+    }
+
+    /**
+     * Used to toggle the console output of mismatched request reports. By default they are only rendered in the logging. A value of <code>true</code>
+     * will cause the report to be output on the console as well.
+     *
+     * @param toConsole whether or not the report should also be written to the console
+     * @return a reference to the server being configured
+     */
+    @Override
+    ServerConfig reportToConsole(boolean toConsole = true) {
+        mismatchToConsole = toConsole
         this
     }
 
@@ -333,8 +347,6 @@ class ErsatzServer implements ServerConfig {
                 builder.addHttpsListener(EPHEMERAL_PORT, LOCALHOST, sslContext())
             }
 
-            // FIXME: create report for every un-matched request
-
             BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(
                 applyAuthentication(
                     new HttpTraceHandler(
@@ -351,11 +363,13 @@ class ErsatzServer implements ServerConfig {
                                     send(exchange, currentResponse)
 
                                 } else {
-                                    log.warn 'Unmatched-Request: {}', clientRequest
+                                    UnmatchedRequestReport report = new UnmatchedRequestReport(clientRequest, expectations.requests as List<ErsatzRequest>)
 
-                                    // TODO: working here
+                                    log.warn report.toString()
 
-                                    println new UnmatchedRequestReport(clientRequest, expectations.requests)
+                                    if (mismatchToConsole) {
+                                        println report
+                                    }
 
                                     exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
                                 }
@@ -407,7 +421,6 @@ class ErsatzServer implements ServerConfig {
      * @return <code>true</code> if all call criteria were met during test execution.
      */
     boolean verify() {
-        // FIXME: how to interact with the report?
         expectations.verify()
     }
 

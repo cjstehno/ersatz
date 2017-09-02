@@ -1,12 +1,16 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.HttpMethod
-import com.stehno.ersatz.Request
+import com.stehno.ersatz.ResponseEncoders
 import io.undertow.server.handlers.CookieImpl
 import io.undertow.util.HeaderMap
 import spock.lang.Specification
 
+import static com.stehno.ersatz.HttpMethod.POST
+import static com.stehno.ersatz.HttpMethod.PUT
 import static io.undertow.util.HttpString.tryFromString
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.startsWith
 
 class UnmatchedRequestReportSpec extends Specification {
 
@@ -31,16 +35,43 @@ class UnmatchedRequestReportSpec extends Specification {
         request.query('selected', 'one', 'two')
         request.query('id', '1002')
 
-        List<Request> expectations = [
-            GroovyMock(Request) { r ->
-
-            }
+        List<ErsatzRequest> expectations = [
+            new ErsatzRequest(POST, equalTo('/alpha/foo'), new ResponseEncoders()),
+            new ErsatzRequest(PUT, startsWith('/alpha/bar'), new ResponseEncoders()).protocol('HTTPS')
         ]
 
         when:
         String string = new UnmatchedRequestReport(request, expectations).toString()
 
         then:
-        println string
+        string == '''            # Unmatched Request
+            
+            HTTP GET /alpha/foo ? selected=[one, two], id=[1002]
+            Headers:
+             - alpha: [bravo-1, bravo-2]
+             - charlie: [delta]
+             - Content-Type: [text/plain]
+            Cookies:
+             - ident (null, null): asdfasdfasdf
+            Character-Encoding: UTF-8
+            Content-type: text/plain
+            Content-Length: 1234
+            Content:
+              [84, 104, 105, 115, 32, 105, 115, 32, 115, 111, 109, 101, 32, 116, 101, 120, 116, 32, 99, 111, 110, 116, 101, 110, 116]
+            
+            # Expectations
+            
+            Expectation 0 (2 matchers):
+              X HTTP method matches <POST>
+              ✓ Path matches "/alpha/foo"
+              (2 matchers: 1 matched, 1 failed)
+            
+            Expectation 1 (3 matchers):
+              X HTTP method matches <PUT>
+              X Path matches a string starting with "/alpha/bar"
+              X Protocol matches equalToIgnoringCase("HTTPS")
+              (3 matchers: 0 matched, 3 failed)
+              
+        '''.stripIndent()
     }
 }

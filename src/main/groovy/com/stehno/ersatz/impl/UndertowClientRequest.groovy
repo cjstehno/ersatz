@@ -143,6 +143,6 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Override
     String getContentType() {
-        exchange.requestHeaders.get(CONTENT_TYPE_HEADER).first
+        exchange.requestHeaders.get(CONTENT_TYPE_HEADER)?.first
     }
 }

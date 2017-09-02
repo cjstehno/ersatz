@@ -188,7 +188,6 @@ class ErsatzRequest implements Request {
      * @return true if the incoming request matches the configured request
      */
     boolean matches(final ClientRequest clientRequest) {
-        // FIXME: need a way to denote what actually failed (matcher description?)
         matchers.every { m ->
             m.matches(clientRequest)
         }
@@ -196,7 +195,8 @@ class ErsatzRequest implements Request {
 
     /**
      * Used to retrieve the configured matchers in the request.
-     * @return
+     *
+     * @return an immutable list of the configured matchers.
      */
     List<RequestMatcher> getRequestMatchers(){
         matchers.asImmutable()

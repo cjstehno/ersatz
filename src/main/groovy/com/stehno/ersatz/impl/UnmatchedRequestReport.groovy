@@ -1,51 +1,82 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.Request
-import groovy.text.GStringTemplateEngine
-import groovy.text.Template
-import groovy.text.TemplateEngine
-import groovy.transform.CompileStatic
+import groovy.transform.Memoized
 
 /**
- * FIXME: document
+ * Helper object used to build and render a report of the unmatched request and the configured expectations.
  */
-@CompileStatic
 class UnmatchedRequestReport {
 
-    private final Template requestTemplate
-    private final Template expectationTemplate
     private final ClientRequest request
-    private final List<Request> expectations
+    private final List<ErsatzRequest> expectations
 
-    UnmatchedRequestReport(final ClientRequest request, final List<Request> expectations) {
+    UnmatchedRequestReport(final ClientRequest request, final List<ErsatzRequest> expectations) {
         this.request = request
         this.expectations = expectations
-
-        TemplateEngine engine = new GStringTemplateEngine()
-        requestTemplate = engine.createTemplate(UnmatchedRequestReport.getResource('/client-request-template.txt'))
-        expectationTemplate = engine.createTemplate(UnmatchedRequestReport.getResource('/expectation-template.txt'))
     }
 
+    @Memoized(maxCacheSize = 1, protectedCacheSize = 1)
+    String toString() {
+        StringBuilder out = new StringBuilder()
 
-    @Override String toString() {
-        """
-# Unmatched Request:
+        out.append('# Unmatched Request\n\n')
 
-${clientRequestToString(request)}
+        String query = request.queryParams.collect { k, v -> "$k=$v" }.join(', ')
+        out.append("${request.protocol} ${request.method} ${request.path} ? $query\n")
 
-# Expected Requests:
-        
-        """.stripIndent()
-    }
+        if (request.headers) {
+            out.append 'Headers:\n'
+            request.headers.each { h ->
+                out.append " - ${h.headerName}: ${h.toArray()}\n"
+            }
+        }
 
-    // TODO: consider pulling this out into a helper object used by both impls (?)
-    // ClientRequest is an interface with two very different implementations - doing to String here for now
-    private String clientRequestToString(final ClientRequest cr) {
-        requestTemplate.make(cr: cr)
-    }
+        if (request.cookies) {
+            out.append 'Cookies:\n'
+            request.cookies.each { n, c ->
+                out.append " - ${n} (${c.domain}, ${c.path}): ${c.value}\n"
+            }
+        }
 
-    private String requestToString(final Request req) {
-        expectationTemplate.make(req: req)
+        if (request.characterEncoding) {
+            out.append "Character-Encoding: ${request.characterEncoding}\n"
+        }
+
+        if (request.contentType) {
+            out.append "Content-type: ${request.contentType}\n"
+        }
+
+        if (request.contentLength > 0) {
+            out.append "Content-Length: ${request.contentLength}\n"
+        }
+
+        if (request.body) {
+            out.append "Content:\n"
+            out.append request.body ? "  ${request.body}\n" : '  <empty>\n'
+        }
+
+        out.append('\n# Expectations\n\n')
+
+        expectations.eachWithIndex { ErsatzRequest req, int index ->
+            int count = req.requestMatchers.size()
+
+            out.append "Expectation $index ($count matchers):\n"
+
+            int failed = 0
+            req.requestMatchers.each { RequestMatcher matcher ->
+                boolean matches = matcher.matches(request)
+                if (matches) {
+                    out.append "  ✓ ${matcher}\n"
+                } else {
+                    out.append "  X ${matcher}\n"
+                    failed++
+                }
+            }
+
+            out.append "  ($count matchers: ${count - failed} matched, $failed failed)\n\n"
+        }
+
+        out.toString()
     }
 }

@@ -65,6 +65,22 @@ interface ServerConfig {
     ServerConfig autoStart()
 
     /**
+     * Causes the mismatched request reports to be generated as console output, rather than only in the logging.
+     *
+     * @return a reference to the server being configured
+     */
+    ServerConfig reportToConsole()
+
+    /**
+     * Used to toggle the console output of mismatched request reports. By default they are only rendered in the logging. A value of <code>true</code>
+     * will cause the report to be output on the console as well.
+     *
+     * @param toConsole whether or not the report should also be written to the console
+     * @return a reference to the server being configured
+     */
+    ServerConfig reportToConsole(boolean toConsole)
+
+    /**
      * Allows configuration of an external HTTPS keystore with the given location and password. By default, if this is not specified an internally
      * provided keystore will be used for HTTPS certification. See the User Guide for details about configuring your own keystore.
      *
