@@ -339,6 +339,7 @@ class ErsatzServer implements ServerConfig {
      * Used to start the HTTP server for test interactions. This method should be called after configuration of expectations and before the test
      * interactions are executed against the server.
      */
+    @SuppressWarnings(['Println', 'DuplicateNumberLiteral'])
     void start() {
         if (!started) {
             Undertow.Builder builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST)
@@ -363,7 +364,10 @@ class ErsatzServer implements ServerConfig {
                                     send(exchange, currentResponse)
 
                                 } else {
-                                    UnmatchedRequestReport report = new UnmatchedRequestReport(clientRequest, expectations.requests as List<ErsatzRequest>)
+                                    UnmatchedRequestReport report = new UnmatchedRequestReport(
+                                        clientRequest,
+                                        expectations.requests as List<ErsatzRequest>
+                                    )
 
                                     log.warn report.toString()
 

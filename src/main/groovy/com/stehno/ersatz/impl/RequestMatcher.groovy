@@ -134,7 +134,7 @@ class RequestMatcher extends BaseMatcher<ClientRequest> {
             cr.cookies.collectEntries { name, cookie ->
                 [name, bake(cookie)]
             }
-        }, "Cookies match ")
+        }, 'Cookies match ')
     }
 
     /**
@@ -183,5 +183,3 @@ class RequestMatcher extends BaseMatcher<ClientRequest> {
         matcher.describeTo(description)
     }
 }
-
-

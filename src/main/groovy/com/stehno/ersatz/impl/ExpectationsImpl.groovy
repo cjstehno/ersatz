@@ -302,7 +302,7 @@ class ExpectationsImpl implements Expectations {
      *
      * @return the list of request expectations
      */
-    List<Request> getRequests(){
+    List<Request> getRequests() {
         requests.asImmutable()
     }
 

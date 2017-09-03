@@ -198,7 +198,7 @@ class ErsatzRequest implements Request {
      *
      * @return an immutable list of the configured matchers.
      */
-    List<RequestMatcher> getRequestMatchers(){
+    List<RequestMatcher> getRequestMatchers() {
         matchers.asImmutable()
     }
 

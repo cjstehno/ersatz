@@ -85,7 +85,7 @@ class ErsatzResponse implements Response {
 
     @Override
     Response header(final String name, final String... value) {
-        List<String> list = headers.computeIfAbsent(name, { k -> [] })
+        List<String> list = headers.computeIfAbsent(name) { k -> [] }
         value.each { String v ->
             list << v
         }
@@ -93,7 +93,7 @@ class ErsatzResponse implements Response {
     }
 
     Response header(final String name, final List<String> values) {
-        List<String> list = headers.computeIfAbsent(name, { k -> [] })
+        List<String> list = headers.computeIfAbsent(name) { k -> [] }
         list.addAll(values)
         this
     }
