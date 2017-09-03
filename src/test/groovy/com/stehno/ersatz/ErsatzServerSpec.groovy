@@ -280,7 +280,7 @@ class ErsatzServerSpec extends Specification {
 
         then:
         connection.contentType == MESSAGE_HTTP.value
-        connection.inputStream.text.readLines()*.trim() == """TRACE /info?data=foo+barHTTP/1.1
+        connection.inputStream.text.readLines()*.trim() == """TRACE /info?data=foo+bar HTTP/1.1
             Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
             Connection: keep-alive
             User-Agent: Java/${System.getProperty('java.version')}

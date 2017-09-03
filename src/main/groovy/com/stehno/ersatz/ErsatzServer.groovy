@@ -470,12 +470,11 @@ class ErsatzServer implements ServerConfig {
         exchange.responseSender.send(responseContent)
     }
 
-    @CompileStatic(SKIP)
     private void applyPorts() {
-        actualHttpPort = server.channels[0].channel.localAddress.holder.port
+        actualHttpPort = (server.listenerInfo[0].address as InetSocketAddress).port
 
         if (httpsEnabled) {
-            actualHttpsPort = server.channels[1].tcpServer.channel.localAddress.holder.port
+            actualHttpsPort = (server.listenerInfo[1].address as InetSocketAddress).port
         }
     }
 
