@@ -15,13 +15,18 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.proxy.ErsatzProxy
+import com.stehno.ersatz.proxy.ProxyConfig
+import com.stehno.ersatz.proxy.ProxyExpectations
 import spock.lang.Specification
+
+import java.util.function.Consumer
 
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
 class ErsatzProxySpec extends Specification {
 
-    def 'http proxy'() {
+    def 'http proxy (closure)'() {
         setup:
         ErsatzServer ersatzServer = new ErsatzServer({
             autoStart()
@@ -31,8 +36,13 @@ class ErsatzProxySpec extends Specification {
             }
         })
 
-        ErsatzProxy ersatzProxy = new ErsatzProxy(ersatzServer.httpUrl)
-        ersatzProxy.start()
+        ErsatzProxy ersatzProxy = new ErsatzProxy({
+            target ersatzServer.httpUrl
+            expectations {
+                get '/'
+                get '/foo'
+            }
+        })
 
         when:
         String text = "${ersatzProxy.url}".toURL().text
@@ -48,6 +58,50 @@ class ErsatzProxySpec extends Specification {
 
         and:
         ersatzServer.verify()
+        ersatzProxy.verify()
+
+        cleanup:
+        ersatzProxy.stop()
+        ersatzServer.stop()
+    }
+
+    def 'http proxy (consumer)'() {
+        setup:
+        ErsatzServer ersatzServer = new ErsatzServer({
+            autoStart()
+            expectations {
+                get('/').called(1).responds().code(200).content('Hello', TEXT_PLAIN)
+                get('/foo').called(1).responds().code(200).content('Foo!', TEXT_PLAIN)
+            }
+        })
+
+        ErsatzProxy ersatzProxy = new ErsatzProxy(new Consumer<ProxyConfig>() {
+            @Override void accept(final ProxyConfig config) {
+                config.target ersatzServer.httpUrl
+                config.expectations(new Consumer<ProxyExpectations>() {
+                    @Override void accept(final ProxyExpectations expect) {
+                        expect.get '/'
+                        expect.get '/foo'
+                    }
+                })
+            }
+        })
+
+        when:
+        String text = "${ersatzProxy.url}".toURL().text
+
+        then:
+        text == 'Hello'
+
+        when:
+        text = "${ersatzProxy.url}/foo".toURL().text
+
+        then:
+        text == 'Foo!'
+
+        and:
+        ersatzServer.verify()
+        ersatzProxy.verify()
 
         cleanup:
         ersatzProxy.stop()
