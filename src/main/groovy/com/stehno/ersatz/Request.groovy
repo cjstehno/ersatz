@@ -35,7 +35,9 @@ interface Request {
     Request protocol(final String proto)
 
     /**
-     * Specifies a request header to be configured in the expected request.
+     * Specifies a request header to be configured in the expected request. The value specified must match one of the request header values mapped to
+     * the expected header name. Multiple header specification may be added to the expectations; each specified header must exist in the request. If
+     * an OR-style match is desired a Hamcrest Matcher should be specified (see the <code>header(String, Matcher<Iterable<String>>)</code> method).
      *
      * @param name the header name
      * @param value the header value
@@ -44,16 +46,18 @@ interface Request {
     Request header(final String name, final String value)
 
     /**
-     * Specifies a request header matcher to be configured in the expected request.
+     * Specifies a request header matcher to be configured in the expected request. If multiple matchers are defined with this method, each must
+     * match successfully for the request to be matched.
      *
      * @param name the header name
      * @param matcher the header value matcher
      * @return this request
      */
-    Request header(final String name, final Matcher<String> matcher)
+    Request header(final String name, final Matcher<Iterable<String>> matcher)
 
     /**
-     * Specifies request headers as a Map of names to values to be configured in the expected request. The map values may be Strings or Matchers.
+     * Specifies request headers as a Map of names to values to be configured in the expected request. The map values may be <code>String</code> or
+     * <code>Matcher<Iterable<String>></code> instances.
      *
      * @param heads the map of headers
      * @return this request

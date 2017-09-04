@@ -15,26 +15,14 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.Expectations
-import com.stehno.ersatz.Request
-import com.stehno.ersatz.RequestDecoders
-import com.stehno.ersatz.RequestWithContent
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.*
 import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.HttpMethod.ANY
-import static com.stehno.ersatz.HttpMethod.DELETE
-import static com.stehno.ersatz.HttpMethod.GET
-import static com.stehno.ersatz.HttpMethod.HEAD
-import static com.stehno.ersatz.HttpMethod.OPTIONS
-import static com.stehno.ersatz.HttpMethod.PATCH
-import static com.stehno.ersatz.HttpMethod.POST
-import static com.stehno.ersatz.HttpMethod.PUT
+import static com.stehno.ersatz.HttpMethod.*
 import static org.hamcrest.Matchers.equalTo
 
 /**
@@ -55,7 +43,7 @@ class ExpectationsImpl implements Expectations {
     /**
      * Removes all expectation configuration, but does not modify global encoders or decoders.
      */
-    void clear(){
+    void clear() {
         requests.clear()
     }
 
@@ -310,6 +298,15 @@ class ExpectationsImpl implements Expectations {
     }
 
     /**
+     * Retrieves an immutable list of the stored request expectations.
+     *
+     * @return the list of request expectations
+     */
+    List<Request> getRequests() {
+        requests.asImmutable()
+    }
+
+    /**
      * Used to verify that all request expectations have been called the expected number of times.
      *
      * @return a value of true if all requests are verified
@@ -340,7 +337,7 @@ class ExpectationsImpl implements Expectations {
         request
     }
 
-    private static Matcher<String> pathMatcher(final String path){
+    private static Matcher<String> pathMatcher(final String path) {
         path == '*' ? Matchers.any(String) : equalTo(path)
     }
 }
