@@ -108,6 +108,7 @@ class ErsatzServer implements ServerConfig {
      *
      * @param consumer the configuration consumer
      */
+    @SuppressWarnings('ThisReferenceEscapesConstructor')
     ErsatzServer(final Consumer<ServerConfig> consumer) {
         consumer.accept(this)
     }

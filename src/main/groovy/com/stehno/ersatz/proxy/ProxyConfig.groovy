@@ -22,7 +22,7 @@ import java.util.function.Consumer
 /**
  * Configuration DSL interface for the ErsatzProxy server.
  */
-@CompileStatic
+@CompileStatic @SuppressWarnings('ConfusingMethodName')
 interface ProxyConfig {
 
     /**
