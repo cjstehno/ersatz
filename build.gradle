@@ -99,10 +99,6 @@ artifacts {
     archives shadowJar
 }
 
-//FIXME: test publishing to local
-//ensure that safe jar works in httpbuilder
-//test publishing to bintray/maven central
-
 publishing {
     publications {
         ersatzPublication(MavenPublication) {
@@ -248,3 +244,6 @@ shadowJar {
     relocate 'org.apache.commons.fileupload', 'ersatz.fileupload'
     relocate 'org.apache.commons.io', 'ersatz.io'
 }
+
+// FIXME: there is an issue with the cookie test in httpb
+// FIXME: test publishing to bintray/maven central
