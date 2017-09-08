@@ -90,6 +90,8 @@ interface Response {
      */
     Response cookie(final String name, final String value)
 
+    need to be able to define cookie properties in the 
+
     /**
      * Used to add multiple cookies to the response, with the provided names and values.
      *

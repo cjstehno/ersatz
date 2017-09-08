@@ -446,6 +446,43 @@ class ErsatzServerSpec extends Specification {
         ersatzServer.verify()
     }
 
+    def 'baking cookies'(){
+        setup:
+        ersatzServer.expectations {
+            get('/setkermit').called(1).responder {
+                content('ok', TEXT_PLAIN)
+                cookie('kermit', 'frog; path=/showkermit')
+            }
+
+            get('/showkermit').cookie('kermit', { Cookie c->
+                c.path.startsWith('frog')
+            }).called(1).responder {
+                content('ok', TEXT_PLAIN)
+                cookie('miss', 'piggy; path=/')
+                cookie('fozzy', 'bear; path=/some/deep/path')
+            }
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(
+            new okhttp3.Request.Builder().get().url(url('/setkermit')).build()
+        ).execute()
+
+        then:
+        response.body().string() == 'ok'
+
+        when:
+        response = client.newCall(
+            new okhttp3.Request.Builder().get().url(url('/showkermit')).addHeader('Cookie','kermit=frog; path=/showkermit').build()
+        ).execute()
+
+        then:
+        response.body().string() == 'ok'
+
+        and:
+        ersatzServer.verify()
+    }
+
     private String url(final String path) {
         "http://localhost:${ersatzServer.httpPort}${path}"
     }
