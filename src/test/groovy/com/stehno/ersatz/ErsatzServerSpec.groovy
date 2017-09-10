@@ -32,6 +32,7 @@ import java.util.function.Consumer
 
 import static MultipartResponseContent.multipart
 import static com.stehno.ersatz.ContentType.*
+import static com.stehno.ersatz.CookieMatcher.cookieMatcher
 import static com.stehno.ersatz.HttpMethod.*
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
 import static org.hamcrest.Matchers.startsWith
@@ -441,6 +442,52 @@ class ErsatzServerSpec extends Specification {
 
         then:
         response.code() == 404
+
+        and:
+        ersatzServer.verify()
+    }
+
+    def 'baking cookies'() {
+        setup:
+        ersatzServer.expectations {
+            get('/setkermit').called(1).responder {
+                content('ok', TEXT_PLAIN)
+                cookie('kermit', Cookie.cookie {
+                    value 'frog'
+                    path '/showkermit'
+                })
+            }
+
+            get('/showkermit').cookie('kermit', cookieMatcher {
+                value startsWith('frog')
+            }).called(1).responder {
+                content('ok', TEXT_PLAIN)
+                cookie('miss', Cookie.cookie {
+                    value 'piggy'
+                    path '/'
+                })
+                cookie('fozzy', Cookie.cookie {
+                    value 'bear'
+                    path '/some/deep/path'
+                })
+            }
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(
+            new okhttp3.Request.Builder().get().url(url('/setkermit')).build()
+        ).execute()
+
+        then:
+        response.body().string() == 'ok'
+
+        when:
+        response = client.newCall(
+            new okhttp3.Request.Builder().get().url(url('/showkermit')).addHeader('Cookie', 'kermit=frog; path=/showkermit').build()
+        ).execute()
+
+        then:
+        response.body().string() == 'ok'
 
         and:
         ersatzServer.verify()

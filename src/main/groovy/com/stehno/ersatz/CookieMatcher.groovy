@@ -239,7 +239,7 @@ class CookieMatcher extends BaseMatcher<Cookie> {
 
     @Override
     void describeTo(final Description description) {
-        description.appendText('CookieMatcher: ')
+        description.appendText('Cookie matching ')
 
         matchers.each { field, matcher ->
             description.appendText("${field}(")

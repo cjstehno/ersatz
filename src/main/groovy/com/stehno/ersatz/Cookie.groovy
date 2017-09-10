@@ -22,7 +22,7 @@ import groovy.transform.ToString
 import java.util.function.Consumer
 
 /**
- * Ersatz abstraction of a request cookie. See also the <code>CookieMatcher</code>.
+ * Ersatz abstraction of a request or response cookie. See also the <code>CookieMatcher</code>.
  */
 @CompileStatic @EqualsAndHashCode @ToString(includeNames = true)
 @SuppressWarnings('ConfusingMethodName')
