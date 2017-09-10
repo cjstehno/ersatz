@@ -239,12 +239,12 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
 
     @Override
     void describeTo(final Description description) {
-<span class="nc" id="L242">        description.appendText('CookieMatcher: ')</span>
+<span class="fc" id="L242">        description.appendText('Cookie matching ')</span>
 
-<span class="nc" id="L244">        matchers.each { field, matcher -&gt;</span>
-<span class="nc" id="L245">            description.appendText(&quot;${field}(&quot;)</span>
-<span class="nc" id="L246">            matcher.describeTo(description)</span>
-<span class="nc" id="L247">            description.appendText(') ')</span>
+<span class="fc" id="L244">        matchers.each { field, matcher -&gt;</span>
+<span class="fc" id="L245">            description.appendText(&quot;${field}(&quot;)</span>
+<span class="fc" id="L246">            matcher.describeTo(description)</span>
+<span class="pc" id="L247">            description.appendText(') ')</span>
         }
     }
 }

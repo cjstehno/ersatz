@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzMatchers.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz</a> &gt; <span class="el_source">ErsatzMatchers.groovy</span></div><h1>ErsatzMatchers.groovy</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2017 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz
+
+import groovy.transform.CompileStatic
+import org.hamcrest.BaseMatcher
+import org.hamcrest.Description
+import org.hamcrest.Matcher
+
+/**
+ * Some reusable Hamcrest matchers useful in Ersatz expectations.
+ */
+@CompileStatic
+class ErsatzMatchers {
+
+    /**
+     * The provided matcher must match at least one element of the target collection (as Iterable).
+     *
+     * @param matcher the matcher to be wrapped
+     * @return the wrapping matcher
+     */
+    static &lt;T&gt; Matcher&lt;Iterable&lt;T&gt;&gt; collectionContainsMatch(final Matcher&lt;T&gt; matcher) {
+<span class="pc" id="L36">        new CollectionContainsMatchMatcher&lt;T&gt;(matcher: matcher)</span>
+    }
+
+    /**
+     * The provided value must match at least one of the elements in the target collection (as Iterable).
+     *
+     * @param value the value
+     * @return the resulting matcher
+     */
+    static &lt;T&gt; Matcher&lt;Iterable&lt;T&gt;&gt; collectionContains(final T value) {
+<span class="pc" id="L46">        new CollectionContainsValueMatcher&lt;T&gt;(value: value)</span>
+    }
+
+    @CompileStatic
+    private static class CollectionContainsMatchMatcher&lt;T&gt; extends BaseMatcher&lt;Iterable&lt;T&gt;&gt; {
+
+        Matcher&lt;T&gt; matcher
+
+        @Override
+        boolean matches(final Object item) {
+<span class="pc bfc" id="L56" title="All 2 branches covered.">            (item as Iterable&lt;T&gt;)?.any { s -&gt;</span>
+<span class="pc" id="L57">                matcher.matches(s)</span>
+            }
+        }
+
+        @Override
+        void describeTo(Description description) {
+<span class="fc" id="L63">            description.appendText('A collection matching ')</span>
+<span class="fc" id="L64">            description.appendDescriptionOf(matcher)</span>
+        }
+    }
+
+    @CompileStatic
+    private static class CollectionContainsValueMatcher&lt;T&gt; extends BaseMatcher&lt;Iterable&lt;T&gt;&gt; {
+
+        T value
+
+        @Override
+        boolean matches(final Object item) {
+<span class="pc bfc" id="L75" title="All 2 branches covered.">            (item as Iterable&lt;T&gt;)?.contains(value)</span>
+        }
+
+        @Override
+        void describeTo(Description description) {
+<span class="nc" id="L80">            description.appendText(&quot;A collection containing the value '$value'&quot;)</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

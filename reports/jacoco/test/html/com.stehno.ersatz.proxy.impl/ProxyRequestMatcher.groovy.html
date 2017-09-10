@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProxyRequestMatcher.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.proxy.impl</a> &gt; <span class="el_source">ProxyRequestMatcher.groovy</span></div><h1>ProxyRequestMatcher.groovy</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2017 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.proxy.impl
+
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.HttpMethod
+import groovy.transform.CompileStatic
+import groovy.transform.TupleConstructor
+import org.hamcrest.BaseMatcher
+import org.hamcrest.Description
+import org.hamcrest.Matcher
+
+/**
+ * Hamcrest Matcher implementation for matching an incoming HTTP request with the configured matcher conditions.
+ */
+@CompileStatic @TupleConstructor
+class ProxyRequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
+
+    /**
+     * The configured HTTP method matcher.
+     */
+    final Matcher&lt;HttpMethod&gt; methodMatcher
+
+    /**
+     * The configured path matcher.
+     */
+    final Matcher&lt;String&gt; pathMatcher
+
+    private int count = 0
+
+    /**
+     * Used to retrieve the number of times this matcher has been matched.
+     *
+     * @return the number of matches
+     */
+    int getMatchCount() {
+<span class="pc" id="L50">        count</span>
+    }
+
+    @Override
+    boolean matches(final Object item) {
+<span class="fc" id="L55">        ClientRequest clientRequest = item as ClientRequest</span>
+<span class="fc bfc" id="L56" title="All 4 branches covered.">        boolean matched = methodMatcher.matches(clientRequest.method) &amp;&amp; pathMatcher.matches(clientRequest.path)</span>
+
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (matched) {</span>
+<span class="fc" id="L59">            count++</span>
+        }
+
+<span class="pc" id="L62">        matched</span>
+    }
+
+    @Override
+    void describeTo(final Description description) {
+<span class="nc" id="L67">        description.appendText('A proxied request for ')</span>
+<span class="nc" id="L68">        description.appendDescriptionOf(methodMatcher)</span>
+<span class="nc" id="L69">        description.appendText(': ')</span>
+<span class="nc" id="L70">        description.appendDescriptionOf(pathMatcher)</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

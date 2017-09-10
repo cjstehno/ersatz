@@ -22,7 +22,7 @@ import groovy.transform.ToString
 import java.util.function.Consumer
 
 /**
- * Ersatz abstraction of a request cookie. See also the &lt;code&gt;CookieMatcher&lt;/code&gt;.
+ * Ersatz abstraction of a request or response cookie. See also the &lt;code&gt;CookieMatcher&lt;/code&gt;.
  */
 @CompileStatic @EqualsAndHashCode @ToString(includeNames = true)
 @SuppressWarnings('ConfusingMethodName')
@@ -57,9 +57,9 @@ class Cookie {
      * @return the configured cookie
      */
     static Cookie cookie(final Consumer&lt;Cookie&gt; consumer) {
-<span class="nc" id="L60">        Cookie cookie = new Cookie()</span>
-<span class="nc" id="L61">        consumer.accept(cookie)</span>
-<span class="nc" id="L62">        cookie</span>
+<span class="fc" id="L60">        Cookie cookie = new Cookie()</span>
+<span class="fc" id="L61">        consumer.accept(cookie)</span>
+<span class="pc" id="L62">        cookie</span>
     }
 
     /**
@@ -80,8 +80,8 @@ class Cookie {
      * @return this cookie
      */
     Cookie comment(final String comment) {
-<span class="nc" id="L83">        this.comment = comment</span>
-<span class="nc" id="L84">        this</span>
+<span class="fc" id="L83">        this.comment = comment</span>
+<span class="pc" id="L84">        this</span>
     }
 
     /**
@@ -91,8 +91,8 @@ class Cookie {
      * @return this cookie
      */
     Cookie domain(final String domain) {
-<span class="nc" id="L94">        this.domain = domain</span>
-<span class="nc" id="L95">        this</span>
+<span class="fc" id="L94">        this.domain = domain</span>
+<span class="pc" id="L95">        this</span>
     }
 
     /**
@@ -102,8 +102,8 @@ class Cookie {
      * @return this cookie
      */
     Cookie path(final String path) {
-<span class="nc" id="L105">        this.path = path</span>
-<span class="nc" id="L106">        this</span>
+<span class="fc" id="L105">        this.path = path</span>
+<span class="pc" id="L106">        this</span>
     }
 
     /**
@@ -113,8 +113,8 @@ class Cookie {
      * @return this cookie
      */
     Cookie version(final int version) {
-<span class="nc" id="L116">        this.version = version</span>
-<span class="nc" id="L117">        this</span>
+<span class="fc" id="L116">        this.version = version</span>
+<span class="pc" id="L117">        this</span>
     }
 
     /**
@@ -124,8 +124,8 @@ class Cookie {
      * @return this cookie
      */
     Cookie httpOnly(final boolean httpOnly) {
-<span class="nc" id="L127">        this.httpOnly = httpOnly</span>
-<span class="nc" id="L128">        this</span>
+<span class="fc" id="L127">        this.httpOnly = httpOnly</span>
+<span class="pc" id="L128">        this</span>
     }
 
     /**
@@ -135,8 +135,8 @@ class Cookie {
      * @return this cookie
      */
     Cookie maxAge(final Integer maxAge) {
-<span class="nc" id="L138">        this.maxAge = maxAge</span>
-<span class="nc" id="L139">        this</span>
+<span class="fc" id="L138">        this.maxAge = maxAge</span>
+<span class="pc" id="L139">        this</span>
     }
 
     /**
@@ -146,8 +146,8 @@ class Cookie {
      * @return this cookie
      */
     Cookie secure(final boolean secure) {
-<span class="nc" id="L149">        this.secure = secure</span>
-<span class="nc" id="L150">        this</span>
+<span class="fc" id="L149">        this.secure = secure</span>
+<span class="pc" id="L150">        this</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProxyExpectationsImpl.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.proxy.impl</a> &gt; <span class="el_source">ProxyExpectationsImpl.groovy</span></div><h1>ProxyExpectationsImpl.groovy</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2017 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.proxy.impl
+
+import com.stehno.ersatz.HttpMethod
+import com.stehno.ersatz.proxy.ProxyExpectations
+import groovy.transform.CompileStatic
+import org.hamcrest.Matcher
+import org.hamcrest.Matchers
+
+/**
+ * Implementation of the ProxyExpectations interface providing configuration of the expected requests to the proxy server.
+ */
+@CompileStatic @SuppressWarnings('MethodCount')
+class ProxyExpectationsImpl implements ProxyExpectations {
+
+    /**
+     * Used to retrieve the configured proxy request matchers.
+     */
+<span class="fc" id="L33">    final List&lt;ProxyRequestMatcher&gt; matchers = []</span>
+
+    @Override
+    ProxyExpectations any(String path) {
+<span class="pc" id="L37">        matches Matchers.any(HttpMethod), path</span>
+    }
+
+    @Override
+    ProxyExpectations any(Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L42">        matches Matchers.any(HttpMethod), matcher</span>
+    }
+
+    @Override
+    ProxyExpectations get(String path) {
+<span class="pc" id="L47">        matches Matchers.equalTo(HttpMethod.GET), path</span>
+    }
+
+    @Override
+    ProxyExpectations get(Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L52">        matches Matchers.equalTo(HttpMethod.GET), matcher</span>
+    }
+
+    @Override
+    ProxyExpectations head(String path) {
+<span class="pc" id="L57">        matches Matchers.equalTo(HttpMethod.HEAD), path</span>
+    }
+
+    @Override
+    ProxyExpectations head(Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L62">        matches Matchers.equalTo(HttpMethod.HEAD), matcher</span>
+    }
+
+    @Override
+    ProxyExpectations put(String path) {
+<span class="pc" id="L67">        matches Matchers.equalTo(HttpMethod.PUT), path</span>
+    }
+
+    @Override
+    ProxyExpectations put(Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L72">        matches Matchers.equalTo(HttpMethod.PUT), matcher</span>
+    }
+
+    @Override
+    ProxyExpectations post(String path) {
+<span class="pc" id="L77">        matches Matchers.equalTo(HttpMethod.POST), path</span>
+    }
+
+    @Override
+    ProxyExpectations post(Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L82">        matches Matchers.equalTo(HttpMethod.POST), matcher</span>
+    }
+
+    @Override
+    ProxyExpectations delete(String path) {
+<span class="pc" id="L87">        matches Matchers.equalTo(HttpMethod.DELETE), path</span>
+    }
+
+    @Override
+    ProxyExpectations delete(Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L92">        matches Matchers.equalTo(HttpMethod.DELETE), matcher</span>
+    }
+
+    @Override
+    ProxyExpectations patch(String path) {
+<span class="pc" id="L97">        matches Matchers.equalTo(HttpMethod.PATCH), path</span>
+    }
+
+    @Override
+    ProxyExpectations patch(Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L102">        matches Matchers.equalTo(HttpMethod.PATCH), matcher</span>
+    }
+
+    @Override
+    ProxyExpectations options(String path) {
+<span class="pc" id="L107">        matches Matchers.equalTo(HttpMethod.OPTIONS), path</span>
+    }
+
+    @Override
+    ProxyExpectations options(Matcher&lt;String&gt; matcher) {
+<span class="pc" id="L112">        matches Matchers.equalTo(HttpMethod.OPTIONS), matcher</span>
+    }
+
+    private ProxyExpectations matches(final Matcher&lt;HttpMethod&gt; method, final String path) {
+<span class="pc" id="L116">        matches method, Matchers.equalTo(path)</span>
+    }
+
+    private ProxyExpectations matches(final Matcher&lt;HttpMethod&gt; method, final Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L120">        matchers &lt;&lt; new ProxyRequestMatcher(method, matcher)</span>
+<span class="pc" id="L121">        this</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

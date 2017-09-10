@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProxyConfigImpl.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.proxy.impl</a> &gt; <span class="el_source">ProxyConfigImpl.groovy</span></div><h1>ProxyConfigImpl.groovy</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2017 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.proxy.impl
+
+import com.stehno.ersatz.proxy.ProxyConfig
+import com.stehno.ersatz.proxy.ProxyExpectations
+import com.stehno.vanilla.Affirmations
+import groovy.transform.CompileStatic
+
+import java.util.function.Consumer
+
+/**
+ * Implementation of the ProxyConfig interface providing the configuration functionality for the proxy server.
+ */
+@CompileStatic
+class ProxyConfigImpl implements ProxyConfig {
+
+    /**
+     * The configured auto-start value.
+     */
+    boolean autoStart = true
+
+    /**
+     * The configured target URI value.
+     */
+    URI targetUri
+
+    /**
+     * The configured expectations.
+     */
+<span class="fc" id="L44">    final ProxyExpectationsImpl expectations = new ProxyExpectationsImpl()</span>
+
+    private static final String ONLY_HTTP_MESSAGE = 'Only HTTP targets are supported at this time.'
+    private static final String HTTP = 'http'
+
+    @Override
+    ProxyConfig autoStart(boolean auto) {
+<span class="fc" id="L51">        autoStart = auto</span>
+<span class="pc" id="L52">        this</span>
+    }
+
+    @Override
+    ProxyConfig target(String value) {
+<span class="fc" id="L57">        Affirmations.affirm value.toLowerCase().startsWith('http://'), ONLY_HTTP_MESSAGE</span>
+<span class="fc" id="L58">        targetUri = value.toURI()</span>
+<span class="pc" id="L59">        this</span>
+    }
+
+    @Override
+    ProxyConfig target(URI value) {
+<span class="fc" id="L64">        Affirmations.affirm value.scheme.equalsIgnoreCase(HTTP), ONLY_HTTP_MESSAGE</span>
+<span class="fc" id="L65">        targetUri = value</span>
+<span class="pc" id="L66">        this</span>
+    }
+
+    @Override
+    ProxyConfig target(URL value) {
+<span class="fc" id="L71">        Affirmations.affirm value.protocol.equalsIgnoreCase(HTTP), ONLY_HTTP_MESSAGE</span>
+<span class="fc" id="L72">        targetUri = value.toURI()</span>
+<span class="pc" id="L73">        this</span>
+    }
+
+    @Override
+    ProxyConfig expectations(@DelegatesTo(ProxyExpectations) Closure closure) {
+<span class="fc" id="L78">        closure.delegate = expectations</span>
+<span class="fc" id="L79">        closure.call()</span>
+<span class="pc" id="L80">        this</span>
+    }
+
+    @Override
+    ProxyConfig expectations(Consumer&lt;ProxyExpectations&gt; consumer) {
+<span class="fc" id="L85">        consumer.accept(expectations)</span>
+<span class="pc" id="L86">        this</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
