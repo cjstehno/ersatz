@@ -46,7 +46,7 @@ interface ServerConfig {
      * configuration methods. With this setting enabled, any other calls to the <code>start()</code> method are ignored. Further configuration is
      * allowed.
      *
-     * Auto-start is disabled by default.
+     * Auto-start is enabled by default.
      *
      * @param autoStart whether or not auto-start is enabled
      * @return a reference to the server being configured
@@ -58,10 +58,13 @@ interface ServerConfig {
      * methods. With this setting enabled, any other calls to the <code>start()</code> method are ignored. Further configuration is
      * allowed.
      *
-     * Auto-start is disabled by default.
+     * Auto-start is enabled by default.
+     *
+     * @deprecated this method is no longer needed and will be removed in 2.0 since auto-start is enabled by default.
      *
      * @return a reference to the server being configured
      */
+    @Deprecated
     ServerConfig autoStart()
 
     /**

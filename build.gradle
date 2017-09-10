@@ -142,13 +142,12 @@ jacocoTestReport {
 license {
     header rootProject.file('config/license_header.txt')
 
-    // Toggle ignoreFailures to false to enable license-checking that will fail the build
-    ignoreFailures true
+    ignoreFailures false
 
     ext.name = 'Christopher J. Stehno'
     ext.year = Calendar.instance.get(Calendar.YEAR)
 
-    excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks'])
+    excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks', '**/*.jpg'])
 }
 
 bintray {

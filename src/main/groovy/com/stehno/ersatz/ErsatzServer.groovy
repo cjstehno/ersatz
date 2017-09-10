@@ -81,7 +81,7 @@ class ErsatzServer implements ServerConfig {
     private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders)
     private Undertow server
     private boolean httpsEnabled
-    private boolean autoStartEnabled
+    private boolean autoStartEnabled = true
     private boolean started
     private boolean mismatchToConsole
     private URL keystoreLocation
@@ -129,14 +129,19 @@ class ErsatzServer implements ServerConfig {
      * configuration methods. With this setting enabled, any other calls to the <code>start()</code> method are ignored. Further configuration is
      * allowed.
      *
-     * Auto-start is disabled by default.
+     * Auto-start is enabled by default.
      *
-     * @param autoStart whether or not auto-start is enabled (true if not specified)
+     * @param autoStart whether or not auto-start is enabled
      * @return a reference to the server being configured
      */
-    ServerConfig autoStart(boolean autoStart = true) {
+    ServerConfig autoStart(boolean autoStart) {
         autoStartEnabled = autoStart
         this
+    }
+
+    @Deprecated
+    ServerConfig autoStart() {
+        autoStart(true)
     }
 
     /**

@@ -29,7 +29,6 @@ class ErsatzProxySpec extends Specification {
     def 'http proxy (closure)'() {
         setup:
         ErsatzServer ersatzServer = new ErsatzServer({
-            autoStart()
             expectations {
                 get('/').called(1).responds().code(200).content('Hello', TEXT_PLAIN)
                 get('/foo').called(1).responds().code(200).content('Foo!', TEXT_PLAIN)
@@ -68,7 +67,6 @@ class ErsatzProxySpec extends Specification {
     def 'http proxy (consumer)'() {
         setup:
         ErsatzServer ersatzServer = new ErsatzServer({
-            autoStart()
             expectations {
                 get('/').called(1).responds().code(200).content('Hello', TEXT_PLAIN)
                 get('/foo').called(1).responds().code(200).content('Foo!', TEXT_PLAIN)

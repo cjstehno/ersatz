@@ -42,7 +42,6 @@ class ErsatzServerSpec extends Specification {
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
 
     @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer({
-        autoStart()
         encoder MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
     })
 
@@ -332,7 +331,6 @@ class ErsatzServerSpec extends Specification {
     def 'proxied request should return proxy not original'() {
         setup:
         ErsatzServer proxyServer = new ErsatzServer({
-            autoStart()
             expectations {
                 get('/proxied').called(1).responds().content('forwarded').code(200)
             }

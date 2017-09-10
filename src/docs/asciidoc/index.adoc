@@ -177,11 +177,9 @@ defining the configurations.
 
 The third method is a simplified builder-style approach for single request method expectation-building.
 
-Once the request expectations are configured, the server must be started by calling the `ErsatzServer::start()` method. This will start the underlying
-embedded HTTP server and register the configured expectations. If the server is not started, you will receive connection errors during testing.
-
-TIP: You can set the server to start automatically after expectations are applied by adding the `autoStart()` configuration to the global configuration
-closure.
+Once the request expectations are configured, the server will automatically start unless `autoStart false` is configured. If auto-start is disabled,
+the server must be started by calling the `ErsatzServer::start()` method. This will start the underlying embedded HTTP server and register the
+configured expectations. If the server is not started, you will receive connection errors during testing.
 
 Further details about configuration options and examples can be found in the Configuration section of this user guide.
 
@@ -293,22 +291,12 @@ This configuration causes the configured request expectations to require DIGEST 
 === Auto-Start
 
 An auto-start feature is provided to allow the server to start automatically once expectations have been applied (e.g. after the `expectations()`
-method is called. This can simplify the code by removing explicit calls to the `start()` method. There are two configuration methods for the
-auto-start feature. The first one, is simply a means of enabling auto-start:
+method is called. This can simplify the code by removing explicit calls to the `start()` method. This auto-start feature may be disabled using:
 
 [source,groovy]
 ----
 def ersatz = new ErsatzServer({
-    autoStart()
-})
-----
-
-while the second provides a way to toggle the feature on (`true`) or off (`false`):
-
-[source,groovy]
-----
-def ersatz = new ErsatzServer({
-    autoStart true
+    autoStart false
 })
 ----
 
@@ -1043,7 +1031,6 @@ expectation configuration will be done on a standard `ErsatzServer` instance at 
 [source,groovy]
 ----
 ErsatzServer ersatzServer = new ErsatzServer({
-    autoStart()
     expectations {
         get('/').called(1).responds().code(200).content('Hello', TEXT_PLAIN)
         get('/foo').called(1).responds().code(200).content('Foo!', TEXT_PLAIN)
@@ -1138,7 +1125,6 @@ import com.stehno.ersatz.MultipartRequestContent
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
 def ersatz = new ErsatzServer({
-    autoStart()
     encoder TEXT_PLAIN, File, Encoders.text
 })
 
@@ -1173,7 +1159,6 @@ import com.stehno.erstaz.ErsatzServer
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
 def ersatz = new ErsatzServer({
-    autoStart()
     encoder TEXT_PLAIN, File, Encoders.text
 })
 
@@ -1197,7 +1182,7 @@ You can use the Ersatz Server from the Kotlin programming language just as easil
 
 [source,kotlin]
 ----
-val ersatz = ErsatzServer { config -> config.autoStart() }
+val ersatz = ErsatzServer { config -> config.autoStart(true) }
 
 ersatz.expectations { expectations ->
     expectations.get("/kotlin").called(1).responder { response ->
