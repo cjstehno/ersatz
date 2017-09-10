@@ -122,10 +122,12 @@ server.expectations(expectations -> {
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Artifacts</h2>
 
-            <blockquote>Note: There is a breaking interface change between 1.5.0 and 1.5.0 - The
-                <code>Request.header(String, Matcher<<String>)</code> method was modified to be
-                <code>Request.header(String, Matcher<Iterable<String>>)</code> in order to support headers with multiple values.
-            </blockquote>
+            <hr/>
+            <p><strong>Note:</strong> There is a breaking interface change between 1.4.0 and 1.5.0 - The
+                <code>Request.header(String, Matcher&lt;String&gt;)</code> method was modified to be
+                <code>Request.header(String, Matcher&lt;Iterable&lt;String&lt;&lt;)</code> in order to support headers with multiple values.
+            </p>
+            <hr/>
 
             The Ersatz Server library is available on Bintray (JCenter) and Maven Central; it may be added to a project via Gradle dependency:
 
