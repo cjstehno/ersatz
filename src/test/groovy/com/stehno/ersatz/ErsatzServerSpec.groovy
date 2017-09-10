@@ -32,6 +32,7 @@ import java.util.function.Consumer
 
 import static MultipartResponseContent.multipart
 import static com.stehno.ersatz.ContentType.*
+import static com.stehno.ersatz.CookieMatcher.cookieMatcher
 import static com.stehno.ersatz.HttpMethod.*
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
 import static org.hamcrest.Matchers.startsWith
@@ -41,7 +42,6 @@ class ErsatzServerSpec extends Specification {
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
 
     @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer({
-        autoStart()
         encoder MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
     })
 
@@ -260,13 +260,14 @@ class ErsatzServerSpec extends Specification {
 
         then:
         connection.responseCode == 200
-        connection.headerFields['Allow'][0] == allowed
+        connection.headerFields['Allow'].size() == allowed.size()
+        connection.headerFields['Allow'].containsAll(allowed)
         !connection.inputStream.text
 
         where:
         path      || allowed
-        'options' || 'GET,POST'
-        '*'       || 'DELETE,GET,OPTIONS'
+        'options' || ['GET', 'POST']
+        '*'       || ['OPTIONS', 'GET', 'DELETE']
     }
 
     def 'TRACE sends back request'() {
@@ -279,7 +280,7 @@ class ErsatzServerSpec extends Specification {
 
         then:
         connection.contentType == MESSAGE_HTTP.value
-        connection.inputStream.text.readLines()*.trim() == """TRACE /info?data=foo+barHTTP/1.1
+        connection.inputStream.text.readLines()*.trim() == """TRACE /info?data=foo+bar HTTP/1.1
             Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
             Connection: keep-alive
             User-Agent: Java/${System.getProperty('java.version')}
@@ -330,7 +331,6 @@ class ErsatzServerSpec extends Specification {
     def 'proxied request should return proxy not original'() {
         setup:
         ErsatzServer proxyServer = new ErsatzServer({
-            autoStart()
             expectations {
                 get('/proxied').called(1).responds().content('forwarded').code(200)
             }
@@ -354,6 +354,140 @@ class ErsatzServerSpec extends Specification {
 
         and:
         proxyServer.verify()
+        ersatzServer.verify()
+    }
+
+    def 'multiple header matching support'() {
+        setup:
+        ersatzServer.expectations {
+            get('/api/hello') {
+                called 1
+                header 'Accept', 'application/json'
+                header 'Accept', 'application/vnd.company+json'
+                responder {
+                    code 200
+                    content 'msg': 'World', 'application/vnd.company+json'
+                }
+            }
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/api/hello'))
+            .addHeader('Accept', 'application/json')
+            .addHeader('Accept', 'application/vnd.company+json')
+            .build()
+        ).execute()
+
+        then:
+        response.code() == 200
+        response.body().string() == '[msg:World]'
+
+        and:
+        ersatzServer.verify()
+    }
+
+    def 'multiple header matching support (using matcher)'() {
+        setup:
+        ersatzServer.expectations {
+            get('/api/hello') {
+                called 1
+                header 'Accept', { x ->
+                    'application/vnd.company+json' in x || 'application/json' in x
+                } as Matcher<Iterable<String>>
+                responder {
+                    code 200
+                    content 'msg': 'World', 'application/vnd.company+json'
+                }
+            }
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/api/hello'))
+            .addHeader('Accept', headerValue)
+            .build()
+        ).execute()
+
+        then:
+        response.code() == 200
+        response.body().string() == '[msg:World]'
+
+        and:
+        ersatzServer.verify()
+
+        where:
+        headerValue << ['application/vnd.company+json', 'application/json']
+    }
+
+    def 'multiple header matching support (expecting two headers and had one)'() {
+        setup:
+        ersatzServer.expectations {
+            get('/api/hello') {
+                called 0
+                header 'Accept', 'application/json'
+                header 'Accept', 'application/vnd.company+json'
+                responder {
+                    code 200
+                    content 'msg': 'World', 'application/vnd.company+json'
+                }
+            }
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url(url('/api/hello'))
+            .addHeader('Accept', 'application/json')
+            .build()
+        ).execute()
+
+        then:
+        response.code() == 404
+
+        and:
+        ersatzServer.verify()
+    }
+
+    def 'baking cookies'() {
+        setup:
+        ersatzServer.expectations {
+            get('/setkermit').called(1).responder {
+                content('ok', TEXT_PLAIN)
+                cookie('kermit', Cookie.cookie {
+                    value 'frog'
+                    path '/showkermit'
+                })
+            }
+
+            get('/showkermit').cookie('kermit', cookieMatcher {
+                value startsWith('frog')
+            }).called(1).responder {
+                content('ok', TEXT_PLAIN)
+                cookie('miss', Cookie.cookie {
+                    value 'piggy'
+                    path '/'
+                })
+                cookie('fozzy', Cookie.cookie {
+                    value 'bear'
+                    path '/some/deep/path'
+                })
+            }
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(
+            new okhttp3.Request.Builder().get().url(url('/setkermit')).build()
+        ).execute()
+
+        then:
+        response.body().string() == 'ok'
+
+        when:
+        response = client.newCall(
+            new okhttp3.Request.Builder().get().url(url('/showkermit')).addHeader('Cookie', 'kermit=frog; path=/showkermit').build()
+        ).execute()
+
+        then:
+        response.body().string() == 'ok'
+
+        and:
         ersatzServer.verify()
     }
 

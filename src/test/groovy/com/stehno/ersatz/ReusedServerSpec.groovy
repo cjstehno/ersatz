@@ -23,8 +23,6 @@ import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 class ReusedServerSpec extends Specification {
 
     @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer({
-        autoStart()
-
         expectations {
             get('/alpha').called(1).responds().content('alpha-response', TEXT_PLAIN)
             get('/bravo').called(2).responds().content('bravo-response', TEXT_PLAIN)

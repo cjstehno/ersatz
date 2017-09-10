@@ -20,15 +20,18 @@ import com.stehno.ersatz.Cookie
 import com.stehno.ersatz.DecodingContext
 import com.stehno.ersatz.HttpMethod
 import groovy.transform.TupleConstructor
+import org.hamcrest.BaseMatcher
+import org.hamcrest.Description
 import org.hamcrest.Matcher
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
+import static com.stehno.ersatz.ErsatzMatchers.collectionContainsMatch
 
 /**
  * Request-specific wrapper around hamcrest matchers to provide property-based matching based on request attributes.
  */
 @TupleConstructor
-class RequestMatcher {
+class RequestMatcher extends BaseMatcher<ClientRequest> {
 
     /**
      * The wrapped hamcrest matcher.
@@ -41,13 +44,18 @@ class RequestMatcher {
     Closure<Object> getter
 
     /**
+     * The matcher description for display purposes (used to prefix the embedded matcher).
+     */
+    String description
+
+    /**
      * Creates a request matcher for the protocol property value.
      *
      * @param m the hamcrest matcher for the protocol property
      * @return a configured RequestMatcher
      */
     static RequestMatcher protocol(final Matcher<String> m) {
-        new RequestMatcher(m, { ClientRequest cr -> cr.protocol })
+        new RequestMatcher(m, { ClientRequest cr -> cr.protocol }, 'Protocol matches ')
     }
 
     /**
@@ -57,7 +65,7 @@ class RequestMatcher {
      * @return a configured RequestMatcher
      */
     static RequestMatcher method(final Matcher<HttpMethod> m) {
-        new RequestMatcher(m, { ClientRequest cr -> cr.method })
+        new RequestMatcher(m, { ClientRequest cr -> cr.method }, 'HTTP method matches ')
     }
 
     /**
@@ -67,7 +75,7 @@ class RequestMatcher {
      * @return a configured RequestMatcher
      */
     static RequestMatcher path(final Matcher<String> m) {
-        new RequestMatcher(m, { ClientRequest cr -> cr.path })
+        new RequestMatcher(m, { ClientRequest cr -> cr.path }, 'Path matches ')
     }
 
     /**
@@ -77,8 +85,10 @@ class RequestMatcher {
      * @param m the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    static RequestMatcher header(final String name, final Matcher<String> m) {
-        new RequestMatcher(m, { ClientRequest cr -> cr.headers.getFirst(name) })
+    static RequestMatcher header(final String name, final Matcher<Iterable<String>> m) {
+        new RequestMatcher(m, { ClientRequest cr ->
+            cr.headers.get(name)?.toList()
+        }, "Header $name matches ")
     }
 
     /**
@@ -89,7 +99,7 @@ class RequestMatcher {
      * @return a configured RequestMatcher
      */
     static RequestMatcher query(final String name, final Matcher<Iterable<String>> m) {
-        new RequestMatcher(m, { ClientRequest cr -> cr.queryParams.get(name) as List })
+        new RequestMatcher(m, { ClientRequest cr -> cr.queryParams.get(name) as List }, "Query string $name matches ")
     }
 
     /**
@@ -103,7 +113,7 @@ class RequestMatcher {
         new RequestMatcher(m, { ClientRequest cr ->
             io.undertow.server.handlers.Cookie undertowCookie = cr.cookies.get(name)
             return undertowCookie ? bake(undertowCookie) : null
-        })
+        }, "Cookie $name matches ")
     }
 
     private static Cookie bake(final io.undertow.server.handlers.Cookie cookie) {
@@ -124,7 +134,7 @@ class RequestMatcher {
             cr.cookies.collectEntries { name, cookie ->
                 [name, bake(cookie)]
             }
-        })
+        }, 'Cookies match ')
     }
 
     /**
@@ -141,7 +151,7 @@ class RequestMatcher {
                 cr.body,
                 new DecodingContext(cr.contentLength, cr.contentType, cr.characterEncoding, decoderChain)
             )
-        })
+        }, "Body ($contentType) matches ")
     }
 
     /**
@@ -151,7 +161,7 @@ class RequestMatcher {
      * @return a configured RequestMatcher
      */
     static RequestMatcher contentType(final Matcher<String> m) {
-        header(CONTENT_TYPE_HEADER, m)
+        header(CONTENT_TYPE_HEADER, collectionContainsMatch(m))
     }
 
     /**
@@ -160,7 +170,16 @@ class RequestMatcher {
      * @param cr the client request
      * @return true if the matcher is successful
      */
-    boolean matches(final ClientRequest cr) {
-        matcher.matches(getter.call(cr))
+    @Override
+    boolean matches(final Object item) {
+        matcher.matches(getter.call(item as ClientRequest))
+    }
+
+    @Override
+    void describeTo(final Description description) {
+        if (this.description) {
+            description.appendText(this.description)
+        }
+        matcher.describeTo(description)
     }
 }

@@ -23,16 +23,9 @@ import spock.lang.Specification
 
 import static com.stehno.ersatz.HttpMethod.GET
 import static com.stehno.ersatz.HttpMethod.HEAD
-import static com.stehno.ersatz.impl.RequestMatcher.body
-import static com.stehno.ersatz.impl.RequestMatcher.contentType
-import static com.stehno.ersatz.impl.RequestMatcher.cookie
-import static com.stehno.ersatz.impl.RequestMatcher.header
-import static com.stehno.ersatz.impl.RequestMatcher.method
-import static com.stehno.ersatz.impl.RequestMatcher.path
-import static com.stehno.ersatz.impl.RequestMatcher.query
-import static org.hamcrest.Matchers.contains
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.startsWith
+import static com.stehno.ersatz.ErsatzMatchers.collectionContains
+import static com.stehno.ersatz.impl.RequestMatcher.*
+import static org.hamcrest.Matchers.*
 
 class RequestMatcherSpec extends Specification {
 
@@ -69,7 +62,7 @@ class RequestMatcherSpec extends Specification {
 
     def 'header'() {
         expect:
-        header('foo', equalTo('bar')).matches(cr) == result
+        header('foo', collectionContains('bar')).matches(cr) == result
 
         where:
         cr                                           || result

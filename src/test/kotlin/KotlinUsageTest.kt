@@ -8,7 +8,7 @@ import org.junit.Test
 class KotlinUsageTest {
 
     @Test fun ersatzUsage() {
-        val ersatz = ErsatzServer { config -> config.autoStart() }
+        val ersatz = ErsatzServer { config -> config.autoStart(true) }
 
         ersatz.expectations { expectations ->
             expectations.get("/kotlin").called(1).responder { response ->

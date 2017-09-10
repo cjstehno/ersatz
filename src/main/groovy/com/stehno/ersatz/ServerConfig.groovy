@@ -46,7 +46,7 @@ interface ServerConfig {
      * configuration methods. With this setting enabled, any other calls to the <code>start()</code> method are ignored. Further configuration is
      * allowed.
      *
-     * Auto-start is disabled by default.
+     * Auto-start is enabled by default.
      *
      * @param autoStart whether or not auto-start is enabled
      * @return a reference to the server being configured
@@ -58,11 +58,30 @@ interface ServerConfig {
      * methods. With this setting enabled, any other calls to the <code>start()</code> method are ignored. Further configuration is
      * allowed.
      *
-     * Auto-start is disabled by default.
+     * Auto-start is enabled by default.
+     *
+     * @deprecated this method is no longer needed and will be removed in 2.0 since auto-start is enabled by default.
      *
      * @return a reference to the server being configured
      */
+    @Deprecated
     ServerConfig autoStart()
+
+    /**
+     * Causes the mismatched request reports to be generated as console output, rather than only in the logging.
+     *
+     * @return a reference to the server being configured
+     */
+    ServerConfig reportToConsole()
+
+    /**
+     * Used to toggle the console output of mismatched request reports. By default they are only rendered in the logging. A value of <code>true</code>
+     * will cause the report to be output on the console as well.
+     *
+     * @param toConsole whether or not the report should also be written to the console
+     * @return a reference to the server being configured
+     */
+    ServerConfig reportToConsole(boolean toConsole)
 
     /**
      * Allows configuration of an external HTTPS keystore with the given location and password. By default, if this is not specified an internally

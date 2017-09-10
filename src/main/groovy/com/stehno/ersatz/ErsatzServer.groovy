@@ -21,6 +21,7 @@ import com.stehno.ersatz.auth.SimpleIdentityManager
 import com.stehno.ersatz.impl.ErsatzRequest
 import com.stehno.ersatz.impl.ExpectationsImpl
 import com.stehno.ersatz.impl.UndertowClientRequest
+import com.stehno.ersatz.impl.UnmatchedRequestReport
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.undertow.Undertow
@@ -33,7 +34,6 @@ import io.undertow.server.handlers.encoding.ContentEncodingRepository
 import io.undertow.server.handlers.encoding.DeflateEncodingProvider
 import io.undertow.server.handlers.encoding.EncodingHandler
 import io.undertow.server.handlers.encoding.GzipEncodingProvider
-import io.undertow.util.HttpString
 
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
@@ -43,6 +43,7 @@ import java.util.function.Consumer
 import java.util.function.Function
 
 import static groovy.transform.TypeCheckingMode.SKIP
+import static io.undertow.util.HttpString.tryFromString
 
 /**
  * The main entry point for configuring an Ersatz server, which allows configuring of the expectations and management of the server itself. This is
@@ -80,8 +81,9 @@ class ErsatzServer implements ServerConfig {
     private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders)
     private Undertow server
     private boolean httpsEnabled
-    private boolean autoStartEnabled
+    private boolean autoStartEnabled = true
     private boolean started
+    private boolean mismatchToConsole
     private URL keystoreLocation
     private String keystorePass = 'ersatz'
     private int actualHttpPort = UNSPECIFIED_PORT
@@ -106,6 +108,7 @@ class ErsatzServer implements ServerConfig {
      *
      * @param consumer the configuration consumer
      */
+    @SuppressWarnings('ThisReferenceEscapesConstructor')
     ErsatzServer(final Consumer<ServerConfig> consumer) {
         consumer.accept(this)
     }
@@ -126,13 +129,31 @@ class ErsatzServer implements ServerConfig {
      * configuration methods. With this setting enabled, any other calls to the <code>start()</code> method are ignored. Further configuration is
      * allowed.
      *
-     * Auto-start is disabled by default.
+     * Auto-start is enabled by default.
      *
-     * @param autoStart whether or not auto-start is enabled (true if not specified)
+     * @param autoStart whether or not auto-start is enabled
      * @return a reference to the server being configured
      */
-    ServerConfig autoStart(boolean autoStart = true) {
+    ServerConfig autoStart(boolean autoStart) {
         autoStartEnabled = autoStart
+        this
+    }
+
+    @Deprecated
+    ServerConfig autoStart() {
+        autoStart(true)
+    }
+
+    /**
+     * Used to toggle the console output of mismatched request reports. By default they are only rendered in the logging. A value of <code>true</code>
+     * will cause the report to be output on the console as well.
+     *
+     * @param toConsole whether or not the report should also be written to the console
+     * @return a reference to the server being configured
+     */
+    @Override
+    ServerConfig reportToConsole(boolean toConsole = true) {
+        mismatchToConsole = toConsole
         this
     }
 
@@ -324,6 +345,7 @@ class ErsatzServer implements ServerConfig {
      * Used to start the HTTP server for test interactions. This method should be called after configuration of expectations and before the test
      * interactions are executed against the server.
      */
+    @SuppressWarnings(['Println', 'DuplicateNumberLiteral'])
     void start() {
         if (!started) {
             Undertow.Builder builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST)
@@ -348,7 +370,16 @@ class ErsatzServer implements ServerConfig {
                                     send(exchange, currentResponse)
 
                                 } else {
-                                    log.warn 'Unmatched-Request: {}', clientRequest
+                                    UnmatchedRequestReport report = new UnmatchedRequestReport(
+                                        clientRequest,
+                                        expectations.requests as List<ErsatzRequest>
+                                    )
+
+                                    log.warn report.toString()
+
+                                    if (mismatchToConsole) {
+                                        println report
+                                    }
 
                                     exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
                                 }
@@ -374,7 +405,7 @@ class ErsatzServer implements ServerConfig {
     /**
      * Clears all configured expectations from the server. Does not affect global encoders or decoders.
      */
-    void clearExpectations(){
+    void clearExpectations() {
         expectations.clear()
     }
 
@@ -431,12 +462,28 @@ class ErsatzServer implements ServerConfig {
 
             exchange.statusCode = response.code
 
-            response.headers.each { k, v ->
-                exchange.responseHeaders.put(new HttpString(k), v)
+            response.headers.each { String k, List<String> v ->
+                v.each { String value ->
+                    exchange.responseHeaders.add(tryFromString(k), value)
+                }
             }
 
             response.cookies.each { k, v ->
-                exchange.responseCookies.put(k, new CookieImpl(k, v))
+                if (v instanceof Cookie) {
+                    Cookie ersatzCookie = v as Cookie
+                    CookieImpl cookie = new CookieImpl(k, ersatzCookie.value)
+                    cookie.path = ersatzCookie.path
+                    cookie.domain = ersatzCookie.domain
+                    cookie.maxAge = ersatzCookie.maxAge
+                    cookie.secure = ersatzCookie.secure
+                    cookie.version = ersatzCookie.version
+                    cookie.httpOnly = ersatzCookie.httpOnly
+                    cookie.setComment(ersatzCookie.comment)
+                    exchange.responseCookies.put(k, cookie)
+
+                } else {
+                    exchange.responseCookies.put(k, new CookieImpl(k, v as String))
+                }
             }
         }
 
@@ -447,12 +494,11 @@ class ErsatzServer implements ServerConfig {
         exchange.responseSender.send(responseContent)
     }
 
-    @CompileStatic(SKIP)
     private void applyPorts() {
-        actualHttpPort = server.channels[0].channel.localAddress.holder.port
+        actualHttpPort = (server.listenerInfo[0].address as InetSocketAddress).port
 
         if (httpsEnabled) {
-            actualHttpsPort = server.channels[1].tcpServer.channel.localAddress.holder.port
+            actualHttpsPort = (server.listenerInfo[1].address as InetSocketAddress).port
         }
     }
 

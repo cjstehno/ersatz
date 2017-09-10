@@ -116,9 +116,18 @@ server.expectations(expectations -> {
                 <li>Request/Response compression (gzip and/or deflate) supported.</li>
                 <li>Support for GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, and TRACE request methods.</li>
                 <li>Ability to delay the response from the server to simulate slow connections.</li>
+                <li>Provides a simple standalone proxy server for testing proxied connections.</li>
+                <li>Alternate distribution as a shadowed jar with the Undertow library repackaged to avoid collisions.</li>
             </ul>
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Artifacts</h2>
+
+            <hr/>
+            <p><strong>Note:</strong> There is a breaking interface change between 1.4.0 and 1.5.0 - The
+                <code>Request.header(String, Matcher&lt;String&gt;)</code> method was modified to be
+                <code>Request.header(String, Matcher&lt;Iterable&lt;String&lt;&lt;)</code> in order to support headers with multiple values.
+            </p>
+            <hr/>
 
             The Ersatz Server library is available on Bintray (JCenter) and Maven Central; it may be added to a project via Gradle dependency:
 

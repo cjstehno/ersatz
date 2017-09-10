@@ -63,7 +63,7 @@ interface Response {
      * @param value the header value
      * @return this response
      */
-    Response header(final String name, final String value)
+    Response header(final String name, final String... value)
 
     /**
      * Used to add multiple headers to the response.
@@ -71,7 +71,7 @@ interface Response {
      * @param headers the headers
      * @return this response
      */
-    Response headers(final Map<String, String> headers)
+    Response headers(final Map<String, Object> headers)
 
     /**
      * Shortcut method for adding values to the "Allow" header. These values will be appended to the existing header.
@@ -89,6 +89,15 @@ interface Response {
      * @return this response
      */
     Response cookie(final String name, final String value)
+
+    /**
+     * Used to add a cookie to the response.
+     *
+     * @param name the cookie name
+     * @param cookie the cookie definition
+     * @return this response
+     */
+    Response cookie(final String name, final Cookie cookie)
 
     /**
      * Used to add multiple cookies to the response, with the provided names and values.
@@ -166,14 +175,15 @@ interface Response {
      *
      * @return the response headers
      */
-    Map<String, String> getHeaders()
+    Map<String, List<String>> getHeaders()
 
     /**
-     * Used to retrieve the configured response cookies.
+     * Used to retrieve the configured response cookies. The map keys will be the cookie names, while the values will be either the cookie value as
+     * as String, or a <code>Cookie</code> object.
      *
      * @return the response cookies
      */
-    Map<String, String> getCookies()
+    Map<String, Object> getCookies()
 
     /**
      * Used to retrieve the configured response content. The content will be converted to a String based on the encoder configured for the
