@@ -1089,6 +1089,18 @@ Here are some external references and discussions about developing with Ersatz:
 
 * http://guides.grails.org/grails-mock-http-server/guide/index.html[Consume and test a third-party REST API] _(Sergio del Amo)_ - Use Ersatz, a "mock" HTTP library, for testing code dealing with HTTP requests
 
+== Shadow Jar
+
+The embedded version of Undertow used by Ersatz has caused issues with some server frameworks which also use Undertow (e.g. Grails, and Spring-boot).
+If you run into errors using the standard jar distribution, please try using the `safe` distribution, which is a shadowed jar which includes the
+Undertow library and its JBoss dependencies repackaged in the jar. You can use this version with the following coordinates:
+
+    testCompile 'com.stehno.ersatz:ersatz:1.5.0:safe@jar'
+
+Notice the `safe` classifier.
+
+NOTE: This version of the library will NOT bring any of its other dependencies with it, so you will need to ensure that you have Hamcrest and JUnit defined, if they are needed by your project.
+
 == Usage Examples
 
 This section contains some recipe-style usage examples.
