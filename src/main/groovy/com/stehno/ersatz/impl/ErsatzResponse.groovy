@@ -46,7 +46,7 @@ class ErsatzResponse implements Response {
     }
 
     private final Map<String, List<String>> headers = [:]
-    private final Map<String, String> cookies = [:]
+    private final Map<String, Object> cookies = [:]
     private Object content
     private Integer code = 200
     private long delayTime
@@ -129,6 +129,12 @@ class ErsatzResponse implements Response {
     }
 
     @Override
+    Response cookie(final String name, final Cookie cookie) {
+        cookies[name] = cookie
+        this
+    }
+
+    @Override
     Response contentType(final String contentType) {
         header(CONTENT_TYPE_HEADER, contentType)
         this
@@ -173,7 +179,7 @@ class ErsatzResponse implements Response {
     }
 
     @Override
-    Map<String, String> getCookies() {
+    Map<String, Object> getCookies() {
         cookies.asImmutable()
     }
 

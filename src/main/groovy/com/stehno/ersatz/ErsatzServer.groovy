@@ -463,7 +463,21 @@ class ErsatzServer implements ServerConfig {
             }
 
             response.cookies.each { k, v ->
-                exchange.responseCookies.put(k, new CookieImpl(k, v))
+                if (v instanceof Cookie) {
+                    Cookie ersatzCookie = v as Cookie
+                    CookieImpl cookie = new CookieImpl(k, ersatzCookie.value)
+                    cookie.path = ersatzCookie.path
+                    cookie.domain = ersatzCookie.domain
+                    cookie.maxAge = ersatzCookie.maxAge
+                    cookie.secure = ersatzCookie.secure
+                    cookie.version = ersatzCookie.version
+                    cookie.httpOnly = ersatzCookie.httpOnly
+                    cookie.setComment(ersatzCookie.comment)
+                    exchange.responseCookies.put(k, cookie)
+
+                } else {
+                    exchange.responseCookies.put(k, new CookieImpl(k, v as String))
+                }
             }
         }
 

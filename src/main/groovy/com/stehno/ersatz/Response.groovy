@@ -90,7 +90,14 @@ interface Response {
      */
     Response cookie(final String name, final String value)
 
-    need to be able to define cookie properties in the 
+    /**
+     * Used to add a cookie to the response.
+     *
+     * @param name the cookie name
+     * @param cookie the cookie definition
+     * @return this response
+     */
+    Response cookie(final String name, final Cookie cookie)
 
     /**
      * Used to add multiple cookies to the response, with the provided names and values.
@@ -171,11 +178,12 @@ interface Response {
     Map<String, List<String>> getHeaders()
 
     /**
-     * Used to retrieve the configured response cookies.
+     * Used to retrieve the configured response cookies. The map keys will be the cookie names, while the values will be either the cookie value as
+     * as String, or a <code>Cookie</code> object.
      *
      * @return the response cookies
      */
-    Map<String, String> getCookies()
+    Map<String, Object> getCookies()
 
     /**
      * Used to retrieve the configured response content. The content will be converted to a String based on the encoder configured for the
