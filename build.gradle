@@ -204,7 +204,7 @@ tasks.site.dependsOn = ['build', 'groovydoc', 'jacocoTestReport', 'asciidoctor']
 
 task publishSite(type: GradleBuild, group: 'Publishing', description: 'Publishes the documentation web site.', dependsOn: ['site']) {
     buildFile = 'publish.gradle'
-    tasks = ['publishGhPages']
+    tasks = ['gitPublishPush']
 }
 
 compileKotlin {
