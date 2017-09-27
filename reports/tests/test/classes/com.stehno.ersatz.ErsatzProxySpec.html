@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.223s</div>
+<div class="counter">0.185s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,12 +79,12 @@
 </thead>
 <tr>
 <td class="success">http proxy (closure)</td>
-<td>0.160s</td>
+<td>0.137s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">http proxy (consumer)</td>
-<td>0.063s</td>
+<td>0.048s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -92,88 +92,90 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>17:45:26.269 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@36247b52
-17:45:26.271 [XNIO-3 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-1', selector sun.nio.ch.EPollSelectorImpl@27072e65
-17:45:26.271 [XNIO-3 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-2', selector sun.nio.ch.EPollSelectorImpl@4960991c
-17:45:26.271 [XNIO-3 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-3', selector sun.nio.ch.EPollSelectorImpl@549ebba3
-17:45:26.272 [XNIO-3 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-4', selector sun.nio.ch.EPollSelectorImpl@2b650f0c
-17:45:26.272 [XNIO-3 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-5', selector sun.nio.ch.EPollSelectorImpl@1d6dac67
-17:45:26.272 [XNIO-3 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-6', selector sun.nio.ch.EPollSelectorImpl@527a536e
-17:45:26.272 [XNIO-3 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-7', selector sun.nio.ch.EPollSelectorImpl@25cce8d6
-17:45:26.272 [XNIO-3 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-8', selector sun.nio.ch.EPollSelectorImpl@606e1821
-17:45:26.273 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-17:45:26.274 [XNIO-3 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 Accept', selector sun.nio.ch.EPollSelectorImpl@184ef9aa
-17:45:26.333 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@449a13fa
-17:45:26.336 [XNIO-4 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-2', selector sun.nio.ch.EPollSelectorImpl@2d6165f2
-17:45:26.336 [XNIO-4 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-1', selector sun.nio.ch.EPollSelectorImpl@1ec16eb7
-17:45:26.337 [XNIO-4 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-3', selector sun.nio.ch.EPollSelectorImpl@73584bd8
-17:45:26.337 [XNIO-4 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-4', selector sun.nio.ch.EPollSelectorImpl@63c79aa5
-17:45:26.337 [XNIO-4 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-5', selector sun.nio.ch.EPollSelectorImpl@1c13851d
-17:45:26.337 [XNIO-4 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-6', selector sun.nio.ch.EPollSelectorImpl@7eca2bc7
-17:45:26.339 [XNIO-4 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-7', selector sun.nio.ch.EPollSelectorImpl@137149ff
-17:45:26.340 [XNIO-4 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-8', selector sun.nio.ch.EPollSelectorImpl@6042f6a5
-17:45:26.340 [XNIO-4 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 Accept', selector sun.nio.ch.EPollSelectorImpl@3c29d3ac
-17:45:26.340 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-17:45:26.381 [XNIO-4 I/O-8] DEBUG io.undertow.server.handlers.proxy - Sending request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} to target localhost/127.0.0.1:43333 for exchange HttpServerExchange{ GET / request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:36567]} response {}}
-17:45:26.387 [XNIO-4 I/O-8] DEBUG io.undertow.server.handlers.proxy - Sent request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} to target 127.0.0.1 for exchange HttpServerExchange{ GET / request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:36567]} response {}}
-17:45:26.391 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientExchange - request terminated for request to localhost/127.0.0.1:43333 /
-17:45:26.391 [XNIO-3 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET / (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], X-Forwarded-Server=[localhost], User-Agent=[Java/1.8.0_131], Connection=[keep-alive], X-Forwarded-Proto=[http], X-Forwarded-Port=[36567], X-Forwarded-For=[127.0.0.1], Host=[localhost:36567], X-Forwarded-Host=[localhost]}, cookies=[:]): &lt;empty&gt; }
-17:45:26.392 [XNIO-3 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): Hello
-17:45:26.404 [XNIO-4 I/O-8] DEBUG io.undertow.server.handlers.proxy - Received response ClientResponse{responseHeaders={Connection=[keep-alive], Content-Type=[text/plain], Content-Length=[5], Date=[Sun, 10 Sep 2017 22:45:26 GMT]}, responseCode=200, status='OK', protocol=HTTP/1.1} for request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} for exchange HttpServerExchange{ GET / request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:36567]} response {}}
-17:45:26.411 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientExchange - response terminated for request to localhost/127.0.0.1:43333 /
-17:45:26.411 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientConnection - exchange complete in connection to localhost/127.0.0.1:43333
-17:45:26.414 [XNIO-4 I/O-8] DEBUG io.undertow.server.handlers.proxy - Sending request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} to target localhost/127.0.0.1:43333 for exchange HttpServerExchange{ GET /foo request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:36567]} response {}}
-17:45:26.414 [XNIO-4 I/O-8] DEBUG io.undertow.server.handlers.proxy - Sent request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} to target 127.0.0.1 for exchange HttpServerExchange{ GET /foo request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:36567]} response {}}
-17:45:26.414 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientExchange - request terminated for request to localhost/127.0.0.1:43333 /foo
-17:45:26.415 [XNIO-3 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], X-Forwarded-Server=[localhost], User-Agent=[Java/1.8.0_131], Connection=[keep-alive], X-Forwarded-Proto=[http], X-Forwarded-Port=[36567], X-Forwarded-For=[127.0.0.1], Host=[localhost:36567], X-Forwarded-Host=[localhost]}, cookies=[:]): &lt;empty&gt; }
-17:45:26.416 [XNIO-3 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): Foo!
-17:45:26.416 [XNIO-4 I/O-8] DEBUG io.undertow.server.handlers.proxy - Received response ClientResponse{responseHeaders={Connection=[keep-alive], Content-Type=[text/plain], Content-Length=[4], Date=[Sun, 10 Sep 2017 22:45:26 GMT]}, responseCode=200, status='OK', protocol=HTTP/1.1} for request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} for exchange HttpServerExchange{ GET /foo request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:36567]} response {}}
-17:45:26.416 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientExchange - response terminated for request to localhost/127.0.0.1:43333 /foo
-17:45:26.416 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientConnection - exchange complete in connection to localhost/127.0.0.1:43333
-17:45:26.420 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@449a13fa
-17:45:26.421 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@36247b52
-17:45:26.421 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientConnection - connection to localhost/127.0.0.1:43333 closed
-17:45:26.425 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@55481ae1
-17:45:26.429 [XNIO-5 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-1', selector sun.nio.ch.EPollSelectorImpl@7e4b4314
-17:45:26.431 [XNIO-5 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-2', selector sun.nio.ch.EPollSelectorImpl@1c97b0b5
-17:45:26.433 [XNIO-5 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-3', selector sun.nio.ch.EPollSelectorImpl@53203cc9
-17:45:26.433 [XNIO-5 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-6', selector sun.nio.ch.EPollSelectorImpl@2f426f11
-17:45:26.433 [XNIO-5 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-5', selector sun.nio.ch.EPollSelectorImpl@2cfc758a
-17:45:26.433 [XNIO-5 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-4', selector sun.nio.ch.EPollSelectorImpl@57499079
-17:45:26.433 [XNIO-5 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-7', selector sun.nio.ch.EPollSelectorImpl@ac10ab0
-17:45:26.433 [XNIO-5 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-8', selector sun.nio.ch.EPollSelectorImpl@f0cd6d6
-17:45:26.443 [XNIO-5 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 Accept', selector sun.nio.ch.EPollSelectorImpl@63e55942
-17:45:26.443 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-17:45:26.455 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@41495ac6
-17:45:26.459 [XNIO-6 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-1', selector sun.nio.ch.EPollSelectorImpl@5a2c155b
-17:45:26.459 [XNIO-6 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-3', selector sun.nio.ch.EPollSelectorImpl@31dddc28
-17:45:26.459 [XNIO-6 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-2', selector sun.nio.ch.EPollSelectorImpl@50925986
-17:45:26.463 [XNIO-6 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-4', selector sun.nio.ch.EPollSelectorImpl@249328a1
-17:45:26.464 [XNIO-6 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-5', selector sun.nio.ch.EPollSelectorImpl@a619c25
-17:45:26.464 [XNIO-6 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-6', selector sun.nio.ch.EPollSelectorImpl@9462557
-17:45:26.467 [XNIO-6 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-7', selector sun.nio.ch.EPollSelectorImpl@c77c67d
-17:45:26.468 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-17:45:26.468 [XNIO-6 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-8', selector sun.nio.ch.EPollSelectorImpl@79e17104
-17:45:26.468 [XNIO-6 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 Accept', selector sun.nio.ch.EPollSelectorImpl@3cfe6d7f
-17:45:26.470 [XNIO-6 I/O-4] DEBUG io.undertow.server.handlers.proxy - Sending request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} to target localhost/127.0.0.1:39889 for exchange HttpServerExchange{ GET / request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:40401]} response {}}
-17:45:26.470 [XNIO-6 I/O-4] DEBUG io.undertow.server.handlers.proxy - Sent request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} to target 127.0.0.1 for exchange HttpServerExchange{ GET / request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:40401]} response {}}
-17:45:26.470 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientExchange - request terminated for request to localhost/127.0.0.1:39889 /
-17:45:26.470 [XNIO-5 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET / (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], X-Forwarded-Server=[localhost], User-Agent=[Java/1.8.0_131], Connection=[keep-alive], X-Forwarded-Proto=[http], X-Forwarded-Port=[40401], X-Forwarded-For=[127.0.0.1], Host=[localhost:40401], X-Forwarded-Host=[localhost]}, cookies=[:]): &lt;empty&gt; }
-17:45:26.471 [XNIO-5 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): Hello
-17:45:26.472 [XNIO-6 I/O-4] DEBUG io.undertow.server.handlers.proxy - Received response ClientResponse{responseHeaders={Connection=[keep-alive], Content-Type=[text/plain], Content-Length=[5], Date=[Sun, 10 Sep 2017 22:45:26 GMT]}, responseCode=200, status='OK', protocol=HTTP/1.1} for request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} for exchange HttpServerExchange{ GET / request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:40401]} response {}}
-17:45:26.472 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientExchange - response terminated for request to localhost/127.0.0.1:39889 /
-17:45:26.472 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientConnection - exchange complete in connection to localhost/127.0.0.1:39889
-17:45:26.476 [XNIO-6 I/O-4] DEBUG io.undertow.server.handlers.proxy - Sending request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} to target localhost/127.0.0.1:39889 for exchange HttpServerExchange{ GET /foo request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:40401]} response {}}
-17:45:26.476 [XNIO-6 I/O-4] DEBUG io.undertow.server.handlers.proxy - Sent request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} to target 127.0.0.1 for exchange HttpServerExchange{ GET /foo request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:40401]} response {}}
-17:45:26.476 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientExchange - request terminated for request to localhost/127.0.0.1:39889 /foo
-17:45:26.480 [XNIO-5 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], X-Forwarded-Server=[localhost], User-Agent=[Java/1.8.0_131], Connection=[keep-alive], X-Forwarded-Proto=[http], X-Forwarded-Port=[40401], X-Forwarded-For=[127.0.0.1], Host=[localhost:40401], X-Forwarded-Host=[localhost]}, cookies=[:]): &lt;empty&gt; }
-17:45:26.481 [XNIO-5 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): Foo!
-17:45:26.482 [XNIO-6 I/O-4] DEBUG io.undertow.server.handlers.proxy - Received response ClientResponse{responseHeaders={Connection=[keep-alive], Content-Type=[text/plain], Content-Length=[4], Date=[Sun, 10 Sep 2017 22:45:26 GMT]}, responseCode=200, status='OK', protocol=HTTP/1.1} for request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} for exchange HttpServerExchange{ GET /foo request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:40401]} response {}}
-17:45:26.482 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientExchange - response terminated for request to localhost/127.0.0.1:39889 /foo
-17:45:26.482 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientConnection - exchange complete in connection to localhost/127.0.0.1:39889
-17:45:26.483 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@41495ac6
-17:45:26.483 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientConnection - connection to localhost/127.0.0.1:39889 closed
-17:45:26.483 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@55481ae1
+<pre>10:24:33.083 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@2ad7defe
+10:24:33.085 [XNIO-3 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-1', selector sun.nio.ch.EPollSelectorImpl@ec6ed1
+10:24:33.085 [XNIO-3 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-3', selector sun.nio.ch.EPollSelectorImpl@25f3df78
+10:24:33.085 [XNIO-3 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-4', selector sun.nio.ch.EPollSelectorImpl@3aa78aab
+10:24:33.085 [XNIO-3 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-2', selector sun.nio.ch.EPollSelectorImpl@3602740
+10:24:33.085 [XNIO-3 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-5', selector sun.nio.ch.EPollSelectorImpl@438d58eb
+10:24:33.085 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+10:24:33.086 [XNIO-3 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-7', selector sun.nio.ch.EPollSelectorImpl@71d5c87d
+10:24:33.086 [XNIO-3 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 Accept', selector sun.nio.ch.EPollSelectorImpl@22e06eba
+10:24:33.086 [XNIO-3 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-6', selector sun.nio.ch.EPollSelectorImpl@29314a9d
+10:24:33.086 [XNIO-3 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-8', selector sun.nio.ch.EPollSelectorImpl@5d5436a0
+10:24:33.132 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@444e2d25
+10:24:33.134 [XNIO-4 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-1', selector sun.nio.ch.EPollSelectorImpl@440bc8fc
+10:24:33.134 [XNIO-4 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-2', selector sun.nio.ch.EPollSelectorImpl@15e5cce2
+10:24:33.134 [XNIO-4 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-4', selector sun.nio.ch.EPollSelectorImpl@114d918a
+10:24:33.134 [XNIO-4 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-3', selector sun.nio.ch.EPollSelectorImpl@276be0b0
+10:24:33.134 [XNIO-4 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-7', selector sun.nio.ch.EPollSelectorImpl@22cf9d7a
+10:24:33.134 [XNIO-4 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-6', selector sun.nio.ch.EPollSelectorImpl@3fb4fcd8
+10:24:33.134 [XNIO-4 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-5', selector sun.nio.ch.EPollSelectorImpl@6f699d7a
+10:24:33.134 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+10:24:33.134 [XNIO-4 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 Accept', selector sun.nio.ch.EPollSelectorImpl@7a65c267
+10:24:33.134 [XNIO-4 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-8', selector sun.nio.ch.EPollSelectorImpl@3ef0f4a4
+10:24:33.172 [XNIO-4 I/O-8] DEBUG io.undertow.server.handlers.proxy - Sending request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} to target localhost/127.0.0.1:39703 for exchange HttpServerExchange{ GET / request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:37647]} response {}}
+10:24:33.177 [XNIO-4 I/O-8] DEBUG io.undertow.server.handlers.proxy - Sent request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} to target 127.0.0.1 for exchange HttpServerExchange{ GET / request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:37647]} response {}}
+10:24:33.182 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientExchange - request terminated for request to localhost/127.0.0.1:39703 /
+10:24:33.182 [XNIO-3 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET / (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], X-Forwarded-Server=[localhost], User-Agent=[Java/1.8.0_131], Connection=[keep-alive], X-Forwarded-Proto=[http], X-Forwarded-Port=[37647], X-Forwarded-For=[127.0.0.1], Host=[localhost:37647], X-Forwarded-Host=[localhost]}, cookies=[:]): &lt;empty&gt; }
+10:24:33.183 [XNIO-3 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): Hello
+10:24:33.194 [XNIO-4 I/O-8] DEBUG io.undertow.server.handlers.proxy - Received response ClientResponse{responseHeaders={Connection=[keep-alive], Content-Type=[text/plain], Content-Length=[5], Date=[Wed, 27 Sep 2017 15:24:33 GMT]}, responseCode=200, status='OK', protocol=HTTP/1.1} for request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} for exchange HttpServerExchange{ GET / request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:37647]} response {}}
+10:24:33.199 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientExchange - response terminated for request to localhost/127.0.0.1:39703 /
+10:24:33.199 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientConnection - exchange complete in connection to localhost/127.0.0.1:39703
+10:24:33.202 [XNIO-4 I/O-8] DEBUG io.undertow.server.handlers.proxy - Sending request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} to target localhost/127.0.0.1:39703 for exchange HttpServerExchange{ GET /foo request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:37647]} response {}}
+10:24:33.203 [XNIO-4 I/O-8] DEBUG io.undertow.server.handlers.proxy - Sent request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} to target 127.0.0.1 for exchange HttpServerExchange{ GET /foo request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:37647]} response {}}
+10:24:33.203 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientExchange - request terminated for request to localhost/127.0.0.1:39703 /foo
+10:24:33.203 [XNIO-3 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], X-Forwarded-Server=[localhost], User-Agent=[Java/1.8.0_131], Connection=[keep-alive], X-Forwarded-Proto=[http], X-Forwarded-Port=[37647], X-Forwarded-For=[127.0.0.1], Host=[localhost:37647], X-Forwarded-Host=[localhost]}, cookies=[:]): &lt;empty&gt; }
+10:24:33.204 [XNIO-3 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): Foo!
+10:24:33.204 [XNIO-4 I/O-8] DEBUG io.undertow.server.handlers.proxy - Received response ClientResponse{responseHeaders={Connection=[keep-alive], Content-Type=[text/plain], Content-Length=[4], Date=[Wed, 27 Sep 2017 15:24:33 GMT]}, responseCode=200, status='OK', protocol=HTTP/1.1} for request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} for exchange HttpServerExchange{ GET /foo request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:37647]} response {}}
+10:24:33.205 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientExchange - response terminated for request to localhost/127.0.0.1:39703 /foo
+10:24:33.205 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientConnection - exchange complete in connection to localhost/127.0.0.1:39703
+10:24:33.208 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@444e2d25
+10:24:33.208 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@2ad7defe
+10:24:33.209 [XNIO-4 I/O-8] DEBUG io.undertow.client - Connection to localhost/127.0.0.1:39703 was closed by the target server
+10:24:33.209 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientConnection - close called on connection to localhost/127.0.0.1:39703
+10:24:33.210 [XNIO-4 I/O-8] DEBUG io.undertow.client.http.HttpClientConnection - connection to localhost/127.0.0.1:39703 closed
+10:24:33.215 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@71a4548e
+10:24:33.216 [XNIO-5 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-1', selector sun.nio.ch.EPollSelectorImpl@62ae3e48
+10:24:33.218 [XNIO-5 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-2', selector sun.nio.ch.EPollSelectorImpl@3c4fea3c
+10:24:33.218 [XNIO-5 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-3', selector sun.nio.ch.EPollSelectorImpl@4569c235
+10:24:33.225 [XNIO-5 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-4', selector sun.nio.ch.EPollSelectorImpl@76c07701
+10:24:33.225 [XNIO-5 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-5', selector sun.nio.ch.EPollSelectorImpl@11b38ffa
+10:24:33.225 [XNIO-5 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-6', selector sun.nio.ch.EPollSelectorImpl@63b8a4ab
+10:24:33.226 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+10:24:33.226 [XNIO-5 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-8', selector sun.nio.ch.EPollSelectorImpl@19b56588
+10:24:33.226 [XNIO-5 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-7', selector sun.nio.ch.EPollSelectorImpl@39211d3e
+10:24:33.226 [XNIO-5 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 Accept', selector sun.nio.ch.EPollSelectorImpl@3d3a135
+10:24:33.237 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@6f80c8d7
+10:24:33.239 [XNIO-6 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-1', selector sun.nio.ch.EPollSelectorImpl@13799708
+10:24:33.239 [XNIO-6 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-2', selector sun.nio.ch.EPollSelectorImpl@65f223e4
+10:24:33.239 [XNIO-6 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-3', selector sun.nio.ch.EPollSelectorImpl@4ab2a92c
+10:24:33.239 [XNIO-6 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-4', selector sun.nio.ch.EPollSelectorImpl@34511512
+10:24:33.240 [XNIO-6 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-6', selector sun.nio.ch.EPollSelectorImpl@5d6914bb
+10:24:33.240 [XNIO-6 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-7', selector sun.nio.ch.EPollSelectorImpl@3951851f
+10:24:33.240 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+10:24:33.240 [XNIO-6 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 Accept', selector sun.nio.ch.EPollSelectorImpl@36127a50
+10:24:33.240 [XNIO-6 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-8', selector sun.nio.ch.EPollSelectorImpl@3b382731
+10:24:33.240 [XNIO-6 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-5', selector sun.nio.ch.EPollSelectorImpl@2f0ecceb
+10:24:33.245 [XNIO-6 I/O-4] DEBUG io.undertow.server.handlers.proxy - Sending request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} to target localhost/127.0.0.1:46093 for exchange HttpServerExchange{ GET / request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:42811]} response {}}
+10:24:33.245 [XNIO-6 I/O-4] DEBUG io.undertow.server.handlers.proxy - Sent request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} to target 127.0.0.1 for exchange HttpServerExchange{ GET / request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:42811]} response {}}
+10:24:33.246 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientExchange - request terminated for request to localhost/127.0.0.1:46093 /
+10:24:33.246 [XNIO-5 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET / (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], X-Forwarded-Server=[localhost], User-Agent=[Java/1.8.0_131], Connection=[keep-alive], X-Forwarded-Proto=[http], X-Forwarded-Port=[42811], X-Forwarded-For=[127.0.0.1], Host=[localhost:42811], X-Forwarded-Host=[localhost]}, cookies=[:]): &lt;empty&gt; }
+10:24:33.247 [XNIO-5 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): Hello
+10:24:33.248 [XNIO-6 I/O-4] DEBUG io.undertow.server.handlers.proxy - Received response ClientResponse{responseHeaders={Connection=[keep-alive], Content-Type=[text/plain], Content-Length=[5], Date=[Wed, 27 Sep 2017 15:24:33 GMT]}, responseCode=200, status='OK', protocol=HTTP/1.1} for request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} for exchange HttpServerExchange{ GET / request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:42811]} response {}}
+10:24:33.248 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientExchange - response terminated for request to localhost/127.0.0.1:46093 /
+10:24:33.248 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientConnection - exchange complete in connection to localhost/127.0.0.1:46093
+10:24:33.250 [XNIO-6 I/O-4] DEBUG io.undertow.server.handlers.proxy - Sending request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} to target localhost/127.0.0.1:46093 for exchange HttpServerExchange{ GET /foo request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:42811]} response {}}
+10:24:33.250 [XNIO-6 I/O-4] DEBUG io.undertow.server.handlers.proxy - Sent request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} to target 127.0.0.1 for exchange HttpServerExchange{ GET /foo request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:42811]} response {}}
+10:24:33.251 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientExchange - request terminated for request to localhost/127.0.0.1:46093 /foo
+10:24:33.252 [XNIO-5 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /foo (query=[:], headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], X-Forwarded-Server=[localhost], User-Agent=[Java/1.8.0_131], Connection=[keep-alive], X-Forwarded-Proto=[http], X-Forwarded-Port=[42811], X-Forwarded-For=[127.0.0.1], Host=[localhost:42811], X-Forwarded-Host=[localhost]}, cookies=[:]): &lt;empty&gt; }
+10:24:33.254 [XNIO-5 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): Foo!
+10:24:33.255 [XNIO-6 I/O-4] DEBUG io.undertow.server.handlers.proxy - Received response ClientResponse{responseHeaders={Connection=[keep-alive], Content-Type=[text/plain], Content-Length=[4], Date=[Wed, 27 Sep 2017 15:24:33 GMT]}, responseCode=200, status='OK', protocol=HTTP/1.1} for request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} for exchange HttpServerExchange{ GET /foo request {Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/1.8.0_131], Host=[localhost:42811]} response {}}
+10:24:33.255 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientExchange - response terminated for request to localhost/127.0.0.1:46093 /foo
+10:24:33.255 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientConnection - exchange complete in connection to localhost/127.0.0.1:46093
+10:24:33.255 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@6f80c8d7
+10:24:33.256 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@71a4548e
+10:24:33.256 [XNIO-6 I/O-4] DEBUG io.undertow.client.http.HttpClientConnection - connection to localhost/127.0.0.1:46093 closed
 </pre>
 </span>
 </div>
@@ -185,7 +187,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 4.1</a> at Sep 10, 2017 5:45:31 PM</p>
+<a href="http://www.gradle.org">Gradle 4.2</a> at Sep 27, 2017 10:24:38 AM</p>
 </div>
 </div>
 </body>
