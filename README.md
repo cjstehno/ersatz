@@ -32,6 +32,8 @@ For Maven:
         <version>1.5.0</version>
         <scope>test</scope>
     </dependency>
+    
+Alternately, there is a `safe` (shadowed) version of the library available, which is useful in cases where you already have a version of Undertow in use (to avoid version collisions). See the [Shadow Jar](http://stehno.com/ersatz/asciidoc/html5/#_shadow_jar) section of the User Guide for more information.
 
 ## Build Instructions
 
