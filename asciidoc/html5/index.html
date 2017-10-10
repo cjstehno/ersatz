@@ -624,8 +624,8 @@ for rich unit testing, which is what you were trying to do in the first place.</
 </div>
 <div class="paragraph">
 <p>Ersatz is written in Groovy 2.4.x and requires a Java 8 VM due to its use of the modern functional libraries; however, the Ersatz library is written
-such that it may be used with Groovy or standard Java without pain or feature-loss. With that in mind, the expectation configuration allows two main
-forms, a Java-style chained builder, and a Groovy DSL, both of which may be used interchangeably or together, if you are using Groovy.</p>
+such that it may be used with Groovy or standard Java (or even Kotlin) without pain or feature-loss. With that in mind, the expectation configuration
+allows two main forms, a Java-style chained builder, and a Groovy DSL, both of which may be used interchangeably or together, if you are using Groovy.</p>
 </div>
 <div class="paragraph">
 <p>Ersatz is developed with testing in mind. It does not favor any specific testing framework, but it does work well with both the JUnit and Spock
@@ -676,17 +676,15 @@ methods:</p>
         <span class="key">setup</span>:
         ErsatzServer ersatz = <span class="keyword">new</span> ErsatzServer()
 
-        server.expectations {
+        ersatz.expectations {
             get(<span class="string"><span class="delimiter">'</span><span class="content">/say/hello</span><span class="delimiter">'</span></span>){
-                called equalTo(<span class="integer">1</span>)
+                called <span class="integer">1</span>
                 query <span class="string"><span class="delimiter">'</span><span class="content">name</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">Ersatz</span><span class="delimiter">'</span></span>
                 responder {
                     content <span class="string"><span class="delimiter">'</span><span class="content">Hello Ersatz</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">text/plain</span><span class="delimiter">'</span></span>
                 }
             }
         }
-
-        ersatz.start()
 
         <span class="key">when</span>:
         <span class="predefined-type">String</span> result = <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">${</span>ersatz.serverUrl<span class="inline-delimiter">}</span></span><span class="content">/say/hello?name=Ersatz</span><span class="delimiter">&quot;</span></span>.toURL().text
@@ -727,7 +725,7 @@ called more than once, the verification and likewise the test, would fail.</p>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">HelloTest</span> {
 
     <span class="annotation">@Rule</span>
-    <span class="directive">public</span> ErsatzServerRule ersatzServer = <span class="keyword">new</span> ErsatzServerRule(ServerConfig::enableAutoStart);
+    <span class="directive">public</span> ErsatzServerRule ersatzServer = <span class="keyword">new</span> ErsatzServerRule();
 
     <span class="directive">private</span> OkHttpClient client;
 
@@ -983,7 +981,8 @@ method is called. This can simplify the code by removing explicit calls to the <
 </div>
 </div>
 <div class="paragraph">
-<p>This toggling capability allows for an external configuration source to determine whether or not auto-start is enabled.</p>
+<p>This toggling capability allows for an external configuration source to determine whether or not auto-start is enabled. An instance of <code>ErsatzServer</code>
+may be started multiple times without any effect, only the first call to <code>start()</code> will take effect, though any new expectations will be applied.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1524,7 +1523,7 @@ connection.requestMethod = <span class="string"><span class="delimiter">'</span>
 </div>
 </div>
 <div class="paragraph">
-<p>The explicit <code>start()</code> call is required since there are no expecations specified (auto-start wont fire). The <code>HttpUrlConnection</code> is used to make the
+<p>The explicit <code>start()</code> call is required since there are no expectations specified (auto-start wont fire). The <code>HttpUrlConnection</code> is used to make the
 request, and it can be seen that the response content is the same as the original request content.</p>
 </div>
 <div class="paragraph">
@@ -1745,7 +1744,7 @@ in the request:</p>
 <div class="paragraph">
 <p>The <code>ErsatzServer</code> supports HTTPS requests when the <code>https()</code> configuration is set (either as <code>https()</code> or as <code>https true</code>). This
 will setup both an HTTP and HTTPS listener both of which will have access to all configured expectations. In order to limit a specific request
-expectation to HTTP or HTTPS, apply the <code>procotol(String)</code> matcher method with the desired protocol, for example:</p>
+expectation to HTTP or HTTPS, apply the <code>protocol(String)</code> matcher method with the desired protocol, for example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2037,6 +2036,9 @@ proxy server.</p>
 <li>
 <p><a href="http://coffeaelectronica.com/blog/2017/rest-httpbuilder-ersatz.html">Taking a REST with HttpBulder-NG and Ersatz</a> <em>(Christopher J Stehno)</em> - Building and testing a REST interface with HttpBuilder-NG and Ersatz (<a href="https://github.com/cjstehno/rest-dev">implementations</a> in Groovy, Java and Kotlin).</p>
 </li>
+<li>
+<p>The <a href="https://http-builder-ng.github.io/http-builder-ng/">HttpBuilder-NG</a> project has extensive examples of testing with Ersatz.</p>
+</li>
 </ul>
 </div>
 </div>
@@ -2055,7 +2057,22 @@ Undertow library and its JBoss dependencies repackaged in the jar. You can use t
 </div>
 </div>
 <div class="paragraph">
-<p>Notice the <code>safe</code> classifier.</p>
+<p>For a Maven <code>pom.xml</code> entry, this would be:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>&lt;dependency&gt;
+    &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
+    &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
+    &lt;version&gt;1.5.0&lt;/version&gt;
+    &lt;type&gt;jar&lt;/type&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+    &lt;classifier&gt;safe&lt;/classifier&gt;
+&lt;/dependency&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice the <code>safe</code> classifier in both examples.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2203,7 +2220,7 @@ println( http.newCall(request).execute().body().string() )</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 1.5.0<br>
-Last updated 2017-09-27 10:38:02 -05:00
+Last updated 2017-10-10 07:12:49 -05:00
 </div>
 </div>
 </body>
