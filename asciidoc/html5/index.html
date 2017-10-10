@@ -687,7 +687,7 @@ methods:</p>
         }
 
         <span class="key">when</span>:
-        <span class="predefined-type">String</span> result = <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">${</span>ersatz.serverUrl<span class="inline-delimiter">}</span></span><span class="content">/say/hello?name=Ersatz</span><span class="delimiter">&quot;</span></span>.toURL().text
+        <span class="predefined-type">String</span> result = <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">${</span>ersatz.httpUrl<span class="inline-delimiter">}</span></span><span class="content">/say/hello?name=Ersatz</span><span class="delimiter">&quot;</span></span>.toURL().text
 
         <span class="key">then</span>:
         result == <span class="string"><span class="delimiter">'</span><span class="content">Hello Ersatz</span><span class="delimiter">'</span></span>
@@ -2220,7 +2220,7 @@ println( http.newCall(request).execute().body().string() )</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 1.5.0<br>
-Last updated 2017-10-10 07:12:49 -05:00
+Last updated 2017-10-10 07:29:07 -05:00
 </div>
 </div>
 </body>
