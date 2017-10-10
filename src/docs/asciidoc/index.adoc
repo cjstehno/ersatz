@@ -19,8 +19,8 @@ Ersatz provides a balance of mock-like expectation behavior with a real HTTP int
 for rich unit testing, which is what you were trying to do in the first place.
 
 Ersatz is written in Groovy 2.4.x and requires a Java 8 VM due to its use of the modern functional libraries; however, the Ersatz library is written
-such that it may be used with Groovy or standard Java without pain or feature-loss. With that in mind, the expectation configuration allows two main
-forms, a Java-style chained builder, and a Groovy DSL, both of which may be used interchangeably or together, if you are using Groovy.
+such that it may be used with Groovy or standard Java (or even Kotlin) without pain or feature-loss. With that in mind, the expectation configuration
+allows two main forms, a Java-style chained builder, and a Groovy DSL, both of which may be used interchangeably or together, if you are using Groovy.
 
 Ersatz is developed with testing in mind. It does not favor any specific testing framework, but it does work well with both the JUnit and Spock
 frameworks.
@@ -57,17 +57,15 @@ class HelloSpec extends Specification {
         setup:
         ErsatzServer ersatz = new ErsatzServer()
 
-        server.expectations {
+        ersatz.expectations {
             get('/say/hello'){
-                called equalTo(1)
+                called 1
                 query 'name','Ersatz'
                 responder {
                     content 'Hello Ersatz','text/plain'
                 }
             }
         }
-
-        ersatz.start()
 
         when:
         String result = "${ersatz.serverUrl}/say/hello?name=Ersatz".toURL().text
@@ -106,7 +104,7 @@ import static org.junit.Assert.assertEquals;
 public class HelloTest {
 
     @Rule
-    public ErsatzServerRule ersatzServer = new ErsatzServerRule(ServerConfig::enableAutoStart);
+    public ErsatzServerRule ersatzServer = new ErsatzServerRule();
 
     private OkHttpClient client;
 
@@ -300,7 +298,8 @@ def ersatz = new ErsatzServer({
 })
 ----
 
-This toggling capability allows for an external configuration source to determine whether or not auto-start is enabled.
+This toggling capability allows for an external configuration source to determine whether or not auto-start is enabled. An instance of `ErsatzServer`
+may be started multiple times without any effect, only the first call to `start()` will take effect, though any new expectations will be applied.
 
 TIP: While the auto-start methods may be used in the constructor or instance configuration, it is generally meant for use in the constructor, as a
 global configuration.
@@ -678,7 +677,7 @@ assert connection.inputStream.text.readLines()*.trim() == """TRACE /info?data=fo
 """.readLines()*.trim()
 ----
 
-The explicit `start()` call is required since there are no expecations specified (auto-start wont fire). The `HttpUrlConnection` is used to make the
+The explicit `start()` call is required since there are no expectations specified (auto-start wont fire). The `HttpUrlConnection` is used to make the
 request, and it can be seen that the response content is the same as the original request content.
 
 The `TRACE` method is supported using the built-in `HttpTraceHandler` provided by the embedded http://undertow.io[Undertow] server.
@@ -861,7 +860,7 @@ server.expectations {
 
 The `ErsatzServer` supports HTTPS requests when the `https()` configuration is set (either as `https()` or as `https true`). This
 will setup both an HTTP and HTTPS listener both of which will have access to all configured expectations. In order to limit a specific request
-expectation to HTTP or HTTPS, apply the `procotol(String)` matcher method with the desired protocol, for example:
+expectation to HTTP or HTTPS, apply the `protocol(String)` matcher method with the desired protocol, for example:
 
 [source,groovy]
 ----
@@ -1076,6 +1075,7 @@ Here are some external references and discussions about developing with Ersatz:
 
 * http://guides.grails.org/grails-mock-http-server/guide/index.html[Consume and test a third-party REST API] _(Sergio del Amo)_ - Use Ersatz, a "mock" HTTP library, for testing code dealing with HTTP requests
 * http://coffeaelectronica.com/blog/2017/rest-httpbuilder-ersatz.html[Taking a REST with HttpBulder-NG and Ersatz] _(Christopher J Stehno)_ - Building and testing a REST interface with HttpBuilder-NG and Ersatz (https://github.com/cjstehno/rest-dev[implementations] in Groovy, Java and Kotlin).
+* The https://http-builder-ng.github.io/http-builder-ng/[HttpBuilder-NG] project has extensive examples of testing with Ersatz.
 
 == Shadow Jar
 
@@ -1085,7 +1085,18 @@ Undertow library and its JBoss dependencies repackaged in the jar. You can use t
 
     testCompile 'com.stehno.ersatz:ersatz:1.5.0:safe@jar'
 
-Notice the `safe` classifier.
+For a Maven `pom.xml` entry, this would be:
+
+    <dependency>
+        <groupId>com.stehno.ersatz</groupId>
+        <artifactId>ersatz</artifactId>
+        <version>1.5.0</version>
+        <type>jar</type>
+        <scope>test</scope>
+        <classifier>safe</classifier>
+    </dependency>
+
+Notice the `safe` classifier in both examples.
 
 NOTE: This version of the library will NOT bring any of its other dependencies with it, so you will need to ensure that you have Hamcrest and JUnit defined, if they are needed by your project.
 
