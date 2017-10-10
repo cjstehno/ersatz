@@ -68,7 +68,7 @@ class HelloSpec extends Specification {
         }
 
         when:
-        String result = "${ersatz.serverUrl}/say/hello?name=Ersatz".toURL().text
+        String result = "${ersatz.httpUrl}/say/hello?name=Ersatz".toURL().text
 
         then:
         result == 'Hello Ersatz'
