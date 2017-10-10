@@ -45,7 +45,7 @@ dependencies {
     testCompile 'com.squareup.okhttp3:okhttp:3.5.0'
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
     testCompile 'com.burgstaller:okhttp-digest:1.10'
-    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.4-3"
+    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.50"
 
     groovyDoc "org.codehaus.groovy:groovy-groovydoc:$groovyVersion"
     groovyDoc "org.codehaus.groovy:groovy-ant:$groovyVersion"
@@ -57,7 +57,7 @@ dependencies {
 }
 
 codenarc {
-    toolVersion = '0.26.0'
+    toolVersion = '1.0.0'
 }
 
 codenarcMain {
@@ -204,7 +204,7 @@ tasks.site.dependsOn = ['build', 'groovydoc', 'jacocoTestReport', 'asciidoctor']
 
 task publishSite(type: GradleBuild, group: 'Publishing', description: 'Publishes the documentation web site.', dependsOn: ['site']) {
     buildFile = 'publish.gradle'
-    tasks = ['publishGhPages']
+    tasks = ['gitPublishPush']
 }
 
 compileKotlin {

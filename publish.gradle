@@ -1,18 +1,12 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'org.ajoberstar:gradle-git:1.0.0'
-    }
+plugins {
+    id 'org.ajoberstar.git-publish' version '0.3.0'
 }
 
-apply plugin: 'org.ajoberstar.github-pages'
-
-githubPages {
+gitPublish {
     repoUri = 'git@github.com:cjstehno/ersatz'
-    pages {
+    branch = 'gh-pages'
+
+    contents {
         from(file('build/site')) {
             into '.'
         }

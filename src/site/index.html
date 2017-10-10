@@ -13,6 +13,17 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
+    <style type="text/css">
+        code {
+            font-size: smaller;
+        }
+        pre {
+            padding-top: 0px;
+            padding-bottom: 0px;
+            margin-bottom: 10px;
+        }
+    </style>
+
     <title>Ersatz Server</title>
 </head>
 
@@ -50,53 +61,6 @@
             <p>Ersatz Server is a "mock" HTTP server library for testing HTTP clients. It allows for server-side request/response expectations to be
                 configured so that your client library can make real HTTP calls and get back real pre-configured responses rather than fake stubs.</p>
 
-            <p>A simple example of the expectation configuration would be (using Groovy):</p>
-
-            <pre><code>ErsatzServer ersatz = new ErsatzServer()
-
-server.expectations {
-    get('/say/hello'){
-        called equalTo(1)
-        query 'name','Ersatz'
-        responder {
-            body 'Hello Ersatz','text/plain'
-        }
-    }
-}
-
-ersatz.start()
-
-URL url = "&#36;{ersatz.serverUrl}/say/hello?name=Ersatz".toURL()
-assert url.text == 'Hello Ersatz'
-
-assert ersatz.verify()
-
-ersatz.stop()</code></pre>
-
-            <p>which will assert that a GET request to "/say/hello?name=Ersatz" will only happen once and that it will respond with "Hello Ersatz" so
-                that the client code being tested may proceed and do what it needs to do with the response. The expectation may also be written in a
-                builder form, such as:</p>
-
-            <pre><code>server.expectations {
-    get('/say/hello').called(equalTo(1)).query('name','Ersatz')
-        .responds().body('Hello Ersatz','text/plain')
-}</code></pre>
-
-            <p>Standard Java 8 may also be used; the example above would look very similar in Java:</p>
-
-            <pre><code>ErsatzServer ersatz = new ErsatzServer();
-
-server.expectations(expectations -> {
-    expectations.get("/say/hello", req -> {
-        req.called(1)
-        req.query("name","Ersatz")
-        req.responder().body("Hello Ersatz","text/plain")
-    }
-}).start();
-</code></pre>
-
-            <p>Both forms are equivalent and may be used together.</p>
-
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Features</h2>
 
             <ul>
@@ -120,14 +84,56 @@ server.expectations(expectations -> {
                 <li>Alternate distribution as a shadowed jar with the Undertow library repackaged to avoid collisions.</li>
             </ul>
 
-            <h2><span aria-hidden="true" class="octicon octicon-link"></span>Artifacts</h2>
+            <h2><span aria-hidden="true" class="octicon octicon-link"></span>Getting Started</h2>
 
-            <hr/>
-            <p><strong>Note:</strong> There is a breaking interface change between 1.4.0 and 1.5.0 - The
-                <code>Request.header(String, Matcher&lt;String&gt;)</code> method was modified to be
-                <code>Request.header(String, Matcher&lt;Iterable&lt;String&lt;&lt;)</code> in order to support headers with multiple values.
-            </p>
-            <hr/>
+            <p>The Ersatz <a href="asciidoc/html5" target="_blank">User Guide</a> and <a href="docs/groovydoc" target="_blank">Groovy Docs</a> provide
+            detailed documentation of the features and configuration; however, a simple example of the expectation configuration would be (using
+                Groovy):</p>
+
+            <pre><code>ErsatzServer ersatz = new ErsatzServer()
+
+ersatz.expectations {
+    get('/say/hello') {
+        called 1
+        query 'name', 'Ersatz'
+        responder {
+            content 'Hello Ersatz', 'text/plain'
+        }
+    }
+}
+
+URL url = "&#36;{ersatz.httpUrl}/say/hello?name=Ersatz".toURL()
+assert url.text == 'Hello Ersatz'
+
+assert ersatz.verify()
+
+ersatz.stop()</code></pre>
+
+            <p>which will assert that a GET request to "/say/hello?name=Ersatz" will only happen once and that it will respond with "Hello Ersatz" so
+                that the client code being tested may proceed and do what it needs to do with the response. The expectation may also be written in a
+                builder form, such as:</p>
+
+            <pre><code>server.expectations {
+    get('/say/hello').called(1).query('name','Ersatz')
+        .responds().content('Hello Ersatz','text/plain')
+}</code></pre>
+
+            <p>Standard Java 8 may also be used; the `expectations` block in the example above would look very similar in Java:</p>
+
+            <pre><code>ErsatzServer ersatz = new ErsatzServer();
+
+server.expectations(expectations -> {
+    expectations.get("/say/hello", req -> {
+        req.called(1)
+        req.query("name","Ersatz")
+        req.responder().content("Hello Ersatz","text/plain")
+    }
+}).start();
+</code></pre>
+
+            <p>Both forms are equivalent and may be used together.</p>
+
+            <h2><span aria-hidden="true" class="octicon octicon-link"></span>Artifacts</h2>
 
             The Ersatz Server library is available on Bintray (JCenter) and Maven Central; it may be added to a project via Gradle dependency:
 
@@ -140,6 +146,10 @@ server.expectations(expectations -> {
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
     &lt;version&gt;${project_version}&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
+
+            There is also a "safe" (shadow jar) artifact available for situations where the Undertow server is already being used (e.g. Grails or
+            Spring-Boot using Undertow as the embedded server) - see the
+            <a href="/asciidoc/html5/#_shadow_jar">Shadow Jar</a> section of the User Guide for more information.
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Documentation</h2>
 
@@ -162,6 +172,8 @@ server.expectations(expectations -> {
             <p>If you find any issues with the library or the documentation, please feel free to <a
                 href="https://github.com/cjstehno/ersatz/issues/new">create an issue</a> with a description of the problem or
                 suggestion.</p>
+
+            <hr/>
 
             <p>Ersatz is developed and maintained by <a
                 href="https://github.com/cjstehno">Christopher J. Stehno</a> under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache
