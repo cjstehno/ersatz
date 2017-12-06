@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno <chris@stehno.com>
-v1.5.0, September 2017
+v1.5.0, December 2017
 :toc: left
 :toclevels: 4
 
@@ -899,6 +899,22 @@ ErsatzServer server = new ErsatzServer({
 
 where `KEYSTORE_URL` is the URL to your custom keystore file, and `KEYSTORE_PASS` is the password (maybe omitted if you used `ersatz` as the password).
 
+=== Request Timeout
+
+The server request timeout configuration may be specified using the `timeout(int, StorageUnit)` configuration method. This allows the request timeout value and units to be configured before server
+startup (prior to calling `start()` or configuring expectations.
+
+[source,groovy]
+----
+import static java.util.concurrent.TimeUnit.MINUTES
+
+ErsatzServer server = new ErsatzServer({
+    timeout 1, MINUTES
+})
+----
+
+This will allow some wiggle room in tests with high volumes of data or having complex matching logic to be resolved.
+
 === Request / Response Compression
 
 Ersatz supports GZip and Deflate compression seamlessly as long as the `Accept-Encoding` header is specified as `gzip` or `deflate`. If the response
@@ -1099,6 +1115,25 @@ For a Maven `pom.xml` entry, this would be:
 Notice the `safe` classifier in both examples.
 
 NOTE: This version of the library will NOT bring any of its other dependencies with it, so you will need to ensure that you have Hamcrest and JUnit defined, if they are needed by your project.
+
+== Utilities
+
+The Ersatz project also contains some useful helper utility classes.
+
+=== `DummyContentGenerator`
+
+The `DummyContentGenerator` class provides a simple method for quickly generating request/response content bytes of various sizes. The generated data is simply `(byte)1` values. Usage is pretty
+straight-forward:
+
+[source,groovy]
+----
+import static com.stehno.ersatz.util.DummyContentGenerator.generate
+import static com.stehno.vanilla.io.StorageUnit.MEGABYTES
+
+byte[] content = generate(10, MEGABYTES)
+----
+
+which will generate an array with 10 MB of data.
 
 == Usage Examples
 

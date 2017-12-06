@@ -92,6 +92,11 @@ task javadocJar(type: Jar) {
 
 test {
     maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
+    useJUnit {
+        if (project.hasProperty('skip-long-running')) {
+            excludeCategories 'com.stehno.ersatz.LongRunning'
+        }
+    }
 }
 
 artifacts {

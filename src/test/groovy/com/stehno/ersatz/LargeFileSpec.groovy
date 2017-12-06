@@ -19,6 +19,7 @@ import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import org.hamcrest.Matcher
+import org.junit.experimental.categories.Category
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
@@ -27,11 +28,13 @@ import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 import static com.stehno.ersatz.ErsatzMatchers.byteArrayLike
 import static com.stehno.ersatz.util.DummyContentGenerator.generate
 import static com.stehno.vanilla.io.StorageUnit.GIGABYTES
+import static com.stehno.vanilla.io.StorageUnit.MEGABYTES
 import static java.util.concurrent.TimeUnit.MINUTES
 
-// FIXME: document support up to 1.5 GB upload size (note the timeout change)
-// TODO: provide way to exclude this test
-class LargeFileSpec extends Specification {
+// NOTE: These are separate classes so that they will run concurrently in the build
+
+@Category(LongRunning)
+class LargeFileUploadSpec extends Specification {
 
     private final OkHttpClient client = new OkHttpClient.Builder()
         .cookieJar(new InMemoryCookieJar())
@@ -50,6 +53,7 @@ class LargeFileSpec extends Specification {
 
         server.expectations {
             post('/push') {
+                called 1
                 body byteArrayLike(lob) as Matcher<Object>, IMAGE_JPG
 
                 responder {
@@ -70,6 +74,38 @@ class LargeFileSpec extends Specification {
         and:
         server.verify()
     }
+}
 
-    // FIXME: test large downloads as well (also multipart)
+@Category(LongRunning)
+class LargeFileDownloadSpec extends Specification {
+
+    private final OkHttpClient client = new OkHttpClient.Builder()
+        .cookieJar(new InMemoryCookieJar())
+        .readTimeout(3, MINUTES).writeTimeout(3, MINUTES)
+        .build()
+
+    @AutoCleanup('stop')
+    private final ErsatzServer server = new ErsatzServer({
+        timeout 1, MINUTES // this is not required, its just here to provide a test
+        encoder IMAGE_JPG, byte[].class, Encoders.binaryBase64
+    })
+
+    def 'large download'() {
+        setup:
+        byte[] lob = generate(500, MEGABYTES)
+
+        server.expectations {
+            get('/download').called(1).responds().code(200).content(lob, IMAGE_JPG)
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url("http://localhost:${server.httpPort}${'/download'}").build()).execute()
+
+        then:
+        response.code() == 200
+        response.body()
+
+        and:
+        server.verify()
+    }
 }

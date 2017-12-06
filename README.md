@@ -40,6 +40,10 @@ Alternately, there is a `safe` (shadowed) version of the library available, whic
 Ersatz is built using Gradle with no custom build tasks:
 
     ./gradlew clean build
+    
+Note: There are some long-running tests that may be skipped during local development using:
+
+    ./gradle -Pskip-long-running clean build
 
 
 ## License
