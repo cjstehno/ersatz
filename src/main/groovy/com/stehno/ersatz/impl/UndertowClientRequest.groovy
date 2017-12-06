@@ -113,7 +113,14 @@ class UndertowClientRequest implements ClientRequest {
 
     @Override
     String toString() {
-        "{ $method $path (query=$queryParams, headers=$headers, cookies=$cookies): ${body ? new String(body).take(1000) : '<empty>'} }"
+        String contentString = '<empty>'
+        if (body && contentType?.startsWith('text/')) {
+            contentString = new String(body).take(1000)
+        } else if (body) {
+            contentString = "<$contentLength of $contentType content>"
+        }
+
+        "{ $method $path (query=$queryParams, headers=$headers, cookies=$cookies): $contentString }"
     }
 
     /**

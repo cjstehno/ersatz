@@ -99,7 +99,7 @@ class ErsatzRequest implements Request {
 
     @Override
     Request query(final String name, final String value = null) {
-        query name, value != null ? contains(value) : contains("")
+        query name, value != null ? contains(value) : contains('')
     }
 
     @Override

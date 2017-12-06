@@ -25,7 +25,7 @@ import java.util.function.Consumer
 /**
  * Implementation of the ProxyConfig interface providing the configuration functionality for the proxy server.
  */
-@CompileStatic
+@CompileStatic @SuppressWarnings('ConfusingMethodName')
 class ProxyConfigImpl implements ProxyConfig {
 
     /**

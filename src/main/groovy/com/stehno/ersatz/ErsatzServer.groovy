@@ -38,12 +38,17 @@ import io.undertow.server.handlers.encoding.GzipEncodingProvider
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import java.security.KeyStore
+import java.util.concurrent.TimeUnit
 import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Function
 
 import static groovy.transform.TypeCheckingMode.SKIP
+import static io.undertow.UndertowOptions.IDLE_TIMEOUT
+import static io.undertow.UndertowOptions.REQUEST_PARSE_TIMEOUT
 import static io.undertow.util.HttpString.tryFromString
+import static java.util.concurrent.TimeUnit.MILLISECONDS
+import static java.util.concurrent.TimeUnit.SECONDS
 
 /**
  * The main entry point for configuring an Ersatz server, which allows configuring of the expectations and management of the server itself. This is
@@ -89,6 +94,7 @@ class ErsatzServer implements ServerConfig {
     private int actualHttpPort = UNSPECIFIED_PORT
     private int actualHttpsPort = UNSPECIFIED_PORT
     private AuthenticationConfig authenticationConfig
+    private Closure<Void> timeoutConfig = { b -> }
 
     /**
      * Creates a new Ersatz server instance with either the default configuration or a configuration provided by the Groovy DSL closure.
@@ -142,6 +148,22 @@ class ErsatzServer implements ServerConfig {
     @Deprecated
     ServerConfig autoStart() {
         autoStart(true)
+    }
+
+    /**
+     * Used to specify the server request timeout property value on the server. If not specified, <code>SECONDS</code> will be used as the units.
+     *
+     * @param value the timeout value
+     * @param units the units the timeout is specified with (or <code>SECONDS</code>)
+     * @return a reference to the server being configured
+     */
+    ServerConfig timeout(final int value, final TimeUnit units = SECONDS) {
+        timeoutConfig = { Undertow.Builder builder ->
+            builder.setServerOption(IDLE_TIMEOUT, MILLISECONDS.convert(value, units) as Integer)
+            builder.setServerOption(REQUEST_PARSE_TIMEOUT, MILLISECONDS.convert(value, units) as Integer)
+            null
+        }
+        this
     }
 
     /**
@@ -349,6 +371,7 @@ class ErsatzServer implements ServerConfig {
     void start() {
         if (!started) {
             Undertow.Builder builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST)
+            timeoutConfig.call(builder)
 
             if (httpsEnabled) {
                 builder.addHttpsListener(EPHEMERAL_PORT, LOCALHOST, sslContext())
@@ -471,15 +494,15 @@ class ErsatzServer implements ServerConfig {
             response.cookies.each { k, v ->
                 if (v instanceof Cookie) {
                     Cookie ersatzCookie = v as Cookie
-                    CookieImpl cookie = new CookieImpl(k, ersatzCookie.value)
-                    cookie.path = ersatzCookie.path
-                    cookie.domain = ersatzCookie.domain
-                    cookie.maxAge = ersatzCookie.maxAge
-                    cookie.secure = ersatzCookie.secure
-                    cookie.version = ersatzCookie.version
-                    cookie.httpOnly = ersatzCookie.httpOnly
-                    cookie.setComment(ersatzCookie.comment)
-                    exchange.responseCookies.put(k, cookie)
+                    exchange.responseCookies.put k, new CookieImpl(k, ersatzCookie.value).with {
+                        path = ersatzCookie.path
+                        domain = ersatzCookie.domain
+                        maxAge = ersatzCookie.maxAge
+                        secure = ersatzCookie.secure
+                        version = ersatzCookie.version
+                        httpOnly = ersatzCookie.httpOnly
+                        setComment(ersatzCookie.comment)
+                    } as CookieImpl
 
                 } else {
                     exchange.responseCookies.put(k, new CookieImpl(k, v as String))
