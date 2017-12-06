@@ -92,10 +92,10 @@ class ErsatzRequestSpec extends Specification {
         request.matches(cr) == result
 
         where:
-        cr                                                || result
-        clientRequest().query('enabled', null as String)  || true
-        clientRequest().query('enabled', 'yes')           || false
-        clientRequest().query('disabled', null as String) || false
+        cr                                      || result
+        clientRequest().query('enabled', '')    || true
+        clientRequest().query('enabled', 'yes') || false
+        clientRequest().query('disabled', '')   || false
     }
 
     def 'query with no value'() {
@@ -106,10 +106,10 @@ class ErsatzRequestSpec extends Specification {
         request.matches(cr) == result
 
         where:
-        cr                                                || result
-        clientRequest().query('enabled', null as String)  || true
-        clientRequest().query('enabled', 'yes')           || false
-        clientRequest().query('disabled', null as String) || false
+        cr                                      || result
+        clientRequest().query('enabled', '')    || true
+        clientRequest().query('enabled', 'yes') || false
+        clientRequest().query('disabled', '')   || false
     }
 
     def 'queries with no value'() {

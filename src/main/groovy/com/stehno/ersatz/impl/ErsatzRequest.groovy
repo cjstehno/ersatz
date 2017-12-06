@@ -39,11 +39,11 @@ import static com.stehno.ersatz.HttpMethod.TRACE
 import static org.hamcrest.Matchers.anything
 import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.containsInAnyOrder
-import static org.hamcrest.Matchers.emptyIterable
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.equalToIgnoringCase
 import static org.hamcrest.Matchers.hasItem
 import static org.hamcrest.Matchers.isOneOf
+
 /**
  * <code>Request</code> implementation representing requests without body content.
  */
@@ -98,8 +98,8 @@ class ErsatzRequest implements Request {
     }
 
     @Override
-    Request query(final String name, final String value=null) {
-        query name, value != null  ? contains(value) : emptyIterable()
+    Request query(final String name, final String value = null) {
+        query name, value != null ? contains(value) : contains("")
     }
 
     @Override
