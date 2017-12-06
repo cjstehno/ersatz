@@ -90,6 +90,10 @@ task javadocJar(type: Jar) {
     from groovydoc
 }
 
+test {
+    maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
+}
+
 artifacts {
     archives jar
     archives sourcesJar

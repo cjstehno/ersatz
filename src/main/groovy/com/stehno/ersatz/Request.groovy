@@ -75,6 +75,18 @@ interface Request {
     Request query(final String name, final String value)
 
     /**
+     * Used to specify a valueless request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
+     * specified multiple times with different values to denote a parameter with multiple values.
+     *
+     * This is equivalent to calling <code>query(name, null)</code>.
+     *
+     * @param name the parameter name
+     * @param value the parameter value
+     * @return this request
+     */
+    Request query(final String name)
+
+    /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
      * specified multiple times with different values to denote a parameter with multiple values.
      *
