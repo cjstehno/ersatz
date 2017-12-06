@@ -68,7 +68,7 @@ import static java.util.concurrent.TimeUnit.SECONDS
  *     <li>Stop the server.</li>
  * </ol>
  *
- * See the <a href="http://stehno.com/ersatz/guide/html5/" target="_blank">User Guide</a> for more detailed information.
+ * See the <a href="http://stehno.com/ersatz/asciidoc/html5/" target="_blank">User Guide</a> for more detailed information.
  */
 @CompileStatic @Slf4j
 class ErsatzServer implements ServerConfig {
