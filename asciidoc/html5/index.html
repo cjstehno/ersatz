@@ -515,8 +515,8 @@ table.CodeRay td.code>pre{padding:0}
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
 <span id="email" class="email"><a href="mailto:chris@stehno.com">chris@stehno.com</a></span><br>
-<span id="revnumber">version 1.5.0,</span>
-<span id="revdate">September 2017</span>
+<span id="revnumber">version 1.6.0,</span>
+<span id="revdate">December 2017</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -584,6 +584,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_creating_a_custom_keystore">Creating a Custom Keystore</a></li>
 </ul>
 </li>
+<li><a href="#_request_timeout">Request Timeout</a></li>
 <li><a href="#_request_response_compression">Request / Response Compression</a></li>
 <li><a href="#_multipart_request_content">Multipart Request Content</a></li>
 <li><a href="#_multipart_response_content">Multipart Response Content</a></li>
@@ -592,6 +593,11 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_proxy_server">Proxy Server</a></li>
 <li><a href="#_sightings">Sightings</a></li>
 <li><a href="#_shadow_jar">Shadow Jar</a></li>
+<li><a href="#_utilities">Utilities</a>
+<ul class="sectlevel2">
+<li><a href="#__code_dummycontentgenerator_code"><code>DummyContentGenerator</code></a></li>
+</ul>
+</li>
 <li><a href="#_usage_examples">Usage Examples</a>
 <ul class="sectlevel2">
 <li><a href="#_url_encoded_form_requests">Url-Encoded Form Requests</a></li>
@@ -645,7 +651,7 @@ methods:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:1.5.0'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:1.6.0'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -656,7 +662,7 @@ methods:</p>
 <pre>&lt;dependency&gt;
     &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
-    &lt;version&gt;1.5.0&lt;/version&gt;
+    &lt;version&gt;1.6.0&lt;/version&gt;
     &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</pre>
 </div>
@@ -1808,6 +1814,25 @@ the key being created. The default keystore name is <code>ersatz</code> and it h
 </div>
 </div>
 <div class="sect2">
+<h3 id="_request_timeout">Request Timeout</h3>
+<div class="paragraph">
+<p>The server request timeout configuration may be specified using the <code>timeout(int, StorageUnit)</code> configuration method. This allows the request timeout value and units to be configured before server
+startup (prior to calling <code>start()</code> or configuring expectations.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">static</span> <span class="include">java.util.concurrent.TimeUnit.MINUTES</span>
+
+ErsatzServer server = <span class="keyword">new</span> ErsatzServer({
+    timeout <span class="integer">1</span>, MINUTES
+})</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will allow some wiggle room in tests with high volumes of data or having complex matching logic to be resolved.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_request_response_compression">Request / Response Compression</h3>
 <div class="paragraph">
 <p>Ersatz supports GZip and Deflate compression seamlessly as long as the <code>Accept-Encoding</code> header is specified as <code>gzip</code> or <code>deflate</code>. If the response
@@ -1960,7 +1985,7 @@ the unit tests).</p>
 <h2 id="_proxy_server">Proxy Server</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Starting in v1.5.0 a standalone proxy server was available. The <code>com.stehno.ersatz.proxy.ErsatzProxy</code> is useful for testing proxied HTTP connections.
+<p>Starting in v1.6.0 a standalone proxy server was available. The <code>com.stehno.ersatz.proxy.ErsatzProxy</code> is useful for testing proxied HTTP connections.
 The proxy server has a similar configuration to the <code>ErsatzServer</code> and allows limited expectation configuration; it is expected that more detailed
 expectation configuration will be done on a standard <code>ErsatzServer</code> instance at the other end of the proxy.</p>
 </div>
@@ -2053,7 +2078,7 @@ Undertow library and its JBoss dependencies repackaged in the jar. You can use t
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:1.5.0:safe@jar'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:1.6.0:safe@jar'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2064,7 +2089,7 @@ Undertow library and its JBoss dependencies repackaged in the jar. You can use t
 <pre>&lt;dependency&gt;
     &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
-    &lt;version&gt;1.5.0&lt;/version&gt;
+    &lt;version&gt;1.6.0&lt;/version&gt;
     &lt;type&gt;jar&lt;/type&gt;
     &lt;scope&gt;test&lt;/scope&gt;
     &lt;classifier&gt;safe&lt;/classifier&gt;
@@ -2085,6 +2110,32 @@ This version of the library will NOT bring any of its other dependencies with it
 </td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_utilities">Utilities</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Ersatz project also contains some useful helper utility classes.</p>
+</div>
+<div class="sect2">
+<h3 id="__code_dummycontentgenerator_code"><code>DummyContentGenerator</code></h3>
+<div class="paragraph">
+<p>The <code>DummyContentGenerator</code> class provides a simple method for quickly generating request/response content bytes of various sizes. The generated data is simply <code>(byte)1</code> values. Usage is pretty
+straight-forward:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">static</span> <span class="include">com.stehno.ersatz.util.DummyContentGenerator.generate</span>
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">com.stehno.vanilla.io.StorageUnit.MEGABYTES</span>
+
+<span class="type">byte</span><span class="type">[]</span> content = generate(<span class="integer">10</span>, MEGABYTES)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>which will generate an array with 10 MB of data.</p>
+</div>
 </div>
 </div>
 </div>
@@ -2219,8 +2270,8 @@ println( http.newCall(request).execute().body().string() )</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.5.0<br>
-Last updated 2017-10-10 07:29:07 -05:00
+Version 1.6.0<br>
+Last updated 2017-12-08 07:28:09 -06:00
 </div>
 </div>
 </body>

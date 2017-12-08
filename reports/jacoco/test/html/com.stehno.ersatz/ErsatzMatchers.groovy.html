@@ -46,6 +46,16 @@ class ErsatzMatchers {
 <span class="pc" id="L46">        new CollectionContainsValueMatcher&lt;T&gt;(value: value)</span>
     }
 
+    /**
+     * The provided value must be a byte array with the same length and same first and last element values.
+     *
+     * @param array the array
+     * @return the resulting matcher
+     */
+    static Matcher&lt;byte[]&gt; byteArrayLike(final byte[] array) {
+<span class="pc" id="L56">        new ByteArrayMatcher(array: array)</span>
+    }
+
     @CompileStatic
     private static class CollectionContainsMatchMatcher&lt;T&gt; extends BaseMatcher&lt;Iterable&lt;T&gt;&gt; {
 
@@ -53,15 +63,15 @@ class ErsatzMatchers {
 
         @Override
         boolean matches(final Object item) {
-<span class="pc bfc" id="L56" title="All 2 branches covered.">            (item as Iterable&lt;T&gt;)?.any { s -&gt;</span>
-<span class="pc" id="L57">                matcher.matches(s)</span>
+<span class="pc bfc" id="L66" title="All 2 branches covered.">            (item as Iterable&lt;T&gt;)?.any { s -&gt;</span>
+<span class="pc" id="L67">                matcher.matches(s)</span>
             }
         }
 
         @Override
         void describeTo(Description description) {
-<span class="fc" id="L63">            description.appendText('A collection matching ')</span>
-<span class="fc" id="L64">            description.appendDescriptionOf(matcher)</span>
+<span class="fc" id="L73">            description.appendText('A collection matching ')</span>
+<span class="fc" id="L74">            description.appendDescriptionOf(matcher)</span>
         }
     }
 
@@ -72,13 +82,30 @@ class ErsatzMatchers {
 
         @Override
         boolean matches(final Object item) {
-<span class="pc bfc" id="L75" title="All 2 branches covered.">            (item as Iterable&lt;T&gt;)?.contains(value)</span>
+<span class="pc bfc" id="L85" title="All 2 branches covered.">            (item as Iterable&lt;T&gt;)?.contains(value)</span>
         }
 
         @Override
         void describeTo(Description description) {
-<span class="nc" id="L80">            description.appendText(&quot;A collection containing the value '$value'&quot;)</span>
+<span class="nc" id="L90">            description.appendText(&quot;A collection containing the value '$value'&quot;)</span>
+        }
+    }
+
+    @CompileStatic @SuppressWarnings('DuplicateNumberLiteral')
+    private static class ByteArrayMatcher extends BaseMatcher&lt;byte[]&gt; {
+
+        byte[] array
+
+        @Override
+        boolean matches(final Object item) {
+<span class="fc" id="L101">            byte[] bytes = item as byte[]</span>
+<span class="pc bpc" id="L102" title="7 of 14 branches missed.">            bytes.length == array.length &amp;&amp; bytes[0] == array[0] &amp;&amp; bytes[-1] == array[-1]</span>
+        }
+
+        @Override
+        void describeTo(Description description) {
+<span class="nc" id="L107">            description.appendText(&quot;A byte array of length ${array.length} having ${array[0]} as the first element and ${array[-1]} as the last.&quot;)</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

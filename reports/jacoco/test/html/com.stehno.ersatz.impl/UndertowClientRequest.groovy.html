@@ -113,7 +113,14 @@ class UndertowClientRequest implements ClientRequest {
 
     @Override
     String toString() {
-<span class="pc bfc" id="L116" title="All 2 branches covered.">        &quot;{ $method $path (query=$queryParams, headers=$headers, cookies=$cookies): ${body ? new String(body).take(1000) : '&lt;empty&gt;'} }&quot;</span>
+<span class="fc" id="L116">        String contentString = '&lt;empty&gt;'</span>
+<span class="pc bpc" id="L117" title="1 of 8 branches missed.">        if (body &amp;&amp; contentType?.startsWith('text/')) {</span>
+<span class="fc" id="L118">            contentString = new String(body).take(1000)</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        } else if (body) {</span>
+<span class="fc" id="L120">            contentString = &quot;&lt;$contentLength of $contentType content&gt;&quot;</span>
+        }
+
+<span class="pc" id="L123">        &quot;{ $method $path (query=$queryParams, headers=$headers, cookies=$cookies): $contentString }&quot;</span>
     }
 
     /**
@@ -123,7 +130,7 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Override
     long getContentLength() {
-<span class="pc" id="L126">        exchange.requestContentLength</span>
+<span class="pc" id="L133">        exchange.requestContentLength</span>
     }
 
     /**
@@ -133,7 +140,7 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Override
     String getCharacterEncoding() {
-<span class="pc" id="L136">        exchange.requestCharset</span>
+<span class="pc" id="L143">        exchange.requestCharset</span>
     }
 
     /**
@@ -143,7 +150,7 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Override
     String getContentType() {
-<span class="pc bfc" id="L146" title="All 2 branches covered.">        exchange.requestHeaders.get(CONTENT_TYPE_HEADER)?.first</span>
+<span class="pc bfc" id="L153" title="All 2 branches covered.">        exchange.requestHeaders.get(CONTENT_TYPE_HEADER)?.first</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
