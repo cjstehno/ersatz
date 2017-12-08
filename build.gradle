@@ -10,13 +10,13 @@ plugins {
     id "org.asciidoctor.convert" version '1.5.3'
     id "com.stehno.gradle.webpreview" version '0.3.0'
     id "com.stehno.gradle.site" version '0.0.3'
-    id 'org.jetbrains.kotlin.jvm' version '1.1.3-2'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.0'
     id 'com.github.ben-manes.versions' version '0.15.0'
     id "com.github.johnrengelman.shadow" version '2.0.1'
 }
 
 group = 'com.stehno.ersatz'
-version = '1.5.0'
+version = '1.6.0'
 
 sourceCompatibility = 8
 targetCompatibility = 8
@@ -45,7 +45,7 @@ dependencies {
     testCompile 'com.squareup.okhttp3:okhttp:3.5.0'
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
     testCompile 'com.burgstaller:okhttp-digest:1.10'
-    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.50"
+    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.2.0"
 
     groovyDoc "org.codehaus.groovy:groovy-groovydoc:$groovyVersion"
     groovyDoc "org.codehaus.groovy:groovy-ant:$groovyVersion"
@@ -88,6 +88,15 @@ task javadocJar(type: Jar) {
     description = 'Creates API documentation jar.'
     classifier = 'javadoc'
     from groovydoc
+}
+
+test {
+    maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
+    useJUnit {
+        if (project.hasProperty('skip-long-running')) {
+            excludeCategories 'com.stehno.ersatz.LongRunning'
+        }
+    }
 }
 
 artifacts {

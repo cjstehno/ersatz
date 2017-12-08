@@ -84,6 +84,47 @@ class ErsatzRequestSpec extends Specification {
         clientRequest().query('one', 'two').query('three', 'xyz', 'five').query('foo', 'bar')  || false
     }
 
+    def 'query with null value'() {
+        when:
+        request.query('enabled', null as String)
+
+        then:
+        request.matches(cr) == result
+
+        where:
+        cr                                      || result
+        clientRequest().query('enabled', '')    || true
+        clientRequest().query('enabled', 'yes') || false
+        clientRequest().query('disabled', '')   || false
+    }
+
+    def 'query with no value'() {
+        when:
+        request.query('enabled')
+
+        then:
+        request.matches(cr) == result
+
+        where:
+        cr                                      || result
+        clientRequest().query('enabled', '')    || true
+        clientRequest().query('enabled', 'yes') || false
+        clientRequest().query('disabled', '')   || false
+    }
+
+    def 'queries with no value'() {
+        when:
+        request.queries(query as Map<String, Object>)
+
+        then:
+        request.matches(cr) == result
+
+        where:
+        query         | cr                                               || result
+        [enabled: []] | clientRequest().query('enabled', null as String) || true
+        [enabled: []] | clientRequest().query('enabled', 'yes')          || false
+    }
+
     def 'cookies'() {
         when:
         request.cookies(chocolate: 'yes', amount: 'dozen').cookie('sugar', 'no')

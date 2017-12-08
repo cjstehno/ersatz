@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno <chris@stehno.com>
-v1.5.0, September 2017
+v1.6.0, December 2017
 :toc: left
 :toclevels: 4
 
@@ -32,14 +32,14 @@ methods:
 
 For Gradle add the following to your `build.gradle` file:
 
-    testCompile 'com.stehno.ersatz:ersatz:1.5.0'
+    testCompile 'com.stehno.ersatz:ersatz:1.6.0'
 
 For Maven add the code below to your `pom.xml` file:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>1.5.0</version>
+        <version>1.6.0</version>
         <scope>test</scope>
     </dependency>
 
@@ -68,7 +68,7 @@ class HelloSpec extends Specification {
         }
 
         when:
-        String result = "${ersatz.serverUrl}/say/hello?name=Ersatz".toURL().text
+        String result = "${ersatz.httpUrl}/say/hello?name=Ersatz".toURL().text
 
         then:
         result == 'Hello Ersatz'
@@ -899,6 +899,22 @@ ErsatzServer server = new ErsatzServer({
 
 where `KEYSTORE_URL` is the URL to your custom keystore file, and `KEYSTORE_PASS` is the password (maybe omitted if you used `ersatz` as the password).
 
+=== Request Timeout
+
+The server request timeout configuration may be specified using the `timeout(int, StorageUnit)` configuration method. This allows the request timeout value and units to be configured before server
+startup (prior to calling `start()` or configuring expectations.
+
+[source,groovy]
+----
+import static java.util.concurrent.TimeUnit.MINUTES
+
+ErsatzServer server = new ErsatzServer({
+    timeout 1, MINUTES
+})
+----
+
+This will allow some wiggle room in tests with high volumes of data or having complex matching logic to be resolved.
+
 === Request / Response Compression
 
 Ersatz supports GZip and Deflate compression seamlessly as long as the `Accept-Encoding` header is specified as `gzip` or `deflate`. If the response
@@ -1023,7 +1039,7 @@ the unit tests).
 
 == Proxy Server
 
-Starting in v1.5.0 a standalone proxy server was available. The `com.stehno.ersatz.proxy.ErsatzProxy` is useful for testing proxied HTTP connections.
+Starting in v1.6.0 a standalone proxy server was available. The `com.stehno.ersatz.proxy.ErsatzProxy` is useful for testing proxied HTTP connections.
 The proxy server has a similar configuration to the `ErsatzServer` and allows limited expectation configuration; it is expected that more detailed
 expectation configuration will be done on a standard `ErsatzServer` instance at the other end of the proxy.
 
@@ -1083,14 +1099,14 @@ The embedded version of Undertow used by Ersatz has caused issues with some serv
 If you run into errors using the standard jar distribution, please try using the `safe` distribution, which is a shadowed jar which includes the
 Undertow library and its JBoss dependencies repackaged in the jar. You can use this version with the following coordinates:
 
-    testCompile 'com.stehno.ersatz:ersatz:1.5.0:safe@jar'
+    testCompile 'com.stehno.ersatz:ersatz:1.6.0:safe@jar'
 
 For a Maven `pom.xml` entry, this would be:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>1.5.0</version>
+        <version>1.6.0</version>
         <type>jar</type>
         <scope>test</scope>
         <classifier>safe</classifier>
@@ -1099,6 +1115,25 @@ For a Maven `pom.xml` entry, this would be:
 Notice the `safe` classifier in both examples.
 
 NOTE: This version of the library will NOT bring any of its other dependencies with it, so you will need to ensure that you have Hamcrest and JUnit defined, if they are needed by your project.
+
+== Utilities
+
+The Ersatz project also contains some useful helper utility classes.
+
+=== `DummyContentGenerator`
+
+The `DummyContentGenerator` class provides a simple method for quickly generating request/response content bytes of various sizes. The generated data is simply `(byte)1` values. Usage is pretty
+straight-forward:
+
+[source,groovy]
+----
+import static com.stehno.ersatz.util.DummyContentGenerator.generate
+import static com.stehno.vanilla.io.StorageUnit.MEGABYTES
+
+byte[] content = generate(10, MEGABYTES)
+----
+
+which will generate an array with 10 MB of data.
 
 == Usage Examples
 

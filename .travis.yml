@@ -6,6 +6,6 @@ env:
   - TERM=dumb
 before_script:
   - ./gradlew --version
-script: ./gradlew build
+script: ./gradlew -Pskip-long-running build
 after_success:
-  - ./gradlew jacocoTestReport coveralls
+  - ./gradlew -Pskip-long-running jacocoTestReport coveralls

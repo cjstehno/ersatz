@@ -31,9 +31,14 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
 import static MultipartResponseContent.multipart
-import static com.stehno.ersatz.ContentType.*
+import static com.stehno.ersatz.ContentType.MESSAGE_HTTP
+import static com.stehno.ersatz.ContentType.MULTIPART_MIXED
+import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 import static com.stehno.ersatz.CookieMatcher.cookieMatcher
-import static com.stehno.ersatz.HttpMethod.*
+import static com.stehno.ersatz.HttpMethod.DELETE
+import static com.stehno.ersatz.HttpMethod.GET
+import static com.stehno.ersatz.HttpMethod.OPTIONS
+import static com.stehno.ersatz.HttpMethod.POST
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
 import static org.hamcrest.Matchers.startsWith
 
@@ -113,6 +118,24 @@ class ErsatzServerSpec extends Specification {
 
         then:
         client.newCall(request).execute().body().string() == 'The answer is 42'
+
+        and:
+        ersatzServer.verify()
+    }
+
+    def 'valueless query string param'() {
+        setup:
+        ersatzServer.expectations {
+            get('/something').query('enabled').responds().code(200).content('OK', TEXT_PLAIN)
+        }
+
+        when:
+        def request = new okhttp3.Request.Builder().url(url('/something?enabled')).build()
+        def response = client.newCall(request).execute()
+
+        then:
+        response.code() == 200
+        response.body().string() == 'OK'
 
         and:
         ersatzServer.verify()

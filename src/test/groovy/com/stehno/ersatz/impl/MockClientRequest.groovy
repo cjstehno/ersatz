@@ -42,7 +42,7 @@ class MockClientRequest implements ClientRequest {
     }
 
     MockClientRequest query(String name, String... values) {
-        queryParams.computeIfAbsent(name) { [] }.addAll(values as List)
+        queryParams.computeIfAbsent(name) { [] }.addAll(values as List ?: [])
         this
     }
 

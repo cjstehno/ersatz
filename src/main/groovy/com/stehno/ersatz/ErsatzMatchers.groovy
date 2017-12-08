@@ -46,6 +46,16 @@ class ErsatzMatchers {
         new CollectionContainsValueMatcher<T>(value: value)
     }
 
+    /**
+     * The provided value must be a byte array with the same length and same first and last element values.
+     *
+     * @param array the array
+     * @return the resulting matcher
+     */
+    static Matcher<byte[]> byteArrayLike(final byte[] array) {
+        new ByteArrayMatcher(array: array)
+    }
+
     @CompileStatic
     private static class CollectionContainsMatchMatcher<T> extends BaseMatcher<Iterable<T>> {
 
@@ -78,6 +88,23 @@ class ErsatzMatchers {
         @Override
         void describeTo(Description description) {
             description.appendText("A collection containing the value '$value'")
+        }
+    }
+
+    @CompileStatic @SuppressWarnings('DuplicateNumberLiteral')
+    private static class ByteArrayMatcher extends BaseMatcher<byte[]> {
+
+        byte[] array
+
+        @Override
+        boolean matches(final Object item) {
+            byte[] bytes = item as byte[]
+            bytes.length == array.length && bytes[0] == array[0] && bytes[-1] == array[-1]
+        }
+
+        @Override
+        void describeTo(Description description) {
+            description.appendText("A byte array of length ${array.length} having ${array[0]} as the first element and ${array[-1]} as the last.")
         }
     }
 }

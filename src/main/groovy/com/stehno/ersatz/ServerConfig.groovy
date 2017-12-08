@@ -17,6 +17,7 @@ package com.stehno.ersatz
 
 import groovy.transform.CompileStatic
 
+import java.util.concurrent.TimeUnit
 import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Function
@@ -66,6 +67,23 @@ interface ServerConfig {
      */
     @Deprecated
     ServerConfig autoStart()
+
+    /**
+     * Used to specify the server request timeout property value on the server.
+     *
+     * @param value the timeout value
+     * @param units the units the timeout is specified with
+     * @return a reference to the server being configured
+     */
+    ServerConfig timeout(int value, TimeUnit units)
+
+    /**
+     * Used to specify the server request timeout property value on the server, in seconds.
+     *
+     * @param value the timeout value
+     * @return a reference to the server being configured
+     */
+    ServerConfig timeout(int value)
 
     /**
      * Causes the mismatched request reports to be generated as console output, rather than only in the logging.
