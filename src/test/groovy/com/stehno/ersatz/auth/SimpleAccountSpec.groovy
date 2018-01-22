@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Christopher J. Stehno
+ * Copyright (C) 2018 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 package com.stehno.ersatz.auth
 
 import spock.lang.Specification
-
-import static com.stehno.vanilla.test.Assertions.assertValidEqualsAndHashcode
 
 class SimpleAccountSpec extends Specification {
 
@@ -41,15 +39,5 @@ class SimpleAccountSpec extends Specification {
     def 'as string'() {
         expect:
         new SimpleAccount('someuser') as String == 'com.stehno.ersatz.auth.SimpleAccount(someuser, [TESTER])'
-    }
-
-    def 'equals and hashCode'() {
-        expect:
-        assertValidEqualsAndHashcode(
-            new SimpleAccount('someuser', ['ADMIN'] as Set<String>),
-            new SimpleAccount('someuser', ['ADMIN'] as Set<String>),
-            new SimpleAccount('someuser', ['ADMIN'] as Set<String>),
-            new SimpleAccount('other', ['GUEST'] as Set<String>)
-        )
     }
 }

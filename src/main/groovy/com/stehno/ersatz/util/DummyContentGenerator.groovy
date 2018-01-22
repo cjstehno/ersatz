@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Christopher J. Stehno
+ * Copyright (C) 2018 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
  */
 package com.stehno.ersatz.util
 
-import com.stehno.vanilla.io.StorageUnit
 import groovy.transform.CompileStatic
 
 /**
  * Provides a means to generate dummy request/response content for testing.
  */
 @CompileStatic
-@SuppressWarnings(['DuplicateNumberLiteral', 'SpaceAroundOperator', 'UnnecessaryElseStatement', 'DuplicateStringLiteral']) // TODO: remove these when code is moved
+@SuppressWarnings(['DuplicateNumberLiteral', 'SpaceAroundOperator', 'UnnecessaryElseStatement', 'DuplicateStringLiteral'])
+// TODO: remove these when code is moved
 class DummyContentGenerator {
 
     /**
@@ -39,7 +39,7 @@ class DummyContentGenerator {
         bytes
     }
 
-    // FIXME: add this to vanilla
+    // FIXME: add this to StorageUnit
     private static double convert(final StorageUnit destUnit, final double sourceValue, final StorageUnit sourceUnit) {
         int m = sourceUnit.mult - destUnit.mult
         if (m == 0) {
@@ -51,7 +51,7 @@ class DummyContentGenerator {
         }
     }
 
-    // FIXME: add this to vanilla
+    // FIXME: add this to StorageUnit
     private static long approximate(final StorageUnit destUnit, double sourceValue, StorageUnit sourceUnit) {
         Math.round(convert(destUnit, sourceValue, sourceUnit))
     }

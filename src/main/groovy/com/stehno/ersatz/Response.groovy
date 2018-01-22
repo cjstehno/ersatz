@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Christopher J. Stehno
+ * Copyright (C) 2018 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,7 +156,7 @@ interface Response {
     Response delay(final long time, TimeUnit unit)
 
     /**
-     * Used to specify a delay in the response time for the request as a <code>com.stehno.vanilla.util.TimeSpan</code> string (e.g. '2 s').
+     * Used to specify a delay in the response time for the request as a <code>com.stehno.ersatz.util.TimeSpan</code> string (e.g. '2 s').
      *
      * @param time the delay time as a string
      * @return this response

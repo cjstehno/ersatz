@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Christopher J. Stehno
+ * Copyright (C) 2018 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.*
-import com.stehno.vanilla.util.TimeSpan
+import com.stehno.ersatz.util.TimeSpan
 import groovy.transform.CompileStatic
 
 import java.util.concurrent.TimeUnit

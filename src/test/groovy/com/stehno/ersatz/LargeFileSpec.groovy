@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Christopher J. Stehno
+ * Copyright (C) 2018 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import static com.stehno.ersatz.ContentType.IMAGE_JPG
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 import static com.stehno.ersatz.ErsatzMatchers.byteArrayLike
 import static com.stehno.ersatz.util.DummyContentGenerator.generate
-import static com.stehno.vanilla.io.StorageUnit.GIGABYTES
-import static com.stehno.vanilla.io.StorageUnit.MEGABYTES
+import static com.stehno.ersatz.util.StorageUnit.GIGABYTES
+import static com.stehno.ersatz.util.StorageUnit.MEGABYTES
 import static java.util.concurrent.TimeUnit.MINUTES
 
 // NOTE: These are separate classes so that they will run concurrently in the build
