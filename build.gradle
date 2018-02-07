@@ -231,7 +231,7 @@ shadowJar {
     classifier = 'safe'
     dependencies {
         exclude(dependency('junit:junit:4.12'))
-        exclude(dependency('org.codehaus.groovy:groovy-all:2.4.11'))
+        exclude(dependency("org.codehaus.groovy:groovy-all:$groovyVersion"))
         exclude(dependency('org.slf4j:slf4j-api:1.7.20'))
         exclude(dependency('ch.qos.logback:logback-classic:1.1.7'))
         exclude(dependency('ch.qos.logback:logback-core:1.1.7'))
