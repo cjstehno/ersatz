@@ -21,9 +21,9 @@ import com.stehno.ersatz.Decoders
 import com.stehno.ersatz.RequestDecoders
 import spock.lang.Specification
 
+import static com.stehno.ersatz.ErsatzMatchers.collectionContains
 import static com.stehno.ersatz.HttpMethod.GET
 import static com.stehno.ersatz.HttpMethod.HEAD
-import static com.stehno.ersatz.ErsatzMatchers.collectionContains
 import static com.stehno.ersatz.impl.RequestMatcher.*
 import static org.hamcrest.Matchers.*
 
@@ -68,6 +68,8 @@ class RequestMatcherSpec extends Specification {
         cr                                           || result
         new MockClientRequest().header('foo', 'bar') || true
         new MockClientRequest().header('one', 'two') || false
+        new MockClientRequest().header('Foo', 'bar') || true
+        new MockClientRequest().header('Foo', 'Bar') || false
         new MockClientRequest()                      || false
     }
 
