@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Christopher J. Stehno
+ * Copyright (C) 2018 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package com.stehno.ersatz.proxy.impl
 
 import com.stehno.ersatz.proxy.ProxyConfig
 import com.stehno.ersatz.proxy.ProxyExpectations
-import com.stehno.vanilla.Affirmations
 import groovy.transform.CompileStatic
 
 import java.util.function.Consumer
@@ -54,21 +53,21 @@ class ProxyConfigImpl implements ProxyConfig {
 
     @Override
     ProxyConfig target(String value) {
-        Affirmations.affirm value.toLowerCase().startsWith('http://'), ONLY_HTTP_MESSAGE
+        ensure value.toLowerCase().startsWith('http://'), ONLY_HTTP_MESSAGE
         targetUri = value.toURI()
         this
     }
 
     @Override
     ProxyConfig target(URI value) {
-        Affirmations.affirm value.scheme.equalsIgnoreCase(HTTP), ONLY_HTTP_MESSAGE
+        ensure value.scheme.equalsIgnoreCase(HTTP), ONLY_HTTP_MESSAGE
         targetUri = value
         this
     }
 
     @Override
     ProxyConfig target(URL value) {
-        Affirmations.affirm value.protocol.equalsIgnoreCase(HTTP), ONLY_HTTP_MESSAGE
+        ensure value.protocol.equalsIgnoreCase(HTTP), ONLY_HTTP_MESSAGE
         targetUri = value.toURI()
         this
     }
@@ -84,5 +83,11 @@ class ProxyConfigImpl implements ProxyConfig {
     ProxyConfig expectations(Consumer<ProxyExpectations> consumer) {
         consumer.accept(expectations)
         this
+    }
+
+    private static void ensure(final boolean isTrue, final String message) {
+        if (!isTrue) {
+            throw new IllegalArgumentException(message)
+        }
     }
 }

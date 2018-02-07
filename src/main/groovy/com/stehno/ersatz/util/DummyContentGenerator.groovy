@@ -1,5 +1,24 @@
 /*
+ * Copyright (C) 2018 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+<<<<<<< HEAD
  * Copyright (C) 2017 Christopher J. Stehno
+=======
+ * Copyright (C) 2018 Christopher J. Stehno
+>>>>>>> master
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +34,13 @@
  */
 package com.stehno.ersatz.util
 
-import com.stehno.vanilla.io.StorageUnit
 import groovy.transform.CompileStatic
 
 /**
  * Provides a means to generate dummy request/response content for testing.
  */
 @CompileStatic
-@SuppressWarnings(['DuplicateNumberLiteral', 'SpaceAroundOperator', 'UnnecessaryElseStatement', 'DuplicateStringLiteral']) // TODO: remove these when code is moved
+@SuppressWarnings(['DuplicateNumberLiteral', 'SpaceAroundOperator', 'UnnecessaryElseStatement', 'DuplicateStringLiteral'])
 class DummyContentGenerator {
 
     /**
@@ -39,7 +57,7 @@ class DummyContentGenerator {
         bytes
     }
 
-    // FIXME: add this to vanilla
+    // FIXME: add this to StorageUnit
     private static double convert(final StorageUnit destUnit, final double sourceValue, final StorageUnit sourceUnit) {
         int m = sourceUnit.mult - destUnit.mult
         if (m == 0) {
@@ -51,7 +69,7 @@ class DummyContentGenerator {
         }
     }
 
-    // FIXME: add this to vanilla
+    // FIXME: add this to StorageUnit
     private static long approximate(final StorageUnit destUnit, double sourceValue, StorageUnit sourceUnit) {
         Math.round(convert(destUnit, sourceValue, sourceUnit))
     }
