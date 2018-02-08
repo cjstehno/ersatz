@@ -22,7 +22,6 @@ import groovy.transform.CompileStatic
  */
 @CompileStatic
 @SuppressWarnings(['DuplicateNumberLiteral', 'SpaceAroundOperator', 'UnnecessaryElseStatement', 'DuplicateStringLiteral'])
-// TODO: remove these when code is moved
 class DummyContentGenerator {
 
     /**

@@ -22,6 +22,7 @@ import com.stehno.ersatz.HttpMethod
 import com.stehno.ersatz.Request
 import com.stehno.ersatz.Response
 import com.stehno.ersatz.ResponseEncoders
+import com.sun.corba.se.spi.orb.ORBVersion
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 
@@ -187,6 +188,12 @@ class ErsatzRequest implements Request {
     @Override @SuppressWarnings('ConfusingMethodName')
     Request called(final int count) {
         called equalTo(count)
+    }
+
+    @Override
+    Request matcher(final Matcher<ClientRequest> matcher){
+        matchers << RequestMatcher.matcher(matcher)
+        this
     }
 
     /**

@@ -31,14 +31,11 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
 import static MultipartResponseContent.multipart
-import static com.stehno.ersatz.ContentType.MESSAGE_HTTP
-import static com.stehno.ersatz.ContentType.MULTIPART_MIXED
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.ContentType.*
 import static com.stehno.ersatz.CookieMatcher.cookieMatcher
-import static com.stehno.ersatz.HttpMethod.DELETE
-import static com.stehno.ersatz.HttpMethod.GET
-import static com.stehno.ersatz.HttpMethod.OPTIONS
-import static com.stehno.ersatz.HttpMethod.POST
+import static com.stehno.ersatz.HttpMethod.*
+import static okhttp3.MediaType.parse
+import static okhttp3.RequestBody.create
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
 import static org.hamcrest.Matchers.startsWith
 
@@ -512,6 +509,28 @@ class ErsatzServerSpec extends Specification {
 
         and:
         ersatzServer.verify()
+    }
+
+    def 'variable-case headers'() {
+        setup:
+        ersatzServer.expectations {
+            post('*') {
+                body({ true } as Matcher<Object>, APPLICATION_URLENCODED)
+                header('Something-Headery', 'a-value')
+                responds().content('OK')
+            }
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(
+            new okhttp3.Request.Builder().post(create(parse(APPLICATION_URLENCODED.value), 'Posted'))
+                .url(url('/postit'))
+                .header('something-headery', 'a-value')
+                .build()
+        ).execute()
+
+        then:
+        response.body().string() == 'OK'
     }
 
     private String url(final String path) {

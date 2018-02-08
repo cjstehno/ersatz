@@ -15,15 +15,13 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ContentType
-import com.stehno.ersatz.CookieMatcher
-import com.stehno.ersatz.Decoders
-import com.stehno.ersatz.RequestDecoders
+import com.stehno.ersatz.*
+import org.hamcrest.Matcher
 import spock.lang.Specification
 
+import static com.stehno.ersatz.ErsatzMatchers.collectionContains
 import static com.stehno.ersatz.HttpMethod.GET
 import static com.stehno.ersatz.HttpMethod.HEAD
-import static com.stehno.ersatz.ErsatzMatchers.collectionContains
 import static com.stehno.ersatz.impl.RequestMatcher.*
 import static org.hamcrest.Matchers.*
 
@@ -68,6 +66,8 @@ class RequestMatcherSpec extends Specification {
         cr                                           || result
         new MockClientRequest().header('foo', 'bar') || true
         new MockClientRequest().header('one', 'two') || false
+        new MockClientRequest().header('Foo', 'bar') || true
+        new MockClientRequest().header('Foo', 'Bar') || false
         new MockClientRequest()                      || false
     }
 
@@ -107,5 +107,19 @@ class RequestMatcherSpec extends Specification {
         new MockClientRequest()                           || false
         new MockClientRequest(body: 'text content')       || true
         new MockClientRequest(body: 'text other content') || false
+    }
+
+    def 'matcher'() {
+        setup:
+
+        expect:
+        matcher({ ClientRequest r ->
+            r.method == HttpMethod.GET && r.contentLength > 10
+        } as Matcher<ClientRequest>).matches(cr) == result
+
+        where:
+        cr                                                                || result
+        new MockClientRequest()                                           || false
+        new MockClientRequest(method: HttpMethod.GET, contentLength: 100) || true
     }
 }
