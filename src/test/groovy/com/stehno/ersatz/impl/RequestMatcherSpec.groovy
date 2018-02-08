@@ -15,10 +15,8 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ContentType
-import com.stehno.ersatz.CookieMatcher
-import com.stehno.ersatz.Decoders
-import com.stehno.ersatz.RequestDecoders
+import com.stehno.ersatz.*
+import org.hamcrest.Matcher
 import spock.lang.Specification
 
 import static com.stehno.ersatz.ErsatzMatchers.collectionContains
@@ -109,5 +107,19 @@ class RequestMatcherSpec extends Specification {
         new MockClientRequest()                           || false
         new MockClientRequest(body: 'text content')       || true
         new MockClientRequest(body: 'text other content') || false
+    }
+
+    def 'matcher'() {
+        setup:
+
+        expect:
+        matcher({ ClientRequest r ->
+            r.method == HttpMethod.GET && r.contentLength > 10
+        } as Matcher<ClientRequest>).matches(cr) == result
+
+        where:
+        cr                                                                || result
+        new MockClientRequest()                                           || false
+        new MockClientRequest(method: HttpMethod.GET, contentLength: 100) || true
     }
 }

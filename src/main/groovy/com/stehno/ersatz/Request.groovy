@@ -175,6 +175,15 @@ interface Request {
     Request called(final int count)
 
     /**
+     * Configures a matcher for the <code>ClientRequest</code>, which allows ad-hoc matching based on the request. This does <i>not</i> disallow
+     * using other matcher methods, but be careful to consider any potential overlaps or unintended exclusions.
+     *
+     * @param matcher a matcher based on the <code>ClientRequest</code> object
+     * @return a reference to this request
+     */
+    Request matcher(final Matcher<ClientRequest> matcher)
+
+    /**
      * Initiates the definition of a response for this request.
      *
      * @return a response for this request, for configuration

@@ -16,6 +16,7 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.ContentType
 import com.stehno.ersatz.ErsatzServer
 import com.stehno.ersatz.InMemoryCookieJar
 import com.stehno.ersatz.Response
@@ -23,6 +24,7 @@ import com.stehno.ersatz.ResponseEncoders
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Request.Builder
+import org.hamcrest.Matcher
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -30,6 +32,7 @@ import spock.lang.Unroll
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
+import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 import static com.stehno.ersatz.Cookie.cookie
 import static com.stehno.ersatz.CookieMatcher.cookieMatcher
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
@@ -490,6 +493,18 @@ class ErsatzRequestSpec extends Specification {
 
         then:
         value == NOT_FOUND_BODY
+    }
+
+    def 'generic matcher'(){
+        setup:
+        server.expectations {
+            get('/testing').matcher({ ClientRequest cr ->
+                cr.protocol == 'http' && cr.path == '/testing' && !cr.queryParams.isEmpty()
+            } as Matcher<ClientRequest>).responds().content(STRING_CONTENT)
+        }
+
+        expect:
+        exec(clientGet('/testing?alpha=123').build()).body().string() == STRING_CONTENT
     }
 
     private Builder clientGet(final String path) {

@@ -165,6 +165,16 @@ class RequestMatcher extends BaseMatcher<ClientRequest> {
     }
 
     /**
+     * Creates a matcher based on the <code>ClientRequest</code> object.
+     *
+     * @param crm the matcher
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher matcher(final Matcher<ClientRequest> crm) {
+        new RequestMatcher(crm, { it }, "Request matches $crm")
+    }
+
+    /**
      * Performs the hamcrest matching using the wrapped matcher and property extractor.
      *
      * @param cr the client request
