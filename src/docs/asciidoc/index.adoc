@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno <chris@stehno.com>
-v1.6.1, December 2017
+v1.6.2, December 2017
 :toc: left
 :toclevels: 4
 
@@ -32,14 +32,14 @@ methods:
 
 For Gradle add the following to your `build.gradle` file:
 
-    testCompile 'com.stehno.ersatz:ersatz:1.6.1'
+    testCompile 'com.stehno.ersatz:ersatz:1.6.2'
 
 For Maven add the code below to your `pom.xml` file:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>1.6.1</version>
+        <version>1.6.2</version>
         <scope>test</scope>
     </dependency>
 
@@ -1039,7 +1039,7 @@ the unit tests).
 
 == Proxy Server
 
-Starting in v1.6.1 a standalone proxy server was available. The `com.stehno.ersatz.proxy.ErsatzProxy` is useful for testing proxied HTTP connections.
+Starting in v1.6.2 a standalone proxy server was available. The `com.stehno.ersatz.proxy.ErsatzProxy` is useful for testing proxied HTTP connections.
 The proxy server has a similar configuration to the `ErsatzServer` and allows limited expectation configuration; it is expected that more detailed
 expectation configuration will be done on a standard `ErsatzServer` instance at the other end of the proxy.
 
@@ -1099,14 +1099,14 @@ The embedded version of Undertow used by Ersatz has caused issues with some serv
 If you run into errors using the standard jar distribution, please try using the `safe` distribution, which is a shadowed jar which includes the
 Undertow library and its JBoss dependencies repackaged in the jar. You can use this version with the following coordinates:
 
-    testCompile 'com.stehno.ersatz:ersatz:1.6.1:safe@jar'
+    testCompile 'com.stehno.ersatz:ersatz:1.6.2:safe@jar'
 
 For a Maven `pom.xml` entry, this would be:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>1.6.1</version>
+        <version>1.6.2</version>
         <type>jar</type>
         <scope>test</scope>
         <classifier>safe</classifier>
