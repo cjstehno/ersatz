@@ -18,10 +18,14 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.ClientRequest
 import groovy.transform.Memoized
 
+import java.nio.charset.Charset
+
 /**
  * Helper object used to build and render a report of the unmatched request and the configured expectations.
  */
 class UnmatchedRequestReport {
+
+    private static final List<String> TEXT_CONTENT_HINTS = ['text/', '/json', 'application/x-www-form-urlencoded'].asImmutable()
 
     private final ClientRequest request
     private final List<ErsatzRequest> expectations
@@ -68,7 +72,11 @@ class UnmatchedRequestReport {
 
         if (request.body) {
             out.append 'Content:\n'
-            out.append request.body ? "  ${request.body}\n" : '  <empty>\n'
+            if (request.contentType && TEXT_CONTENT_HINTS.any { request.contentType.contains(it) }) {
+                out.append "  ${new String(request.body, Charset.forName(request.characterEncoding ?: 'UTF-8'))}\n"
+            } else {
+                out.append "  ${request.body}\n"
+            }
         }
 
         out.append('\n# Expectations\n\n')
