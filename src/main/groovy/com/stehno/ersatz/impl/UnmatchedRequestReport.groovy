@@ -72,9 +72,6 @@ class UnmatchedRequestReport {
 
         if (request.body) {
             out.append 'Content:\n'
-            if (!request.body) {
-                out.append '  <empty>\n'
-            }
             if (request.contentType && TEXT_CONTENT_HINTS.any { request.contentType.contains(it) }) {
                 out.append "  ${new String(request.body, Charset.forName(request.characterEncoding ?: 'UTF-8'))}\n"
             } else {
