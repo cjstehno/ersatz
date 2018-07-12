@@ -17,12 +17,14 @@ package com.stehno.ersatz
 
 import okhttp3.OkHttpClient
 import okhttp3.Request.Builder
+import spock.lang.AutoCleanup
 import spock.lang.Specification
 
 import static com.stehno.ersatz.auth.SimpleIdentityManager.encodedCredential
 
 class BasicSpec extends Specification {
 
+    @AutoCleanup
     private final ErsatzServer ersatzServer = new ErsatzServer({
         authentication {
             basic()
@@ -51,9 +53,5 @@ class BasicSpec extends Specification {
         then:
         response.code() == 200
         response.body().string() == 'Something secure'
-    }
-
-    def cleanup() {
-        ersatzServer.stop()
     }
 }
