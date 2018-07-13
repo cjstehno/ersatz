@@ -1,22 +1,22 @@
 plugins {
     id 'groovy'
-    id "com.github.hierynomus.license" version '0.13.1'
+    id "com.github.hierynomus.license" version '0.14.0'
     id 'jacoco'
     id 'codenarc'
     id 'maven'
     id 'maven-publish'
-    id 'com.github.kt3k.coveralls' version '2.8.1'
-    id 'com.jfrog.bintray' version '1.7.3'
-    id "org.asciidoctor.convert" version '1.5.3'
+    id 'com.github.kt3k.coveralls' version '2.8.2'
+    id 'com.jfrog.bintray' version '1.8.4'
+    id "org.asciidoctor.convert" version '1.5.8.1'
     id "com.stehno.gradle.webpreview" version '0.3.0'
     id "com.stehno.gradle.site" version '0.0.3'
-    id 'org.jetbrains.kotlin.jvm' version '1.2.0'
-    id 'com.github.ben-manes.versions' version '0.15.0'
-    id "com.github.johnrengelman.shadow" version '2.0.1'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.51'
+    id 'com.github.ben-manes.versions' version '0.20.0'
+    id "com.github.johnrengelman.shadow" version '2.0.4'
 }
 
 group = 'com.stehno.ersatz'
-version = '1.6.2'
+version = '1.6.3'
 
 sourceCompatibility = 8
 targetCompatibility = 8
@@ -31,32 +31,33 @@ configurations {
 
 dependencies {
     compile "org.codehaus.groovy:groovy-all:$groovyVersion"
-    compile 'io.undertow:undertow-core:1.4.19.Final'
+
+    compile 'io.undertow:undertow-core:2.0.10.Final'
 
     compile 'ch.qos.logback:logback-classic:1.1.7'
 
-    compile 'commons-fileupload:commons-fileupload:1.3.2'
+    compile 'commons-fileupload:commons-fileupload:1.3.3'
     compile 'javax.servlet:javax.servlet-api:3.1.0'
 
     compile 'org.hamcrest:hamcrest-library:1.3'
     compile 'junit:junit:4.12'
 
-    testCompile 'com.squareup.okhttp3:okhttp:3.5.0'
+    testCompile 'com.squareup.okhttp3:okhttp:3.11.0'
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
-    testCompile 'com.burgstaller:okhttp-digest:1.10'
-    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.2.0"
+    testCompile 'com.burgstaller:okhttp-digest:1.17'
+    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.2.51"
 
     groovyDoc "org.codehaus.groovy:groovy-groovydoc:$groovyVersion"
     groovyDoc "org.codehaus.groovy:groovy-ant:$groovyVersion"
 
     codenarc(
-        'org.codenarc:CodeNarc:0.26.0',
+        'org.codenarc:CodeNarc:1.2',
         "org.codehaus.groovy:groovy-all:$groovyVersion"
     )
 }
 
 codenarc {
-    toolVersion = '1.0.0'
+    toolVersion = '1.2'
 }
 
 codenarcMain {
@@ -148,11 +149,10 @@ jacocoTestReport {
 }
 
 license {
-    header rootProject.file('config/license_header.txt')
+    header = file('config/license_header.txt')
 
     ignoreFailures false
 
-    ext.name = 'Christopher J. Stehno'
     ext.year = Calendar.instance.get(Calendar.YEAR)
 
     excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks', '**/*.jpg'])
