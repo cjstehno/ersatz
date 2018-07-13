@@ -1,0 +1,62 @@
+
+WEB SOCKETs
+
+For testing I can use OkHttp https://square.github.io/okhttp/3.x/okhttp/okhttp3/WebSocket.html
+
+want to be able to expect messages pushed to server
+want to be able to have the server push messages to client (after delay?, multiple timed, etc)
+
+ssl integration?
+
+expectations {
+    ws {
+        inbound('/topic/foo'){
+            message(...)
+        }
+        outbound('/topic/other'){
+            payload(...)
+        }
+    }
+}
+
+Setup a simple undertow server with ws and test access to it with okhttp client
+
+- connect and wait to recieve pushed data
+- connect and send data then get response push
+- connect and send data and get nothing
+
+ws('/path') {
+    connected {
+        // do something in response to connection
+        send(TEXT, 'sdfsdfsdf')
+        actions {
+            // groovy code
+            send ...
+            // groovy code
+        }
+    }
+    receive(TEXT, 'sdfsdf')
+    receive {
+        type BINARY
+        content sdfsdf
+        count 2
+        actions {
+            ... send...
+        }
+    }
+}
+
+
+should be able to have standard web expectations fire ws operations
+
+post('/something'){
+    ...
+    responds {
+
+    }
+    ws {
+        // groovy code
+        send ...
+        // groovy code
+    }
+}
