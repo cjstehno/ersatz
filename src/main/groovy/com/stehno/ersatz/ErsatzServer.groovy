@@ -27,17 +27,10 @@ import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.BlockingHandler
 import io.undertow.server.handlers.CookieImpl
 import io.undertow.server.handlers.HttpTraceHandler
-import io.undertow.server.handlers.PathHandler
 import io.undertow.server.handlers.encoding.ContentEncodingRepository
 import io.undertow.server.handlers.encoding.DeflateEncodingProvider
 import io.undertow.server.handlers.encoding.EncodingHandler
 import io.undertow.server.handlers.encoding.GzipEncodingProvider
-import io.undertow.websockets.WebSocketConnectionCallback
-import io.undertow.websockets.core.AbstractReceiveListener
-import io.undertow.websockets.core.BufferedBinaryMessage
-import io.undertow.websockets.core.BufferedTextMessage
-import io.undertow.websockets.core.WebSocketChannel
-import io.undertow.websockets.spi.WebSocketHttpExchange
 
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
@@ -47,18 +40,10 @@ import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Function
 
-import static com.stehno.ersatz.WebSocketsHandlerFactory.webSocketHandler
-import static com.stehno.ersatz.WsMessageType.BINARY
-import static com.stehno.ersatz.WsMessageType.resolve
 import static groovy.transform.TypeCheckingMode.SKIP
-import static io.undertow.Handlers.path
-import static io.undertow.Handlers.websocket
 import static io.undertow.UndertowOptions.IDLE_TIMEOUT
 import static io.undertow.UndertowOptions.REQUEST_PARSE_TIMEOUT
 import static io.undertow.util.HttpString.tryFromString
-import static io.undertow.websockets.core.WebSockets.sendBinary
-import static io.undertow.websockets.core.WebSockets.sendText
-import static java.nio.ByteBuffer.wrap
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 import static java.util.concurrent.TimeUnit.SECONDS
 
@@ -434,7 +419,9 @@ class ErsatzServer implements ServerConfig {
                     .addEncodingHandler('deflate', new DeflateEncodingProvider(), 50)
             ))
 
-            server = builder.setHandler(webSocketHandler(expectations, blockingHandler)).build()
+            WebSocketsHandlerBuilder wsBuilder = new WebSocketsHandlerBuilder(expectations, blockingHandler, mismatchToConsole)
+
+            server = builder.setHandler(wsBuilder.build()).build()
             server.start()
 
             applyPorts()
@@ -466,17 +453,17 @@ class ErsatzServer implements ServerConfig {
 
     /**
      * Used to verify that all of the expected request interactions were called the appropriate number of times. This method should be called after
-     * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back from
-     * the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
+     * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back
+     * from the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
      *
-     * If there are web socket expectations configured, this method will be blocking against the expected operations. Expectations involving web sockets
-     * should consider using the timeout parameters - the default is 1s.
+     * If there are web socket expectations configured, this method will be blocking against the expected operations. Expectations involving web
+     * sockets should consider using the timeout parameters - the default is 1s.
      *
      * @param timeout the timeout value (defaults to 1)
      * @param unit the timeout unit (defaults to SECONDS)
      * @return <code>true</code> if all call criteria were met during test execution.
      */
-    boolean verify(final long timeout=1, final TimeUnit unit=SECONDS){
+    boolean verify(final long timeout = 1, final TimeUnit unit = SECONDS) {
         expectations.verify(timeout, unit)
     }
 
@@ -566,76 +553,4 @@ class ErsatzServer implements ServerConfig {
     }
 }
 
-@CompileStatic @Slf4j
-class WebSocketsHandlerFactory {
 
-    static PathHandler webSocketHandler(final ExpectationsImpl expectations, final HttpHandler defaultHandler) {
-        // FIXME: this will be configurable (and allow multiple paths)
-        String pathPrefix = '/ws'
-
-        path(defaultHandler).addPrefixPath(pathPrefix, websocket(new WebSocketConnectionCallback() {
-            @Override
-            void onConnect(final WebSocketHttpExchange exchange, final WebSocketChannel channel) {
-                log.debug 'Connected ({}).', pathPrefix
-
-                // find the ws for this path and register a connection
-                WebSocketExpectationsImpl wsExpectation = expectations.findWsMatch(pathPrefix) as WebSocketExpectationsImpl
-                if (wsExpectation) {
-                    wsExpectation.connect()
-
-                    // perform on-connect sends
-                    wsExpectation.eachSender { SentMessageImpl sm ->
-                        //noinspection UnnecessaryQualifiedReference
-                        WebSocketsHandlerFactory.sendMessage channel, sm.payload, sm.messageType
-                    }
-
-                    // FIXME: ensure that ws failures are represented in the match failure reporting
-
-                    channel.receiveSetter.set(new AbstractReceiveListener() {
-                        @Override
-                        protected void onFullTextMessage(WebSocketChannel ch, BufferedTextMessage message) throws IOException {
-                            handleMessage(wsExpectation, ch, message)
-                        }
-
-                        @Override
-                        protected void onFullBinaryMessage(WebSocketChannel ch, BufferedBinaryMessage message) throws IOException {
-                            handleMessage(wsExpectation, ch, message)
-                        }
-                    })
-                    channel.resumeReceives()
-
-                } else {
-                    throw new IllegalArgumentException('Web socket expectation was never connected.')
-                }
-            }
-        }))
-    }
-
-    @CompileStatic(SKIP)
-    private static void handleMessage(final WebSocketExpectationsImpl wsExpectation, final WebSocketChannel ch, final Object message) {
-        ReceivedMessageImpl expectation = wsExpectation.findMatch(message)
-        if (expectation) {
-            expectation.mark()
-            performReactions expectation, ch
-
-        } else {
-            log.warn 'Received ({}) message that has no configured expectation: {}', resolve(message), message
-        }
-    }
-
-    private static void performReactions(final ReceivedMessageImpl expectation, WebSocketChannel ch) {
-        expectation.reactions.each { MessageReactionImpl reaction ->
-            sendMessage(ch, reaction.payload, reaction.messageType)
-        }
-    }
-
-    private static void sendMessage(final WebSocketChannel ch, final Object payload, final WsMessageType messageType) {
-        switch (messageType) {
-            case BINARY:
-                sendBinary(wrap(payload as byte[]), ch, null)
-                break
-            default:
-                sendText(payload.toString(), ch, null)
-        }
-    }
-}

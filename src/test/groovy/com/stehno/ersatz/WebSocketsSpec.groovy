@@ -41,11 +41,26 @@ class WebSocketsSpec extends Specification {
     def 'specified ws block should expect at least one connect'() {
         setup:
         ersatz.expectations {
+            ws('/stuff')
+        }
+
+        when:
+        openWebSocket("${ersatz.wsUrl}/stuff")
+
+        then:
+        ersatz.verify()
+    }
+
+    def 'specified multiple ws connection expectations'() {
+        setup:
+        ersatz.expectations {
             ws('/ws')
+            ws('/foo')
         }
 
         when:
         openWebSocket("${ersatz.wsUrl}/ws")
+        openWebSocket("${ersatz.wsUrl}/foo")
 
         then:
         ersatz.verify()

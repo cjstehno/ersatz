@@ -293,14 +293,14 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     WebSocketExpectations ws(final String path) {
-        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl()
+        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path)
         webSockets[path] = wse
         wse
     }
 
     @Override
     WebSocketExpectations ws(String path, @DelegatesTo(WebSocketExpectations) Closure closure) {
-        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl()
+        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path)
 
         closure.delegate = wse
         closure.call()
@@ -308,6 +308,10 @@ class ExpectationsImpl implements Expectations {
         webSockets[path] = wse
 
         wse
+    }
+
+    Set<String> getWebSocketPaths() {
+        webSockets.keySet()
     }
 
     /**

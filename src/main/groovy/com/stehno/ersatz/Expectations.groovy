@@ -466,12 +466,14 @@ interface Expectations {
     Request options(Matcher<String> matcher, Consumer<Request> config)
 
     /**
-     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection will be expected in order for the verification to pass.
+     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection will be expected in order
+     * for the verification to pass.
      */
     WebSocketExpectations ws(String path)
 
     /**
-     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection will be expected in order for the verification to pass.
+     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection will be expected in order
+     * for the verification to pass.
      */
     WebSocketExpectations ws(String path, @DelegatesTo(WebSocketExpectations) Closure closure)
 

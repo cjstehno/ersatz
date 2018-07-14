@@ -33,11 +33,20 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
     private final CountDownLatch connectionLatch = new CountDownLatch(1)
     private final List<ReceivedMessageImpl> receivedMessages = []
     private final List<SentMessageImpl> sentMessages = []
+    final String path
+
+    WebSocketExpectationsImpl(final String path) {
+        this.path = path
+    }
 
     void connect() {
         connectionLatch.countDown()
 
         // TODO: runs any reactions
+    }
+
+    boolean isConnected() {
+        connectionLatch.count == 0
     }
 
     @Override
@@ -94,8 +103,16 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
         message
     }
 
+    int getExpectedMessageCount() {
+        receivedMessages.size()
+    }
+
     void eachSender(Closure closure) {
         sentMessages.each closure
+    }
+
+    void eachMessage(Closure closure) {
+        receivedMessages.each closure
     }
 
     ReceivedMessageImpl findMatch(final BufferedTextMessage message) {
@@ -106,8 +123,6 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
         receivedMessages.find { m -> m.matches(message) }
     }
 
-    // FIXME: add a timeout to the verify method (optional)
-    // TODO: document this blocking
     boolean verify(final long timeout = 1, final TimeUnit unit = SECONDS) {
         connectionLatch.await(timeout, unit) && receivedMessages.every { m -> m.marked(timeout, unit) }
     }
