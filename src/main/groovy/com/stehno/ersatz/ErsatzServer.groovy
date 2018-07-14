@@ -218,7 +218,11 @@ class ErsatzServer implements ServerConfig {
         "http://localhost:$actualHttpPort"
     }
 
-    // FIXME: document
+    /**
+     * Used to retrieve the Web Socket URL.
+     *
+     * @return the web socket URL
+     */
     String getWsUrl() {
         "ws://localhost:$actualHttpPort"
     }

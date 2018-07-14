@@ -15,6 +15,8 @@
  */
 package com.stehno.ersatz
 
+import java.util.function.Consumer
+
 /**
  * Defines the web socket expectations.
  */
@@ -48,7 +50,13 @@ interface WebSocketExpectations {
      */
     ReceivedMessage receive(@DelegatesTo(ReceivedMessage) Closure closure)
 
-    // FIXME: consumer versions
+    /**
+     * Configures an expectation that the web socket connection will receive a message configured by the consumer.
+     *
+     * @param config the configuration consumer
+     * @return a reference to this ReceivedMessage
+     */
+    ReceivedMessage receive(Consumer<ReceivedMessage> config)
 
     /**
      * Configures a web socket message which will be sent to the client after it connects.
@@ -74,4 +82,12 @@ interface WebSocketExpectations {
      * @return a reference to this ReceivedMessage
      */
     SentMessage send(@DelegatesTo(SentMessage) Closure closure)
+
+    /**
+     * Configures a web socket message which will be sent to the client after it connects.
+     *
+     * @param config the configuration consumer
+     * @return a reference to this ReceivedMessage
+     */
+    SentMessage send(Consumer<SentMessage> config)
 }

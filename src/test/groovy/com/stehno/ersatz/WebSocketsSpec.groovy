@@ -26,6 +26,7 @@ import spock.lang.Unroll
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import java.util.function.Consumer
 
 import static com.stehno.ersatz.WsMessageType.BINARY
 import static com.stehno.ersatz.WsMessageType.TEXT
@@ -76,6 +77,34 @@ class WebSocketsSpec extends Specification {
 
         when:
         openWebSocket("${ersatz.wsUrl}/ws") { WebSocket wskt ->
+            wskt.send(sentMessage)
+        }
+
+        then:
+        ersatz.verify()
+
+        where:
+        type   | sentMessage           || receivedMessage
+        TEXT   | 'the message'         || 'the message'
+        BINARY | of('somebytes'.bytes) || 'somebytes'.bytes
+    }
+
+    @Unroll 'specify a ws block and expect a received message (consumer: #type)'() {
+        setup:
+        def msg = receivedMessage
+        def msgType = type
+
+        ersatz.expectations {
+            ws('/blah', new Consumer<WebSocketExpectations>() {
+                @Override
+                void accept(WebSocketExpectations ex) {
+                    ex.receive(msg, msgType)
+                }
+            })
+        }
+
+        when:
+        openWebSocket("${ersatz.wsUrl}/blah") { WebSocket wskt ->
             wskt.send(sentMessage)
         }
 

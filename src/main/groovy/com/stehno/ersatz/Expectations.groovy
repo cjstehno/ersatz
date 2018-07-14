@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.impl.WebSocketExpectationsImpl
 import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
 
@@ -477,6 +478,9 @@ interface Expectations {
      */
     WebSocketExpectations ws(String path, @DelegatesTo(WebSocketExpectations) Closure closure)
 
-    // FIXME: implement
-//    WebSocketExpectations ws(String path, Consumer config)
+    /**
+     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection will be expected in order
+     * for the verification to pass.
+     */
+    WebSocketExpectations ws(String path, Consumer<WebSocketExpectations> config)
 }

@@ -24,6 +24,7 @@ import io.undertow.websockets.core.BufferedTextMessage
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import java.util.function.Consumer
 
 import static com.stehno.ersatz.WsMessageType.*
 import static java.util.concurrent.TimeUnit.SECONDS
@@ -41,8 +42,6 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
 
     void connect() {
         connectionLatch.countDown()
-
-        // TODO: runs any reactions
     }
 
     boolean isConnected() {
@@ -99,6 +98,22 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
         SentMessageImpl message = new SentMessageImpl()
         closure.delegate = message
         closure.call()
+        sentMessages << message
+        message
+    }
+
+    @Override
+    ReceivedMessage receive(Consumer<ReceivedMessage> config) {
+        ReceivedMessageImpl message = new ReceivedMessageImpl()
+        config.accept(message)
+        receivedMessages << message
+        message
+    }
+
+    @Override
+    SentMessage send(Consumer<SentMessage> config) {
+        SentMessageImpl message = new SentMessageImpl()
+        config.accept(message)
         sentMessages << message
         message
     }

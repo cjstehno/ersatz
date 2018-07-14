@@ -310,6 +310,16 @@ class ExpectationsImpl implements Expectations {
         wse
     }
 
+    @Override
+    WebSocketExpectations ws(String path, Consumer<WebSocketExpectations> config) {
+        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path)
+        config.accept(wse)
+
+        webSockets[path] = wse
+
+        wse
+    }
+
     Set<String> getWebSocketPaths() {
         webSockets.keySet()
     }
