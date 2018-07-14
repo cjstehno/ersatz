@@ -18,10 +18,7 @@ package com.stehno.ersatz
 import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
 
-import java.util.concurrent.CountDownLatch
 import java.util.function.Consumer
-
-import static java.util.concurrent.TimeUnit.SECONDS
 
 /**
  * The <code>Expectations</code> interface is the root element of the expectation configuration, which provides the ability to define request

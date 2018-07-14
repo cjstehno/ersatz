@@ -23,4 +23,14 @@ import groovy.transform.CompileStatic
 @CompileStatic
 enum WsMessageType {
     BINARY, TEXT
+
+    /**
+     * Resolves the default message type for the specified object.
+     *
+     * @param obj the payload object
+     * @return the message type determined by content
+     */
+    static WsMessageType resolve(final Object obj) {
+        obj instanceof byte[] ? BINARY : TEXT
+    }
 }

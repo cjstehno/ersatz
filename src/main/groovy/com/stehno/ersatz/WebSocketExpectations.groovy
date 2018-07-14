@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz
 
+@SuppressWarnings('ConfusingMethodName')
 interface WebSocketExpectations {
 
     ReceivedMessage receive(Object payload)
@@ -22,4 +23,40 @@ interface WebSocketExpectations {
     ReceivedMessage receive(Object payload, WsMessageType messageType)
 
     ReceivedMessage receive(@DelegatesTo(ReceivedMessage) Closure closure)
+
+    // FIXME: consumer versions
+
+    SentMessage send(Object payload)
+
+    SentMessage send(Object payload, WsMessageType messageType)
+
+    SentMessage send(@DelegatesTo(SentMessage) Closure closure)
+}
+
+// FIXME: move this out
+
+@SuppressWarnings('ConfusingMethodName')
+interface SentMessage {
+
+    SentMessage payload(Object obj)
+
+    SentMessage messageType(WsMessageType type)
+}
+
+class SentMessageImpl implements SentMessage {
+
+    Object payload
+    WsMessageType messageType
+
+    @Override
+    SentMessage payload(Object obj) {
+        payload = obj
+        this
+    }
+
+    @Override
+    SentMessage messageType(WsMessageType type) {
+        messageType = type
+        this
+    }
 }

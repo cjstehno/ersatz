@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz.util
 
-
 /**
  * Unit of a TimeSpan.
  */

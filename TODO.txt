@@ -47,9 +47,6 @@ ws('/path'){
     }
 }
 
-EXPECTATIONS:
-- if a ws block is specified, then at least one connection is expected or the verify will fail
-
 
 post('/something'){
     ...
@@ -66,6 +63,7 @@ post('/something'){
 
 ----
 - document the closable patch (and implement it)
+- consumer versions for DSL?
 - document the ws support
 - ensure that the failure report displays ws details
 - standard web expectations should be able to send ws events

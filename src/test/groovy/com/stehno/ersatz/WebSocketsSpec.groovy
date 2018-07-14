@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit
 import static com.stehno.ersatz.WsMessageType.BINARY
 import static com.stehno.ersatz.WsMessageType.TEXT
 import static java.util.concurrent.TimeUnit.SECONDS
+import static okio.ByteString.of
 
 class WebSocketsSpec extends Specification {
 
@@ -67,9 +68,9 @@ class WebSocketsSpec extends Specification {
         ersatz.verify()
 
         where:
-        type   | sentMessage                      || receivedMessage
-        TEXT   | 'the message'                    || 'the message'
-        BINARY | ByteString.of('somebytes'.bytes) || 'somebytes'.bytes
+        type   | sentMessage           || receivedMessage
+        TEXT   | 'the message'         || 'the message'
+        BINARY | of('somebytes'.bytes) || 'somebytes'.bytes
     }
 
     @Unroll 'specify a ws block and expect a received message (closure)'() {
@@ -92,16 +93,16 @@ class WebSocketsSpec extends Specification {
         ersatz.verify()
 
         where:
-        type   | sentMessage                      || receivedMessage
-        TEXT   | 'the message'                    || 'the message'
-        BINARY | ByteString.of('somebytes'.bytes) || 'somebytes'.bytes
+        type   | sentMessage           || receivedMessage
+        TEXT   | 'the message'         || 'the message'
+        BINARY | of('somebytes'.bytes) || 'somebytes'.bytes
     }
 
-    def 'ws block expects a message and then reacts (method)'() {
+    @Unroll 'ws block expects a message and then reacts (method: #type)'() {
         setup:
         ersatz.expectations {
             ws('/ws') {
-                receive('hello').reaction('howdy')
+                receive('hello').reaction(reactionMessage, type)
             }
         }
 
@@ -112,14 +113,103 @@ class WebSocketsSpec extends Specification {
             wskt.send('hello')
         }
 
-        // TODO: test closure version and both binary and text.
+        then:
+        ersatz.verify()
+
+        and:
+        listener.await()
+        listener.messages == [clientMessage]
+
+        where:
+        type   | reactionMessage   || clientMessage
+        TEXT   | 'the message'     || 'the message'
+        BINARY | 'somebytes'.bytes || of('somebytes'.bytes)
+    }
+
+    @Unroll 'ws block expects a message and then reacts (closure: #type)'() {
+        setup:
+        ersatz.expectations {
+            ws('/ws') {
+                receive('hello').reaction {
+                    payload reactionMessage
+                    messageType type
+                }
+            }
+        }
+
+        CapturingWebSocketListener listener = new CapturingWebSocketListener(1)
+
+        when:
+        openWebSocket("${ersatz.wsUrl}/ws", listener) { WebSocket wskt ->
+            wskt.send('hello')
+        }
 
         then:
         ersatz.verify()
 
         and:
         listener.await()
-        listener.textMessages == ['howdy']
+        listener.messages == [clientMessage]
+
+        where:
+        type   | reactionMessage   || clientMessage
+        TEXT   | 'the message'     || 'the message'
+        BINARY | 'somebytes'.bytes || of('somebytes'.bytes)
+    }
+
+    @Unroll 'ws block connects and sends message (method: #type)'() {
+        setup:
+        ersatz.expectations {
+            ws('/ws') {
+                send(sentMessage, type)
+            }
+        }
+
+        CapturingWebSocketListener listener = new CapturingWebSocketListener(1)
+
+        when:
+        openWebSocket "${ersatz.wsUrl}/ws", listener
+
+        then:
+        ersatz.verify()
+
+        and:
+        listener.await()
+        listener.messages == [clientMessage]
+
+        where:
+        type   | sentMessage                  || clientMessage
+        TEXT   | 'message for you, sir'       || 'message for you, sir'
+        BINARY | 'message for you, sir'.bytes || of('message for you, sir'.bytes)
+    }
+
+    @Unroll 'ws block connects and sends message (closure: #type)'() {
+        setup:
+        ersatz.expectations {
+            ws('/ws') {
+                send {
+                    payload sentMessage
+                    messageType type
+                }
+            }
+        }
+
+        CapturingWebSocketListener listener = new CapturingWebSocketListener(1)
+
+        when:
+        openWebSocket "${ersatz.wsUrl}/ws", listener
+
+        then:
+        ersatz.verify()
+
+        and:
+        listener.await()
+        listener.messages == [clientMessage]
+
+        where:
+        type   | sentMessage                  || clientMessage
+        TEXT   | 'message for you, sir'       || 'message for you, sir'
+        BINARY | 'message for you, sir'.bytes || of('message for you, sir'.bytes)
     }
 
     private void openWebSocket(final String url, Closure closure = null) {
@@ -139,8 +229,7 @@ class WebSocketsSpec extends Specification {
 @Slf4j
 class CapturingWebSocketListener extends WebSocketListener {
 
-    final List<String> textMessages = []
-    final List<ByteString> binaryMessages = []
+    final List messages = []
     private final CountDownLatch latch
 
     CapturingWebSocketListener(int expectedMessageCount) {
@@ -157,13 +246,13 @@ class CapturingWebSocketListener extends WebSocketListener {
 
     @Override void onMessage(WebSocket webSocket, String text) {
         log.info('message (string): {}', text)
-        textMessages << text
+        messages << text
         latch.countDown()
     }
 
     @Override void onMessage(WebSocket webSocket, ByteString bytes) {
         log.info('message (bytes): {}', bytes)
-        binaryMessages << bytes
+        messages << bytes
         latch.countDown()
     }
 

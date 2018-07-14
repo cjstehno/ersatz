@@ -15,23 +15,21 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ReceivedMessage
-import com.stehno.ersatz.WebSocketExpectations
-import com.stehno.ersatz.WsMessageType
+import com.stehno.ersatz.*
 import io.undertow.websockets.core.BufferedBinaryMessage
 import io.undertow.websockets.core.BufferedTextMessage
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-import static com.stehno.ersatz.WsMessageType.BINARY
-import static com.stehno.ersatz.WsMessageType.TEXT
+import static com.stehno.ersatz.WsMessageType.*
 import static java.util.concurrent.TimeUnit.SECONDS
 
 class WebSocketExpectationsImpl implements WebSocketExpectations {
 
     private CountDownLatch connectionLatch = new CountDownLatch(1)
     private final List<ReceivedMessageImpl> receivedMessages = []
+    private final List<SentMessageImpl> sentMessages = []
 
     void connect() {
         connectionLatch.countDown()
@@ -41,7 +39,7 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
 
     @Override
     ReceivedMessage receive(Object payload) {
-        switch (MessageTypeResolver.resolve(payload)) {
+        switch (resolve(payload)) {
             case BINARY:
                 return receive(payload, BINARY)
             default:
@@ -67,6 +65,36 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
         message
     }
 
+    @Override
+    SentMessage send(Object payload) {
+        switch (resolve(payload)) {
+            case BINARY:
+                return send(payload, BINARY)
+            default:
+                return send(payload.toString(), TEXT)
+        }
+    }
+
+    @Override
+    SentMessage send(Object payload, WsMessageType messageType) {
+        SentMessageImpl message = new SentMessageImpl(payload: payload, messageType: messageType)
+        sentMessages << message
+        message
+    }
+
+    @Override
+    SentMessage send(@DelegatesTo(SentMessage) Closure closure) {
+        SentMessageImpl message = new SentMessageImpl()
+        closure.delegate = message
+        closure.call()
+        sentMessages << message
+        message
+    }
+
+    void eachSender(Closure closure) {
+        sentMessages.each closure
+    }
+
     ReceivedMessageImpl findMatch(final BufferedTextMessage message) {
         receivedMessages.find { m -> m.matches(message) }
     }
@@ -79,13 +107,5 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
     // TODO: document this blocking
     boolean verify(final long timeout = 1, final TimeUnit unit = SECONDS) {
         connectionLatch.await(timeout, unit) && receivedMessages.every { m -> m.marked(timeout, unit) }
-    }
-}
-
-// FIXME: move this
-class MessageTypeResolver {
-
-    static WsMessageType resolve(Object obj) {
-        obj instanceof byte[] ? BINARY : TEXT
     }
 }

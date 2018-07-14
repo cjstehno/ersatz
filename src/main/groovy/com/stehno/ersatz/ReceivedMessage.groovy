@@ -18,6 +18,7 @@ package com.stehno.ersatz
 /**
  * FIXME: document
  */
+@SuppressWarnings('ConfusingMethodName')
 interface ReceivedMessage {
 
     // generally a string or byte array
@@ -32,6 +33,9 @@ interface ReceivedMessage {
     MessageReaction reaction(@DelegatesTo(MessageReaction) Closure closure)
 }
 
+// FIXME: move these out
+
+@SuppressWarnings('ConfusingMethodName')
 interface MessageReaction {
 
     MessageReaction payload(Object obj)

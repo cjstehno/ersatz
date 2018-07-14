@@ -48,6 +48,7 @@ import java.util.function.Consumer
 import java.util.function.Function
 
 import static com.stehno.ersatz.WebSocketsHandlerFactory.webSocketHandler
+import static com.stehno.ersatz.WsMessageType.BINARY
 import static groovy.transform.TypeCheckingMode.SKIP
 import static io.undertow.Handlers.path
 import static io.undertow.Handlers.websocket
@@ -577,7 +578,12 @@ class WebSocketsHandlerFactory {
                 if (wsExpectation) {
                     wsExpectation.connect()
 
-                    channel.getReceiveSetter().set(new AbstractReceiveListener() {
+                    // perform on-connect sends
+                    wsExpectation.eachSender { SentMessageImpl sm ->
+                        WebSocketsHandlerFactory.sendMessage channel, sm.payload, sm.messageType
+                    }
+
+                    channel.receiveSetter.set(new AbstractReceiveListener() {
                         @Override
                         protected void onFullTextMessage(WebSocketChannel ch, BufferedTextMessage message) throws IOException {
                             log.trace 'Received(text) ...'
@@ -620,13 +626,17 @@ class WebSocketsHandlerFactory {
 
     private static void performReactions(final ReceivedMessageImpl expectation, WebSocketChannel ch) {
         expectation.reactions.each { MessageReactionImpl reaction ->
-            switch (reaction.messageType) {
-                case WsMessageType.BINARY:
-                    sendBinary(wrap(reaction.payload as byte[]), ch, null)
-                    break
-                default:
-                    sendText(reaction.payload.toString(), ch, null)
-            }
+            sendMessage(ch, reaction.payload, reaction.messageType)
+        }
+    }
+
+    private static void sendMessage(final WebSocketChannel ch, final Object payload, final WsMessageType messageType) {
+        switch (messageType) {
+            case BINARY:
+                sendBinary(wrap(payload as byte[]), ch, null)
+                break
+            default:
+                sendText(payload.toString(), ch, null)
         }
     }
 }

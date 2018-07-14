@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
 
 import static com.stehno.ersatz.WsMessageType.BINARY
 import static com.stehno.ersatz.WsMessageType.TEXT
-import static com.stehno.ersatz.impl.MessageTypeResolver.resolve
+import static com.stehno.ersatz.WsMessageType.resolve
 
 @Slf4j
 class ReceivedMessageImpl implements ReceivedMessage {
@@ -74,7 +74,7 @@ class ReceivedMessageImpl implements ReceivedMessage {
         closure.delegate = reaction
         closure.call()
         reactions << reaction
-        this
+        reaction
     }
 
     boolean matches(BufferedBinaryMessage message) {
