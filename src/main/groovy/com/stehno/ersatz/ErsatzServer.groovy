@@ -54,6 +54,9 @@ import static io.undertow.Handlers.websocket
 import static io.undertow.UndertowOptions.IDLE_TIMEOUT
 import static io.undertow.UndertowOptions.REQUEST_PARSE_TIMEOUT
 import static io.undertow.util.HttpString.tryFromString
+import static io.undertow.websockets.core.WebSockets.sendBinary
+import static io.undertow.websockets.core.WebSockets.sendText
+import static java.nio.ByteBuffer.wrap
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 import static java.util.concurrent.TimeUnit.SECONDS
 
@@ -391,42 +394,42 @@ class ErsatzServer implements ServerConfig {
             }
 
             BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(
-                    applyAuthentication(
-                            new HttpTraceHandler(
-                                    new HttpHandler() {
-                                        @Override
-                                        void handleRequest(final HttpServerExchange exchange) throws Exception {
-                                            ClientRequest clientRequest = new UndertowClientRequest(exchange)
+                applyAuthentication(
+                    new HttpTraceHandler(
+                        new HttpHandler() {
+                            @Override
+                            void handleRequest(final HttpServerExchange exchange) throws Exception {
+                                ClientRequest clientRequest = new UndertowClientRequest(exchange)
 
-                                            log.debug 'Request: {}', clientRequest
+                                log.debug 'Request: {}', clientRequest
 
-                                            ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
-                                            if (request) {
-                                                Response currentResponse = request.currentResponse
-                                                request.mark(clientRequest)
-                                                send(exchange, currentResponse)
+                                ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
+                                if (request) {
+                                    Response currentResponse = request.currentResponse
+                                    request.mark(clientRequest)
+                                    send(exchange, currentResponse)
 
-                                            } else {
-                                                UnmatchedRequestReport report = new UnmatchedRequestReport(
-                                                        clientRequest,
-                                                        expectations.requests as List<ErsatzRequest>
-                                                )
+                                } else {
+                                    UnmatchedRequestReport report = new UnmatchedRequestReport(
+                                        clientRequest,
+                                        expectations.requests as List<ErsatzRequest>
+                                    )
 
-                                                log.warn report.toString()
+                                    log.warn report.toString()
 
-                                                if (mismatchToConsole) {
-                                                    println report
-                                                }
-
-                                                exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
-                                            }
-                                        }
+                                    if (mismatchToConsole) {
+                                        println report
                                     }
-                            )
-                    ),
-                    new ContentEncodingRepository()
-                            .addEncodingHandler('gzip', new GzipEncodingProvider(), 50)
-                            .addEncodingHandler('deflate', new DeflateEncodingProvider(), 50)
+
+                                    exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
+                                }
+                            }
+                        }
+                    )
+                ),
+                new ContentEncodingRepository()
+                    .addEncodingHandler('gzip', new GzipEncodingProvider(), 50)
+                    .addEncodingHandler('deflate', new DeflateEncodingProvider(), 50)
             ))
 
             server = builder.setHandler(webSocketHandler(expectations, blockingHandler)).build()
@@ -556,8 +559,8 @@ class ErsatzServer implements ServerConfig {
     }
 }
 
-@CompileStatic
-@Slf4j
+// FIXME: figure out where this should live
+@CompileStatic @Slf4j
 class WebSocketsHandlerFactory {
 
     static PathHandler webSocketHandler(final ExpectationsImpl expectations, final HttpHandler defaultHandler) {
@@ -572,25 +575,38 @@ class WebSocketsHandlerFactory {
                 // find the ws for this path and register a connection
                 WebSocketExpectationsImpl wsExpectation = expectations.findWsMatch(pathPrefix) as WebSocketExpectationsImpl
                 if (wsExpectation) {
-                    log.debug 'Found ws expectation... '
-
                     wsExpectation.connect()
 
                     channel.getReceiveSetter().set(new AbstractReceiveListener() {
                         @Override
                         protected void onFullTextMessage(WebSocketChannel ch, BufferedTextMessage message) throws IOException {
-                            log.debug 'Received(text) ...'
+                            log.trace 'Received(text) ...'
 
                             // FIXME: implement report ?
-                            wsExpectation.findMatch(message)?.mark()
+                            ReceivedMessageImpl expectation = wsExpectation.findMatch(message)
+                            if (expectation) {
+                                expectation.mark()
+                                performReactions expectation, ch
+
+                            } else {
+                                // FIXME: error?
+                            }
                         }
 
                         @Override
                         protected void onFullBinaryMessage(WebSocketChannel ch, BufferedBinaryMessage message) throws IOException {
-                            log.debug 'Received(binary): ...'
+                            log.trace 'Received(binary): ...'
 
+                            // FIXME: reduce duplication here
                             // FIXME: implement report ?
-                            wsExpectation.findMatch(message)?.mark()
+                            ReceivedMessageImpl expectation = wsExpectation.findMatch(message)
+                            if (expectation) {
+                                expectation.mark()
+                                performReactions expectation, ch
+
+                            } else {
+                                // FIXME: error?
+                            }
                         }
                     })
                     channel.resumeReceives()
@@ -600,5 +616,17 @@ class WebSocketsHandlerFactory {
                 }
             }
         }))
+    }
+
+    private static void performReactions(final ReceivedMessageImpl expectation, WebSocketChannel ch) {
+        expectation.reactions.each { MessageReactionImpl reaction ->
+            switch (reaction.messageType) {
+                case WsMessageType.BINARY:
+                    sendBinary(wrap(reaction.payload as byte[]), ch, null)
+                    break
+                default:
+                    sendText(reaction.payload.toString(), ch, null)
+            }
+        }
     }
 }

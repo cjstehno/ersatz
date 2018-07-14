@@ -9,6 +9,8 @@ import io.undertow.websockets.core.BufferedTextMessage
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
+import static com.stehno.ersatz.WsMessageType.BINARY
+import static com.stehno.ersatz.WsMessageType.TEXT
 import static java.util.concurrent.TimeUnit.SECONDS
 
 class WebSocketExpectationsImpl implements WebSocketExpectations {
@@ -20,6 +22,16 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
         connectionLatch.countDown()
 
         // TODO: runs any reactions
+    }
+
+    @Override
+    ReceivedMessage receive(Object payload) {
+        switch (MessageTypeResolver.resolve(payload)) {
+            case BINARY:
+                return receive(payload, BINARY)
+            default:
+                return receive(payload.toString(), TEXT)
+        }
     }
 
     @Override
@@ -52,5 +64,13 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
     // TODO: document this blocking
     boolean verify(final long timeout = 1, final TimeUnit unit = SECONDS) {
         connectionLatch.await(timeout, unit) && receivedMessages.every { m -> m.marked(timeout, unit) }
+    }
+}
+
+// FIXME: move this
+class MessageTypeResolver {
+
+    static WsMessageType resolve(Object obj) {
+        obj instanceof byte[] ? BINARY : TEXT
     }
 }

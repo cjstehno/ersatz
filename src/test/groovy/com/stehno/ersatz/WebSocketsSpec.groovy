@@ -9,7 +9,12 @@ import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+
+import static com.stehno.ersatz.WsMessageType.BINARY
 import static com.stehno.ersatz.WsMessageType.TEXT
+import static java.util.concurrent.TimeUnit.SECONDS
 
 class WebSocketsSpec extends Specification {
 
@@ -34,21 +39,22 @@ class WebSocketsSpec extends Specification {
         setup:
         ersatz.expectations {
             ws('/ws') {
-                receive(message, type)
+                receive(receivedMessage, type)
             }
         }
 
         when:
         openWebSocket("${ersatz.wsUrl}/ws") { WebSocket wskt ->
-            wskt.send(message)
+            wskt.send(sentMessage)
         }
 
         then:
         ersatz.verify()
 
         where:
-        type | message
-        TEXT | 'the message'
+        type   | sentMessage                      || receivedMessage
+        TEXT   | 'the message'                    || 'the message'
+        BINARY | ByteString.of('somebytes'.bytes) || 'somebytes'.bytes
     }
 
     @Unroll 'specify a ws block and expect a received message (closure)'() {
@@ -56,7 +62,7 @@ class WebSocketsSpec extends Specification {
         ersatz.expectations {
             ws('/ws') {
                 receive {
-                    payload message
+                    payload receivedMessage
                     messageType type
                 }
             }
@@ -64,20 +70,50 @@ class WebSocketsSpec extends Specification {
 
         when:
         openWebSocket("${ersatz.wsUrl}/ws") { WebSocket wskt ->
-            wskt.send(message)
+            wskt.send(sentMessage)
         }
 
         then:
         ersatz.verify()
 
         where:
-        type | message
-        TEXT | 'the message'
+        type   | sentMessage                      || receivedMessage
+        TEXT   | 'the message'                    || 'the message'
+        BINARY | ByteString.of('somebytes'.bytes) || 'somebytes'.bytes
+    }
+
+    def 'ws block expects a message and then reacts (method)'() {
+        setup:
+        ersatz.expectations {
+            ws('/ws') {
+                receive('hello').reaction('howdy')
+            }
+        }
+
+        CapturingWebSocketListener listener = new CapturingWebSocketListener(1)
+
+        when:
+        openWebSocket("${ersatz.wsUrl}/ws", listener) { WebSocket wskt ->
+            wskt.send('hello')
+        }
+
+        // TODO: test closure version and both binary and text.
+
+        then:
+        ersatz.verify()
+
+        and:
+        listener.await()
+        listener.textMessages == ['howdy']
     }
 
     private void openWebSocket(final String url, Closure closure = null) {
+        openWebSocket(url, null, closure)
+    }
+
+    private void openWebSocket(final String url, WebSocketListener listener, Closure closure = null) {
         okhttp3.Request request = new okhttp3.Request.Builder().url(url).build()
-        WebSocket webSocket = client.newWebSocket(request, new LoggingWebSocketListener())
+        WebSocket webSocket = client.newWebSocket(request, listener ?: new CapturingWebSocketListener(0))
 
         closure?.call(webSocket)
 
@@ -86,7 +122,19 @@ class WebSocketsSpec extends Specification {
 }
 
 @Slf4j
-class LoggingWebSocketListener extends WebSocketListener {
+class CapturingWebSocketListener extends WebSocketListener {
+
+    final List<String> textMessages = []
+    final List<ByteString> binaryMessages = []
+    private final CountDownLatch latch
+
+    CapturingWebSocketListener(int expectedMessageCount) {
+        latch = new CountDownLatch(expectedMessageCount)
+    }
+
+    boolean await(long timeout = 1, TimeUnit unit = SECONDS) {
+        latch.await(timeout, unit)
+    }
 
     @Override void onOpen(WebSocket webSocket, okhttp3.Response response) {
         log.info('open')
@@ -94,10 +142,14 @@ class LoggingWebSocketListener extends WebSocketListener {
 
     @Override void onMessage(WebSocket webSocket, String text) {
         log.info('message (string): {}', text)
+        textMessages << text
+        latch.countDown()
     }
 
     @Override void onMessage(WebSocket webSocket, ByteString bytes) {
         log.info('message (bytes): {}', bytes)
+        binaryMessages << bytes
+        latch.countDown()
     }
 
     @Override void onClosing(WebSocket webSocket, int code, String reason) {
