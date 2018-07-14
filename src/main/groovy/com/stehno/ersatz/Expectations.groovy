@@ -18,7 +18,10 @@ package com.stehno.ersatz
 import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
 
+import java.util.concurrent.CountDownLatch
 import java.util.function.Consumer
+
+import static java.util.concurrent.TimeUnit.SECONDS
 
 /**
  * The <code>Expectations</code> interface is the root element of the expectation configuration, which provides the ability to define request
@@ -29,7 +32,8 @@ import java.util.function.Consumer
  * match for a specific expectation to be considered a match and if there are multiple matching expectations, the first one configured will be the
  * one considered as the match.
  */
-@CompileStatic @SuppressWarnings('MethodCount')
+@CompileStatic
+@SuppressWarnings('MethodCount')
 interface Expectations {
 
     /**
@@ -463,4 +467,19 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      */
     Request options(Matcher<String> matcher, Consumer<Request> config)
+
+    /**
+     * FIXME: document
+     *
+     * When this expectation block is configured, at least one web socket connection will be expected in order for the verification to pass.
+     */
+    WebSocketExpectations ws(String path)
+
+    WebSocketExpectations ws(String path, @DelegatesTo(WebSocketExpectations) Closure closure)
+
+    // FIXME: implement
+//    WebSocketExpectations ws(String path, Consumer config)
 }
+
+
+

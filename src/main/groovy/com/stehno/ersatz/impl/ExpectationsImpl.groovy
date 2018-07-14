@@ -28,10 +28,12 @@ import static org.hamcrest.Matchers.equalTo
 /**
  * Implementation of the <code>Expectations</code> interface.
  */
-@CompileStatic @SuppressWarnings(['ConfusingMethodName', 'MethodCount'])
+@CompileStatic
+@SuppressWarnings(['ConfusingMethodName', 'MethodCount'])
 class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = []
+    private final Map<String, WebSocketExpectations> webSockets = [:]
     private final RequestDecoders globalDecoders
     private final ResponseEncoders globalEncoders
 
@@ -287,6 +289,25 @@ class ExpectationsImpl implements Expectations {
         expect new ErsatzRequest(OPTIONS, matcher, globalEncoders), config
     }
 
+    @Override
+    WebSocketExpectations ws(final String path) {
+        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl()
+        webSockets[path] = wse
+        wse
+    }
+
+    @Override
+    WebSocketExpectations ws(String path, @DelegatesTo(WebSocketExpectations) Closure closure) {
+        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl()
+
+        closure.delegate = wse
+        closure.call()
+
+        webSockets[path] = wse
+
+        wse
+    }
+
     /**
      * Used to find a request matching the given incoming client request. The first match will be returned.
      *
@@ -295,6 +316,10 @@ class ExpectationsImpl implements Expectations {
      */
     Request findMatch(final ClientRequest clientRequest) {
         requests.find { r -> ((ErsatzRequest) r).matches(clientRequest) }
+    }
+
+    WebSocketExpectations findWsMatch(final String path) {
+        webSockets[path]
     }
 
     /**
@@ -314,6 +339,9 @@ class ExpectationsImpl implements Expectations {
     boolean verify() {
         requests.each { r ->
             assert ((ErsatzRequest) r).verify(), "Expectations for $r were not met."
+        }
+        webSockets.each { p, w ->
+            assert ((WebSocketExpectationsImpl) w).verify(), "WebSocket expectations for $w were not met."
         }
         true
     }

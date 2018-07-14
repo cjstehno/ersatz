@@ -18,10 +18,7 @@ package com.stehno.ersatz
 import com.stehno.ersatz.auth.BasicAuthHandler
 import com.stehno.ersatz.auth.DigestAuthHandler
 import com.stehno.ersatz.auth.SimpleIdentityManager
-import com.stehno.ersatz.impl.ErsatzRequest
-import com.stehno.ersatz.impl.ExpectationsImpl
-import com.stehno.ersatz.impl.UndertowClientRequest
-import com.stehno.ersatz.impl.UnmatchedRequestReport
+import com.stehno.ersatz.impl.*
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.undertow.Undertow
@@ -30,10 +27,17 @@ import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.BlockingHandler
 import io.undertow.server.handlers.CookieImpl
 import io.undertow.server.handlers.HttpTraceHandler
+import io.undertow.server.handlers.PathHandler
 import io.undertow.server.handlers.encoding.ContentEncodingRepository
 import io.undertow.server.handlers.encoding.DeflateEncodingProvider
 import io.undertow.server.handlers.encoding.EncodingHandler
 import io.undertow.server.handlers.encoding.GzipEncodingProvider
+import io.undertow.websockets.WebSocketConnectionCallback
+import io.undertow.websockets.core.AbstractReceiveListener
+import io.undertow.websockets.core.BufferedBinaryMessage
+import io.undertow.websockets.core.BufferedTextMessage
+import io.undertow.websockets.core.WebSocketChannel
+import io.undertow.websockets.spi.WebSocketHttpExchange
 
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
@@ -43,7 +47,10 @@ import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Function
 
+import static com.stehno.ersatz.WebSocketsHandlerFactory.webSocketHandler
 import static groovy.transform.TypeCheckingMode.SKIP
+import static io.undertow.Handlers.path
+import static io.undertow.Handlers.websocket
 import static io.undertow.UndertowOptions.IDLE_TIMEOUT
 import static io.undertow.UndertowOptions.REQUEST_PARSE_TIMEOUT
 import static io.undertow.util.HttpString.tryFromString
@@ -70,7 +77,8 @@ import static java.util.concurrent.TimeUnit.SECONDS
  *
  * See the <a href="http://stehno.com/ersatz/asciidoc/html5/" target="_blank">User Guide</a> for more detailed information.
  */
-@CompileStatic @Slf4j
+@CompileStatic
+@Slf4j
 class ErsatzServer implements ServerConfig {
 
     /**
@@ -218,6 +226,11 @@ class ErsatzServer implements ServerConfig {
      */
     String getHttpUrl() {
         "http://localhost:$actualHttpPort"
+    }
+
+    // FIXME: document
+    String getWsUrl() {
+        "ws://localhost:$actualHttpPort"
     }
 
     /**
@@ -378,45 +391,45 @@ class ErsatzServer implements ServerConfig {
             }
 
             BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(
-                applyAuthentication(
-                    new HttpTraceHandler(
-                        new HttpHandler() {
-                            @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
-                                ClientRequest clientRequest = new UndertowClientRequest(exchange)
+                    applyAuthentication(
+                            new HttpTraceHandler(
+                                    new HttpHandler() {
+                                        @Override
+                                        void handleRequest(final HttpServerExchange exchange) throws Exception {
+                                            ClientRequest clientRequest = new UndertowClientRequest(exchange)
 
-                                log.debug 'Request: {}', clientRequest
+                                            log.debug 'Request: {}', clientRequest
 
-                                ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
-                                if (request) {
-                                    Response currentResponse = request.currentResponse
-                                    request.mark(clientRequest)
-                                    send(exchange, currentResponse)
+                                            ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
+                                            if (request) {
+                                                Response currentResponse = request.currentResponse
+                                                request.mark(clientRequest)
+                                                send(exchange, currentResponse)
 
-                                } else {
-                                    UnmatchedRequestReport report = new UnmatchedRequestReport(
-                                        clientRequest,
-                                        expectations.requests as List<ErsatzRequest>
-                                    )
+                                            } else {
+                                                UnmatchedRequestReport report = new UnmatchedRequestReport(
+                                                        clientRequest,
+                                                        expectations.requests as List<ErsatzRequest>
+                                                )
 
-                                    log.warn report.toString()
+                                                log.warn report.toString()
 
-                                    if (mismatchToConsole) {
-                                        println report
+                                                if (mismatchToConsole) {
+                                                    println report
+                                                }
+
+                                                exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
+                                            }
+                                        }
                                     }
-
-                                    exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
-                                }
-                            }
-                        }
-                    )
-                ),
-                new ContentEncodingRepository()
-                    .addEncodingHandler('gzip', new GzipEncodingProvider(), 50)
-                    .addEncodingHandler('deflate', new DeflateEncodingProvider(), 50)
+                            )
+                    ),
+                    new ContentEncodingRepository()
+                            .addEncodingHandler('gzip', new GzipEncodingProvider(), 50)
+                            .addEncodingHandler('deflate', new DeflateEncodingProvider(), 50)
             ))
 
-            server = builder.setHandler(blockingHandler).build()
-
+            server = builder.setHandler(webSocketHandler(expectations, blockingHandler)).build()
             server.start()
 
             applyPorts()
@@ -540,5 +553,52 @@ class ErsatzServer implements ServerConfig {
         sslContext.init(keyManagerFactory.keyManagers, null, null)
 
         sslContext
+    }
+}
+
+@CompileStatic
+@Slf4j
+class WebSocketsHandlerFactory {
+
+    static PathHandler webSocketHandler(final ExpectationsImpl expectations, final HttpHandler defaultHandler) {
+        // FIXME: this will be configurable (and allow multiple paths)
+        String pathPrefix = '/ws'
+
+        path(defaultHandler).addPrefixPath(pathPrefix, websocket(new WebSocketConnectionCallback() {
+            @Override
+            void onConnect(final WebSocketHttpExchange exchange, final WebSocketChannel channel) {
+                log.debug 'Connected ({}).', pathPrefix
+
+                // find the ws for this path and register a connection
+                WebSocketExpectationsImpl wsExpectation = expectations.findWsMatch(pathPrefix) as WebSocketExpectationsImpl
+                if (wsExpectation) {
+                    log.debug 'Found ws expectation... '
+
+                    wsExpectation.connect()
+
+                    channel.getReceiveSetter().set(new AbstractReceiveListener() {
+                        @Override
+                        protected void onFullTextMessage(WebSocketChannel ch, BufferedTextMessage message) throws IOException {
+                            log.debug 'Received(text) ...'
+
+                            // FIXME: implement report ?
+                            wsExpectation.findMatch(message)?.mark()
+                        }
+
+                        @Override
+                        protected void onFullBinaryMessage(WebSocketChannel ch, BufferedBinaryMessage message) throws IOException {
+                            log.debug 'Received(binary): ...'
+
+                            // FIXME: implement report ?
+                            wsExpectation.findMatch(message)?.mark()
+                        }
+                    })
+                    channel.resumeReceives()
+
+                } else {
+                    // TODO: error - not found?
+                }
+            }
+        }))
     }
 }

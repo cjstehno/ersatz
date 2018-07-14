@@ -25,29 +25,39 @@ Setup a simple undertow server with ws and test access to it with okhttp client
 - connect and send data then get response push
 - connect and send data and get nothing
 
-ws('/path') {
-    connected {
-        // do something in response to connection
-        send(TEXT, 'sdfsdfsdf')
-        actions {
-            // groovy code
-            send ...
-            // groovy code
+WsMessageType (BINARY, TEXT)
+
+ws('/path'){
+    receive(payload, type)
+    receive {
+        payload ...
+        messageType ..
+        count ..
+        decoder (?)
+
+        reactions {
+            .. send...
+        }
+
+        - or -
+        reaction(alias to send)
+        reaction {
+            alias to send
         }
     }
-    receive(TEXT, 'sdfsdf')
-    receive {
-        type BINARY
-        content sdfsdf
-        count 2
-        actions {
-            ... send...
-        }
+
+    // these fire on connect
+    send(payload, type)
+    send {
+        payload ...
+        messageType ...
+        encoder (?)
     }
 }
 
+EXPECTATIONS:
+- if a ws block is specified, then at least one connection is expected or the verify will fail
 
-should be able to have standard web expectations fire ws operations
 
 post('/something'){
     ...
@@ -60,3 +70,10 @@ post('/something'){
         // groovy code
     }
 }
+
+
+----
+- document the closable patch (and implement it)
+- document the ws support
+- ensure that the failure report displays ws details
+- standard web expectations should be able to send ws events
