@@ -27,8 +27,6 @@ import static com.stehno.ersatz.util.TimeSpanUnit.*
 @Immutable(knownImmutableClasses = [Number])
 class TimeSpan {
 
-    // TODO: this might make an interesting extension to Number (e.g. 12.hours)
-
     Number value
     TimeSpanUnit unit
 
