@@ -69,7 +69,7 @@ class WebSocketsSpec extends Specification {
 
         where:
         type   | sentMessage           || receivedMessage
-        TEXT   | 'the message'         || 'the smessage'
+        TEXT   | 'the message'         || 'the message'
         BINARY | of('somebytes'.bytes) || 'somebytes'.bytes
     }
 
