@@ -15,35 +15,14 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.Cookie
-import com.stehno.ersatz.CookieMatcher
-import com.stehno.ersatz.HttpMethod
-import com.stehno.ersatz.Request
-import com.stehno.ersatz.Response
-import com.stehno.ersatz.ResponseEncoders
-import com.sun.corba.se.spi.orb.ORBVersion
+import com.stehno.ersatz.*
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.HttpMethod.ANY
-import static com.stehno.ersatz.HttpMethod.DELETE
-import static com.stehno.ersatz.HttpMethod.GET
-import static com.stehno.ersatz.HttpMethod.HEAD
-import static com.stehno.ersatz.HttpMethod.OPTIONS
-import static com.stehno.ersatz.HttpMethod.PATCH
-import static com.stehno.ersatz.HttpMethod.POST
-import static com.stehno.ersatz.HttpMethod.PUT
-import static com.stehno.ersatz.HttpMethod.TRACE
-import static org.hamcrest.Matchers.anything
-import static org.hamcrest.Matchers.contains
-import static org.hamcrest.Matchers.containsInAnyOrder
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.equalToIgnoringCase
-import static org.hamcrest.Matchers.hasItem
-import static org.hamcrest.Matchers.isOneOf
+import static com.stehno.ersatz.HttpMethod.*
+import static org.hamcrest.Matchers.*
 
 /**
  * <code>Request</code> implementation representing requests without body content.
@@ -65,7 +44,9 @@ class ErsatzRequest implements Request {
      * @param pathMatcher the path matcher
      * @param noResponse whether or not this is a request with an empty response (defaults to false)
      */
-    ErsatzRequest(final HttpMethod meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse = false) {
+    ErsatzRequest(
+        final HttpMethod meth,
+        final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse = false) {
         matchers << RequestMatcher.method(meth == ANY ? isOneOf(GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, TRACE) : equalTo(meth))
         matchers << RequestMatcher.path(pathMatcher)
 
@@ -191,7 +172,7 @@ class ErsatzRequest implements Request {
     }
 
     @Override
-    Request matcher(final Matcher<ClientRequest> matcher){
+    Request matcher(final Matcher<ClientRequest> matcher) {
         matchers << RequestMatcher.matcher(matcher)
         this
     }

@@ -16,7 +16,6 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.MessageReaction
-import com.stehno.ersatz.MessageReactionImpl
 import com.stehno.ersatz.ReceivedMessage
 import com.stehno.ersatz.WsMessageType
 import groovy.util.logging.Slf4j
@@ -26,18 +25,16 @@ import io.undertow.websockets.core.BufferedTextMessage
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-import static com.stehno.ersatz.WsMessageType.BINARY
-import static com.stehno.ersatz.WsMessageType.TEXT
-import static com.stehno.ersatz.WsMessageType.resolve
+import static com.stehno.ersatz.WsMessageType.*
 
-@Slf4j
+@Slf4j @SuppressWarnings('ConfusingMethodName')
 class ReceivedMessageImpl implements ReceivedMessage {
 
     Object payload
     WsMessageType messageType
     final List<MessageReactionImpl> reactions = []
 
-    private CountDownLatch matchLatch = new CountDownLatch(1)
+    private final CountDownLatch matchLatch = new CountDownLatch(1)
 
     @Override
     ReceivedMessage payload(Object obj) {

@@ -13,22 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz.impl
+
+import com.stehno.ersatz.SentMessage
+import com.stehno.ersatz.WsMessageType
 
 @SuppressWarnings('ConfusingMethodName')
-interface WebSocketExpectations {
+class SentMessageImpl implements SentMessage {
 
-    ReceivedMessage receive(Object payload)
+    Object payload
+    WsMessageType messageType
 
-    ReceivedMessage receive(Object payload, WsMessageType messageType)
+    @Override
+    SentMessage payload(Object obj) {
+        payload = obj
+        this
+    }
 
-    ReceivedMessage receive(@DelegatesTo(ReceivedMessage) Closure closure)
-
-    // FIXME: consumer versions
-
-    SentMessage send(Object payload)
-
-    SentMessage send(Object payload, WsMessageType messageType)
-
-    SentMessage send(@DelegatesTo(SentMessage) Closure closure)
+    @Override
+    SentMessage messageType(WsMessageType type) {
+        messageType = type
+        this
+    }
 }

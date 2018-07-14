@@ -49,6 +49,7 @@ import java.util.function.Function
 
 import static com.stehno.ersatz.WebSocketsHandlerFactory.webSocketHandler
 import static com.stehno.ersatz.WsMessageType.BINARY
+import static com.stehno.ersatz.WsMessageType.resolve
 import static groovy.transform.TypeCheckingMode.SKIP
 import static io.undertow.Handlers.path
 import static io.undertow.Handlers.websocket
@@ -580,48 +581,58 @@ class WebSocketsHandlerFactory {
 
                     // perform on-connect sends
                     wsExpectation.eachSender { SentMessageImpl sm ->
+                        //noinspection UnnecessaryQualifiedReference
                         WebSocketsHandlerFactory.sendMessage channel, sm.payload, sm.messageType
                     }
+
+                    // FIXME: ensure that ws failures are represented in the match failure reporting
 
                     channel.receiveSetter.set(new AbstractReceiveListener() {
                         @Override
                         protected void onFullTextMessage(WebSocketChannel ch, BufferedTextMessage message) throws IOException {
-                            log.trace 'Received(text) ...'
-
-                            // FIXME: implement report ?
-                            ReceivedMessageImpl expectation = wsExpectation.findMatch(message)
-                            if (expectation) {
-                                expectation.mark()
-                                performReactions expectation, ch
-
-                            } else {
-                                // FIXME: error?
-                            }
+                            handleMessage(wsExpectation, ch, message)
+//                            ReceivedMessageImpl expectation = wsExpectation.findMatch(message)
+//                            if (expectation) {
+//                                expectation.mark()
+//                                performReactions expectation, ch
+//
+//                            } else {
+//                                log.warn 'Received (TEXT) message that has no configured expectation: {}', message.data
+//                            }
                         }
 
                         @Override
                         protected void onFullBinaryMessage(WebSocketChannel ch, BufferedBinaryMessage message) throws IOException {
-                            log.trace 'Received(binary): ...'
-
-                            // FIXME: reduce duplication here
-                            // FIXME: implement report ?
-                            ReceivedMessageImpl expectation = wsExpectation.findMatch(message)
-                            if (expectation) {
-                                expectation.mark()
-                                performReactions expectation, ch
-
-                            } else {
-                                // FIXME: error?
-                            }
+                            handleMessage(wsExpectation, ch, message)
+//                            ReceivedMessageImpl expectation = wsExpectation.findMatch(message)
+//                            if (expectation) {
+//                                expectation.mark()
+//                                performReactions expectation, ch
+//
+//                            } else {
+//                                log.warn 'Received (BINARY) message that has no configured expectation: {}', message.data
+//                            }
                         }
                     })
                     channel.resumeReceives()
 
                 } else {
-                    // TODO: error - not found?
+                    throw new IllegalArgumentException('Web socket expectation was never connected.')
                 }
             }
         }))
+    }
+
+    @CompileStatic(SKIP)
+    private static void handleMessage(final WebSocketExpectationsImpl wsExpectation, final WebSocketChannel ch, final Object message) {
+        ReceivedMessageImpl expectation = wsExpectation.findMatch(message)
+        if (expectation) {
+            expectation.mark()
+            performReactions expectation, ch
+
+        } else {
+            log.warn 'Received ({}) message that has no configured expectation: {}', resolve(message), message
+        }
     }
 
     private static void performReactions(final ReceivedMessageImpl expectation, WebSocketChannel ch) {

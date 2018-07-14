@@ -16,47 +16,50 @@
 package com.stehno.ersatz
 
 /**
- * FIXME: document
+ * Represents the expectation of a web service message sent by the client.
  */
 @SuppressWarnings('ConfusingMethodName')
 interface ReceivedMessage {
 
-    // generally a string or byte array
+    /**
+     * The message payload, which will be resolved as either TEXT or BINARY type based on the object type.
+     *
+     * @param obj the payload object
+     * @return a reference to this ReceivedMessage
+     */
     ReceivedMessage payload(Object obj)
 
+    /**
+     * The message payload type.
+     *
+     * @param obj the payload type
+     * @return a reference to this ReceivedMessage
+     */
     ReceivedMessage messageType(WsMessageType type)
 
+    /**
+     * Used to specify a reaction message to be sent after receiving this message. The message type will be determined
+     * by the payload type.
+     *
+     * @param payload the payload object
+     * @return a reference to this ReceivedMessage
+     */
     MessageReaction reaction(Object payload)
 
+    /**
+     * Used to specify a reaction message to be sent after receiving this message.
+     *
+     * @param payload the payload object
+     * @param messageType the message type
+     * @return a reference to this ReceivedMessage
+     */
     MessageReaction reaction(Object payload, WsMessageType messageType)
 
+    /**
+     * Used to specify a reaction message to be sent after receiving this message.
+     *
+     * @param closure the reaction configuration closure
+     * @return a reference to this ReceivedMessage
+     */
     MessageReaction reaction(@DelegatesTo(MessageReaction) Closure closure)
-}
-
-// FIXME: move these out
-
-@SuppressWarnings('ConfusingMethodName')
-interface MessageReaction {
-
-    MessageReaction payload(Object obj)
-
-    MessageReaction messageType(WsMessageType type)
-}
-
-class MessageReactionImpl implements MessageReaction {
-
-    Object payload
-    WsMessageType messageType
-
-    @Override
-    MessageReaction payload(Object obj) {
-        payload = obj
-        this
-    }
-
-    @Override
-    MessageReaction messageType(WsMessageType type) {
-        messageType = type
-        this
-    }
 }

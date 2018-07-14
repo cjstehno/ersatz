@@ -16,19 +16,9 @@
 package com.stehno.ersatz
 
 @SuppressWarnings('ConfusingMethodName')
-interface WebSocketExpectations {
+interface MessageReaction {
 
-    ReceivedMessage receive(Object payload)
+    MessageReaction payload(Object obj)
 
-    ReceivedMessage receive(Object payload, WsMessageType messageType)
-
-    ReceivedMessage receive(@DelegatesTo(ReceivedMessage) Closure closure)
-
-    // FIXME: consumer versions
-
-    SentMessage send(Object payload)
-
-    SentMessage send(Object payload, WsMessageType messageType)
-
-    SentMessage send(@DelegatesTo(SentMessage) Closure closure)
+    MessageReaction messageType(WsMessageType type)
 }

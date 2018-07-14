@@ -15,7 +15,10 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+import com.stehno.ersatz.ReceivedMessage
+import com.stehno.ersatz.SentMessage
+import com.stehno.ersatz.WebSocketExpectations
+import com.stehno.ersatz.WsMessageType
 import io.undertow.websockets.core.BufferedBinaryMessage
 import io.undertow.websockets.core.BufferedTextMessage
 
@@ -27,7 +30,7 @@ import static java.util.concurrent.TimeUnit.SECONDS
 
 class WebSocketExpectationsImpl implements WebSocketExpectations {
 
-    private CountDownLatch connectionLatch = new CountDownLatch(1)
+    private final CountDownLatch connectionLatch = new CountDownLatch(1)
     private final List<ReceivedMessageImpl> receivedMessages = []
     private final List<SentMessageImpl> sentMessages = []
 

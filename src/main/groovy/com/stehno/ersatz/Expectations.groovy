@@ -477,6 +477,3 @@ interface Expectations {
     // FIXME: implement
 //    WebSocketExpectations ws(String path, Consumer config)
 }
-
-
-

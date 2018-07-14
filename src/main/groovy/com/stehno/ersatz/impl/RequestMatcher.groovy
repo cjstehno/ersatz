@@ -170,6 +170,7 @@ class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param crm the matcher
      * @return a configured RequestMatcher
      */
+    @SuppressWarnings('ConfusingMethodName')
     static RequestMatcher matcher(final Matcher<ClientRequest> crm) {
         new RequestMatcher(crm, { it }, "Request matches $crm")
     }
