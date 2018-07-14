@@ -1,51 +1,6 @@
 
 WEB SOCKETs
 
-For testing I can use OkHttp https://square.github.io/okhttp/3.x/okhttp/okhttp3/WebSocket.html
-
-want to be able to expect messages pushed to server
-want to be able to have the server push messages to client (after delay?, multiple timed, etc)
-
-ssl integration?
-
-expectations {
-    ws {
-        inbound('/topic/foo'){
-            message(...)
-        }
-        outbound('/topic/other'){
-            payload(...)
-        }
-    }
-}
-
-Setup a simple undertow server with ws and test access to it with okhttp client
-
-- connect and wait to recieve pushed data
-- connect and send data then get response push
-- connect and send data and get nothing
-
-WsMessageType (BINARY, TEXT)
-
-ws('/path'){
-    receive(payload, type)
-    receive {
-        payload ...
-        messageType ..
-        reaction(alias to send)
-        reaction {
-            alias to send
-        }
-    }
-
-    // these fire on connect
-    send(payload, type)
-    send {
-        payload ...
-        messageType ...
-        encoder (?)
-    }
-}
 
 
 post('/something'){
@@ -53,16 +8,12 @@ post('/something'){
     responds {
 
     }
-    ws {
-        // groovy code
-        send ...
-        // groovy code
-    }
+    reaction()
+    reaction {}
 }
 
 
 ----
-- document the closable patch (and implement it)
 - consumer versions for DSL?
 - document the ws support
 - ensure that the failure report displays ws details

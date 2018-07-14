@@ -20,6 +20,7 @@ import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
+import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
 import static com.stehno.ersatz.HttpMethod.*
@@ -336,12 +337,12 @@ class ExpectationsImpl implements Expectations {
      *
      * @return a value of true if all requests are verified
      */
-    boolean verify() {
+    boolean verify(final long timeout, final TimeUnit unit) {
         requests.each { r ->
             assert ((ErsatzRequest) r).verify(), "Expectations for $r were not met."
         }
         webSockets.each { p, w ->
-            assert ((WebSocketExpectationsImpl) w).verify(), "WebSocket expectations for $w were not met."
+            assert ((WebSocketExpectationsImpl) w).verify(timeout, unit), "WebSocket expectations for $w were not met."
         }
         true
     }

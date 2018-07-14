@@ -469,10 +469,15 @@ class ErsatzServer implements ServerConfig {
      * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back from
      * the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
      *
+     * If there are web socket expectations configured, this method will be blocking against the expected operations. Expectations involving web sockets
+     * should consider using the timeout parameters - the default is 1s.
+     *
+     * @param timeout the timeout value (defaults to 1)
+     * @param unit the timeout unit (defaults to SECONDS)
      * @return <code>true</code> if all call criteria were met during test execution.
      */
-    boolean verify() {
-        expectations.verify()
+    boolean verify(final long timeout=1, final TimeUnit unit=SECONDS){
+        expectations.verify(timeout, unit)
     }
 
     private HttpHandler applyAuthentication(final HttpHandler handler) {
@@ -561,7 +566,6 @@ class ErsatzServer implements ServerConfig {
     }
 }
 
-// FIXME: figure out where this should live
 @CompileStatic @Slf4j
 class WebSocketsHandlerFactory {
 
@@ -591,27 +595,11 @@ class WebSocketsHandlerFactory {
                         @Override
                         protected void onFullTextMessage(WebSocketChannel ch, BufferedTextMessage message) throws IOException {
                             handleMessage(wsExpectation, ch, message)
-//                            ReceivedMessageImpl expectation = wsExpectation.findMatch(message)
-//                            if (expectation) {
-//                                expectation.mark()
-//                                performReactions expectation, ch
-//
-//                            } else {
-//                                log.warn 'Received (TEXT) message that has no configured expectation: {}', message.data
-//                            }
                         }
 
                         @Override
                         protected void onFullBinaryMessage(WebSocketChannel ch, BufferedBinaryMessage message) throws IOException {
                             handleMessage(wsExpectation, ch, message)
-//                            ReceivedMessageImpl expectation = wsExpectation.findMatch(message)
-//                            if (expectation) {
-//                                expectation.mark()
-//                                performReactions expectation, ch
-//
-//                            } else {
-//                                log.warn 'Received (BINARY) message that has no configured expectation: {}', message.data
-//                            }
                         }
                     })
                     channel.resumeReceives()
