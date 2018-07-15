@@ -43,7 +43,7 @@ class ErsatzServerSpec extends Specification {
 
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
 
-    @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer({
+    @AutoCleanup private final ErsatzServer ersatzServer = new ErsatzServer({
         encoder MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
     })
 

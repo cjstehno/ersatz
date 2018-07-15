@@ -208,12 +208,13 @@ Verification is optional and may simply be skipped if not needed.
 ==== Cleanup
 
 After testing and verification, when all test interactions have completed, the server must be stopped in order to free up resources. This is done by
-calling the `ErsatzServer::stop()` method. This is an important step, as odd test failures have been noticed during multi-test runs if the server is
-not properly stopped. In Spock you can create the `ErsatzServer` with the `@AutoCleanup` annotation to aid in proper management:
+calling the `stop()` or `close()` method on the `ErsatzServer` instance. This is an important step, as odd test failures have been noticed during
+multi-test runs if the server is not properly stopped. In Spock you can create the `ErsatzServer` with the `@AutoCleanup` annotation to aid in
+proper management:
 
 [source,groovy]
 ----
-@AutoCleanup('stop') ErsatzServer server = new ErsatzServer()
+@AutoCleanup ErsatzServer server = new ErsatzServer()
 ----
 
 likewise, in a JUnit test (Groovy or Java) you may use the `ErsatzServerRule` class, which is a

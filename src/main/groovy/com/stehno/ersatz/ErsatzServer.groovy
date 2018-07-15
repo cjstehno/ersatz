@@ -69,7 +69,7 @@ import static java.util.concurrent.TimeUnit.SECONDS
  */
 @CompileStatic
 @Slf4j
-class ErsatzServer implements ServerConfig {
+class ErsatzServer implements ServerConfig, Closeable {
 
     /**
      * The response body returned when no matching expectation could be found.
@@ -456,6 +456,14 @@ class ErsatzServer implements ServerConfig {
     }
 
     /**
+     * An alias to the <code>stop()</code> method.
+     */
+    @Override
+    void close(){
+        stop()
+    }
+
+/**
      * Used to verify that all of the expected request interactions were called the appropriate number of times. This method should be called after
      * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back
      * from the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
