@@ -533,6 +533,26 @@ class ErsatzServerSpec extends Specification {
         response.body().string() == 'OK'
     }
 
+    def 'post params'(){
+        setup:
+        ersatzServer.expectations {
+            post('/updates'){
+                param('foo', 'bar')
+                responds().code(201)
+            }
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(
+            new okhttp3.Request.Builder().post(create(parse(APPLICATION_URLENCODED.value), 'foo=bar'))
+                .url(url('/updates'))
+                .build()
+        ).execute()
+
+        then:
+        response.code() == 201
+    }
+
     private String url(final String path) {
         "http://localhost:${ersatzServer.httpPort}${path}"
     }

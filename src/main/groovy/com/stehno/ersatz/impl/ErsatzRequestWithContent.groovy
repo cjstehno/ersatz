@@ -20,8 +20,7 @@ import org.hamcrest.Matcher
 
 import java.util.function.BiFunction
 
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.startsWith
+import static org.hamcrest.Matchers.*
 
 /**
  * Ersatz implementation of a <code>Request</code> with request body content.
@@ -88,6 +87,22 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
     @Override
     RequestWithContent decoders(final RequestDecoders requestDecoders) {
         decoderChain.second(requestDecoders)
+        this
+    }
+
+    @Override
+    RequestWithContent param(String name, String value) {
+        param name, value != null ? contains(value) : contains('')
+    }
+
+    @Override
+    RequestWithContent param(String name, Iterable<String> values) {
+        param name, containsInAnyOrder((values as Collection<String>).collect { equalTo(it) })
+    }
+
+    @Override
+    RequestWithContent param(String name, Matcher<Iterable<String>> matchers) {
+        addMatcher RequestMatcher.param(name, matchers)
         this
     }
 }

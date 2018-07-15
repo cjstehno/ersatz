@@ -91,4 +91,34 @@ interface RequestWithContent extends Request {
      * @return a reference to this request
      */
     RequestWithContent decoders(final RequestDecoders decoders)
+
+    /**
+     * Configures an expectation matching parameters contained in the request body. The specified value must exist in the list
+     * of parameters for the provided key.
+     *
+     * @param name the parameter name
+     * @param value the expected parameter value
+     * @return a reference to this request
+     */
+    RequestWithContent param(final String name, final String value)
+
+    /**
+     * Configures an expectation matching parameters contained in the request body. The specified values must exist in the list
+     * of parameters for the provided key.
+     *
+     * @param name the parameter name
+     * @param values the expected parameter values
+     * @return a reference to this request
+     */
+    RequestWithContent param(final String name, final Iterable<String> values)
+
+    /**
+     * Configures an expectation matching parameters contained in the request body. The specified matchers must be satisifed
+     * by the parameters mapped to the provided named parameter.
+     *
+     * @param name the parameter name
+     * @param value the expected parameter value matchers
+     * @return a reference to this request
+     */
+    RequestWithContent param(final String name, final Matcher<Iterable<String>> matchers)
 }
