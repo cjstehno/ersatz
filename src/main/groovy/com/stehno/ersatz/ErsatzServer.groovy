@@ -71,7 +71,7 @@ import static java.util.concurrent.TimeUnit.SECONDS
  * See the <a href="http://stehno.com/ersatz/asciidoc/html5/" target="_blank">User Guide</a> for more detailed information.
  */
 @CompileStatic @Slf4j
-class ErsatzServer implements ServerConfig {
+class ErsatzServer implements ServerConfig, Closeable {
 
     /**
      * The response body returned when no matching expectation could be found.
@@ -444,6 +444,14 @@ class ErsatzServer implements ServerConfig {
 
             started = false
         }
+    }
+
+    /**
+     * Alias to stop.
+     */
+    @Override
+    void close() {
+        stop()
     }
 
     /**
