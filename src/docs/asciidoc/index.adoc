@@ -685,6 +685,75 @@ The `TRACE` method is supported using the built-in `HttpTraceHandler` provided b
 NOTE: At some point, if there are valid use cases for allowing mocks of `TRACE` it could be supported. Feel free to
 https://github.com/cjstehno/ersatz/issues/new[create an Issue ticket] describing your use case and it will be addressed.
 
+==== Web Sockets
+
+The simulation of sending and receiving web socket messages is supported - this support is experimental, so feel free submit any issues or feature
+requests.
+
+To initialize the web service support, a `ws` expectation is configured on the desired web socket path:
+
+[source,grooy]
+----
+ersatz.expectations {
+    ws('/socks')
+}
+----
+
+Simply providing this configuration will expect at least one connection to the specified web socket path. Expectations for messages received by the
+web socket connection may be configured using the `receive(...)` configuration methods:
+
+[source,grooy]
+----
+ersatz.expectations {
+    ws('/socks'){
+        receive 'hello', WsMessageType.TEXT
+    }
+}
+----
+
+which will expect that the web socket client will connect to the `/socks` path and send a text message with "hello" as the message body.
+
+===== Reactions
+
+Reactions may be configured as a message that is sent when the specified message is received by the server:
+
+[source,grooy]
+----
+ersatz.expectations {
+    ws('/socks'){
+        receive {
+            payload 'hello'
+            messageType WsMessageType.TEXT
+            reaction 'goodbye', WsMessageText.TEXT
+        }
+    }
+}
+----
+
+Upon receiving the "hello" message, the server will send the "goodbye" message back to the client on the same socket.
+
+===== Message Push
+
+Message may also be sent upon connecting to the web socket server, using the `send(...)` configurations:
+
+[source,grooy]
+----
+ersatz.expectations {
+    ws('/socks'){
+        send 'connected', WsMessageType.TEXT
+    }
+}
+----
+
+which will send the "connected" message once the `/socks` connection is initialized.
+
+===== Verification
+
+When web sockets are in use, the `verify(...)` method blocks until the expectations have been resolved. A timeout (and unit) parameter is available on
+the `verify` method so that a failed verification can fail-out in a timely manner, while still waiting for messages that are not coming.
+
+TIP: The message communication is asynchronous, therefore messages captured by the client should consider that they may arrive out of order or after verification has occurred.
+
 === Request Matching
 
 When a request comes into the server an attempt is made to match it against the configured request expectations. When a match is found, the configured
