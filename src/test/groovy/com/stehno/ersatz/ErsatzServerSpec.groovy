@@ -23,6 +23,8 @@ import org.apache.commons.fileupload.FileUpload
 import org.apache.commons.fileupload.UploadContext
 import org.apache.commons.fileupload.disk.DiskFileItemFactory
 import org.hamcrest.Matcher
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -31,9 +33,16 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
 import static MultipartResponseContent.multipart
-import static com.stehno.ersatz.ContentType.*
+import static com.stehno.ersatz.ContentType.APPLICATION_URLENCODED
+import static com.stehno.ersatz.ContentType.IMAGE_JPG
+import static com.stehno.ersatz.ContentType.MESSAGE_HTTP
+import static com.stehno.ersatz.ContentType.MULTIPART_MIXED
+import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 import static com.stehno.ersatz.CookieMatcher.cookieMatcher
-import static com.stehno.ersatz.HttpMethod.*
+import static com.stehno.ersatz.HttpMethod.DELETE
+import static com.stehno.ersatz.HttpMethod.GET
+import static com.stehno.ersatz.HttpMethod.OPTIONS
+import static com.stehno.ersatz.HttpMethod.POST
 import static okhttp3.MediaType.parse
 import static okhttp3.RequestBody.create
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
@@ -42,6 +51,8 @@ import static org.hamcrest.Matchers.startsWith
 class ErsatzServerSpec extends Specification {
 
     private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
+
+    @Rule TemporaryFolder folder = new TemporaryFolder()
 
     @AutoCleanup private final ErsatzServer ersatzServer = new ErsatzServer({
         encoder MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
@@ -323,7 +334,7 @@ class ErsatzServerSpec extends Specification {
 
         then:
         response == 'Done'
-        elapsed >= time
+        elapsed >= (time-10) // there is some wiggle room
 
         where:
         delay   | time
@@ -533,10 +544,10 @@ class ErsatzServerSpec extends Specification {
         response.body().string() == 'OK'
     }
 
-    def 'post params'(){
+    def 'post params'() {
         setup:
         ersatzServer.expectations {
-            post('/updates'){
+            post('/updates') {
                 param('foo', 'bar')
                 responds().code(201)
             }
@@ -551,6 +562,31 @@ class ErsatzServerSpec extends Specification {
 
         then:
         response.code() == 201
+    }
+
+    def 'file downloading'() {
+        setup:
+        File file = folder.newFile()
+        file.bytes = ErsatzServerSpec.getResource('/test-image.jpg').bytes
+
+        ersatzServer.expectations {
+            get('/somefile') {
+                responder {
+                    encoder IMAGE_JPG, byte[], Encoders.binaryBase64
+                    header 'Content-Disposition', 'attachment; filename="photo.jpg"'
+                    content file.bytes, IMAGE_JPG
+                    code 200
+                }
+            }
+        }
+
+        when:
+        okhttp3.Response response = client.newCall(
+            new okhttp3.Request.Builder().get().url(url('/somefile')).build()
+        ).execute()
+
+        then:
+        response.code() == 200
     }
 
     private String url(final String path) {

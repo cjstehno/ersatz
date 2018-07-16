@@ -532,6 +532,7 @@ class ErsatzServer implements ServerConfig, Closeable {
             }
         }
 
+        // FIXME: need to allow for byte content (the use bytebuffer below - should this just be the default rather than string)
         String responseContent = response?.content
 
         log.debug 'Response({}): {}', exchange.responseHeaders ?: '<no-headers>', responseContent.take(1000) ?: '<empty>'
