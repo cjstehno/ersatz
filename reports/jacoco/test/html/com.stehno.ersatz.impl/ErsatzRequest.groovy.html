@@ -15,47 +15,26 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.Cookie
-import com.stehno.ersatz.CookieMatcher
-import com.stehno.ersatz.HttpMethod
-import com.stehno.ersatz.Request
-import com.stehno.ersatz.Response
-import com.stehno.ersatz.ResponseEncoders
-import com.sun.corba.se.spi.orb.ORBVersion
+import com.stehno.ersatz.*
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.HttpMethod.ANY
-import static com.stehno.ersatz.HttpMethod.DELETE
-import static com.stehno.ersatz.HttpMethod.GET
-import static com.stehno.ersatz.HttpMethod.HEAD
-import static com.stehno.ersatz.HttpMethod.OPTIONS
-import static com.stehno.ersatz.HttpMethod.PATCH
-import static com.stehno.ersatz.HttpMethod.POST
-import static com.stehno.ersatz.HttpMethod.PUT
-import static com.stehno.ersatz.HttpMethod.TRACE
-import static org.hamcrest.Matchers.anything
-import static org.hamcrest.Matchers.contains
-import static org.hamcrest.Matchers.containsInAnyOrder
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.equalToIgnoringCase
-import static org.hamcrest.Matchers.hasItem
-import static org.hamcrest.Matchers.isOneOf
+import static com.stehno.ersatz.HttpMethod.*
+import static org.hamcrest.Matchers.*
 
 /**
  * &lt;code&gt;Request&lt;/code&gt; implementation representing requests without body content.
  */
 class ErsatzRequest implements Request {
 
-<span class="fc" id="L53">    private final List&lt;RequestMatcher&gt; matchers = []</span>
-<span class="fc" id="L54">    private final List&lt;Consumer&lt;ClientRequest&gt;&gt; listeners = []</span>
-<span class="fc" id="L55">    private final List&lt;Response&gt; responses = []</span>
+<span class="fc" id="L32">    private final List&lt;RequestMatcher&gt; matchers = []</span>
+<span class="fc" id="L33">    private final List&lt;Consumer&lt;ClientRequest&gt;&gt; listeners = []</span>
+<span class="fc" id="L34">    private final List&lt;Response&gt; responses = []</span>
     private final ResponseEncoders globalEncoders
     private final boolean emptyResponse
-<span class="fc" id="L58">    private Matcher&lt;?&gt; callVerifier = anything()</span>
+<span class="fc" id="L37">    private Matcher&lt;?&gt; callVerifier = anything()</span>
     private int callCount
 
     /**
@@ -65,135 +44,137 @@ class ErsatzRequest implements Request {
      * @param pathMatcher the path matcher
      * @param noResponse whether or not this is a request with an empty response (defaults to false)
      */
-    ErsatzRequest(final HttpMethod meth, final Matcher&lt;String&gt; pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse = false) {
-<span class="fc bfc" id="L69" title="All 2 branches covered.">        matchers &lt;&lt; RequestMatcher.method(meth == ANY ? isOneOf(GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, TRACE) : equalTo(meth))</span>
-<span class="fc" id="L70">        matchers &lt;&lt; RequestMatcher.path(pathMatcher)</span>
+    ErsatzRequest(
+        final HttpMethod meth,
+        final Matcher&lt;String&gt; pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse = false) {
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        matchers &lt;&lt; RequestMatcher.method(meth == ANY ? isOneOf(GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, TRACE) : equalTo(meth))</span>
+<span class="fc" id="L51">        matchers &lt;&lt; RequestMatcher.path(pathMatcher)</span>
 
-<span class="fc" id="L72">        this.globalEncoders = globalEncoders</span>
-<span class="fc" id="L73">        this.emptyResponse = noResponse</span>
+<span class="fc" id="L53">        this.globalEncoders = globalEncoders</span>
+<span class="fc" id="L54">        this.emptyResponse = noResponse</span>
     }
 
     @Override
     Request protocol(final String proto) {
-<span class="fc" id="L78">        matchers &lt;&lt; RequestMatcher.protocol(equalToIgnoringCase(proto))</span>
-<span class="pc" id="L79">        this</span>
+<span class="fc" id="L59">        matchers &lt;&lt; RequestMatcher.protocol(equalToIgnoringCase(proto))</span>
+<span class="pc" id="L60">        this</span>
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
     Request headers(final Map&lt;String, Object&gt; heads) {
-<span class="fc" id="L84">        heads.each { k, v -&gt;</span>
-<span class="pc" id="L85">            header k, v</span>
+<span class="fc" id="L65">        heads.each { k, v -&gt;</span>
+<span class="pc" id="L66">            header k, v</span>
         }
-<span class="pc" id="L87">        this</span>
+<span class="pc" id="L68">        this</span>
     }
 
     @Override
     Request header(final String name, final String value) {
-<span class="pc" id="L92">        header name, hasItem(value)</span>
+<span class="pc" id="L73">        header name, hasItem(value)</span>
     }
 
     @Override
     Request header(final String name, final Matcher&lt;Iterable&lt;String&gt;&gt; value) {
-<span class="fc" id="L97">        matchers &lt;&lt; RequestMatcher.header(name, value)</span>
-<span class="pc" id="L98">        this</span>
+<span class="fc" id="L78">        matchers &lt;&lt; RequestMatcher.header(name, value)</span>
+<span class="pc" id="L79">        this</span>
     }
 
     @Override
     Request query(final String name, final String value = null) {
-<span class="pc bfc" id="L103" title="All 2 branches covered.">        query name, value != null ? contains(value) : contains('')</span>
+<span class="pc bfc" id="L84" title="All 2 branches covered.">        query name, value != null ? contains(value) : contains('')</span>
     }
 
     @Override
     Request query(final String name, final Iterable&lt;String&gt; value) {
-<span class="pc" id="L108">        query name, containsInAnyOrder((value as Collection&lt;String&gt;).collect { equalTo(it) })</span>
+<span class="pc" id="L89">        query name, containsInAnyOrder((value as Collection&lt;String&gt;).collect { equalTo(it) })</span>
     }
 
     @Override
     Request query(final String name, final Matcher&lt;Iterable&lt;String&gt;&gt; matcher) {
-<span class="fc" id="L113">        matchers &lt;&lt; RequestMatcher.query(name, matcher)</span>
-<span class="pc" id="L114">        this</span>
+<span class="fc" id="L94">        matchers &lt;&lt; RequestMatcher.query(name, matcher)</span>
+<span class="pc" id="L95">        this</span>
     }
 
     @Override
     Request queries(final Map&lt;String, Object&gt; map) {
-<span class="fc" id="L119">        map.each { k, v -&gt;</span>
-<span class="pc" id="L120">            query k, v</span>
+<span class="fc" id="L100">        map.each { k, v -&gt;</span>
+<span class="pc" id="L101">            query k, v</span>
         }
-<span class="pc" id="L122">        this</span>
+<span class="pc" id="L103">        this</span>
     }
 
     @Override
     Request cookie(final String name, final String value) {
-<span class="pc" id="L127">        cookie name, new CookieMatcher().value(value)</span>
+<span class="pc" id="L108">        cookie name, new CookieMatcher().value(value)</span>
     }
 
     @Override
     Request cookie(final String name, final Matcher&lt;Cookie&gt; value) {
-<span class="fc" id="L132">        matchers &lt;&lt; RequestMatcher.cookie(name, value)</span>
-<span class="pc" id="L133">        this</span>
+<span class="fc" id="L113">        matchers &lt;&lt; RequestMatcher.cookie(name, value)</span>
+<span class="pc" id="L114">        this</span>
     }
 
     @Override
     Request cookies(Matcher&lt;Map&lt;String, Cookie&gt;&gt; matcher) {
-<span class="fc" id="L138">        matchers &lt;&lt; RequestMatcher.cookies(matcher)</span>
-<span class="pc" id="L139">        this</span>
+<span class="fc" id="L119">        matchers &lt;&lt; RequestMatcher.cookies(matcher)</span>
+<span class="pc" id="L120">        this</span>
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
     Request cookies(Map&lt;String, Object&gt; cookies) {
-<span class="fc" id="L144">        cookies.each { k, v -&gt;</span>
-<span class="pc" id="L145">            cookie k, v</span>
+<span class="fc" id="L125">        cookies.each { k, v -&gt;</span>
+<span class="pc" id="L126">            cookie k, v</span>
         }
-<span class="pc" id="L147">        this</span>
+<span class="pc" id="L128">        this</span>
     }
 
     @Override
     Request listener(final Consumer&lt;ClientRequest&gt; listener) {
-<span class="fc" id="L152">        listeners.add(listener)</span>
-<span class="pc" id="L153">        this</span>
+<span class="fc" id="L133">        listeners.add(listener)</span>
+<span class="pc" id="L134">        this</span>
     }
 
     @Override
     Response responds() {
-<span class="pc bpc" id="L158" title="2 of 4 branches missed.">        Response response = newResponse()</span>
-<span class="fc" id="L159">        responses.add(response)</span>
-<span class="pc" id="L160">        response</span>
+<span class="pc bpc" id="L139" title="2 of 4 branches missed.">        Response response = newResponse()</span>
+<span class="fc" id="L140">        responses.add(response)</span>
+<span class="pc" id="L141">        response</span>
     }
 
     @Override
     Request responder(final Consumer&lt;Response&gt; responder) {
-<span class="pc bpc" id="L165" title="2 of 4 branches missed.">        Response response = newResponse()</span>
-<span class="fc" id="L166">        responder.accept(response)</span>
-<span class="fc" id="L167">        responses.add(response)</span>
-<span class="pc" id="L168">        this</span>
+<span class="pc bpc" id="L146" title="2 of 4 branches missed.">        Response response = newResponse()</span>
+<span class="fc" id="L147">        responder.accept(response)</span>
+<span class="fc" id="L148">        responses.add(response)</span>
+<span class="pc" id="L149">        this</span>
     }
 
     @Override
     Request responder(@DelegatesTo(Response) final Closure closure) {
-<span class="pc bpc" id="L173" title="2 of 4 branches missed.">        Response response = newResponse()</span>
-<span class="fc" id="L174">        closure.setDelegate(response)</span>
-<span class="fc" id="L175">        closure.call()</span>
+<span class="pc bpc" id="L154" title="2 of 4 branches missed.">        Response response = newResponse()</span>
+<span class="fc" id="L155">        closure.setDelegate(response)</span>
+<span class="fc" id="L156">        closure.call()</span>
 
-<span class="fc" id="L177">        responses.add(response)</span>
+<span class="fc" id="L158">        responses.add(response)</span>
 
-<span class="pc" id="L179">        this</span>
+<span class="pc" id="L160">        this</span>
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
     Request called(final Matcher&lt;Integer&gt; callVerifier) {
-<span class="fc" id="L184">        this.callVerifier = callVerifier</span>
-<span class="pc" id="L185">        this</span>
+<span class="fc" id="L165">        this.callVerifier = callVerifier</span>
+<span class="pc" id="L166">        this</span>
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
     Request called(final int count) {
-<span class="pc" id="L190">        called equalTo(count)</span>
+<span class="pc" id="L171">        called equalTo(count)</span>
     }
 
     @Override
-    Request matcher(final Matcher&lt;ClientRequest&gt; matcher){
-<span class="fc" id="L195">        matchers &lt;&lt; RequestMatcher.matcher(matcher)</span>
-<span class="pc" id="L196">        this</span>
+    Request matcher(final Matcher&lt;ClientRequest&gt; matcher) {
+<span class="fc" id="L176">        matchers &lt;&lt; RequestMatcher.matcher(matcher)</span>
+<span class="pc" id="L177">        this</span>
     }
 
     /**
@@ -203,7 +184,7 @@ class ErsatzRequest implements Request {
      * @return true if the call count matches the expected verification criteria
      */
     boolean verify() {
-<span class="pc" id="L206">        callVerifier.matches(callCount)</span>
+<span class="pc" id="L187">        callVerifier.matches(callCount)</span>
     }
 
     /**
@@ -215,8 +196,8 @@ class ErsatzRequest implements Request {
      * @return true if the incoming request matches the configured request
      */
     boolean matches(final ClientRequest clientRequest) {
-<span class="pc" id="L218">        matchers.every { m -&gt;</span>
-<span class="pc" id="L219">            m.matches(clientRequest)</span>
+<span class="pc" id="L199">        matchers.every { m -&gt;</span>
+<span class="pc" id="L200">            m.matches(clientRequest)</span>
         }
     }
 
@@ -226,15 +207,15 @@ class ErsatzRequest implements Request {
      * @return an immutable list of the configured matchers.
      */
     List&lt;RequestMatcher&gt; getRequestMatchers() {
-<span class="pc" id="L229">        matchers.asImmutable()</span>
+<span class="pc" id="L210">        matchers.asImmutable()</span>
     }
 
     protected void addMatcher(final RequestMatcher matcher) {
-<span class="fc" id="L233">        matchers &lt;&lt; matcher</span>
+<span class="fc" id="L214">        matchers &lt;&lt; matcher</span>
     }
 
     private Response newResponse() {
-<span class="pc" id="L237">        new ErsatzResponse(emptyResponse, globalEncoders)</span>
+<span class="pc" id="L218">        new ErsatzResponse(emptyResponse, globalEncoders)</span>
     }
 
     /**
@@ -244,32 +225,32 @@ class ErsatzRequest implements Request {
      * @return the current response
      */
     Response getCurrentResponse() {
-<span class="fc bfc" id="L247" title="All 2 branches covered.">        int index = callCount &gt;= responses.size() ? responses.size() - 1 : callCount</span>
-<span class="pc bpc" id="L248" title="10 of 16 branches missed.">        index &gt;= 0 ? responses[index] : null</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">        int index = callCount &gt;= responses.size() ? responses.size() - 1 : callCount</span>
+<span class="pc bpc" id="L229" title="10 of 16 branches missed.">        index &gt;= 0 ? responses[index] : null</span>
     }
 
     /**
      * Used to mark the request as having been called. Any configured listeners will be called after the call count has been incremented.
      */
     void mark(final ClientRequest cr) {
-<span class="pc bpc" id="L255" title="3 of 6 branches missed.">        callCount++</span>
+<span class="pc bpc" id="L236" title="3 of 6 branches missed.">        callCount++</span>
 
-<span class="fc bfc" id="L257" title="All 2 branches covered.">        for (final Consumer&lt;ClientRequest&gt; listener : listeners) {</span>
-<span class="fc" id="L258">            listener.accept(cr)</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">        for (final Consumer&lt;ClientRequest&gt; listener : listeners) {</span>
+<span class="fc" id="L239">            listener.accept(cr)</span>
         }
     }
 
     @Override String toString() {
-<span class="fc" id="L263">        StringBuilder str = new StringBuilder()</span>
-<span class="fc" id="L264">        str.append &quot;Expectations (${getClass().simpleName}): &quot;</span>
+<span class="fc" id="L244">        StringBuilder str = new StringBuilder()</span>
+<span class="fc" id="L245">        str.append &quot;Expectations (${getClass().simpleName}): &quot;</span>
 
-<span class="fc" id="L266">        matchers.each { m -&gt;</span>
-<span class="fc" id="L267">            StringDescription desc = new StringDescription()</span>
-<span class="fc" id="L268">            m.matcher.describeTo(desc)</span>
-<span class="pc" id="L269">            str.append(desc).append(', ')</span>
+<span class="fc" id="L247">        matchers.each { m -&gt;</span>
+<span class="fc" id="L248">            StringDescription desc = new StringDescription()</span>
+<span class="fc" id="L249">            m.matcher.describeTo(desc)</span>
+<span class="pc" id="L250">            str.append(desc).append(', ')</span>
         }
 
-<span class="pc" id="L272">        str.toString()</span>
+<span class="pc" id="L253">        str.toString()</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

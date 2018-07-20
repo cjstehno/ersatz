@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">8.524s</div>
+<div class="counter">13.539s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,12 +79,12 @@
 </thead>
 <tr>
 <td class="success">ersatzUsage</td>
-<td>0.111s</td>
+<td class="success">0.339s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">ersatzUsageWithClosure</td>
-<td>8.413s</td>
+<td class="success">13.200s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -92,35 +92,35 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>12:24:31.741 [Test worker] DEBUG org.jboss.logging - Logging Provider: org.jboss.logging.Slf4jLoggerProvider
-12:24:31.821 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@61452ec3
-12:24:31.883 [Test worker] INFO org.xnio - XNIO version 3.3.8.Final
-12:24:32.004 [Test worker] INFO org.xnio.nio - XNIO NIO Implementation Version 3.3.8.Final
-12:24:32.256 [XNIO-1 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-1', selector sun.nio.ch.EPollSelectorImpl@11ba15d8
-12:24:32.272 [XNIO-1 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-2', selector sun.nio.ch.EPollSelectorImpl@46fe9494
-12:24:32.288 [XNIO-1 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-3', selector sun.nio.ch.EPollSelectorImpl@56c9bee9
-12:24:32.296 [XNIO-1 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-4', selector sun.nio.ch.EPollSelectorImpl@20527e82
-12:24:32.312 [XNIO-1 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-5', selector sun.nio.ch.EPollSelectorImpl@35f11c56
-12:24:32.313 [XNIO-1 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-6', selector sun.nio.ch.EPollSelectorImpl@63920ab9
-12:24:32.323 [XNIO-1 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-7', selector sun.nio.ch.EPollSelectorImpl@77ecb323
-12:24:32.332 [XNIO-1 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-8', selector sun.nio.ch.EPollSelectorImpl@47dc56d8
-12:24:32.349 [XNIO-1 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 Accept', selector sun.nio.ch.EPollSelectorImpl@3f53eff8
-12:24:32.352 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-12:24:34.223 [XNIO-1 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /kotlin (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:32815]}, cookies=[:]): &lt;empty&gt; }
-12:24:34.493 [XNIO-1 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): Hello Kotlin!
-12:24:34.585 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@70b7d0f9
-12:24:34.596 [XNIO-2 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-1', selector sun.nio.ch.EPollSelectorImpl@588f55df
-12:24:34.604 [XNIO-2 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-2', selector sun.nio.ch.EPollSelectorImpl@fa9daf7
-12:24:34.613 [XNIO-2 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-3', selector sun.nio.ch.EPollSelectorImpl@1bdf6c6
-12:24:34.628 [XNIO-2 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-4', selector sun.nio.ch.EPollSelectorImpl@6d6fbd55
-12:24:34.632 [XNIO-2 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-5', selector sun.nio.ch.EPollSelectorImpl@2018c050
-12:24:34.645 [XNIO-2 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-6', selector sun.nio.ch.EPollSelectorImpl@7a4de592
-12:24:34.652 [XNIO-2 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-7', selector sun.nio.ch.EPollSelectorImpl@1e9b4eb5
-12:24:34.656 [XNIO-2 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-8', selector sun.nio.ch.EPollSelectorImpl@5bfb704c
-12:24:34.657 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-12:24:34.657 [XNIO-2 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 Accept', selector sun.nio.ch.EPollSelectorImpl@2e7d6cc
-12:24:34.680 [XNIO-2 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /kotlin (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.5.0], Host=[localhost:35069]}, cookies=[:]): &lt;empty&gt; }
-12:24:34.681 [XNIO-2 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): Hello Kotlin!
+<pre>06:31:52.557 [Test worker] DEBUG org.jboss.logging - Logging Provider: org.jboss.logging.Slf4jLoggerProvider
+06:31:52.959 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@445ec316
+06:31:53.094 [Test worker] INFO org.xnio - XNIO version 3.3.8.Final
+06:31:53.434 [Test worker] INFO org.xnio.nio - XNIO NIO Implementation Version 3.3.8.Final
+06:31:53.988 [XNIO-1 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-1', selector sun.nio.ch.EPollSelectorImpl@657b7649
+06:31:53.998 [XNIO-1 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-2', selector sun.nio.ch.EPollSelectorImpl@597bb0b3
+06:31:54.016 [XNIO-1 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-4', selector sun.nio.ch.EPollSelectorImpl@6791f149
+06:31:54.022 [XNIO-1 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-5', selector sun.nio.ch.EPollSelectorImpl@6f018d42
+06:31:54.023 [XNIO-1 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-3', selector sun.nio.ch.EPollSelectorImpl@5539c8f6
+06:31:54.144 [XNIO-1 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 Accept', selector sun.nio.ch.EPollSelectorImpl@18f3a56f
+06:31:54.145 [XNIO-1 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-6', selector sun.nio.ch.EPollSelectorImpl@10f8c9ea
+06:31:54.146 [XNIO-1 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-7', selector sun.nio.ch.EPollSelectorImpl@708a0bcc
+06:31:54.147 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+06:31:54.147 [XNIO-1 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-8', selector sun.nio.ch.EPollSelectorImpl@490d2119
+06:31:57.101 [XNIO-1 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /kotlin (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:39759]}, cookies=[:]): &lt;empty&gt; }
+06:31:57.691 [XNIO-1 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): Hello Kotlin!
+06:31:58.019 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@70ef8a27
+06:31:58.068 [XNIO-2 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-1', selector sun.nio.ch.EPollSelectorImpl@b291362
+06:31:58.096 [XNIO-2 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-2', selector sun.nio.ch.EPollSelectorImpl@3e4b1d61
+06:31:58.109 [XNIO-2 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-3', selector sun.nio.ch.EPollSelectorImpl@43bf7c2f
+06:31:58.124 [XNIO-2 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-4', selector sun.nio.ch.EPollSelectorImpl@20e93d9b
+06:31:58.156 [XNIO-2 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-5', selector sun.nio.ch.EPollSelectorImpl@68055fd
+06:31:58.180 [XNIO-2 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-6', selector sun.nio.ch.EPollSelectorImpl@4bc5dc00
+06:31:58.200 [XNIO-2 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-7', selector sun.nio.ch.EPollSelectorImpl@4acdabc8
+06:31:58.217 [XNIO-2 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-8', selector sun.nio.ch.EPollSelectorImpl@615466a2
+06:31:58.239 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+06:31:58.247 [XNIO-2 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 Accept', selector sun.nio.ch.EPollSelectorImpl@6dc4b853
+06:31:58.293 [XNIO-2 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /kotlin (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:45093]}, cookies=[:]): &lt;empty&gt; }
+06:31:58.295 [XNIO-2 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): Hello Kotlin!
 </pre>
 </span>
 </div>
@@ -132,7 +132,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 4.5.1</a> at Feb 8, 2018 12:24:45 PM</p>
+<a href="http://www.gradle.org">Gradle 4.8.1</a> at Jul 20, 2018 6:32:14 AM</p>
 </div>
 </div>
 </body>

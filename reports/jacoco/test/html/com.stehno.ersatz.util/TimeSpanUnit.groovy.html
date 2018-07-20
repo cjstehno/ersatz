@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz.util
 
-
 /**
  * Unit of a TimeSpan.
  */
@@ -34,15 +33,15 @@ enum TimeSpanUnit {
     final List&lt;String&gt; abbreviations
 
     private TimeSpanUnit(String... abbrevs) {
-<span class="fc" id="L37">        abbreviations = (abbrevs as List&lt;String&gt;).asImmutable()</span>
+<span class="fc" id="L36">        abbreviations = (abbrevs as List&lt;String&gt;).asImmutable()</span>
     }
 
     String abbreviate(boolean plural) {
-<span class="pc bfc" id="L41" title="All 2 branches covered.">        abbreviations[plural ? -1 : -2]</span>
+<span class="pc bfc" id="L40" title="All 2 branches covered.">        abbreviations[plural ? -1 : -2]</span>
     }
 
-    static TimeSpanUnit fromAbbreviation(String abr) {
-<span class="pc bpc" id="L45" title="2 of 4 branches missed.">        values().find { u -&gt; u.abbreviations.contains(abr.toLowerCase()) }</span>
+<span class="pc bpc" id="L43" title="2 of 4 branches missed.">    static TimeSpanUnit fromAbbreviation(String abr) {</span>
+<span class="pc" id="L44">        values().find { u -&gt; u.abbreviations.contains(abr.toLowerCase()) }</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

@@ -27,8 +27,6 @@ import static com.stehno.ersatz.util.TimeSpanUnit.*
 @Immutable(knownImmutableClasses = [Number])
 class TimeSpan {
 
-    // TODO: this might make an interesting extension to Number (e.g. 12.hours)
-
     Number value
     TimeSpanUnit unit
 
@@ -39,18 +37,18 @@ class TimeSpan {
      * @return the parsed TimeSpan
      */
     static TimeSpan parse(String value) {
-<span class="fc" id="L42">        def digits = []</span>
-<span class="fc" id="L43">        def unit = []</span>
+<span class="fc" id="L40">        def digits = []</span>
+<span class="fc" id="L41">        def unit = []</span>
 
-<span class="fc" id="L45">        value.trim().toCharArray().each { c -&gt;</span>
-<span class="fc bfc" id="L46" title="All 6 branches covered.">            if (c.isDigit() || c == '.') {</span>
-<span class="pc" id="L47">                digits &lt;&lt; c</span>
+<span class="fc" id="L43">        value.trim().toCharArray().each { c -&gt;</span>
+<span class="fc bfc" id="L44" title="All 6 branches covered.">            if (c.isDigit() || c == '.') {</span>
+<span class="pc" id="L45">                digits &lt;&lt; c</span>
             } else {
-<span class="pc" id="L49">                unit &lt;&lt; c</span>
+<span class="pc" id="L47">                unit &lt;&lt; c</span>
             }
         }
 
-<span class="pc" id="L53">        new TimeSpan(new BigDecimal(digits.join()), fromAbbreviation(unit.join().trim()))</span>
+<span class="pc" id="L51">        new TimeSpan(new BigDecimal(digits.join()), fromAbbreviation(unit.join().trim()))</span>
     }
 
     /**
@@ -58,8 +56,8 @@ class TimeSpan {
      *
      * @return a formatted string representation of the TimeSpan
      */
-    String format() {
-<span class="pc bpc" id="L62" title="8 of 16 branches missed.">        &quot;${value} ${unit.abbreviate(value &gt; 1 || value &lt; 1)}&quot;</span>
+<span class="pc bpc" id="L59" title="4 of 8 branches missed.">    String format() {</span>
+<span class="pc bpc" id="L60" title="4 of 8 branches missed.">        &quot;${value} ${unit.abbreviate(value &gt; 1 || value &lt; 1)}&quot;</span>
     }
 
     /**
@@ -70,53 +68,53 @@ class TimeSpan {
      * @return the time span converted to milliseconds.
      */
     long toMillis() {
-<span class="fc" id="L73">        switch (unit) {</span>
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">            case NANOSECONDS:</span>
-<span class="nc" id="L75">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.NANOSECONDS)</span>
-<span class="fc bfc" id="L76" title="All 2 branches covered.">            case MILLISECONDS:</span>
-<span class="pc" id="L77">                return value</span>
-<span class="fc bfc" id="L78" title="All 2 branches covered.">            case SECONDS:</span>
-<span class="pc" id="L79">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.SECONDS)</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">            case MINUTES:</span>
-<span class="pc" id="L81">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.MINUTES)</span>
-<span class="fc bfc" id="L82" title="All 2 branches covered.">            case HOURS:</span>
-<span class="pc" id="L83">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.HOURS)</span>
-<span class="fc bfc" id="L84" title="All 2 branches covered.">            case DAYS:</span>
-<span class="pc" id="L85">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.DAYS)</span>
-<span class="fc bfc" id="L86" title="All 2 branches covered.">            case WEEKS:</span>
-<span class="pc" id="L87">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.DAYS) * 7</span>
-<span class="fc bfc" id="L88" title="All 2 branches covered.">            case MONTHS:</span>
-<span class="pc" id="L89">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.DAYS) * 30</span>
-<span class="pc bpc" id="L90" title="1 of 2 branches missed.">            case YEARS:</span>
-<span class="pc" id="L91">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.DAYS) * 365</span>
+<span class="fc" id="L71">        switch (unit) {</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            case NANOSECONDS:</span>
+<span class="nc" id="L73">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.NANOSECONDS)</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            case MILLISECONDS:</span>
+<span class="pc" id="L75">                return value</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            case SECONDS:</span>
+<span class="pc" id="L77">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.SECONDS)</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            case MINUTES:</span>
+<span class="pc" id="L79">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.MINUTES)</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">            case HOURS:</span>
+<span class="pc" id="L81">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.HOURS)</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            case DAYS:</span>
+<span class="pc" id="L83">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.DAYS)</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            case WEEKS:</span>
+<span class="pc" id="L85">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.DAYS) * 7</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">            case MONTHS:</span>
+<span class="pc" id="L87">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.DAYS) * 30</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">            case YEARS:</span>
+<span class="pc" id="L89">                return TimeUnit.MILLISECONDS.convert(value as long, TimeUnit.DAYS) * 365</span>
         }
 
     }
 
     TimeSpan plus(TimeSpan ts) {
-<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        assert unit == ts.unit // no conversion at this point</span>
-<span class="pc" id="L98">        new TimeSpan(value + ts.value, unit)</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        assert unit == ts.unit // no conversion at this point</span>
+<span class="pc" id="L96">        new TimeSpan(value + ts.value, unit)</span>
     }
 
     TimeSpan minus(TimeSpan ts) {
-<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        assert unit == ts.unit // no conversion at this point</span>
-<span class="pc" id="L103">        new TimeSpan(value - ts.value, unit)</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        assert unit == ts.unit // no conversion at this point</span>
+<span class="pc" id="L101">        new TimeSpan(value - ts.value, unit)</span>
     }
 
     TimeSpan multiply(Number num) {
-<span class="pc" id="L107">        new TimeSpan(value * num, unit)</span>
+<span class="pc" id="L105">        new TimeSpan(value * num, unit)</span>
     }
 
     TimeSpan div(Number num) {
-<span class="pc" id="L111">        new TimeSpan(value / num, unit)</span>
+<span class="pc" id="L109">        new TimeSpan(value / num, unit)</span>
     }
 
     TimeSpan next() {
-<span class="pc" id="L115">        new TimeSpan(++value, unit)</span>
+<span class="pc" id="L113">        new TimeSpan(++value, unit)</span>
     }
 
     TimeSpan previous() {
-<span class="pc" id="L119">        new TimeSpan(--value, unit)</span>
+<span class="pc" id="L117">        new TimeSpan(--value, unit)</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

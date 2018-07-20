@@ -26,12 +26,15 @@ import org.hamcrest.Matcher
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
 import static com.stehno.ersatz.ErsatzMatchers.collectionContainsMatch
+import static io.undertow.util.QueryParameterUtils.parseQueryString
 
 /**
  * Request-specific wrapper around hamcrest matchers to provide property-based matching based on request attributes.
  */
 @TupleConstructor
 class RequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
+
+    private static final String UTF_8 = 'UTF-8'
 
     /**
      * The wrapped hamcrest matcher.
@@ -55,7 +58,7 @@ class RequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
      * @return a configured RequestMatcher
      */
     static RequestMatcher protocol(final Matcher&lt;String&gt; m) {
-<span class="pc" id="L58">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.protocol }, 'Protocol matches ')</span>
+<span class="pc" id="L61">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.protocol }, 'Protocol matches ')</span>
     }
 
     /**
@@ -65,7 +68,7 @@ class RequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
      * @return a configured RequestMatcher
      */
     static RequestMatcher method(final Matcher&lt;HttpMethod&gt; m) {
-<span class="pc" id="L68">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.method }, 'HTTP method matches ')</span>
+<span class="pc" id="L71">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.method }, 'HTTP method matches ')</span>
     }
 
     /**
@@ -75,7 +78,7 @@ class RequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
      * @return a configured RequestMatcher
      */
     static RequestMatcher path(final Matcher&lt;String&gt; m) {
-<span class="pc" id="L78">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.path }, 'Path matches ')</span>
+<span class="pc" id="L81">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.path }, 'Path matches ')</span>
     }
 
     /**
@@ -86,8 +89,8 @@ class RequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
      * @return a configured RequestMatcher
      */
     static RequestMatcher header(final String name, final Matcher&lt;Iterable&lt;String&gt;&gt; m) {
-<span class="pc" id="L89">        new RequestMatcher(m, { ClientRequest cr -&gt;</span>
-<span class="pc" id="L90">            cr.headers.get(name)?.toList()</span>
+<span class="pc" id="L92">        new RequestMatcher(m, { ClientRequest cr -&gt;</span>
+<span class="pc" id="L93">            cr.headers.get(name)?.toList()</span>
         }, &quot;Header $name matches &quot;)
     }
 
@@ -99,7 +102,24 @@ class RequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
      * @return a configured RequestMatcher
      */
     static RequestMatcher query(final String name, final Matcher&lt;Iterable&lt;String&gt;&gt; m) {
-<span class="pc" id="L102">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.queryParams.get(name) as List }, &quot;Query string $name matches &quot;)</span>
+<span class="pc" id="L105">        new RequestMatcher(m, { ClientRequest cr -&gt; cr.queryParams.get(name) as List }, &quot;Query string $name matches &quot;)</span>
+    }
+
+    /**
+     * Creates a request matcher for parameters specified within the request body.
+     *
+     * @param name the name of the parameter
+     * @param m the matchers
+     * @return the configured RequestMatcher
+     */
+    static RequestMatcher param(final String name, final Matcher&lt;Iterable&lt;String&gt;&gt; m) {
+<span class="pc" id="L116">        new RequestMatcher(</span>
+            m,
+            { ClientRequest cr -&gt;
+<span class="pc bfc" id="L119" title="All 2 branches covered.">                parseQueryString(new String(cr.body ?: [] as byte[], UTF_8), UTF_8)?.get(name) as List</span>
+            },
+            &quot;Parameter string $name matches&quot;
+        )
     }
 
     /**
@@ -110,14 +130,14 @@ class RequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
      * @return a configured RequestMatcher
      */
     static RequestMatcher cookie(final String name, final Matcher&lt;Cookie&gt; m) {
-<span class="pc" id="L113">        new RequestMatcher(m, { ClientRequest cr -&gt;</span>
-<span class="fc" id="L114">            io.undertow.server.handlers.Cookie undertowCookie = cr.cookies.get(name)</span>
-<span class="pc bfc" id="L115" title="All 2 branches covered.">            return undertowCookie ? bake(undertowCookie) : null</span>
+<span class="pc" id="L133">        new RequestMatcher(m, { ClientRequest cr -&gt;</span>
+<span class="fc" id="L134">            io.undertow.server.handlers.Cookie undertowCookie = cr.cookies.get(name)</span>
+<span class="pc bfc" id="L135" title="All 2 branches covered.">            return undertowCookie ? bake(undertowCookie) : null</span>
         }, &quot;Cookie $name matches &quot;)
     }
 
     private static Cookie bake(final io.undertow.server.handlers.Cookie cookie) {
-<span class="pc" id="L120">        new Cookie(</span>
+<span class="pc" id="L140">        new Cookie(</span>
             value: cookie.value,
             comment: cookie.comment,
             domain: cookie.domain,
@@ -130,9 +150,9 @@ class RequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
     }
 
     static RequestMatcher cookies(final Matcher&lt;Map&lt;String, Cookie&gt;&gt; matcher) {
-<span class="pc" id="L133">        new RequestMatcher(matcher, { ClientRequest cr -&gt;</span>
-<span class="pc" id="L134">            cr.cookies.collectEntries { name, cookie -&gt;</span>
-<span class="pc" id="L135">                [name, bake(cookie)]</span>
+<span class="pc" id="L153">        new RequestMatcher(matcher, { ClientRequest cr -&gt;</span>
+<span class="pc" id="L154">            cr.cookies.collectEntries { name, cookie -&gt;</span>
+<span class="pc" id="L155">                [name, bake(cookie)]</span>
             }
         }, 'Cookies match ')
     }
@@ -146,10 +166,10 @@ class RequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
      * @return a configured RequestMatcher
      */
     static RequestMatcher body(final DecoderChain decoderChain, final String contentType, final Matcher&lt;Object&gt; m) {
-<span class="pc" id="L149">        new RequestMatcher(m, { ClientRequest cr -&gt;</span>
-<span class="fc" id="L150">            decoderChain.resolve(contentType)?.apply(</span>
+<span class="pc" id="L169">        new RequestMatcher(m, { ClientRequest cr -&gt;</span>
+<span class="fc" id="L170">            decoderChain.resolve(contentType)?.apply(</span>
                 cr.body,
-<span class="pc" id="L152">                new DecodingContext(cr.contentLength, cr.contentType, cr.characterEncoding, decoderChain)</span>
+<span class="pc" id="L172">                new DecodingContext(cr.contentLength, cr.contentType, cr.characterEncoding, decoderChain)</span>
             )
         }, &quot;Body ($contentType) matches &quot;)
     }
@@ -161,7 +181,7 @@ class RequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
      * @return a configured RequestMatcher
      */
     static RequestMatcher contentType(final Matcher&lt;String&gt; m) {
-<span class="pc" id="L164">        header(CONTENT_TYPE_HEADER, collectionContainsMatch(m))</span>
+<span class="pc" id="L184">        header(CONTENT_TYPE_HEADER, collectionContainsMatch(m))</span>
     }
 
     /**
@@ -170,8 +190,9 @@ class RequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
      * @param crm the matcher
      * @return a configured RequestMatcher
      */
+    @SuppressWarnings('ConfusingMethodName')
     static RequestMatcher matcher(final Matcher&lt;ClientRequest&gt; crm) {
-<span class="pc" id="L174">        new RequestMatcher(crm, { it }, &quot;Request matches $crm&quot;)</span>
+<span class="pc" id="L195">        new RequestMatcher(crm, { it }, &quot;Request matches $crm&quot;)</span>
     }
 
     /**
@@ -182,15 +203,15 @@ class RequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
      */
     @Override
     boolean matches(final Object item) {
-<span class="pc" id="L185">        matcher.matches(getter.call(item as ClientRequest))</span>
+<span class="pc" id="L206">        matcher.matches(getter.call(item as ClientRequest))</span>
     }
 
     @Override
     void describeTo(final Description description) {
-<span class="pc bpc" id="L190" title="1 of 2 branches missed.">        if (this.description) {</span>
-<span class="fc" id="L191">            description.appendText(this.description)</span>
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">        if (this.description) {</span>
+<span class="fc" id="L212">            description.appendText(this.description)</span>
         }
-<span class="fc" id="L193">        matcher.describeTo(description)</span>
+<span class="fc" id="L214">        matcher.describeTo(description)</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

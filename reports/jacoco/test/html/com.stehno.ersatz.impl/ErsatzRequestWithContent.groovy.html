@@ -20,8 +20,7 @@ import org.hamcrest.Matcher
 
 import java.util.function.BiFunction
 
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.startsWith
+import static org.hamcrest.Matchers.*
 
 /**
  * Ersatz implementation of a &lt;code&gt;Request&lt;/code&gt; with request body content.
@@ -29,8 +28,8 @@ import static org.hamcrest.Matchers.startsWith
 @SuppressWarnings('ConfusingMethodName')
 class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
-<span class="fc" id="L32">    private final RequestDecoders localDecoders = new RequestDecoders()</span>
-<span class="fc" id="L33">    private final DecoderChain decoderChain = new DecoderChain(localDecoders)</span>
+<span class="fc" id="L31">    private final RequestDecoders localDecoders = new RequestDecoders()</span>
+<span class="fc" id="L32">    private final DecoderChain decoderChain = new DecoderChain(localDecoders)</span>
 
     /**
      * Creates a request with the specified method and path.
@@ -44,52 +43,68 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
         final RequestDecoders globalDecoders = null,
         final ResponseEncoders globalEncoders = null
     ) {
-<span class="fc" id="L47">        super(method, pathMatcher, globalEncoders)</span>
+<span class="fc" id="L46">        super(method, pathMatcher, globalEncoders)</span>
 
-<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (globalDecoders) {</span>
-<span class="fc" id="L50">            decoderChain.last globalDecoders</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        if (globalDecoders) {</span>
+<span class="fc" id="L49">            decoderChain.last globalDecoders</span>
         }
     }
 
     @Override
     RequestWithContent body(final Matcher&lt;Object&gt; bodyMatcher, final String contentType) {
-<span class="fc" id="L56">        addMatcher RequestMatcher.contentType(startsWith(contentType))</span>
-<span class="fc" id="L57">        addMatcher RequestMatcher.body(decoderChain, contentType, bodyMatcher)</span>
-<span class="pc" id="L58">        this</span>
+<span class="fc" id="L55">        addMatcher RequestMatcher.contentType(startsWith(contentType))</span>
+<span class="fc" id="L56">        addMatcher RequestMatcher.body(decoderChain, contentType, bodyMatcher)</span>
+<span class="pc" id="L57">        this</span>
     }
 
     @Override
     RequestWithContent body(final Object obj, final String contentType) {
-<span class="pc" id="L63">        body equalTo(obj), contentType</span>
+<span class="pc" id="L62">        body equalTo(obj), contentType</span>
     }
 
     @Override
     RequestWithContent body(final Matcher&lt;Object&gt; bodyMatcher, final ContentType contentType) {
-<span class="pc" id="L68">        body bodyMatcher, contentType.value</span>
+<span class="pc" id="L67">        body bodyMatcher, contentType.value</span>
     }
 
     @Override
     RequestWithContent body(final Object obj, final ContentType contentType) {
-<span class="pc" id="L73">        body obj, contentType.value</span>
+<span class="pc" id="L72">        body obj, contentType.value</span>
     }
 
     @Override
     RequestWithContent decoder(final String contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {
-<span class="fc" id="L78">        localDecoders.register(contentType, decoder)</span>
-<span class="pc" id="L79">        this</span>
+<span class="fc" id="L77">        localDecoders.register(contentType, decoder)</span>
+<span class="pc" id="L78">        this</span>
     }
 
     @Override
     RequestWithContent decoder(final ContentType contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {
-<span class="fc" id="L84">        localDecoders.register(contentType, decoder)</span>
-<span class="pc" id="L85">        this</span>
+<span class="fc" id="L83">        localDecoders.register(contentType, decoder)</span>
+<span class="pc" id="L84">        this</span>
     }
 
     @Override
     RequestWithContent decoders(final RequestDecoders requestDecoders) {
-<span class="fc" id="L90">        decoderChain.second(requestDecoders)</span>
-<span class="pc" id="L91">        this</span>
+<span class="fc" id="L89">        decoderChain.second(requestDecoders)</span>
+<span class="pc" id="L90">        this</span>
+    }
+
+    @Override
+    RequestWithContent param(String name, String value) {
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        param name, value != null ? contains(value) : contains('')</span>
+    }
+
+    @Override
+    RequestWithContent param(String name, Iterable&lt;String&gt; values) {
+<span class="nc" id="L100">        param name, containsInAnyOrder((values as Collection&lt;String&gt;).collect { equalTo(it) })</span>
+    }
+
+    @Override
+    RequestWithContent param(String name, Matcher&lt;Iterable&lt;String&gt;&gt; matchers) {
+<span class="fc" id="L105">        addMatcher RequestMatcher.param(name, matchers)</span>
+<span class="pc" id="L106">        this</span>
     }
 }
 
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>
