@@ -82,6 +82,17 @@ class RequestMatcherSpec extends Specification {
         new MockClientRequest()                                || false
     }
 
+    def 'param'() {
+        expect:
+        param('email', contains(containsString('@goomail.com'))).matches(cr) == result
+
+        where:
+        cr                                                          || result
+        new MockClientRequest()                                     || false
+        new MockClientRequest(body: 'email=foo@goomail.com&spam=n') || true
+        new MockClientRequest(body: 'spam=n')                       || false
+    }
+
     def 'cookie'() {
         expect:
         cookie('id', new CookieMatcher().value(equalTo('asdf89s7g'))).matches(cr) == result

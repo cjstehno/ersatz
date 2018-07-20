@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2018 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,17 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz.util
 
-import groovy.lang.Closure
+import spock.lang.Specification
 
-// Note: This is experimental code for kotlin support - it may not look anything like this in the end
+import static com.stehno.ersatz.util.DummyContentGenerator.generate
+import static com.stehno.ersatz.util.StorageUnit.*
 
-object KotlinDsl {
+class DummyContentGeneratorSpec extends Specification {
 
-    fun kotlinConfig(conf: ServerConfig.() -> Unit): Closure<Unit> = delegateClosureOf(conf)
+    def 'generate'() {
+        expect:
+        generate(10.5d, unit).length == result
 
-    fun kotlinExpectations(expects: Expectations.() -> Unit): Closure<Unit> = delegateClosureOf(expects)
-
-    fun kotlinResponse(resp: Response.() -> Unit): Closure<Unit> = delegateClosureOf(resp)
+        where:
+        unit      || result
+        BYTES     || 11
+        KILOBYTES || 10752
+        MEGABYTES || 11010048
+    }
 }

@@ -18,10 +18,7 @@ package com.stehno.ersatz
 import com.stehno.ersatz.auth.BasicAuthHandler
 import com.stehno.ersatz.auth.DigestAuthHandler
 import com.stehno.ersatz.auth.SimpleIdentityManager
-import com.stehno.ersatz.impl.ErsatzRequest
-import com.stehno.ersatz.impl.ExpectationsImpl
-import com.stehno.ersatz.impl.UndertowClientRequest
-import com.stehno.ersatz.impl.UnmatchedRequestReport
+import com.stehno.ersatz.impl.*
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.undertow.Undertow
@@ -70,8 +67,9 @@ import static java.util.concurrent.TimeUnit.SECONDS
  *
  * See the <a href="http://stehno.com/ersatz/asciidoc/html5/" target="_blank">User Guide</a> for more detailed information.
  */
-@CompileStatic @Slf4j
-class ErsatzServer implements ServerConfig {
+@CompileStatic
+@Slf4j
+class ErsatzServer implements ServerConfig, Closeable {
 
     /**
      * The response body returned when no matching expectation could be found.
@@ -218,6 +216,15 @@ class ErsatzServer implements ServerConfig {
      */
     String getHttpUrl() {
         "http://localhost:$actualHttpPort"
+    }
+
+    /**
+     * Used to retrieve the Web Socket URL.
+     *
+     * @return the web socket URL
+     */
+    String getWsUrl() {
+        "ws://localhost:$actualHttpPort"
     }
 
     /**
@@ -381,7 +388,8 @@ class ErsatzServer implements ServerConfig {
                 applyAuthentication(
                     new HttpTraceHandler(
                         new HttpHandler() {
-                            @Override void handleRequest(final HttpServerExchange exchange) throws Exception {
+                            @Override
+                            void handleRequest(final HttpServerExchange exchange) throws Exception {
                                 ClientRequest clientRequest = new UndertowClientRequest(exchange)
 
                                 log.debug 'Request: {}', clientRequest
@@ -415,8 +423,9 @@ class ErsatzServer implements ServerConfig {
                     .addEncodingHandler('deflate', new DeflateEncodingProvider(), 50)
             ))
 
-            server = builder.setHandler(blockingHandler).build()
+            WebSocketsHandlerBuilder wsBuilder = new WebSocketsHandlerBuilder(expectations, blockingHandler, mismatchToConsole)
 
+            server = builder.setHandler(wsBuilder.build()).build()
             server.start()
 
             applyPorts()
@@ -447,14 +456,27 @@ class ErsatzServer implements ServerConfig {
     }
 
     /**
+     * An alias to the <code>stop()</code> method.
+     */
+    @Override
+    void close(){
+        stop()
+    }
+
+/**
      * Used to verify that all of the expected request interactions were called the appropriate number of times. This method should be called after
-     * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back from
-     * the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
+     * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back
+     * from the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
      *
+     * If there are web socket expectations configured, this method will be blocking against the expected operations. Expectations involving web
+     * sockets should consider using the timeout parameters - the default is 1s.
+     *
+     * @param timeout the timeout value (defaults to 1)
+     * @param unit the timeout unit (defaults to SECONDS)
      * @return <code>true</code> if all call criteria were met during test execution.
      */
-    boolean verify() {
-        expectations.verify()
+    boolean verify(final long timeout = 1, final TimeUnit unit = SECONDS) {
+        expectations.verify(timeout, unit)
     }
 
     private HttpHandler applyAuthentication(final HttpHandler handler) {
@@ -542,3 +564,5 @@ class ErsatzServer implements ServerConfig {
         sslContext
     }
 }
+
+

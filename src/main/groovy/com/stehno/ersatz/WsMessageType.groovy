@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2018 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,15 +15,22 @@
  */
 package com.stehno.ersatz
 
-import groovy.lang.Closure
+import groovy.transform.CompileStatic
 
-// Note: This is experimental code for kotlin support - it may not look anything like this in the end
+/**
+ * Enumeration of the supported WebSocket message types.
+ */
+@CompileStatic
+enum WsMessageType {
+    BINARY, TEXT
 
-object KotlinDsl {
-
-    fun kotlinConfig(conf: ServerConfig.() -> Unit): Closure<Unit> = delegateClosureOf(conf)
-
-    fun kotlinExpectations(expects: Expectations.() -> Unit): Closure<Unit> = delegateClosureOf(expects)
-
-    fun kotlinResponse(resp: Response.() -> Unit): Closure<Unit> = delegateClosureOf(resp)
+    /**
+     * Resolves the default message type for the specified object.
+     *
+     * @param obj the payload object
+     * @return the message type determined by content
+     */
+    static WsMessageType resolve(final Object obj) {
+        obj instanceof byte[] ? BINARY : TEXT
+    }
 }

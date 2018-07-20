@@ -26,12 +26,15 @@ import org.hamcrest.Matcher
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
 import static com.stehno.ersatz.ErsatzMatchers.collectionContainsMatch
+import static io.undertow.util.QueryParameterUtils.parseQueryString
 
 /**
  * Request-specific wrapper around hamcrest matchers to provide property-based matching based on request attributes.
  */
 @TupleConstructor
 class RequestMatcher extends BaseMatcher<ClientRequest> {
+
+    private static final String UTF_8 = 'UTF-8'
 
     /**
      * The wrapped hamcrest matcher.
@@ -103,6 +106,23 @@ class RequestMatcher extends BaseMatcher<ClientRequest> {
     }
 
     /**
+     * Creates a request matcher for parameters specified within the request body.
+     *
+     * @param name the name of the parameter
+     * @param m the matchers
+     * @return the configured RequestMatcher
+     */
+    static RequestMatcher param(final String name, final Matcher<Iterable<String>> m) {
+        new RequestMatcher(
+            m,
+            { ClientRequest cr ->
+                parseQueryString(new String(cr.body ?: [] as byte[], UTF_8), UTF_8)?.get(name) as List
+            },
+            "Parameter string $name matches"
+        )
+    }
+
+    /**
      * Creates a request matcher for a cookie.
      *
      * @param name the cookie name
@@ -170,6 +190,7 @@ class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param crm the matcher
      * @return a configured RequestMatcher
      */
+    @SuppressWarnings('ConfusingMethodName')
     static RequestMatcher matcher(final Matcher<ClientRequest> crm) {
         new RequestMatcher(crm, { it }, "Request matches $crm")
     }

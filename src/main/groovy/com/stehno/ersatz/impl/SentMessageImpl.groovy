@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2018 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,17 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz.impl
 
-import groovy.lang.Closure
+import com.stehno.ersatz.SentMessage
+import com.stehno.ersatz.WsMessageType
 
-// Note: This is experimental code for kotlin support - it may not look anything like this in the end
+@SuppressWarnings('ConfusingMethodName')
+class SentMessageImpl implements SentMessage {
 
-object KotlinDsl {
+    Object payload
+    WsMessageType messageType
 
-    fun kotlinConfig(conf: ServerConfig.() -> Unit): Closure<Unit> = delegateClosureOf(conf)
+    @Override
+    SentMessage payload(Object obj) {
+        payload = obj
+        this
+    }
 
-    fun kotlinExpectations(expects: Expectations.() -> Unit): Closure<Unit> = delegateClosureOf(expects)
-
-    fun kotlinResponse(resp: Response.() -> Unit): Closure<Unit> = delegateClosureOf(resp)
+    @Override
+    SentMessage messageType(WsMessageType type) {
+        messageType = type
+        this
+    }
 }

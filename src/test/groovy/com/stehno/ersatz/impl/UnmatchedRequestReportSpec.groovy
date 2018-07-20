@@ -20,6 +20,7 @@ import com.stehno.ersatz.ResponseEncoders
 import io.undertow.server.handlers.CookieImpl
 import io.undertow.util.HeaderMap
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import static com.stehno.ersatz.HttpMethod.POST
 import static com.stehno.ersatz.HttpMethod.PUT
@@ -29,7 +30,11 @@ import static org.hamcrest.Matchers.startsWith
 
 class UnmatchedRequestReportSpec extends Specification {
 
-    def 'unmatched report'() {
+
+    private static final String BODY = 'This is some text content'
+
+    @Unroll
+    void 'unmatched report with type #contentType should print #content'() {
         setup:
         HeaderMap headers = new HeaderMap()
         headers.add(tryFromString('alpha'), 'bravo-1')
@@ -42,9 +47,9 @@ class UnmatchedRequestReportSpec extends Specification {
             path: '/alpha/foo',
             headers: headers,
             contentLength: 1234,
-            contentType: 'text/plain',
+            contentType: contentType,
             characterEncoding: 'UTF-8',
-            body: 'This is some text content'.bytes,
+            body: BODY.bytes,
             cookies: [ident: new CookieImpl('ident', 'asdfasdfasdf')]
         )
         request.query('selected', 'one', 'two')
@@ -59,20 +64,20 @@ class UnmatchedRequestReportSpec extends Specification {
         String string = new UnmatchedRequestReport(request, expectations).toString()
 
         then:
-        string == '''            # Unmatched Request
+        string == """            # Unmatched Request
             
             HTTP GET /alpha/foo ? selected=[one, two], id=[1002]
             Headers:
              - alpha: [bravo-1, bravo-2]
              - charlie: [delta]
-             - Content-Type: [text/plain]
+             - Content-Type: [$contentType]
             Cookies:
              - ident (null, null): asdfasdfasdf
             Character-Encoding: UTF-8
-            Content-type: text/plain
+            Content-type: $contentType
             Content-Length: 1234
             Content:
-              [84, 104, 105, 115, 32, 105, 115, 32, 115, 111, 109, 101, 32, 116, 101, 120, 116, 32, 99, 111, 110, 116, 101, 110, 116]
+              $content
             
             # Expectations
             
@@ -87,6 +92,14 @@ class UnmatchedRequestReportSpec extends Specification {
               X Protocol matches equalToIgnoringCase("HTTPS")
               (3 matchers: 0 matched, 3 failed)
               
-        '''.stripIndent()
+        """.stripIndent()
+
+        where:
+        contentType                             | content
+        'application/octet-stream'              | '[84, 104, 105, 115, 32, 105, 115, 32, 115, 111, 109, 101, 32, 116, 101, 120, 116, 32, 99, 111, 110, 116, 101, 110, 116]'
+        'text/plain'                            | BODY
+        'text/csv'                              | BODY
+        'application/json'                      | BODY
+        'application/x-www-form-urlencoded'     | BODY
     }
 }

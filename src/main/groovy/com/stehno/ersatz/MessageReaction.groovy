@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2018 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,15 +15,25 @@
  */
 package com.stehno.ersatz
 
-import groovy.lang.Closure
+/**
+ * Describes a web socket reaction message - a message sent as an asynchronous "response" to a connection or another message.
+ */
+@SuppressWarnings('ConfusingMethodName')
+interface MessageReaction {
 
-// Note: This is experimental code for kotlin support - it may not look anything like this in the end
+    /**
+     * Defines the message payload.
+     *
+     * @param obj the payload object
+     * @return a reference to this MessageReaction
+     */
+    MessageReaction payload(Object obj)
 
-object KotlinDsl {
-
-    fun kotlinConfig(conf: ServerConfig.() -> Unit): Closure<Unit> = delegateClosureOf(conf)
-
-    fun kotlinExpectations(expects: Expectations.() -> Unit): Closure<Unit> = delegateClosureOf(expects)
-
-    fun kotlinResponse(resp: Response.() -> Unit): Closure<Unit> = delegateClosureOf(resp)
+    /**
+     * Defines the message type.
+     *
+     * @param obj the payload type
+     * @return a reference to this MessageReaction
+     */
+    MessageReaction messageType(WsMessageType type)
 }
