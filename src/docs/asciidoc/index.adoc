@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno <chris@stehno.com>
-v1.7.0, December 2017
+v1.8.0, December 2017
 :toc: left
 :toclevels: 4
 
@@ -32,14 +32,14 @@ methods:
 
 For Gradle add the following to your `build.gradle` file:
 
-    testCompile 'com.stehno.ersatz:ersatz:1.7.0'
+    testCompile 'com.stehno.ersatz:ersatz:1.8.0'
 
 For Maven add the code below to your `pom.xml` file:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>1.7.0</version>
+        <version>1.8.0</version>
         <scope>test</scope>
     </dependency>
 
@@ -1169,14 +1169,14 @@ The embedded version of Undertow used by Ersatz has caused issues with some serv
 If you run into errors using the standard jar distribution, please try using the `safe` distribution, which is a shadowed jar which includes the
 Undertow library and its JBoss dependencies repackaged in the jar. You can use this version with the following coordinates:
 
-    testCompile 'com.stehno.ersatz:ersatz:1.7.0:safe@jar'
+    testCompile 'com.stehno.ersatz:ersatz:1.8.0:safe@jar'
 
 For a Maven `pom.xml` entry, this would be:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>1.7.0</version>
+        <version>1.8.0</version>
         <type>jar</type>
         <scope>test</scope>
         <classifier>safe</classifier>
