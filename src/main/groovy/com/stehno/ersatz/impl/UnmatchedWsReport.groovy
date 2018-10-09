@@ -25,8 +25,7 @@ class UnmatchedWsReport {
 
     final WebSocketExpectationsImpl expectations
 
-    @Override @Memoized(maxCacheSize = 1, protectedCacheSize = 1)
-    String toString() {
+    @Override @Memoized(maxCacheSize = 1, protectedCacheSize = 1) String toString() {
         StringBuilder out = new StringBuilder()
 
         out.append('# Unmatched Web Socket Message\n\n')
@@ -41,7 +40,9 @@ class UnmatchedWsReport {
         expectations.eachMessage { ReceivedMessageImpl rm ->
             boolean matched = rm.marked(1, TimeUnit.SECONDS)
             out.append("  ${matched ? '✓' : 'X'} Received ${rm.messageType} message: ${rm.payload}\n")
-            if (!matched) failed++
+            if (!matched) {
+                failed++
+            }
         }
 
         int count = expectations.expectedMessageCount + 1

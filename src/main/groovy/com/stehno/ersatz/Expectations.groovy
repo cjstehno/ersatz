@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz
 
-import com.stehno.ersatz.impl.WebSocketExpectationsImpl
 import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
 

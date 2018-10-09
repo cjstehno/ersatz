@@ -18,7 +18,11 @@ package com.stehno.ersatz
 import com.stehno.ersatz.auth.BasicAuthHandler
 import com.stehno.ersatz.auth.DigestAuthHandler
 import com.stehno.ersatz.auth.SimpleIdentityManager
-import com.stehno.ersatz.impl.*
+import com.stehno.ersatz.impl.ErsatzRequest
+import com.stehno.ersatz.impl.ExpectationsImpl
+import com.stehno.ersatz.impl.UndertowClientRequest
+import com.stehno.ersatz.impl.UnmatchedRequestReport
+import com.stehno.ersatz.impl.WebSocketsHandlerBuilder
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.undertow.Undertow
@@ -459,11 +463,11 @@ class ErsatzServer implements ServerConfig, Closeable {
      * An alias to the <code>stop()</code> method.
      */
     @Override
-    void close(){
+    void close() {
         stop()
     }
 
-/**
+    /**
      * Used to verify that all of the expected request interactions were called the appropriate number of times. This method should be called after
      * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back
      * from the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
@@ -564,5 +568,3 @@ class ErsatzServer implements ServerConfig, Closeable {
         sslContext
     }
 }
-
-
