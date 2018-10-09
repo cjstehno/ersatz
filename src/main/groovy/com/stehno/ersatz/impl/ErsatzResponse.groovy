@@ -15,7 +15,12 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+import com.stehno.ersatz.ContentType
+import com.stehno.ersatz.Cookie
+import com.stehno.ersatz.HttpMethod
+import com.stehno.ersatz.MultipartResponseContent
+import com.stehno.ersatz.Response
+import com.stehno.ersatz.ResponseEncoders
 import com.stehno.ersatz.util.TimeSpan
 import groovy.transform.CompileStatic
 
@@ -51,7 +56,7 @@ class ErsatzResponse implements Response {
     private Integer code = 200
     private long delayTime
 
-    @Override
+    @Override @Deprecated
     Response content(final Object content) {
         if (empty) {
             throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')
@@ -72,15 +77,30 @@ class ErsatzResponse implements Response {
         this
     }
 
-    @Override
+    @Override @Deprecated
     Response content(final Object content, final String contentType) {
         this.content(content)
         this.contentType(contentType)
     }
 
-    @Override
+    @Override @Deprecated
     Response content(final Object content, final ContentType contentType) {
         this.content(content, contentType.value)
+    }
+
+    @Override
+    Response body(Object data) {
+        content(data)
+    }
+
+    @Override
+    Response body(Object data, String contentType) {
+        content(data, contentType)
+    }
+
+    @Override
+    Response body(Object data, ContentType contentType) {
+        content(data, contentType)
     }
 
     @Override
