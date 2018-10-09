@@ -17,6 +17,8 @@ package com.stehno.ersatz
 
 import java.util.function.Consumer
 
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * Defines the web socket expectations.
  */
@@ -48,7 +50,7 @@ interface WebSocketExpectations {
      * @param closure the configuration closure
      * @return a reference to this ReceivedMessage
      */
-    ReceivedMessage receive(@DelegatesTo(ReceivedMessage) Closure closure)
+    ReceivedMessage receive(@DelegatesTo(value = ReceivedMessage, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Configures an expectation that the web socket connection will receive a message configured by the consumer.
@@ -81,7 +83,7 @@ interface WebSocketExpectations {
      * @param closure the message configuration closure
      * @return a reference to this ReceivedMessage
      */
-    SentMessage send(@DelegatesTo(SentMessage) Closure closure)
+    SentMessage send(@DelegatesTo(value = SentMessage, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Configures a web socket message which will be sent to the client after it connects.

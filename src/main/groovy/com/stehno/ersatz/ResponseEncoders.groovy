@@ -22,6 +22,9 @@ import groovy.transform.TypeChecked
 import javax.activation.MimeType
 import java.util.function.Function
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * Provides management of response encoders. You may share an instance of this class to define response part encoders across multiple multipart
  * response configurations.
@@ -36,10 +39,10 @@ class ResponseEncoders {
      *
      * @param closure the optional configuration closure
      */
-    ResponseEncoders(@DelegatesTo(ResponseEncoders) Closure closure = null) {
+    @SuppressWarnings('ThisReferenceEscapesConstructor')
+    ResponseEncoders(@DelegatesTo(value = ResponseEncoders, strategy = DELEGATE_FIRST) Closure closure = null) {
         if (closure) {
-            closure.delegate = this
-            closure.call()
+            delegateTo(this, closure)
         }
     }
 

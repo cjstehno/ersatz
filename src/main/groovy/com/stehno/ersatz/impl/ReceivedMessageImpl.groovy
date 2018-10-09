@@ -25,7 +25,11 @@ import io.undertow.websockets.core.BufferedTextMessage
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-import static com.stehno.ersatz.WsMessageType.*
+import static com.stehno.ersatz.WsMessageType.BINARY
+import static com.stehno.ersatz.WsMessageType.TEXT
+import static com.stehno.ersatz.WsMessageType.resolve
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
 
 @Slf4j @SuppressWarnings('ConfusingMethodName')
 class ReceivedMessageImpl implements ReceivedMessage {
@@ -66,10 +70,8 @@ class ReceivedMessageImpl implements ReceivedMessage {
     }
 
     @Override
-    MessageReaction reaction(@DelegatesTo(MessageReaction) Closure closure) {
-        MessageReactionImpl reaction = new MessageReactionImpl()
-        closure.delegate = reaction
-        closure.call()
+    MessageReaction reaction(@DelegatesTo(value = MessageReaction, strategy = DELEGATE_FIRST) Closure closure) {
+        MessageReactionImpl reaction = delegateTo(new MessageReactionImpl(), closure)
         reactions << reaction
         reaction
     }

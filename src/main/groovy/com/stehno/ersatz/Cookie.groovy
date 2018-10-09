@@ -21,6 +21,9 @@ import groovy.transform.ToString
 
 import java.util.function.Consumer
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * Ersatz abstraction of a request or response cookie. See also the <code>CookieMatcher</code>.
  */
@@ -43,11 +46,8 @@ class Cookie {
      * @param closure the configuration closure
      * @return the configured cookie
      */
-    static Cookie cookie(@DelegatesTo(Cookie) final Closure closure) {
-        Cookie cookie = new Cookie()
-        closure.delegate = cookie
-        closure.call()
-        cookie
+    static Cookie cookie(@DelegatesTo(value = Cookie, strategy = DELEGATE_FIRST) final Closure closure) {
+        delegateTo(new Cookie(), closure)
     }
 
     /**

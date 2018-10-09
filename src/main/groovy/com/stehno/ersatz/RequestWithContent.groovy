@@ -89,7 +89,9 @@ interface RequestWithContent extends Request {
      *
      * @param decoders the parent decoder collection
      * @return a reference to this request
+     * @deprecated Use one of the other decoder configuration methods
      */
+    @Deprecated // TODO: remove in 2.0
     RequestWithContent decoders(final RequestDecoders decoders)
 
     /**

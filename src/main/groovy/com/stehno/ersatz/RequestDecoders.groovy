@@ -20,6 +20,9 @@ import groovy.transform.Immutable
 import javax.activation.MimeType
 import java.util.function.BiFunction
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * Configuration manager for a collection of request content decoders.
  */
@@ -32,10 +35,10 @@ class RequestDecoders {
      *
      * @param closure the optional configuration closure
      */
-    RequestDecoders(@DelegatesTo(RequestDecoders) Closure closure = null) {
+    @SuppressWarnings('ThisReferenceEscapesConstructor')
+    RequestDecoders(@DelegatesTo(value = RequestDecoders, strategy = DELEGATE_FIRST) Closure closure = null) {
         if (closure) {
-            closure.delegate = this
-            closure.call()
+            delegateTo(this, closure)
         }
     }
 

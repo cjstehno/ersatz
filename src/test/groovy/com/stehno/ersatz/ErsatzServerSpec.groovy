@@ -559,6 +559,28 @@ class ErsatzServerSpec extends Specification {
         response.code() == 201
     }
 
+    void 'Proper closure delegation'() {
+        setup:
+        ersatzServer.expectations {
+            get("/headers") {
+                header('Accept', 'application/json')
+
+                responder {
+                    header("Bad", "code")
+                    content('{"hello":"world"}', 'application/json')
+                }
+            }
+        }
+
+        when:
+        def request = new okhttp3.Request.Builder().url(url('/headers')).header('Accept', 'application/json')
+        okhttp3.Response response = client.newCall(request.build()).execute()
+
+        then:
+        response.body().string() == '{"hello":"world"}'
+        response.header('Bad') == 'code'
+    }
+
     private String url(final String path) {
         "http://localhost:${ersatzServer.httpPort}${path}"
     }
