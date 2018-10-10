@@ -24,6 +24,8 @@ import org.junit.runners.model.Statement
 
 import java.util.function.Consumer
 
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * JUnit Rule implementation to simplify the use of Ersatz in JUnit tests. It may be used with <code>@Rule</code> or <code>@ClassRule</code>. It's is
  * a drop-in replacement for the <code>ErsatzServer</code> class which provides all of its configuration functionality and adds an automatic call to
@@ -37,7 +39,7 @@ class ErsatzServerRule extends ErsatzServer implements TestRule {
      *
      * @param closure the configuration closure delegating to <code>ServerConfig</code>.
      */
-    ErsatzServerRule(@DelegatesTo(ServerConfig) final Closure closure = null) {
+    ErsatzServerRule(@DelegatesTo(value = ServerConfig, strategy = DELEGATE_FIRST) final Closure closure = null) {
         super(closure)
     }
 

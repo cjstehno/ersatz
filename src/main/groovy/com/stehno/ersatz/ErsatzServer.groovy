@@ -49,6 +49,8 @@ import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Function
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
 import static groovy.transform.TypeCheckingMode.SKIP
 import static io.undertow.UndertowOptions.IDLE_TIMEOUT
 import static io.undertow.UndertowOptions.NO_REQUEST_TIMEOUT
@@ -109,10 +111,10 @@ class ErsatzServer implements ServerConfig, Closeable {
      *
      * @param closure the configuration closure (delegated to <code>ServerConfig</code>)
      */
-    ErsatzServer(@DelegatesTo(ServerConfig) final Closure closure = null) {
+    @SuppressWarnings('ThisReferenceEscapesConstructor')
+    ErsatzServer(@DelegatesTo(value = ServerConfig, strategy = DELEGATE_FIRST) final Closure closure = null) {
         if (closure) {
-            closure.delegate = this
-            closure.call()
+            delegateTo(this, closure)
         }
     }
 
@@ -281,9 +283,8 @@ class ErsatzServer implements ServerConfig, Closeable {
      * @return a reference to this server
      */
     @SuppressWarnings('ConfusingMethodName')
-    ErsatzServer expectations(@DelegatesTo(Expectations) final Closure closure) {
-        closure.delegate = expectations
-        closure.call()
+    ErsatzServer expectations(@DelegatesTo(value=Expectations, strategy = DELEGATE_FIRST) final Closure closure) {
+        delegateTo(expectations, closure)
 
         if (autoStartEnabled) {
             start()
@@ -365,10 +366,8 @@ class ErsatzServer implements ServerConfig, Closeable {
      * @return a reference to this server configuration
      */
     @Override
-    ServerConfig authentication(@DelegatesTo(AuthenticationConfig) final Closure closure) {
-        authenticationConfig = new AuthenticationConfig()
-        closure.delegate = authenticationConfig
-        closure.call()
+    ServerConfig authentication(@DelegatesTo(value=AuthenticationConfig, strategy = DELEGATE_FIRST) final Closure closure) {
+        authenticationConfig = delegateTo(new AuthenticationConfig(), closure)
         this
     }
 

@@ -26,7 +26,11 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.WsMessageType.*
+import static com.stehno.ersatz.WsMessageType.BINARY
+import static com.stehno.ersatz.WsMessageType.TEXT
+import static com.stehno.ersatz.WsMessageType.resolve
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.concurrent.TimeUnit.SECONDS
 
 class WebSocketExpectationsImpl implements WebSocketExpectations {
@@ -67,12 +71,9 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
     }
 
     @Override
-    ReceivedMessage receive(@DelegatesTo(ReceivedMessage) Closure closure) {
-        ReceivedMessageImpl message = new ReceivedMessageImpl()
-        closure.delegate = message
-        closure.call()
+    ReceivedMessage receive(@DelegatesTo(value = ReceivedMessage, strategy = DELEGATE_FIRST) Closure closure) {
+        ReceivedMessageImpl message = delegateTo(new ReceivedMessageImpl(), closure)
         receivedMessages << message
-
         message
     }
 
@@ -94,10 +95,8 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
     }
 
     @Override
-    SentMessage send(@DelegatesTo(SentMessage) Closure closure) {
-        SentMessageImpl message = new SentMessageImpl()
-        closure.delegate = message
-        closure.call()
+    SentMessage send(@DelegatesTo(value = SentMessage, strategy = DELEGATE_FIRST) Closure closure) {
+        SentMessageImpl message = delegateTo(new SentMessageImpl(), closure)
         sentMessages << message
         message
     }

@@ -30,6 +30,9 @@ import io.undertow.server.handlers.proxy.ProxyHandler
 
 import java.util.function.Consumer
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * Standalone simple proxy server useful for testing proxy configurations.
  *
@@ -56,10 +59,8 @@ class ErsatzProxy {
      *
      * @param closure the configuration closure.
      */
-    ErsatzProxy(@DelegatesTo(ProxyConfig) final Closure closure) {
-        ProxyConfigImpl config = new ProxyConfigImpl()
-        closure.delegate = config
-        closure.call()
+    ErsatzProxy(@DelegatesTo(value = ProxyConfig, strategy = DELEGATE_FIRST) final Closure closure) {
+        ProxyConfigImpl config = delegateTo(new ProxyConfigImpl(), closure)
 
         targetUri = config.targetUri
         matchers.addAll config.expectations.matchers

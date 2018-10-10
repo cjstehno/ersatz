@@ -34,7 +34,9 @@ interface Response {
      *
      * @param content the content object
      * @return this response
+     * @deprecated Use the body configuration methods
      */
+    @Deprecated // FIXME: remove in 2.0
     Response content(final Object content)
 
     /**
@@ -44,8 +46,9 @@ interface Response {
      *
      * @param content the content object
      * @param contentType the content type
-     * @return this response
+     * @return this response* @deprecated Use the body configuration methods
      */
+    @Deprecated // FIXME: remove in 2.0
     Response content(final Object content, final String contentType)
 
     /**
@@ -56,8 +59,25 @@ interface Response {
      * @param content the content object
      * @param contentType the content type
      * @return this response
+     * @return this response* @deprecated Use the body configuration methods
      */
+    @Deprecated // FIXME: remove in 2.0
     Response content(final Object content, final ContentType contentType)
+
+    /**
+     * FIXME: document
+     */
+    Response body(final Object content)
+
+    /**
+     * FIXME: document
+     */
+    Response body(final Object content, final String contentType)
+
+    /**
+     * FIXME: document
+     */
+    Response body(final Object content, final ContentType contentType)
 
     /**
      * Used to add a header to the response with the given name and value.

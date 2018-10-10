@@ -22,6 +22,8 @@ import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Function
 
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * Configuration interface for an Ersatz server instance.
  */
@@ -137,7 +139,7 @@ interface ServerConfig {
      * @param closure the Groovy <code>Closure</code> which will provide expectation configuration via DSL
      * @return a reference to this server
      */
-    ServerConfig expectations(@DelegatesTo(Expectations) final Closure closure)
+    ServerConfig expectations(@DelegatesTo(value = Expectations, strategy = DELEGATE_FIRST) final Closure closure)
 
     /**
      * An alternate means of starting the expectation chain.
@@ -192,7 +194,7 @@ interface ServerConfig {
      * @param closure the configuration closure
      * @return a reference to this server configuration
      */
-    ServerConfig authentication(@DelegatesTo(AuthenticationConfig) Closure closure)
+    ServerConfig authentication(@DelegatesTo(value = AuthenticationConfig, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Registers authentication configuration as a <code>Consumer<AuthenticationConfig></code>.

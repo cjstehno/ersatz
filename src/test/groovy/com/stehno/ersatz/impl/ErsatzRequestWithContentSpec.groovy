@@ -48,13 +48,13 @@ class ErsatzRequestWithContentSpec extends Specification {
     private final ErsatzRequestWithContent request = new ErsatzRequestWithContent(POST, equalTo('/posting'))
     @AutoCleanup('stop') private final ErsatzServer server = new ErsatzServer()
 
-    private final RequestDecoders decoders = new RequestDecoders({
+    private static final RequestDecoders sharedDecoders = new RequestDecoders({
         register TEXT_PLAIN, Decoders.utf8String
     })
 
     def 'body with content-type'() {
         when:
-        request.body(BODY_CONTENT, TEXT_PLAIN).decoders(decoders)
+        request.body(BODY_CONTENT, TEXT_PLAIN).decoders(sharedDecoders)
 
         then:
         request.matches(new MockClientRequest(method: POST, path: '/posting', body: BODY_CONTENT.bytes).header('Content-Type', TEXT_PLAIN.value))
@@ -71,7 +71,7 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'matching: body'() {
         setup:
         server.expectations {
-            post('/posting').body(BODY_CONTENT, TEXT_PLAIN).decoders(decoders).responds().content('accepted')
+            post('/posting').body(BODY_CONTENT, TEXT_PLAIN).decoders(sharedDecoders).responds().content('accepted')
         }.start()
 
         when:
@@ -90,7 +90,7 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'matching: body and content-type'() {
         setup:
         server.expectations {
-            post('/posting').body(BODY_CONTENT, 'text/plain; charset=utf-8').decoders(decoders).responds().content('accepted')
+            post('/posting').body(BODY_CONTENT, 'text/plain; charset=utf-8').decoders(sharedDecoders).responds().content('accepted')
         }.start()
 
         when:
@@ -183,7 +183,7 @@ class ErsatzRequestWithContentSpec extends Specification {
         setup:
         server.expectations {
             post('/upload') {
-                decoders decoders
+                decoder TEXT_PLAIN, Decoders.utf8String
                 decoder MULTIPART_MIXED, Decoders.multipart
                 decoder IMAGE_PNG, Decoders.passthrough
                 body MultipartRequestContent.multipart {
@@ -217,7 +217,7 @@ class ErsatzRequestWithContentSpec extends Specification {
         setup:
         server.expectations {
             post('/upload') {
-                decoders decoders
+                decoder TEXT_PLAIN, Decoders.utf8String
                 decoder MULTIPART_MIXED, Decoders.multipart
                 decoder IMAGE_PNG, Decoders.passthrough
                 body multipartMatcher {

@@ -575,6 +575,48 @@ class ErsatzServerSpec extends Specification {
         response.code() == 201
     }
 
+    void 'Proper closure delegation'() {
+        setup:
+        ersatzServer.expectations {
+            get("/headers") {
+                header('Accept', 'application/json')
+
+                responder {
+                    header("Bad", "code")
+                    content('{"hello":"world"}', 'application/json')
+                }
+            }
+        }
+
+        when:
+        def request = new okhttp3.Request.Builder().url(url('/headers')).header('Accept', 'application/json')
+        okhttp3.Response response = client.newCall(request.build()).execute()
+
+        then:
+        response.body().string() == '{"hello":"world"}'
+        response.header('Bad') == 'code'
+    }
+
+    void 'Proper delegation of content body request/response'() {
+        setup:
+        ersatzServer.expectations {
+            post('/booga') {
+                decoder TEXT_PLAIN, Decoders.utf8String
+                body 'a request', TEXT_PLAIN
+                responder {
+                    body 'a response', TEXT_PLAIN
+                }
+            }
+        }
+
+        when:
+        def request = new okhttp3.Request.Builder().url(url('/booga')).post(create(parse('text/plain'), 'a request'))
+        def response = client.newCall(request.build()).execute()
+
+        then:
+        response.body().string() == 'a response'
+    }
+
     private String url(final String path) {
         "http://localhost:${ersatzServer.httpPort}${path}"
     }

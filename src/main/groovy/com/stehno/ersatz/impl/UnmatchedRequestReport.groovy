@@ -26,6 +26,9 @@ import java.nio.charset.Charset
 class UnmatchedRequestReport {
 
     private static final List<String> TEXT_CONTENT_HINTS = ['text/', '/json', 'application/x-www-form-urlencoded'].asImmutable()
+    private static final String RED = '\u001b[31m'
+    private static final String GREEN = '\u001b[32m'
+    private static final String RESET = '\u001b[0m'
 
     private final ClientRequest request
     private final List<ErsatzRequest> expectations
@@ -90,14 +93,14 @@ class UnmatchedRequestReport {
             req.requestMatchers.each { RequestMatcher matcher ->
                 boolean matches = matcher.matches(request)
                 if (matches) {
-                    out.append "  ✓ ${matcher}\n"
+                    out.append "  ${GREEN}✓${RESET} ${matcher}\n"
                 } else {
-                    out.append "  X ${matcher}\n"
+                    out.append "  ${RED}X ${matcher}${RESET}\n"
                     failed++
                 }
             }
 
-            out.append "  ($count matchers: ${count - failed} matched, $failed failed)\n\n"
+            out.append "  ($count matchers: ${count - failed} matched, ${failed ? RED : ''}$failed failed${failed ? RESET : ''})\n\n"
         }
 
         out.toString()
