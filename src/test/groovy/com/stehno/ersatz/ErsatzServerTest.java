@@ -55,29 +55,29 @@ public class ErsatzServerTest {
 
         ersatzServer.expectations(expectations -> {
             expectations.get("/foo").called(greaterThanOrEqualTo(1))
-                .responder(response -> response.content("This is Ersatz!!"))
-                .responds().content("This is another response");
+                .responder(response -> response.body("This is Ersatz!!"))
+                .responds().body("This is another response");
 
-            expectations.get("/bar").called(greaterThanOrEqualTo(2)).listener(listener).responds().content("This is Bar!!");
+            expectations.get("/bar").called(greaterThanOrEqualTo(2)).listener(listener).responds().body("This is Bar!!");
 
-            expectations.get("/baz").query("alpha", "42").responds().content("The answer is 42");
+            expectations.get("/baz").query("alpha", "42").responds().body("The answer is 42");
 
-            expectations.get("/bing").header("bravo", "hello").responds().content("Heads up!").header("charlie", "goodbye").code(222);
+            expectations.get("/bing").header("bravo", "hello").responds().body("Heads up!").header("charlie", "goodbye").code(222);
 
-            expectations.get("/cookie/monster").cookie("flavor", "chocolate-chip").responds().content("I love cookies!").cookie("eaten", "yes");
+            expectations.get("/cookie/monster").cookie("flavor", "chocolate-chip").responds().body("I love cookies!").cookie("eaten", "yes");
 
             expectations.head("/head").responds().header("foo", "blah").code(123);
 
             expectations.post("/form").body("some content", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, getUtf8String())
-                .responds().content("response");
+                .responds().body("response");
 
             expectations.put("/update").body("more content", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, getUtf8String())
-                .responds().content("updated");
+                .responds().body("updated");
 
-            expectations.delete("/remove").responds().content("removed");
+            expectations.delete("/remove").responds().body("removed");
 
             expectations.post("/patch").body("a change", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, getUtf8String())
-                .responds().content("patched");
+                .responds().body("patched");
         });
 
         okhttp3.Request request = new okhttp3.Request.Builder().url(url("/foo")).build();
@@ -131,7 +131,7 @@ public class ErsatzServerTest {
     @Test
     public void alternateConfiguration() throws IOException {
         ErsatzServer server = new ErsatzServer(config -> {
-            config.expects().get(startsWith("/hello")).responds().content("ok");
+            config.expects().get(startsWith("/hello")).responds().body("ok");
         });
         server.start();
 

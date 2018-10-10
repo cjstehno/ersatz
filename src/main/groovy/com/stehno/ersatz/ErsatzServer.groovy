@@ -554,16 +554,17 @@ class ErsatzServer implements ServerConfig, Closeable {
         }
 
         String responseContent = response?.content
+        String responsePreview = responseContent?.take(1000) ?: EMPTY
 
         ChunkingConfig chunking = response?.chunkingConfig
         if (responseContent && chunking) {
-            log.debug 'Chunked-Response({}; {}): {}', exchange.responseHeaders ?: NO_HEADERS, chunking, responseContent.take(1000) ?: EMPTY
+            log.debug 'Chunked-Response({}; {}): {}', exchange.responseHeaders ?: NO_HEADERS, chunking, responsePreview
 
             List<String> chunks = prepareChunks(responseContent, chunking.chunks)
             exchange.responseSender.send(chunks.remove(0), new ResponseChunker(chunks, chunking.delay))
 
         } else {
-            log.debug 'Response({}): {}', exchange.responseHeaders ?: NO_HEADERS, responseContent.take(1000) ?: EMPTY
+            log.debug 'Response({}): {}', exchange.responseHeaders ?: NO_HEADERS, responsePreview
 
             exchange.responseSender.send(responseContent)
         }
@@ -637,7 +638,7 @@ class ResponseChunker implements IoCallback {
             }
 
             int len = chunklen + extra
-            chunked << str.substring(index, index + len)
+            chunked << str[index..(index + len - 1)]
             index += len
         }
 

@@ -33,7 +33,7 @@ public class ErsatzServerRuleEmptyTest {
     @Test
     public void testing() throws IOException {
         ersatzServer.expectations(expectations -> {
-            expectations.get("/testing").responds().content("ok");
+            expectations.get("/testing").responds().body("ok");
         }).start();
 
         okhttp3.Response response = new OkHttpClient().newCall(

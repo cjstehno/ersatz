@@ -57,8 +57,8 @@ class ErsatzServerSpec extends Specification {
     def 'prototype: functional'() {
         setup:
         ersatzServer.expectations({ expectations ->
-            expectations.get('/foo').responds().content('This is Ersatz!!')
-            expectations.get('/bar').responds().content('This is Bar!!')
+            expectations.get('/foo').responds().body('This is Ersatz!!')
+            expectations.get('/bar').responds().body('This is Bar!!')
         } as Consumer<Expectations>)
 
         when:
@@ -74,20 +74,20 @@ class ErsatzServerSpec extends Specification {
 
         ersatzServer.expectations {
             get('/foo').called(greaterThanOrEqualTo(1)).responder {
-                content 'This is Ersatz!!'
+                body 'This is Ersatz!!'
             }.responder {
-                content 'This is another response'
+                body 'This is another response'
             }
 
             get('/bar') {
                 called greaterThanOrEqualTo(2)
                 listener { req -> counter.incrementAndGet() }
                 responder {
-                    content 'This is Bar!!'
+                    body 'This is Bar!!'
                 }
             }
 
-            get('/baz').query('alpha', '42').responds().content('The answer is 42')
+            get('/baz').query('alpha', '42').responds().body('The answer is 42')
         }
 
         ersatzServer.start()
@@ -173,7 +173,7 @@ class ErsatzServerSpec extends Specification {
         setup:
         ersatzServer.expectations {
             get('/data') {
-                responds().content(multipart {
+                responds().body(multipart {
                     boundary 't8xOJjySKePdRgBHYD'
                     encoder TEXT_PLAIN.value, CharSequence, { o -> o as String }
                     field 'alpha', 'bravo'
@@ -205,7 +205,7 @@ class ErsatzServerSpec extends Specification {
         setup:
         ersatzServer.expectations {
             get('/data') {
-                responds().content(multipart {
+                responds().body(multipart {
                     boundary 'WyAJDTEVlYgGjdI13o'
                     encoder TEXT_PLAIN, CharSequence, { o -> o as String }
                     encoder 'image/jpeg', InputStream, { o -> ((InputStream) o).bytes.encodeBase64() }
@@ -243,7 +243,7 @@ class ErsatzServerSpec extends Specification {
         setup:
         def server = new ErsatzServer({
             expectations {
-                get(startsWith('/hello')).responds().content('ok')
+                get(startsWith('/hello')).responds().body('ok')
             }
         })
 
@@ -259,7 +259,7 @@ class ErsatzServerSpec extends Specification {
     def 'gzip compression supported'() {
         setup:
         ersatzServer.expectations {
-            get('/gzip').header('Accept-Encoding', 'gzip').responds().content('x' * 1000, TEXT_PLAIN)
+            get('/gzip').header('Accept-Encoding', 'gzip').responds().body('x' * 1000, TEXT_PLAIN)
         }
 
         when:
@@ -273,7 +273,7 @@ class ErsatzServerSpec extends Specification {
     def 'non-compression supported'() {
         setup:
         ersatzServer.expectations {
-            get('/gzip').header('Accept-Encoding', '').responds().content('x' * 1000, TEXT_PLAIN)
+            get('/gzip').header('Accept-Encoding', '').responds().body('x' * 1000, TEXT_PLAIN)
         }
 
         when:
@@ -287,7 +287,7 @@ class ErsatzServerSpec extends Specification {
     def 'deflate supported'() {
         setup:
         ersatzServer.expectations {
-            get('/gzip').header('Accept-Encoding', 'deflate').responds().content('x' * 1000, TEXT_PLAIN)
+            get('/gzip').header('Accept-Encoding', 'deflate').responds().body('x' * 1000, TEXT_PLAIN)
         }
 
         when:
@@ -365,8 +365,8 @@ class ErsatzServerSpec extends Specification {
     @Unroll 'using closure as matcher (#path)'() {
         setup:
         ersatzServer.expectations {
-            get({ p -> p.startsWith('/general') } as Matcher<String>).responds().content('ok').code(200)
-            get('/other').responds().content('err').code(200)
+            get({ p -> p.startsWith('/general') } as Matcher<String>).responds().body('ok').code(200)
+            get('/other').responds().body('err').code(200)
         }
 
         expect:
@@ -383,12 +383,12 @@ class ErsatzServerSpec extends Specification {
         setup:
         ErsatzServer proxyServer = new ErsatzServer({
             expectations {
-                get('/proxied').called(1).responds().content('forwarded').code(200)
+                get('/proxied').called(1).responds().body('forwarded').code(200)
             }
         })
 
         ersatzServer.expectations {
-            get('/proxied').called(0).responds().content('original').code(200)
+            get('/proxied').called(0).responds().body('original').code(200)
         }
 
         OkHttpClient proxiedClient = new OkHttpClient.Builder()
@@ -548,7 +548,7 @@ class ErsatzServerSpec extends Specification {
             post('*') {
                 body({ true } as Matcher<Object>, APPLICATION_URLENCODED)
                 header('Something-Headery', 'a-value')
-                responds().content('OK')
+                responds().body('OK')
             }
         }
 

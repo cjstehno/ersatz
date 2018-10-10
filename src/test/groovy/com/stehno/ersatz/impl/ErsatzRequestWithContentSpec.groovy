@@ -71,7 +71,7 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'matching: body'() {
         setup:
         server.expectations {
-            post('/posting').body(BODY_CONTENT, TEXT_PLAIN).decoders(sharedDecoders).responds().content('accepted')
+            post('/posting').body(BODY_CONTENT, TEXT_PLAIN).decoders(sharedDecoders).responds().body('accepted')
         }.start()
 
         when:
@@ -90,7 +90,7 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'matching: body and content-type'() {
         setup:
         server.expectations {
-            post('/posting').body(BODY_CONTENT, 'text/plain; charset=utf-8').decoders(sharedDecoders).responds().content('accepted')
+            post('/posting').body(BODY_CONTENT, 'text/plain; charset=utf-8').decoders(sharedDecoders).responds().body('accepted')
         }.start()
 
         when:
@@ -111,7 +111,7 @@ class ErsatzRequestWithContentSpec extends Specification {
         server.expectations {
             post('/posting').body([label: "Body Content", text: "This is some body content."], 'some/json; charset=utf-8')
                 .decoder('some/json; charset=utf-8', Decoders.parseJson)
-                .responds().content('accepted')
+                .responds().body('accepted')
         }.start()
 
         when:
@@ -136,7 +136,7 @@ class ErsatzRequestWithContentSpec extends Specification {
                 body([label: "Body Content", text: "This is some body content."], 'some/json; charset=utf-8')
                 decoder(new ContentType('some/json; charset=utf-8'), Decoders.parseJson)
                 responder {
-                    content responseContent
+                    body responseContent
                 }
             }
         }.start()
@@ -161,7 +161,7 @@ class ErsatzRequestWithContentSpec extends Specification {
                 decoder APPLICATION_URLENCODED, Decoders.urlEncoded
                 body([alpha: 'some data', bravo: '42', charlie: 'last'], 'application/x-www-form-urlencoded; charset=utf-8')
                 responder {
-                    content 'ok'
+                    body 'ok'
                 }
             }
         }.start()
@@ -192,7 +192,7 @@ class ErsatzRequestWithContentSpec extends Specification {
                     part 'dataFile', 'data.bin', IMAGE_PNG, [8, 6, 7, 5, 3, 0, 9] as byte[]
                 }, MULTIPART_MIXED
                 responder {
-                    content 'ok'
+                    body 'ok'
                 }
             }
         }.start()
@@ -226,7 +226,7 @@ class ErsatzRequestWithContentSpec extends Specification {
                     part 'dataFile', 'data.bin', IMAGE_PNG, notNullValue()
                 }, MULTIPART_MIXED
                 responder {
-                    content 'ok'
+                    body 'ok'
                 }
             }
         }.start()

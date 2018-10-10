@@ -63,6 +63,21 @@ class ErsatzResponse implements Response {
 
     @Override @Deprecated
     Response content(final Object content) {
+        body(content)
+    }
+
+    @Override @Deprecated
+    Response content(final Object content, final String contentType) {
+        body(content, contentType)
+    }
+
+    @Override @Deprecated
+    Response content(final Object content, final ContentType contentType) {
+        body(content, contentType.value)
+    }
+
+    @Override
+    Response body(Object content) {
         if (empty) {
             throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')
         }
@@ -82,30 +97,16 @@ class ErsatzResponse implements Response {
         this
     }
 
-    @Override @Deprecated
-    Response content(final Object content, final String contentType) {
-        this.content(content)
-        this.contentType(contentType)
-    }
-
-    @Override @Deprecated
-    Response content(final Object content, final ContentType contentType) {
-        this.content(content, contentType.value)
-    }
-
-    @Override
-    Response body(Object data) {
-        content(data)
-    }
-
     @Override
     Response body(Object data, String contentType) {
-        content(data, contentType)
+        body(data)
+        this.contentType(contentType)
     }
 
     @Override
     Response body(Object data, ContentType contentType) {
-        content(data, contentType)
+        body(data)
+        this.contentType(contentType)
     }
 
     @Override

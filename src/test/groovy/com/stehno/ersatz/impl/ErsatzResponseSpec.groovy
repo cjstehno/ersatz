@@ -29,7 +29,7 @@ class ErsatzResponseSpec extends Specification {
 
     def 'content when empty'() {
         when:
-        new ErsatzResponse(true).content(CONTENT_A)
+        new ErsatzResponse(true).body(CONTENT_A)
 
         then:
         def ex = thrown(IllegalArgumentException)
@@ -38,7 +38,7 @@ class ErsatzResponseSpec extends Specification {
 
     def 'content'() {
         when:
-        response.content(CONTENT_A)
+        response.body(CONTENT_A)
 
         then:
         response.content == CONTENT_A

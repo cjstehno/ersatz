@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 package com.stehno.ersatz
+
 /**
  * Configuration for a chunked response. The response content-type will be specified as "chunked" and the response itself
  * will be written as partial chunks using the <code>chunks</code> property to determine the number of chunks, with the
  * <code>delay</code> property used to determine the delay between each chunk - a range of values may be specified to cause
  * a random delay based on a value within the range (milliseconds).
  */
+@SuppressWarnings('ConfusingMethodName')
 class ChunkingConfig {
 
     private int chunks = 2
@@ -67,7 +69,7 @@ class ChunkingConfig {
         range
     }
 
-    @Override String toString(){
+    @Override String toString() {
         "ChunkingConfig(chunks:$chunks, delay:${range.size() == 1 ? range.from : range.from + '..' + range.to})"
     }
 }
