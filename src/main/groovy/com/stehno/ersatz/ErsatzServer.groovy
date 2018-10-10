@@ -49,6 +49,7 @@ import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Function
 
+import static ResponseChunker.prepareChunks
 import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 import static groovy.transform.TypeCheckingMode.SKIP
@@ -91,6 +92,8 @@ class ErsatzServer implements ServerConfig, Closeable {
     private static final String LOCALHOST = 'localhost'
     private static final int EPHEMERAL_PORT = 0
     private static final int UNSPECIFIED_PORT = -1
+    private static final String NO_HEADERS = '<no-headers>'
+    private static final String EMPTY = '<empty>'
     private final RequestDecoders globalDecoders = new RequestDecoders()
     private final ResponseEncoders globalEncoders = new ResponseEncoders()
     private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders)
@@ -283,7 +286,7 @@ class ErsatzServer implements ServerConfig, Closeable {
      * @return a reference to this server
      */
     @SuppressWarnings('ConfusingMethodName')
-    ErsatzServer expectations(@DelegatesTo(value=Expectations, strategy = DELEGATE_FIRST) final Closure closure) {
+    ErsatzServer expectations(@DelegatesTo(value = Expectations, strategy = DELEGATE_FIRST) final Closure closure) {
         delegateTo(expectations, closure)
 
         if (autoStartEnabled) {
@@ -366,7 +369,7 @@ class ErsatzServer implements ServerConfig, Closeable {
      * @return a reference to this server configuration
      */
     @Override
-    ServerConfig authentication(@DelegatesTo(value=AuthenticationConfig, strategy = DELEGATE_FIRST) final Closure closure) {
+    ServerConfig authentication(@DelegatesTo(value = AuthenticationConfig, strategy = DELEGATE_FIRST) final Closure closure) {
         authenticationConfig = delegateTo(new AuthenticationConfig(), closure)
         this
     }
@@ -527,8 +530,9 @@ class ErsatzServer implements ServerConfig, Closeable {
                 }
             }
 
-            // FIXME: TEMP
-            exchange.responseHeaders.add(tryFromString('Transfer-encoding'), 'chunked')
+            if (response.chunkingConfig) {
+                exchange.responseHeaders.add(tryFromString('Transfer-encoding'), 'chunked')
+            }
 
             response.cookies.each { k, v ->
                 if (v instanceof Cookie) {
@@ -551,12 +555,18 @@ class ErsatzServer implements ServerConfig, Closeable {
 
         String responseContent = response?.content
 
-        List<String> chunks = responseContent?.toCharArray()?.collect { s -> s as String } ?: []
+        ChunkingConfig chunking = response?.chunkingConfig
+        if (responseContent && chunking) {
+            log.debug 'Chunked-Response({}; {}): {}', exchange.responseHeaders ?: NO_HEADERS, chunking, responseContent.take(1000) ?: EMPTY
 
-        log.debug 'Response({}): {}', exchange.responseHeaders ?: '<no-headers>', responseContent.take(1000) ?: '<empty>'
-        log.debug '{} chunks', chunks.size()
+            List<String> chunks = prepareChunks(responseContent, chunking.chunks)
+            exchange.responseSender.send(chunks.remove(0), new ResponseChunker(chunks, chunking.delay))
 
-        exchange.responseSender.send(chunks.remove(0), new Chunker(chunks))
+        } else {
+            log.debug 'Response({}): {}', exchange.responseHeaders ?: NO_HEADERS, responseContent.take(1000) ?: EMPTY
+
+            exchange.responseSender.send(responseContent)
+        }
     }
 
     private void applyPorts() {
@@ -585,24 +595,52 @@ class ErsatzServer implements ServerConfig, Closeable {
     }
 }
 
-// FIXME: this is a decent prototype - needs config and cleanup
-
 @TupleConstructor
-class Chunker implements IoCallback {
+class ResponseChunker implements IoCallback {
 
     final List<String> chunks
+    final IntRange delay
 
     @Override
     void onComplete(HttpServerExchange exchange, Sender sender) {
         if (chunks) {
-            // FIXME: need to be sure that timeout is also specified
-            sleep ThreadLocalRandom.current().nextLong(100, 500)
+            rest()
             sender.send(chunks.remove(0), this)
+        }
+    }
+
+    private void rest() {
+        if (delay.size() > 1) {
+            sleep ThreadLocalRandom.current().nextLong(delay.from, delay.to)
+        } else {
+            sleep ThreadLocalRandom.current().nextLong(delay.from)
         }
     }
 
     @Override
     void onException(HttpServerExchange exchange, Sender sender, IOException exception) {
         exception.printStackTrace()
+    }
+
+    static List<String> prepareChunks(final String str, final int chunks) {
+        int chunklen = str.length() / chunks
+        int remainder = str.length() % chunks
+
+        List<String> chunked = []
+
+        int index = 0
+        chunks.times { n ->
+            int extra = 0
+            if (remainder) {
+                extra = 1
+                --remainder
+            }
+
+            int len = chunklen + extra
+            chunked << str.substring(index, index + len)
+            index += len
+        }
+
+        chunked
     }
 }

@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.ChunkingConfig
 import com.stehno.ersatz.ContentType
 import com.stehno.ersatz.Cookie
 import com.stehno.ersatz.HttpMethod
@@ -30,6 +31,7 @@ import java.util.function.Function
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 
@@ -44,6 +46,13 @@ class ErsatzResponse implements Response {
     private final ResponseEncoders localEncoders = new ResponseEncoders()
     private final EncoderChain encoderChain = new EncoderChain(localEncoders)
 
+    private final Map<String, List<String>> headers = [:]
+    private final Map<String, Object> cookies = [:]
+    ChunkingConfig chunkingConfig
+    private Object content
+    private Integer code = 200
+    private long delayTime
+
     ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders = null) {
         this.empty = empty
 
@@ -51,12 +60,6 @@ class ErsatzResponse implements Response {
             encoderChain.last(globalEncoders)
         }
     }
-
-    private final Map<String, List<String>> headers = [:]
-    private final Map<String, Object> cookies = [:]
-    private Object content
-    private Integer code = 200
-    private long delayTime
 
     @Override @Deprecated
     Response content(final Object content) {
@@ -196,14 +199,16 @@ class ErsatzResponse implements Response {
     }
 
     @Override
-    Response chunked(@DelegatesTo(value = ChunkingConfig, strategy = DELEGATE_FIRST) ChunkingConfig chunking) {
-        // FIXME: implement
-        return null
+    Response chunked(@DelegatesTo(value = ChunkingConfig, strategy = DELEGATE_FIRST) Closure closure) {
+        chunkingConfig = delegateTo(new ChunkingConfig(), closure)
+        this
     }
 
     @Override
     Response chunked(Consumer<ChunkingConfig> config) {
-        return null
+        chunkingConfig = new ChunkingConfig()
+        config.accept(chunkingConfig)
+        this
     }
 
     @Override

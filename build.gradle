@@ -10,9 +10,9 @@ plugins {
     id "org.asciidoctor.convert" version '1.5.8.1'
     id "com.stehno.gradle.webpreview" version '0.3.0'
     id "com.stehno.gradle.site" version '0.0.3'
-    id 'org.jetbrains.kotlin.jvm' version '1.2.50'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.71'
     id 'com.github.ben-manes.versions' version '0.20.0'
-    id "com.github.johnrengelman.shadow" version '2.0.4'
+    id "com.github.johnrengelman.shadow" version '4.0.1'
     id "com.adarshr.test-logger" version "1.5.0"
 }
 
@@ -33,7 +33,7 @@ configurations {
 dependencies {
     compile "org.codehaus.groovy:groovy-all:$groovyVersion"
 
-    compile 'io.undertow:undertow-core:2.0.10.Final'
+    compile 'io.undertow:undertow-core:2.0.13.Final'
 
     compile 'ch.qos.logback:logback-classic:1.1.7'
 
@@ -46,20 +46,20 @@ dependencies {
     testCompile 'com.squareup.okhttp3:okhttp:3.11.0'
     testCompile 'org.spockframework:spock-core:1.2-groovy-2.4'
 
-    testCompile 'com.burgstaller:okhttp-digest:1.17'
-    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.2.51"
+    testCompile 'com.burgstaller:okhttp-digest:1.18'
+    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.71"
 
     groovyDoc "org.codehaus.groovy:groovy-groovydoc:$groovyVersion"
     groovyDoc "org.codehaus.groovy:groovy-ant:$groovyVersion"
 
     codenarc(
-        'org.codenarc:CodeNarc:1.2',
+        'org.codenarc:CodeNarc:1.2.1',
         "org.codehaus.groovy:groovy-all:$groovyVersion"
     )
 }
 
 codenarc {
-    toolVersion = '1.2'
+    toolVersion = '1.2.1'
 }
 
 codenarcMain {

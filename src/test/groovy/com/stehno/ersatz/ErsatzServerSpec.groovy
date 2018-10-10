@@ -125,12 +125,16 @@ class ErsatzServerSpec extends Specification {
         ersatzServer.verify()
     }
 
-    void 'chunked response'() {
+    @Unroll 'chunked response: #chunkDelay'() {
         setup:
         ersatzServer.timeout(1, TimeUnit.MINUTES)
         ersatzServer.expectations {
             get('/chunky').responder {
-                content 'This is chunked content', TEXT_PLAIN
+                body 'This is chunked content', TEXT_PLAIN
+                chunked {
+                    chunks 3
+                    delay chunkDelay
+                }
             }
         }
 
@@ -140,6 +144,11 @@ class ErsatzServerSpec extends Specification {
         then:
         response.header('Transfer-encoding') == 'chunked'
         response.body().string() == 'This is chunked content'
+
+        where:
+        label   | chunkDelay
+        'range' | 10..25
+        'fixed' | 15
     }
 
     def 'valueless query string param'() {

@@ -199,7 +199,7 @@ interface Response {
      * @param chunking the chunking configuration
      * @return a reference to this response
      */
-    Response chunked(@DelegatesTo(value = ChunkingConfig, strategy = DELEGATE_FIRST) ChunkingConfig chunking)
+    Response chunked(@DelegatesTo(value = ChunkingConfig, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Configures the response as "chunked", with the specified chunking configuration.
@@ -240,6 +240,13 @@ interface Response {
      * @return the response code
      */
     Integer getCode()
+
+    /**
+     * Used to retrieve the chunk configuration, if configured.
+     *
+     * @return the chunk configuration, or null
+     */
+    ChunkingConfig getChunkingConfig()
 
     /**
      * Registers a response body encoder for this response, which will override any matching encoders configured globally (or shared).

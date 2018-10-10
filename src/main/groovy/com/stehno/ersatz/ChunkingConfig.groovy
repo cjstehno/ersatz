@@ -1,5 +1,19 @@
+/*
+ * Copyright (C) 2018 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.stehno.ersatz
-
 /**
  * Configuration for a chunked response. The response content-type will be specified as "chunked" and the response itself
  * will be written as partial chunks using the <code>chunks</code> property to determine the number of chunks, with the
@@ -17,7 +31,7 @@ class ChunkingConfig {
      * @param value the number of chunks
      * @return a reference to the config
      */
-    ChunkingConfig chunks(final int value){
+    ChunkingConfig chunks(final int value) {
         chunks = value
         this
     }
@@ -28,7 +42,7 @@ class ChunkingConfig {
      * @param value the delay value in milliseconds
      * @return a reference to the config
      */
-    ChunkingConfig delay(final int value){
+    ChunkingConfig delay(final int value) {
         range = value..value
         this
     }
@@ -40,8 +54,20 @@ class ChunkingConfig {
      * @param delayRange the delay value range in milliseconds
      * @return a reference to the config
      */
-    ChunkingConfig delay(final IntRange delayRange){
+    ChunkingConfig delay(final IntRange delayRange) {
         range = delayRange
         this
+    }
+
+    int getChunks() {
+        chunks
+    }
+
+    IntRange getDelay() {
+        range
+    }
+
+    @Override String toString(){
+        "ChunkingConfig(chunks:$chunks, delay:${range.size() == 1 ? range.from : range.from + '..' + range.to})"
     }
 }
