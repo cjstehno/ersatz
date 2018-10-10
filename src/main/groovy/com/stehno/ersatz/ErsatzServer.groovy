@@ -166,12 +166,14 @@ class ErsatzServer implements ServerConfig, Closeable {
     /**
      * Used to specify the server request timeout property value on the server. If not specified, <code>SECONDS</code> will be used as the units.
      *
+     * The IDLE_TIMEOUT, NO_REQUEST_TIMEOUT, REQUEST_PARSE_TIMEOUT, READ_TIMEOUT and WRITE_TIMEOUT are all configured to the same specified
+     * value.
+     *
      * @param value the timeout value
      * @param units the units the timeout is specified with (or <code>SECONDS</code>)
      * @return a reference to the server being configured
      */
     ServerConfig timeout(final int value, final TimeUnit units = SECONDS) {
-        // FIXME: document what is actually set here.
         timeoutConfig = { Undertow.Builder builder ->
             Integer ms = MILLISECONDS.convert(value, units) as Integer
             builder.setServerOption(IDLE_TIMEOUT, ms)

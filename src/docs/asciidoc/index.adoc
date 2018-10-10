@@ -985,6 +985,8 @@ ErsatzServer server = new ErsatzServer({
 
 This will allow some wiggle room in tests with high volumes of data or having complex matching logic to be resolved.
 
+INFO: The timeout is a bit of a shotgun approach, as it sets a handful of timeout options to the specified value. See the API docs for more details.
+
 === Request / Response Compression
 
 Ersatz supports GZip and Deflate compression seamlessly as long as the `Accept-Encoding` header is specified as `gzip` or `deflate`. If the response
