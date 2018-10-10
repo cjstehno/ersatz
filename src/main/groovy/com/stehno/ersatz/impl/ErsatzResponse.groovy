@@ -20,10 +20,12 @@ import com.stehno.ersatz.util.TimeSpan
 import groovy.transform.CompileStatic
 
 import java.util.concurrent.TimeUnit
+import java.util.function.Consumer
 import java.util.function.Function
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
@@ -171,6 +173,17 @@ class ErsatzResponse implements Response {
     @Override
     long getDelay() {
         this.delayTime
+    }
+
+    @Override
+    Response chunked(@DelegatesTo(value = ChunkingConfig, strategy = DELEGATE_FIRST) ChunkingConfig chunking) {
+        // FIXME: implement
+        return null
+    }
+
+    @Override
+    Response chunked(Consumer<ChunkingConfig> config) {
+        return null
     }
 
     @Override

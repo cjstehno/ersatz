@@ -18,7 +18,10 @@ package com.stehno.ersatz
 import groovy.transform.CompileStatic
 
 import java.util.concurrent.TimeUnit
+import java.util.function.Consumer
 import java.util.function.Function
+
+import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
  * Used to configure the provided response to an HTTP request.
@@ -169,6 +172,22 @@ interface Response {
      * @return the response delay time in milliseconds
      */
     long getDelay()
+
+    /**
+     * Configures the response as "chunked", with the specified chunking configuration.
+     *
+     * @param chunking the chunking configuration
+     * @return a reference to this response
+     */
+    Response chunked(@DelegatesTo(value = ChunkingConfig, strategy = DELEGATE_FIRST) ChunkingConfig chunking)
+
+    /**
+     * Configures the response as "chunked", with the specified chunking configuration.
+     *
+     * @param chunking the chunking configuration
+     * @return a reference to this response
+     */
+    Response chunked(final Consumer<ChunkingConfig> config)
 
     /**
      * Used to retrieve the configured response headers.
