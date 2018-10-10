@@ -27,6 +27,7 @@ import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
@@ -59,8 +60,6 @@ class ErsatzServerSpec extends Specification {
             expectations.get('/foo').responds().content('This is Ersatz!!')
             expectations.get('/bar').responds().content('This is Bar!!')
         } as Consumer<Expectations>)
-
-        ersatzServer.start()
 
         when:
         String text = "http://localhost:${ersatzServer.httpPort}/foo".toURL().text
@@ -124,6 +123,23 @@ class ErsatzServerSpec extends Specification {
 
         and:
         ersatzServer.verify()
+    }
+
+    void 'chunked response'() {
+        setup:
+        ersatzServer.timeout(1, TimeUnit.MINUTES)
+        ersatzServer.expectations {
+            get('/chunky').responder {
+                content 'This is chunked content', TEXT_PLAIN
+            }
+        }
+
+        when:
+        def response = client.newCall(new okhttp3.Request.Builder().url(url('/chunky')).build()).execute()
+
+        then:
+        response.header('Transfer-encoding') == 'chunked'
+        response.body().string() == 'This is chunked content'
     }
 
     def 'valueless query string param'() {

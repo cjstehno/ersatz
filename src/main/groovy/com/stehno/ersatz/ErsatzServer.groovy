@@ -24,8 +24,11 @@ import com.stehno.ersatz.impl.UndertowClientRequest
 import com.stehno.ersatz.impl.UnmatchedRequestReport
 import com.stehno.ersatz.impl.WebSocketsHandlerBuilder
 import groovy.transform.CompileStatic
+import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
 import io.undertow.Undertow
+import io.undertow.io.IoCallback
+import io.undertow.io.Sender
 import io.undertow.server.HttpHandler
 import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.BlockingHandler
@@ -35,10 +38,12 @@ import io.undertow.server.handlers.encoding.ContentEncodingRepository
 import io.undertow.server.handlers.encoding.DeflateEncodingProvider
 import io.undertow.server.handlers.encoding.EncodingHandler
 import io.undertow.server.handlers.encoding.GzipEncodingProvider
+import org.xnio.Options
 
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import java.security.KeyStore
+import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
 import java.util.function.BiFunction
 import java.util.function.Consumer
@@ -46,6 +51,7 @@ import java.util.function.Function
 
 import static groovy.transform.TypeCheckingMode.SKIP
 import static io.undertow.UndertowOptions.IDLE_TIMEOUT
+import static io.undertow.UndertowOptions.NO_REQUEST_TIMEOUT
 import static io.undertow.UndertowOptions.REQUEST_PARSE_TIMEOUT
 import static io.undertow.util.HttpString.tryFromString
 import static java.util.concurrent.TimeUnit.MILLISECONDS
@@ -160,9 +166,14 @@ class ErsatzServer implements ServerConfig, Closeable {
      * @return a reference to the server being configured
      */
     ServerConfig timeout(final int value, final TimeUnit units = SECONDS) {
+        // FIXME: document what is actually set here.
         timeoutConfig = { Undertow.Builder builder ->
-            builder.setServerOption(IDLE_TIMEOUT, MILLISECONDS.convert(value, units) as Integer)
-            builder.setServerOption(REQUEST_PARSE_TIMEOUT, MILLISECONDS.convert(value, units) as Integer)
+            Integer ms = MILLISECONDS.convert(value, units) as Integer
+            builder.setServerOption(IDLE_TIMEOUT, ms)
+            builder.setServerOption(NO_REQUEST_TIMEOUT, ms)
+            builder.setServerOption(REQUEST_PARSE_TIMEOUT, ms)
+            builder.setSocketOption(Options.READ_TIMEOUT, ms)
+            builder.setSocketOption(Options.WRITE_TIMEOUT, ms)
             null
         }
         this
@@ -517,6 +528,9 @@ class ErsatzServer implements ServerConfig, Closeable {
                 }
             }
 
+            // FIXME: TEMP
+            exchange.responseHeaders.add(tryFromString('Transfer-encoding'), 'chunked')
+
             response.cookies.each { k, v ->
                 if (v instanceof Cookie) {
                     Cookie ersatzCookie = v as Cookie
@@ -538,9 +552,12 @@ class ErsatzServer implements ServerConfig, Closeable {
 
         String responseContent = response?.content
 
-        log.debug 'Response({}): {}', exchange.responseHeaders ?: '<no-headers>', responseContent.take(1000) ?: '<empty>'
+        List<String> chunks = responseContent?.toCharArray()?.collect { s -> s as String } ?: []
 
-        exchange.responseSender.send(responseContent)
+        log.debug 'Response({}): {}', exchange.responseHeaders ?: '<no-headers>', responseContent.take(1000) ?: '<empty>'
+        log.debug '{} chunks', chunks.size()
+
+        exchange.responseSender.send(chunks.remove(0), new Chunker(chunks))
     }
 
     private void applyPorts() {
@@ -566,5 +583,27 @@ class ErsatzServer implements ServerConfig, Closeable {
         sslContext.init(keyManagerFactory.keyManagers, null, null)
 
         sslContext
+    }
+}
+
+// FIXME: this is a decent prototype - needs config and cleanup
+
+@TupleConstructor
+class Chunker implements IoCallback {
+
+    final List<String> chunks
+
+    @Override
+    void onComplete(HttpServerExchange exchange, Sender sender) {
+        if (chunks) {
+            // FIXME: need to be sure that timeout is also specified
+            sleep ThreadLocalRandom.current().nextLong(100, 500)
+            sender.send(chunks.remove(0), this)
+        }
+    }
+
+    @Override
+    void onException(HttpServerExchange exchange, Sender sender, IOException exception) {
+        exception.printStackTrace()
     }
 }
