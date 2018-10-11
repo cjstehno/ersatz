@@ -27,9 +27,11 @@ import java.util.function.Consumer
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
- * JUnit Rule implementation to simplify the use of Ersatz in JUnit tests. It may be used with <code>@Rule</code> or <code>@ClassRule</code>. It's is
+ * JUnit 4 Rule implementation to simplify the use of Ersatz in JUnit tests. It may be used with <code>@Rule</code> or <code>@ClassRule</code>. It's is
  * a drop-in replacement for the <code>ErsatzServer</code> class which provides all of its configuration functionality and adds an automatic call to
  * <code>stop()</code> after each test method. The <code>start()</code> method must still be called manually by the test methods.
+ *
+ * Note: If you are using JUnit 5, see the <code>com.stehno.ersatz.junit5</code> package for support details.
  */
 @CompileStatic
 class ErsatzServerRule extends ErsatzServer implements TestRule {
