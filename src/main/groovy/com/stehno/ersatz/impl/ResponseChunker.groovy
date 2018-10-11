@@ -22,6 +22,9 @@ import io.undertow.server.HttpServerExchange
 
 import java.util.concurrent.ThreadLocalRandom
 
+/**
+ * Undertow server callback used to provide the delayed chunked content.
+ */
 @TupleConstructor
 class ResponseChunker implements IoCallback {
 
@@ -49,6 +52,14 @@ class ResponseChunker implements IoCallback {
         exception.printStackTrace()
     }
 
+    /**
+     * Splits the provided string of content into the specified number of chunks. Any remaining characters will be spread out over the chunks to
+     * keep the sizes as even as possible.
+     *
+     * @param str the string to be chunked
+     * @param chunks the number of chunks
+     * @return a List<String> containing the chunk data
+     */
     static List<String> prepareChunks(final String str, final int chunks) {
         int chunklen = str.length() / chunks
         int remainder = str.length() % chunks

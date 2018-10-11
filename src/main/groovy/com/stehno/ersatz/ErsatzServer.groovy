@@ -46,8 +46,8 @@ import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Function
 
-import static com.stehno.ersatz.impl.ResponseChunker.prepareChunks
 import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static com.stehno.ersatz.impl.ResponseChunker.prepareChunks
 import static groovy.lang.Closure.DELEGATE_FIRST
 import static groovy.transform.TypeCheckingMode.SKIP
 import static io.undertow.UndertowOptions.IDLE_TIMEOUT
@@ -253,6 +253,26 @@ class ErsatzServer implements ServerConfig, Closeable {
      */
     String getHttpsUrl() {
         "https://localhost:$actualHttpsPort"
+    }
+
+    /**
+     * A helper method which may be used to append the given path to the server HTTP url.
+     *
+     * @param path the path to be applied
+     * @return the resulting URL
+     */
+    String httpUrl(final String path) {
+        "$httpUrl$path"
+    }
+
+    /**
+     * A helper method which may be used to append the given path to the server HTTPS url.
+     *
+     * @param path the path to be applied
+     * @return the resulting URL
+     */
+    String httpsUrl(final String path) {
+        "$httpsUrl$path"
     }
 
     /**

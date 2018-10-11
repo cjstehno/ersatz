@@ -91,21 +91,21 @@ class ErsatzServerSpec extends Specification {
         ersatzServer.start()
 
         when:
-        def response = http.get(url('/foo'))
+        def response = http.get(ersatzServer.httpUrl('/foo'))
 
         then:
         response.body().string() == 'This is Ersatz!!'
 
         when:
-        response = http.get(url('/foo'))
+        response = http.get(ersatzServer.httpUrl('/foo'))
 
         then:
         response.body().string() == 'This is another response'
 
         when:
         def results = [
-            http.get(url('/bar')).body().string(),
-            http.get(url('/bar')).body().string()
+            http.get(ersatzServer.httpUrl('/bar')).body().string(),
+            http.get(ersatzServer.httpUrl('/bar')).body().string()
         ]
 
         then:
@@ -113,7 +113,7 @@ class ErsatzServerSpec extends Specification {
         results.every { it == 'This is Bar!!' }
 
         when:
-        response = http.get(url('/baz?alpha=42'))
+        response = http.get(ersatzServer.httpUrl('/baz?alpha=42'))
 
         then:
         response.body().string() == 'The answer is 42'
@@ -136,7 +136,7 @@ class ErsatzServerSpec extends Specification {
         }
 
         when:
-        def response = http.get(url('/chunky'))
+        def response = http.get(ersatzServer.httpUrl('/chunky'))
 
         then:
         response.header('Transfer-encoding') == 'chunked'
@@ -155,7 +155,7 @@ class ErsatzServerSpec extends Specification {
         }
 
         when:
-        def response = http.get(url('/something?enabled'))
+        def response = http.get(ersatzServer.httpUrl('/something?enabled'))
 
         then:
         response.code() == 200
@@ -179,7 +179,7 @@ class ErsatzServerSpec extends Specification {
         }.start()
 
         when:
-        okhttp3.Response response = http.get(url('/data'))
+        okhttp3.Response response = http.get(ersatzServer.httpUrl('/data'))
 
         then:
         response.body().string().trim().readLines() == '''
@@ -212,7 +212,7 @@ class ErsatzServerSpec extends Specification {
         }.start()
 
         when:
-        okhttp3.Response response = http.get(url('/data'))
+        okhttp3.Response response = http.get(ersatzServer.httpUrl('/data'))
 
         def down = new ResponseDownloadContent(response.body())
         FileUpload fu = new FileUpload(new DiskFileItemFactory(100000, File.createTempDir()))
@@ -257,7 +257,7 @@ class ErsatzServerSpec extends Specification {
         }
 
         when:
-        okhttp3.Response response = http.get(url('/gzip'))
+        okhttp3.Response response = http.get(ersatzServer.httpUrl('/gzip'))
 
         then:
         response.code() == 200
@@ -271,7 +271,7 @@ class ErsatzServerSpec extends Specification {
         }
 
         when:
-        okhttp3.Response response = http.get(url('/gzip'), 'Accept-Encoding': '')
+        okhttp3.Response response = http.get(ersatzServer.httpUrl('/gzip'), 'Accept-Encoding': '')
 
         then:
         response.code() == 200
@@ -285,7 +285,7 @@ class ErsatzServerSpec extends Specification {
         }
 
         when:
-        okhttp3.Response response = http.get(url('/gzip'), 'Accept-Encoding': 'deflate')
+        okhttp3.Response response = http.get(ersatzServer.httpUrl('/gzip'), 'Accept-Encoding': 'deflate')
 
         then:
         response.code() == 200
@@ -364,7 +364,7 @@ class ErsatzServerSpec extends Specification {
         }
 
         expect:
-        url(path).toURL().text == response
+        ersatzServer.httpUrl(path).toURL().text == response
 
         where:
         path           || response
@@ -391,7 +391,7 @@ class ErsatzServerSpec extends Specification {
             .build()
 
         when:
-        okhttp3.Response response = proxiedClient.newCall(new okhttp3.Request.Builder().get().url(url('/proxied')).build()).execute()
+        okhttp3.Response response = proxiedClient.newCall(new okhttp3.Request.Builder().get().url(ersatzServer.httpUrl('/proxied')).build()).execute()
 
         then:
         response.code() == 200
@@ -417,7 +417,7 @@ class ErsatzServerSpec extends Specification {
         }
 
         when:
-        okhttp3.Response response = http.get(url('/api/hello'), 'Accept': ['application/json', 'application/vnd.company+json'])
+        okhttp3.Response response = http.get(ersatzServer.httpUrl('/api/hello'), 'Accept': ['application/json', 'application/vnd.company+json'])
 
         then:
         response.code() == 200
@@ -443,7 +443,7 @@ class ErsatzServerSpec extends Specification {
         }
 
         when:
-        okhttp3.Response response = http.get(url('/api/hello'), 'Accept': headerValue)
+        okhttp3.Response response = http.get(ersatzServer.httpUrl('/api/hello'), 'Accept': headerValue)
 
         then:
         response.code() == 200
@@ -471,7 +471,7 @@ class ErsatzServerSpec extends Specification {
         }
 
         when:
-        okhttp3.Response response = http.get(url('/api/hello'), 'Accept': 'application/json')
+        okhttp3.Response response = http.get(ersatzServer.httpUrl('/api/hello'), 'Accept': 'application/json')
 
         then:
         response.code() == 404
@@ -507,13 +507,13 @@ class ErsatzServerSpec extends Specification {
         }
 
         when:
-        okhttp3.Response response = http.get(url('/setkermit'))
+        okhttp3.Response response = http.get(ersatzServer.httpUrl('/setkermit'))
 
         then:
         response.body().string() == 'ok'
 
         when:
-        response = http.get(url('/showkermit'), 'Cookie': 'kermit=frog; path=/showkermit')
+        response = http.get(ersatzServer.httpUrl('/showkermit'), 'Cookie': 'kermit=frog; path=/showkermit')
 
         then:
         response.body().string() == 'ok'
@@ -534,7 +534,7 @@ class ErsatzServerSpec extends Specification {
 
         when:
         okhttp3.Response response = http.post(
-            url('/postit'),
+            ersatzServer.httpUrl('/postit'),
             create(parse(APPLICATION_URLENCODED.value), 'Posted'),
             'something-headery': 'a-value'
         )
@@ -554,7 +554,7 @@ class ErsatzServerSpec extends Specification {
 
         when:
         okhttp3.Response response = http.post(
-            url('/updates'),
+            ersatzServer.httpUrl('/updates'),
             create(parse(APPLICATION_URLENCODED.value), 'foo=bar')
         )
 
@@ -576,7 +576,7 @@ class ErsatzServerSpec extends Specification {
         }
 
         when:
-        okhttp3.Response response = http.get(url('/headers'), Accept: 'application/json')
+        okhttp3.Response response = http.get(ersatzServer.httpUrl('/headers'), Accept: 'application/json')
 
         then:
         response.body().string() == '{"hello":"world"}'
@@ -597,16 +597,12 @@ class ErsatzServerSpec extends Specification {
 
         when:
         def response = http.post(
-            url('/booga'),
+            ersatzServer.httpUrl('/booga'),
             create(parse('text/plain'), 'a request')
         )
 
         then:
         response.body().string() == 'a response'
-    }
-
-    private String url(final String path) {
-        "http://localhost:${ersatzServer.httpPort}${path}"
     }
 
     @TupleConstructor
