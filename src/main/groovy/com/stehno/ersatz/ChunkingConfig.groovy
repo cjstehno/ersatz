@@ -25,7 +25,7 @@ package com.stehno.ersatz
 class ChunkingConfig {
 
     private int chunks = 2
-    private IntRange range = 50..50
+    private IntRange range = 0..0
 
     /**
      * Used to specify the number of chunks which the response will be broken into,

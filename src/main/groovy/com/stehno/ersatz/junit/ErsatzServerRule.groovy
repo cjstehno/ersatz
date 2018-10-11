@@ -62,6 +62,7 @@ class ErsatzServerRule extends ErsatzServer implements TestRule {
                     base.evaluate()
                 } finally {
                     stop()
+                    clearExpectations()
                 }
             }
         }
