@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz.util
 
 /**
  * Annotates a long-running test so that it may be excluded from the development test runs.

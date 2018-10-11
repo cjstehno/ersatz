@@ -15,8 +15,7 @@
  */
 package com.stehno.ersatz
 
-import okhttp3.OkHttpClient
-import okhttp3.Request.Builder
+import com.stehno.ersatz.util.HttpClient
 import spock.lang.Specification
 
 import static com.stehno.ersatz.auth.SimpleIdentityManager.encodedCredential
@@ -28,7 +27,7 @@ class BasicSpec extends Specification {
             basic()
         }
     })
-    private final OkHttpClient client = new OkHttpClient()
+    private final HttpClient http = new HttpClient()
 
     def 'BASIC auth'() {
         setup:
@@ -37,16 +36,14 @@ class BasicSpec extends Specification {
         }.start()
 
         when:
-        okhttp3.Response response = client.newCall(new Builder().url("${ersatzServer.httpUrl}/secrets").build()).execute()
+        okhttp3.Response response = http.get("${ersatzServer.httpUrl}/secrets")
 
         then:
         response.code() == 401
         response.body().string() == ''
 
         when:
-        response = client.newCall(
-            new Builder().url("${ersatzServer.httpUrl}/secrets").addHeader('Authorization', encodedCredential('admin', '$3cr3t')).build()
-        ).execute()
+        response = http.get("${ersatzServer.httpUrl}/secrets", Authorization: encodedCredential('admin', '$3cr3t'))
 
         then:
         response.code() == 200

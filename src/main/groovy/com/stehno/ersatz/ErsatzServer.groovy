@@ -20,15 +20,13 @@ import com.stehno.ersatz.auth.DigestAuthHandler
 import com.stehno.ersatz.auth.SimpleIdentityManager
 import com.stehno.ersatz.impl.ErsatzRequest
 import com.stehno.ersatz.impl.ExpectationsImpl
+import com.stehno.ersatz.impl.ResponseChunker
 import com.stehno.ersatz.impl.UndertowClientRequest
 import com.stehno.ersatz.impl.UnmatchedRequestReport
 import com.stehno.ersatz.impl.WebSocketsHandlerBuilder
 import groovy.transform.CompileStatic
-import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
 import io.undertow.Undertow
-import io.undertow.io.IoCallback
-import io.undertow.io.Sender
 import io.undertow.server.HttpHandler
 import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.BlockingHandler
@@ -43,13 +41,12 @@ import org.xnio.Options
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import java.security.KeyStore
-import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
 import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Function
 
-import static ResponseChunker.prepareChunks
+import static com.stehno.ersatz.impl.ResponseChunker.prepareChunks
 import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 import static groovy.transform.TypeCheckingMode.SKIP
@@ -595,55 +592,5 @@ class ErsatzServer implements ServerConfig, Closeable {
         sslContext.init(keyManagerFactory.keyManagers, null, null)
 
         sslContext
-    }
-}
-
-@TupleConstructor
-class ResponseChunker implements IoCallback {
-
-    final List<String> chunks
-    final IntRange delay
-
-    @Override
-    void onComplete(HttpServerExchange exchange, Sender sender) {
-        if (chunks) {
-            rest()
-            sender.send(chunks.remove(0), this)
-        }
-    }
-
-    private void rest() {
-        if (delay.size() > 1) {
-            sleep ThreadLocalRandom.current().nextLong(delay.from, delay.to)
-        } else {
-            sleep ThreadLocalRandom.current().nextLong(delay.from)
-        }
-    }
-
-    @Override
-    void onException(HttpServerExchange exchange, Sender sender, IOException exception) {
-        exception.printStackTrace()
-    }
-
-    static List<String> prepareChunks(final String str, final int chunks) {
-        int chunklen = str.length() / chunks
-        int remainder = str.length() % chunks
-
-        List<String> chunked = []
-
-        int index = 0
-        chunks.times { n ->
-            int extra = 0
-            if (remainder) {
-                extra = 1
-                --remainder
-            }
-
-            int len = chunklen + extra
-            chunked << str[index..(index + len - 1)]
-            index += len
-        }
-
-        chunked
     }
 }

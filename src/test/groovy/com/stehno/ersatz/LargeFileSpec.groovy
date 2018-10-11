@@ -15,9 +15,8 @@
  */
 package com.stehno.ersatz
 
-import okhttp3.MediaType
-import okhttp3.OkHttpClient
-import okhttp3.RequestBody
+import com.stehno.ersatz.util.HttpClient
+import com.stehno.ersatz.util.LongRunning
 import org.hamcrest.Matcher
 import org.junit.experimental.categories.Category
 import spock.lang.AutoCleanup
@@ -30,18 +29,19 @@ import static com.stehno.ersatz.util.DummyContentGenerator.generate
 import static com.stehno.ersatz.util.StorageUnit.GIGABYTES
 import static com.stehno.ersatz.util.StorageUnit.MEGABYTES
 import static java.util.concurrent.TimeUnit.MINUTES
+import static okhttp3.MediaType.parse
+import static okhttp3.RequestBody.create
 
 // NOTE: These are separate classes so that they will run concurrently in the build
 
 @Category(LongRunning)
 class LargeFileUploadSpec extends Specification {
 
-    private final OkHttpClient client = new OkHttpClient.Builder()
-        .cookieJar(new InMemoryCookieJar())
-        .readTimeout(3, MINUTES).writeTimeout(3, MINUTES)
-        .build()
+    private final HttpClient http = new HttpClient({ builder ->
+        builder.readTimeout(3, MINUTES).writeTimeout(3, MINUTES)
+    })
 
-    @AutoCleanup('stop')
+    @AutoCleanup
     private final ErsatzServer server = new ErsatzServer({
         timeout 1, MINUTES // this is not required, its just here to provide a test
         decoder IMAGE_JPG, Decoders.passthrough
@@ -64,8 +64,11 @@ class LargeFileUploadSpec extends Specification {
         }
 
         when:
-        RequestBody body = RequestBody.create(MediaType.parse('image/jpeg'), lob)
-        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().post(body).url("http://localhost:${server.httpPort}${'/push'}").build()).execute()
+
+        okhttp3.Response response = http.post(
+            "http://localhost:${server.httpPort}${'/push'}",
+            create(parse('image/jpeg'), lob)
+        )
 
         then:
         response.code() == 200
@@ -79,12 +82,11 @@ class LargeFileUploadSpec extends Specification {
 @Category(LongRunning)
 class LargeFileDownloadSpec extends Specification {
 
-    private final OkHttpClient client = new OkHttpClient.Builder()
-        .cookieJar(new InMemoryCookieJar())
-        .readTimeout(3, MINUTES).writeTimeout(3, MINUTES)
-        .build()
+    private final HttpClient http = new HttpClient({ builder ->
+        builder.readTimeout(3, MINUTES).writeTimeout(3, MINUTES)
+    })
 
-    @AutoCleanup('stop')
+    @AutoCleanup
     private final ErsatzServer server = new ErsatzServer({
         timeout 1, MINUTES // this is not required, its just here to provide a test
         encoder IMAGE_JPG, byte[].class, Encoders.binaryBase64
@@ -99,7 +101,7 @@ class LargeFileDownloadSpec extends Specification {
         }
 
         when:
-        okhttp3.Response response = client.newCall(new okhttp3.Request.Builder().get().url("http://localhost:${server.httpPort}${'/download'}").build()).execute()
+        okhttp3.Response response = http.get("http://localhost:${server.httpPort}${'/download'}")
 
         then:
         response.code() == 200
