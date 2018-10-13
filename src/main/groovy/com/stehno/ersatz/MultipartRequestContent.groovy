@@ -22,6 +22,8 @@ import groovy.transform.EqualsAndHashCode
 import java.util.function.Consumer
 
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
  * Defines the request body content for a multipart request. An instance of this class may be created directly or by using the Groovy DSL closure or
@@ -41,11 +43,8 @@ class MultipartRequestContent {
      * @param closure the configuration closure
      * @return a configured instance of MultipartRequestContent
      */
-    static MultipartRequestContent multipart(@DelegatesTo(MultipartRequestContent) final Closure closure) {
-        MultipartRequestContent request = new MultipartRequestContent()
-        closure.delegate = request
-        closure.call()
-        request
+    static MultipartRequestContent multipart(@DelegatesTo(value = MultipartRequestContent, strategy = DELEGATE_FIRST) final Closure closure) {
+        delegateTo(new MultipartRequestContent(), closure)
     }
 
     /**

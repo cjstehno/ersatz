@@ -15,7 +15,13 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.Expectations
+import com.stehno.ersatz.Request
+import com.stehno.ersatz.RequestDecoders
+import com.stehno.ersatz.RequestWithContent
+import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.WebSocketExpectations
 import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
@@ -23,7 +29,16 @@ import org.hamcrest.Matchers
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.HttpMethod.*
+import static com.stehno.ersatz.HttpMethod.ANY
+import static com.stehno.ersatz.HttpMethod.DELETE
+import static com.stehno.ersatz.HttpMethod.GET
+import static com.stehno.ersatz.HttpMethod.HEAD
+import static com.stehno.ersatz.HttpMethod.OPTIONS
+import static com.stehno.ersatz.HttpMethod.PATCH
+import static com.stehno.ersatz.HttpMethod.POST
+import static com.stehno.ersatz.HttpMethod.PUT
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.concurrent.TimeUnit.SECONDS
 import static org.hamcrest.Matchers.equalTo
 
@@ -62,12 +77,12 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request any(final String path, @DelegatesTo(Request) final Closure closure) {
+    Request any(final String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) final Closure closure) {
         any pathMatcher(path), closure
     }
 
     @Override
-    Request any(final Matcher<String> matcher, @DelegatesTo(Request) final Closure closure) {
+    Request any(final Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) final Closure closure) {
         expect new ErsatzRequestWithContent(ANY, matcher, globalDecoders, globalEncoders), closure
     }
 
@@ -92,12 +107,12 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request get(final String path, @DelegatesTo(Request) final Closure closure) {
+    Request get(final String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) final Closure closure) {
         get(pathMatcher(path), closure)
     }
 
     @Override
-    Request get(final Matcher<String> matcher, @DelegatesTo(Request) final Closure closure) {
+    Request get(final Matcher<String> matcher, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) final Closure closure) {
         expect new ErsatzRequest(GET, matcher, globalEncoders), closure
     }
 
@@ -117,7 +132,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request head(String path, @DelegatesTo(Request) Closure closure) {
+    Request head(String path, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) Closure closure) {
         head(pathMatcher(path), closure)
     }
 
@@ -132,7 +147,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request head(Matcher<String> matcher, @DelegatesTo(Request) Closure closure) {
+    Request head(Matcher<String> matcher, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) Closure closure) {
         expect new ErsatzRequest(HEAD, matcher, globalEncoders, true), closure
     }
 
@@ -147,7 +162,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    RequestWithContent post(String path, @DelegatesTo(RequestWithContent) Closure closure) {
+    RequestWithContent post(String path, @DelegatesTo(value=RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
         post(pathMatcher(path), closure)
     }
 
@@ -162,7 +177,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    RequestWithContent post(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure) {
+    RequestWithContent post(Matcher<String> matcher, @DelegatesTo(value=RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
         expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders, globalEncoders), closure) as RequestWithContent
     }
 
@@ -177,7 +192,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    RequestWithContent put(String path, @DelegatesTo(RequestWithContent) Closure closure) {
+    RequestWithContent put(String path, @DelegatesTo(value=RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
         put(pathMatcher(path), closure)
     }
 
@@ -192,7 +207,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    RequestWithContent put(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure) {
+    RequestWithContent put(Matcher<String> matcher, @DelegatesTo(value=RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
         expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders, globalEncoders), closure) as RequestWithContent
     }
 
@@ -207,7 +222,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request delete(String path, @DelegatesTo(Request) Closure closure) {
+    Request delete(String path, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) Closure closure) {
         delete(pathMatcher(path), closure)
     }
 
@@ -222,7 +237,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request delete(Matcher<String> matcher, @DelegatesTo(Request) Closure closure) {
+    Request delete(Matcher<String> matcher, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) Closure closure) {
         expect new ErsatzRequest(DELETE, matcher, globalEncoders), closure
     }
 
@@ -237,7 +252,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    RequestWithContent patch(String path, @DelegatesTo(RequestWithContent) Closure closure) {
+    RequestWithContent patch(String path, @DelegatesTo(value=RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
         patch(pathMatcher(path), closure)
     }
 
@@ -252,7 +267,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(RequestWithContent) Closure closure) {
+    RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(value=RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
         expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders, globalEncoders), closure) as RequestWithContent
     }
 
@@ -267,7 +282,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request options(String path, @DelegatesTo(Request) Closure closure) {
+    Request options(String path, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) Closure closure) {
         options(pathMatcher(path), closure)
     }
 
@@ -282,7 +297,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request options(Matcher<String> matcher, @DelegatesTo(Request) Closure closure) {
+    Request options(Matcher<String> matcher, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) Closure closure) {
         expect new ErsatzRequest(OPTIONS, matcher, globalEncoders, true), closure
     }
 
@@ -299,19 +314,14 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    WebSocketExpectations ws(String path, @DelegatesTo(WebSocketExpectations) Closure closure) {
-        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path)
-
-        closure.delegate = wse
-        closure.call()
-
+    WebSocketExpectations ws(final String path, @DelegatesTo(value = WebSocketExpectations, strategy = DELEGATE_FIRST) Closure closure) {
+        WebSocketExpectationsImpl wse = delegateTo(new WebSocketExpectationsImpl(path), closure)
         webSockets[path] = wse
-
         wse
     }
 
     @Override
-    WebSocketExpectations ws(String path, Consumer<WebSocketExpectations> config) {
+    WebSocketExpectations ws(final String path, Consumer<WebSocketExpectations> config) {
         WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path)
         config.accept(wse)
 
@@ -368,9 +378,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     private Request expect(final Request request, final Closure closure) {
-        closure.setDelegate(request)
-        closure.call()
-
+        delegateTo(request, closure)
         requests.add(request)
         request
     }

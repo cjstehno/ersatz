@@ -18,7 +18,12 @@ package com.stehno.ersatz
 import com.stehno.ersatz.auth.BasicAuthHandler
 import com.stehno.ersatz.auth.DigestAuthHandler
 import com.stehno.ersatz.auth.SimpleIdentityManager
-import com.stehno.ersatz.impl.*
+import com.stehno.ersatz.impl.ErsatzRequest
+import com.stehno.ersatz.impl.ExpectationsImpl
+import com.stehno.ersatz.impl.ResponseChunker
+import com.stehno.ersatz.impl.UndertowClientRequest
+import com.stehno.ersatz.impl.UnmatchedRequestReport
+import com.stehno.ersatz.impl.WebSocketsHandlerBuilder
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.undertow.Undertow
@@ -31,6 +36,7 @@ import io.undertow.server.handlers.encoding.ContentEncodingRepository
 import io.undertow.server.handlers.encoding.DeflateEncodingProvider
 import io.undertow.server.handlers.encoding.EncodingHandler
 import io.undertow.server.handlers.encoding.GzipEncodingProvider
+import org.xnio.Options
 
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
@@ -40,8 +46,12 @@ import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Function
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static com.stehno.ersatz.impl.ResponseChunker.prepareChunks
+import static groovy.lang.Closure.DELEGATE_FIRST
 import static groovy.transform.TypeCheckingMode.SKIP
 import static io.undertow.UndertowOptions.IDLE_TIMEOUT
+import static io.undertow.UndertowOptions.NO_REQUEST_TIMEOUT
 import static io.undertow.UndertowOptions.REQUEST_PARSE_TIMEOUT
 import static io.undertow.util.HttpString.tryFromString
 import static java.util.concurrent.TimeUnit.MILLISECONDS
@@ -79,6 +89,8 @@ class ErsatzServer implements ServerConfig, Closeable {
     private static final String LOCALHOST = 'localhost'
     private static final int EPHEMERAL_PORT = 0
     private static final int UNSPECIFIED_PORT = -1
+    private static final String NO_HEADERS = '<no-headers>'
+    private static final String EMPTY = '<empty>'
     private final RequestDecoders globalDecoders = new RequestDecoders()
     private final ResponseEncoders globalEncoders = new ResponseEncoders()
     private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders)
@@ -99,10 +111,10 @@ class ErsatzServer implements ServerConfig, Closeable {
      *
      * @param closure the configuration closure (delegated to <code>ServerConfig</code>)
      */
-    ErsatzServer(@DelegatesTo(ServerConfig) final Closure closure = null) {
+    @SuppressWarnings('ThisReferenceEscapesConstructor')
+    ErsatzServer(@DelegatesTo(value = ServerConfig, strategy = DELEGATE_FIRST) final Closure closure = null) {
         if (closure) {
-            closure.delegate = this
-            closure.call()
+            delegateTo(this, closure)
         }
     }
 
@@ -151,14 +163,21 @@ class ErsatzServer implements ServerConfig, Closeable {
     /**
      * Used to specify the server request timeout property value on the server. If not specified, <code>SECONDS</code> will be used as the units.
      *
+     * The IDLE_TIMEOUT, NO_REQUEST_TIMEOUT, REQUEST_PARSE_TIMEOUT, READ_TIMEOUT and WRITE_TIMEOUT are all configured to the same specified
+     * value.
+     *
      * @param value the timeout value
      * @param units the units the timeout is specified with (or <code>SECONDS</code>)
      * @return a reference to the server being configured
      */
     ServerConfig timeout(final int value, final TimeUnit units = SECONDS) {
         timeoutConfig = { Undertow.Builder builder ->
-            builder.setServerOption(IDLE_TIMEOUT, MILLISECONDS.convert(value, units) as Integer)
-            builder.setServerOption(REQUEST_PARSE_TIMEOUT, MILLISECONDS.convert(value, units) as Integer)
+            Integer ms = MILLISECONDS.convert(value, units) as Integer
+            builder.setServerOption(IDLE_TIMEOUT, ms)
+            builder.setServerOption(NO_REQUEST_TIMEOUT, ms)
+            builder.setServerOption(REQUEST_PARSE_TIMEOUT, ms)
+            builder.setSocketOption(Options.READ_TIMEOUT, ms)
+            builder.setSocketOption(Options.WRITE_TIMEOUT, ms)
             null
         }
         this
@@ -237,6 +256,26 @@ class ErsatzServer implements ServerConfig, Closeable {
     }
 
     /**
+     * A helper method which may be used to append the given path to the server HTTP url.
+     *
+     * @param path the path to be applied
+     * @return the resulting URL
+     */
+    String httpUrl(final String path) {
+        "$httpUrl$path"
+    }
+
+    /**
+     * A helper method which may be used to append the given path to the server HTTPS url.
+     *
+     * @param path the path to be applied
+     * @return the resulting URL
+     */
+    String httpsUrl(final String path) {
+        "$httpsUrl$path"
+    }
+
+    /**
      * Used to configure HTTP expectations on the server; the provided <code>Consumer<Expectations></code> implementation will have an active
      * <code>Expectations</code> object passed into it for configuring server interaction expectations.
      *
@@ -266,9 +305,8 @@ class ErsatzServer implements ServerConfig, Closeable {
      * @return a reference to this server
      */
     @SuppressWarnings('ConfusingMethodName')
-    ErsatzServer expectations(@DelegatesTo(Expectations) final Closure closure) {
-        closure.delegate = expectations
-        closure.call()
+    ErsatzServer expectations(@DelegatesTo(value = Expectations, strategy = DELEGATE_FIRST) final Closure closure) {
+        delegateTo(expectations, closure)
 
         if (autoStartEnabled) {
             start()
@@ -350,10 +388,8 @@ class ErsatzServer implements ServerConfig, Closeable {
      * @return a reference to this server configuration
      */
     @Override
-    ServerConfig authentication(@DelegatesTo(AuthenticationConfig) final Closure closure) {
-        authenticationConfig = new AuthenticationConfig()
-        closure.delegate = authenticationConfig
-        closure.call()
+    ServerConfig authentication(@DelegatesTo(value = AuthenticationConfig, strategy = DELEGATE_FIRST) final Closure closure) {
+        authenticationConfig = delegateTo(new AuthenticationConfig(), closure)
         this
     }
 
@@ -459,11 +495,11 @@ class ErsatzServer implements ServerConfig, Closeable {
      * An alias to the <code>stop()</code> method.
      */
     @Override
-    void close(){
+    void close() {
         stop()
     }
 
-/**
+    /**
      * Used to verify that all of the expected request interactions were called the appropriate number of times. This method should be called after
      * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back
      * from the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
@@ -513,6 +549,10 @@ class ErsatzServer implements ServerConfig, Closeable {
                 }
             }
 
+            if (response.chunkingConfig) {
+                exchange.responseHeaders.add(tryFromString('Transfer-encoding'), 'chunked')
+            }
+
             response.cookies.each { k, v ->
                 if (v instanceof Cookie) {
                     Cookie ersatzCookie = v as Cookie
@@ -533,10 +573,20 @@ class ErsatzServer implements ServerConfig, Closeable {
         }
 
         String responseContent = response?.content
+        String responsePreview = responseContent?.take(1000) ?: EMPTY
 
-        log.debug 'Response({}): {}', exchange.responseHeaders ?: '<no-headers>', responseContent.take(1000) ?: '<empty>'
+        ChunkingConfig chunking = response?.chunkingConfig
+        if (responseContent && chunking) {
+            log.debug 'Chunked-Response({}; {}): {}', exchange.responseHeaders ?: NO_HEADERS, chunking, responsePreview
 
-        exchange.responseSender.send(responseContent)
+            List<String> chunks = prepareChunks(responseContent, chunking.chunks)
+            exchange.responseSender.send(chunks.remove(0), new ResponseChunker(chunks, chunking.delay))
+
+        } else {
+            log.debug 'Response({}): {}', exchange.responseHeaders ?: NO_HEADERS, responsePreview
+
+            exchange.responseSender.send(responseContent)
+        }
     }
 
     private void applyPorts() {
@@ -564,5 +614,3 @@ class ErsatzServer implements ServerConfig, Closeable {
         sslContext
     }
 }
-
-

@@ -22,10 +22,10 @@ import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
 class ReusedServerSpec extends Specification {
 
-    @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer({
+    @AutoCleanup private final ErsatzServer ersatzServer = new ErsatzServer({
         expectations {
-            get('/alpha').called(1).responds().content('alpha-response', TEXT_PLAIN)
-            get('/bravo').called(2).responds().content('bravo-response', TEXT_PLAIN)
+            get('/alpha').called(1).responds().body('alpha-response', TEXT_PLAIN)
+            get('/bravo').called(2).responds().body('bravo-response', TEXT_PLAIN)
         }
     })
 
@@ -66,14 +66,11 @@ class ReusedServerSpec extends Specification {
         ersatzServer.clearExpectations()
 
         ersatzServer.expectations {
-            get('/charlie').called(1).responds().content('charlie-response', TEXT_PLAIN)
+            get('/charlie').called(1).responds().body('charlie-response', TEXT_PLAIN)
         }
 
-        when:
-        String resp = request('/charlie')
-
-        then:
-        resp == 'charlie-response'
+        expect:
+        request('/charlie') == 'charlie-response'
     }
 
     def 'same calls again to ensure that server resets normally'() {

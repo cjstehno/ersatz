@@ -13,11 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz.impl
 
-/**
- * Annotates a long-running test so that it may be excluded from the development test runs.
- */
-@interface LongRunning {
+import groovy.transform.CompileStatic
 
+@CompileStatic
+class Delegator {
+
+    static <T> T delegateTo(final T target, final Closure closure) {
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.delegate = target
+        closure.call()
+        target
+    }
 }

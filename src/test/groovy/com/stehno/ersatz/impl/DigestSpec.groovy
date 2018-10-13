@@ -41,7 +41,7 @@ class DigestSpec extends Specification {
     def 'DIGEST no-auth'() {
         setup:
         ersatzServer.expectations {
-            get('/secrets').responds().content('Something secure')
+            get('/secrets').responds().body('Something secure')
         }.start()
 
         when:
@@ -56,7 +56,7 @@ class DigestSpec extends Specification {
     def 'DIGEST auth'() {
         setup:
         ersatzServer.expectations {
-            get('/secrets').responds().content('Something secure')
+            get('/secrets').responds().body('Something secure')
         }.start()
 
         when:

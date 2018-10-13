@@ -31,7 +31,7 @@ class ExamplesSpec extends Specification {
                 called 1
                 query 'name', 'Ersatz'
                 responder {
-                    content 'Hello Ersatz', 'text/plain'
+                    body 'Hello Ersatz', 'text/plain'
                 }
             }
         }
@@ -56,7 +56,7 @@ class ExamplesSpec extends Specification {
                 called 1
                 query 'name','Ersatz'
                 responder {
-                    content 'Hello Ersatz','text/plain'
+                    body 'Hello Ersatz','text/plain'
                 }
             }
         }

@@ -32,7 +32,7 @@ class KotlinUsageTest {
 
         ersatz.expectations { expectations ->
             expectations.get("/kotlin").called(1).responder { response ->
-                response.content("Hello Kotlin!", TEXT_PLAIN).code(200)
+                response.body("Hello Kotlin!", TEXT_PLAIN).code(200)
             }
         }
 
@@ -48,7 +48,7 @@ class KotlinUsageTest {
         val ersatz = ErsatzServer(kotlinConfig {
             expectations(kotlinExpectations {
                 get("/kotlin").called(1).responder(kotlinResponse {
-                    content("Hello Kotlin!", TEXT_PLAIN)
+                    body("Hello Kotlin!", TEXT_PLAIN)
                     code(200)
                 })
             })

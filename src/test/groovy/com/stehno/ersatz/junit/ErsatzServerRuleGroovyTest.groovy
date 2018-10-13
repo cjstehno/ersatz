@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals
 class ErsatzServerRuleGroovyTest {
 
     @Rule public ErsatzServerRule ersatzServer = new ErsatzServerRule({
-        expects().get('/testing').responds().content('ok')
+        expects().get('/testing').responds().body('ok')
     })
 
     @Test void testing() throws IOException {
