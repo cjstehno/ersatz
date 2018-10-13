@@ -21,7 +21,6 @@ import org.hamcrest.Matcher
 import org.junit.experimental.categories.Category
 import spock.lang.AutoCleanup
 import spock.lang.Ignore
-import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 import static com.stehno.ersatz.ContentType.IMAGE_JPG
@@ -81,7 +80,7 @@ class LargeFileUploadSpec extends Specification {
     }
 }
 
-@Category(LongRunning)
+@Category(LongRunning) @Ignore
 class LargeFileDownloadSpec extends Specification {
 
     private final HttpClient http = new HttpClient({ builder ->
