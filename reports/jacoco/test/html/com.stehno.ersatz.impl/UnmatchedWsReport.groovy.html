@@ -25,29 +25,38 @@ class UnmatchedWsReport {
 
     final WebSocketExpectationsImpl expectations
 
-    @Override @Memoized(maxCacheSize = 1, protectedCacheSize = 1)
-    String toString() {
-<span class="nc" id="L30">        StringBuilder out = new StringBuilder()</span>
+    private static final String RED = '\u001b[31m'
+    private static final String GREEN = '\u001b[32m'
+    private static final String RESET = '\u001b[0m'
 
-<span class="nc" id="L32">        out.append('# Unmatched Web Socket Message\n\n')</span>
+    @Override @Memoized(maxCacheSize = 1, protectedCacheSize = 1) String toString() {
+<span class="nc" id="L33">        StringBuilder out = new StringBuilder()</span>
 
-<span class="nc" id="L34">        out.append('# Expectations\n\n')</span>
+<span class="nc" id="L35">        out.append('# Unmatched Web Socket Message\n\n')</span>
 
-<span class="nc" id="L36">        out.append &quot;Expectation (${expectations.path}):\n&quot;</span>
+<span class="nc" id="L37">        out.append('# Expectations\n\n')</span>
 
-<span class="nc bnc" id="L38" title="All 2 branches missed.">        out.append(&quot;  ${expectations.connected ? '✓' : 'X'} Client connection made.\n&quot;)</span>
+<span class="nc" id="L39">        out.append &quot;Expectation (${expectations.path}):\n&quot;</span>
 
-<span class="nc" id="L40">        int failed = 0</span>
-<span class="nc" id="L41">        expectations.eachMessage { ReceivedMessageImpl rm -&gt;</span>
-<span class="nc" id="L42">            boolean matched = rm.marked(1, TimeUnit.SECONDS)</span>
-<span class="nc bnc" id="L43" title="All 2 branches missed.">            out.append(&quot;  ${matched ? '✓' : 'X'} Received ${rm.messageType} message: ${rm.payload}\n&quot;)</span>
-<span class="nc bnc" id="L44" title="All 4 branches missed.">            if (!matched) failed++</span>
+<span class="nc" id="L41">        out.append(&quot;  ${mark(expectations.connected)} Client connection made.\n&quot;)</span>
+
+<span class="nc" id="L43">        int failed = 0</span>
+<span class="nc" id="L44">        expectations.eachMessage { ReceivedMessageImpl rm -&gt;</span>
+<span class="nc" id="L45">            boolean matched = rm.marked(1, TimeUnit.SECONDS)</span>
+<span class="nc" id="L46">            out.append(&quot;  ${mark(matched)} Received ${rm.messageType} message: ${rm.payload}\n&quot;)</span>
+<span class="nc bnc" id="L47" title="All 4 branches missed.">            if (!matched) {</span>
+<span class="nc" id="L48">                failed++</span>
+            }
         }
 
-<span class="nc" id="L47">        int count = expectations.expectedMessageCount + 1</span>
-<span class="nc" id="L48">        out.append(&quot;  ($count matchers: ${count - failed} matched, $failed failed)\n\n&quot;)</span>
+<span class="nc" id="L52">        int count = expectations.expectedMessageCount + 1</span>
+<span class="nc bnc" id="L53" title="All 4 branches missed.">        out.append(&quot;  ($count matchers: ${count - failed} matched, ${failed ? RED : ''}$failed failed${failed ? RESET : ''})\n\n&quot;)</span>
 
-<span class="nc" id="L50">        out.toString()</span>
+<span class="nc" id="L55">        out.toString()</span>
+    }
+
+    private static String mark(final boolean ok) {
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        ok ? &quot;${GREEN}✓${RESET}&quot; : &quot;${RED}X${RESET}&quot;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

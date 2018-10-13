@@ -53,7 +53,7 @@ class ErsatzMatchers {
      * @return the resulting matcher
      */
     static Matcher&lt;byte[]&gt; byteArrayLike(final byte[] array) {
-<span class="pc" id="L56">        new ByteArrayMatcher(array: array)</span>
+<span class="nc" id="L56">        new ByteArrayMatcher(array: array)</span>
     }
 
     @CompileStatic
@@ -98,8 +98,8 @@ class ErsatzMatchers {
 
         @Override
         boolean matches(final Object item) {
-<span class="fc" id="L101">            byte[] bytes = item as byte[]</span>
-<span class="pc bpc" id="L102" title="7 of 14 branches missed.">            bytes.length == array.length &amp;&amp; bytes[0] == array[0] &amp;&amp; bytes[-1] == array[-1]</span>
+<span class="nc" id="L101">            byte[] bytes = item as byte[]</span>
+<span class="nc bnc" id="L102" title="All 14 branches missed.">            bytes.length == array.length &amp;&amp; bytes[0] == array[0] &amp;&amp; bytes[-1] == array[-1]</span>
         }
 
         @Override

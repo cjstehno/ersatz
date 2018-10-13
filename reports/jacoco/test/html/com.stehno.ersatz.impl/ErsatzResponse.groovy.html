@@ -15,15 +15,24 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+import com.stehno.ersatz.ChunkingConfig
+import com.stehno.ersatz.ContentType
+import com.stehno.ersatz.Cookie
+import com.stehno.ersatz.HttpMethod
+import com.stehno.ersatz.MultipartResponseContent
+import com.stehno.ersatz.Response
+import com.stehno.ersatz.ResponseEncoders
 import com.stehno.ersatz.util.TimeSpan
 import groovy.transform.CompileStatic
 
 import java.util.concurrent.TimeUnit
+import java.util.function.Consumer
 import java.util.function.Function
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
@@ -34,185 +43,215 @@ class ErsatzResponse implements Response {
 
     private static final String ALLOW_HEADER = 'Allow'
     private final boolean empty
-<span class="fc" id="L37">    private final ResponseEncoders localEncoders = new ResponseEncoders()</span>
-<span class="fc" id="L38">    private final EncoderChain encoderChain = new EncoderChain(localEncoders)</span>
-
-    ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders = null) {
-<span class="fc" id="L41">        this.empty = empty</span>
-
-<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (globalEncoders) {</span>
-<span class="fc" id="L44">            encoderChain.last(globalEncoders)</span>
-        }
-    }
+<span class="fc" id="L46">    private final ResponseEncoders localEncoders = new ResponseEncoders()</span>
+<span class="fc" id="L47">    private final EncoderChain encoderChain = new EncoderChain(localEncoders)</span>
 
     private final Map&lt;String, List&lt;String&gt;&gt; headers = [:]
     private final Map&lt;String, Object&gt; cookies = [:]
+    ChunkingConfig chunkingConfig
     private Object content
     private Integer code = 200
     private long delayTime
 
-    @Override
+    ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders = null) {
+<span class="fc" id="L57">        this.empty = empty</span>
+
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (globalEncoders) {</span>
+<span class="fc" id="L60">            encoderChain.last(globalEncoders)</span>
+        }
+    }
+
+    @Override @Deprecated
     Response content(final Object content) {
-<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (empty) {</span>
-<span class="fc" id="L57">            throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')</span>
+<span class="pc" id="L66">        body(content)</span>
+    }
+
+    @Override @Deprecated
+    Response content(final Object content, final String contentType) {
+<span class="pc" id="L71">        body(content, contentType)</span>
+    }
+
+    @Override @Deprecated
+    Response content(final Object content, final ContentType contentType) {
+<span class="pc" id="L76">        body(content, contentType.value)</span>
+    }
+
+    @Override
+    Response body(Object content) {
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (empty) {</span>
+<span class="fc" id="L82">            throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')</span>
         }
 
-<span class="fc" id="L60">        this.content = content</span>
+<span class="fc" id="L85">        this.content = content</span>
 
-<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (content instanceof MultipartResponseContent) {</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (content instanceof MultipartResponseContent) {</span>
             // apply the configured encoders
-<span class="fc" id="L64">            encoderChain.items().each { ResponseEncoders re -&gt;</span>
-<span class="pc" id="L65">                (content as ErsatzMultipartResponseContent).encoders(re)</span>
+<span class="fc" id="L89">            encoderChain.items().each { ResponseEncoders re -&gt;</span>
+<span class="pc" id="L90">                (content as ErsatzMultipartResponseContent).encoders(re)</span>
             }
 
             // apply the content type (with boundary)
-<span class="fc" id="L69">            contentType((content as ErsatzMultipartResponseContent).contentType)</span>
+<span class="fc" id="L94">            contentType((content as ErsatzMultipartResponseContent).contentType)</span>
         }
 
-<span class="pc" id="L72">        this</span>
+<span class="pc" id="L97">        this</span>
     }
 
     @Override
-    Response content(final Object content, final String contentType) {
-<span class="fc" id="L77">        this.content(content)</span>
-<span class="pc" id="L78">        this.contentType(contentType)</span>
+    Response body(Object data, String contentType) {
+<span class="fc" id="L102">        body(data)</span>
+<span class="pc" id="L103">        this.contentType(contentType)</span>
     }
 
     @Override
-    Response content(final Object content, final ContentType contentType) {
-<span class="pc" id="L83">        this.content(content, contentType.value)</span>
+    Response body(Object data, ContentType contentType) {
+<span class="fc" id="L108">        body(data)</span>
+<span class="pc" id="L109">        this.contentType(contentType)</span>
     }
 
     @Override
     Response header(final String name, final String... value) {
-<span class="pc" id="L88">        List&lt;String&gt; list = headers.computeIfAbsent(name) { k -&gt; [] }</span>
-<span class="fc" id="L89">        value.each { String v -&gt;</span>
-<span class="pc" id="L90">            list &lt;&lt; v</span>
+<span class="pc" id="L114">        List&lt;String&gt; list = headers.computeIfAbsent(name) { k -&gt; [] }</span>
+<span class="fc" id="L115">        value.each { String v -&gt;</span>
+<span class="pc" id="L116">            list &lt;&lt; v</span>
         }
-<span class="pc" id="L92">        this</span>
+<span class="pc" id="L118">        this</span>
     }
 
     Response header(final String name, final List&lt;String&gt; values) {
-<span class="pc" id="L96">        List&lt;String&gt; list = headers.computeIfAbsent(name) { k -&gt; [] }</span>
-<span class="fc" id="L97">        list.addAll(values)</span>
-<span class="pc" id="L98">        this</span>
+<span class="pc" id="L122">        List&lt;String&gt; list = headers.computeIfAbsent(name) { k -&gt; [] }</span>
+<span class="fc" id="L123">        list.addAll(values)</span>
+<span class="pc" id="L124">        this</span>
     }
 
     @Override
     Response headers(final Map&lt;String, Object&gt; headers) {
-<span class="fc" id="L103">        headers.each { k, v -&gt;</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">            if (v instanceof List) {</span>
-<span class="pc" id="L105">                header k, (v as List&lt;String&gt;)</span>
+<span class="fc" id="L129">        headers.each { k, v -&gt;</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">            if (v instanceof List) {</span>
+<span class="pc" id="L131">                header k, (v as List&lt;String&gt;)</span>
             } else {
-<span class="pc" id="L107">                header k, (v as String)</span>
+<span class="pc" id="L133">                header k, (v as String)</span>
             }
         }
-<span class="pc" id="L110">        this</span>
+<span class="pc" id="L136">        this</span>
     }
 
     @Override
     Response allows(final HttpMethod... methods) {
-<span class="fc" id="L115">        header ALLOW_HEADER, methods*.value</span>
-<span class="pc" id="L116">        this</span>
+<span class="fc" id="L141">        header ALLOW_HEADER, methods*.value</span>
+<span class="pc" id="L142">        this</span>
     }
 
     @Override
     Response cookies(final Map&lt;String, String&gt; cookies) {
-<span class="fc" id="L121">        this.cookies.putAll(cookies)</span>
-<span class="pc" id="L122">        this</span>
+<span class="fc" id="L147">        this.cookies.putAll(cookies)</span>
+<span class="pc" id="L148">        this</span>
     }
 
     @Override
     Response cookie(final String name, final String value) {
-<span class="fc" id="L127">        cookies[name] = value</span>
-<span class="pc" id="L128">        this</span>
+<span class="fc" id="L153">        cookies[name] = value</span>
+<span class="pc" id="L154">        this</span>
     }
 
     @Override
     Response cookie(final String name, final Cookie cookie) {
-<span class="fc" id="L133">        cookies[name] = cookie</span>
-<span class="pc" id="L134">        this</span>
+<span class="fc" id="L159">        cookies[name] = cookie</span>
+<span class="pc" id="L160">        this</span>
     }
 
     @Override
     Response contentType(final String contentType) {
-<span class="fc" id="L139">        header(CONTENT_TYPE_HEADER, contentType)</span>
-<span class="pc" id="L140">        this</span>
+<span class="fc" id="L165">        header(CONTENT_TYPE_HEADER, contentType)</span>
+<span class="pc" id="L166">        this</span>
     }
 
     @Override
     Response contentType(final ContentType contentType) {
-<span class="fc" id="L145">        header(CONTENT_TYPE_HEADER, contentType.value)</span>
-<span class="pc" id="L146">        this</span>
+<span class="fc" id="L171">        header(CONTENT_TYPE_HEADER, contentType.value)</span>
+<span class="pc" id="L172">        this</span>
     }
 
     @Override
     String getContentType() {
-<span class="pc bfc" id="L151" title="All 4 branches covered.">        headers[CONTENT_TYPE_HEADER]?.join(',') ?: TEXT_PLAIN.value</span>
+<span class="pc bfc" id="L177" title="All 4 branches covered.">        headers[CONTENT_TYPE_HEADER]?.join(',') ?: TEXT_PLAIN.value</span>
     }
 
     Response code(final int code) {
-<span class="fc" id="L155">        this.code = code</span>
-<span class="pc" id="L156">        this</span>
+<span class="fc" id="L181">        this.code = code</span>
+<span class="pc" id="L182">        this</span>
     }
 
     @Override
     Response delay(final long time, final TimeUnit unit = MILLISECONDS) {
-<span class="fc" id="L161">        this.delayTime = MILLISECONDS.convert(time, unit)</span>
-<span class="pc" id="L162">        this</span>
+<span class="fc" id="L187">        this.delayTime = MILLISECONDS.convert(time, unit)</span>
+<span class="pc" id="L188">        this</span>
     }
 
     @Override
     Response delay(final String time) {
-<span class="fc" id="L167">        this.delayTime = TimeSpan.parse(time).toMillis()</span>
-<span class="pc" id="L168">        this</span>
+<span class="fc" id="L193">        this.delayTime = TimeSpan.parse(time).toMillis()</span>
+<span class="pc" id="L194">        this</span>
     }
 
     @Override
     long getDelay() {
-<span class="pc" id="L173">        this.delayTime</span>
+<span class="pc" id="L199">        this.delayTime</span>
+    }
+
+    @Override
+    Response chunked(@DelegatesTo(value = ChunkingConfig, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="fc" id="L204">        chunkingConfig = delegateTo(new ChunkingConfig(), closure)</span>
+<span class="pc" id="L205">        this</span>
+    }
+
+    @Override
+    Response chunked(Consumer&lt;ChunkingConfig&gt; config) {
+<span class="nc" id="L210">        chunkingConfig = new ChunkingConfig()</span>
+<span class="nc" id="L211">        config.accept(chunkingConfig)</span>
+<span class="nc" id="L212">        this</span>
     }
 
     @Override
     Map&lt;String, List&lt;String&gt;&gt; getHeaders() {
-<span class="pc" id="L178">        headers.asImmutable()</span>
+<span class="pc" id="L217">        headers.asImmutable()</span>
     }
 
     @Override
     Map&lt;String, Object&gt; getCookies() {
-<span class="pc" id="L183">        cookies.asImmutable()</span>
+<span class="pc" id="L222">        cookies.asImmutable()</span>
     }
 
     @Override
     String getContent() {
-<span class="fc bfc" id="L188" title="All 4 branches covered.">        if (content != null) {</span>
-<span class="fc bfc" id="L189" title="All 4 branches covered.">            return encoderChain.resolve(contentType, content.class)?.apply(content) ?: (content as String)</span>
+<span class="fc bfc" id="L227" title="All 4 branches covered.">        if (content != null) {</span>
+<span class="fc bfc" id="L228" title="All 4 branches covered.">            return encoderChain.resolve(contentType, content.class)?.apply(content) ?: (content as String)</span>
 
         }
-<span class="pc" id="L192">        return ''</span>
+<span class="pc" id="L231">        return ''</span>
     }
 
     @Override
     Integer getCode() {
-<span class="pc" id="L197">        code</span>
+<span class="pc" id="L236">        code</span>
     }
 
     @Override
     Response encoder(final String contentType, final Class objectType, final Function&lt;Object, String&gt; encoder) {
-<span class="fc" id="L202">        localEncoders.register(contentType, objectType, encoder)</span>
-<span class="pc" id="L203">        this</span>
+<span class="fc" id="L241">        localEncoders.register(contentType, objectType, encoder)</span>
+<span class="pc" id="L242">        this</span>
     }
 
     @Override
     Response encoder(final ContentType contentType, final Class objectType, final Function&lt;Object, String&gt; encoder) {
-<span class="fc" id="L208">        localEncoders.register(contentType, objectType, encoder)</span>
-<span class="pc" id="L209">        this</span>
+<span class="fc" id="L247">        localEncoders.register(contentType, objectType, encoder)</span>
+<span class="pc" id="L248">        this</span>
     }
 
     @Override
     Response encoders(final ResponseEncoders encoders) {
-<span class="fc" id="L214">        encoderChain.second(encoders)</span>
-<span class="pc" id="L215">        this</span>
+<span class="fc" id="L253">        encoderChain.second(encoders)</span>
+<span class="pc" id="L254">        this</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

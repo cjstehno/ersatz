@@ -24,10 +24,14 @@ import org.junit.runners.model.Statement
 
 import java.util.function.Consumer
 
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
- * JUnit Rule implementation to simplify the use of Ersatz in JUnit tests. It may be used with &lt;code&gt;@Rule&lt;/code&gt; or &lt;code&gt;@ClassRule&lt;/code&gt;. It's is
+ * JUnit 4 Rule implementation to simplify the use of Ersatz in JUnit tests. It may be used with &lt;code&gt;@Rule&lt;/code&gt; or &lt;code&gt;@ClassRule&lt;/code&gt;. It's is
  * a drop-in replacement for the &lt;code&gt;ErsatzServer&lt;/code&gt; class which provides all of its configuration functionality and adds an automatic call to
  * &lt;code&gt;stop()&lt;/code&gt; after each test method. The &lt;code&gt;start()&lt;/code&gt; method must still be called manually by the test methods.
+ *
+ * Note: If you are using JUnit 5, see the &lt;code&gt;com.stehno.ersatz.junit5&lt;/code&gt; package for support details.
  */
 @CompileStatic
 class ErsatzServerRule extends ErsatzServer implements TestRule {
@@ -37,8 +41,8 @@ class ErsatzServerRule extends ErsatzServer implements TestRule {
      *
      * @param closure the configuration closure delegating to &lt;code&gt;ServerConfig&lt;/code&gt;.
      */
-    ErsatzServerRule(@DelegatesTo(ServerConfig) final Closure closure = null) {
-<span class="fc" id="L41">        super(closure)</span>
+    ErsatzServerRule(@DelegatesTo(value = ServerConfig, strategy = DELEGATE_FIRST) final Closure closure = null) {
+<span class="fc" id="L45">        super(closure)</span>
     }
 
     /**
@@ -47,17 +51,18 @@ class ErsatzServerRule extends ErsatzServer implements TestRule {
      * @param consumer the configuration consumer based on a &lt;code&gt;ServerConfig&lt;/code&gt; instance.
      */
     ErsatzServerRule(final Consumer&lt;ServerConfig&gt; consumer) {
-<span class="fc" id="L50">        super(consumer)</span>
+<span class="fc" id="L54">        super(consumer)</span>
     }
 
     @SuppressWarnings('UnusedMethodParameter')
     Statement apply(final Statement base, final Description description) {
-<span class="pc" id="L55">        return new Statement() {</span>
+<span class="pc" id="L59">        return new Statement() {</span>
             @Override void evaluate() throws Throwable {
                 try {
-<span class="fc" id="L58">                    base.evaluate()</span>
+<span class="fc" id="L62">                    base.evaluate()</span>
                 } finally {
-<span class="fc" id="L60">                    stop()</span>
+<span class="fc" id="L64">                    stop()</span>
+<span class="fc" id="L65">                    clearExpectations()</span>
                 }
             }
         }

@@ -22,6 +22,9 @@ import groovy.transform.TypeChecked
 import javax.activation.MimeType
 import java.util.function.Function
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * Provides management of response encoders. You may share an instance of this class to define response part encoders across multiple multipart
  * response configurations.
@@ -29,17 +32,17 @@ import java.util.function.Function
 @TypeChecked
 class ResponseEncoders {
 
-<span class="fc" id="L32">    private final List&lt;EncoderMapping&gt; encoders = []</span>
+<span class="fc" id="L35">    private final List&lt;EncoderMapping&gt; encoders = []</span>
 
     /**
      * Creates a response encoder collection with optionally specified configuration.
      *
      * @param closure the optional configuration closure
      */
-    ResponseEncoders(@DelegatesTo(ResponseEncoders) Closure closure = null) {
-<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (closure) {</span>
-<span class="fc" id="L41">            closure.delegate = this</span>
-<span class="fc" id="L42">            closure.call()</span>
+    @SuppressWarnings('ThisReferenceEscapesConstructor')
+    ResponseEncoders(@DelegatesTo(value = ResponseEncoders, strategy = DELEGATE_FIRST) Closure closure = null) {
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (closure) {</span>
+<span class="fc" id="L45">            delegateTo(this, closure)</span>
         }
     }
 
@@ -51,7 +54,7 @@ class ResponseEncoders {
      * @param encoder the encoder function
      */
     void register(final String contentType, final Class objectType, final Function&lt;Object, String&gt; encoder) {
-<span class="fc" id="L54">        encoders &lt;&lt; new EncoderMapping(new MimeType(contentType), objectType, encoder)</span>
+<span class="fc" id="L57">        encoders &lt;&lt; new EncoderMapping(new MimeType(contentType), objectType, encoder)</span>
     }
 
     /**
@@ -62,7 +65,7 @@ class ResponseEncoders {
      * @param encoder the encoder function
      */
     void register(final ContentType contentType, final Class objectType, final Function&lt;Object, String&gt; encoder) {
-<span class="fc" id="L65">        register contentType.value, objectType, encoder</span>
+<span class="fc" id="L68">        register contentType.value, objectType, encoder</span>
     }
 
     /**
@@ -73,10 +76,10 @@ class ResponseEncoders {
      * @return the encoder function if one exists or null
      */
     Function&lt;Object, String&gt; findEncoder(final String contentType, final Class objectType) {
-<span class="fc" id="L76">        MimeType mime = new MimeType(contentType)</span>
-<span class="pc bfc" id="L77" title="All 4 branches covered.">        Function&lt;Object, String&gt; encoder = encoders.find { em -&gt; em.contentType.match(mime) &amp;&amp; em.objectType.isAssignableFrom(objectType) }?.encoder</span>
+<span class="fc" id="L79">        MimeType mime = new MimeType(contentType)</span>
+<span class="pc bfc" id="L80" title="All 4 branches covered.">        Function&lt;Object, String&gt; encoder = encoders.find { em -&gt; em.contentType.match(mime) &amp;&amp; em.objectType.isAssignableFrom(objectType) }?.encoder</span>
 
-<span class="pc" id="L79">        encoder</span>
+<span class="pc" id="L82">        encoder</span>
     }
 
     /**
@@ -87,7 +90,7 @@ class ResponseEncoders {
      * @return the encoder function if one exists or null
      */
     Function&lt;Object, String&gt; findEncoder(final ContentType contentType, final Class objectType) {
-<span class="pc" id="L90">        findEncoder contentType.value, objectType</span>
+<span class="pc" id="L93">        findEncoder contentType.value, objectType</span>
     }
 
     /**

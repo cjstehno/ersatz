@@ -21,6 +21,8 @@ import groovy.transform.CompileStatic
 import java.util.function.Consumer
 import java.util.function.Function
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.Collections.shuffle
 
 /**
@@ -44,11 +46,8 @@ abstract class MultipartResponseContent {
      * @param closure the configuration closure (Delegates to MultipartContent instance)
      * @return a reference to this MultipartResponseContent instance
      */
-    static MultipartResponseContent multipart(final @DelegatesTo(MultipartResponseContent) Closure closure) {
-<span class="fc" id="L48">        MultipartResponseContent content = new ErsatzMultipartResponseContent()</span>
-<span class="fc" id="L49">        closure.delegate = content</span>
-<span class="fc" id="L50">        closure.call()</span>
-<span class="pc" id="L51">        content</span>
+    static MultipartResponseContent multipart(final @DelegatesTo(value = MultipartResponseContent, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="pc" id="L50">        delegateTo(new ErsatzMultipartResponseContent(), closure)</span>
     }
 
     /**
@@ -59,9 +58,9 @@ abstract class MultipartResponseContent {
      * @return a reference to this MultipartResponseContent instance
      */
     static MultipartResponseContent multipart(final Consumer&lt;MultipartResponseContent&gt; consumer) {
-<span class="fc" id="L62">        MultipartResponseContent content = new ErsatzMultipartResponseContent()</span>
-<span class="fc" id="L63">        consumer.accept(content)</span>
-<span class="pc" id="L64">        content</span>
+<span class="fc" id="L61">        MultipartResponseContent content = new ErsatzMultipartResponseContent()</span>
+<span class="fc" id="L62">        consumer.accept(content)</span>
+<span class="pc" id="L63">        content</span>
     }
 
     /**
@@ -70,9 +69,9 @@ abstract class MultipartResponseContent {
      * @return a random boundary label
      */
     static String generateBoundary() {
-<span class="fc" id="L73">        def letters = ALPHANUMERICS as List</span>
-<span class="fc" id="L74">        shuffle(letters)</span>
-<span class="pc" id="L75">        letters[0..&lt;18].join('')</span>
+<span class="fc" id="L72">        def letters = ALPHANUMERICS as List</span>
+<span class="fc" id="L73">        shuffle(letters)</span>
+<span class="pc" id="L74">        letters[0..&lt;18].join('')</span>
     }
 
     /**

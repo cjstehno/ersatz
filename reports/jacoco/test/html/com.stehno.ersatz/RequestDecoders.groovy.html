@@ -20,22 +20,25 @@ import groovy.transform.Immutable
 import javax.activation.MimeType
 import java.util.function.BiFunction
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * Configuration manager for a collection of request content decoders.
  */
 class RequestDecoders {
 
-<span class="fc" id="L28">    private final List&lt;DecoderMapping&gt; decoders = []</span>
+<span class="fc" id="L31">    private final List&lt;DecoderMapping&gt; decoders = []</span>
 
     /**
      * Creates a new decoder collection optionally registering decoders with the Groovy DSL closure.
      *
      * @param closure the optional configuration closure
      */
-    RequestDecoders(@DelegatesTo(RequestDecoders) Closure closure = null) {
-<span class="fc bfc" id="L36" title="All 2 branches covered.">        if (closure) {</span>
-<span class="fc" id="L37">            closure.delegate = this</span>
-<span class="fc" id="L38">            closure.call()</span>
+    @SuppressWarnings('ThisReferenceEscapesConstructor')
+    RequestDecoders(@DelegatesTo(value = RequestDecoders, strategy = DELEGATE_FIRST) Closure closure = null) {
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (closure) {</span>
+<span class="fc" id="L41">            delegateTo(this, closure)</span>
         }
     }
 
@@ -46,7 +49,7 @@ class RequestDecoders {
      * @param decoder the decoder function
      */
     void register(final ContentType contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {
-<span class="fc" id="L49">        register contentType.value, decoder</span>
+<span class="fc" id="L52">        register contentType.value, decoder</span>
     }
 
     /**
@@ -56,12 +59,12 @@ class RequestDecoders {
      * @param decoder the decoder function
      */
     void register(final String contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; converter) {
-<span class="pc" id="L59">        DecoderMapping existing = decoders.find { c -&gt; c.mimeType.toString() == contentType }</span>
-<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (existing) {</span>
-<span class="fc" id="L61">            decoders.remove(existing)</span>
+<span class="pc" id="L62">        DecoderMapping existing = decoders.find { c -&gt; c.mimeType.toString() == contentType }</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        if (existing) {</span>
+<span class="fc" id="L64">            decoders.remove(existing)</span>
         }
 
-<span class="fc" id="L64">        decoders.add(new DecoderMapping(new MimeType(contentType), converter))</span>
+<span class="fc" id="L67">        decoders.add(new DecoderMapping(new MimeType(contentType), converter))</span>
     }
 
     /**
@@ -71,7 +74,7 @@ class RequestDecoders {
      * @return the decoder function
      */
     BiFunction&lt;byte[], DecodingContext, Object&gt; findDecoder(final ContentType contentType) {
-<span class="pc" id="L74">        findDecoder(contentType.value)</span>
+<span class="pc" id="L77">        findDecoder(contentType.value)</span>
     }
 
     /**
@@ -81,15 +84,15 @@ class RequestDecoders {
      * @return the decoder function
      */
     BiFunction&lt;byte[], DecodingContext, Object&gt; findDecoder(final String contentType) {
-<span class="fc" id="L84">        MimeType mimeType = new MimeType(contentType)</span>
+<span class="fc" id="L87">        MimeType mimeType = new MimeType(contentType)</span>
 
-<span class="pc" id="L86">        def found = decoders.findAll { c -&gt; c.mimeType.match(mimeType) }</span>
+<span class="pc" id="L89">        def found = decoders.findAll { c -&gt; c.mimeType.match(mimeType) }</span>
 
-<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (found.size() &gt; 1) {</span>
-<span class="pc" id="L89">            found = [found.find { c -&gt; c.mimeType.toString() == contentType }]</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (found.size() &gt; 1) {</span>
+<span class="pc" id="L92">            found = [found.find { c -&gt; c.mimeType.toString() == contentType }]</span>
         }
 
-<span class="pc" id="L92">        found[0]?.decoder</span>
+<span class="pc" id="L95">        found[0]?.decoder</span>
     }
 
     @Immutable(knownImmutableClasses = [MimeType, BiFunction])

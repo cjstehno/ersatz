@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.967s</div>
+<div class="counter">0.761s</div>
 <p>duration</p>
 </div>
 </td>
@@ -82,12 +82,12 @@
 </thead>
 <tr>
 <td class="success">DIGEST auth</td>
-<td class="success">0.267s</td>
+<td class="success">0.202s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">DIGEST no-auth</td>
-<td class="success">0.700s</td>
+<td class="success">0.559s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -95,62 +95,90 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>06:56:03.194 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@524249d2
-06:56:03.213 [XNIO-2 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-1', selector sun.nio.ch.EPollSelectorImpl@4e8b7916
-06:56:03.228 [XNIO-2 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-2', selector sun.nio.ch.EPollSelectorImpl@6466f317
-06:56:03.234 [XNIO-2 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-3', selector sun.nio.ch.EPollSelectorImpl@5a29431a
-06:56:03.266 [XNIO-2 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-4', selector sun.nio.ch.EPollSelectorImpl@1ccd9187
-06:56:03.275 [XNIO-2 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-5', selector sun.nio.ch.EPollSelectorImpl@24481f3c
-06:56:03.292 [XNIO-2 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-6', selector sun.nio.ch.EPollSelectorImpl@4293367b
-06:56:03.293 [XNIO-2 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-7', selector sun.nio.ch.EPollSelectorImpl@642e050
-06:56:03.310 [XNIO-2 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-8', selector sun.nio.ch.EPollSelectorImpl@39211d3e
-06:56:03.325 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-06:56:03.359 [XNIO-2 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 Accept', selector sun.nio.ch.EPollSelectorImpl@19b56588
-06:56:03.638 [XNIO-2 task-1] DEBUG io.undertow.request.security - Setting authentication required for exchange HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:43147]} response {}}
-06:56:03.640 [XNIO-2 task-1] DEBUG io.undertow.request.security - Attempting to authenticate /secrets, authentication required: true
-06:56:03.641 [XNIO-2 task-1] DEBUG io.undertow.request.security - Authentication outcome was NOT_ATTEMPTED with method io.undertow.security.impl.DigestAuthenticationMechanism@46c2bf0 for /secrets
-06:56:03.641 [XNIO-2 task-1] DEBUG io.undertow.request.security - Sending authentication challenge for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:43147]} response {}}
-06:56:03.652 [XNIO-2 task-1] DEBUG io.undertow.request.security - Authentication result was CHALLENGE_SENT for /secrets
-06:56:03.697 [XNIO-2 task-2] DEBUG io.undertow.request.security - Setting authentication required for exchange HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;SjX/79qW94kNMTUzOTQzMTc2MzY0NqaHnns1tS2rymw7soY/Udg=&quot;, uri=&quot;/secrets&quot;, response=&quot;ccd40fad8e4c486a6edb4697dc64d0f7&quot;, qop=auth, nc=00000001, cnonce=&quot;f5c03e3560d365d7&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:43147]} response {}}
-06:56:03.697 [XNIO-2 task-2] DEBUG io.undertow.request.security - Attempting to authenticate /secrets, authentication required: true
-06:56:03.713 [XNIO-2 task-2] DEBUG io.undertow.request.security - Found digest header Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;SjX/79qW94kNMTUzOTQzMTc2MzY0NqaHnns1tS2rymw7soY/Udg=&quot;, uri=&quot;/secrets&quot;, response=&quot;ccd40fad8e4c486a6edb4697dc64d0f7&quot;, qop=auth, nc=00000001, cnonce=&quot;f5c03e3560d365d7&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot; in HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;SjX/79qW94kNMTUzOTQzMTc2MzY0NqaHnns1tS2rymw7soY/Udg=&quot;, uri=&quot;/secrets&quot;, response=&quot;ccd40fad8e4c486a6edb4697dc64d0f7&quot;, qop=auth, nc=00000001, cnonce=&quot;f5c03e3560d365d7&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:43147]} response {}}
-06:56:03.738 [XNIO-2 task-2] DEBUG io.undertow.request.security - Authentication failed with message UT000038: Authentication failed, requested user name 'admin' and mechanism DIGEST for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;SjX/79qW94kNMTUzOTQzMTc2MzY0NqaHnns1tS2rymw7soY/Udg=&quot;, uri=&quot;/secrets&quot;, response=&quot;ccd40fad8e4c486a6edb4697dc64d0f7&quot;, qop=auth, nc=00000001, cnonce=&quot;f5c03e3560d365d7&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:43147]} response {}}
-06:56:03.739 [XNIO-2 task-2] DEBUG io.undertow.request.security - Authentication outcome was NOT_AUTHENTICATED with method io.undertow.security.impl.DigestAuthenticationMechanism@46c2bf0 for /secrets
-06:56:03.739 [XNIO-2 task-2] DEBUG io.undertow.request.security - Sending authentication challenge for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;SjX/79qW94kNMTUzOTQzMTc2MzY0NqaHnns1tS2rymw7soY/Udg=&quot;, uri=&quot;/secrets&quot;, response=&quot;ccd40fad8e4c486a6edb4697dc64d0f7&quot;, qop=auth, nc=00000001, cnonce=&quot;f5c03e3560d365d7&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:43147]} response {}}
-06:56:03.739 [XNIO-2 task-2] DEBUG io.undertow.request.security - Authentication result was CHALLENGE_SENT for /secrets
-06:56:03.747 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@524249d2
-06:56:03.755 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@5d3dea17
-06:56:03.787 [XNIO-3 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-1', selector sun.nio.ch.EPollSelectorImpl@3aa89c31
-06:56:03.806 [XNIO-3 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-2', selector sun.nio.ch.EPollSelectorImpl@f6baaf0
-06:56:03.815 [XNIO-3 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-3', selector sun.nio.ch.EPollSelectorImpl@390ab2b6
-06:56:03.836 [XNIO-3 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-4', selector sun.nio.ch.EPollSelectorImpl@1ba482a8
-06:56:03.852 [XNIO-3 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-5', selector sun.nio.ch.EPollSelectorImpl@26ab463e
-06:56:03.866 [XNIO-3 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-6', selector sun.nio.ch.EPollSelectorImpl@118bc536
-06:56:03.886 [XNIO-3 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-7', selector sun.nio.ch.EPollSelectorImpl@1b4a6252
-06:56:03.900 [XNIO-3 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-8', selector sun.nio.ch.EPollSelectorImpl@6aa38ff
-06:56:03.912 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-06:56:03.922 [XNIO-3 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 Accept', selector sun.nio.ch.EPollSelectorImpl@57d021ff
-06:56:03.947 [XNIO-3 task-1] DEBUG io.undertow.request.security - Setting authentication required for exchange HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:39177]} response {}}
-06:56:03.947 [XNIO-3 task-1] DEBUG io.undertow.request.security - Attempting to authenticate /secrets, authentication required: true
-06:56:03.948 [XNIO-3 task-1] DEBUG io.undertow.request.security - Authentication outcome was NOT_ATTEMPTED with method io.undertow.security.impl.DigestAuthenticationMechanism@303e1ccd for /secrets
-06:56:03.948 [XNIO-3 task-1] DEBUG io.undertow.request.security - Sending authentication challenge for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:39177]} response {}}
-06:56:03.948 [XNIO-3 task-1] DEBUG io.undertow.request.security - Authentication result was CHALLENGE_SENT for /secrets
-06:56:04.000 [XNIO-3 task-2] DEBUG io.undertow.request.security - Setting authentication required for exchange HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;VpAM3ZZbTo8NMTUzOTQzMTc2Mzk0ONRPL3Gu7v8nLH7avkJRiZ8=&quot;, uri=&quot;/secrets&quot;, response=&quot;3413ffec3216c4d2b227420b64e6a049&quot;, qop=auth, nc=00000001, cnonce=&quot;e245a85177b7639d&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:39177]} response {}}
-06:56:04.000 [XNIO-3 task-2] DEBUG io.undertow.request.security - Attempting to authenticate /secrets, authentication required: true
-06:56:04.000 [XNIO-3 task-2] DEBUG io.undertow.request.security - Found digest header Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;VpAM3ZZbTo8NMTUzOTQzMTc2Mzk0ONRPL3Gu7v8nLH7avkJRiZ8=&quot;, uri=&quot;/secrets&quot;, response=&quot;3413ffec3216c4d2b227420b64e6a049&quot;, qop=auth, nc=00000001, cnonce=&quot;e245a85177b7639d&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot; in HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;VpAM3ZZbTo8NMTUzOTQzMTc2Mzk0ONRPL3Gu7v8nLH7avkJRiZ8=&quot;, uri=&quot;/secrets&quot;, response=&quot;3413ffec3216c4d2b227420b64e6a049&quot;, qop=auth, nc=00000001, cnonce=&quot;e245a85177b7639d&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:39177]} response {}}
-06:56:04.010 [XNIO-3 task-2] DEBUG io.undertow.request.security - Authenticated as admin, roles [TESTER]
-06:56:04.011 [XNIO-3 task-2] DEBUG io.undertow.request.security - Authentication outcome was AUTHENTICATED with method io.undertow.security.impl.DigestAuthenticationMechanism@303e1ccd for /secrets
-06:56:04.011 [XNIO-3 task-2] DEBUG io.undertow.request.security - Authentication result was AUTHENTICATED for /secrets
-06:56:04.011 [XNIO-3 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /secrets (query=[:], headers={Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;VpAM3ZZbTo8NMTUzOTQzMTc2Mzk0ONRPL3Gu7v8nLH7avkJRiZ8=&quot;, uri=&quot;/secrets&quot;, response=&quot;3413ffec3216c4d2b227420b64e6a049&quot;, qop=auth, nc=00000001, cnonce=&quot;e245a85177b7639d&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:39177]}, cookies=[:]): &lt;empty&gt; }
-06:56:04.012 [XNIO-3 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response({Authentication-Info=[nextnonce=&quot;VpAM3ZZbTo8NMTUzOTQzMTc2Mzk0ONRPL3Gu7v8nLH7avkJRiZ8=&quot;,qop=&quot;auth&quot;,rspauth=&quot;842d0c9e5a0466e1ab14eca63a2d76bb&quot;,cnonce=&quot;e245a85177b7639d&quot;,nc=00000001]}): Something secure
-06:56:04.016 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@5d3dea17
+<pre>07:43:57.271 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@2f3b61d3
+07:43:57.276 [XNIO-2 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-1', selector sun.nio.ch.EPollSelectorImpl@6bdb4beb
+07:43:57.277 [XNIO-2 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-2', selector sun.nio.ch.EPollSelectorImpl@29913665
+07:43:57.281 [XNIO-2 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-3', selector sun.nio.ch.EPollSelectorImpl@6f7ccfae
+07:43:57.285 [XNIO-2 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-4', selector sun.nio.ch.EPollSelectorImpl@14c31785
+07:43:57.285 [XNIO-2 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-5', selector sun.nio.ch.EPollSelectorImpl@4b934519
+07:43:57.285 [XNIO-2 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-6', selector sun.nio.ch.EPollSelectorImpl@4750553b
+07:43:57.300 [XNIO-2 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-7', selector sun.nio.ch.EPollSelectorImpl@445d20c7
+07:43:57.336 [XNIO-2 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-8', selector sun.nio.ch.EPollSelectorImpl@5549726d
+07:43:57.344 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:43:57.346 [XNIO-2 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 Accept', selector sun.nio.ch.EPollSelectorImpl@46a8f69d
+07:43:57.552 [XNIO-2 task-1] DEBUG io.undertow.request.security - Setting authentication required for exchange HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:36699]} response {}}
+07:43:57.552 [XNIO-2 task-1] DEBUG io.undertow.request.security - Attempting to authenticate /secrets, authentication required: true
+07:43:57.557 [XNIO-2 task-1] DEBUG io.undertow.request.security - Authentication outcome was NOT_ATTEMPTED with method io.undertow.security.impl.DigestAuthenticationMechanism@2f242838 for /secrets
+07:43:57.558 [XNIO-2 task-1] DEBUG io.undertow.request.security - Sending authentication challenge for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:36699]} response {}}
+07:43:57.565 [XNIO-2 task-1] DEBUG io.undertow.request.security - Authentication result was CHALLENGE_SENT for /secrets
+07:43:57.585 [XNIO-2 task-2] DEBUG io.undertow.request.security - Setting authentication required for exchange HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;/Hc8mJ7SYgENMTUzOTQzNDYzNzU2Mg+Eukd/cTXPP1TcxCYJguY=&quot;, uri=&quot;/secrets&quot;, response=&quot;2b040a13090fb841737788afeb314fe8&quot;, qop=auth, nc=00000001, cnonce=&quot;390f33f1f113bd7c&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:36699]} response {}}
+07:43:57.585 [XNIO-2 task-2] DEBUG io.undertow.request.security - Attempting to authenticate /secrets, authentication required: true
+07:43:57.589 [XNIO-2 task-2] DEBUG io.undertow.request.security - Found digest header Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;/Hc8mJ7SYgENMTUzOTQzNDYzNzU2Mg+Eukd/cTXPP1TcxCYJguY=&quot;, uri=&quot;/secrets&quot;, response=&quot;2b040a13090fb841737788afeb314fe8&quot;, qop=auth, nc=00000001, cnonce=&quot;390f33f1f113bd7c&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot; in HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;/Hc8mJ7SYgENMTUzOTQzNDYzNzU2Mg+Eukd/cTXPP1TcxCYJguY=&quot;, uri=&quot;/secrets&quot;, response=&quot;2b040a13090fb841737788afeb314fe8&quot;, qop=auth, nc=00000001, cnonce=&quot;390f33f1f113bd7c&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:36699]} response {}}
+07:43:57.646 [XNIO-2 task-2] DEBUG io.undertow.request.security - Authentication failed with message UT000038: Authentication failed, requested user name 'admin' and mechanism DIGEST for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;/Hc8mJ7SYgENMTUzOTQzNDYzNzU2Mg+Eukd/cTXPP1TcxCYJguY=&quot;, uri=&quot;/secrets&quot;, response=&quot;2b040a13090fb841737788afeb314fe8&quot;, qop=auth, nc=00000001, cnonce=&quot;390f33f1f113bd7c&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:36699]} response {}}
+07:43:57.656 [XNIO-2 task-2] DEBUG io.undertow.request.security - Authentication outcome was NOT_AUTHENTICATED with method io.undertow.security.impl.DigestAuthenticationMechanism@2f242838 for /secrets
+07:43:57.657 [XNIO-2 task-2] DEBUG io.undertow.request.security - Sending authentication challenge for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;/Hc8mJ7SYgENMTUzOTQzNDYzNzU2Mg+Eukd/cTXPP1TcxCYJguY=&quot;, uri=&quot;/secrets&quot;, response=&quot;2b040a13090fb841737788afeb314fe8&quot;, qop=auth, nc=00000001, cnonce=&quot;390f33f1f113bd7c&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:36699]} response {}}
+07:43:57.659 [XNIO-2 task-2] DEBUG io.undertow.request.security - Authentication result was CHALLENGE_SENT for /secrets
+07:43:57.664 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@2f3b61d3
+07:43:57.687 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@46648f6
+07:43:57.700 [XNIO-3 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-1', selector sun.nio.ch.EPollSelectorImpl@665b0e5d
+07:43:57.720 [XNIO-3 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-2', selector sun.nio.ch.EPollSelectorImpl@3abe8266
+07:43:57.724 [XNIO-3 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-3', selector sun.nio.ch.EPollSelectorImpl@b0e8be8
+07:43:57.733 [XNIO-3 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-4', selector sun.nio.ch.EPollSelectorImpl@2e5f2aae
+07:43:57.744 [XNIO-3 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-5', selector sun.nio.ch.EPollSelectorImpl@64fef36b
+07:43:57.760 [XNIO-3 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-6', selector sun.nio.ch.EPollSelectorImpl@21398b5e
+07:43:57.768 [XNIO-3 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-7', selector sun.nio.ch.EPollSelectorImpl@201a4985
+07:43:57.776 [XNIO-3 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-8', selector sun.nio.ch.EPollSelectorImpl@38b3e131
+07:43:57.788 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:43:57.790 [XNIO-3 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 Accept', selector sun.nio.ch.EPollSelectorImpl@78543e50
+07:43:57.820 [XNIO-3 task-1] DEBUG io.undertow.request.security - Setting authentication required for exchange HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:36597]} response {}}
+07:43:57.820 [XNIO-3 task-1] DEBUG io.undertow.request.security - Attempting to authenticate /secrets, authentication required: true
+07:43:57.820 [XNIO-3 task-1] DEBUG io.undertow.request.security - Authentication outcome was NOT_ATTEMPTED with method io.undertow.security.impl.DigestAuthenticationMechanism@33f1a9f3 for /secrets
+07:43:57.820 [XNIO-3 task-1] DEBUG io.undertow.request.security - Sending authentication challenge for HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:36597]} response {}}
+07:43:57.820 [XNIO-3 task-1] DEBUG io.undertow.request.security - Authentication result was CHALLENGE_SENT for /secrets
+07:43:57.844 [XNIO-3 task-2] DEBUG io.undertow.request.security - Setting authentication required for exchange HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;Ly2mkP77Sh0NMTUzOTQzNDYzNzgyMEdtI2O71WbsHxeW5+COaoc=&quot;, uri=&quot;/secrets&quot;, response=&quot;90f281e94a1f23b5e5d904eb62d19b49&quot;, qop=auth, nc=00000001, cnonce=&quot;f648b6cb75810418&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:36597]} response {}}
+07:43:57.844 [XNIO-3 task-2] DEBUG io.undertow.request.security - Attempting to authenticate /secrets, authentication required: true
+07:43:57.845 [XNIO-3 task-2] DEBUG io.undertow.request.security - Found digest header Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;Ly2mkP77Sh0NMTUzOTQzNDYzNzgyMEdtI2O71WbsHxeW5+COaoc=&quot;, uri=&quot;/secrets&quot;, response=&quot;90f281e94a1f23b5e5d904eb62d19b49&quot;, qop=auth, nc=00000001, cnonce=&quot;f648b6cb75810418&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot; in HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;Ly2mkP77Sh0NMTUzOTQzNDYzNzgyMEdtI2O71WbsHxeW5+COaoc=&quot;, uri=&quot;/secrets&quot;, response=&quot;90f281e94a1f23b5e5d904eb62d19b49&quot;, qop=auth, nc=00000001, cnonce=&quot;f648b6cb75810418&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:36597]} response {}}
+07:43:57.861 [XNIO-3 task-2] DEBUG io.undertow.request.security - Authenticated as admin, roles [TESTER]
+07:43:57.861 [XNIO-3 task-2] DEBUG io.undertow.request.security - Authentication outcome was AUTHENTICATED with method io.undertow.security.impl.DigestAuthenticationMechanism@33f1a9f3 for /secrets
+07:43:57.861 [XNIO-3 task-2] DEBUG io.undertow.request.security - Authentication result was AUTHENTICATED for /secrets
+07:43:57.862 [XNIO-3 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Request: { GET /secrets (query=[:], headers={Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;Ly2mkP77Sh0NMTUzOTQzNDYzNzgyMEdtI2O71WbsHxeW5+COaoc=&quot;, uri=&quot;/secrets&quot;, response=&quot;90f281e94a1f23b5e5d904eb62d19b49&quot;, qop=auth, nc=00000001, cnonce=&quot;f648b6cb75810418&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:36597]}, cookies=[:]): &lt;empty&gt; }
+07:43:57.866 [XNIO-3 task-2] DEBUG com.stehno.ersatz.ErsatzServer - Response({Authentication-Info=[nextnonce=&quot;Ly2mkP77Sh0NMTUzOTQzNDYzNzgyMEdtI2O71WbsHxeW5+COaoc=&quot;,qop=&quot;auth&quot;,rspauth=&quot;8a6dc99a454290cb13f3143ce92f91e8&quot;,cnonce=&quot;f648b6cb75810418&quot;,nc=00000001]}): Something secure
+07:43:57.868 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@46648f6
+07:43:57.875 [XNIO-3 task-2] ERROR io.undertow.request - UT005071: Undertow request failed HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;Ly2mkP77Sh0NMTUzOTQzNDYzNzgyMEdtI2O71WbsHxeW5+COaoc=&quot;, uri=&quot;/secrets&quot;, response=&quot;90f281e94a1f23b5e5d904eb62d19b49&quot;, qop=auth, nc=00000001, cnonce=&quot;f648b6cb75810418&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:36597]} response {Content-Encoding=[gzip], Connection=[keep-alive], Authentication-Info=[nextnonce=&quot;Ly2mkP77Sh0NMTUzOTQzNDYzNzgyMEdtI2O71WbsHxeW5+COaoc=&quot;,qop=&quot;auth&quot;,rspauth=&quot;8a6dc99a454290cb13f3143ce92f91e8&quot;,cnonce=&quot;f648b6cb75810418&quot;,nc=00000001], Content-Length=[36], Date=[Sat, 13 Oct 2018 12:43:57 GMT]}}
+java.lang.NullPointerException: null
+	at io.undertow.conduits.DeflatingStreamSinkConduit.performFlushIfRequired(DeflatingStreamSinkConduit.java:449)
+	at io.undertow.conduits.DeflatingStreamSinkConduit.flush(DeflatingStreamSinkConduit.java:371)
+	at org.xnio.conduits.ConduitStreamSinkChannel.flush(ConduitStreamSinkChannel.java:162)
+	at io.undertow.channels.DetachableStreamSinkChannel.flush(DetachableStreamSinkChannel.java:119)
+	at org.xnio.channels.Channels.flushBlocking(Channels.java:63)
+	at io.undertow.io.UndertowOutputStream.close(UndertowOutputStream.java:347)
+	at io.undertow.io.BlockingSenderImpl.close(BlockingSenderImpl.java:219)
+	at io.undertow.io.DefaultIoCallback.onComplete(DefaultIoCallback.java:54)
+	at io.undertow.io.BlockingSenderImpl.invokeOnComplete(BlockingSenderImpl.java:276)
+	at io.undertow.io.BlockingSenderImpl.send(BlockingSenderImpl.java:132)
+	at io.undertow.io.BlockingSenderImpl.send(BlockingSenderImpl.java:166)
+	at com.stehno.ersatz.ErsatzServer.send(ErsatzServer.groovy:588)
+	at com.stehno.ersatz.ErsatzServer.access$0(ErsatzServer.groovy)
+	at com.stehno.ersatz.ErsatzServer$1.handleRequest(ErsatzServer.groovy:437)
+	at io.undertow.server.handlers.HttpTraceHandler.handleRequest(HttpTraceHandler.java:70)
+	at io.undertow.security.handlers.AuthenticationCallHandler.handleRequest(AuthenticationCallHandler.java:52)
+	at io.undertow.security.handlers.AuthenticationConstraintHandler.handleRequest(AuthenticationConstraintHandler.java:53)
+	at io.undertow.security.handlers.AuthenticationMechanismsHandler.handleRequest(AuthenticationMechanismsHandler.java:60)
+	at io.undertow.security.handlers.AbstractSecurityContextAssociationHandler.handleRequest(AbstractSecurityContextAssociationHandler.java:43)
+	at io.undertow.server.handlers.encoding.EncodingHandler.handleRequest(EncodingHandler.java:72)
+	at io.undertow.server.Connectors.executeRootHandler(Connectors.java:360)
+	at io.undertow.server.HttpServerExchange$1.run(HttpServerExchange.java:830)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+07:43:57.876 [XNIO-3 task-2] ERROR io.undertow - UT005085: Connection io.undertow.server.protocol.http.HttpServerConnection@4dc42399 for exchange HttpServerExchange{ GET /secrets request {Connection=[Keep-Alive], Authorization=[Digest username=&quot;admin&quot;, realm=&quot;DigestTesting&quot;, nonce=&quot;Ly2mkP77Sh0NMTUzOTQzNDYzNzgyMEdtI2O71WbsHxeW5+COaoc=&quot;, uri=&quot;/secrets&quot;, response=&quot;90f281e94a1f23b5e5d904eb62d19b49&quot;, qop=auth, nc=00000001, cnonce=&quot;f648b6cb75810418&quot;, algorithm=MD5, opaque=&quot;00000000000000000000000000000000&quot;], Accept-Encoding=[gzip], User-Agent=[okhttp/3.11.0], Host=[localhost:36597]} response {Content-Encoding=[gzip], Connection=[keep-alive], Authentication-Info=[nextnonce=&quot;Ly2mkP77Sh0NMTUzOTQzNDYzNzgyMEdtI2O71WbsHxeW5+COaoc=&quot;,qop=&quot;auth&quot;,rspauth=&quot;8a6dc99a454290cb13f3143ce92f91e8&quot;,cnonce=&quot;f648b6cb75810418&quot;,nc=00000001], Content-Length=[36], Date=[Sat, 13 Oct 2018 12:43:57 GMT]}} was not closed cleanly, forcibly closing connection
 </pre>
 </span>
 </div>
 <div id="tab2" class="tab">
 <h2>Standard error</h2>
 <span class="code">
-<pre>Oct 13, 2018 6:56:03 AM okhttp3.internal.platform.Platform log
+<pre>Oct 13, 2018 7:43:57 AM okhttp3.internal.platform.Platform log
 WARNING: previous digest authentication with same nonce failed, returning null
 </pre>
 </span>
@@ -163,7 +191,7 @@ WARNING: previous digest authentication with same nonce failed, returning null
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 4.10.2</a> at Oct 13, 2018 6:56:15 AM</p>
+<a href="http://www.gradle.org">Gradle 4.10.2</a> at Oct 13, 2018 7:44:03 AM</p>
 </div>
 </div>
 </body>

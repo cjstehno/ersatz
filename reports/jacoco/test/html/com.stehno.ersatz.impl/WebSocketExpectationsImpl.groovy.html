@@ -26,120 +26,119 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.WsMessageType.*
+import static com.stehno.ersatz.WsMessageType.BINARY
+import static com.stehno.ersatz.WsMessageType.TEXT
+import static com.stehno.ersatz.WsMessageType.resolve
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.concurrent.TimeUnit.SECONDS
 
 class WebSocketExpectationsImpl implements WebSocketExpectations {
 
-<span class="fc" id="L34">    private final CountDownLatch connectionLatch = new CountDownLatch(1)</span>
-<span class="fc" id="L35">    private final List&lt;ReceivedMessageImpl&gt; receivedMessages = []</span>
-<span class="fc" id="L36">    private final List&lt;SentMessageImpl&gt; sentMessages = []</span>
+<span class="fc" id="L38">    private final CountDownLatch connectionLatch = new CountDownLatch(1)</span>
+<span class="fc" id="L39">    private final List&lt;ReceivedMessageImpl&gt; receivedMessages = []</span>
+<span class="fc" id="L40">    private final List&lt;SentMessageImpl&gt; sentMessages = []</span>
     final String path
 
     WebSocketExpectationsImpl(final String path) {
-<span class="fc" id="L40">        this.path = path</span>
+<span class="fc" id="L44">        this.path = path</span>
     }
 
     void connect() {
-<span class="fc" id="L44">        connectionLatch.countDown()</span>
+<span class="fc" id="L48">        connectionLatch.countDown()</span>
     }
 
     boolean isConnected() {
-<span class="nc" id="L48">        connectionLatch.count == 0</span>
+<span class="nc" id="L52">        connectionLatch.count == 0</span>
     }
 
     @Override
     ReceivedMessage receive(Object payload) {
-<span class="fc" id="L53">        switch (resolve(payload)) {</span>
-<span class="pc bpc" id="L54" title="1 of 2 branches missed.">            case BINARY:</span>
-<span class="nc" id="L55">                return receive(payload, BINARY)</span>
+<span class="fc" id="L57">        switch (resolve(payload)) {</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">            case BINARY:</span>
+<span class="nc" id="L59">                return receive(payload, BINARY)</span>
             default:
-<span class="pc" id="L57">                return receive(payload.toString(), TEXT)</span>
+<span class="pc" id="L61">                return receive(payload.toString(), TEXT)</span>
         }
     }
 
     @Override
     ReceivedMessage receive(Object payload, WsMessageType messageType) {
-<span class="fc" id="L63">        ReceivedMessageImpl message = new ReceivedMessageImpl(payload: payload, messageType: messageType)</span>
-<span class="fc" id="L64">        receivedMessages &lt;&lt; message</span>
+<span class="fc" id="L67">        ReceivedMessageImpl message = new ReceivedMessageImpl(payload: payload, messageType: messageType)</span>
+<span class="fc" id="L68">        receivedMessages &lt;&lt; message</span>
 
-<span class="pc" id="L66">        message</span>
+<span class="pc" id="L70">        message</span>
     }
 
     @Override
-    ReceivedMessage receive(@DelegatesTo(ReceivedMessage) Closure closure) {
-<span class="fc" id="L71">        ReceivedMessageImpl message = new ReceivedMessageImpl()</span>
-<span class="fc" id="L72">        closure.delegate = message</span>
-<span class="fc" id="L73">        closure.call()</span>
-<span class="fc" id="L74">        receivedMessages &lt;&lt; message</span>
-
-<span class="pc" id="L76">        message</span>
+    ReceivedMessage receive(@DelegatesTo(value = ReceivedMessage, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="fc" id="L75">        ReceivedMessageImpl message = delegateTo(new ReceivedMessageImpl(), closure)</span>
+<span class="fc" id="L76">        receivedMessages &lt;&lt; message</span>
+<span class="pc" id="L77">        message</span>
     }
 
     @Override
     SentMessage send(Object payload) {
-<span class="nc" id="L81">        switch (resolve(payload)) {</span>
-<span class="nc bnc" id="L82" title="All 2 branches missed.">            case BINARY:</span>
-<span class="nc" id="L83">                return send(payload, BINARY)</span>
+<span class="nc" id="L82">        switch (resolve(payload)) {</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            case BINARY:</span>
+<span class="nc" id="L84">                return send(payload, BINARY)</span>
             default:
-<span class="nc" id="L85">                return send(payload.toString(), TEXT)</span>
+<span class="nc" id="L86">                return send(payload.toString(), TEXT)</span>
         }
     }
 
     @Override
     SentMessage send(Object payload, WsMessageType messageType) {
-<span class="fc" id="L91">        SentMessageImpl message = new SentMessageImpl(payload: payload, messageType: messageType)</span>
-<span class="fc" id="L92">        sentMessages &lt;&lt; message</span>
-<span class="pc" id="L93">        message</span>
+<span class="fc" id="L92">        SentMessageImpl message = new SentMessageImpl(payload: payload, messageType: messageType)</span>
+<span class="fc" id="L93">        sentMessages &lt;&lt; message</span>
+<span class="pc" id="L94">        message</span>
     }
 
     @Override
-    SentMessage send(@DelegatesTo(SentMessage) Closure closure) {
-<span class="fc" id="L98">        SentMessageImpl message = new SentMessageImpl()</span>
-<span class="fc" id="L99">        closure.delegate = message</span>
-<span class="fc" id="L100">        closure.call()</span>
-<span class="fc" id="L101">        sentMessages &lt;&lt; message</span>
-<span class="pc" id="L102">        message</span>
+    SentMessage send(@DelegatesTo(value = SentMessage, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="fc" id="L99">        SentMessageImpl message = delegateTo(new SentMessageImpl(), closure)</span>
+<span class="fc" id="L100">        sentMessages &lt;&lt; message</span>
+<span class="pc" id="L101">        message</span>
     }
 
     @Override
     ReceivedMessage receive(Consumer&lt;ReceivedMessage&gt; config) {
-<span class="nc" id="L107">        ReceivedMessageImpl message = new ReceivedMessageImpl()</span>
-<span class="nc" id="L108">        config.accept(message)</span>
-<span class="nc" id="L109">        receivedMessages &lt;&lt; message</span>
-<span class="nc" id="L110">        message</span>
+<span class="nc" id="L106">        ReceivedMessageImpl message = new ReceivedMessageImpl()</span>
+<span class="nc" id="L107">        config.accept(message)</span>
+<span class="nc" id="L108">        receivedMessages &lt;&lt; message</span>
+<span class="nc" id="L109">        message</span>
     }
 
     @Override
     SentMessage send(Consumer&lt;SentMessage&gt; config) {
-<span class="nc" id="L115">        SentMessageImpl message = new SentMessageImpl()</span>
-<span class="nc" id="L116">        config.accept(message)</span>
-<span class="nc" id="L117">        sentMessages &lt;&lt; message</span>
-<span class="nc" id="L118">        message</span>
+<span class="nc" id="L114">        SentMessageImpl message = new SentMessageImpl()</span>
+<span class="nc" id="L115">        config.accept(message)</span>
+<span class="nc" id="L116">        sentMessages &lt;&lt; message</span>
+<span class="nc" id="L117">        message</span>
     }
 
     int getExpectedMessageCount() {
-<span class="nc" id="L122">        receivedMessages.size()</span>
+<span class="nc" id="L121">        receivedMessages.size()</span>
     }
 
     void eachSender(Closure closure) {
-<span class="fc" id="L126">        sentMessages.each closure</span>
+<span class="fc" id="L125">        sentMessages.each closure</span>
     }
 
     void eachMessage(Closure closure) {
-<span class="nc" id="L130">        receivedMessages.each closure</span>
+<span class="nc" id="L129">        receivedMessages.each closure</span>
     }
 
     ReceivedMessageImpl findMatch(final BufferedTextMessage message) {
-<span class="pc" id="L134">        receivedMessages.find { m -&gt; m.matches(message) }</span>
+<span class="pc" id="L133">        receivedMessages.find { m -&gt; m.matches(message) }</span>
     }
 
     ReceivedMessageImpl findMatch(final BufferedBinaryMessage message) {
-<span class="pc" id="L138">        receivedMessages.find { m -&gt; m.matches(message) }</span>
+<span class="pc" id="L137">        receivedMessages.find { m -&gt; m.matches(message) }</span>
     }
 
     boolean verify(final long timeout = 1, final TimeUnit unit = SECONDS) {
-<span class="pc bpc" id="L142" title="2 of 4 branches missed.">        connectionLatch.await(timeout, unit) &amp;&amp; receivedMessages.every { m -&gt; m.marked(timeout, unit) }</span>
+<span class="pc bpc" id="L141" title="2 of 4 branches missed.">        connectionLatch.await(timeout, unit) &amp;&amp; receivedMessages.every { m -&gt; m.marked(timeout, unit) }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

@@ -15,7 +15,13 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.Expectations
+import com.stehno.ersatz.Request
+import com.stehno.ersatz.RequestDecoders
+import com.stehno.ersatz.RequestWithContent
+import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.WebSocketExpectations
 import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
@@ -23,7 +29,16 @@ import org.hamcrest.Matchers
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.HttpMethod.*
+import static com.stehno.ersatz.HttpMethod.ANY
+import static com.stehno.ersatz.HttpMethod.DELETE
+import static com.stehno.ersatz.HttpMethod.GET
+import static com.stehno.ersatz.HttpMethod.HEAD
+import static com.stehno.ersatz.HttpMethod.OPTIONS
+import static com.stehno.ersatz.HttpMethod.PATCH
+import static com.stehno.ersatz.HttpMethod.POST
+import static com.stehno.ersatz.HttpMethod.PUT
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.concurrent.TimeUnit.SECONDS
 import static org.hamcrest.Matchers.equalTo
 
@@ -34,294 +49,289 @@ import static org.hamcrest.Matchers.equalTo
 @SuppressWarnings(['ConfusingMethodName', 'MethodCount'])
 class ExpectationsImpl implements Expectations {
 
-<span class="fc" id="L37">    private final List&lt;Request&gt; requests = []</span>
+<span class="fc" id="L52">    private final List&lt;Request&gt; requests = []</span>
     private final Map&lt;String, WebSocketExpectations&gt; webSockets = [:]
     private final RequestDecoders globalDecoders
     private final ResponseEncoders globalEncoders
 
     ExpectationsImpl(final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
-<span class="fc" id="L43">        this.globalDecoders = globalDecoders</span>
-<span class="fc" id="L44">        this.globalEncoders = globalEncoders</span>
+<span class="fc" id="L58">        this.globalDecoders = globalDecoders</span>
+<span class="fc" id="L59">        this.globalEncoders = globalEncoders</span>
     }
 
     /**
      * Removes all expectation configuration, but does not modify global encoders or decoders.
      */
     void clear() {
-<span class="fc" id="L51">        requests.clear()</span>
+<span class="fc" id="L66">        requests.clear()</span>
     }
 
     @Override
     Request any(final String path) {
-<span class="pc" id="L56">        any pathMatcher(path)</span>
+<span class="pc" id="L71">        any pathMatcher(path)</span>
     }
 
     @Override
     Request any(final Matcher&lt;String&gt; matcher) {
-<span class="pc" id="L61">        expect new ErsatzRequestWithContent(ANY, matcher, globalDecoders, globalEncoders)</span>
+<span class="pc" id="L76">        expect new ErsatzRequestWithContent(ANY, matcher, globalDecoders, globalEncoders)</span>
     }
 
     @Override
-    Request any(final String path, @DelegatesTo(Request) final Closure closure) {
-<span class="pc" id="L66">        any pathMatcher(path), closure</span>
+    Request any(final String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) final Closure closure) {
+<span class="pc" id="L81">        any pathMatcher(path), closure</span>
     }
 
     @Override
-    Request any(final Matcher&lt;String&gt; matcher, @DelegatesTo(Request) final Closure closure) {
-<span class="pc" id="L71">        expect new ErsatzRequestWithContent(ANY, matcher, globalDecoders, globalEncoders), closure</span>
+    Request any(final Matcher&lt;String&gt; matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) final Closure closure) {
+<span class="pc" id="L86">        expect new ErsatzRequestWithContent(ANY, matcher, globalDecoders, globalEncoders), closure</span>
     }
 
     @Override
     Request any(final String path, final Consumer&lt;Request&gt; consumer) {
-<span class="pc" id="L76">        any pathMatcher(path), consumer</span>
+<span class="pc" id="L91">        any pathMatcher(path), consumer</span>
     }
 
     @Override
     Request any(final Matcher&lt;String&gt; matcher, final Consumer&lt;Request&gt; consumer) {
-<span class="pc" id="L81">        expect new ErsatzRequestWithContent(ANY, matcher, globalDecoders, globalEncoders), consumer</span>
+<span class="pc" id="L96">        expect new ErsatzRequestWithContent(ANY, matcher, globalDecoders, globalEncoders), consumer</span>
     }
 
     @Override
     Request get(final String path) {
-<span class="pc" id="L86">        get pathMatcher(path)</span>
+<span class="pc" id="L101">        get pathMatcher(path)</span>
     }
 
     @Override
     Request get(final Matcher&lt;String&gt; matcher) {
-<span class="pc" id="L91">        expect new ErsatzRequest(GET, matcher, globalEncoders)</span>
+<span class="pc" id="L106">        expect new ErsatzRequest(GET, matcher, globalEncoders)</span>
     }
 
     @Override
-    Request get(final String path, @DelegatesTo(Request) final Closure closure) {
-<span class="pc" id="L96">        get(pathMatcher(path), closure)</span>
+    Request get(final String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) final Closure closure) {
+<span class="pc" id="L111">        get(pathMatcher(path), closure)</span>
     }
 
     @Override
-    Request get(final Matcher&lt;String&gt; matcher, @DelegatesTo(Request) final Closure closure) {
-<span class="pc" id="L101">        expect new ErsatzRequest(GET, matcher, globalEncoders), closure</span>
+    Request get(final Matcher&lt;String&gt; matcher, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) final Closure closure) {
+<span class="pc" id="L116">        expect new ErsatzRequest(GET, matcher, globalEncoders), closure</span>
     }
 
     @Override
     Request get(String path, Consumer&lt;Request&gt; config) {
-<span class="pc" id="L106">        get(pathMatcher(path), config)</span>
+<span class="pc" id="L121">        get(pathMatcher(path), config)</span>
     }
 
     @Override
     Request get(Matcher&lt;String&gt; matcher, Consumer&lt;Request&gt; config) {
-<span class="pc" id="L111">        expect new ErsatzRequest(GET, matcher, globalEncoders), config</span>
+<span class="pc" id="L126">        expect new ErsatzRequest(GET, matcher, globalEncoders), config</span>
     }
 
     @Override
     Request head(String path) {
-<span class="pc" id="L116">        head(pathMatcher(path))</span>
+<span class="pc" id="L131">        head(pathMatcher(path))</span>
     }
 
     @Override
-    Request head(String path, @DelegatesTo(Request) Closure closure) {
-<span class="pc" id="L121">        head(pathMatcher(path), closure)</span>
+    Request head(String path, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="pc" id="L136">        head(pathMatcher(path), closure)</span>
     }
 
     @Override
     Request head(String path, Consumer&lt;Request&gt; config) {
-<span class="pc" id="L126">        head(pathMatcher(path), config)</span>
+<span class="pc" id="L141">        head(pathMatcher(path), config)</span>
     }
 
     @Override
     Request head(Matcher&lt;String&gt; matcher) {
-<span class="pc" id="L131">        expect new ErsatzRequest(HEAD, matcher, globalEncoders, true)</span>
+<span class="pc" id="L146">        expect new ErsatzRequest(HEAD, matcher, globalEncoders, true)</span>
     }
 
     @Override
-    Request head(Matcher&lt;String&gt; matcher, @DelegatesTo(Request) Closure closure) {
-<span class="pc" id="L136">        expect new ErsatzRequest(HEAD, matcher, globalEncoders, true), closure</span>
+    Request head(Matcher&lt;String&gt; matcher, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="pc" id="L151">        expect new ErsatzRequest(HEAD, matcher, globalEncoders, true), closure</span>
     }
 
     @Override
     Request head(Matcher&lt;String&gt; matcher, Consumer&lt;Request&gt; config) {
-<span class="pc" id="L141">        expect new ErsatzRequest(HEAD, matcher, globalEncoders), config</span>
+<span class="pc" id="L156">        expect new ErsatzRequest(HEAD, matcher, globalEncoders), config</span>
     }
 
     @Override
     RequestWithContent post(String path) {
-<span class="pc" id="L146">        post(pathMatcher(path))</span>
+<span class="pc" id="L161">        post(pathMatcher(path))</span>
     }
 
     @Override
-    RequestWithContent post(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-<span class="pc" id="L151">        post(pathMatcher(path), closure)</span>
+    RequestWithContent post(String path, @DelegatesTo(value=RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="pc" id="L166">        post(pathMatcher(path), closure)</span>
     }
 
     @Override
     RequestWithContent post(String path, Consumer&lt;RequestWithContent&gt; config) {
-<span class="pc" id="L156">        post(pathMatcher(path), config)</span>
+<span class="pc" id="L171">        post(pathMatcher(path), config)</span>
     }
 
     @Override
     RequestWithContent post(Matcher&lt;String&gt; matcher) {
-<span class="pc" id="L161">        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders, globalEncoders)) as RequestWithContent</span>
+<span class="pc" id="L176">        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders, globalEncoders)) as RequestWithContent</span>
     }
 
     @Override
-    RequestWithContent post(Matcher&lt;String&gt; matcher, @DelegatesTo(RequestWithContent) Closure closure) {
-<span class="pc" id="L166">        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders, globalEncoders), closure) as RequestWithContent</span>
+    RequestWithContent post(Matcher&lt;String&gt; matcher, @DelegatesTo(value=RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="pc" id="L181">        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders, globalEncoders), closure) as RequestWithContent</span>
     }
 
     @Override
     RequestWithContent post(Matcher&lt;String&gt; matcher, Consumer&lt;RequestWithContent&gt; config) {
-<span class="pc" id="L171">        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders, globalEncoders), config) as RequestWithContent</span>
+<span class="pc" id="L186">        expect(new ErsatzRequestWithContent(POST, matcher, globalDecoders, globalEncoders), config) as RequestWithContent</span>
     }
 
     @Override
     RequestWithContent put(String path) {
-<span class="pc" id="L176">        put(pathMatcher(path))</span>
+<span class="pc" id="L191">        put(pathMatcher(path))</span>
     }
 
     @Override
-    RequestWithContent put(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-<span class="pc" id="L181">        put(pathMatcher(path), closure)</span>
+    RequestWithContent put(String path, @DelegatesTo(value=RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="pc" id="L196">        put(pathMatcher(path), closure)</span>
     }
 
     @Override
     RequestWithContent put(String path, Consumer&lt;RequestWithContent&gt; config) {
-<span class="pc" id="L186">        put(pathMatcher(path), config)</span>
+<span class="pc" id="L201">        put(pathMatcher(path), config)</span>
     }
 
     @Override
     RequestWithContent put(Matcher&lt;String&gt; matcher) {
-<span class="pc" id="L191">        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders, globalEncoders)) as RequestWithContent</span>
+<span class="pc" id="L206">        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders, globalEncoders)) as RequestWithContent</span>
     }
 
     @Override
-    RequestWithContent put(Matcher&lt;String&gt; matcher, @DelegatesTo(RequestWithContent) Closure closure) {
-<span class="pc" id="L196">        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders, globalEncoders), closure) as RequestWithContent</span>
+    RequestWithContent put(Matcher&lt;String&gt; matcher, @DelegatesTo(value=RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="pc" id="L211">        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders, globalEncoders), closure) as RequestWithContent</span>
     }
 
     @Override
     RequestWithContent put(Matcher&lt;String&gt; matcher, Consumer&lt;RequestWithContent&gt; config) {
-<span class="pc" id="L201">        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders, globalEncoders), config) as RequestWithContent</span>
+<span class="pc" id="L216">        expect(new ErsatzRequestWithContent(PUT, matcher, globalDecoders, globalEncoders), config) as RequestWithContent</span>
     }
 
     @Override
     Request delete(String path) {
-<span class="pc" id="L206">        delete(pathMatcher(path))</span>
+<span class="pc" id="L221">        delete(pathMatcher(path))</span>
     }
 
     @Override
-    Request delete(String path, @DelegatesTo(Request) Closure closure) {
-<span class="pc" id="L211">        delete(pathMatcher(path), closure)</span>
+    Request delete(String path, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="pc" id="L226">        delete(pathMatcher(path), closure)</span>
     }
 
     @Override
     Request delete(String path, Consumer&lt;Request&gt; config) {
-<span class="pc" id="L216">        delete(pathMatcher(path), config)</span>
+<span class="pc" id="L231">        delete(pathMatcher(path), config)</span>
     }
 
     @Override
     Request delete(Matcher&lt;String&gt; matcher) {
-<span class="pc" id="L221">        expect new ErsatzRequest(DELETE, matcher, globalEncoders)</span>
+<span class="pc" id="L236">        expect new ErsatzRequest(DELETE, matcher, globalEncoders)</span>
     }
 
     @Override
-    Request delete(Matcher&lt;String&gt; matcher, @DelegatesTo(Request) Closure closure) {
-<span class="pc" id="L226">        expect new ErsatzRequest(DELETE, matcher, globalEncoders), closure</span>
+    Request delete(Matcher&lt;String&gt; matcher, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="pc" id="L241">        expect new ErsatzRequest(DELETE, matcher, globalEncoders), closure</span>
     }
 
     @Override
     Request delete(Matcher&lt;String&gt; matcher, Consumer&lt;Request&gt; config) {
-<span class="pc" id="L231">        expect new ErsatzRequest(DELETE, matcher, globalEncoders), config</span>
+<span class="pc" id="L246">        expect new ErsatzRequest(DELETE, matcher, globalEncoders), config</span>
     }
 
     @Override
     RequestWithContent patch(String path) {
-<span class="pc" id="L236">        patch(pathMatcher(path))</span>
+<span class="pc" id="L251">        patch(pathMatcher(path))</span>
     }
 
     @Override
-    RequestWithContent patch(String path, @DelegatesTo(RequestWithContent) Closure closure) {
-<span class="pc" id="L241">        patch(pathMatcher(path), closure)</span>
+    RequestWithContent patch(String path, @DelegatesTo(value=RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="pc" id="L256">        patch(pathMatcher(path), closure)</span>
     }
 
     @Override
     RequestWithContent patch(String path, Consumer&lt;RequestWithContent&gt; config) {
-<span class="pc" id="L246">        patch(pathMatcher(path), config)</span>
+<span class="pc" id="L261">        patch(pathMatcher(path), config)</span>
     }
 
     @Override
     RequestWithContent patch(Matcher&lt;String&gt; matcher) {
-<span class="pc" id="L251">        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders, globalEncoders)) as RequestWithContent</span>
+<span class="pc" id="L266">        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders, globalEncoders)) as RequestWithContent</span>
     }
 
     @Override
-    RequestWithContent patch(Matcher&lt;String&gt; matcher, @DelegatesTo(RequestWithContent) Closure closure) {
-<span class="pc" id="L256">        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders, globalEncoders), closure) as RequestWithContent</span>
+    RequestWithContent patch(Matcher&lt;String&gt; matcher, @DelegatesTo(value=RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="pc" id="L271">        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders, globalEncoders), closure) as RequestWithContent</span>
     }
 
     @Override
     RequestWithContent patch(Matcher&lt;String&gt; matcher, Consumer&lt;RequestWithContent&gt; config) {
-<span class="pc" id="L261">        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders, globalEncoders), config) as RequestWithContent</span>
+<span class="pc" id="L276">        expect(new ErsatzRequestWithContent(PATCH, matcher, globalDecoders, globalEncoders), config) as RequestWithContent</span>
     }
 
     @Override
     Request options(String path) {
-<span class="pc" id="L266">        options(pathMatcher(path))</span>
+<span class="pc" id="L281">        options(pathMatcher(path))</span>
     }
 
     @Override
-    Request options(String path, @DelegatesTo(Request) Closure closure) {
-<span class="pc" id="L271">        options(pathMatcher(path), closure)</span>
+    Request options(String path, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="pc" id="L286">        options(pathMatcher(path), closure)</span>
     }
 
     @Override
     Request options(String path, Consumer&lt;Request&gt; config) {
-<span class="pc" id="L276">        options(pathMatcher(path), config)</span>
+<span class="pc" id="L291">        options(pathMatcher(path), config)</span>
     }
 
     @Override
     Request options(Matcher&lt;String&gt; matcher) {
-<span class="pc" id="L281">        expect new ErsatzRequest(OPTIONS, matcher, globalEncoders, true)</span>
+<span class="pc" id="L296">        expect new ErsatzRequest(OPTIONS, matcher, globalEncoders, true)</span>
     }
 
     @Override
-    Request options(Matcher&lt;String&gt; matcher, @DelegatesTo(Request) Closure closure) {
-<span class="pc" id="L286">        expect new ErsatzRequest(OPTIONS, matcher, globalEncoders, true), closure</span>
+    Request options(Matcher&lt;String&gt; matcher, @DelegatesTo(value=Request, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="pc" id="L301">        expect new ErsatzRequest(OPTIONS, matcher, globalEncoders, true), closure</span>
     }
 
     @Override
     Request options(Matcher&lt;String&gt; matcher, Consumer&lt;Request&gt; config) {
-<span class="pc" id="L291">        expect new ErsatzRequest(OPTIONS, matcher, globalEncoders), config</span>
+<span class="pc" id="L306">        expect new ErsatzRequest(OPTIONS, matcher, globalEncoders), config</span>
     }
 
     @Override
     WebSocketExpectations ws(final String path) {
-<span class="fc" id="L296">        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path)</span>
-<span class="fc" id="L297">        webSockets[path] = wse</span>
-<span class="pc" id="L298">        wse</span>
+<span class="fc" id="L311">        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path)</span>
+<span class="fc" id="L312">        webSockets[path] = wse</span>
+<span class="pc" id="L313">        wse</span>
     }
 
     @Override
-    WebSocketExpectations ws(String path, @DelegatesTo(WebSocketExpectations) Closure closure) {
-<span class="fc" id="L303">        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path)</span>
-
-<span class="fc" id="L305">        closure.delegate = wse</span>
-<span class="fc" id="L306">        closure.call()</span>
-
-<span class="fc" id="L308">        webSockets[path] = wse</span>
-
-<span class="pc" id="L310">        wse</span>
-    }
-
-    @Override
-    WebSocketExpectations ws(String path, Consumer&lt;WebSocketExpectations&gt; config) {
-<span class="fc" id="L315">        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path)</span>
-<span class="fc" id="L316">        config.accept(wse)</span>
-
-<span class="fc" id="L318">        webSockets[path] = wse</span>
-
+    WebSocketExpectations ws(final String path, @DelegatesTo(value = WebSocketExpectations, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="fc" id="L318">        WebSocketExpectationsImpl wse = delegateTo(new WebSocketExpectationsImpl(path), closure)</span>
+<span class="fc" id="L319">        webSockets[path] = wse</span>
 <span class="pc" id="L320">        wse</span>
     }
 
+    @Override
+    WebSocketExpectations ws(final String path, Consumer&lt;WebSocketExpectations&gt; config) {
+<span class="fc" id="L325">        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path)</span>
+<span class="fc" id="L326">        config.accept(wse)</span>
+
+<span class="fc" id="L328">        webSockets[path] = wse</span>
+
+<span class="pc" id="L330">        wse</span>
+    }
+
     Set&lt;String&gt; getWebSocketPaths() {
-<span class="pc" id="L324">        webSockets.keySet()</span>
+<span class="pc" id="L334">        webSockets.keySet()</span>
     }
 
     /**
@@ -331,11 +341,11 @@ class ExpectationsImpl implements Expectations {
      * @return the matching request expectation
      */
     Request findMatch(final ClientRequest clientRequest) {
-<span class="pc" id="L334">        requests.find { r -&gt; ((ErsatzRequest) r).matches(clientRequest) }</span>
+<span class="pc" id="L344">        requests.find { r -&gt; ((ErsatzRequest) r).matches(clientRequest) }</span>
     }
 
     WebSocketExpectations findWsMatch(final String path) {
-<span class="pc" id="L338">        webSockets[path]</span>
+<span class="pc" id="L348">        webSockets[path]</span>
     }
 
     /**
@@ -344,7 +354,7 @@ class ExpectationsImpl implements Expectations {
      * @return the list of request expectations
      */
     List&lt;Request&gt; getRequests() {
-<span class="pc" id="L347">        requests.asImmutable()</span>
+<span class="pc" id="L357">        requests.asImmutable()</span>
     }
 
     /**
@@ -353,36 +363,34 @@ class ExpectationsImpl implements Expectations {
      * @return a value of true if all requests are verified
      */
     boolean verify(final long timeout = 1, final TimeUnit unit = SECONDS) {
-<span class="fc" id="L356">        requests.each { r -&gt;</span>
-<span class="pc bpc" id="L357" title="1 of 2 branches missed.">            assert ((ErsatzRequest) r).verify(), &quot;Expectations for $r were not met.&quot;</span>
+<span class="fc" id="L366">        requests.each { r -&gt;</span>
+<span class="pc bpc" id="L367" title="1 of 2 branches missed.">            assert ((ErsatzRequest) r).verify(), &quot;Expectations for $r were not met.&quot;</span>
         }
-<span class="fc" id="L359">        webSockets.each { p, w -&gt;</span>
-<span class="pc bpc" id="L360" title="1 of 2 branches missed.">            assert ((WebSocketExpectationsImpl) w).verify(timeout, unit), &quot;WebSocket expectations for $w were not met.&quot;</span>
+<span class="fc" id="L369">        webSockets.each { p, w -&gt;</span>
+<span class="pc bpc" id="L370" title="1 of 2 branches missed.">            assert ((WebSocketExpectationsImpl) w).verify(timeout, unit), &quot;WebSocket expectations for $w were not met.&quot;</span>
         }
-<span class="pc" id="L362">        true</span>
+<span class="pc" id="L372">        true</span>
     }
 
     private Request expect(final Request request) {
-<span class="fc" id="L366">        requests.add(request)</span>
-<span class="pc" id="L367">        request</span>
+<span class="fc" id="L376">        requests.add(request)</span>
+<span class="pc" id="L377">        request</span>
     }
 
     private Request expect(final Request request, final Closure closure) {
-<span class="fc" id="L371">        closure.setDelegate(request)</span>
-<span class="fc" id="L372">        closure.call()</span>
-
-<span class="fc" id="L374">        requests.add(request)</span>
-<span class="pc" id="L375">        request</span>
+<span class="fc" id="L381">        delegateTo(request, closure)</span>
+<span class="fc" id="L382">        requests.add(request)</span>
+<span class="pc" id="L383">        request</span>
     }
 
     private Request expect(final Request request, final Consumer&lt;? extends Request&gt; consumer) {
-<span class="fc" id="L379">        consumer.accept(request)</span>
-<span class="fc" id="L380">        requests.add(request)</span>
-<span class="pc" id="L381">        request</span>
+<span class="fc" id="L387">        consumer.accept(request)</span>
+<span class="fc" id="L388">        requests.add(request)</span>
+<span class="pc" id="L389">        request</span>
     }
 
     private static Matcher&lt;String&gt; pathMatcher(final String path) {
-<span class="pc bfc" id="L385" title="All 2 branches covered.">        path == '*' ? Matchers.any(String) : equalTo(path)</span>
+<span class="pc bfc" id="L393" title="All 2 branches covered.">        path == '*' ? Matchers.any(String) : equalTo(path)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

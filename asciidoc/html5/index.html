@@ -528,13 +528,14 @@ table.CodeRay td.code>pre{padding:0}
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
 <span id="email" class="email"><a href="mailto:chris@stehno.com">chris@stehno.com</a></span><br>
-<span id="revnumber">version 1.8.0,</span>
-<span id="revdate">December 2017</span>
+<span id="revnumber">version 1.8.1,</span>
+<span id="revdate">October 2018</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_introduction">Introduction</a></li>
+<li><a href="#_whats_new_in_1_8">What&#8217;s New in 1.8</a></li>
 <li><a href="#_getting_started">Getting Started</a></li>
 <li><a href="#_ersatz_server">Ersatz Server</a>
 <ul class="sectlevel2">
@@ -606,6 +607,7 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 <li><a href="#_request_timeout">Request Timeout</a></li>
 <li><a href="#_request_response_compression">Request / Response Compression</a></li>
+<li><a href="#_chunked_response">Chunked Response</a></li>
 <li><a href="#_multipart_request_content">Multipart Request Content</a></li>
 <li><a href="#_multipart_response_content">Multipart Response Content</a></li>
 </ul>
@@ -660,6 +662,33 @@ frameworks.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_whats_new_in_1_8">What&#8217;s New in 1.8</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Variable scope changes - the configuration Groovy DSL closures had incorrect (or inadequate) resolution strategies specified which caused variables to be resolved incorrectly in some situations. All of the closures now use <code>DELEGATE_FIRST</code>; however, beware this may cause some issues with existing code.</p>
+</li>
+<li>
+<p>Deprecation of the <code>Response</code> <code>content(&#8230;&#8203;)</code> methods in favor of the new <code>body(&#8230;&#8203;)</code> methods.</p>
+</li>
+<li>
+<p>ANSI color codes were added to the match failure reports to make them a bit more readable.</p>
+</li>
+<li>
+<p>A couple of helper methods were added to <code>ErsatzServer</code> to facilitate simple URL string building - see <code>httpUrl(String)</code> and <code>httpsUrl(String)</code>.</p>
+</li>
+<li>
+<p>A JUnit 5 <code>Extension</code> was added to make server management simple with JUnit 5, similar to what already existed for JUnit 4.</p>
+</li>
+<li>
+<p>Support for "chunked" responses with fixed or random delays between chunks has been added.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_getting_started">Getting Started</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -671,7 +700,7 @@ methods:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:1.8.0'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:1.8.1'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -682,7 +711,7 @@ methods:</p>
 <pre>&lt;dependency&gt;
     &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
-    &lt;version&gt;1.8.0&lt;/version&gt;
+    &lt;version&gt;1.8.1&lt;/version&gt;
     &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</pre>
 </div>
@@ -764,7 +793,7 @@ called more than once, the verification and likewise the test, would fail.</p>
     <span class="directive">public</span> sayHello(){
         ersatzServer.expectations(expectations -&gt; {
             expectations.get(<span class="string"><span class="delimiter">&quot;</span><span class="content">/say/hello</span><span class="delimiter">&quot;</span></span>).called(<span class="integer">1</span>).query(<span class="string"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>,<span class="string"><span class="delimiter">&quot;</span><span class="content">Ersatz</span><span class="delimiter">&quot;</span></span>)
-                .responder().content(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello Ersatz</span><span class="delimiter">&quot;</span></span>, ContentType.TEXT_PLAIN)
+                .responder().body(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello Ersatz</span><span class="delimiter">&quot;</span></span>, ContentType.TEXT_PLAIN)
         })
 
         <span class="predefined-type">String</span> url = ersatzServer.getHttpUrl() + <span class="string"><span class="delimiter">&quot;</span><span class="content">/say/hello?name=Ersatz</span><span class="delimiter">&quot;</span></span>;
@@ -882,7 +911,7 @@ interface provides a <code>called</code> method to add call count verification p
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">post(<span class="string"><span class="delimiter">'</span><span class="content">/user</span><span class="delimiter">'</span></span>).body(content, <span class="string"><span class="delimiter">'</span><span class="content">application/json</span><span class="delimiter">'</span></span>).called(<span class="integer">1</span>)
-    .responds().content(successContent, <span class="string"><span class="delimiter">'</span><span class="content">application/json</span><span class="delimiter">'</span></span>)</code></pre>
+    .responds().body(successContent, <span class="string"><span class="delimiter">'</span><span class="content">application/json</span><span class="delimiter">'</span></span>)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -908,9 +937,9 @@ proper management:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>likewise, in a JUnit test (Groovy or Java) you may use the <code>ErsatzServerRule</code> class, which is a
+<p>likewise, in a JUnit test (Groovy or Java) you may use the <code>ErsatzServerRule</code> class (for JUnit 4), which is a
 <a href="https://github.com/junit-team/junit4/wiki/Rules">JUnit Rule</a> implementation delegating to an <code>ErsatzServer</code>; it automatically calls the <code>stop()</code> method
-after each test method, though the <code>start()</code> method must still be called manually.</p>
+after each test method, though the <code>start()</code> method must still be called manually (if not in auto-start mode).</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -918,7 +947,7 @@ after each test method, though the <code>start()</code> method must still be cal
 
 <span class="annotation">@Test</span> <span class="directive">public</span> <span class="type">void</span> hello(){
     ersatzServer.expectations(expectations -&gt; {
-        expectations.get(<span class="string"><span class="delimiter">&quot;</span><span class="content">/testing</span><span class="delimiter">&quot;</span></span>).responds().content(<span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span>);
+        expectations.get(<span class="string"><span class="delimiter">&quot;</span><span class="content">/testing</span><span class="delimiter">&quot;</span></span>).responds().body(<span class="string"><span class="delimiter">&quot;</span><span class="content">ok</span><span class="delimiter">&quot;</span></span>);
     }).start();
 
     okhttp3.Response response = <span class="keyword">new</span> OkHttpClient().newCall(
@@ -931,8 +960,32 @@ after each test method, though the <code>start()</code> method must still be cal
 </div>
 </div>
 <div class="paragraph">
-<p>The server may be restarted after it has been stopped; however, be aware that expectation configuration is additive and existing configuration will
-remain on server start even if new expectations are configured.</p>
+<p>The server may be restarted after it has been stopped between tests.</p>
+</div>
+<div class="paragraph">
+<p>Also, there is an <code>Extension</code> for JUnit 5 providing a similar interface:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@ExtendWith</span>(ErsatzServerSupport.class)
+<span class="type">class</span> <span class="class">Junit5Test</span> {
+
+    <span class="directive">private</span> ErsatzServer server = <span class="keyword">new</span> ErsatzServer();
+    <span class="directive">private</span> <span class="directive">final</span> HttpClient http = <span class="keyword">new</span> HttpClient();
+
+    <span class="annotation">@Test</span> <span class="annotation">@DisplayName</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">Testing JUnit 5 Support</span><span class="delimiter">&quot;</span></span>)
+    <span class="type">void</span> testing_junit5_support() <span class="directive">throws</span> <span class="exception">IOException</span> {
+        server.expectations(expects -&gt; {
+            expects.get(<span class="string"><span class="delimiter">&quot;</span><span class="content">/junit5</span><span class="delimiter">&quot;</span></span>).responds().code(<span class="integer">200</span>).body(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hi</span><span class="delimiter">&quot;</span></span>, TEXT_PLAIN);
+        });
+
+        assertThat(http.get(server.httpUrl(<span class="string"><span class="delimiter">&quot;</span><span class="content">/junit5</span><span class="delimiter">&quot;</span></span>)).body().string(), equalTo(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hi</span><span class="delimiter">&quot;</span></span>));
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After each test, the server will be stopped and the expectations cleared out.</p>
 </div>
 </div>
 </div>
@@ -1378,7 +1431,7 @@ using the <code>get()</code> methods, as follows:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">ersatzServer.expectations {
-    get(<span class="string"><span class="delimiter">'</span><span class="content">/something</span><span class="delimiter">'</span></span>).responds().content(<span class="string"><span class="delimiter">'</span><span class="content">This is INTERESTING!</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">text/plain</span><span class="delimiter">'</span></span>).code(<span class="integer">200</span>)
+    get(<span class="string"><span class="delimiter">'</span><span class="content">/something</span><span class="delimiter">'</span></span>).responds().body(<span class="string"><span class="delimiter">'</span><span class="content">This is INTERESTING!</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">text/plain</span><span class="delimiter">'</span></span>).code(<span class="integer">200</span>)
 }</code></pre>
 </div>
 </div>
@@ -1423,7 +1476,7 @@ may be made against a specific URL path, or against <code>*</code> in order to d
     post(<span class="string"><span class="delimiter">'</span><span class="content">/form</span><span class="delimiter">'</span></span>){
         body([<span class="key">first</span>:<span class="string"><span class="delimiter">'</span><span class="content">John</span><span class="delimiter">'</span></span>, <span class="key">last</span>:<span class="string"><span class="delimiter">'</span><span class="content">Doe</span><span class="delimiter">'</span></span>], APPLICATION_URLENCODED)
         responder {
-            content(<span class="string"><span class="delimiter">'</span><span class="content">{ status:</span><span class="delimiter">'</span></span>saved<span class="string"><span class="delimiter">'</span><span class="content"> }</span><span class="delimiter">'</span></span>, APPLICATION_JSON)
+            body(<span class="string"><span class="delimiter">'</span><span class="content">{ status:</span><span class="delimiter">'</span></span>saved<span class="string"><span class="delimiter">'</span><span class="content"> }</span><span class="delimiter">'</span></span>, APPLICATION_JSON)
         }
     }
 }</code></pre>
@@ -1544,7 +1597,7 @@ connection.requestMethod = <span class="string"><span class="delimiter">'</span>
 <span class="keyword">assert</span> connection.inputStream.text.readLines()*.trim() == <span class="string"><span class="delimiter">&quot;&quot;&quot;</span><span class="content">TRACE /info?data=foo+barHTTP/1.1
     Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
     Connection: keep-alive
-    User-Agent: Java/1.8.0_121
+    User-Agent: Java/1.8.1_121
     Host: localhost:</span><span class="inline"><span class="inline-delimiter">${</span>ersatzServer.httpPort<span class="inline-delimiter">}</span></span><span class="content">
 </span><span class="delimiter">&quot;&quot;&quot;</span></span>.readLines()*.trim()</code></pre>
 </div>
@@ -1944,12 +1997,55 @@ ErsatzServer server = <span class="keyword">new</span> ErsatzServer({
 <div class="paragraph">
 <p>This will allow some wiggle room in tests with high volumes of data or having complex matching logic to be resolved.</p>
 </div>
+<div class="paragraph">
+<p>INFO: The timeout is a bit of a shotgun approach, as it sets a handful of timeout options to the specified value. See the API docs for more details.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_request_response_compression">Request / Response Compression</h3>
 <div class="paragraph">
 <p>Ersatz supports GZip and Deflate compression seamlessly as long as the <code>Accept-Encoding</code> header is specified as <code>gzip</code> or <code>deflate</code>. If the response
 is compressed, a <code>Content-Encoding</code> header will be added to the response with the appropriate compression type as the value.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_chunked_response">Chunked Response</h3>
+<div class="paragraph">
+<p>A response may be configured as a "chunked" response, wherein the response data is sent to the client in small bits along with an additional response
+header, the <code>Transfer-encoding: chunked</code> header. For testing purposes, a fixed or randomized range of time delay may be configured so that the chunks
+may be sent slowly, to more accurately simulate a real environment.</p>
+</div>
+<div class="paragraph">
+<p>To configure a chunked response, provide a <code>ChunkingConfig</code> to the response configuration:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ersatzServer.expectations {
+    get(<span class="string"><span class="delimiter">'</span><span class="content">/chunky</span><span class="delimiter">'</span></span>).responder {
+        body <span class="string"><span class="delimiter">'</span><span class="content">This is chunked content</span><span class="delimiter">'</span></span>, TEXT_PLAIN
+        chunked {
+            chunks <span class="integer">3</span>
+            delay <span class="integer">100</span>..<span class="integer">500</span>
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the example, the response content will be broken into <code>3</code> roughly equal chunks, each of which is sent to the client after a random delay between 100 and
+500 milliseconds. This <code>delay</code> value may also be a fixed number of milliseconds, or omitted to send the content as fast as possible.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+The <code>Transfer-encoding</code> response header will be set automatically when a <code>chunked</code> configuration is specified on the response.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -2053,7 +2149,7 @@ response configuration. No part encoders are provided by default.</p>
     get(<span class="string"><span class="delimiter">'</span><span class="content">/data</span><span class="delimiter">'</span></span>) {
         responder {
             encoder ContentType.MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
-            content(multipart {
+            body(multipart {
                 <span class="comment">// configure the part encoders</span>
                 encoder TEXT_PLAIN, <span class="predefined-type">CharSequence</span>, { o -&gt; o <span class="keyword">as</span> <span class="predefined-type">String</span> }
                 encoder IMAGE_JPG, <span class="predefined-type">File</span>, { o -&gt; ((<span class="predefined-type">File</span>)o).bytes.encodeBase64() }
@@ -2106,8 +2202,8 @@ expectation configuration will be done on a standard <code>ErsatzServer</code> i
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">ErsatzServer ersatzServer = <span class="keyword">new</span> ErsatzServer({
     expectations {
-        get(<span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>).called(<span class="integer">1</span>).responds().code(<span class="integer">200</span>).content(<span class="string"><span class="delimiter">'</span><span class="content">Hello</span><span class="delimiter">'</span></span>, TEXT_PLAIN)
-        get(<span class="string"><span class="delimiter">'</span><span class="content">/foo</span><span class="delimiter">'</span></span>).called(<span class="integer">1</span>).responds().code(<span class="integer">200</span>).content(<span class="string"><span class="delimiter">'</span><span class="content">Foo!</span><span class="delimiter">'</span></span>, TEXT_PLAIN)
+        get(<span class="string"><span class="delimiter">'</span><span class="content">/</span><span class="delimiter">'</span></span>).called(<span class="integer">1</span>).responds().code(<span class="integer">200</span>).body(<span class="string"><span class="delimiter">'</span><span class="content">Hello</span><span class="delimiter">'</span></span>, TEXT_PLAIN)
+        get(<span class="string"><span class="delimiter">'</span><span class="content">/foo</span><span class="delimiter">'</span></span>).called(<span class="integer">1</span>).responds().code(<span class="integer">200</span>).body(<span class="string"><span class="delimiter">'</span><span class="content">Foo!</span><span class="delimiter">'</span></span>, TEXT_PLAIN)
     }
 })
 
@@ -2191,7 +2287,7 @@ Undertow library and its JBoss dependencies repackaged in the jar. You can use t
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:1.8.0:safe@jar'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:1.8.1:safe@jar'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2202,7 +2298,7 @@ Undertow library and its JBoss dependencies repackaged in the jar. You can use t
 <pre>&lt;dependency&gt;
     &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
-    &lt;version&gt;1.8.0&lt;/version&gt;
+    &lt;version&gt;1.8.1&lt;/version&gt;
     &lt;type&gt;jar&lt;/type&gt;
     &lt;scope&gt;test&lt;/scope&gt;
     &lt;classifier&gt;safe&lt;/classifier&gt;
@@ -2271,7 +2367,7 @@ example would be:</p>
     post(<span class="string"><span class="delimiter">'</span><span class="content">/form</span><span class="delimiter">'</span></span>) {
         body([<span class="key">alpha</span>: <span class="string"><span class="delimiter">'</span><span class="content">some data</span><span class="delimiter">'</span></span>, <span class="key">bravo</span>: <span class="string"><span class="delimiter">'</span><span class="content">42</span><span class="delimiter">'</span></span>], <span class="string"><span class="delimiter">'</span><span class="content">application/x-www-form-urlencoded</span><span class="delimiter">'</span></span>)
         responder {
-            content <span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>
+            body <span class="string"><span class="delimiter">'</span><span class="content">ok</span><span class="delimiter">'</span></span>
         }
     }
 }</code></pre>
@@ -2344,7 +2440,7 @@ ersatz.expectations {
     get(<span class="string"><span class="delimiter">'</span><span class="content">/download</span><span class="delimiter">'</span></span>){
         responder {
             header <span class="string"><span class="delimiter">'</span><span class="content">Content-Disposition</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">attachment; filename=</span><span class="char">\&quot;</span><span class="inline"><span class="inline-delimiter">${</span>file.name<span class="inline-delimiter">}</span></span><span class="char">\&quot;</span><span class="delimiter">&quot;</span></span>
-            content file, TEXT_PLAIN
+            body file, TEXT_PLAIN
         }
     }
 }</code></pre>
@@ -2365,7 +2461,7 @@ ersatz.expectations {
 
 ersatz.expectations { expectations -&gt;
     expectations.get(&quot;/kotlin&quot;).called(1).responder { response -&gt;
-        response.content(&quot;Hello Kotlin!&quot;, ContentType.TEXT_PLAIN).code(200)
+        response.body(&quot;Hello Kotlin!&quot;, ContentType.TEXT_PLAIN).code(200)
     }
 }
 
@@ -2383,8 +2479,8 @@ println( http.newCall(request).execute().body().string() )</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.8.0<br>
-Last updated 2018-10-13 06:55:15 CDT
+Version 1.8.1<br>
+Last updated 2018-10-13 07:41:23 CDT
 </div>
 </div>
 </body>

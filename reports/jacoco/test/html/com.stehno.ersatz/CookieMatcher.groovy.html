@@ -22,6 +22,8 @@ import org.hamcrest.Matcher
 
 import java.util.function.Consumer
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
 import static org.hamcrest.Matchers.equalTo
 
 /**
@@ -38,11 +40,8 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @param closure the configuration closure
      * @return the configured matcher
      */
-    static CookieMatcher cookieMatcher(@DelegatesTo(CookieMatcher) final Closure closure) {
-<span class="fc" id="L42">        CookieMatcher cookieMatcher = new CookieMatcher()</span>
-<span class="fc" id="L43">        closure.delegate = cookieMatcher</span>
-<span class="fc" id="L44">        closure.call()</span>
-<span class="pc" id="L45">        cookieMatcher</span>
+    static CookieMatcher cookieMatcher(@DelegatesTo(value = CookieMatcher, strategy = DELEGATE_FIRST) final Closure closure) {
+<span class="pc" id="L44">        delegateTo(new CookieMatcher(), closure)</span>
     }
 
     /**
@@ -52,9 +51,9 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return the configured matcher
      */
     static CookieMatcher cookieMatcher(final Consumer&lt;CookieMatcher&gt; consumer) {
-<span class="nc" id="L55">        CookieMatcher cookieMatcher = new CookieMatcher()</span>
-<span class="nc" id="L56">        consumer.accept(cookieMatcher)</span>
-<span class="nc" id="L57">        cookieMatcher</span>
+<span class="nc" id="L54">        CookieMatcher cookieMatcher = new CookieMatcher()</span>
+<span class="nc" id="L55">        consumer.accept(cookieMatcher)</span>
+<span class="nc" id="L56">        cookieMatcher</span>
     }
 
     /**
@@ -64,7 +63,7 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher value(final String val) {
-<span class="pc" id="L67">        value(equalTo(val))</span>
+<span class="pc" id="L66">        value(equalTo(val))</span>
     }
 
     /**
@@ -74,8 +73,8 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher value(final Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L77">        matchers['value'] = matcher</span>
-<span class="pc" id="L78">        this</span>
+<span class="fc" id="L76">        matchers['value'] = matcher</span>
+<span class="pc" id="L77">        this</span>
     }
 
     /**
@@ -85,7 +84,7 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher comment(final String str) {
-<span class="pc" id="L88">        comment equalTo(str)</span>
+<span class="pc" id="L87">        comment equalTo(str)</span>
     }
 
     /**
@@ -95,8 +94,8 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher comment(final Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L98">        matchers['comment'] = matcher</span>
-<span class="pc" id="L99">        this</span>
+<span class="fc" id="L97">        matchers['comment'] = matcher</span>
+<span class="pc" id="L98">        this</span>
     }
 
     /**
@@ -106,7 +105,7 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher domain(final String str) {
-<span class="pc" id="L109">        domain equalTo(str)</span>
+<span class="pc" id="L108">        domain equalTo(str)</span>
     }
 
     /**
@@ -116,8 +115,8 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher domain(final Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L119">        matchers['domain'] = matcher</span>
-<span class="pc" id="L120">        this</span>
+<span class="fc" id="L118">        matchers['domain'] = matcher</span>
+<span class="pc" id="L119">        this</span>
     }
 
     /**
@@ -127,7 +126,7 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher path(final String str) {
-<span class="pc" id="L130">        path equalTo(str)</span>
+<span class="pc" id="L129">        path equalTo(str)</span>
     }
 
     /**
@@ -137,8 +136,8 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher path(final Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L140">        matchers['path'] = matcher</span>
-<span class="pc" id="L141">        this</span>
+<span class="fc" id="L139">        matchers['path'] = matcher</span>
+<span class="pc" id="L140">        this</span>
     }
 
     /**
@@ -148,7 +147,7 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher version(final int vers) {
-<span class="pc" id="L151">        version equalTo(vers)</span>
+<span class="pc" id="L150">        version equalTo(vers)</span>
     }
 
     /**
@@ -158,8 +157,8 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher version(final Matcher&lt;Integer&gt; matcher) {
-<span class="fc" id="L161">        matchers['version'] = matcher</span>
-<span class="pc" id="L162">        this</span>
+<span class="fc" id="L160">        matchers['version'] = matcher</span>
+<span class="pc" id="L161">        this</span>
     }
 
     /**
@@ -169,8 +168,8 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher httpOnly(final boolean httpOnly) {
-<span class="fc" id="L172">        matchers['httpOnly'] = equalTo(httpOnly)</span>
-<span class="pc" id="L173">        this</span>
+<span class="fc" id="L171">        matchers['httpOnly'] = equalTo(httpOnly)</span>
+<span class="pc" id="L172">        this</span>
     }
 
     /**
@@ -180,7 +179,7 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher maxAge(final int age) {
-<span class="pc" id="L183">        maxAge equalTo(age)</span>
+<span class="pc" id="L182">        maxAge equalTo(age)</span>
     }
 
     /**
@@ -190,8 +189,8 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher maxAge(final Matcher&lt;Integer&gt; matcher) {
-<span class="fc" id="L193">        matchers['maxAge'] = matcher</span>
-<span class="pc" id="L194">        this</span>
+<span class="fc" id="L192">        matchers['maxAge'] = matcher</span>
+<span class="pc" id="L193">        this</span>
     }
 
     /**
@@ -201,50 +200,50 @@ class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {
      * @return a reference to the matcher being configured
      */
     CookieMatcher secure(final boolean secure) {
-<span class="fc" id="L204">        matchers['secure'] = equalTo(secure)</span>
-<span class="pc" id="L205">        this</span>
+<span class="fc" id="L203">        matchers['secure'] = equalTo(secure)</span>
+<span class="pc" id="L204">        this</span>
     }
 
     @Override
     boolean matches(final Object item) {
-<span class="fc bfc" id="L210" title="All 4 branches covered.">        if (!(item instanceof Cookie)) {</span>
-<span class="fc" id="L211">            return false</span>
+<span class="fc bfc" id="L209" title="All 4 branches covered.">        if (!(item instanceof Cookie)) {</span>
+<span class="fc" id="L210">            return false</span>
         }
 
-<span class="fc" id="L214">        Cookie cookie = item as Cookie</span>
+<span class="fc" id="L213">        Cookie cookie = item as Cookie</span>
 
-<span class="pc" id="L216">        matchers.every { field, matcher -&gt;</span>
-<span class="fc" id="L217">            switch (field) {</span>
-<span class="fc bfc" id="L218" title="All 2 branches covered.">                case 'value':</span>
-<span class="pc" id="L219">                    return matcher.matches(cookie.value)</span>
-<span class="fc bfc" id="L220" title="All 2 branches covered.">                case 'comment':</span>
-<span class="pc" id="L221">                    return matcher.matches(cookie.comment)</span>
-<span class="fc bfc" id="L222" title="All 2 branches covered.">                case 'domain':</span>
-<span class="pc" id="L223">                    return matcher.matches(cookie.domain)</span>
-<span class="fc bfc" id="L224" title="All 2 branches covered.">                case 'path':</span>
-<span class="pc" id="L225">                    return matcher.matches(cookie.path)</span>
-<span class="fc bfc" id="L226" title="All 2 branches covered.">                case 'maxAge':</span>
-<span class="pc" id="L227">                    return matcher.matches(cookie.maxAge)</span>
-<span class="fc bfc" id="L228" title="All 2 branches covered.">                case 'httpOnly':</span>
-<span class="pc" id="L229">                    return matcher.matches(cookie.httpOnly)</span>
-<span class="fc bfc" id="L230" title="All 2 branches covered.">                case 'secure':</span>
-<span class="pc" id="L231">                    return matcher.matches(cookie.secure)</span>
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">                case 'version':</span>
-<span class="fc" id="L233">                    return matcher.matches(cookie.version)</span>
+<span class="pc" id="L215">        matchers.every { field, matcher -&gt;</span>
+<span class="fc" id="L216">            switch (field) {</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">                case 'value':</span>
+<span class="pc" id="L218">                    return matcher.matches(cookie.value)</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">                case 'comment':</span>
+<span class="pc" id="L220">                    return matcher.matches(cookie.comment)</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">                case 'domain':</span>
+<span class="pc" id="L222">                    return matcher.matches(cookie.domain)</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">                case 'path':</span>
+<span class="pc" id="L224">                    return matcher.matches(cookie.path)</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">                case 'maxAge':</span>
+<span class="pc" id="L226">                    return matcher.matches(cookie.maxAge)</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">                case 'httpOnly':</span>
+<span class="pc" id="L228">                    return matcher.matches(cookie.httpOnly)</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">                case 'secure':</span>
+<span class="pc" id="L230">                    return matcher.matches(cookie.secure)</span>
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">                case 'version':</span>
+<span class="fc" id="L232">                    return matcher.matches(cookie.version)</span>
                 default:
-<span class="nc" id="L235">                    return false</span>
+<span class="nc" id="L234">                    return false</span>
             }
         }
     }
 
     @Override
     void describeTo(final Description description) {
-<span class="fc" id="L242">        description.appendText('Cookie matching ')</span>
+<span class="fc" id="L241">        description.appendText('Cookie matching ')</span>
 
-<span class="fc" id="L244">        matchers.each { field, matcher -&gt;</span>
-<span class="fc" id="L245">            description.appendText(&quot;${field}(&quot;)</span>
-<span class="fc" id="L246">            matcher.describeTo(description)</span>
-<span class="pc" id="L247">            description.appendText(') ')</span>
+<span class="fc" id="L243">        matchers.each { field, matcher -&gt;</span>
+<span class="fc" id="L244">            description.appendText(&quot;${field}(&quot;)</span>
+<span class="fc" id="L245">            matcher.describeTo(description)</span>
+<span class="pc" id="L246">            description.appendText(') ')</span>
         }
     }
 }

@@ -68,8 +68,8 @@
                 <li>Provides a Java 8 compatible builder interface</li>
                 <li>Provides a Groovy configuration DSL</li>
                 <li>Works well with Kotlin</li>
-                <li>Compatible with the <a href="http://junit.org/junit4/">JUnit</a> and <a href="http://spockframework.org/">Spock</a> testing
-                    frameworks (and probably others)
+                <li>Compatible with the <a href="http://junit.org/">JUnit (4 or 5)</a> and <a href="http://spockframework.org/">Spock</a> testing
+                    frameworks (and probably others).
                 </li>
                 <li>Allows configuration of expectations for requests and expected responses</li>
                 <li>Support for <a href="http://hamcrest.org/" target="_blank">Hamcrest</a> matchers</li>
@@ -84,6 +84,7 @@
                 <li>Alternate distribution as a shadowed jar with the Undertow library repackaged to avoid collisions.</li>
                 <li>Support for upload requests with up to 1.5 GB of content and response downloads of up to 500 MG.</li>
                 <li>Support for simulating web socket message sending and receiving.</li>
+                <li>Support for chunked response content (e.g. Transfer-encoding: "chunked"), with optional delay times.</li>
             </ul>
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Getting Started</h2>
@@ -99,7 +100,7 @@ ersatz.expectations {
         called 1
         query 'name', 'Ersatz'
         responder {
-            content 'Hello Ersatz', 'text/plain'
+            body 'Hello Ersatz', 'text/plain'
         }
     }
 }
@@ -117,7 +118,7 @@ ersatz.stop()</code></pre>
 
             <pre><code>server.expectations {
     get('/say/hello').called(1).query('name','Ersatz')
-        .responds().content('Hello Ersatz','text/plain')
+        .responds().body('Hello Ersatz','text/plain')
 }</code></pre>
 
             <p>Standard Java 8 may also be used; the `expectations` block in the example above would look very similar in Java:</p>
@@ -128,7 +129,7 @@ server.expectations(expectations -> {
     expectations.get("/say/hello", req -> {
         req.called(1)
         req.query("name","Ersatz")
-        req.responder().content("Hello Ersatz","text/plain")
+        req.responder().body("Hello Ersatz","text/plain")
     }
 }).start();
 </code></pre>
@@ -139,14 +140,14 @@ server.expectations(expectations -> {
 
             The Ersatz Server library is available on Bintray (JCenter) and Maven Central; it may be added to a project via Gradle dependency:
 
-            <pre><code>testCompile 'com.stehno.ersatz:ersatz:1.8.0'</code></pre>
+            <pre><code>testCompile 'com.stehno.ersatz:ersatz:1.8.1'</code></pre>
 
             or for Maven:
 
             <pre><code>&lt;dependency&gt;
     &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
-    &lt;version&gt;1.8.0&lt;/version&gt;
+    &lt;version&gt;1.8.1&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 
             There is also a "safe" (shadow jar) artifact available for situations where the Undertow server is already being used (e.g. Grails or

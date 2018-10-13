@@ -21,6 +21,9 @@ import groovy.transform.CompileStatic
 
 import java.util.function.Consumer
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * Implementation of the ProxyConfig interface providing the configuration functionality for the proxy server.
  */
@@ -40,54 +43,53 @@ class ProxyConfigImpl implements ProxyConfig {
     /**
      * The configured expectations.
      */
-<span class="fc" id="L43">    final ProxyExpectationsImpl expectations = new ProxyExpectationsImpl()</span>
+<span class="fc" id="L46">    final ProxyExpectationsImpl expectations = new ProxyExpectationsImpl()</span>
 
     private static final String ONLY_HTTP_MESSAGE = 'Only HTTP targets are supported at this time.'
     private static final String HTTP = 'http'
 
     @Override
     ProxyConfig autoStart(boolean auto) {
-<span class="fc" id="L50">        autoStart = auto</span>
-<span class="pc" id="L51">        this</span>
+<span class="fc" id="L53">        autoStart = auto</span>
+<span class="pc" id="L54">        this</span>
     }
 
     @Override
     ProxyConfig target(String value) {
-<span class="fc" id="L56">        ensure value.toLowerCase().startsWith('http://'), ONLY_HTTP_MESSAGE</span>
-<span class="fc" id="L57">        targetUri = value.toURI()</span>
-<span class="pc" id="L58">        this</span>
+<span class="fc" id="L59">        ensure value.toLowerCase().startsWith('http://'), ONLY_HTTP_MESSAGE</span>
+<span class="fc" id="L60">        targetUri = value.toURI()</span>
+<span class="pc" id="L61">        this</span>
     }
 
     @Override
     ProxyConfig target(URI value) {
-<span class="fc" id="L63">        ensure value.scheme.equalsIgnoreCase(HTTP), ONLY_HTTP_MESSAGE</span>
-<span class="fc" id="L64">        targetUri = value</span>
-<span class="pc" id="L65">        this</span>
+<span class="fc" id="L66">        ensure value.scheme.equalsIgnoreCase(HTTP), ONLY_HTTP_MESSAGE</span>
+<span class="fc" id="L67">        targetUri = value</span>
+<span class="pc" id="L68">        this</span>
     }
 
     @Override
     ProxyConfig target(URL value) {
-<span class="fc" id="L70">        ensure value.protocol.equalsIgnoreCase(HTTP), ONLY_HTTP_MESSAGE</span>
-<span class="fc" id="L71">        targetUri = value.toURI()</span>
-<span class="pc" id="L72">        this</span>
+<span class="fc" id="L73">        ensure value.protocol.equalsIgnoreCase(HTTP), ONLY_HTTP_MESSAGE</span>
+<span class="fc" id="L74">        targetUri = value.toURI()</span>
+<span class="pc" id="L75">        this</span>
     }
 
     @Override
-    ProxyConfig expectations(@DelegatesTo(ProxyExpectations) Closure closure) {
-<span class="fc" id="L77">        closure.delegate = expectations</span>
-<span class="fc" id="L78">        closure.call()</span>
-<span class="pc" id="L79">        this</span>
+    ProxyConfig expectations(@DelegatesTo(value = ProxyExpectations, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="fc" id="L80">        delegateTo(expectations, closure)</span>
+<span class="pc" id="L81">        this</span>
     }
 
     @Override
     ProxyConfig expectations(Consumer&lt;ProxyExpectations&gt; consumer) {
-<span class="fc" id="L84">        consumer.accept(expectations)</span>
-<span class="pc" id="L85">        this</span>
+<span class="fc" id="L86">        consumer.accept(expectations)</span>
+<span class="pc" id="L87">        this</span>
     }
 
     private static void ensure(final boolean isTrue, final String message) {
-<span class="pc bpc" id="L89" title="2 of 4 branches missed.">        if (!isTrue) {</span>
-<span class="pc" id="L90">            throw new IllegalArgumentException(message)</span>
+<span class="pc bpc" id="L91" title="2 of 4 branches missed.">        if (!isTrue) {</span>
+<span class="pc" id="L92">            throw new IllegalArgumentException(message)</span>
         }
     }
 }
