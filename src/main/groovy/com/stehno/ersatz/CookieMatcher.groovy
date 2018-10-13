@@ -22,6 +22,8 @@ import org.hamcrest.Matcher
 
 import java.util.function.Consumer
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
 import static org.hamcrest.Matchers.equalTo
 
 /**
@@ -38,11 +40,8 @@ class CookieMatcher extends BaseMatcher<Cookie> {
      * @param closure the configuration closure
      * @return the configured matcher
      */
-    static CookieMatcher cookieMatcher(@DelegatesTo(CookieMatcher) final Closure closure) {
-        CookieMatcher cookieMatcher = new CookieMatcher()
-        closure.delegate = cookieMatcher
-        closure.call()
-        cookieMatcher
+    static CookieMatcher cookieMatcher(@DelegatesTo(value = CookieMatcher, strategy = DELEGATE_FIRST) final Closure closure) {
+        delegateTo(new CookieMatcher(), closure)
     }
 
     /**

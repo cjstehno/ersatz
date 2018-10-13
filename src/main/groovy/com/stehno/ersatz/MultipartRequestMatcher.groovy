@@ -22,7 +22,11 @@ import org.hamcrest.Matcher
 
 import java.util.function.Consumer
 
-import static org.hamcrest.Matchers.*
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.notNullValue
+import static org.hamcrest.Matchers.startsWith
 
 /**
  * A Hamcrest matcher used to match <code>MultipartRequestContent</code>. The matcher may be created directly or by using the closure or consumer
@@ -39,11 +43,8 @@ class MultipartRequestMatcher extends BaseMatcher<MultipartRequestContent> {
      * @param the configuration closure
      * @return a configured matcher instance
      */
-    static MultipartRequestMatcher multipartMatcher(@DelegatesTo(MultipartRequestMatcher) final Closure closure) {
-        MultipartRequestMatcher matcher = new MultipartRequestMatcher()
-        closure.delegate = matcher
-        closure.call()
-        matcher
+    static MultipartRequestMatcher multipartMatcher(@DelegatesTo(value = MultipartRequestMatcher, strategy = DELEGATE_FIRST) final Closure closure) {
+        delegateTo(new MultipartRequestMatcher(), closure)
     }
 
     /**

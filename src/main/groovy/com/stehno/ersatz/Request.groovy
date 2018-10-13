@@ -206,5 +206,5 @@ interface Request {
      * @param closure the <code>Consumer<Response></code> to provide configuration of the response
      * @return a reference to this request
      */
-    Request responder(@DelegatesTo(Response) final Closure closure)
+    Request responder(@DelegatesTo(value = Response, strategy = Closure.DELEGATE_FIRST) final Closure closure)
 }

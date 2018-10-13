@@ -25,8 +25,11 @@ class UnmatchedWsReport {
 
     final WebSocketExpectationsImpl expectations
 
-    @Override @Memoized(maxCacheSize = 1, protectedCacheSize = 1)
-    String toString() {
+    private static final String RED = '\u001b[31m'
+    private static final String GREEN = '\u001b[32m'
+    private static final String RESET = '\u001b[0m'
+
+    @Override @Memoized(maxCacheSize = 1, protectedCacheSize = 1) String toString() {
         StringBuilder out = new StringBuilder()
 
         out.append('# Unmatched Web Socket Message\n\n')
@@ -35,18 +38,24 @@ class UnmatchedWsReport {
 
         out.append "Expectation (${expectations.path}):\n"
 
-        out.append("  ${expectations.connected ? '✓' : 'X'} Client connection made.\n")
+        out.append("  ${mark(expectations.connected)} Client connection made.\n")
 
         int failed = 0
         expectations.eachMessage { ReceivedMessageImpl rm ->
             boolean matched = rm.marked(1, TimeUnit.SECONDS)
-            out.append("  ${matched ? '✓' : 'X'} Received ${rm.messageType} message: ${rm.payload}\n")
-            if (!matched) failed++
+            out.append("  ${mark(matched)} Received ${rm.messageType} message: ${rm.payload}\n")
+            if (!matched) {
+                failed++
+            }
         }
 
         int count = expectations.expectedMessageCount + 1
-        out.append("  ($count matchers: ${count - failed} matched, $failed failed)\n\n")
+        out.append("  ($count matchers: ${count - failed} matched, ${failed ? RED : ''}$failed failed${failed ? RESET : ''})\n\n")
 
         out.toString()
+    }
+
+    private static String mark(final boolean ok) {
+        ok ? "${GREEN}✓${RESET}" : "${RED}X${RESET}"
     }
 }

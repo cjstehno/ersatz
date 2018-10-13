@@ -15,14 +15,36 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.Cookie
+import com.stehno.ersatz.CookieMatcher
+import com.stehno.ersatz.HttpMethod
+import com.stehno.ersatz.Request
+import com.stehno.ersatz.Response
+import com.stehno.ersatz.ResponseEncoders
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.HttpMethod.*
-import static org.hamcrest.Matchers.*
+import static com.stehno.ersatz.HttpMethod.ANY
+import static com.stehno.ersatz.HttpMethod.DELETE
+import static com.stehno.ersatz.HttpMethod.GET
+import static com.stehno.ersatz.HttpMethod.HEAD
+import static com.stehno.ersatz.HttpMethod.OPTIONS
+import static com.stehno.ersatz.HttpMethod.PATCH
+import static com.stehno.ersatz.HttpMethod.POST
+import static com.stehno.ersatz.HttpMethod.PUT
+import static com.stehno.ersatz.HttpMethod.TRACE
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
+import static org.hamcrest.Matchers.anything
+import static org.hamcrest.Matchers.contains
+import static org.hamcrest.Matchers.containsInAnyOrder
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.equalToIgnoringCase
+import static org.hamcrest.Matchers.hasItem
+import static org.hamcrest.Matchers.isOneOf
 
 /**
  * <code>Request</code> implementation representing requests without body content.
@@ -150,13 +172,9 @@ class ErsatzRequest implements Request {
     }
 
     @Override
-    Request responder(@DelegatesTo(Response) final Closure closure) {
-        Response response = newResponse()
-        closure.setDelegate(response)
-        closure.call()
-
+    Request responder(@DelegatesTo(value = Response, strategy = DELEGATE_FIRST) final Closure closure) {
+        Response response = delegateTo(newResponse(), closure)
         responses.add(response)
-
         this
     }
 

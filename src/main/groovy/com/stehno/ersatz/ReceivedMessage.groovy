@@ -15,6 +15,8 @@
  */
 package com.stehno.ersatz
 
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * Represents the expectation of a web service message sent by the client.
  */
@@ -61,5 +63,5 @@ interface ReceivedMessage {
      * @param closure the reaction configuration closure
      * @return a reference to this ReceivedMessage
      */
-    MessageReaction reaction(@DelegatesTo(MessageReaction) Closure closure)
+    MessageReaction reaction(@DelegatesTo(value = MessageReaction, strategy = DELEGATE_FIRST) Closure closure)
 }

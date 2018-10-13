@@ -16,7 +16,6 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.ContentType
 import com.stehno.ersatz.ErsatzServer
 import com.stehno.ersatz.InMemoryCookieJar
 import com.stehno.ersatz.Response
@@ -32,7 +31,6 @@ import spock.lang.Unroll
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 import static com.stehno.ersatz.Cookie.cookie
 import static com.stehno.ersatz.CookieMatcher.cookieMatcher
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
@@ -290,7 +288,7 @@ class ErsatzRequestSpec extends Specification {
         String body = 'the-body'
 
         when:
-        request.responds().contentType('something/else').content(body)
+        request.responds().contentType('something/else').body(body)
 
         then:
         Response resp = request.currentResponse
@@ -303,10 +301,10 @@ class ErsatzRequestSpec extends Specification {
         Object contentA = 'body-A'
         Object contentB = 'body-B'
 
-        request.responds().contentType('something/else').content(contentA)
+        request.responds().contentType('something/else').body(contentA)
         request.responder {
             contentType 'test/date'
-            content contentB
+            body contentB
         }
 
         when:
@@ -338,12 +336,12 @@ class ErsatzRequestSpec extends Specification {
         Object contentA = 'body-A'
         Object contentB = 'body-B'
 
-        request.responds().contentType('something/else').content(contentA)
+        request.responds().contentType('something/else').body(contentA)
         request.responder(new Consumer<Response>() {
             @Override
             void accept(final Response response) {
                 response.contentType 'test/date'
-                response.content contentB
+                response.body contentB
             }
         })
 
@@ -374,7 +372,7 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: not found'() {
         setup:
         server.expectations {
-            get('/blah').responds().content(new Object())
+            get('/blah').responds().body(new Object())
         }.start()
 
         expect:
@@ -384,7 +382,7 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: header'() {
         setup:
         server.expectations {
-            get('/test').header('one', 'blah').responds().content(STRING_CONTENT)
+            get('/test').header('one', 'blah').responds().body(STRING_CONTENT)
         }.start()
 
         when:
@@ -403,7 +401,7 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: headers'() {
         setup:
         server.expectations {
-            get('/test').headers(alpha: 'one', bravo: 'two').responds().content(STRING_CONTENT)
+            get('/test').headers(alpha: 'one', bravo: 'two').responds().body(STRING_CONTENT)
         }.start()
 
         when:
@@ -422,7 +420,7 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: query'() {
         setup:
         server.expectations {
-            get('/testing').query('alpha', 'blah').responds().content(STRING_CONTENT)
+            get('/testing').query('alpha', 'blah').responds().body(STRING_CONTENT)
         }.start()
 
         when:
@@ -441,7 +439,7 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: queries'() {
         setup:
         server.expectations {
-            get('/testing').queries(alpha: ['one'], bravo: ['two', 'three']).responds().content(STRING_CONTENT)
+            get('/testing').queries(alpha: ['one'], bravo: ['two', 'three']).responds().body(STRING_CONTENT)
         }.start()
 
         when:
@@ -460,7 +458,7 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: cookie'() {
         setup:
         server.expectations {
-            get('/test').cookie('flavor', 'chocolate-chip').responds().content(STRING_CONTENT)
+            get('/test').cookie('flavor', 'chocolate-chip').responds().body(STRING_CONTENT)
         }.start()
 
         when:
@@ -479,7 +477,7 @@ class ErsatzRequestSpec extends Specification {
     def 'matching: cookies'() {
         setup:
         server.expectations {
-            get('/test').cookies(flavor: 'chocolate-chip').responds().content(STRING_CONTENT)
+            get('/test').cookies(flavor: 'chocolate-chip').responds().body(STRING_CONTENT)
         }.start()
 
         when:
@@ -500,7 +498,7 @@ class ErsatzRequestSpec extends Specification {
         server.expectations {
             get('/testing').matcher({ ClientRequest cr ->
                 cr.protocol == 'http' && cr.path == '/testing' && !cr.queryParams.isEmpty()
-            } as Matcher<ClientRequest>).responds().content(STRING_CONTENT)
+            } as Matcher<ClientRequest>).responds().body(STRING_CONTENT)
         }
 
         expect:

@@ -30,7 +30,9 @@ import static org.hamcrest.Matchers.startsWith
 
 class UnmatchedRequestReportSpec extends Specification {
 
-
+    private static final String RED = '\u001b[31m'
+    private static final String GREEN = '\u001b[32m'
+    private static final String RESET = '\u001b[0m'
     private static final String BODY = 'This is some text content'
 
     @Unroll
@@ -82,24 +84,24 @@ class UnmatchedRequestReportSpec extends Specification {
             # Expectations
             
             Expectation 0 (2 matchers):
-              X HTTP method matches <POST>
-              ✓ Path matches "/alpha/foo"
-              (2 matchers: 1 matched, 1 failed)
+              ${RED}X HTTP method matches <POST>${RESET}
+              ${GREEN}✓${RESET} Path matches "/alpha/foo"
+              (2 matchers: 1 matched, ${RED}1 failed${RESET})
             
             Expectation 1 (3 matchers):
-              X HTTP method matches <PUT>
-              X Path matches a string starting with "/alpha/bar"
-              X Protocol matches equalToIgnoringCase("HTTPS")
-              (3 matchers: 0 matched, 3 failed)
+              ${RED}X HTTP method matches <PUT>${RESET}
+              ${RED}X Path matches a string starting with "/alpha/bar"${RESET}
+              ${RED}X Protocol matches equalToIgnoringCase("HTTPS")${RESET}
+              (3 matchers: 0 matched, ${RED}3 failed${RESET})
               
         """.stripIndent()
 
         where:
-        contentType                             | content
-        'application/octet-stream'              | '[84, 104, 105, 115, 32, 105, 115, 32, 115, 111, 109, 101, 32, 116, 101, 120, 116, 32, 99, 111, 110, 116, 101, 110, 116]'
-        'text/plain'                            | BODY
-        'text/csv'                              | BODY
-        'application/json'                      | BODY
-        'application/x-www-form-urlencoded'     | BODY
+        contentType                         | content
+        'application/octet-stream'          | '[84, 104, 105, 115, 32, 105, 115, 32, 115, 111, 109, 101, 32, 116, 101, 120, 116, 32, 99, 111, 110, 116, 101, 110, 116]'
+        'text/plain'                        | BODY
+        'text/csv'                          | BODY
+        'application/json'                  | BODY
+        'application/x-www-form-urlencoded' | BODY
     }
 }

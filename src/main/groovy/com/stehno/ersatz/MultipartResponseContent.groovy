@@ -21,6 +21,8 @@ import groovy.transform.CompileStatic
 import java.util.function.Consumer
 import java.util.function.Function
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.Collections.shuffle
 
 /**
@@ -44,11 +46,8 @@ abstract class MultipartResponseContent {
      * @param closure the configuration closure (Delegates to MultipartContent instance)
      * @return a reference to this MultipartResponseContent instance
      */
-    static MultipartResponseContent multipart(final @DelegatesTo(MultipartResponseContent) Closure closure) {
-        MultipartResponseContent content = new ErsatzMultipartResponseContent()
-        closure.delegate = content
-        closure.call()
-        content
+    static MultipartResponseContent multipart(final @DelegatesTo(value = MultipartResponseContent, strategy = DELEGATE_FIRST) Closure closure) {
+        delegateTo(new ErsatzMultipartResponseContent(), closure)
     }
 
     /**

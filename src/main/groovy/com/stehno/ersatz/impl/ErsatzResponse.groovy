@@ -15,15 +15,24 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+import com.stehno.ersatz.ChunkingConfig
+import com.stehno.ersatz.ContentType
+import com.stehno.ersatz.Cookie
+import com.stehno.ersatz.HttpMethod
+import com.stehno.ersatz.MultipartResponseContent
+import com.stehno.ersatz.Response
+import com.stehno.ersatz.ResponseEncoders
 import com.stehno.ersatz.util.TimeSpan
 import groovy.transform.CompileStatic
 
 import java.util.concurrent.TimeUnit
+import java.util.function.Consumer
 import java.util.function.Function
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
@@ -37,6 +46,13 @@ class ErsatzResponse implements Response {
     private final ResponseEncoders localEncoders = new ResponseEncoders()
     private final EncoderChain encoderChain = new EncoderChain(localEncoders)
 
+    private final Map<String, List<String>> headers = [:]
+    private final Map<String, Object> cookies = [:]
+    ChunkingConfig chunkingConfig
+    private Object content
+    private Integer code = 200
+    private long delayTime
+
     ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders = null) {
         this.empty = empty
 
@@ -45,14 +61,23 @@ class ErsatzResponse implements Response {
         }
     }
 
-    private final Map<String, List<String>> headers = [:]
-    private final Map<String, Object> cookies = [:]
-    private Object content
-    private Integer code = 200
-    private long delayTime
+    @Override @Deprecated
+    Response content(final Object content) {
+        body(content)
+    }
+
+    @Override @Deprecated
+    Response content(final Object content, final String contentType) {
+        body(content, contentType)
+    }
+
+    @Override @Deprecated
+    Response content(final Object content, final ContentType contentType) {
+        body(content, contentType.value)
+    }
 
     @Override
-    Response content(final Object content) {
+    Response body(Object content) {
         if (empty) {
             throw new IllegalArgumentException('The response is configured as EMPTY and cannot have content.')
         }
@@ -73,14 +98,15 @@ class ErsatzResponse implements Response {
     }
 
     @Override
-    Response content(final Object content, final String contentType) {
-        this.content(content)
+    Response body(Object data, String contentType) {
+        body(data)
         this.contentType(contentType)
     }
 
     @Override
-    Response content(final Object content, final ContentType contentType) {
-        this.content(content, contentType.value)
+    Response body(Object data, ContentType contentType) {
+        body(data)
+        this.contentType(contentType)
     }
 
     @Override
@@ -171,6 +197,19 @@ class ErsatzResponse implements Response {
     @Override
     long getDelay() {
         this.delayTime
+    }
+
+    @Override
+    Response chunked(@DelegatesTo(value = ChunkingConfig, strategy = DELEGATE_FIRST) Closure closure) {
+        chunkingConfig = delegateTo(new ChunkingConfig(), closure)
+        this
+    }
+
+    @Override
+    Response chunked(Consumer<ChunkingConfig> config) {
+        chunkingConfig = new ChunkingConfig()
+        config.accept(chunkingConfig)
+        this
     }
 
     @Override

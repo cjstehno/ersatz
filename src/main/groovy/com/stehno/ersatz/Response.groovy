@@ -18,7 +18,10 @@ package com.stehno.ersatz
 import groovy.transform.CompileStatic
 
 import java.util.concurrent.TimeUnit
+import java.util.function.Consumer
 import java.util.function.Function
+
+import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
  * Used to configure the provided response to an HTTP request.
@@ -31,7 +34,9 @@ interface Response {
      *
      * @param content the content object
      * @return this response
+     * @deprecated Use the body configuration methods
      */
+    @Deprecated // FIXME: remove in 2.0
     Response content(final Object content)
 
     /**
@@ -41,8 +46,10 @@ interface Response {
      *
      * @param content the content object
      * @param contentType the content type
-     * @return this response
+     * @return this response* @deprecated Use the body configuration methods
+     * @deprecated Use the body configuration methods
      */
+    @Deprecated // FIXME: remove in 2.0
     Response content(final Object content, final String contentType)
 
     /**
@@ -53,8 +60,42 @@ interface Response {
      * @param content the content object
      * @param contentType the content type
      * @return this response
+     * @return this response* @deprecated Use the body configuration methods
+     * @deprecated Use the body configuration methods
      */
+    @Deprecated // FIXME: remove in 2.0
     Response content(final Object content, final ContentType contentType)
+
+    /**
+     * Defines the request content to be sent back to the client. In the case of <code>MultipartContent</code>, the content-type will also be set.
+     *
+     * @param content the content object
+     * @return this response
+     */
+    Response body(final Object content)
+
+    /**
+     * Defines the request content to be sent back to the client, along with its content-type. Multipart responses may be specified using this method;
+     * however, the content-type will need to specify the boundary string and the boundary will need to be specified in the
+     * <code>MultipartContent</code> configuration as well.
+     *
+     * @param content the content object
+     * @param contentType the content type
+     * @return this response* @deprecated Use the body configuration methods
+     */
+    Response body(final Object content, final String contentType)
+
+    /**
+     * Defines the request content to be sent back to the client, along with its content-type. Multipart responses may be specified using this method;
+     * however, the content-type will need to specify the boundary string and the boundary will need to be specified in the
+     * <code>MultipartContent</code> configuration as well.
+     *
+     * @param content the content object
+     * @param contentType the content type
+     * @return this response
+     * @return this response* @deprecated Use the body configuration methods
+     */
+    Response body(final Object content, final ContentType contentType)
 
     /**
      * Used to add a header to the response with the given name and value.
@@ -171,6 +212,22 @@ interface Response {
     long getDelay()
 
     /**
+     * Configures the response as "chunked", with the specified chunking configuration.
+     *
+     * @param chunking the chunking configuration
+     * @return a reference to this response
+     */
+    Response chunked(@DelegatesTo(value = ChunkingConfig, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Configures the response as "chunked", with the specified chunking configuration.
+     *
+     * @param chunking the chunking configuration
+     * @return a reference to this response
+     */
+    Response chunked(final Consumer<ChunkingConfig> config)
+
+    /**
      * Used to retrieve the configured response headers.
      *
      * @return the response headers
@@ -201,6 +258,13 @@ interface Response {
      * @return the response code
      */
     Integer getCode()
+
+    /**
+     * Used to retrieve the chunk configuration, if configured.
+     *
+     * @return the chunk configuration, or null
+     */
+    ChunkingConfig getChunkingConfig()
 
     /**
      * Registers a response body encoder for this response, which will override any matching encoders configured globally (or shared).

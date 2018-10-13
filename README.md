@@ -51,7 +51,7 @@ Note: There are some long-running tests that may be skipped during local develop
 ## License
 
 ```
-Copyright (C) 2017 Christopher J. Stehno
+Copyright (C) 2018 Christopher J. Stehno
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

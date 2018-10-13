@@ -21,6 +21,9 @@ import groovy.transform.CompileStatic
 
 import java.util.function.Consumer
 
+import static com.stehno.ersatz.impl.Delegator.delegateTo
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * Implementation of the ProxyConfig interface providing the configuration functionality for the proxy server.
  */
@@ -73,9 +76,8 @@ class ProxyConfigImpl implements ProxyConfig {
     }
 
     @Override
-    ProxyConfig expectations(@DelegatesTo(ProxyExpectations) Closure closure) {
-        closure.delegate = expectations
-        closure.call()
+    ProxyConfig expectations(@DelegatesTo(value = ProxyExpectations, strategy = DELEGATE_FIRST) Closure closure) {
+        delegateTo(expectations, closure)
         this
     }
 

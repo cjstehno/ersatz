@@ -19,6 +19,8 @@ import groovy.transform.CompileStatic
 
 import java.util.function.Consumer
 
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * Configuration DSL interface for the ErsatzProxy server.
  */
@@ -63,7 +65,7 @@ interface ProxyConfig {
      * @param closure the Groovy closure
      * @return a reference to this configuration
      */
-    ProxyConfig expectations(@DelegatesTo(ProxyExpectations) Closure closure)
+    ProxyConfig expectations(@DelegatesTo(value = ProxyExpectations, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Used to configure the proxy server expectations with a Consumer, which will have an instance of ProxyExpectations passed into it.

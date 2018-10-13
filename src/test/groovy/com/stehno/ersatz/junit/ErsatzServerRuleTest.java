@@ -29,7 +29,7 @@ public class ErsatzServerRuleTest {
 
     @Rule
     public ErsatzServerRule ersatzServer = new ErsatzServerRule(config -> {
-        config.expects().get("/testing").responds().content("ok");
+        config.expects().get("/testing").responds().body("ok");
     });
 
     @Test
