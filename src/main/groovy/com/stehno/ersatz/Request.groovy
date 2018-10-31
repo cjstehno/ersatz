@@ -20,6 +20,8 @@ import org.hamcrest.Matcher
 
 import java.util.function.Consumer
 
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 /**
  * Configuration interface for HTTP request expectations.
  */
@@ -206,5 +208,5 @@ interface Request {
      * @param closure the <code>Consumer<Response></code> to provide configuration of the response
      * @return a reference to this request
      */
-    Request responder(@DelegatesTo(value = Response, strategy = Closure.DELEGATE_FIRST) final Closure closure)
+    Request responder(@DelegatesTo(value = Response, strategy = DELEGATE_FIRST) final Closure closure)
 }
