@@ -28,7 +28,7 @@ class DSLScopingSpec extends Specification {
     private static final String VALUE_C = 'value-C'
 
     void 'static field should be resolvable in DSL'() {
-        when:
+        setup:
         def config = conf {
             value VALUE_A
             nested {
@@ -39,7 +39,7 @@ class DSLScopingSpec extends Specification {
             }
         }
 
-        then:
+        expect:
         config.value == VALUE_A
         config.valuator.value == VALUE_B
         config.valuator.stored.value == VALUE_C
