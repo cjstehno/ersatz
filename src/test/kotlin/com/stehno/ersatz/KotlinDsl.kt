@@ -21,13 +21,13 @@ import java.util.function.Consumer
 
 
 fun ersatzServer(conf: ServerConfig.() -> Unit) : ErsatzServer {
-    return ErsatzServer(Consumer(conf::invoke))
+    return ErsatzServer(conf)
 }
 
 fun ServerConfig.expect(expects: Expectations.() -> Unit) {
-    this.expectations(Consumer(expects::invoke))
+    this.expectations(expects)
 }
 
 fun Request.respond(resp: Response.() -> Unit) {
-    this.responder(Consumer(resp::invoke))
+    this.responder(resp)
 }
