@@ -21,8 +21,9 @@ import groovy.transform.EqualsAndHashCode
 
 import java.util.function.Consumer
 
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
+
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
@@ -44,7 +45,7 @@ class MultipartRequestContent {
      * @return a configured instance of MultipartRequestContent
      */
     static MultipartRequestContent multipart(@DelegatesTo(value = MultipartRequestContent, strategy = DELEGATE_FIRST) final Closure closure) {
-        delegateTo(new MultipartRequestContent(), closure)
+        multipart(ConsumerWithDelegate.create(closure))
     }
 
     /**

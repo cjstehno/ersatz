@@ -17,11 +17,11 @@ package com.stehno.ersatz
 
 import com.stehno.ersatz.impl.ErsatzMultipartResponseContent
 import groovy.transform.CompileStatic
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import java.util.function.Consumer
 import java.util.function.Function
 
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.Collections.shuffle
 
@@ -47,7 +47,7 @@ abstract class MultipartResponseContent {
      * @return a reference to this MultipartResponseContent instance
      */
     static MultipartResponseContent multipart(final @DelegatesTo(value = MultipartResponseContent, strategy = DELEGATE_FIRST) Closure closure) {
-        delegateTo(new ErsatzMultipartResponseContent(), closure)
+        multipart(ConsumerWithDelegate.create(closure))
     }
 
     /**

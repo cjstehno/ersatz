@@ -16,9 +16,6 @@
 package com.stehno.ersatz
 
 import com.stehno.ersatz.ContentType.TEXT_PLAIN
-import com.stehno.ersatz.KotlinDsl.kotlinConfig
-import com.stehno.ersatz.KotlinDsl.kotlinExpectations
-import com.stehno.ersatz.KotlinDsl.kotlinResponse
 import okhttp3.OkHttpClient
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -45,14 +42,14 @@ class KotlinUsageTest {
 
     @Test
     fun ersatzUsageWithClosure() {
-        val ersatz = ErsatzServer(kotlinConfig {
-            expectations(kotlinExpectations {
-                get("/kotlin").called(1).responder(kotlinResponse {
+        val ersatz = ersatzServer {
+            expect {
+                get("/kotlin").called(1).respond {
                     body("Hello Kotlin!", TEXT_PLAIN)
                     code(200)
-                })
-            })
-        })
+                }
+            }
+        }
 
         val http = OkHttpClient.Builder().build()
         val request: okhttp3.Request = okhttp3.Request.Builder().url("${ersatz.httpUrl}/kotlin").build()

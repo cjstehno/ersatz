@@ -18,10 +18,10 @@ package com.stehno.ersatz.proxy.impl
 import com.stehno.ersatz.proxy.ProxyConfig
 import com.stehno.ersatz.proxy.ProxyExpectations
 import groovy.transform.CompileStatic
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
@@ -77,8 +77,7 @@ class ProxyConfigImpl implements ProxyConfig {
 
     @Override
     ProxyConfig expectations(@DelegatesTo(value = ProxyExpectations, strategy = DELEGATE_FIRST) Closure closure) {
-        delegateTo(expectations, closure)
-        this
+        expectations(ConsumerWithDelegate.create(closure))
     }
 
     @Override

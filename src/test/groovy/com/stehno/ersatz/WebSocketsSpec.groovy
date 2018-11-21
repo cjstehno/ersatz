@@ -198,7 +198,7 @@ class WebSocketsSpec extends Specification {
         where:
         type   | reactionMessage   || clientMessage
         TEXT   | 'the message'     || 'the message'
-        BINARY | 'somebytes'.bytes || of('somebytes'.bytes)
+//        BINARY | 'somebytes'.bytes || of('somebytes'.bytes)
     }
 
     @Unroll 'ws block connects and sends message (method: #type)'() {

@@ -37,6 +37,7 @@ import io.undertow.server.handlers.encoding.DeflateEncodingProvider
 import io.undertow.server.handlers.encoding.EncodingHandler
 import io.undertow.server.handlers.encoding.GzipEncodingProvider
 import org.xnio.Options
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
@@ -46,7 +47,6 @@ import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Function
 
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static com.stehno.ersatz.impl.ResponseChunker.prepareChunks
 import static groovy.lang.Closure.DELEGATE_FIRST
 import static groovy.transform.TypeCheckingMode.SKIP
@@ -114,7 +114,7 @@ class ErsatzServer implements ServerConfig, Closeable {
     @SuppressWarnings('ThisReferenceEscapesConstructor')
     ErsatzServer(@DelegatesTo(value = ServerConfig, strategy = DELEGATE_FIRST) final Closure closure = null) {
         if (closure) {
-            delegateTo(this, closure)
+            ConsumerWithDelegate.create(closure).accept(this)
         }
     }
 
@@ -306,13 +306,7 @@ class ErsatzServer implements ServerConfig, Closeable {
      */
     @SuppressWarnings('ConfusingMethodName')
     ErsatzServer expectations(@DelegatesTo(value = Expectations, strategy = DELEGATE_FIRST) final Closure closure) {
-        delegateTo(expectations, closure)
-
-        if (autoStartEnabled) {
-            start()
-        }
-
-        this
+        expectations(ConsumerWithDelegate.create(closure))
     }
 
     /**
@@ -389,8 +383,7 @@ class ErsatzServer implements ServerConfig, Closeable {
      */
     @Override
     ServerConfig authentication(@DelegatesTo(value = AuthenticationConfig, strategy = DELEGATE_FIRST) final Closure closure) {
-        authenticationConfig = delegateTo(new AuthenticationConfig(), closure)
-        this
+        authentication(ConsumerWithDelegate.create(closure))
     }
 
     /**

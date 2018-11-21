@@ -19,8 +19,6 @@ import com.stehno.ersatz.ErsatzServer
 import com.stehno.ersatz.util.HttpClient
 import okhttp3.Response
 import spock.lang.AutoCleanup
-import spock.lang.Ignore
-import spock.lang.Issue
 import spock.lang.Specification
 
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
@@ -41,7 +39,6 @@ class ScopingAndAutoCleanupSpec extends Specification {
     @AutoCleanup('stop') private final ErsatzServer server = new ErsatzServer()
     private final HttpClient client = new HttpClient()
 
-    @Ignore @Issue('https://github.com/cjstehno/ersatz/issues/107')
     void 'Posting One'() {
         setup:
         server.expectations {

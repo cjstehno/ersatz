@@ -19,10 +19,10 @@ import groovy.transform.CompileStatic
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 import static org.hamcrest.Matchers.equalTo
 
@@ -41,7 +41,7 @@ class CookieMatcher extends BaseMatcher<Cookie> {
      * @return the configured matcher
      */
     static CookieMatcher cookieMatcher(@DelegatesTo(value = CookieMatcher, strategy = DELEGATE_FIRST) final Closure closure) {
-        delegateTo(new CookieMatcher(), closure)
+        cookieMatcher(ConsumerWithDelegate.create(closure))
     }
 
     /**

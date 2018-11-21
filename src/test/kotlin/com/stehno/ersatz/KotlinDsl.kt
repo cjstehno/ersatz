@@ -15,15 +15,19 @@
  */
 package com.stehno.ersatz
 
-import groovy.lang.Closure
+import java.util.function.Consumer
 
 // Note: This is experimental code for kotlin support - it may not look anything like this in the end
 
-object KotlinDsl {
 
-    fun kotlinConfig(conf: ServerConfig.() -> Unit): Closure<Unit> = delegateClosureOf(conf)
+fun ersatzServer(conf: ServerConfig.() -> Unit) : ErsatzServer {
+    return ErsatzServer(Consumer(conf::invoke))
+}
 
-    fun kotlinExpectations(expects: Expectations.() -> Unit): Closure<Unit> = delegateClosureOf(expects)
+fun ServerConfig.expect(expects: Expectations.() -> Unit) {
+    this.expectations(Consumer(expects::invoke))
+}
 
-    fun kotlinResponse(resp: Response.() -> Unit): Closure<Unit> = delegateClosureOf(resp)
+fun Request.respond(resp: Response.() -> Unit) {
+    this.responder(Consumer(resp::invoke))
 }
