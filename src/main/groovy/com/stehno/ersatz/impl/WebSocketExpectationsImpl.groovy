@@ -21,6 +21,7 @@ import com.stehno.ersatz.WebSocketExpectations
 import com.stehno.ersatz.WsMessageType
 import io.undertow.websockets.core.BufferedBinaryMessage
 import io.undertow.websockets.core.BufferedTextMessage
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -29,7 +30,6 @@ import java.util.function.Consumer
 import static com.stehno.ersatz.WsMessageType.BINARY
 import static com.stehno.ersatz.WsMessageType.TEXT
 import static com.stehno.ersatz.WsMessageType.resolve
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.concurrent.TimeUnit.SECONDS
 
@@ -72,9 +72,7 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
 
     @Override
     ReceivedMessage receive(@DelegatesTo(value = ReceivedMessage, strategy = DELEGATE_FIRST) Closure closure) {
-        ReceivedMessageImpl message = delegateTo(new ReceivedMessageImpl(), closure)
-        receivedMessages << message
-        message
+        receive(ConsumerWithDelegate.create(closure))
     }
 
     @Override
@@ -96,9 +94,7 @@ class WebSocketExpectationsImpl implements WebSocketExpectations {
 
     @Override
     SentMessage send(@DelegatesTo(value = SentMessage, strategy = DELEGATE_FIRST) Closure closure) {
-        SentMessageImpl message = delegateTo(new SentMessageImpl(), closure)
-        sentMessages << message
-        message
+        send(ConsumerWithDelegate.create(closure))
     }
 
     @Override

@@ -27,10 +27,10 @@ import io.undertow.server.HttpServerExchange
 import io.undertow.server.handlers.BlockingHandler
 import io.undertow.server.handlers.proxy.LoadBalancingProxyClient
 import io.undertow.server.handlers.proxy.ProxyHandler
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
@@ -60,7 +60,8 @@ class ErsatzProxy {
      * @param closure the configuration closure.
      */
     ErsatzProxy(@DelegatesTo(value = ProxyConfig, strategy = DELEGATE_FIRST) final Closure closure) {
-        ProxyConfigImpl config = delegateTo(new ProxyConfigImpl(), closure)
+        ProxyConfigImpl config = new ProxyConfigImpl()
+        ConsumerWithDelegate.create(closure).accept(config)
 
         targetUri = config.targetUri
         matchers.addAll config.expectations.matchers

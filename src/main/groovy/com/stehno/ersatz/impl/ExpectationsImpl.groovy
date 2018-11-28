@@ -25,6 +25,7 @@ import com.stehno.ersatz.WebSocketExpectations
 import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
@@ -37,7 +38,6 @@ import static com.stehno.ersatz.HttpMethod.OPTIONS
 import static com.stehno.ersatz.HttpMethod.PATCH
 import static com.stehno.ersatz.HttpMethod.POST
 import static com.stehno.ersatz.HttpMethod.PUT
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.concurrent.TimeUnit.SECONDS
 import static org.hamcrest.Matchers.equalTo
@@ -315,9 +315,7 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     WebSocketExpectations ws(final String path, @DelegatesTo(value = WebSocketExpectations, strategy = DELEGATE_FIRST) Closure closure) {
-        WebSocketExpectationsImpl wse = delegateTo(new WebSocketExpectationsImpl(path), closure)
-        webSockets[path] = wse
-        wse
+        ws(path, ConsumerWithDelegate.create(closure))
     }
 
     @Override
@@ -378,9 +376,7 @@ class ExpectationsImpl implements Expectations {
     }
 
     private Request expect(final Request request, final Closure closure) {
-        delegateTo(request, closure)
-        requests.add(request)
-        request
+        expect(request, ConsumerWithDelegate.create(closure))
     }
 
     private Request expect(final Request request, final Consumer<? extends Request> consumer) {

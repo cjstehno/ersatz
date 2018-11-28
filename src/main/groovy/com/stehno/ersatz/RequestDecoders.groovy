@@ -16,11 +16,11 @@
 package com.stehno.ersatz
 
 import groovy.transform.Immutable
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import javax.activation.MimeType
 import java.util.function.BiFunction
 
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
@@ -38,7 +38,7 @@ class RequestDecoders {
     @SuppressWarnings('ThisReferenceEscapesConstructor')
     RequestDecoders(@DelegatesTo(value = RequestDecoders, strategy = DELEGATE_FIRST) Closure closure = null) {
         if (closure) {
-            delegateTo(this, closure)
+            ConsumerWithDelegate.create(closure).accept(this)
         }
     }
 

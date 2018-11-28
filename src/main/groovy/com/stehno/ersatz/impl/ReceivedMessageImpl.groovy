@@ -21,14 +21,15 @@ import com.stehno.ersatz.WsMessageType
 import groovy.util.logging.Slf4j
 import io.undertow.websockets.core.BufferedBinaryMessage
 import io.undertow.websockets.core.BufferedTextMessage
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import java.util.function.Consumer
 
 import static com.stehno.ersatz.WsMessageType.BINARY
 import static com.stehno.ersatz.WsMessageType.TEXT
 import static com.stehno.ersatz.WsMessageType.resolve
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 @Slf4j @SuppressWarnings('ConfusingMethodName')
@@ -71,7 +72,13 @@ class ReceivedMessageImpl implements ReceivedMessage {
 
     @Override
     MessageReaction reaction(@DelegatesTo(value = MessageReaction, strategy = DELEGATE_FIRST) Closure closure) {
-        MessageReactionImpl reaction = delegateTo(new MessageReactionImpl(), closure)
+        reaction(ConsumerWithDelegate.create(closure))
+    }
+
+    @Override
+    MessageReaction reaction(Consumer<MessageReaction> config) {
+        MessageReactionImpl reaction = new MessageReactionImpl()
+        config.accept(reaction)
         reactions << reaction
         reaction
     }

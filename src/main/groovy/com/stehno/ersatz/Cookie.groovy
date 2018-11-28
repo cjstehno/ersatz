@@ -18,10 +18,10 @@ package com.stehno.ersatz
 import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
@@ -47,7 +47,7 @@ class Cookie {
      * @return the configured cookie
      */
     static Cookie cookie(@DelegatesTo(value = Cookie, strategy = DELEGATE_FIRST) final Closure closure) {
-        delegateTo(new Cookie(), closure)
+        cookie(ConsumerWithDelegate.create(closure))
     }
 
     /**

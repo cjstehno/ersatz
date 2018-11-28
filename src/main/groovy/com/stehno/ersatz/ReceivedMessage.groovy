@@ -15,6 +15,8 @@
  */
 package com.stehno.ersatz
 
+import java.util.function.Consumer
+
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
@@ -64,4 +66,12 @@ interface ReceivedMessage {
      * @return a reference to this ReceivedMessage
      */
     MessageReaction reaction(@DelegatesTo(value = MessageReaction, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Used to specify a reaction message to be sent after receiving this message.
+     *
+     * @param config the reaction configuration consumer
+     * @return a reference to this ReceivedMessage
+     */
+    MessageReaction reaction(Consumer<MessageReaction> config)
 }

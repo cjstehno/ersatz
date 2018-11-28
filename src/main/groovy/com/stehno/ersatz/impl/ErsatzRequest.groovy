@@ -24,6 +24,7 @@ import com.stehno.ersatz.Response
 import com.stehno.ersatz.ResponseEncoders
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import java.util.function.Consumer
 
@@ -36,7 +37,6 @@ import static com.stehno.ersatz.HttpMethod.PATCH
 import static com.stehno.ersatz.HttpMethod.POST
 import static com.stehno.ersatz.HttpMethod.PUT
 import static com.stehno.ersatz.HttpMethod.TRACE
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 import static org.hamcrest.Matchers.anything
 import static org.hamcrest.Matchers.contains
@@ -173,9 +173,7 @@ class ErsatzRequest implements Request {
 
     @Override
     Request responder(@DelegatesTo(value = Response, strategy = DELEGATE_FIRST) final Closure closure) {
-        Response response = delegateTo(newResponse(), closure)
-        responses.add(response)
-        this
+        responder(ConsumerWithDelegate.create(closure))
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')

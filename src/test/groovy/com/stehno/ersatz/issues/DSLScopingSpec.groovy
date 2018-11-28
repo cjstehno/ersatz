@@ -15,9 +15,9 @@
  */
 package com.stehno.ersatz.issues
 
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 import spock.lang.Specification
 
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static com.stehno.ersatz.issues.Config.conf
 import static groovy.lang.Closure.DELEGATE_FIRST
 
@@ -52,7 +52,9 @@ class Config {
     private Valuator valuator
 
     static Config conf(@DelegatesTo(value = Config, strategy = DELEGATE_FIRST) Closure closure) {
-        delegateTo(new Config(), closure)
+        Config config = new Config()
+        ConsumerWithDelegate.create(closure).accept(config)
+        config
     }
 
     void value(String x) {
@@ -64,7 +66,9 @@ class Config {
     }
 
     void nested(@DelegatesTo(value = Valuator, strategy = DELEGATE_FIRST) Closure closure) {
-        valuator = delegateTo(new Valuator(), closure)
+        Valuator valuator = new Valuator()
+        ConsumerWithDelegate.create(closure).accept(valuator)
+        this.valuator = valuator
     }
 
     Valuator getValuator() {
@@ -86,7 +90,9 @@ class Valuator {
     }
 
     void stored(@DelegatesTo(value = Stored, strategy = DELEGATE_FIRST) Closure closure) {
-        stored = delegateTo(new Stored(), closure)
+        Stored stored = new Stored()
+        ConsumerWithDelegate.create(closure).accept(stored)
+        this.stored = stored
     }
 
     Stored getStored() {

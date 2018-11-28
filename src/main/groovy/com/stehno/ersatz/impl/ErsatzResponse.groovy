@@ -29,9 +29,10 @@ import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 import java.util.function.Function
 
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
+
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 
@@ -201,8 +202,7 @@ class ErsatzResponse implements Response {
 
     @Override
     Response chunked(@DelegatesTo(value = ChunkingConfig, strategy = DELEGATE_FIRST) Closure closure) {
-        chunkingConfig = delegateTo(new ChunkingConfig(), closure)
-        this
+        chunked(ConsumerWithDelegate.create(closure))
     }
 
     @Override
