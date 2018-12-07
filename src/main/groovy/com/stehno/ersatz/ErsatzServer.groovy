@@ -101,6 +101,8 @@ class ErsatzServer implements ServerConfig, Closeable {
     private boolean mismatchToConsole
     private URL keystoreLocation
     private String keystorePass = 'ersatz'
+    private int desiredHttpPort = EPHEMERAL_PORT
+    private int desiredHttpsPort = EPHEMERAL_PORT
     private int actualHttpPort = UNSPECIFIED_PORT
     private int actualHttpsPort = UNSPECIFIED_PORT
     private AuthenticationConfig authenticationConfig
@@ -399,6 +401,18 @@ class ErsatzServer implements ServerConfig, Closeable {
         return this
     }
 
+    @Override
+    ServerConfig httpPort(int serverPort) {
+        desiredHttpPort = serverPort
+        return this
+    }
+
+    @Override
+    ServerConfig httpsPort(int serverPort) {
+        desiredHttpsPort = serverPort
+        return this
+    }
+
     /**
      * Used to start the HTTP server for test interactions. This method should be called after configuration of expectations and before the test
      * interactions are executed against the server.
@@ -406,11 +420,11 @@ class ErsatzServer implements ServerConfig, Closeable {
     @SuppressWarnings(['Println', 'DuplicateNumberLiteral'])
     void start() {
         if (!started) {
-            Undertow.Builder builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST)
+            Undertow.Builder builder = Undertow.builder().addHttpListener(desiredHttpPort, LOCALHOST)
             timeoutConfig.call(builder)
 
             if (httpsEnabled) {
-                builder.addHttpsListener(EPHEMERAL_PORT, LOCALHOST, sslContext())
+                builder.addHttpsListener(desiredHttpsPort, LOCALHOST, sslContext())
             }
 
             BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(

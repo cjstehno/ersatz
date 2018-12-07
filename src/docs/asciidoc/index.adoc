@@ -25,6 +25,12 @@ allows two main forms, a Java-style chained builder, and a Groovy DSL, both of w
 Ersatz is developed with testing in mind. It does not favor any specific testing framework, but it does work well with both the JUnit and Spock
 frameworks.
 
+== What's New in 1.9
+
+* Corrections to the closure variable scoping.
+* Support for configuring the server port - though, in general, this is not recommended.
+* Some added usage documentation
+
 == What's New in 1.8
 
 * Variable scope changes - the configuration Groovy DSL closures had incorrect (or inadequate) resolution strategies specified which caused variables to be resolved incorrectly in some situations. All of the closures now use `DELEGATE_FIRST`; however, beware this may cause some issues with existing code.
@@ -1371,3 +1377,78 @@ println( http.newCall(request).execute().body().string() )
 ----
 
 which will print out "Hello Kotlin!" when executed.
+
+=== Matching XML Body Content
+
+A unit test has been added to provide a better example of how to use the Hamcrest matchers in a request. See the `BodyContentMatcherSpec` test class in the source code, but
+a summary is provided below:
+
+[source,groovy]
+----
+import com.stehno.ersatz.DecodingContext
+import com.stehno.ersatz.ErsatzServer
+import com.stehno.ersatz.util.HttpClient
+import okhttp3.MediaType
+import okhttp3.Response
+import spock.lang.AutoCleanup
+import spock.lang.Specification
+
+import javax.xml.parsers.DocumentBuilderFactory
+
+import static com.stehno.ersatz.ContentType.TEXT_XML
+import static com.stehno.ersatz.Decoders.utf8String
+import static com.stehno.ersatz.Encoders.text
+import static okhttp3.RequestBody.create
+import static org.hamcrest.CoreMatchers.equalTo
+import static org.hamcrest.xml.HasXPath.hasXPath
+
+class BodyContentMatcherSpec extends Specification {
+
+    @AutoCleanup private final ErsatzServer server = new ErsatzServer()
+    private final HttpClient http = new HttpClient()
+
+    void 'matching part of body content'() {
+        setup:
+        String requestXml = '<request><node foo="bar"/></request>'
+        String responseXml = '<response>OK</response>'
+
+        server.expectations {
+            post('/posting') {
+                decoder('text/xml; charset=utf-8') { byte[] bytes, DecodingContext ctx ->
+                    DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(bytes))
+                }
+                body hasXPath('string(//request/node/@foo)', equalTo('bar')), 'text/xml; charset=utf-8'
+                called 1
+                responder {
+                    body responseXml, TEXT_XML
+                    encoder TEXT_XML, String, text
+                }
+            }
+        }
+
+        when:
+        Response response = http.post(server.httpUrl('/posting'), create(MediaType.get('text/xml; charset=utf-8'), requestXml))
+
+        then:
+        response.body().string() == responseXml
+
+        when:
+        response = http.post(server.httpUrl('/posting'), create(MediaType.get('text/xml; charset=utf-8'), '<request><node foo="blah"/></request>'))
+
+        then:
+        response.code() == 404
+
+        and:
+        server.verify()
+    }
+}
+----
+
+This test sets up a POST expectation with the XML request body content being used as one of the matching criteria. Hamcrest provides an XPath-based
+matcher, `hasXPath(String, Matcher)`, which works well here. A custom XML-decoder was installed to parse the request into the XML document format
+required by the matcher.
+
+The test shows to requests made to the server, one with the expected content and one without - the results verify that only the correct call was
+actually matched.
+
+See the http://hamcrest.org/JavaHamcrest/[Hamcrest] documentation for more details about pre-existing and custom `Matcher`s.

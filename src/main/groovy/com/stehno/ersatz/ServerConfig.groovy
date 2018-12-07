@@ -203,4 +203,22 @@ interface ServerConfig {
      * @return a reference to this server configuration
      */
     ServerConfig authentication(Consumer<AuthenticationConfig> config)
+
+    /**
+     * Allows the specific configuration of the HTTP server port. The default ephemeral port should be used in most cases since
+     * specifying the port will negate the ability to run tests in parallel and will also allow possible collisions with
+     * other running servers on the host.
+     *
+     * Do NOT specify this setting unless you really need to.
+     */
+    ServerConfig httpPort(int value)
+
+    /**
+     * Allows the specific configuration of the HTTPS server port. The default ephemeral port should be used in most cases since
+     * specifying the port will negate the ability to run tests in parallel and will also allow possible collisions with
+     * other running servers on the host.
+     *
+     * Do NOT specify this setting unless you really need to.
+     */
+    ServerConfig httpsPort(int value)
 }
