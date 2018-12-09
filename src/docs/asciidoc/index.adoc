@@ -31,7 +31,7 @@ frameworks.
 * Support for configuring the server port - though, in general, this is not recommended.
 * Some added usage documentation
 
-== What's New in 1.9.0
+== What's New in 1.8
 
 * Variable scope changes - the configuration Groovy DSL closures had incorrect (or inadequate) resolution strategies specified which caused variables to be resolved incorrectly in some situations. All of the closures now use `DELEGATE_FIRST`; however, beware this may cause some issues with existing code.
 * Deprecation of the `Response` `content(...)` methods in favor of the new `body(...)` methods.
