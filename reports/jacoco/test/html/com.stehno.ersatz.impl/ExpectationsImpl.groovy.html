@@ -25,6 +25,7 @@ import com.stehno.ersatz.WebSocketExpectations
 import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
@@ -37,7 +38,6 @@ import static com.stehno.ersatz.HttpMethod.OPTIONS
 import static com.stehno.ersatz.HttpMethod.PATCH
 import static com.stehno.ersatz.HttpMethod.POST
 import static com.stehno.ersatz.HttpMethod.PUT
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 import static java.util.concurrent.TimeUnit.SECONDS
 import static org.hamcrest.Matchers.equalTo
@@ -315,23 +315,21 @@ class ExpectationsImpl implements Expectations {
 
     @Override
     WebSocketExpectations ws(final String path, @DelegatesTo(value = WebSocketExpectations, strategy = DELEGATE_FIRST) Closure closure) {
-<span class="fc" id="L318">        WebSocketExpectationsImpl wse = delegateTo(new WebSocketExpectationsImpl(path), closure)</span>
-<span class="fc" id="L319">        webSockets[path] = wse</span>
-<span class="pc" id="L320">        wse</span>
+<span class="pc" id="L318">        ws(path, ConsumerWithDelegate.create(closure))</span>
     }
 
     @Override
     WebSocketExpectations ws(final String path, Consumer&lt;WebSocketExpectations&gt; config) {
-<span class="fc" id="L325">        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path)</span>
-<span class="fc" id="L326">        config.accept(wse)</span>
+<span class="fc" id="L323">        WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path)</span>
+<span class="fc" id="L324">        config.accept(wse)</span>
 
-<span class="fc" id="L328">        webSockets[path] = wse</span>
+<span class="fc" id="L326">        webSockets[path] = wse</span>
 
-<span class="pc" id="L330">        wse</span>
+<span class="pc" id="L328">        wse</span>
     }
 
     Set&lt;String&gt; getWebSocketPaths() {
-<span class="pc" id="L334">        webSockets.keySet()</span>
+<span class="pc" id="L332">        webSockets.keySet()</span>
     }
 
     /**
@@ -341,11 +339,11 @@ class ExpectationsImpl implements Expectations {
      * @return the matching request expectation
      */
     Request findMatch(final ClientRequest clientRequest) {
-<span class="pc" id="L344">        requests.find { r -&gt; ((ErsatzRequest) r).matches(clientRequest) }</span>
+<span class="pc" id="L342">        requests.find { r -&gt; ((ErsatzRequest) r).matches(clientRequest) }</span>
     }
 
     WebSocketExpectations findWsMatch(final String path) {
-<span class="pc" id="L348">        webSockets[path]</span>
+<span class="pc" id="L346">        webSockets[path]</span>
     }
 
     /**
@@ -354,7 +352,7 @@ class ExpectationsImpl implements Expectations {
      * @return the list of request expectations
      */
     List&lt;Request&gt; getRequests() {
-<span class="pc" id="L357">        requests.asImmutable()</span>
+<span class="pc" id="L355">        requests.asImmutable()</span>
     }
 
     /**
@@ -363,34 +361,32 @@ class ExpectationsImpl implements Expectations {
      * @return a value of true if all requests are verified
      */
     boolean verify(final long timeout = 1, final TimeUnit unit = SECONDS) {
-<span class="fc" id="L366">        requests.each { r -&gt;</span>
-<span class="pc bpc" id="L367" title="1 of 2 branches missed.">            assert ((ErsatzRequest) r).verify(), &quot;Expectations for $r were not met.&quot;</span>
+<span class="fc" id="L364">        requests.each { r -&gt;</span>
+<span class="pc bpc" id="L365" title="1 of 2 branches missed.">            assert ((ErsatzRequest) r).verify(), &quot;Expectations for $r were not met.&quot;</span>
         }
-<span class="fc" id="L369">        webSockets.each { p, w -&gt;</span>
-<span class="pc bpc" id="L370" title="1 of 2 branches missed.">            assert ((WebSocketExpectationsImpl) w).verify(timeout, unit), &quot;WebSocket expectations for $w were not met.&quot;</span>
+<span class="fc" id="L367">        webSockets.each { p, w -&gt;</span>
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">            assert ((WebSocketExpectationsImpl) w).verify(timeout, unit), &quot;WebSocket expectations for $w were not met.&quot;</span>
         }
-<span class="pc" id="L372">        true</span>
+<span class="pc" id="L370">        true</span>
     }
 
     private Request expect(final Request request) {
-<span class="fc" id="L376">        requests.add(request)</span>
-<span class="pc" id="L377">        request</span>
+<span class="fc" id="L374">        requests.add(request)</span>
+<span class="pc" id="L375">        request</span>
     }
 
     private Request expect(final Request request, final Closure closure) {
-<span class="fc" id="L381">        delegateTo(request, closure)</span>
-<span class="fc" id="L382">        requests.add(request)</span>
-<span class="pc" id="L383">        request</span>
+<span class="pc" id="L379">        expect(request, ConsumerWithDelegate.create(closure))</span>
     }
 
     private Request expect(final Request request, final Consumer&lt;? extends Request&gt; consumer) {
-<span class="fc" id="L387">        consumer.accept(request)</span>
-<span class="fc" id="L388">        requests.add(request)</span>
-<span class="pc" id="L389">        request</span>
+<span class="fc" id="L383">        consumer.accept(request)</span>
+<span class="fc" id="L384">        requests.add(request)</span>
+<span class="pc" id="L385">        request</span>
     }
 
     private static Matcher&lt;String&gt; pathMatcher(final String path) {
-<span class="pc bfc" id="L393" title="All 2 branches covered.">        path == '*' ? Matchers.any(String) : equalTo(path)</span>
+<span class="pc bfc" id="L389" title="All 2 branches covered.">        path == '*' ? Matchers.any(String) : equalTo(path)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

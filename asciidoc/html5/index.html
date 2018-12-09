@@ -528,13 +528,14 @@ table.CodeRay td.code>pre{padding:0}
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
 <span id="email" class="email"><a href="mailto:chris@stehno.com">chris@stehno.com</a></span><br>
-<span id="revnumber">version 1.8.1,</span>
+<span id="revnumber">version 1.9.0.1,</span>
 <span id="revdate">October 2018</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_introduction">Introduction</a></li>
+<li><a href="#_whats_new_in_1_9">What&#8217;s New in 1.9</a></li>
 <li><a href="#_whats_new_in_1_8">What&#8217;s New in 1.8</a></li>
 <li><a href="#_getting_started">Getting Started</a></li>
 <li><a href="#_ersatz_server">Ersatz Server</a>
@@ -626,6 +627,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_file_upload_post">File Upload (POST)</a></li>
 <li><a href="#_file_download_get">File Download (GET)</a></li>
 <li><a href="#_kotlin_usage">Kotlin Usage</a></li>
+<li><a href="#_matching_xml_body_content">Matching XML Body Content</a></li>
 </ul>
 </li>
 </ul>
@@ -658,6 +660,24 @@ allows two main forms, a Java-style chained builder, and a Groovy DSL, both of w
 <div class="paragraph">
 <p>Ersatz is developed with testing in mind. It does not favor any specific testing framework, but it does work well with both the JUnit and Spock
 frameworks.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_new_in_1_9">What&#8217;s New in 1.9</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Corrections to the closure variable scoping.</p>
+</li>
+<li>
+<p>Support for configuring the server port - though, in general, this is not recommended.</p>
+</li>
+<li>
+<p>Some added usage documentation</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -700,7 +720,7 @@ methods:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:1.8.1'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:1.9.0.1'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -711,7 +731,7 @@ methods:</p>
 <pre>&lt;dependency&gt;
     &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
-    &lt;version&gt;1.8.1&lt;/version&gt;
+    &lt;version&gt;1.9.0.1&lt;/version&gt;
     &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</pre>
 </div>
@@ -1597,7 +1617,7 @@ connection.requestMethod = <span class="string"><span class="delimiter">'</span>
 <span class="keyword">assert</span> connection.inputStream.text.readLines()*.trim() == <span class="string"><span class="delimiter">&quot;&quot;&quot;</span><span class="content">TRACE /info?data=foo+barHTTP/1.1
     Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
     Connection: keep-alive
-    User-Agent: Java/1.8.1_121
+    User-Agent: Java/1.9.0.1_121
     Host: localhost:</span><span class="inline"><span class="inline-delimiter">${</span>ersatzServer.httpPort<span class="inline-delimiter">}</span></span><span class="content">
 </span><span class="delimiter">&quot;&quot;&quot;</span></span>.readLines()*.trim()</code></pre>
 </div>
@@ -2287,7 +2307,7 @@ Undertow library and its JBoss dependencies repackaged in the jar. You can use t
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>testCompile 'com.stehno.ersatz:ersatz:1.8.1:safe@jar'</pre>
+<pre>testCompile 'com.stehno.ersatz:ersatz:1.9.0.1:safe@jar'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2298,7 +2318,7 @@ Undertow library and its JBoss dependencies repackaged in the jar. You can use t
 <pre>&lt;dependency&gt;
     &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
-    &lt;version&gt;1.8.1&lt;/version&gt;
+    &lt;version&gt;1.9.0.1&lt;/version&gt;
     &lt;type&gt;jar&lt;/type&gt;
     &lt;scope&gt;test&lt;/scope&gt;
     &lt;classifier&gt;safe&lt;/classifier&gt;
@@ -2474,13 +2494,93 @@ println( http.newCall(request).execute().body().string() )</code></pre>
 <p>which will print out "Hello Kotlin!" when executed.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_matching_xml_body_content">Matching XML Body Content</h3>
+<div class="paragraph">
+<p>A unit test has been added to provide a better example of how to use the Hamcrest matchers in a request. See the <code>BodyContentMatcherSpec</code> test class in the source code, but
+a summary is provided below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">com.stehno.ersatz.DecodingContext</span>
+<span class="keyword">import</span> <span class="include">com.stehno.ersatz.ErsatzServer</span>
+<span class="keyword">import</span> <span class="include">com.stehno.ersatz.util.HttpClient</span>
+<span class="keyword">import</span> <span class="include">okhttp3.MediaType</span>
+<span class="keyword">import</span> <span class="include">okhttp3.Response</span>
+<span class="keyword">import</span> <span class="include">spock.lang.AutoCleanup</span>
+<span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+
+<span class="keyword">import</span> <span class="include">javax.xml.parsers.DocumentBuilderFactory</span>
+
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">com.stehno.ersatz.ContentType.TEXT_XML</span>
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">com.stehno.ersatz.Decoders.utf8String</span>
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">com.stehno.ersatz.Encoders.text</span>
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">okhttp3.RequestBody.create</span>
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.CoreMatchers.equalTo</span>
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.xml.HasXPath.hasXPath</span>
+
+<span class="type">class</span> <span class="class">BodyContentMatcherSpec</span> <span class="directive">extends</span> Specification {
+
+    <span class="annotation">@AutoCleanup</span> <span class="directive">private</span> <span class="directive">final</span> ErsatzServer server = <span class="keyword">new</span> ErsatzServer()
+    <span class="directive">private</span> <span class="directive">final</span> HttpClient http = <span class="keyword">new</span> HttpClient()
+
+    <span class="type">void</span> <span class="string"><span class="delimiter">'</span><span class="content">matching part of body content</span><span class="delimiter">'</span></span>() {
+        <span class="key">setup</span>:
+        <span class="predefined-type">String</span> requestXml = <span class="string"><span class="delimiter">'</span><span class="content">&lt;request&gt;&lt;node foo=&quot;bar&quot;/&gt;&lt;/request&gt;</span><span class="delimiter">'</span></span>
+        <span class="predefined-type">String</span> responseXml = <span class="string"><span class="delimiter">'</span><span class="content">&lt;response&gt;OK&lt;/response&gt;</span><span class="delimiter">'</span></span>
+
+        server.expectations {
+            post(<span class="string"><span class="delimiter">'</span><span class="content">/posting</span><span class="delimiter">'</span></span>) {
+                decoder(<span class="string"><span class="delimiter">'</span><span class="content">text/xml; charset=utf-8</span><span class="delimiter">'</span></span>) { <span class="type">byte</span><span class="type">[]</span> bytes, DecodingContext ctx -&gt;
+                    <span class="predefined-type">DocumentBuilderFactory</span>.newInstance().newDocumentBuilder().parse(<span class="keyword">new</span> <span class="predefined-type">ByteArrayInputStream</span>(bytes))
+                }
+                body hasXPath(<span class="string"><span class="delimiter">'</span><span class="content">string(//request/node/@foo)</span><span class="delimiter">'</span></span>, equalTo(<span class="string"><span class="delimiter">'</span><span class="content">bar</span><span class="delimiter">'</span></span>)), <span class="string"><span class="delimiter">'</span><span class="content">text/xml; charset=utf-8</span><span class="delimiter">'</span></span>
+                called <span class="integer">1</span>
+                responder {
+                    body responseXml, TEXT_XML
+                    encoder TEXT_XML, <span class="predefined-type">String</span>, text
+                }
+            }
+        }
+
+        <span class="key">when</span>:
+        Response response = http.post(server.httpUrl(<span class="string"><span class="delimiter">'</span><span class="content">/posting</span><span class="delimiter">'</span></span>), create(MediaType.get(<span class="string"><span class="delimiter">'</span><span class="content">text/xml; charset=utf-8</span><span class="delimiter">'</span></span>), requestXml))
+
+        <span class="key">then</span>:
+        response.body().string() == responseXml
+
+        <span class="key">when</span>:
+        response = http.post(server.httpUrl(<span class="string"><span class="delimiter">'</span><span class="content">/posting</span><span class="delimiter">'</span></span>), create(MediaType.get(<span class="string"><span class="delimiter">'</span><span class="content">text/xml; charset=utf-8</span><span class="delimiter">'</span></span>), <span class="string"><span class="delimiter">'</span><span class="content">&lt;request&gt;&lt;node foo=&quot;blah&quot;/&gt;&lt;/request&gt;</span><span class="delimiter">'</span></span>))
+
+        <span class="key">then</span>:
+        response.code() == <span class="integer">404</span>
+
+        <span class="key">and</span>:
+        server.verify()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This test sets up a POST expectation with the XML request body content being used as one of the matching criteria. Hamcrest provides an XPath-based
+matcher, <code>hasXPath(String, Matcher)</code>, which works well here. A custom XML-decoder was installed to parse the request into the XML document format
+required by the matcher.</p>
+</div>
+<div class="paragraph">
+<p>The test shows to requests made to the server, one with the expected content and one without - the results verify that only the correct call was
+actually matched.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="http://hamcrest.org/JavaHamcrest/">Hamcrest</a> documentation for more details about pre-existing and custom `Matcher`s.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.8.1<br>
-Last updated 2018-10-13 07:41:23 CDT
+Version 1.9.0.1<br>
+Last updated 2018-12-09 06:49:20 CST
 </div>
 </div>
 </body>

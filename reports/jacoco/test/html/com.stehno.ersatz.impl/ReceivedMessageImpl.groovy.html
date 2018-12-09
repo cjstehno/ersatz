@@ -21,14 +21,15 @@ import com.stehno.ersatz.WsMessageType
 import groovy.util.logging.Slf4j
 import io.undertow.websockets.core.BufferedBinaryMessage
 import io.undertow.websockets.core.BufferedTextMessage
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import java.util.function.Consumer
 
 import static com.stehno.ersatz.WsMessageType.BINARY
 import static com.stehno.ersatz.WsMessageType.TEXT
 import static com.stehno.ersatz.WsMessageType.resolve
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 @Slf4j @SuppressWarnings('ConfusingMethodName')
@@ -36,66 +37,72 @@ class ReceivedMessageImpl implements ReceivedMessage {
 
     Object payload
     WsMessageType messageType
-<span class="fc" id="L39">    final List&lt;MessageReactionImpl&gt; reactions = []</span>
+<span class="fc" id="L40">    final List&lt;MessageReactionImpl&gt; reactions = []</span>
 
-<span class="fc" id="L41">    private final CountDownLatch matchLatch = new CountDownLatch(1)</span>
+<span class="fc" id="L42">    private final CountDownLatch matchLatch = new CountDownLatch(1)</span>
 
     @Override
     ReceivedMessage payload(Object obj) {
-<span class="fc" id="L45">        this.payload = obj</span>
-<span class="pc" id="L46">        this</span>
+<span class="fc" id="L46">        this.payload = obj</span>
+<span class="pc" id="L47">        this</span>
     }
 
     @Override
     ReceivedMessage messageType(WsMessageType type) {
-<span class="fc" id="L51">        this.messageType = type</span>
-<span class="pc" id="L52">        this</span>
+<span class="fc" id="L52">        this.messageType = type</span>
+<span class="pc" id="L53">        this</span>
     }
 
     @Override
     MessageReaction reaction(Object payload) {
-<span class="nc" id="L57">        switch (resolve(payload)) {</span>
-<span class="nc bnc" id="L58" title="All 2 branches missed.">            case BINARY:</span>
-<span class="nc" id="L59">                return reaction(payload, BINARY)</span>
+<span class="nc" id="L58">        switch (resolve(payload)) {</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">            case BINARY:</span>
+<span class="nc" id="L60">                return reaction(payload, BINARY)</span>
             default:
-<span class="nc" id="L61">                return reaction(payload.toString(), TEXT)</span>
+<span class="nc" id="L62">                return reaction(payload.toString(), TEXT)</span>
         }
     }
 
     @Override
     MessageReaction reaction(Object payload, WsMessageType messageType) {
-<span class="fc" id="L67">        MessageReactionImpl messageReaction = new MessageReactionImpl(payload: payload, messageType: messageType)</span>
-<span class="fc" id="L68">        reactions &lt;&lt; messageReaction</span>
-<span class="pc" id="L69">        messageReaction</span>
+<span class="fc" id="L68">        MessageReactionImpl messageReaction = new MessageReactionImpl(payload: payload, messageType: messageType)</span>
+<span class="fc" id="L69">        reactions &lt;&lt; messageReaction</span>
+<span class="pc" id="L70">        messageReaction</span>
     }
 
     @Override
     MessageReaction reaction(@DelegatesTo(value = MessageReaction, strategy = DELEGATE_FIRST) Closure closure) {
-<span class="fc" id="L74">        MessageReactionImpl reaction = delegateTo(new MessageReactionImpl(), closure)</span>
-<span class="fc" id="L75">        reactions &lt;&lt; reaction</span>
-<span class="pc" id="L76">        reaction</span>
+<span class="pc" id="L75">        reaction(ConsumerWithDelegate.create(closure))</span>
+    }
+
+    @Override
+    MessageReaction reaction(Consumer&lt;MessageReaction&gt; config) {
+<span class="fc" id="L80">        MessageReactionImpl reaction = new MessageReactionImpl()</span>
+<span class="fc" id="L81">        config.accept(reaction)</span>
+<span class="fc" id="L82">        reactions &lt;&lt; reaction</span>
+<span class="pc" id="L83">        reaction</span>
     }
 
     boolean matches(BufferedBinaryMessage message) {
-<span class="fc" id="L80">        byte[] incoming = message.data.resource.collect { b -&gt;</span>
-<span class="fc" id="L81">            byte[] data = new byte[b.remaining()]</span>
-<span class="fc" id="L82">            b.get(data)</span>
-<span class="pc" id="L83">            data</span>
+<span class="fc" id="L87">        byte[] incoming = message.data.resource.collect { b -&gt;</span>
+<span class="fc" id="L88">            byte[] data = new byte[b.remaining()]</span>
+<span class="fc" id="L89">            b.get(data)</span>
+<span class="pc" id="L90">            data</span>
         }.flatten()
 
-<span class="pc bpc" id="L86" title="9 of 14 branches missed.">        messageType == BINARY &amp;&amp; incoming == payload</span>
+<span class="pc bpc" id="L93" title="9 of 14 branches missed.">        messageType == BINARY &amp;&amp; incoming == payload</span>
     }
 
-<span class="pc bpc" id="L89" title="3 of 6 branches missed.">    boolean matches(BufferedTextMessage message) {</span>
-<span class="pc bpc" id="L90" title="6 of 8 branches missed.">        messageType == TEXT &amp;&amp; message.data == payload</span>
+<span class="pc bpc" id="L96" title="3 of 6 branches missed.">    boolean matches(BufferedTextMessage message) {</span>
+<span class="pc bpc" id="L97" title="6 of 8 branches missed.">        messageType == TEXT &amp;&amp; message.data == payload</span>
     }
 
     void mark() {
-<span class="fc" id="L94">        matchLatch.countDown()</span>
+<span class="fc" id="L101">        matchLatch.countDown()</span>
     }
 
     boolean marked(final long timeout, final TimeUnit unit) {
-<span class="pc" id="L98">        matchLatch.await(timeout, unit)</span>
+<span class="pc" id="L105">        matchLatch.await(timeout, unit)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

@@ -24,6 +24,7 @@ import com.stehno.ersatz.Response
 import com.stehno.ersatz.ResponseEncoders
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import java.util.function.Consumer
 
@@ -36,7 +37,6 @@ import static com.stehno.ersatz.HttpMethod.PATCH
 import static com.stehno.ersatz.HttpMethod.POST
 import static com.stehno.ersatz.HttpMethod.PUT
 import static com.stehno.ersatz.HttpMethod.TRACE
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 import static org.hamcrest.Matchers.anything
 import static org.hamcrest.Matchers.contains
@@ -173,26 +173,24 @@ class ErsatzRequest implements Request {
 
     @Override
     Request responder(@DelegatesTo(value = Response, strategy = DELEGATE_FIRST) final Closure closure) {
-<span class="pc bpc" id="L176" title="2 of 4 branches missed.">        Response response = delegateTo(newResponse(), closure)</span>
-<span class="fc" id="L177">        responses.add(response)</span>
-<span class="pc" id="L178">        this</span>
+<span class="pc" id="L176">        responder(ConsumerWithDelegate.create(closure))</span>
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
     Request called(final Matcher&lt;Integer&gt; callVerifier) {
-<span class="fc" id="L183">        this.callVerifier = callVerifier</span>
-<span class="pc" id="L184">        this</span>
+<span class="fc" id="L181">        this.callVerifier = callVerifier</span>
+<span class="pc" id="L182">        this</span>
     }
 
     @Override @SuppressWarnings('ConfusingMethodName')
     Request called(final int count) {
-<span class="pc" id="L189">        called equalTo(count)</span>
+<span class="pc" id="L187">        called equalTo(count)</span>
     }
 
     @Override
     Request matcher(final Matcher&lt;ClientRequest&gt; matcher) {
-<span class="fc" id="L194">        matchers &lt;&lt; RequestMatcher.matcher(matcher)</span>
-<span class="pc" id="L195">        this</span>
+<span class="fc" id="L192">        matchers &lt;&lt; RequestMatcher.matcher(matcher)</span>
+<span class="pc" id="L193">        this</span>
     }
 
     /**
@@ -202,7 +200,7 @@ class ErsatzRequest implements Request {
      * @return true if the call count matches the expected verification criteria
      */
     boolean verify() {
-<span class="pc" id="L205">        callVerifier.matches(callCount)</span>
+<span class="pc" id="L203">        callVerifier.matches(callCount)</span>
     }
 
     /**
@@ -214,8 +212,8 @@ class ErsatzRequest implements Request {
      * @return true if the incoming request matches the configured request
      */
     boolean matches(final ClientRequest clientRequest) {
-<span class="pc" id="L217">        matchers.every { m -&gt;</span>
-<span class="pc" id="L218">            m.matches(clientRequest)</span>
+<span class="pc" id="L215">        matchers.every { m -&gt;</span>
+<span class="pc" id="L216">            m.matches(clientRequest)</span>
         }
     }
 
@@ -225,15 +223,15 @@ class ErsatzRequest implements Request {
      * @return an immutable list of the configured matchers.
      */
     List&lt;RequestMatcher&gt; getRequestMatchers() {
-<span class="pc" id="L228">        matchers.asImmutable()</span>
+<span class="pc" id="L226">        matchers.asImmutable()</span>
     }
 
     protected void addMatcher(final RequestMatcher matcher) {
-<span class="fc" id="L232">        matchers &lt;&lt; matcher</span>
+<span class="fc" id="L230">        matchers &lt;&lt; matcher</span>
     }
 
     private Response newResponse() {
-<span class="pc" id="L236">        new ErsatzResponse(emptyResponse, globalEncoders)</span>
+<span class="pc" id="L234">        new ErsatzResponse(emptyResponse, globalEncoders)</span>
     }
 
     /**
@@ -243,32 +241,32 @@ class ErsatzRequest implements Request {
      * @return the current response
      */
     Response getCurrentResponse() {
-<span class="fc bfc" id="L246" title="All 2 branches covered.">        int index = callCount &gt;= responses.size() ? responses.size() - 1 : callCount</span>
-<span class="pc bpc" id="L247" title="10 of 16 branches missed.">        index &gt;= 0 ? responses[index] : null</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">        int index = callCount &gt;= responses.size() ? responses.size() - 1 : callCount</span>
+<span class="pc bpc" id="L245" title="10 of 16 branches missed.">        index &gt;= 0 ? responses[index] : null</span>
     }
 
     /**
      * Used to mark the request as having been called. Any configured listeners will be called after the call count has been incremented.
      */
     void mark(final ClientRequest cr) {
-<span class="pc bpc" id="L254" title="3 of 6 branches missed.">        callCount++</span>
+<span class="pc bpc" id="L252" title="3 of 6 branches missed.">        callCount++</span>
 
-<span class="fc bfc" id="L256" title="All 2 branches covered.">        for (final Consumer&lt;ClientRequest&gt; listener : listeners) {</span>
-<span class="fc" id="L257">            listener.accept(cr)</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">        for (final Consumer&lt;ClientRequest&gt; listener : listeners) {</span>
+<span class="fc" id="L255">            listener.accept(cr)</span>
         }
     }
 
     @Override String toString() {
-<span class="fc" id="L262">        StringBuilder str = new StringBuilder()</span>
-<span class="fc" id="L263">        str.append &quot;Expectations (${getClass().simpleName}): &quot;</span>
+<span class="fc" id="L260">        StringBuilder str = new StringBuilder()</span>
+<span class="fc" id="L261">        str.append &quot;Expectations (${getClass().simpleName}): &quot;</span>
 
-<span class="fc" id="L265">        matchers.each { m -&gt;</span>
-<span class="fc" id="L266">            StringDescription desc = new StringDescription()</span>
-<span class="fc" id="L267">            m.matcher.describeTo(desc)</span>
-<span class="pc" id="L268">            str.append(desc).append(', ')</span>
+<span class="fc" id="L263">        matchers.each { m -&gt;</span>
+<span class="fc" id="L264">            StringDescription desc = new StringDescription()</span>
+<span class="fc" id="L265">            m.matcher.describeTo(desc)</span>
+<span class="pc" id="L266">            str.append(desc).append(', ')</span>
         }
 
-<span class="pc" id="L271">        str.toString()</span>
+<span class="pc" id="L269">        str.toString()</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

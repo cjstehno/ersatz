@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - Class com.stehno.ersatz.issues.ScopingAndAutoCleanupSpec</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class com.stehno.ersatz.issues.ScopingAndAutoCleanupSpec</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.stehno.ersatz.issues.html">com.stehno.ersatz.issues</a> &gt; ScopingAndAutoCleanupSpec</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">4</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">2.545s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">Posting Four</td>
+<td class="success">0.229s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Posting One</td>
+<td class="success">1.940s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Posting Three</td>
+<td class="success">0.194s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Posting Two</td>
+<td class="success">0.182s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>07:27:49.597 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@608a0cef
+07:27:49.610 [XNIO-5 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-1', selector sun.nio.ch.EPollSelectorImpl@15cc07ce
+07:27:49.634 [XNIO-5 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-2', selector sun.nio.ch.EPollSelectorImpl@2eb7da43
+07:27:49.638 [XNIO-5 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-3', selector sun.nio.ch.EPollSelectorImpl@63a1e0b2
+07:27:49.646 [XNIO-5 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-4', selector sun.nio.ch.EPollSelectorImpl@41c02b52
+07:27:49.655 [XNIO-5 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-5', selector sun.nio.ch.EPollSelectorImpl@7ac02ca1
+07:27:49.675 [XNIO-5 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-6', selector sun.nio.ch.EPollSelectorImpl@6d79d2d8
+07:27:49.682 [XNIO-5 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-7', selector sun.nio.ch.EPollSelectorImpl@5e9b6d49
+07:27:49.697 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:49.702 [XNIO-5 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-8', selector sun.nio.ch.EPollSelectorImpl@19653e0b
+07:27:49.702 [XNIO-5 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 Accept', selector sun.nio.ch.EPollSelectorImpl@6ec3656b
+07:27:50.136 [XNIO-5 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { POST /posting (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[5], User-Agent=[okhttp/3.11.0], Host=[localhost:41609]}, cookies=[:]): input }
+07:27:50.145 [XNIO-5 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): output
+07:27:50.282 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@608a0cef
+07:27:50.331 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@46e2fad3
+07:27:50.362 [XNIO-6 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-1', selector sun.nio.ch.EPollSelectorImpl@4010123
+07:27:50.374 [XNIO-6 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-2', selector sun.nio.ch.EPollSelectorImpl@63b85cd
+07:27:50.387 [XNIO-6 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-3', selector sun.nio.ch.EPollSelectorImpl@20995510
+07:27:50.399 [XNIO-6 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-4', selector sun.nio.ch.EPollSelectorImpl@14daea18
+07:27:50.414 [XNIO-6 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-5', selector sun.nio.ch.EPollSelectorImpl@57b4a546
+07:27:50.420 [XNIO-6 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-6', selector sun.nio.ch.EPollSelectorImpl@70a5660e
+07:27:50.421 [XNIO-6 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-7', selector sun.nio.ch.EPollSelectorImpl@76f90938
+07:27:50.432 [XNIO-6 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-8', selector sun.nio.ch.EPollSelectorImpl@7479977b
+07:27:50.443 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:50.445 [XNIO-6 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 Accept', selector sun.nio.ch.EPollSelectorImpl@a7d0a48
+07:27:50.474 [XNIO-6 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { POST /posting (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[5], User-Agent=[okhttp/3.11.0], Host=[localhost:34753]}, cookies=[:]): input }
+07:27:50.477 [XNIO-6 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): output
+07:27:50.478 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@46e2fad3
+07:27:50.491 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@54926095
+07:27:50.515 [XNIO-7 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-1', selector sun.nio.ch.EPollSelectorImpl@607063e4
+07:27:50.530 [XNIO-7 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-2', selector sun.nio.ch.EPollSelectorImpl@32e85222
+07:27:50.562 [XNIO-7 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-3', selector sun.nio.ch.EPollSelectorImpl@78433c61
+07:27:50.563 [XNIO-7 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-4', selector sun.nio.ch.EPollSelectorImpl@2744bc6a
+07:27:50.583 [XNIO-7 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-5', selector sun.nio.ch.EPollSelectorImpl@2c926bc8
+07:27:50.603 [XNIO-7 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-6', selector sun.nio.ch.EPollSelectorImpl@6ad61957
+07:27:50.604 [XNIO-7 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-7', selector sun.nio.ch.EPollSelectorImpl@5c998cc0
+07:27:50.605 [XNIO-7 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-8', selector sun.nio.ch.EPollSelectorImpl@2c442a99
+07:27:50.614 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:50.614 [XNIO-7 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 Accept', selector sun.nio.ch.EPollSelectorImpl@10bcfa9b
+07:27:50.642 [XNIO-7 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { POST /posting (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[5], User-Agent=[okhttp/3.11.0], Host=[localhost:38681]}, cookies=[:]): input }
+07:27:50.646 [XNIO-7 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): output
+07:27:50.667 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@54926095
+07:27:50.794 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@593af86
+07:27:50.808 [XNIO-8 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-1', selector sun.nio.ch.EPollSelectorImpl@54cb1012
+07:27:50.818 [XNIO-8 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-2', selector sun.nio.ch.EPollSelectorImpl@50d7a7a
+07:27:50.827 [XNIO-8 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-3', selector sun.nio.ch.EPollSelectorImpl@625a65ad
+07:27:50.834 [XNIO-8 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-4', selector sun.nio.ch.EPollSelectorImpl@70e22336
+07:27:50.840 [XNIO-8 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-5', selector sun.nio.ch.EPollSelectorImpl@722ec739
+07:27:50.854 [XNIO-8 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-6', selector sun.nio.ch.EPollSelectorImpl@c427c0e
+07:27:50.866 [XNIO-8 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-7', selector sun.nio.ch.EPollSelectorImpl@4ac8ace1
+07:27:50.867 [XNIO-8 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-8', selector sun.nio.ch.EPollSelectorImpl@7bb74d63
+07:27:50.878 [XNIO-8 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 Accept', selector sun.nio.ch.EPollSelectorImpl@114fcdf9
+07:27:50.878 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:50.906 [XNIO-8 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Request: { POST /Expectations (ErsatzRequest): &lt;GET&gt;, &quot;itsAKindOfMagic&quot;, (query=[:], headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[5], User-Agent=[okhttp/3.11.0], Host=[localhost:42787]}, cookies=[:]): input }
+07:27:50.918 [XNIO-8 task-1] DEBUG com.stehno.ersatz.ErsatzServer - Response({Content-Type=[text/plain]}): output
+07:27:50.920 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@593af86
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 4.10.2</a> at Dec 9, 2018 7:27:55 AM</p>
+</div>
+</div>
+</body>
+</html>

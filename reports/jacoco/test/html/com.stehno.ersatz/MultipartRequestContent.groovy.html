@@ -21,8 +21,9 @@ import groovy.transform.EqualsAndHashCode
 
 import java.util.function.Consumer
 
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
+
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
@@ -44,7 +45,7 @@ class MultipartRequestContent {
      * @return a configured instance of MultipartRequestContent
      */
     static MultipartRequestContent multipart(@DelegatesTo(value = MultipartRequestContent, strategy = DELEGATE_FIRST) final Closure closure) {
-<span class="pc" id="L47">        delegateTo(new MultipartRequestContent(), closure)</span>
+<span class="pc" id="L48">        multipart(ConsumerWithDelegate.create(closure))</span>
     }
 
     /**
@@ -55,9 +56,9 @@ class MultipartRequestContent {
      * @return a configured instance of MultipartRequestContent
      */
     static MultipartRequestContent multipart(final Consumer&lt;MultipartRequestContent&gt; config) {
-<span class="fc" id="L58">        MultipartRequestContent request = new MultipartRequestContent()</span>
-<span class="fc" id="L59">        config.accept(request)</span>
-<span class="pc" id="L60">        request</span>
+<span class="fc" id="L59">        MultipartRequestContent request = new MultipartRequestContent()</span>
+<span class="fc" id="L60">        config.accept(request)</span>
+<span class="pc" id="L61">        request</span>
     }
 
     /**
@@ -68,7 +69,7 @@ class MultipartRequestContent {
      * @return a reference to this multipart request instance
      */
     MultipartRequestContent part(final String fieldName, final String value) {
-<span class="pc" id="L71">        part fieldName, TEXT_PLAIN, value</span>
+<span class="pc" id="L72">        part fieldName, TEXT_PLAIN, value</span>
     }
 
     /**
@@ -80,8 +81,8 @@ class MultipartRequestContent {
      * @return a reference to this multipart request instance
      */
     MultipartRequestContent part(final String fieldName, final String contentType, final Object value) {
-<span class="fc" id="L83">        parts[fieldName] = new MultipartPart(fieldName, null, contentType, null, value)</span>
-<span class="pc" id="L84">        this</span>
+<span class="fc" id="L84">        parts[fieldName] = new MultipartPart(fieldName, null, contentType, null, value)</span>
+<span class="pc" id="L85">        this</span>
     }
 
     /**
@@ -93,8 +94,8 @@ class MultipartRequestContent {
      * @return a reference to this multipart request instance
      */
     MultipartRequestContent part(final String fieldName, final ContentType contentType, final Object value) {
-<span class="fc" id="L96">        parts[fieldName] = new MultipartPart(fieldName, null, contentType.value, null, value)</span>
-<span class="pc" id="L97">        this</span>
+<span class="fc" id="L97">        parts[fieldName] = new MultipartPart(fieldName, null, contentType.value, null, value)</span>
+<span class="pc" id="L98">        this</span>
     }
 
     /**
@@ -107,8 +108,8 @@ class MultipartRequestContent {
      * @return a reference to this multipart request instance
      */
     MultipartRequestContent part(String fieldName, String fileName, String contentType, Object value) {
-<span class="fc" id="L110">        parts[fieldName] = new MultipartPart(fieldName, fileName, contentType, null, value)</span>
-<span class="pc" id="L111">        this</span>
+<span class="fc" id="L111">        parts[fieldName] = new MultipartPart(fieldName, fileName, contentType, null, value)</span>
+<span class="pc" id="L112">        this</span>
     }
 
     /**
@@ -121,8 +122,8 @@ class MultipartRequestContent {
      * @return a reference to this multipart request instance
      */
     MultipartRequestContent part(String fieldName, String fileName, ContentType contentType, Object value) {
-<span class="fc" id="L124">        parts[fieldName] = new MultipartPart(fieldName, fileName, contentType.value, null, value)</span>
-<span class="pc" id="L125">        this</span>
+<span class="fc" id="L125">        parts[fieldName] = new MultipartPart(fieldName, fileName, contentType.value, null, value)</span>
+<span class="pc" id="L126">        this</span>
     }
 
     /**
@@ -132,7 +133,7 @@ class MultipartRequestContent {
      * @return the part or null if none is configured
      */
     protected MultipartPart getAt(final String fieldName) {
-<span class="pc" id="L135">        parts[fieldName]</span>
+<span class="pc" id="L136">        parts[fieldName]</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

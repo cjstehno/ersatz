@@ -18,11 +18,11 @@ package com.stehno.ersatz
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import groovy.transform.TypeChecked
+import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
 import javax.activation.MimeType
 import java.util.function.Function
 
-import static com.stehno.ersatz.impl.Delegator.delegateTo
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
@@ -42,7 +42,7 @@ class ResponseEncoders {
     @SuppressWarnings('ThisReferenceEscapesConstructor')
     ResponseEncoders(@DelegatesTo(value = ResponseEncoders, strategy = DELEGATE_FIRST) Closure closure = null) {
 <span class="fc bfc" id="L44" title="All 2 branches covered.">        if (closure) {</span>
-<span class="fc" id="L45">            delegateTo(this, closure)</span>
+<span class="fc" id="L45">            ConsumerWithDelegate.create(closure).accept(this)</span>
         }
     }
 

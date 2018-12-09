@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">2.209s</div>
+<div class="counter">8.880s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,82 +79,82 @@
 </thead>
 <tr>
 <td class="success">specified multiple ws connection expectations</td>
-<td class="success">0.204s</td>
+<td class="success">0.314s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">specified ws block should expect at least one connect</td>
-<td class="success">0.605s</td>
+<td class="success">5.597s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">specify a ws block and expect a received message (closure)[0]</td>
-<td class="success">0.087s</td>
+<td class="success">0.213s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">specify a ws block and expect a received message (closure)[1]</td>
-<td class="success">0.128s</td>
+<td class="success">0.167s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">specify a ws block and expect a received message (consumer: BINARY)</td>
-<td class="success">0.105s</td>
+<td class="success">0.157s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">specify a ws block and expect a received message (consumer: TEXT)</td>
-<td class="success">0.192s</td>
+<td class="success">0.208s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">specify a ws block and expect a received message (method: BINARY)</td>
-<td class="success">0.225s</td>
+<td class="success">0.252s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">specify a ws block and expect a received message (method: TEXT)</td>
-<td class="success">0.287s</td>
+<td class="success">0.276s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">ws block connects and sends message (closure: BINARY)</td>
-<td class="success">0.015s</td>
+<td class="success">0.204s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">ws block connects and sends message (closure: TEXT)</td>
-<td class="success">0.032s</td>
+<td class="success">0.194s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">ws block connects and sends message (method: BINARY)</td>
-<td class="success">0.030s</td>
+<td class="success">0.218s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">ws block connects and sends message (method: TEXT)</td>
-<td class="success">0.032s</td>
+<td class="success">0.207s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">ws block expects a message and then reacts (closure: BINARY)</td>
-<td class="success">0.024s</td>
+<td class="success">0.178s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">ws block expects a message and then reacts (closure: TEXT)</td>
-<td class="success">0.043s</td>
+<td class="success">0.236s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">ws block expects a message and then reacts (method: BINARY)</td>
-<td class="success">0.029s</td>
+<td class="success">0.200s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">ws block expects a message and then reacts (method: TEXT)</td>
-<td class="success">0.171s</td>
+<td class="success">0.259s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -162,335 +162,342 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>07:43:58.133 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@634a8ec0
-07:43:58.153 [XNIO-5 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-1', selector sun.nio.ch.EPollSelectorImpl@5776d00
-07:43:58.168 [XNIO-5 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-2', selector sun.nio.ch.EPollSelectorImpl@7d564cd4
-07:43:58.179 [XNIO-5 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-3', selector sun.nio.ch.EPollSelectorImpl@6e4f51c3
-07:43:58.197 [XNIO-5 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-4', selector sun.nio.ch.EPollSelectorImpl@4ac32c8f
-07:43:58.207 [XNIO-5 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-5', selector sun.nio.ch.EPollSelectorImpl@5e87127a
-07:43:58.220 [XNIO-5 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-6', selector sun.nio.ch.EPollSelectorImpl@3d2c5dbd
-07:43:58.227 [XNIO-5 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-7', selector sun.nio.ch.EPollSelectorImpl@6f8f9c22
-07:43:58.246 [XNIO-5 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-8', selector sun.nio.ch.EPollSelectorImpl@3f2d7f57
-07:43:58.256 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:43:58.257 [XNIO-5 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 Accept', selector sun.nio.ch.EPollSelectorImpl@1fc0febc
-07:43:58.341 [XNIO-5 I/O-6] DEBUG io.undertow.request - Matched prefix path /stuff for path /stuff
-07:43:58.376 [XNIO-5 I/O-6] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@8504c46 on HttpServerExchange{ GET /stuff request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[C7Vv79IYTazVFzSOsF8bUQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:45681]} response {}}
-07:43:58.378 [XNIO-5 I/O-6] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /stuff request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[C7Vv79IYTazVFzSOsF8bUQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:45681]} response {}}
-07:43:58.418 [OkHttp http://localhost:45681/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:43:58.442 [XNIO-5 I/O-6] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/stuff).
-07:43:58.449 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@634a8ec0
-07:43:58.498 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@723cb548
-07:43:58.498 [OkHttp http://localhost:45681/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: Connection reset
-07:43:58.520 [XNIO-6 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-1', selector sun.nio.ch.EPollSelectorImpl@5a8da580
-07:43:58.536 [XNIO-6 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-2', selector sun.nio.ch.EPollSelectorImpl@33b93bbc
-07:43:58.548 [XNIO-6 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-3', selector sun.nio.ch.EPollSelectorImpl@6cf3a617
-07:43:58.568 [XNIO-6 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-4', selector sun.nio.ch.EPollSelectorImpl@5a6914f0
-07:43:58.580 [XNIO-6 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-5', selector sun.nio.ch.EPollSelectorImpl@5bf73e14
-07:43:58.580 [XNIO-6 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-6', selector sun.nio.ch.EPollSelectorImpl@54cb1012
-07:43:58.600 [XNIO-6 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-7', selector sun.nio.ch.EPollSelectorImpl@50d7a7a
-07:43:58.605 [XNIO-6 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-8', selector sun.nio.ch.EPollSelectorImpl@625a65ad
-07:43:58.612 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:43:58.620 [XNIO-6 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 Accept', selector sun.nio.ch.EPollSelectorImpl@70e22336
-07:43:58.672 [XNIO-6 I/O-6] DEBUG io.undertow.request - Matched default handler path /ws
-07:43:58.673 [XNIO-6 I/O-6] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
-07:43:58.673 [XNIO-6 I/O-6] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@7745c477 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[GzefUQF5qo7EPQWuWbmqUQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:42567]} response {}}
-07:43:58.673 [XNIO-6 I/O-6] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[GzefUQF5qo7EPQWuWbmqUQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:42567]} response {}}
-07:43:58.673 [XNIO-6 I/O-6] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
-07:43:58.674 [OkHttp http://localhost:42567/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:43:58.678 [XNIO-6 I/O-8] DEBUG io.undertow.request - Matched prefix path /foo for path /foo
-07:43:58.678 [XNIO-6 I/O-8] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@55a5a91 on HttpServerExchange{ GET /foo request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[QR9n9UDhkElHL8IpmjpF2A==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:42567]} response {}}
-07:43:58.678 [XNIO-6 I/O-8] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /foo request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[QR9n9UDhkElHL8IpmjpF2A==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:42567]} response {}}
-07:43:58.679 [XNIO-6 I/O-8] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/foo).
-07:43:58.679 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@723cb548
-07:43:58.682 [OkHttp http://localhost:42567/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:43:58.726 [OkHttp http://localhost:42567/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: null
-07:43:58.726 [OkHttp http://localhost:42567/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: null
-07:43:58.773 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@3723103b
-07:43:58.780 [XNIO-7 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-1', selector sun.nio.ch.EPollSelectorImpl@14c31785
-07:43:58.790 [XNIO-7 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-2', selector sun.nio.ch.EPollSelectorImpl@4b934519
-07:43:58.812 [XNIO-7 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-3', selector sun.nio.ch.EPollSelectorImpl@4750553b
-07:43:58.825 [XNIO-7 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-4', selector sun.nio.ch.EPollSelectorImpl@445d20c7
-07:43:58.845 [XNIO-7 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-5', selector sun.nio.ch.EPollSelectorImpl@5549726d
-07:43:58.848 [XNIO-7 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-6', selector sun.nio.ch.EPollSelectorImpl@46a8f69d
-07:43:58.868 [XNIO-7 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-7', selector sun.nio.ch.EPollSelectorImpl@613a50ad
-07:43:58.888 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:43:58.888 [XNIO-7 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-8', selector sun.nio.ch.EPollSelectorImpl@672c0e6b
-07:43:58.898 [XNIO-7 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 Accept', selector sun.nio.ch.EPollSelectorImpl@4e6e5697
-07:43:58.936 [XNIO-7 I/O-2] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
-07:43:58.937 [XNIO-7 I/O-2] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@2a33a55e on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[o8UyBRLZzlPqJu0/nQxrkg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:44051]} response {}}
-07:43:58.937 [XNIO-7 I/O-2] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[o8UyBRLZzlPqJu0/nQxrkg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:44051]} response {}}
-07:43:58.938 [XNIO-7 I/O-2] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
-07:43:58.938 [OkHttp http://localhost:44051/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:43:58.964 [XNIO-7 I/O-2] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
-07:43:59.018 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@3723103b
-07:43:59.025 [OkHttp http://localhost:44051/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: Connection reset
-07:43:59.031 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@50126896
-07:43:59.051 [XNIO-8 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-1', selector sun.nio.ch.EPollSelectorImpl@31777870
-07:43:59.055 [XNIO-8 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-2', selector sun.nio.ch.EPollSelectorImpl@786c973a
-07:43:59.060 [XNIO-8 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-3', selector sun.nio.ch.EPollSelectorImpl@67239bdd
-07:43:59.069 [XNIO-8 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-4', selector sun.nio.ch.EPollSelectorImpl@1cfcf1e6
-07:43:59.084 [XNIO-8 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-5', selector sun.nio.ch.EPollSelectorImpl@53e6cd5a
-07:43:59.100 [XNIO-8 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-6', selector sun.nio.ch.EPollSelectorImpl@4f20647e
-07:43:59.112 [XNIO-8 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-7', selector sun.nio.ch.EPollSelectorImpl@26279e3d
-07:43:59.124 [XNIO-8 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-8', selector sun.nio.ch.EPollSelectorImpl@729f6c5
-07:43:59.133 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:43:59.133 [XNIO-8 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 Accept', selector sun.nio.ch.EPollSelectorImpl@4f30b088
-07:43:59.186 [XNIO-8 I/O-2] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
-07:43:59.186 [XNIO-8 I/O-2] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@4a044de1 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[xlMwp9P2G4hz891FqleUJw==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:35379]} response {}}
-07:43:59.186 [XNIO-8 I/O-2] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[xlMwp9P2G4hz891FqleUJw==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:35379]} response {}}
-07:43:59.187 [XNIO-8 I/O-2] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
-07:43:59.187 [OkHttp http://localhost:35379/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:43:59.200 [XNIO-8 I/O-2] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 2
-07:43:59.252 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@50126896
-07:43:59.253 [OkHttp http://localhost:35379/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: Connection reset
-07:43:59.270 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@f3455ce
-07:43:59.302 [XNIO-9 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-1', selector sun.nio.ch.EPollSelectorImpl@3175d7ff
-07:43:59.304 [XNIO-9 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-2', selector sun.nio.ch.EPollSelectorImpl@2dc59616
-07:43:59.315 [XNIO-9 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-3', selector sun.nio.ch.EPollSelectorImpl@474d5bd
-07:43:59.330 [XNIO-9 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-4', selector sun.nio.ch.EPollSelectorImpl@63e7b786
-07:43:59.348 [XNIO-9 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-5', selector sun.nio.ch.EPollSelectorImpl@3b30a79f
-07:43:59.364 [XNIO-9 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-6', selector sun.nio.ch.EPollSelectorImpl@4e4c7f5b
-07:43:59.376 [XNIO-9 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-7', selector sun.nio.ch.EPollSelectorImpl@77733628
-07:43:59.385 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:43:59.386 [XNIO-9 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-8', selector sun.nio.ch.EPollSelectorImpl@2c15d3be
-07:43:59.388 [XNIO-9 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 Accept', selector sun.nio.ch.EPollSelectorImpl@4f792614
-07:43:59.427 [XNIO-9 I/O-8] DEBUG io.undertow.request - Matched prefix path /blah for path /blah
-07:43:59.427 [XNIO-9 I/O-8] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@7cdd2a51 on HttpServerExchange{ GET /blah request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[O3GtF6pYtGbtaZOQaoNoYw==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:38871]} response {}}
-07:43:59.427 [XNIO-9 I/O-8] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /blah request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[O3GtF6pYtGbtaZOQaoNoYw==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:38871]} response {}}
-07:43:59.428 [XNIO-9 I/O-8] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/blah).
-07:43:59.430 [OkHttp http://localhost:38871/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:43:59.448 [XNIO-9 I/O-8] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
-07:43:59.449 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@f3455ce
-07:43:59.451 [OkHttp http://localhost:38871/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: null
-07:43:59.466 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@28de83a9
-07:43:59.484 [XNIO-10 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-1', selector sun.nio.ch.EPollSelectorImpl@17950562
-07:43:59.493 [XNIO-10 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-2', selector sun.nio.ch.EPollSelectorImpl@538e9469
-07:43:59.508 [XNIO-10 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-4', selector sun.nio.ch.EPollSelectorImpl@154d04cb
-07:43:59.508 [XNIO-10 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-3', selector sun.nio.ch.EPollSelectorImpl@33273512
-07:43:59.509 [XNIO-10 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-5', selector sun.nio.ch.EPollSelectorImpl@3f42c705
-07:43:59.518 [XNIO-10 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-6', selector sun.nio.ch.EPollSelectorImpl@678785c6
-07:43:59.520 [XNIO-10 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-7', selector sun.nio.ch.EPollSelectorImpl@2c4bb714
-07:43:59.521 [XNIO-10 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-8', selector sun.nio.ch.EPollSelectorImpl@5999c5a0
-07:43:59.528 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:43:59.531 [XNIO-10 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 Accept', selector sun.nio.ch.EPollSelectorImpl@14ecc5b5
-07:43:59.547 [XNIO-10 I/O-2] DEBUG io.undertow.request - Matched prefix path /blah for path /blah
-07:43:59.548 [XNIO-10 I/O-2] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@1a93d17b on HttpServerExchange{ GET /blah request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[2Hbt8LhRxoocl4oWqqJcsw==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:33901]} response {}}
-07:43:59.548 [XNIO-10 I/O-2] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /blah request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[2Hbt8LhRxoocl4oWqqJcsw==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:33901]} response {}}
-07:43:59.548 [XNIO-10 I/O-2] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/blah).
-07:43:59.552 [OkHttp http://localhost:33901/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:43:59.562 [XNIO-10 I/O-2] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 2
-07:43:59.563 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@28de83a9
-07:43:59.564 [OkHttp http://localhost:33901/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: null
-07:43:59.584 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@5cece592
-07:43:59.596 [XNIO-11 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-1', selector sun.nio.ch.EPollSelectorImpl@4ef3454e
-07:43:59.608 [XNIO-11 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-2', selector sun.nio.ch.EPollSelectorImpl@3646188b
-07:43:59.610 [XNIO-11 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-3', selector sun.nio.ch.EPollSelectorImpl@4a3617d
-07:43:59.614 [XNIO-11 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-4', selector sun.nio.ch.EPollSelectorImpl@68e977f2
-07:43:59.616 [XNIO-11 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-5', selector sun.nio.ch.EPollSelectorImpl@47f3ec0d
-07:43:59.618 [XNIO-11 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-6', selector sun.nio.ch.EPollSelectorImpl@45f01112
-07:43:59.620 [XNIO-11 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-7', selector sun.nio.ch.EPollSelectorImpl@4000e1f
-07:43:59.624 [XNIO-11 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-8', selector sun.nio.ch.EPollSelectorImpl@4aed7b7f
-07:43:59.628 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:43:59.631 [XNIO-11 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 Accept', selector sun.nio.ch.EPollSelectorImpl@6873a213
-07:43:59.649 [XNIO-11 I/O-4] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
-07:43:59.650 [XNIO-11 I/O-4] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@4d712a38 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[ZOK/DStZd4Ym2Acn41SjbQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:33923]} response {}}
-07:43:59.650 [XNIO-11 I/O-4] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[ZOK/DStZd4Ym2Acn41SjbQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:33923]} response {}}
-07:43:59.650 [XNIO-11 I/O-4] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
-07:43:59.651 [OkHttp http://localhost:33923/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:43:59.658 [XNIO-11 I/O-4] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
-07:43:59.659 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@5cece592
-07:43:59.661 [OkHttp http://localhost:33923/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: null
-07:43:59.667 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@3e07c4f9
-07:43:59.680 [XNIO-12 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-1', selector sun.nio.ch.EPollSelectorImpl@75fbd1d5
-07:43:59.684 [XNIO-12 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-3', selector sun.nio.ch.EPollSelectorImpl@27aa117c
-07:43:59.684 [XNIO-12 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-2', selector sun.nio.ch.EPollSelectorImpl@347266a8
-07:43:59.689 [XNIO-12 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-5', selector sun.nio.ch.EPollSelectorImpl@20881f4b
-07:43:59.689 [XNIO-12 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-4', selector sun.nio.ch.EPollSelectorImpl@103fba1d
-07:43:59.712 [XNIO-12 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-6', selector sun.nio.ch.EPollSelectorImpl@5f240ba3
-07:43:59.716 [XNIO-12 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-7', selector sun.nio.ch.EPollSelectorImpl@2034afe3
-07:43:59.724 [XNIO-12 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-8', selector sun.nio.ch.EPollSelectorImpl@2cdb4884
-07:43:59.740 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:43:59.744 [XNIO-12 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 Accept', selector sun.nio.ch.EPollSelectorImpl@27d378ea
-07:43:59.776 [XNIO-12 I/O-8] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
-07:43:59.776 [XNIO-12 I/O-8] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@72d2ff99 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[RV6JiReowKaIHW4f9a3QzQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:44477]} response {}}
-07:43:59.776 [XNIO-12 I/O-8] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[RV6JiReowKaIHW4f9a3QzQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:44477]} response {}}
-07:43:59.777 [OkHttp http://localhost:44477/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:43:59.778 [XNIO-12 I/O-8] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
-07:43:59.789 [XNIO-12 I/O-8] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 2
-07:43:59.791 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@3e07c4f9
-07:43:59.794 [OkHttp http://localhost:44477/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: null
-07:43:59.831 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@72d37268
-07:43:59.836 [XNIO-13 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-1', selector sun.nio.ch.EPollSelectorImpl@7c1aee78
-07:43:59.840 [XNIO-13 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-2', selector sun.nio.ch.EPollSelectorImpl@23b1c1e4
-07:43:59.857 [XNIO-13 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-3', selector sun.nio.ch.EPollSelectorImpl@282566fb
-07:43:59.857 [XNIO-13 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-4', selector sun.nio.ch.EPollSelectorImpl@60ebafca
-07:43:59.858 [XNIO-13 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-5', selector sun.nio.ch.EPollSelectorImpl@77eefb8a
-07:43:59.868 [XNIO-13 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-6', selector sun.nio.ch.EPollSelectorImpl@7fbb0b3a
-07:43:59.876 [XNIO-13 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-7', selector sun.nio.ch.EPollSelectorImpl@58ab7004
-07:43:59.880 [XNIO-13 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-8', selector sun.nio.ch.EPollSelectorImpl@71af4ce2
-07:43:59.892 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:43:59.892 [XNIO-13 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 Accept', selector sun.nio.ch.EPollSelectorImpl@69eff651
-07:43:59.928 [XNIO-13 I/O-8] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
-07:43:59.929 [XNIO-13 I/O-8] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@2950931c on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[D4A7EKiLCxJD+CQsiVgtrQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:35231]} response {}}
-07:43:59.929 [XNIO-13 I/O-8] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[D4A7EKiLCxJD+CQsiVgtrQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:35231]} response {}}
-07:43:59.931 [XNIO-13 I/O-8] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
-07:43:59.932 [OkHttp http://localhost:35231/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:43:59.940 [XNIO-13 I/O-8] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
-07:43:59.953 [OkHttp http://localhost:35231/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (string): the message
-07:43:59.954 [XNIO-13 I/O-8] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
-07:43:59.958 [OkHttp http://localhost:35231/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
-07:43:59.958 [OkHttp http://localhost:35231/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
-07:43:59.959 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@72d37268
-07:43:59.972 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@6ccf6156
-07:43:59.974 [XNIO-14 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-2', selector sun.nio.ch.EPollSelectorImpl@10ec26b6
-07:43:59.974 [XNIO-14 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-1', selector sun.nio.ch.EPollSelectorImpl@20bf7078
-07:43:59.974 [XNIO-14 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-3', selector sun.nio.ch.EPollSelectorImpl@39685787
-07:43:59.975 [XNIO-14 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-4', selector sun.nio.ch.EPollSelectorImpl@7d13b338
-07:43:59.975 [XNIO-14 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-5', selector sun.nio.ch.EPollSelectorImpl@5c05c47b
-07:43:59.975 [XNIO-14 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-6', selector sun.nio.ch.EPollSelectorImpl@d1ba0e8
-07:43:59.976 [XNIO-14 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-7', selector sun.nio.ch.EPollSelectorImpl@3a886c8b
-07:43:59.989 [XNIO-14 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 Accept', selector sun.nio.ch.EPollSelectorImpl@5bf21c67
-07:43:59.989 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:43:59.989 [XNIO-14 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-8', selector sun.nio.ch.EPollSelectorImpl@3587a3c2
-07:43:59.996 [XNIO-14 I/O-8] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
-07:43:59.997 [XNIO-14 I/O-8] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@31a4e360 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[YDSEM3IDZXdJtPQsJ/A0Aw==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:38313]} response {}}
-07:43:59.997 [XNIO-14 I/O-8] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[YDSEM3IDZXdJtPQsJ/A0Aw==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:38313]} response {}}
-07:43:59.997 [XNIO-14 I/O-8] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
-07:43:59.997 [OkHttp http://localhost:38313/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:43:59.998 [XNIO-14 I/O-8] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
-07:43:59.999 [XNIO-14 I/O-8] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
-07:43:59.999 [OkHttp http://localhost:38313/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (bytes): [text=somebytes]
-07:43:59.999 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@6ccf6156
-07:44:00.000 [OkHttp http://localhost:38313/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
-07:44:00.000 [OkHttp http://localhost:38313/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
-07:44:00.012 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@5e696809
-07:44:00.020 [XNIO-15 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-1', selector sun.nio.ch.EPollSelectorImpl@1e023997
-07:44:00.024 [XNIO-15 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-3', selector sun.nio.ch.EPollSelectorImpl@3ca376df
-07:44:00.024 [XNIO-15 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-2', selector sun.nio.ch.EPollSelectorImpl@75791d68
-07:44:00.024 [XNIO-15 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-4', selector sun.nio.ch.EPollSelectorImpl@72974c01
-07:44:00.026 [XNIO-15 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-5', selector sun.nio.ch.EPollSelectorImpl@34744b01
-07:44:00.026 [XNIO-15 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-6', selector sun.nio.ch.EPollSelectorImpl@424188e1
-07:44:00.026 [XNIO-15 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-7', selector sun.nio.ch.EPollSelectorImpl@42d23a50
-07:44:00.028 [XNIO-15 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-8', selector sun.nio.ch.EPollSelectorImpl@5d930be1
-07:44:00.036 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:44:00.036 [XNIO-15 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 Accept', selector sun.nio.ch.EPollSelectorImpl@2a2b73c8
-07:44:00.043 [XNIO-15 I/O-6] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
-07:44:00.044 [XNIO-15 I/O-6] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@118cf6c5 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[ZMUEWPpv5fGjEIHna1qekg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:38179]} response {}}
-07:44:00.044 [XNIO-15 I/O-6] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[ZMUEWPpv5fGjEIHna1qekg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:38179]} response {}}
-07:44:00.044 [XNIO-15 I/O-6] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
-07:44:00.044 [OkHttp http://localhost:38179/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:44:00.045 [XNIO-15 I/O-6] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
-07:44:00.045 [OkHttp http://localhost:38179/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (string): the message
-07:44:00.045 [XNIO-15 I/O-6] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
-07:44:00.045 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@5e696809
-07:44:00.045 [OkHttp http://localhost:38179/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
-07:44:00.046 [OkHttp http://localhost:38179/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
-07:44:00.051 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@5370118f
-07:44:00.057 [XNIO-16 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-1', selector sun.nio.ch.EPollSelectorImpl@4ea782df
-07:44:00.057 [XNIO-16 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-2', selector sun.nio.ch.EPollSelectorImpl@34abaad7
-07:44:00.057 [XNIO-16 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-3', selector sun.nio.ch.EPollSelectorImpl@68c289ba
-07:44:00.057 [XNIO-16 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-4', selector sun.nio.ch.EPollSelectorImpl@548483fb
-07:44:00.058 [XNIO-16 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-5', selector sun.nio.ch.EPollSelectorImpl@4c4ef8dd
-07:44:00.058 [XNIO-16 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-6', selector sun.nio.ch.EPollSelectorImpl@6c8ad53
-07:44:00.059 [XNIO-16 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-7', selector sun.nio.ch.EPollSelectorImpl@253cb5e9
-07:44:00.059 [XNIO-16 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-8', selector sun.nio.ch.EPollSelectorImpl@3561e517
-07:44:00.060 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:44:00.060 [XNIO-16 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 Accept', selector sun.nio.ch.EPollSelectorImpl@3acb7c0e
-07:44:00.068 [XNIO-16 I/O-6] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
-07:44:00.068 [XNIO-16 I/O-6] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@18be149 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[BmeofaO3RFajZbLEJMP31g==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:41257]} response {}}
-07:44:00.068 [XNIO-16 I/O-6] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[BmeofaO3RFajZbLEJMP31g==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:41257]} response {}}
-07:44:00.069 [XNIO-16 I/O-6] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
-07:44:00.069 [OkHttp http://localhost:41257/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:44:00.072 [XNIO-16 I/O-6] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
-07:44:00.072 [OkHttp http://localhost:41257/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (bytes): [text=somebytes]
-07:44:00.073 [XNIO-16 I/O-6] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
-07:44:00.073 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@5370118f
-07:44:00.073 [OkHttp http://localhost:41257/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
-07:44:00.074 [OkHttp http://localhost:41257/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
-07:44:00.087 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@483ec1df
-07:44:00.090 [XNIO-17 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-17 I/O-1', selector sun.nio.ch.EPollSelectorImpl@48584598
-07:44:00.090 [XNIO-17 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-17 I/O-2', selector sun.nio.ch.EPollSelectorImpl@7bf6bb64
-07:44:00.090 [XNIO-17 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-17 I/O-3', selector sun.nio.ch.EPollSelectorImpl@4ae1cff2
-07:44:00.092 [XNIO-17 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-17 I/O-4', selector sun.nio.ch.EPollSelectorImpl@69e99e58
-07:44:00.096 [XNIO-17 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-17 I/O-5', selector sun.nio.ch.EPollSelectorImpl@59062da9
-07:44:00.096 [XNIO-17 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-17 I/O-6', selector sun.nio.ch.EPollSelectorImpl@2800de28
-07:44:00.096 [XNIO-17 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-17 I/O-7', selector sun.nio.ch.EPollSelectorImpl@fcae2b6
-07:44:00.100 [XNIO-17 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-17 I/O-8', selector sun.nio.ch.EPollSelectorImpl@673a0158
-07:44:00.104 [XNIO-17 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-17 Accept', selector sun.nio.ch.EPollSelectorImpl@6bf187e3
-07:44:00.104 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:44:00.106 [XNIO-17 I/O-6] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
-07:44:00.106 [XNIO-17 I/O-6] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@3a50579e on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[CNQ7oRwgQoh3WCi8NwRzCg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:37545]} response {}}
-07:44:00.106 [XNIO-17 I/O-6] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[CNQ7oRwgQoh3WCi8NwRzCg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:37545]} response {}}
-07:44:00.107 [XNIO-17 I/O-6] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
-07:44:00.107 [OkHttp http://localhost:37545/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:44:00.107 [OkHttp http://localhost:37545/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (string): message for you, sir
-07:44:00.107 [XNIO-17 I/O-6] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
-07:44:00.107 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@483ec1df
-07:44:00.108 [OkHttp http://localhost:37545/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
-07:44:00.108 [OkHttp http://localhost:37545/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
-07:44:00.113 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@2798992f
-07:44:00.115 [XNIO-18 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-18 I/O-1', selector sun.nio.ch.EPollSelectorImpl@41975bf6
-07:44:00.116 [XNIO-18 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-18 I/O-2', selector sun.nio.ch.EPollSelectorImpl@55112cd0
-07:44:00.116 [XNIO-18 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-18 I/O-3', selector sun.nio.ch.EPollSelectorImpl@51f3602
-07:44:00.116 [XNIO-18 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-18 I/O-4', selector sun.nio.ch.EPollSelectorImpl@7cc2a6e5
-07:44:00.117 [XNIO-18 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-18 I/O-5', selector sun.nio.ch.EPollSelectorImpl@fcfd6
-07:44:00.117 [XNIO-18 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-18 I/O-6', selector sun.nio.ch.EPollSelectorImpl@5b3e7329
-07:44:00.117 [XNIO-18 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-18 I/O-7', selector sun.nio.ch.EPollSelectorImpl@3c296619
-07:44:00.117 [XNIO-18 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-18 Accept', selector sun.nio.ch.EPollSelectorImpl@3e0574b0
-07:44:00.117 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:44:00.118 [XNIO-18 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-18 I/O-8', selector sun.nio.ch.EPollSelectorImpl@7bfece89
-07:44:00.133 [XNIO-18 I/O-2] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
-07:44:00.133 [XNIO-18 I/O-2] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@6724909f on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[MCabQeK1VkX4mwsrUV/vyQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:44121]} response {}}
-07:44:00.133 [XNIO-18 I/O-2] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[MCabQeK1VkX4mwsrUV/vyQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:44121]} response {}}
-07:44:00.133 [XNIO-18 I/O-2] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
-07:44:00.133 [OkHttp http://localhost:44121/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:44:00.140 [OkHttp http://localhost:44121/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (bytes): [text=message for you, sir]
-07:44:00.140 [XNIO-18 I/O-2] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
-07:44:00.140 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@2798992f
-07:44:00.141 [OkHttp http://localhost:44121/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
-07:44:00.141 [OkHttp http://localhost:44121/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
-07:44:00.153 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@29d8293a
-07:44:00.155 [XNIO-19 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-19 I/O-1', selector sun.nio.ch.EPollSelectorImpl@25576170
-07:44:00.156 [XNIO-19 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-19 I/O-3', selector sun.nio.ch.EPollSelectorImpl@5375a4b6
-07:44:00.156 [XNIO-19 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-19 I/O-4', selector sun.nio.ch.EPollSelectorImpl@7345fe1d
-07:44:00.156 [XNIO-19 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-19 I/O-2', selector sun.nio.ch.EPollSelectorImpl@709eae1
-07:44:00.156 [XNIO-19 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-19 I/O-5', selector sun.nio.ch.EPollSelectorImpl@51fd5c45
-07:44:00.164 [XNIO-19 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-19 I/O-6', selector sun.nio.ch.EPollSelectorImpl@1eadb1cc
-07:44:00.168 [XNIO-19 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-19 I/O-7', selector sun.nio.ch.EPollSelectorImpl@5cdd1d63
-07:44:00.168 [XNIO-19 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-19 I/O-8', selector sun.nio.ch.EPollSelectorImpl@66d5c8f1
-07:44:00.171 [XNIO-19 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-19 Accept', selector sun.nio.ch.EPollSelectorImpl@1469404f
-07:44:00.171 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:44:00.175 [XNIO-19 I/O-6] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
-07:44:00.175 [XNIO-19 I/O-6] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@139a9081 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[yLWB2ylYUOHKwBI+63e6Rg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:44811]} response {}}
-07:44:00.175 [XNIO-19 I/O-6] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[yLWB2ylYUOHKwBI+63e6Rg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:44811]} response {}}
-07:44:00.176 [XNIO-19 I/O-6] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
-07:44:00.176 [OkHttp http://localhost:44811/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:44:00.176 [OkHttp http://localhost:44811/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (string): message for you, sir
-07:44:00.177 [XNIO-19 I/O-6] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
-07:44:00.177 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@29d8293a
-07:44:00.177 [OkHttp http://localhost:44811/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
-07:44:00.177 [OkHttp http://localhost:44811/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
-07:44:00.181 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@77f0f83b
-07:44:00.183 [XNIO-20 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-3', selector sun.nio.ch.EPollSelectorImpl@62cd305a
-07:44:00.183 [XNIO-20 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-1', selector sun.nio.ch.EPollSelectorImpl@6fda3ce2
-07:44:00.184 [XNIO-20 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-2', selector sun.nio.ch.EPollSelectorImpl@61445278
-07:44:00.184 [XNIO-20 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-4', selector sun.nio.ch.EPollSelectorImpl@16d9c8f5
-07:44:00.184 [XNIO-20 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-5', selector sun.nio.ch.EPollSelectorImpl@3aee6961
-07:44:00.184 [XNIO-20 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-6', selector sun.nio.ch.EPollSelectorImpl@694e6130
-07:44:00.185 [XNIO-20 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-7', selector sun.nio.ch.EPollSelectorImpl@4af79c1a
-07:44:00.185 [XNIO-20 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 I/O-8', selector sun.nio.ch.EPollSelectorImpl@6b232947
-07:44:00.185 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-07:44:00.185 [XNIO-20 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-20 Accept', selector sun.nio.ch.EPollSelectorImpl@4c739cdc
-07:44:00.190 [XNIO-20 I/O-2] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
-07:44:00.190 [XNIO-20 I/O-2] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@55ab5859 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[WbqSuqYlrvv68J6CK3DvOA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:32779]} response {}}
-07:44:00.190 [XNIO-20 I/O-2] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[WbqSuqYlrvv68J6CK3DvOA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:32779]} response {}}
-07:44:00.191 [XNIO-20 I/O-2] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
-07:44:00.191 [OkHttp http://localhost:32779/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
-07:44:00.192 [OkHttp http://localhost:32779/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (bytes): [text=message for you, sir]
-07:44:00.192 [XNIO-20 I/O-2] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
-07:44:00.193 [OkHttp http://localhost:32779/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
-07:44:00.193 [OkHttp http://localhost:32779/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
-07:44:00.194 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@77f0f83b
+<pre>07:27:44.485 [Test worker] DEBUG org.jboss.logging - Logging Provider: org.jboss.logging.Slf4jLoggerProvider
+07:27:45.217 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@2defb42b
+07:27:45.423 [Test worker] INFO org.xnio - XNIO version 3.3.8.Final
+07:27:45.670 [Test worker] INFO org.xnio.nio - XNIO NIO Implementation Version 3.3.8.Final
+07:27:45.986 [XNIO-1 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-1', selector sun.nio.ch.EPollSelectorImpl@bd37ae6
+07:27:45.998 [XNIO-1 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-2', selector sun.nio.ch.EPollSelectorImpl@10ba274
+07:27:46.005 [XNIO-1 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-3', selector sun.nio.ch.EPollSelectorImpl@47b96292
+07:27:46.024 [XNIO-1 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-5', selector sun.nio.ch.EPollSelectorImpl@4eaaceca
+07:27:46.026 [XNIO-1 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-4', selector sun.nio.ch.EPollSelectorImpl@7a5c83cf
+07:27:46.033 [XNIO-1 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-6', selector sun.nio.ch.EPollSelectorImpl@6b19d215
+07:27:46.045 [XNIO-1 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-7', selector sun.nio.ch.EPollSelectorImpl@4640d626
+07:27:46.066 [XNIO-1 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-8', selector sun.nio.ch.EPollSelectorImpl@afe31d0
+07:27:46.067 [XNIO-1 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 Accept', selector sun.nio.ch.EPollSelectorImpl@60f86a
+07:27:46.075 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:47.026 [XNIO-1 I/O-8] DEBUG io.undertow.request - Matched prefix path /stuff for path /stuff
+07:27:47.091 [XNIO-1 I/O-8] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@eba8134 on HttpServerExchange{ GET /stuff request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[TxRqMv9kj1SIfWu4osZGfA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:41343]} response {}}
+07:27:47.093 [XNIO-1 I/O-8] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /stuff request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[TxRqMv9kj1SIfWu4osZGfA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:41343]} response {}}
+07:27:47.200 [OkHttp http://localhost:41343/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:47.209 [XNIO-1 I/O-8] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/stuff).
+07:27:47.246 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@2defb42b
+07:27:47.310 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@ae88fd5
+07:27:47.316 [OkHttp http://localhost:41343/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: Connection reset
+07:27:47.322 [XNIO-2 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-1', selector sun.nio.ch.EPollSelectorImpl@147026e0
+07:27:47.328 [XNIO-2 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-2', selector sun.nio.ch.EPollSelectorImpl@7ba247ed
+07:27:47.363 [XNIO-2 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-3', selector sun.nio.ch.EPollSelectorImpl@48cc9d0e
+07:27:47.373 [XNIO-2 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-4', selector sun.nio.ch.EPollSelectorImpl@96083b0
+07:27:47.387 [XNIO-2 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-5', selector sun.nio.ch.EPollSelectorImpl@4c79b1e
+07:27:47.414 [XNIO-2 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-6', selector sun.nio.ch.EPollSelectorImpl@7e3c1e4c
+07:27:47.443 [XNIO-2 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-7', selector sun.nio.ch.EPollSelectorImpl@518d9078
+07:27:47.465 [XNIO-2 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-8', selector sun.nio.ch.EPollSelectorImpl@67275183
+07:27:47.466 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:47.486 [XNIO-2 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 Accept', selector sun.nio.ch.EPollSelectorImpl@2a5095f9
+07:27:47.523 [XNIO-2 I/O-6] DEBUG io.undertow.request - Matched prefix path /foo for path /foo
+07:27:47.523 [XNIO-2 I/O-6] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@6780f7ba on HttpServerExchange{ GET /foo request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[blMjJEllzpIUoLbVPzUm9Q==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:40155]} response {}}
+07:27:47.523 [XNIO-2 I/O-6] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /foo request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[blMjJEllzpIUoLbVPzUm9Q==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:40155]} response {}}
+07:27:47.524 [XNIO-2 I/O-6] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/foo).
+07:27:47.525 [OkHttp http://localhost:40155/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:47.525 [XNIO-2 I/O-8] DEBUG io.undertow.request - Matched default handler path /ws
+07:27:47.528 [XNIO-2 I/O-8] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
+07:27:47.528 [XNIO-2 I/O-8] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@2f7c8a03 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[fipX/HO+bnl7o+3wbtKTrA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:40155]} response {}}
+07:27:47.528 [XNIO-2 I/O-8] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[fipX/HO+bnl7o+3wbtKTrA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:40155]} response {}}
+07:27:47.529 [XNIO-2 I/O-8] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
+07:27:47.530 [OkHttp http://localhost:40155/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:47.532 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@ae88fd5
+07:27:47.539 [XNIO-2 I/O-6] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
+07:27:47.556 [XNIO-2 I/O-8] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
+07:27:47.607 [OkHttp http://localhost:40155/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
+07:27:47.608 [OkHttp http://localhost:40155/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
+07:27:47.608 [OkHttp http://localhost:40155/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
+07:27:47.608 [OkHttp http://localhost:40155/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
+07:27:47.686 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@192781a2
+07:27:47.699 [XNIO-3 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-1', selector sun.nio.ch.EPollSelectorImpl@70caca7d
+07:27:47.706 [XNIO-3 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-2', selector sun.nio.ch.EPollSelectorImpl@30c25fd5
+07:27:47.719 [XNIO-3 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-3', selector sun.nio.ch.EPollSelectorImpl@1977df46
+07:27:47.722 [XNIO-3 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-5', selector sun.nio.ch.EPollSelectorImpl@69c7b7ad
+07:27:47.722 [XNIO-3 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-4', selector sun.nio.ch.EPollSelectorImpl@13941ed8
+07:27:47.729 [XNIO-3 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-6', selector sun.nio.ch.EPollSelectorImpl@4d3f89c
+07:27:47.736 [XNIO-3 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-7', selector sun.nio.ch.EPollSelectorImpl@2aa03840
+07:27:47.766 [XNIO-3 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-8', selector sun.nio.ch.EPollSelectorImpl@3221806
+07:27:47.774 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:47.774 [XNIO-3 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 Accept', selector sun.nio.ch.EPollSelectorImpl@1a1fbb40
+07:27:47.831 [XNIO-3 I/O-2] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
+07:27:47.832 [XNIO-3 I/O-2] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@7f4ff2e8 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[WqoPcqlvpB2z9YdFkJud8g==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:46401]} response {}}
+07:27:47.832 [XNIO-3 I/O-2] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[WqoPcqlvpB2z9YdFkJud8g==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:46401]} response {}}
+07:27:47.832 [XNIO-3 I/O-2] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
+07:27:47.832 [OkHttp http://localhost:46401/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:47.840 [XNIO-3 I/O-2] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
+07:27:47.885 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@192781a2
+07:27:47.906 [OkHttp http://localhost:46401/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: Connection reset
+07:27:47.912 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@447e411b
+07:27:47.930 [XNIO-4 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-1', selector sun.nio.ch.EPollSelectorImpl@10ec0dc7
+07:27:47.934 [XNIO-4 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-2', selector sun.nio.ch.EPollSelectorImpl@72593428
+07:27:47.935 [XNIO-4 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-4', selector sun.nio.ch.EPollSelectorImpl@636dc257
+07:27:47.935 [XNIO-4 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-5', selector sun.nio.ch.EPollSelectorImpl@3be808c5
+07:27:47.936 [XNIO-4 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-6', selector sun.nio.ch.EPollSelectorImpl@1ebc47fb
+07:27:47.937 [XNIO-4 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-7', selector sun.nio.ch.EPollSelectorImpl@315286c0
+07:27:47.937 [XNIO-4 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-3', selector sun.nio.ch.EPollSelectorImpl@31897f89
+07:27:47.938 [XNIO-4 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-8', selector sun.nio.ch.EPollSelectorImpl@63156b6
+07:27:47.954 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:47.954 [XNIO-4 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 Accept', selector sun.nio.ch.EPollSelectorImpl@67593e63
+07:27:47.974 [XNIO-4 I/O-8] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
+07:27:47.974 [XNIO-4 I/O-8] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@3c8edb77 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[th6GVvMkWuZFtfQQidZeDw==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34299]} response {}}
+07:27:47.975 [XNIO-4 I/O-8] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[th6GVvMkWuZFtfQQidZeDw==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34299]} response {}}
+07:27:47.976 [XNIO-4 I/O-8] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
+07:27:47.981 [OkHttp http://localhost:34299/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:48.009 [XNIO-4 I/O-8] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 2
+07:27:48.136 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@447e411b
+07:27:48.161 [XNIO-4 I/O-8] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
+07:27:48.167 [OkHttp http://localhost:34299/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
+07:27:48.167 [OkHttp http://localhost:34299/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
+07:27:48.206 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@16a7ca3a
+07:27:48.241 [XNIO-5 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-1', selector sun.nio.ch.EPollSelectorImpl@52771495
+07:27:48.254 [XNIO-5 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-2', selector sun.nio.ch.EPollSelectorImpl@4ae7680a
+07:27:48.282 [XNIO-5 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-3', selector sun.nio.ch.EPollSelectorImpl@6252c539
+07:27:48.285 [XNIO-5 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-4', selector sun.nio.ch.EPollSelectorImpl@16dbe2a1
+07:27:48.302 [XNIO-5 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-6', selector sun.nio.ch.EPollSelectorImpl@78f12dc
+07:27:48.311 [XNIO-5 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-5', selector sun.nio.ch.EPollSelectorImpl@7b7572e1
+07:27:48.322 [XNIO-5 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-7', selector sun.nio.ch.EPollSelectorImpl@4ecd9133
+07:27:48.322 [XNIO-5 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-8', selector sun.nio.ch.EPollSelectorImpl@2aa110ee
+07:27:48.338 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:48.342 [XNIO-5 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 Accept', selector sun.nio.ch.EPollSelectorImpl@476ab27f
+07:27:48.369 [XNIO-5 I/O-2] DEBUG io.undertow.request - Matched prefix path /blah for path /blah
+07:27:48.370 [XNIO-5 I/O-2] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@22be4a99 on HttpServerExchange{ GET /blah request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[q+uf3ZJ8LxIY35jqQ1MlsA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:43971]} response {}}
+07:27:48.370 [XNIO-5 I/O-2] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /blah request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[q+uf3ZJ8LxIY35jqQ1MlsA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:43971]} response {}}
+07:27:48.371 [XNIO-5 I/O-2] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/blah).
+07:27:48.371 [OkHttp http://localhost:43971/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:48.372 [XNIO-5 I/O-2] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
+07:27:48.372 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@16a7ca3a
+07:27:48.378 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@67c0a2a6
+07:27:48.386 [XNIO-6 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-1', selector sun.nio.ch.EPollSelectorImpl@4751d9b4
+07:27:48.407 [XNIO-6 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-2', selector sun.nio.ch.EPollSelectorImpl@324a1315
+07:27:48.422 [XNIO-6 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-3', selector sun.nio.ch.EPollSelectorImpl@1b1358a4
+07:27:48.422 [XNIO-6 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-5', selector sun.nio.ch.EPollSelectorImpl@21875ee5
+07:27:48.430 [XNIO-6 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-4', selector sun.nio.ch.EPollSelectorImpl@5d6189df
+07:27:48.434 [XNIO-6 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-6', selector sun.nio.ch.EPollSelectorImpl@3376630e
+07:27:48.443 [XNIO-6 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-7', selector sun.nio.ch.EPollSelectorImpl@5d0580d2
+07:27:48.443 [OkHttp http://localhost:43971/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: null
+07:27:48.478 [XNIO-6 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-8', selector sun.nio.ch.EPollSelectorImpl@57bac556
+07:27:48.498 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:48.499 [XNIO-6 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 Accept', selector sun.nio.ch.EPollSelectorImpl@264014d1
+07:27:48.529 [XNIO-6 I/O-4] DEBUG io.undertow.request - Matched prefix path /blah for path /blah
+07:27:48.529 [XNIO-6 I/O-4] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@61aa0082 on HttpServerExchange{ GET /blah request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[YkYaeeN7GD4uLltyRA8qHA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34153]} response {}}
+07:27:48.529 [XNIO-6 I/O-4] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /blah request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[YkYaeeN7GD4uLltyRA8qHA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34153]} response {}}
+07:27:48.530 [XNIO-6 I/O-4] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/blah).
+07:27:48.530 [OkHttp http://localhost:34153/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:48.532 [XNIO-6 I/O-4] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 2
+07:27:48.532 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@67c0a2a6
+07:27:48.534 [OkHttp http://localhost:34153/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: null
+07:27:48.590 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@55eb7881
+07:27:48.610 [XNIO-7 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-1', selector sun.nio.ch.EPollSelectorImpl@522b185d
+07:27:48.623 [XNIO-7 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-2', selector sun.nio.ch.EPollSelectorImpl@70e895d0
+07:27:48.640 [XNIO-7 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-3', selector sun.nio.ch.EPollSelectorImpl@49cf737c
+07:27:48.649 [XNIO-7 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-4', selector sun.nio.ch.EPollSelectorImpl@1b8a3b07
+07:27:48.656 [XNIO-7 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-5', selector sun.nio.ch.EPollSelectorImpl@73a48d9f
+07:27:48.678 [XNIO-7 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-6', selector sun.nio.ch.EPollSelectorImpl@23145d19
+07:27:48.679 [XNIO-7 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-7', selector sun.nio.ch.EPollSelectorImpl@64727aaa
+07:27:48.690 [XNIO-7 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-8', selector sun.nio.ch.EPollSelectorImpl@6b4b76b8
+07:27:48.705 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:48.706 [XNIO-7 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 Accept', selector sun.nio.ch.EPollSelectorImpl@7ae12162
+07:27:48.741 [XNIO-7 I/O-6] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
+07:27:48.742 [XNIO-7 I/O-6] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@32501f98 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[WKXzTZ0dmyHaK9tkO8CvMA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:44993]} response {}}
+07:27:48.742 [XNIO-7 I/O-6] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[WKXzTZ0dmyHaK9tkO8CvMA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:44993]} response {}}
+07:27:48.742 [XNIO-7 I/O-6] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
+07:27:48.744 [OkHttp http://localhost:44993/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:48.749 [XNIO-7 I/O-6] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
+07:27:48.750 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@55eb7881
+07:27:48.755 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@4bfdeb8
+07:27:48.756 [OkHttp http://localhost:44993/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: null
+07:27:48.780 [XNIO-8 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-1', selector sun.nio.ch.EPollSelectorImpl@7fb3253e
+07:27:48.793 [XNIO-8 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-2', selector sun.nio.ch.EPollSelectorImpl@3b898dd5
+07:27:48.810 [XNIO-8 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-3', selector sun.nio.ch.EPollSelectorImpl@227a710e
+07:27:48.822 [XNIO-8 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-4', selector sun.nio.ch.EPollSelectorImpl@34928825
+07:27:48.830 [XNIO-8 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-5', selector sun.nio.ch.EPollSelectorImpl@208a40fc
+07:27:48.847 [XNIO-8 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-6', selector sun.nio.ch.EPollSelectorImpl@20135137
+07:27:48.862 [XNIO-8 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-7', selector sun.nio.ch.EPollSelectorImpl@5758f58e
+07:27:48.879 [XNIO-8 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-8', selector sun.nio.ch.EPollSelectorImpl@ed3df60
+07:27:48.888 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:48.890 [XNIO-8 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 Accept', selector sun.nio.ch.EPollSelectorImpl@7eafe671
+07:27:48.915 [XNIO-8 I/O-2] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
+07:27:48.915 [XNIO-8 I/O-2] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@617fc98f on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[MabYHB6Ltr0SotovXNAPLQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:36397]} response {}}
+07:27:48.915 [XNIO-8 I/O-2] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[MabYHB6Ltr0SotovXNAPLQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:36397]} response {}}
+07:27:48.916 [XNIO-8 I/O-2] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
+07:27:48.916 [OkHttp http://localhost:36397/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:48.918 [XNIO-8 I/O-2] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 2
+07:27:48.919 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@4bfdeb8
+07:27:48.920 [OkHttp http://localhost:36397/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: null
+07:27:49.003 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@762e2fec
+07:27:49.007 [XNIO-9 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-1', selector sun.nio.ch.EPollSelectorImpl@59c7641f
+07:27:49.022 [XNIO-9 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-2', selector sun.nio.ch.EPollSelectorImpl@6ec12d74
+07:27:49.034 [XNIO-9 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-3', selector sun.nio.ch.EPollSelectorImpl@5f7a2c80
+07:27:49.042 [XNIO-9 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-4', selector sun.nio.ch.EPollSelectorImpl@186587de
+07:27:49.047 [XNIO-9 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-5', selector sun.nio.ch.EPollSelectorImpl@7c1269b8
+07:27:49.060 [XNIO-9 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-6', selector sun.nio.ch.EPollSelectorImpl@2395dd3a
+07:27:49.070 [XNIO-9 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-7', selector sun.nio.ch.EPollSelectorImpl@149c26b6
+07:27:49.074 [XNIO-9 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-8', selector sun.nio.ch.EPollSelectorImpl@7e63db99
+07:27:49.094 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:49.102 [XNIO-9 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 Accept', selector sun.nio.ch.EPollSelectorImpl@afda4d8
+07:27:49.156 [XNIO-9 I/O-4] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
+07:27:49.156 [XNIO-9 I/O-4] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@313c73fc on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[J4hOp5l68kmbJDQ+EnLtGg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34035]} response {}}
+07:27:49.156 [XNIO-9 I/O-4] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[J4hOp5l68kmbJDQ+EnLtGg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34035]} response {}}
+07:27:49.157 [XNIO-9 I/O-4] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
+07:27:49.167 [OkHttp http://localhost:34035/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:49.170 [XNIO-9 I/O-4] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
+07:27:49.173 [OkHttp http://localhost:34035/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (string): the message
+07:27:49.175 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@762e2fec
+07:27:49.177 [OkHttp http://localhost:34035/...] INFO com.stehno.ersatz.CapturingWebSocketListener - failure: null
+07:27:49.191 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@7729074a
+07:27:49.222 [XNIO-10 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-1', selector sun.nio.ch.EPollSelectorImpl@13139533
+07:27:49.238 [XNIO-10 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-2', selector sun.nio.ch.EPollSelectorImpl@5a96ecb4
+07:27:49.238 [XNIO-10 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-3', selector sun.nio.ch.EPollSelectorImpl@6ba897f0
+07:27:49.258 [XNIO-10 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-4', selector sun.nio.ch.EPollSelectorImpl@2c921518
+07:27:49.270 [XNIO-10 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-5', selector sun.nio.ch.EPollSelectorImpl@25999b76
+07:27:49.271 [XNIO-10 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-6', selector sun.nio.ch.EPollSelectorImpl@2e5c4f75
+07:27:49.275 [XNIO-10 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-7', selector sun.nio.ch.EPollSelectorImpl@dd01aef
+07:27:49.286 [XNIO-10 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-8', selector sun.nio.ch.EPollSelectorImpl@1a83b6ff
+07:27:49.322 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:49.322 [XNIO-10 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 Accept', selector sun.nio.ch.EPollSelectorImpl@3a42f848
+07:27:49.359 [XNIO-10 I/O-6] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
+07:27:49.359 [XNIO-10 I/O-6] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@273af490 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[wKiuzn4j9lixZ+XJxovyMQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:35705]} response {}}
+07:27:49.359 [XNIO-10 I/O-6] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[wKiuzn4j9lixZ+XJxovyMQ==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:35705]} response {}}
+07:27:49.360 [XNIO-10 I/O-6] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
+07:27:49.361 [OkHttp http://localhost:35705/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:49.375 [XNIO-10 I/O-6] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
+07:27:49.377 [XNIO-10 I/O-6] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
+07:27:49.377 [OkHttp http://localhost:35705/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (bytes): [text=somebytes]
+07:27:49.377 [OkHttp http://localhost:35705/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
+07:27:49.377 [OkHttp http://localhost:35705/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
+07:27:49.386 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@7729074a
+07:27:49.404 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@7d0a75e4
+07:27:49.438 [XNIO-11 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-1', selector sun.nio.ch.EPollSelectorImpl@3138ebf9
+07:27:49.456 [XNIO-11 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-2', selector sun.nio.ch.EPollSelectorImpl@60f2eda4
+07:27:49.466 [XNIO-11 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-3', selector sun.nio.ch.EPollSelectorImpl@180c68aa
+07:27:49.496 [XNIO-11 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-5', selector sun.nio.ch.EPollSelectorImpl@5e465e69
+07:27:49.500 [XNIO-11 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-4', selector sun.nio.ch.EPollSelectorImpl@3196263f
+07:27:49.509 [XNIO-11 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-6', selector sun.nio.ch.EPollSelectorImpl@38514b4d
+07:27:49.538 [XNIO-11 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-7', selector sun.nio.ch.EPollSelectorImpl@3ff8f805
+07:27:49.539 [XNIO-11 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-8', selector sun.nio.ch.EPollSelectorImpl@4d5bc601
+07:27:49.558 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:49.561 [XNIO-11 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 Accept', selector sun.nio.ch.EPollSelectorImpl@7ec0006d
+07:27:49.595 [XNIO-11 I/O-2] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
+07:27:49.595 [XNIO-11 I/O-2] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@21e181e7 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[ZX7HID5kN89WClsOzcMzkg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34585]} response {}}
+07:27:49.595 [XNIO-11 I/O-2] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[ZX7HID5kN89WClsOzcMzkg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34585]} response {}}
+07:27:49.596 [XNIO-11 I/O-2] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
+07:27:49.596 [OkHttp http://localhost:34585/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:49.605 [XNIO-11 I/O-2] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
+07:27:49.606 [OkHttp http://localhost:34585/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (string): the message
+07:27:49.606 [XNIO-11 I/O-2] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
+07:27:49.606 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@7d0a75e4
+07:27:49.607 [OkHttp http://localhost:34585/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
+07:27:49.607 [OkHttp http://localhost:34585/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
+07:27:49.629 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@63c219d9
+07:27:49.648 [XNIO-12 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-2', selector sun.nio.ch.EPollSelectorImpl@1f9a5c4d
+07:27:49.668 [XNIO-12 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-4', selector sun.nio.ch.EPollSelectorImpl@a32bb5b
+07:27:49.674 [XNIO-12 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-3', selector sun.nio.ch.EPollSelectorImpl@3199c856
+07:27:49.690 [XNIO-12 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-1', selector sun.nio.ch.EPollSelectorImpl@4532292c
+07:27:49.690 [XNIO-12 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-5', selector sun.nio.ch.EPollSelectorImpl@4819865
+07:27:49.702 [XNIO-12 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-6', selector sun.nio.ch.EPollSelectorImpl@7d9cd044
+07:27:49.708 [XNIO-12 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-7', selector sun.nio.ch.EPollSelectorImpl@7faab080
+07:27:49.714 [XNIO-12 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-8', selector sun.nio.ch.EPollSelectorImpl@6b40c13f
+07:27:49.740 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:49.742 [XNIO-12 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 Accept', selector sun.nio.ch.EPollSelectorImpl@5c76950b
+07:27:49.768 [XNIO-12 I/O-8] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
+07:27:49.768 [XNIO-12 I/O-8] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@60db1b72 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[p8tzYET2N9K/H1NF3I/3NA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34973]} response {}}
+07:27:49.769 [XNIO-12 I/O-8] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[p8tzYET2N9K/H1NF3I/3NA==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34973]} response {}}
+07:27:49.769 [XNIO-12 I/O-8] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
+07:27:49.769 [OkHttp http://localhost:34973/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:49.787 [XNIO-12 I/O-8] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 1
+07:27:49.788 [OkHttp http://localhost:34973/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (bytes): [text=somebytes]
+07:27:49.788 [XNIO-12 I/O-8] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
+07:27:49.788 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@63c219d9
+07:27:49.789 [OkHttp http://localhost:34973/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
+07:27:49.790 [OkHttp http://localhost:34973/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
+07:27:49.832 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@5b143611
+07:27:49.837 [XNIO-13 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-1', selector sun.nio.ch.EPollSelectorImpl@6edad9f1
+07:27:49.853 [XNIO-13 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-2', selector sun.nio.ch.EPollSelectorImpl@4074f537
+07:27:49.854 [XNIO-13 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-3', selector sun.nio.ch.EPollSelectorImpl@1a54f70c
+07:27:49.877 [XNIO-13 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-4', selector sun.nio.ch.EPollSelectorImpl@7e7575fb
+07:27:49.886 [XNIO-13 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-5', selector sun.nio.ch.EPollSelectorImpl@2b27ad1f
+07:27:49.921 [XNIO-13 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-6', selector sun.nio.ch.EPollSelectorImpl@593c7282
+07:27:49.922 [XNIO-13 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-7', selector sun.nio.ch.EPollSelectorImpl@1fc13199
+07:27:49.938 [XNIO-13 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-8', selector sun.nio.ch.EPollSelectorImpl@7ff89383
+07:27:49.943 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:49.945 [XNIO-13 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 Accept', selector sun.nio.ch.EPollSelectorImpl@4f03c495
+07:27:49.980 [XNIO-13 I/O-4] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
+07:27:49.981 [XNIO-13 I/O-4] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@15ff9f66 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[h/ehKD5yO8q8FHIsfpGmIw==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34895]} response {}}
+07:27:49.981 [XNIO-13 I/O-4] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[h/ehKD5yO8q8FHIsfpGmIw==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34895]} response {}}
+07:27:49.982 [OkHttp http://localhost:34895/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:49.982 [XNIO-13 I/O-4] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
+07:27:49.989 [OkHttp http://localhost:34895/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (string): message for you, sir
+07:27:49.990 [XNIO-13 I/O-4] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
+07:27:49.991 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@5b143611
+07:27:49.993 [OkHttp http://localhost:34895/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
+07:27:49.993 [OkHttp http://localhost:34895/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
+07:27:50.020 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@4840c495
+07:27:50.037 [XNIO-14 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-1', selector sun.nio.ch.EPollSelectorImpl@75b6dcc4
+07:27:50.051 [XNIO-14 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-2', selector sun.nio.ch.EPollSelectorImpl@964c154
+07:27:50.051 [XNIO-14 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-3', selector sun.nio.ch.EPollSelectorImpl@6082a323
+07:27:50.079 [XNIO-14 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-5', selector sun.nio.ch.EPollSelectorImpl@54e91fe9
+07:27:50.094 [XNIO-14 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-4', selector sun.nio.ch.EPollSelectorImpl@3289512c
+07:27:50.095 [XNIO-14 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-6', selector sun.nio.ch.EPollSelectorImpl@5f713021
+07:27:50.151 [XNIO-14 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-7', selector sun.nio.ch.EPollSelectorImpl@6718e5b0
+07:27:50.179 [XNIO-14 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-8', selector sun.nio.ch.EPollSelectorImpl@4a79d2e6
+07:27:50.185 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:50.190 [XNIO-14 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 Accept', selector sun.nio.ch.EPollSelectorImpl@3270fd3b
+07:27:50.223 [XNIO-14 I/O-8] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
+07:27:50.224 [XNIO-14 I/O-8] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@55382a5f on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[3mcQ4fpz7nesZ+YzCy4tUg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34125]} response {}}
+07:27:50.224 [XNIO-14 I/O-8] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[3mcQ4fpz7nesZ+YzCy4tUg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:34125]} response {}}
+07:27:50.225 [XNIO-14 I/O-8] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
+07:27:50.225 [OkHttp http://localhost:34125/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:50.232 [OkHttp http://localhost:34125/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (bytes): [text=message for you, sir]
+07:27:50.232 [XNIO-14 I/O-8] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
+07:27:50.233 [OkHttp http://localhost:34125/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
+07:27:50.233 [OkHttp http://localhost:34125/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
+07:27:50.233 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@4840c495
+07:27:50.253 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@3aa15227
+07:27:50.273 [XNIO-15 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-1', selector sun.nio.ch.EPollSelectorImpl@7b9424f9
+07:27:50.286 [XNIO-15 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-2', selector sun.nio.ch.EPollSelectorImpl@92f1ce2
+07:27:50.287 [XNIO-15 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-3', selector sun.nio.ch.EPollSelectorImpl@20fde453
+07:27:50.287 [XNIO-15 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-4', selector sun.nio.ch.EPollSelectorImpl@64e4e537
+07:27:50.304 [XNIO-15 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-5', selector sun.nio.ch.EPollSelectorImpl@3575d568
+07:27:50.306 [XNIO-15 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-7', selector sun.nio.ch.EPollSelectorImpl@73d7a0ad
+07:27:50.309 [XNIO-15 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-6', selector sun.nio.ch.EPollSelectorImpl@7a541097
+07:27:50.319 [XNIO-15 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 I/O-8', selector sun.nio.ch.EPollSelectorImpl@49fe6479
+07:27:50.336 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:50.402 [XNIO-15 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-15 Accept', selector sun.nio.ch.EPollSelectorImpl@5f00486
+07:27:50.409 [XNIO-15 I/O-2] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
+07:27:50.415 [XNIO-15 I/O-2] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@15fa252f on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[COUa3IVsd+vXbq5L50mStg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:44751]} response {}}
+07:27:50.417 [XNIO-15 I/O-2] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[COUa3IVsd+vXbq5L50mStg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:44751]} response {}}
+07:27:50.420 [XNIO-15 I/O-2] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
+07:27:50.420 [OkHttp http://localhost:44751/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:50.433 [OkHttp http://localhost:44751/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (string): message for you, sir
+07:27:50.433 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@3aa15227
+07:27:50.434 [XNIO-15 I/O-2] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
+07:27:50.435 [OkHttp http://localhost:44751/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
+07:27:50.435 [OkHttp http://localhost:44751/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
+07:27:50.441 [Test worker] DEBUG io.undertow - starting undertow server io.undertow.Undertow@137d36d3
+07:27:50.476 [XNIO-16 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-1', selector sun.nio.ch.EPollSelectorImpl@16eb1fbc
+07:27:50.486 [XNIO-16 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-2', selector sun.nio.ch.EPollSelectorImpl@506092c3
+07:27:50.500 [XNIO-16 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-3', selector sun.nio.ch.EPollSelectorImpl@1e786e05
+07:27:50.518 [XNIO-16 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-4', selector sun.nio.ch.EPollSelectorImpl@4364a543
+07:27:50.525 [XNIO-16 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-5', selector sun.nio.ch.EPollSelectorImpl@cbfdbb
+07:27:50.532 [XNIO-16 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-7', selector sun.nio.ch.EPollSelectorImpl@3883ecab
+07:27:50.532 [XNIO-16 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-6', selector sun.nio.ch.EPollSelectorImpl@1d9a2172
+07:27:50.544 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+07:27:50.595 [XNIO-16 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 Accept', selector sun.nio.ch.EPollSelectorImpl@76f6a92f
+07:27:50.598 [XNIO-16 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-16 I/O-8', selector sun.nio.ch.EPollSelectorImpl@66e614fe
+07:27:50.621 [XNIO-16 I/O-2] DEBUG io.undertow.request - Matched prefix path /ws for path /ws
+07:27:50.621 [XNIO-16 I/O-2] DEBUG io.undertow.websockets.core.request - Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@172c16e0 on HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[I8A1A7o1qPfUfiYINsRiDg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:33875]} response {}}
+07:27:50.621 [XNIO-16 I/O-2] DEBUG io.undertow.request - Upgrading request HttpServerExchange{ GET /ws request {Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[I8A1A7o1qPfUfiYINsRiDg==], Upgrade=[websocket], User-Agent=[okhttp/3.11.0], Host=[localhost:33875]} response {}}
+07:27:50.622 [XNIO-16 I/O-2] DEBUG com.stehno.ersatz.impl.WebSocketsHandlerBuilder - Connected (/ws).
+07:27:50.622 [OkHttp http://localhost:33875/...] INFO com.stehno.ersatz.CapturingWebSocketListener - open
+07:27:50.630 [OkHttp http://localhost:33875/...] INFO com.stehno.ersatz.CapturingWebSocketListener - message (bytes): [text=message for you, sir]
+07:27:50.631 [Test worker] DEBUG io.undertow - stopping undertow server io.undertow.Undertow@137d36d3
+07:27:50.632 [XNIO-16 I/O-2] DEBUG io.undertow.websockets.core.request - UT025003: Decoding WebSocket Frame with opCode 8
+07:27:50.632 [OkHttp http://localhost:33875/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closing
+07:27:50.632 [OkHttp http://localhost:33875/...] INFO com.stehno.ersatz.CapturingWebSocketListener - closed
 </pre>
 </span>
 </div>
@@ -502,7 +509,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 4.10.2</a> at Oct 13, 2018 7:44:03 AM</p>
+<a href="http://www.gradle.org">Gradle 4.10.2</a> at Dec 9, 2018 7:27:55 AM</p>
 </div>
 </div>
 </body>
