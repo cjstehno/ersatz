@@ -97,8 +97,8 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request get(final String path) {
-        get pathMatcher(path)
+    Request get(final CharSequence path) {
+        get pathMatcher(path?.toString())
     }
 
     @Override

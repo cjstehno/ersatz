@@ -95,7 +95,7 @@ interface Expectations {
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
      */
-    Request get(String path)
+    Request get(CharSequence path)
 
     /**
      * Allows configuration of a GET request expectation.
