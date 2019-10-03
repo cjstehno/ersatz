@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.stehno.ersatz.auth
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import groovy.transform.Memoized
+import groovy.transform.ToString
 import io.undertow.security.idm.Account
 
 import java.security.Principal
@@ -25,7 +26,7 @@ import java.security.Principal
 /**
  * Simple implementation of the <code>Account</code> interface used for BASIC and DIGEST authentication testing.
  */
-@CompileStatic @Canonical
+@CompileStatic @Canonical @ToString(includeNames = true, excludes = ['principal'])
 class SimpleAccount implements Account {
 
     final String user

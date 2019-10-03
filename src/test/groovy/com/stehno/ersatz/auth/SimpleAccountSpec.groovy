@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,6 @@ class SimpleAccountSpec extends Specification {
 
     def 'as string'() {
         expect:
-        new SimpleAccount('someuser') as String == 'com.stehno.ersatz.auth.SimpleAccount(someuser, [TESTER])'
+        new SimpleAccount('someuser') as String == 'com.stehno.ersatz.auth.SimpleAccount(user:someuser, roles:[TESTER])'
     }
 }
