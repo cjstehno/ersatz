@@ -45,7 +45,7 @@ dependencies {
     implementation 'javax.servlet:javax.servlet-api:3.1.0'
 
     // closure handling
-    implementation 'space.jasan:groovy-closure-support:0.5.2'
+    implementation 'space.jasan:groovy-closure-support:0.5.2'               // FIXME: this is not in mavenCentral - bring in?
 
     // these are used to provide junit helpers in production code
     implementation 'org.hamcrest:hamcrest-library:1.3'                      // FIXME: update
@@ -108,6 +108,7 @@ task javadocJar(type: Jar) {
 test {
     useJUnitPlatform()
     maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
+    // FIXME: resolve this
 //    useJUnit {
 //        if (project.hasProperty('skip-long-running')) {
 //            excludeCategories 'com.stehno.ersatz.LongRunning'
@@ -243,6 +244,7 @@ compileTestKotlin {
     }
 }
 
+// FIXME: updates need to be applied
 shadowJar {
     classifier = 'safe'
     dependencies {
