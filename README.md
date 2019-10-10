@@ -10,8 +10,6 @@
 * Groovy Docs: http://stehno.com/ersatz/groovydoc/
 * Twitter: [@ErsatzServer](https://twitter.com/ersatzserver)
 
-<a href='https://ko-fi.com/C0C4CM1M' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi4.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' title='Buy Me a Coffee at ko-fi.com' /></a>
-
 ## Introduction
 
 The Ersatz Server is a HTTP client testing tool, which allows for request/response expectations to be configured in a flexible manner. The expectations
