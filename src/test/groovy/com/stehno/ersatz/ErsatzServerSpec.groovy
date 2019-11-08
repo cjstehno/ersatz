@@ -25,6 +25,7 @@ import org.apache.commons.fileupload.UploadContext
 import org.apache.commons.fileupload.disk.DiskFileItemFactory
 import org.hamcrest.Matcher
 import spock.lang.AutoCleanup
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -33,15 +34,9 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
 import static MultipartResponseContent.multipart
-import static com.stehno.ersatz.ContentType.APPLICATION_URLENCODED
-import static com.stehno.ersatz.ContentType.MESSAGE_HTTP
-import static com.stehno.ersatz.ContentType.MULTIPART_MIXED
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.ContentType.*
 import static com.stehno.ersatz.CookieMatcher.cookieMatcher
-import static com.stehno.ersatz.HttpMethod.DELETE
-import static com.stehno.ersatz.HttpMethod.GET
-import static com.stehno.ersatz.HttpMethod.OPTIONS
-import static com.stehno.ersatz.HttpMethod.POST
+import static com.stehno.ersatz.HttpMethod.*
 import static okhttp3.MediaType.parse
 import static okhttp3.RequestBody.create
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
@@ -603,6 +598,111 @@ class ErsatzServerSpec extends Specification {
 
         then:
         response.body().string() == 'a response'
+    }
+
+    // FIXME: this issue needs to be fixed.
+
+    void 'Multiple responses for GET request'(){
+        setup:
+        ersatzServer.expectations {
+            get('/aclue'){
+                header 'Info', 'value'
+                responder {
+                    code 200
+                    body 'Alpha', TEXT_PLAIN
+                }
+                responder {
+                    code 200
+                    body 'Bravo', TEXT_PLAIN
+                }
+            }
+        }
+
+        when:
+        def response = http.get(ersatzServer.httpUrl('/aclue'), Info: 'value')
+
+        then:
+        response.code() == 200
+        response.body().string() == 'Alpha'
+
+        when:
+        response = http.get(ersatzServer.httpUrl('/aclue'), Info: 'value')
+
+        then:
+        response.code() == 200
+        response.body().string() == 'Bravo'
+    }
+
+    void 'Multiple responses for PUT request'(){
+        setup:
+        ersatzServer.expectations {
+            put('/aclue'){
+                header 'Info', 'value'
+                responder {
+                    code 200
+                }
+                responder {
+                    code 200
+                    body 'Bravo', TEXT_PLAIN
+                }
+            }
+        }
+
+        def payload = create(parse('text/plain'), 'payload')
+
+        when:
+        def response = http.put(ersatzServer.httpUrl('/aclue'), payload, Info: 'value')
+
+        then:
+        response.code() == 200
+        response.body().string() == ''
+
+        when:
+        response = http.put(ersatzServer.httpUrl('/aclue'), payload, Info: 'value')
+
+        then:
+        response.code() == 200
+        response.body().string() == 'Bravo'
+    }
+
+    @Ignore // FIXME: this is an open issue - need to investigate
+    void 'WEBDAV interactions'(){
+        setup:
+        ersatzServer.expectations {
+            put('/storage'){
+                decoder TEXT_PLAIN, Decoders.utf8String
+                header('Expect', '100-continue')
+                responder {
+                    code(100)
+                }
+                responder {
+                    code(200)
+                }
+                called 2
+            }
+        }
+
+        def payload = create(parse('text/plain'), 'some stuff')
+
+        when:
+        def response = http.put(
+            ersatzServer.httpUrl('/storage'),
+            payload,
+            'Expect': '100-continue'
+        )
+
+        then:
+        response.code() == 100
+
+        when:
+        response = http.put(
+            ersatzServer.httpUrl('/storage'),
+            payload,
+            'Expect': '100-continue'
+        )
+
+        then:
+        response.code() == 200
     }
 
     @TupleConstructor
