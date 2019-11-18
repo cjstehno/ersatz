@@ -15,36 +15,17 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.Cookie
-import com.stehno.ersatz.CookieMatcher
-import com.stehno.ersatz.HttpMethod
-import com.stehno.ersatz.Request
-import com.stehno.ersatz.Response
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.*
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.HttpMethod.ANY
-import static com.stehno.ersatz.HttpMethod.DELETE
-import static com.stehno.ersatz.HttpMethod.GET
-import static com.stehno.ersatz.HttpMethod.HEAD
-import static com.stehno.ersatz.HttpMethod.OPTIONS
-import static com.stehno.ersatz.HttpMethod.PATCH
-import static com.stehno.ersatz.HttpMethod.POST
-import static com.stehno.ersatz.HttpMethod.PUT
-import static com.stehno.ersatz.HttpMethod.TRACE
+import static com.stehno.ersatz.HttpMethod.*
 import static groovy.lang.Closure.DELEGATE_FIRST
-import static org.hamcrest.Matchers.anything
-import static org.hamcrest.Matchers.contains
-import static org.hamcrest.Matchers.containsInAnyOrder
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.equalToIgnoringCase
-import static org.hamcrest.Matchers.hasItem
-import static org.hamcrest.Matchers.isOneOf
+import static org.hamcrest.Matchers.*
 
 /**
  * <code>Request</code> implementation representing requests without body content.
@@ -57,7 +38,7 @@ class ErsatzRequest implements Request {
     private final ResponseEncoders globalEncoders
     private final boolean emptyResponse
     private Matcher<?> callVerifier = anything()
-    private int callCount
+    private final AtomicInteger callCount = new AtomicInteger(0)
 
     /**
      * Creates a new request with the specified method, path matcher and optional empty response flag (defaults to false).
@@ -200,7 +181,7 @@ class ErsatzRequest implements Request {
      * @return true if the call count matches the expected verification criteria
      */
     boolean verify() {
-        callVerifier.matches(callCount)
+        callVerifier.matches(callCount.get())
     }
 
     /**
@@ -241,7 +222,8 @@ class ErsatzRequest implements Request {
      * @return the current response
      */
     Response getCurrentResponse() {
-        int index = callCount >= responses.size() ? responses.size() - 1 : callCount
+        int currentCount = callCount.get()
+        int index = currentCount >= responses.size() ? responses.size() - 1 : currentCount
         index >= 0 ? responses[index] : null
     }
 
@@ -249,7 +231,7 @@ class ErsatzRequest implements Request {
      * Used to mark the request as having been called. Any configured listeners will be called after the call count has been incremented.
      */
     void mark(final ClientRequest cr) {
-        callCount++
+        callCount.incrementAndGet()
 
         for (final Consumer<ClientRequest> listener : listeners) {
             listener.accept(cr)
