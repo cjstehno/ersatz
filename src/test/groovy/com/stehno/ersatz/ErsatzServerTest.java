@@ -15,11 +15,11 @@
  */
 package com.stehno.ersatz;
 
-import com.stehno.ersatz.junit.ErsatzServerRule;
 import com.stehno.ersatz.util.HttpClient;
 import org.junit.After;
-import org.junit.Rule;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,9 +37,16 @@ import static org.junit.Assert.assertTrue;
 
 public class ErsatzServerTest {
 
-    @Rule
-    public ErsatzServerRule ersatzServer = new ErsatzServerRule();
+    private ErsatzServer ersatzServer = new ErsatzServer();
     private final HttpClient http = new HttpClient();
+
+    @BeforeEach void beforeEach() {
+        ersatzServer.clearExpectations();
+    }
+
+    @AfterEach void afterEach() {
+        ersatzServer.close();
+    }
 
     @Test
     public void prototype() throws IOException {

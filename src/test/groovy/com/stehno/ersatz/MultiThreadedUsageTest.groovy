@@ -15,11 +15,11 @@
  */
 package com.stehno.ersatz
 
-import com.stehno.ersatz.junit5.ErsatzServerSupport
+
 import com.stehno.ersatz.util.HttpClient
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
@@ -27,16 +27,18 @@ import java.util.concurrent.atomic.AtomicReference
 import static org.awaitility.Awaitility.await
 import static org.hamcrest.CoreMatchers.equalTo
 
-@ExtendWith(ErsatzServerSupport)
 class MultiThreadedUsageTest {
 
-    private final ErsatzServer server = new ErsatzServer({
-        reportToConsole()
-    })
-    private HttpClient client = new HttpClient();
+    private final ErsatzServer server = new ErsatzServer()
+    private HttpClient client = new HttpClient()
 
     @BeforeEach void beforeEach() {
-        client = new HttpClient();
+        server.clearExpectations()
+        client = new HttpClient()
+    }
+
+    @AfterEach void afterEach() {
+        server.close()
     }
 
     @Test void 'Multiple concurrent calls'() {
