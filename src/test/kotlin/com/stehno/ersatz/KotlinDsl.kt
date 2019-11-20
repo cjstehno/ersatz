@@ -15,7 +15,7 @@
  */
 package com.stehno.ersatz
 
-import java.util.function.Consumer
+import com.stehno.ersatz.server.ServerConfig
 
 // Note: This is experimental code for kotlin support - it may not look anything like this in the end
 

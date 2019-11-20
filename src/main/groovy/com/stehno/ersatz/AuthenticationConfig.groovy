@@ -23,6 +23,7 @@ package com.stehno.ersatz
  *
  * Enabling authentication causes ALL server endpoints to require the configured authentication.
  */
+// FIXME: should this be moved?
 class AuthenticationConfig {
 
     /**
