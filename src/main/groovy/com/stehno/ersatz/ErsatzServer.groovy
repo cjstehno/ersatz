@@ -78,7 +78,7 @@ import static java.util.concurrent.TimeUnit.SECONDS
  * See the <a href="http://stehno.com/ersatz/asciidoc/html5/" target="_blank">User Guide</a> for more detailed information.
  */
 @CompileStatic
-@Slf4j
+@Slf4j @SuppressWarnings('MethodCount')
 class ErsatzServer implements ServerConfig, Closeable {
 
     /**

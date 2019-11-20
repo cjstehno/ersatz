@@ -38,7 +38,7 @@ import static org.hamcrest.Matchers.equalTo
 /**
  * Implementation of the <code>Expectations</code> interface.
  */
-@CompileStatic @SuppressWarnings(['ConfusingMethodName', 'MethodCount'])
+@CompileStatic @SuppressWarnings(['ConfusingMethodName', 'MethodCount', 'MethodName'])
 class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = []
@@ -129,12 +129,12 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request get(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+    Request get(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure) {
         GET(path, closure)
     }
 
     @Override
-    Request get(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+    Request get(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure) {
         GET(matcher, closure)
     }
 
@@ -189,12 +189,12 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request head(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+    Request head(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure) {
         HEAD(path, closure)
     }
 
     @Override
-    Request head(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+    Request head(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure) {
         HEAD(matcher, closure)
     }
 
@@ -249,12 +249,12 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    RequestWithContent post(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
+    RequestWithContent post(String path, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
         POST(path, closure)
     }
 
     @Override
-    RequestWithContent post(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
+    RequestWithContent post(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
         POST(matcher, closure)
     }
 
@@ -309,12 +309,12 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    RequestWithContent put(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
+    RequestWithContent put(String path, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
         PUT(path, closure)
     }
 
     @Override
-    RequestWithContent put(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
+    RequestWithContent put(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
         PUT(matcher, closure)
     }
 
@@ -369,12 +369,12 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request delete(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+    Request delete(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure) {
         DELETE(path, closure)
     }
 
     @Override
-    Request delete(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+    Request delete(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure) {
         DELETE(matcher, closure)
     }
 
@@ -429,12 +429,12 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    RequestWithContent patch(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
+    RequestWithContent patch(String path, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
         PATCH(path, closure)
     }
 
     @Override
-    RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
+    RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure) {
         PATCH(matcher, closure)
     }
 
@@ -489,12 +489,12 @@ class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    Request options(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+    Request options(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure) {
         OPTIONS(path, closure)
     }
 
     @Override
-    Request options(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+    Request options(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure) {
         OPTIONS(matcher, closure)
     }
 

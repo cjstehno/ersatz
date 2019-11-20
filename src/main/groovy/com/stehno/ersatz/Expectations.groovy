@@ -32,7 +32,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST
  * match for a specific expectation to be considered a match and if there are multiple matching expectations, the first one configured will be the
  * one considered as the match.
  */
-@SuppressWarnings("MethodCount") @CompileStatic
+@SuppressWarnings(['MethodCount', 'ConfusingMethodName', 'MethodName']) @CompileStatic
 interface Expectations {
 
     /**
@@ -58,7 +58,7 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    Request any(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request any(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a request expectation matching any request method using the Groovy DSL.
@@ -67,7 +67,7 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    Request any(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request any(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
@@ -131,7 +131,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    Request get(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request get(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a GET request expectation using the Groovy DSL.
@@ -140,7 +140,7 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    Request GET(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request GET(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a GET request expectation using the Groovy DSL.
@@ -150,7 +150,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    Request get(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request get(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a GET request expectation using the Groovy DSL.
@@ -159,7 +159,7 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    Request GET(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request GET(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a GET request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
@@ -245,7 +245,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    Request head(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request head(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a HEAD request expectation using the Groovy DSL.
@@ -254,7 +254,7 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    Request HEAD(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request HEAD(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a HEAD request expectation using the Groovy DSL.
@@ -264,7 +264,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    Request head(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request head(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a HEAD request expectation using the Groovy DSL.
@@ -273,7 +273,7 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    Request HEAD(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request HEAD(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a HEAD request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
@@ -359,7 +359,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    RequestWithContent post(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+    RequestWithContent post(String path, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a POST request expectation using the Groovy DSL.
@@ -368,7 +368,7 @@ interface Expectations {
      * @return a <code>RequestWithContent</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    RequestWithContent POST(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+    RequestWithContent POST(String path, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a POST request expectation using the Groovy DSL.
@@ -378,7 +378,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    RequestWithContent post(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+    RequestWithContent post(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a POST request expectation using the Groovy DSL.
@@ -387,7 +387,7 @@ interface Expectations {
      * @return a <code>RequestWithContent</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    RequestWithContent POST(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+    RequestWithContent POST(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a POST request expectation using the provided <code>Consumer<Request></code>. The
@@ -473,7 +473,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    RequestWithContent put(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+    RequestWithContent put(String path, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a PUT request expectation using the Groovy DSL.
@@ -482,7 +482,7 @@ interface Expectations {
      * @return a <code>RequestWithContent</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    RequestWithContent PUT(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+    RequestWithContent PUT(String path, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a PUT request expectation using the Groovy DSL.
@@ -492,7 +492,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    RequestWithContent put(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+    RequestWithContent put(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a PUT request expectation using the Groovy DSL.
@@ -501,7 +501,7 @@ interface Expectations {
      * @return a <code>RequestWithContent</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    RequestWithContent PUT(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+    RequestWithContent PUT(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
@@ -587,7 +587,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    Request delete(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request delete(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a DELETE request expectation using the Groovy DSL.
@@ -596,7 +596,7 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    Request DELETE(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request DELETE(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a DELETE request expectation using the Groovy DSL.
@@ -606,7 +606,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    Request delete(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request delete(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a DELETE request expectation using the Groovy DSL.
@@ -615,7 +615,7 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    Request DELETE(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request DELETE(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a DELETE request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
@@ -701,7 +701,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    RequestWithContent patch(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+    RequestWithContent patch(String path, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a PATCH request expectation using the Groovy DSL.
@@ -710,7 +710,7 @@ interface Expectations {
      * @return a <code>RequestWithContent</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    RequestWithContent PATCH(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+    RequestWithContent PATCH(String path, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a PATCH request expectation using the Groovy DSL.
@@ -720,7 +720,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+    RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a PATCH request expectation using the Groovy DSL.
@@ -729,7 +729,7 @@ interface Expectations {
      * @return a <code>RequestWithContent</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    RequestWithContent PATCH(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+    RequestWithContent PATCH(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a PATCH request expectation using the provided <code>Consumer<Request></code>. The
@@ -815,7 +815,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    Request options(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request options(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a OPTIONS request expectation using the Groovy DSL.
@@ -824,7 +824,7 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    Request OPTIONS(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request OPTIONS(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a OPTIONS request expectation using the Groovy DSL.
@@ -834,7 +834,7 @@ interface Expectations {
      * @pram closure the Groovy closure containing the configuration
      */
     @Deprecated /* will be removed in 2.0 */
-    Request options(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request options(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a OPTIONS request expectation using the Groovy DSL.
@@ -843,7 +843,7 @@ interface Expectations {
      * @return a <code>Request</code> configuration object
      * @pram closure the Groovy closure containing the configuration
      */
-    Request OPTIONS(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+    Request OPTIONS(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code>
@@ -897,7 +897,7 @@ interface Expectations {
      * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection will be expected in order
      * for the verification to pass.
      */
-    WebSocketExpectations ws(String path, @DelegatesTo(value = WebSocketExpectations.class, strategy = DELEGATE_FIRST) Closure closure)
+    WebSocketExpectations ws(String path, @DelegatesTo(value = WebSocketExpectations, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection will be expected in order
