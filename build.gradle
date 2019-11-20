@@ -107,12 +107,6 @@ task javadocJar(type: Jar) {
 test {
     useJUnitPlatform()
     maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
-    // FIXME: resolve this
-//    useJUnit {
-//        if (project.hasProperty('skip-long-running')) {
-//            excludeCategories 'com.stehno.ersatz.LongRunning'
-//        }
-//    }
 }
 
 artifacts {
