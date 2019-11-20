@@ -21,15 +21,11 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
 
-import javax.net.ssl.HostnameVerifier
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSession
-import javax.net.ssl.SSLSocketFactory
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
+import javax.net.ssl.*
 import java.security.SecureRandom
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
+import java.util.concurrent.CompletableFuture
 
 class HttpClient {
 
@@ -67,6 +63,12 @@ class HttpClient {
         }
 
         client.newCall(request.build()).execute()
+    }
+
+    CompletableFuture<Response> getAsync(final Map<String, Object> headers = [:], final String url) {
+        CompletableFuture.supplyAsync {
+            get(headers, url)
+        }
     }
 
     Response delete(final Map<String, Object> headers = [:], final String url) {
@@ -161,9 +163,9 @@ class HttpClient {
 
         builder.sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
             .hostnameVerifier(new HostnameVerifier() {
-            @Override boolean verify(String s, SSLSession sslSession) {
-                return true
-            }
-        })
+                @Override boolean verify(String s, SSLSession sslSession) {
+                    return true
+                }
+            })
     }
 }
