@@ -55,29 +55,29 @@ public class ErsatzServerTest {
         final Consumer<ClientRequest> listener = request -> counter.incrementAndGet();
 
         ersatzServer.expectations(expectations -> {
-            expectations.get("/foo").called(greaterThanOrEqualTo(1))
+            expectations.GET("/foo").called(greaterThanOrEqualTo(1))
                 .responder(response -> response.body("This is Ersatz!!"))
                 .responds().body("This is another response");
 
-            expectations.get("/bar").called(greaterThanOrEqualTo(2)).listener(listener).responds().body("This is Bar!!");
+            expectations.GET("/bar").called(greaterThanOrEqualTo(2)).listener(listener).responds().body("This is Bar!!");
 
-            expectations.get("/baz").query("alpha", "42").responds().body("The answer is 42");
+            expectations.GET("/baz").query("alpha", "42").responds().body("The answer is 42");
 
-            expectations.get("/bing").header("bravo", "hello").responds().body("Heads up!").header("charlie", "goodbye").code(222);
+            expectations.GET("/bing").header("bravo", "hello").responds().body("Heads up!").header("charlie", "goodbye").code(222);
 
-            expectations.get("/cookie/monster").cookie("flavor", "chocolate-chip").responds().body("I love cookies!").cookie("eaten", "yes");
+            expectations.GET("/cookie/monster").cookie("flavor", "chocolate-chip").responds().body("I love cookies!").cookie("eaten", "yes");
 
-            expectations.head("/head").responds().header("foo", "blah").code(123);
+            expectations.HEAD("/head").responds().header("foo", "blah").code(123);
 
-            expectations.post("/form").body("some content", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, getUtf8String())
+            expectations.POST("/form").body("some content", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, getUtf8String())
                 .responds().body("response");
 
-            expectations.put("/update").body("more content", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, getUtf8String())
+            expectations.PUT("/update").body("more content", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, getUtf8String())
                 .responds().body("updated");
 
-            expectations.delete("/remove").responds().body("removed");
+            expectations.DELETE("/remove").responds().body("removed");
 
-            expectations.post("/patch").body("a change", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, getUtf8String())
+            expectations.POST("/patch").body("a change", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, getUtf8String())
                 .responds().body("patched");
         });
 
