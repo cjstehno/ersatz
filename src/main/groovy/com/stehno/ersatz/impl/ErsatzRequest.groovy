@@ -16,15 +16,22 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.*
+import groovy.transform.CompileStatic
+import groovy.transform.TupleConstructor
+import org.awaitility.core.ConditionTimeoutException
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 import space.jasan.support.groovy.closure.ConsumerWithDelegate
 
+import java.util.concurrent.Callable
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
 import static com.stehno.ersatz.HttpMethod.*
 import static groovy.lang.Closure.DELEGATE_FIRST
+import static java.util.concurrent.TimeUnit.SECONDS
+import static org.awaitility.Awaitility.await
 import static org.hamcrest.Matchers.*
 
 /**
@@ -48,8 +55,8 @@ class ErsatzRequest implements Request {
      * @param noResponse whether or not this is a request with an empty response (defaults to false)
      */
     ErsatzRequest(
-        final HttpMethod meth,
-        final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse = false) {
+            final HttpMethod meth,
+            final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse = false) {
         matchers << RequestMatcher.method(meth == ANY ? isOneOf(GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, TRACE) : equalTo(meth))
         matchers << RequestMatcher.path(pathMatcher)
 
@@ -178,10 +185,17 @@ class ErsatzRequest implements Request {
      * Used to verify that the request has been called the expected number of times. By default there is no verification criteria, they must be
      * configured using one of the <code>called()</code> methods.
      *
+     * This method will block until the call count condition is met or the timeout is exceeded.
+     *
      * @return true if the call count matches the expected verification criteria
      */
-    boolean verify() {
-        callVerifier.matches(callCount.get())
+    boolean verify(final long timeout = 1, final TimeUnit unit = SECONDS) {
+        try {
+            await().atMost(timeout, unit).until(new CallCountChecker(callVerifier, callCount))
+        } catch (ConditionTimeoutException cte) {
+            return false
+        }
+        true
     }
 
     /**
@@ -249,5 +263,17 @@ class ErsatzRequest implements Request {
         }
 
         str.toString()
+    }
+
+    @CompileStatic @TupleConstructor
+    private static class CallCountChecker implements Callable<Boolean> {
+
+        final Matcher<?> callVerifier
+        final AtomicInteger callCount
+
+        @Override
+        Boolean call() throws Exception {
+            return callVerifier.matches(callCount.get())
+        }
     }
 }

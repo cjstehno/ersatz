@@ -440,8 +440,8 @@ class ErsatzServer implements ServerConfig, Closeable {
                                 ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
                                 if (request) {
                                     Response currentResponse = request.currentResponse
-                                    request.mark(clientRequest)
                                     send(exchange, currentResponse)
+                                    request.mark(clientRequest)
 
                                 } else {
                                     UnmatchedRequestReport report = new UnmatchedRequestReport(

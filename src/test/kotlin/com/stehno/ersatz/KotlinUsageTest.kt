@@ -17,6 +17,7 @@ package com.stehno.ersatz
 
 import com.stehno.ersatz.ContentType.TEXT_PLAIN
 import okhttp3.OkHttpClient
+import org.awaitility.Awaitility
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

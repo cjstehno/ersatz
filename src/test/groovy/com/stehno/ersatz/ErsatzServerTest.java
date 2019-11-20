@@ -16,6 +16,7 @@
 package com.stehno.ersatz;
 
 import com.stehno.ersatz.util.HttpClient;
+import org.awaitility.Awaitility;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
@@ -30,8 +31,8 @@ import static com.stehno.ersatz.Decoders.getUtf8String;
 import static java.util.Collections.singletonMap;
 import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.startsWith;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -86,7 +87,8 @@ public class ErsatzServerTest {
 
         assertEquals("This is Bar!!", http.get(ersatzServer.httpUrl("/bar")).body().string());
         assertEquals("This is Bar!!", http.get(ersatzServer.httpUrl("/bar")).body().string());
-        assertEquals(2, counter.get());
+
+        await().untilAtomic(counter, equalTo(2));
 
         assertEquals("The answer is 42", http.get(ersatzServer.httpUrl("/baz?alpha=42")).body().string());
 

@@ -23,6 +23,7 @@ import org.apache.commons.fileupload.FileItem
 import org.apache.commons.fileupload.FileUpload
 import org.apache.commons.fileupload.UploadContext
 import org.apache.commons.fileupload.disk.DiskFileItemFactory
+import org.awaitility.Awaitility
 import org.hamcrest.Matcher
 import spock.lang.AutoCleanup
 import spock.lang.Ignore
@@ -39,6 +40,8 @@ import static com.stehno.ersatz.CookieMatcher.cookieMatcher
 import static com.stehno.ersatz.HttpMethod.*
 import static okhttp3.MediaType.parse
 import static okhttp3.RequestBody.create
+import static org.awaitility.Awaitility.await
+import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
 import static org.hamcrest.Matchers.startsWith
 
@@ -103,8 +106,9 @@ class ErsatzServerSpec extends Specification {
             http.get(ersatzServer.httpUrl('/bar')).body().string()
         ]
 
+        await().untilAtomic(counter, equalTo(2))
+
         then:
-        counter.get() == 2
         results.every { it == 'This is Bar!!' }
 
         when:

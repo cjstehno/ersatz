@@ -358,15 +358,19 @@ class ExpectationsImpl implements Expectations {
     /**
      * Used to verify that all request expectations have been called the expected number of times.
      *
+     * This method will block until the call count expectations are met or the timeout expires.
+     *
      * @return a value of true if all requests are verified
      */
     boolean verify(final long timeout = 1, final TimeUnit unit = SECONDS) {
         requests.each { r ->
-            assert ((ErsatzRequest) r).verify(), "Expectations for $r were not met."
+            assert ((ErsatzRequest) r).verify(timeout, unit), "Expectations for $r were not met."
         }
+
         webSockets.each { p, w ->
             assert ((WebSocketExpectationsImpl) w).verify(timeout, unit), "WebSocket expectations for $w were not met."
         }
+
         true
     }
 

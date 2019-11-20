@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz
 
-
 import com.stehno.ersatz.util.HttpClient
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -61,9 +60,7 @@ class MultiThreadedUsageTest {
             }
         }
 
-        await().until {
-            responses.get().size() == requestCount
-        }
+        await().until { responses.get().size() == requestCount }
 
         assert server.verify()
         assert responses.get().size() == requestCount
