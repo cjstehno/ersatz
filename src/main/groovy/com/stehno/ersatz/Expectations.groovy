@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz
 
+
 import groovy.transform.CompileStatic
 import org.hamcrest.Matcher
 
@@ -25,14 +26,13 @@ import static groovy.lang.Closure.DELEGATE_FIRST
 /**
  * The <code>Expectations</code> interface is the root element of the expectation configuration, which provides the ability to define request
  * expectations and responses for test interactions.
- *
+ * <p>
  * Internal expectation matching is done using <a href="http://hamcrest.org/" target="_blank">Hamcrest</a> <code>Matcher</code>s - the methods
  * without explicit Matches provide one as a convenience based on the property and value type (see method description). All configured matchers must
  * match for a specific expectation to be considered a match and if there are multiple matching expectations, the first one configured will be the
  * one considered as the match.
  */
-@CompileStatic
-@SuppressWarnings('MethodCount')
+@SuppressWarnings("MethodCount") @CompileStatic
 interface Expectations {
 
     /**
@@ -55,27 +55,27 @@ interface Expectations {
      * Allows configuration of a request expectation matching any request method using the Groovy DSL.
      *
      * @param path the expected request path.
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    Request any(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
+    Request any(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a request expectation matching any request method using the Groovy DSL.
      *
      * @param matcher the path matcher
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    Request any(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
+    Request any(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
      * <code>Consumer<Request></code> will have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param path the expected request path
-     * @pram config the configuration consumer
      * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
      */
     Request any(String path, Consumer<Request> consumer)
 
@@ -84,8 +84,8 @@ interface Expectations {
      * <code>Consumer<Request></code> will have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param matcher the path matcher
-     * @pram config the configuration consumer
      * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
      */
     Request any(Matcher<String> matcher, Consumer<Request> consumer)
 
@@ -95,7 +95,16 @@ interface Expectations {
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
      */
+    @Deprecated // will be removed in 2.0
     Request get(String path)
+
+    /**
+     * Allows configuration of a GET request expectation.
+     *
+     * @param path the expected request path
+     * @return a <code>Request</code> configuration object
+     */
+    Request GET(String path)
 
     /**
      * Allows configuration of a GET request expectation.
@@ -103,45 +112,96 @@ interface Expectations {
      * @param matcher the path matcher.
      * @return a <code>Request</code> configuration object
      */
+    @Deprecated /* will be removed in 2.0 */
     Request get(Matcher<String> matcher)
+
+    /**
+     * Allows configuration of a GET request expectation.
+     *
+     * @param matcher the path matcher.
+     * @return a <code>Request</code> configuration object
+     */
+    Request GET(Matcher<String> matcher)
 
     /**
      * Allows configuration of a GET request expectation using the Groovy DSL.
      *
      * @param path the expected request path.
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    Request get(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    Request get(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a GET request expectation using the Groovy DSL.
+     *
+     * @param path the expected request path.
+     * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    Request GET(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a GET request expectation using the Groovy DSL.
      *
      * @param matcher the path matcher
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    Request get(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    Request get(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a GET request expectation using the Groovy DSL.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    Request GET(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a GET request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
      * have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param path the expected request path
-     * @pram config the configuration consumer
      * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
      */
+    @Deprecated /* will be removed in 2.0 */
     Request get(String path, Consumer<Request> config)
 
     /**
      * Allows configuration of a GET request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
      * have an instance of <code>Request</code> passed into it for configuration.
      *
-     * @param matcher the path matcher
-     * @pram config the configuration consumer
+     * @param path the expected request path
      * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
      */
+    Request GET(String path, Consumer<Request> config)
+
+    /**
+     * Allows configuration of a GET request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
+     */
+    @Deprecated /* will be removed in 2.0 */
     Request get(Matcher<String> matcher, Consumer<Request> config)
+
+    /**
+     * Allows configuration of a GET request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
+     */
+    Request GET(Matcher<String> matcher, Consumer<Request> config)
 
     /**
      * Allows configuration of a HEAD request expectation.
@@ -149,7 +209,16 @@ interface Expectations {
      * @param path the expected request path.
      * @return a <code>Request</code> configuration object
      */
+    @Deprecated /* will be removed in 2.0 */
     Request head(String path)
+
+    /**
+     * Allows configuration of a HEAD request expectation.
+     *
+     * @param path the expected request path.
+     * @return a <code>Request</code> configuration object
+     */
+    Request HEAD(String path)
 
     /**
      * Allows configuration of a HEAD request expectation.
@@ -157,45 +226,96 @@ interface Expectations {
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
      */
+    @Deprecated /* will be removed in 2.0 */
     Request head(Matcher<String> matcher)
+
+    /**
+     * Allows configuration of a HEAD request expectation.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     */
+    Request HEAD(Matcher<String> matcher)
 
     /**
      * Allows configuration of a HEAD request expectation using the Groovy DSL.
      *
      * @param path the expected request path
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    Request head(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    Request head(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a HEAD request expectation using the Groovy DSL.
+     *
+     * @param path the expected request path
+     * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    Request HEAD(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a HEAD request expectation using the Groovy DSL.
      *
      * @param matcher the path matcher
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    Request head(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    Request head(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a HEAD request expectation using the Groovy DSL.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    Request HEAD(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a HEAD request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
      * have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param path the expected request path
-     * @pram config the configuration consumer
      * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
      */
+    @Deprecated /* will be removed in 2.0 */
     Request head(String path, Consumer<Request> config)
 
     /**
      * Allows configuration of a HEAD request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
      * have an instance of <code>Request</code> passed into it for configuration.
      *
-     * @param matcher the path matcher
-     * @pram config the configuration consumer
+     * @param path the expected request path
      * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
      */
+    Request HEAD(String path, Consumer<Request> config)
+
+    /**
+     * Allows configuration of a HEAD request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
+     */
+    @Deprecated /* will be removed in 2.0 */
     Request head(Matcher<String> matcher, Consumer<Request> config)
+
+    /**
+     * Allows configuration of a HEAD request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
+     */
+    Request HEAD(Matcher<String> matcher, Consumer<Request> config)
 
     /**
      * Allows configuration of a POST request expectation.
@@ -203,7 +323,16 @@ interface Expectations {
      * @param path the request path.
      * @return a <code>RequestWithContent</code> configuration object
      */
+    @Deprecated /* will be removed in 2.0 */
     RequestWithContent post(String path)
+
+    /**
+     * Allows configuration of a POST request expectation.
+     *
+     * @param path the request path.
+     * @return a <code>RequestWithContent</code> configuration object
+     */
+    RequestWithContent POST(String path)
 
     /**
      * Allows configuration of a POST request expectation.
@@ -211,45 +340,96 @@ interface Expectations {
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
      */
+    @Deprecated /* will be removed in 2.0 */
     RequestWithContent post(Matcher<String> matcher)
+
+    /**
+     * Allows configuration of a POST request expectation.
+     *
+     * @param matcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     */
+    RequestWithContent POST(Matcher<String> matcher)
 
     /**
      * Allows configuration of a POST request expectation using the Groovy DSL.
      *
      * @param path the expected request path
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>RequestWithContent</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    RequestWithContent post(String path, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    RequestWithContent post(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a POST request expectation using the Groovy DSL.
+     *
+     * @param path the expected request path
+     * @return a <code>RequestWithContent</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    RequestWithContent POST(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a POST request expectation using the Groovy DSL.
      *
      * @param matcher the path matcher
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>RequestWithContent</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    RequestWithContent post(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    RequestWithContent post(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a POST request expectation using the Groovy DSL.
+     *
+     * @param matcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    RequestWithContent POST(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a POST request expectation using the provided <code>Consumer<Request></code>. The
      * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param path the expected request path
-     * @pram config the configuration consumer
      * @return a <code>RequestWithContent</code> configuration object
+     * @pram config the configuration consumer
      */
+    @Deprecated /* will be removed in 2.0 */
     RequestWithContent post(String path, Consumer<RequestWithContent> config)
 
     /**
      * Allows configuration of a POST request expectation using the provided <code>Consumer<Request></code>. The
      * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
-     * @param matcher the path matcher
-     * @pram config the configuration consumer
+     * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
+     * @pram config the configuration consumer
      */
+    RequestWithContent POST(String path, Consumer<RequestWithContent> config)
+
+    /**
+     * Allows configuration of a POST request expectation using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     * @pram config the configuration consumer
+     */
+    @Deprecated /* will be removed in 2.0 */
     RequestWithContent post(Matcher<String> matcher, Consumer<RequestWithContent> config)
+
+    /**
+     * Allows configuration of a POST request expectation using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     * @pram config the configuration consumer
+     */
+    RequestWithContent POST(Matcher<String> matcher, Consumer<RequestWithContent> config)
 
     /**
      * Allows configuration of a PUT request expectation.
@@ -257,53 +437,113 @@ interface Expectations {
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
      */
+    @Deprecated /* will be removed in 2.0 */
     RequestWithContent put(String path)
 
     /**
      * Allows configuration of a PUT request expectation.
      *
+     * @param path the expected request path
+     * @return a <code>RequestWithContent</code> configuration object
+     */
+    RequestWithContent PUT(String path)
+
+    /**
+     * Allows configuration of a PUT request expectation.
+     *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
      */
+    @Deprecated /* will be removed in 2.0 */
     RequestWithContent put(Matcher<String> matcher)
+
+    /**
+     * Allows configuration of a PUT request expectation.
+     *
+     * @param matcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     */
+    RequestWithContent PUT(Matcher<String> matcher)
 
     /**
      * Allows configuration of a PUT request expectation using the Groovy DSL.
      *
      * @param path the expected request path
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>RequestWithContent</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    RequestWithContent put(String path, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    RequestWithContent put(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a PUT request expectation using the Groovy DSL.
+     *
+     * @param path the expected request path
+     * @return a <code>RequestWithContent</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    RequestWithContent PUT(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a PUT request expectation using the Groovy DSL.
      *
      * @param matcher the path matcher
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>RequestWithContent</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    RequestWithContent put(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    RequestWithContent put(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a PUT request expectation using the Groovy DSL.
+     *
+     * @param matcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    RequestWithContent PUT(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
      * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param path the expected request path
-     * @pram config the configuration consumer
      * @return a <code>RequestWithContent</code> configuration object
+     * @pram config the configuration consumer
      */
+    @Deprecated /* will be removed in 2.0 */
     RequestWithContent put(String path, Consumer<RequestWithContent> config)
 
     /**
      * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
      * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
-     * @param matcher the path matcher
-     * @pram config the configuration consumer
+     * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
+     * @pram config the configuration consumer
      */
+    RequestWithContent PUT(String path, Consumer<RequestWithContent> config)
+
+    /**
+     * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     * @pram config the configuration consumer
+     */
+    @Deprecated /* will be removed in 2.0 */
     RequestWithContent put(Matcher<String> matcher, Consumer<RequestWithContent> config)
+
+    /**
+     * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     * @pram config the configuration consumer
+     */
+    RequestWithContent PUT(Matcher<String> matcher, Consumer<RequestWithContent> config)
 
     /**
      * Allows configuration of a DELETE request expectation.
@@ -311,53 +551,113 @@ interface Expectations {
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
      */
+    @Deprecated /* will be removed in 2.0 */
     Request delete(String path)
 
     /**
      * Allows configuration of a DELETE request expectation.
      *
+     * @param path the expected request path
+     * @return a <code>Request</code> configuration object
+     */
+    Request DELETE(String path)
+
+    /**
+     * Allows configuration of a DELETE request expectation.
+     *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
      */
+    @Deprecated /* will be removed in 2.0 */
     Request delete(Matcher<String> matcher)
+
+    /**
+     * Allows configuration of a DELETE request expectation.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     */
+    Request DELETE(Matcher<String> matcher)
 
     /**
      * Allows configuration of a DELETE request expectation using the Groovy DSL.
      *
      * @param path the expected request path
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    Request delete(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    Request delete(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a DELETE request expectation using the Groovy DSL.
+     *
+     * @param path the expected request path
+     * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    Request DELETE(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a DELETE request expectation using the Groovy DSL.
      *
      * @param matcher the path matcher
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    Request delete(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    Request delete(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a DELETE request expectation using the Groovy DSL.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    Request DELETE(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a DELETE request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
      * have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param path the expected request path
-     * @pram config the configuration consumer
      * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
      */
+    @Deprecated /* will be removed in 2.0 */
     Request delete(String path, Consumer<Request> config)
 
     /**
      * Allows configuration of a DELETE request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
      * have an instance of <code>Request</code> passed into it for configuration.
      *
-     * @param matcher the path matcher
-     * @pram config the configuration consumer
+     * @param path the expected request path
      * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
      */
+    Request DELETE(String path, Consumer<Request> config)
+
+    /**
+     * Allows configuration of a DELETE request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
+     */
+    @Deprecated /* will be removed in 2.0 */
     Request delete(Matcher<String> matcher, Consumer<Request> config)
+
+    /**
+     * Allows configuration of a DELETE request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
+     */
+    Request DELETE(Matcher<String> matcher, Consumer<Request> config)
 
     /**
      * Allows configuration of a PATCH request expectation.
@@ -365,53 +665,113 @@ interface Expectations {
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
      */
+    @Deprecated /* will be removed in 2.0 */
     RequestWithContent patch(String path)
 
     /**
      * Allows configuration of a PATCH request expectation.
      *
+     * @param path the expected request path
+     * @return a <code>RequestWithContent</code> configuration object
+     */
+    RequestWithContent PATCH(String path)
+
+    /**
+     * Allows configuration of a PATCH request expectation.
+     *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
      */
+    @Deprecated /* will be removed in 2.0 */
     RequestWithContent patch(Matcher<String> matcher)
+
+    /**
+     * Allows configuration of a PATCH request expectation.
+     *
+     * @param matcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     */
+    RequestWithContent PATCH(Matcher<String> matcher)
 
     /**
      * Allows configuration of a PATCH request expectation using the Groovy DSL.
      *
      * @param path the expected request path
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>RequestWithContent</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    RequestWithContent patch(String path, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    RequestWithContent patch(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a PATCH request expectation using the Groovy DSL.
+     *
+     * @param path the expected request path
+     * @return a <code>RequestWithContent</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    RequestWithContent PATCH(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a PATCH request expectation using the Groovy DSL.
      *
      * @param matcher the path matcher
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>RequestWithContent</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a PATCH request expectation using the Groovy DSL.
+     *
+     * @param matcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    RequestWithContent PATCH(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a PATCH request expectation using the provided <code>Consumer<Request></code>. The
      * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param path the expected request path
-     * @pram config the configuration consumer
      * @return a <code>RequestWithContent</code> configuration object
+     * @pram config the configuration consumer
      */
+    @Deprecated /* will be removed in 2.0 */
     RequestWithContent patch(String path, Consumer<RequestWithContent> config)
 
     /**
      * Allows configuration of a PATCH request expectation using the provided <code>Consumer<Request></code>. The
      * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
-     * @param matcher the path matcher
-     * @pram config the configuration consumer
+     * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
+     * @pram config the configuration consumer
      */
+    RequestWithContent PATCH(String path, Consumer<RequestWithContent> config)
+
+    /**
+     * Allows configuration of a PATCH request expectation using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     * @pram config the configuration consumer
+     */
+    @Deprecated /* will be removed in 2.0 */
     RequestWithContent patch(Matcher<String> matcher, Consumer<RequestWithContent> config)
+
+    /**
+     * Allows configuration of a PATCH request expectation using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     * @pram config the configuration consumer
+     */
+    RequestWithContent PATCH(Matcher<String> matcher, Consumer<RequestWithContent> config)
 
     /**
      * Allows configuration of a OPTIONS request expectation.
@@ -419,7 +779,16 @@ interface Expectations {
      * @param path the expected request path.
      * @return a <code>Request</code> configuration object
      */
+    @Deprecated /* will be removed in 2.0 */
     Request options(String path)
+
+    /**
+     * Allows configuration of a OPTIONS request expectation.
+     *
+     * @param path the expected request path.
+     * @return a <code>Request</code> configuration object
+     */
+    Request OPTIONS(String path)
 
     /**
      * Allows configuration of a OPTIONS request expectation.
@@ -427,45 +796,96 @@ interface Expectations {
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
      */
+    @Deprecated /* will be removed in 2.0 */
     Request options(Matcher<String> matcher)
+
+    /**
+     * Allows configuration of a OPTIONS request expectation.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     */
+    Request OPTIONS(Matcher<String> matcher)
 
     /**
      * Allows configuration of a OPTIONS request expectation using the Groovy DSL.
      *
      * @param path the expected request path
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    Request options(String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    Request options(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a OPTIONS request expectation using the Groovy DSL.
+     *
+     * @param path the expected request path
+     * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    Request OPTIONS(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a OPTIONS request expectation using the Groovy DSL.
      *
      * @param matcher the path matcher
-     * @pram closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
      */
-    Request options(Matcher<String> matcher, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) Closure closure)
+    @Deprecated /* will be removed in 2.0 */
+    Request options(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
+
+    /**
+     * Allows configuration of a OPTIONS request expectation using the Groovy DSL.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @pram closure the Groovy closure containing the configuration
+     */
+    Request OPTIONS(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code>
      * will have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param path the expected request path
-     * @pram config the configuration consumer
      * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
      */
+    @Deprecated /* will be removed in 2.0 */
     Request options(String path, Consumer<Request> config)
 
     /**
      * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code>
      * will have an instance of <code>Request</code> passed into it for configuration.
      *
-     * @param matcher the path matcher
-     * @pram config the configuration consumer
+     * @param path the expected request path
      * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
      */
+    Request OPTIONS(String path, Consumer<Request> config)
+
+    /**
+     * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code>
+     * will have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
+     */
+    @Deprecated /* will be removed in 2.0 */
     Request options(Matcher<String> matcher, Consumer<Request> config)
+
+    /**
+     * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code>
+     * will have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @pram config the configuration consumer
+     */
+    Request OPTIONS(Matcher<String> matcher, Consumer<Request> config)
 
     /**
      * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection will be expected in order
@@ -477,7 +897,7 @@ interface Expectations {
      * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection will be expected in order
      * for the verification to pass.
      */
-    WebSocketExpectations ws(String path, @DelegatesTo(value = WebSocketExpectations, strategy = DELEGATE_FIRST) Closure closure)
+    WebSocketExpectations ws(String path, @DelegatesTo(value = WebSocketExpectations.class, strategy = DELEGATE_FIRST) Closure closure)
 
     /**
      * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection will be expected in order
