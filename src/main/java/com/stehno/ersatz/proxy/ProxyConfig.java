@@ -1,0 +1,64 @@
+package com.stehno.ersatz.proxy;
+
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+
+import java.net.URI;
+import java.net.URL;
+import java.util.function.Consumer;
+
+import static groovy.lang.Closure.DELEGATE_FIRST;
+
+/**
+ * Configuration DSL interface for the ErsatzProxy server.
+ */
+@SuppressWarnings("ConfusingMethodName") public interface ProxyConfig {
+
+    /**
+     * Toggles the server auto-start feature. By default the proxy server will start once it is configured.
+     *
+     * @param auto enable/disable auto-start
+     * @return a reference to this configuration
+     */
+    ProxyConfig autoStart(boolean auto);
+
+    /**
+     * Specifies the target URI for the proxy server.
+     *
+     * @param value the target URI
+     * @return a reference to this configuration
+     */
+    ProxyConfig target(String value);
+
+    /**
+     * Specifies the target URI for the proxy server.
+     *
+     * @param value the target URI
+     * @return a reference to this configuration
+     */
+    ProxyConfig target(URI value);
+
+    /**
+     * Specifies the target URI for the proxy server.
+     *
+     * @param value the target URI
+     * @return a reference to this configuration
+     */
+    ProxyConfig target(URL value);
+
+    /**
+     * Used to configure the proxy server expectations with a Groovy Closure, which delegates to an instance of ProxyExpectations.
+     *
+     * @param closure the Groovy closure
+     * @return a reference to this configuration
+     */
+    ProxyConfig expectations(@DelegatesTo(value = ProxyExpectations.class, strategy = DELEGATE_FIRST) Closure closure);
+
+    /**
+     * Used to configure the proxy server expectations with a Consumer, which will have an instance of ProxyExpectations passed into it.
+     *
+     * @param consumer the configuration consumer
+     * @return a reference to this configuration
+     */
+    ProxyConfig expectations(Consumer<ProxyExpectations> consumer);
+}

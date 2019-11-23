@@ -1,8 +1,7 @@
 plugins {
-    id 'groovy'
+    id 'java'
     id "com.github.hierynomus.license" version '0.15.0'
     id 'jacoco'
-    id 'codenarc'
     id 'maven'
     id 'maven-publish'
     id 'com.github.kt3k.coveralls' version '2.8.2'
@@ -23,10 +22,6 @@ targetCompatibility = 8
 
 repositories {
     jcenter()
-}
-
-configurations {
-    groovyDoc
 }
 
 dependencies {
@@ -60,36 +55,6 @@ dependencies {
 
     testImplementation 'com.burgstaller:okhttp-digest:2.0'
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.60"
-
-    groovyDoc "org.codehaus.groovy:groovy-groovydoc:$groovyVersion"
-    groovyDoc "org.codehaus.groovy:groovy-ant:$groovyVersion"
-
-    codenarc(
-        'org.codenarc:CodeNarc:1.4',
-        "org.codehaus.groovy:groovy-all:$groovyVersion"
-    )
-}
-
-codenarc {
-    toolVersion = '1.4'
-}
-
-codenarcMain {
-    ignoreFailures false
-    configFile file('config/codenarc-main.rules')
-
-    maxPriority1Violations 0
-    maxPriority2Violations 5
-    maxPriority3Violations 10
-}
-
-codenarcTest {
-    ignoreFailures true
-    configFile file('config/codenarc-test.rules')
-}
-
-groovydoc {
-    groovyClasspath = configurations.groovyDoc
 }
 
 task sourcesJar(type: Jar) {
@@ -98,11 +63,13 @@ task sourcesJar(type: Jar) {
     from project.sourceSets.main.allSource
 }
 
+/*
 task javadocJar(type: Jar) {
     description = 'Creates API documentation jar.'
     classifier = 'javadoc'
     from groovydoc
 }
+*/
 
 test {
     useJUnitPlatform()
@@ -112,7 +79,7 @@ test {
 artifacts {
     archives jar
     archives sourcesJar
-    archives javadocJar
+//    archives javadocJar
     archives shadowJar
 }
 
@@ -121,7 +88,7 @@ publishing {
         ersatzPublication(MavenPublication) {
             from components.java
             artifact sourcesJar
-            artifact javadocJar
+//            artifact javadocJar
             artifact shadowJar
             groupId project.group
             artifactId 'ersatz'
@@ -218,7 +185,7 @@ site {
     versionedFile 'src/docs/asciidoc/index.adoc'
 }
 
-tasks.site.dependsOn = ['build', 'groovydoc', 'jacocoTestReport', 'asciidoctor']
+tasks.site.dependsOn = ['build', 'jacocoTestReport', 'asciidoctor']
 
 task publishSite(type: GradleBuild, group: 'Publishing', description: 'Publishes the documentation web site.', dependsOn: ['site']) {
     buildFile = 'publish.gradle'
