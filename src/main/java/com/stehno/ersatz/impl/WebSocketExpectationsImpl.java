@@ -112,6 +112,10 @@ public class WebSocketExpectationsImpl implements WebSocketExpectations {
         return receivedMessages.size();
     }
 
+    public String getPath() {
+        return path;
+    }
+
     public void eachSender(Consumer<SentMessageImpl> consumer) {
         sentMessages.forEach(consumer);
     }

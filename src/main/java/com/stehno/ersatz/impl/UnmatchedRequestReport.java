@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl
+package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.ClientRequest
-import groovy.transform.Memoized
+import com.stehno.ersatz.ClientRequest;
 
-import java.nio.charset.Charset
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * Helper object used to build and render a report of the unmatched request and the configured expectations.
@@ -46,65 +48,69 @@ public class UnmatchedRequestReport {
 
         out.append("# Unmatched Request\n\n");
 
-        String query = request.queryParams.collect { k, v -> "$k=$v" }.join(', ')
-        out.append("${request.protocol} ${request.method} ${request.path} ? $query\n")
+        final String query = request.getQueryParams().entrySet().stream()
+            .map(entry -> entry.getKey() + "=" + entry.getValue())
+            .collect(joining(", "));
 
-        if (request.headers) {
-            out.append 'Headers:\n'
-            request.headers.each { h ->
-                out.append " - ${h.headerName}: ${h.toArray()}\n"
-            }
+        out.append(request.getProtocol() + " " + request.getMethod() + " " + request.getPath() + "? " + query + "\n");
+
+        if (request.getHeaders() != null) {
+            out.append("Headers:\n");
+            request.getHeaders().forEach(h -> {
+                out.append(" - " + h.getHeaderName() + ": " + h.toArray() + "\n");
+            });
         }
 
-        if (request.cookies) {
-            out.append 'Cookies:\n'
-            request.cookies.each { n, c ->
-                out.append " - ${n} (${c.domain}, ${c.path}): ${c.value}\n"
-            }
+        if (request.getCookies() != null) {
+            out.append("Cookies:\n");
+            request.getCookies().forEach((n, c) -> {
+                out.append(" - " + n + " (" + c.getDomain() + ", " + c.getPath() + "): " + c.getValue() + "\n");
+            });
         }
 
-        if (request.characterEncoding) {
-            out.append "Character-Encoding: ${request.characterEncoding}\n"
+        if (request.getCharacterEncoding() != null) {
+            out.append("Character-Encoding: " + request.getCharacterEncoding() + "\n");
         }
 
-        if (request.contentType) {
-            out.append "Content-type: ${request.contentType}\n"
+        if (request.getContentType() != null) {
+            out.append("Content-type: " + request.getContentType() + "\n");
         }
 
-        if (request.contentLength > 0) {
-            out.append "Content-Length: ${request.contentLength}\n"
+        if (request.getContentLength() > 0) {
+            out.append("Content-Length: " + request.getContentLength() + "\n");
         }
 
-        if (request.body) {
-            out.append 'Content:\n'
-            if (request.contentType && TEXT_CONTENT_HINTS.any { request.contentType.contains(it) }) {
-                out.append "  ${new String(request.body, Charset.forName(request.characterEncoding ?: 'UTF-8'))}\n"
+        if (request.getBody() != null) {
+            out.append("Content:\n");
+            if (request.getContentType() != null && TEXT_CONTENT_HINTS.stream().anyMatch(h -> request.getContentType().contains(h))) {
+                out.append("  " + new String(request.getBody(), Charset.forName(request.getCharacterEncoding() != null ? request.getCharacterEncoding() : "UTF-8")) + "\n");
             } else {
-                out.append "  ${request.body}\n"
+                out.append("  " + request.getBody() + "\n");
             }
         }
 
-        out.append('\n# Expectations\n\n')
+        out.append("\n# Expectations\n\n");
 
-        expectations.eachWithIndex { ErsatzRequest req, int index ->
-            int count = req.requestMatchers.size()
+        for (int index = 0; index < expectations.size(); index++) {
+            final ErsatzRequest req = expectations.get(index);
+            int count = req.getRequestMatchers().size();
 
-            out.append "Expectation $index ($count matchers):\n"
+            out.append("Expectation " + index + " (" + count + " matchers):\n");
 
-            int failed = 0
-            req.requestMatchers.each { RequestMatcher matcher ->
-                boolean matches = matcher.matches(request)
+            final AtomicInteger failed = new AtomicInteger(0);
+            req.getRequestMatchers().forEach(matcher -> {
+                boolean matches = matcher.matches(request);
                 if (matches) {
-                    out.append "  ${GREEN}✓${RESET} ${matcher}\n"
+                    out.append("  " + GREEN + "✓" + RESET + " " + matcher + "\n");
                 } else {
-                    out.append "  ${RED}X ${matcher}${RESET}\n"
-                    failed++
+                    out.append("  " + RED + "X " + matcher + RESET + "\n");
+                    failed.incrementAndGet();
                 }
-            }
+            });
 
-            out.append "  ($count matchers: ${count - failed} matched, ${failed ? RED : ''}$failed failed${failed ? RESET : ''})\n\n"
+            out.append("  (" + count + " matchers: " + (count - failed.get()) + " matched, " + (failed.get() > 0 ? RED : "") + failed + " failed" + (failed.get() > 0 ? RESET : "") + ")\n\n");
         }
 
-        out.toString()
+        return out.toString();
     }
 }

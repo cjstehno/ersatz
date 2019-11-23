@@ -70,8 +70,8 @@ public class ReceivedMessageImpl implements ReceivedMessage {
     @Override
     public MessageReaction reaction(Object payload, WsMessageType messageType) {
         final MessageReactionImpl messageReaction = new MessageReactionImpl();
-        messageReaction.setPayload(payload);
-        messageReaction.setMessageType(messageType);
+        messageReaction.payload(payload);
+        messageReaction.messageType(messageType);
 
         reactions.add(messageReaction);
         return messageReaction;

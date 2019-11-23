@@ -101,23 +101,23 @@ public class ErsatzRequest implements Request {
     }
 
     @Override public Request query(String name) {
-        return query(name, IsIterableContaining.hasItems(""));
+        return query(name, IsIterableContaining.hasItem(""));
     }
 
     @Override
     public Request query(final String name, final String value) {
-        return query(name, (value != null ? IsIterableContaining.hasItems(value) : IsIterableContaining.hasItems("")));
+        return query(name, (value != null ? IsIterableContaining.hasItem(value) : IsIterableContaining.hasItem("")));
     }
 
     @Override
     public Request query(final String name, final Iterable<? super String> value) {
         final List<Matcher<? super String>> list = new LinkedList<>();
 
-        for (String item : value) {
-            list.add(equalTo(item));
-        }
+        value.forEach(it -> {
+            list.add(equalTo(it));
+        });
 
-        return query(name, IsIterableContainingInAnyOrder.containsInAnyOrder(list));
+        return query(name, (Iterable<? super String>) IsIterableContainingInAnyOrder.containsInAnyOrder(list));
     }
 
     @Override

@@ -22,6 +22,7 @@ import com.stehno.ersatz.HttpMethod;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.core.IsIterableContaining;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
@@ -30,7 +31,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER;
-import static com.stehno.ersatz.ErsatzMatchers.collectionContainsMatch;
 import static io.undertow.util.QueryParameterUtils.parseQueryString;
 
 /**
@@ -106,7 +106,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param m    the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    public static RequestMatcher query(final String name, final Matcher<Iterable<String>> m) {
+    public static RequestMatcher query(final String name, final Matcher<Iterable<? super String>> m) {
         return new RequestMatcher(
             m,
             (Function<ClientRequest, Iterable<String>>) cr -> cr.getQueryParams().get(name),
@@ -205,7 +205,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @return a configured RequestMatcher
      */
     public static RequestMatcher contentType(final Matcher<String> m) {
-        return header(CONTENT_TYPE_HEADER, collectionContainsMatch(m));
+        return header(CONTENT_TYPE_HEADER, IsIterableContaining.hasItem(m));
     }
 
     /**
