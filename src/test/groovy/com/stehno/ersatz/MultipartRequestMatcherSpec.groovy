@@ -28,7 +28,7 @@ import static org.hamcrest.Matchers.*
 
 class MultipartRequestMatcherSpec extends Specification {
 
-    private final MultipartRequestContent content = multipart {
+    private MultipartRequestContent content = multipart {
         part 'alpha', 'one'
         part 'bravo', 'bravo.dat', APPLICATION_JSON, '{"label":"This is content!"}'
     }

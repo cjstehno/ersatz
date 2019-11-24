@@ -24,7 +24,7 @@ import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
 class RequestDecodersSpec extends Specification {
 
-    private final RequestDecoders decoders = new RequestDecoders({
+    private RequestDecoders decoders = new RequestDecoders({
         register TEXT_PLAIN, { b, dc -> 'text/plain' }
         register 'text/plain; charset=utf-8', { b, dc -> 'text/plain; charset=utf-8' }
         register 'text/html', { b, dc -> 'text/html' }

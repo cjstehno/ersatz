@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,85 +13,86 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz;
 
-import groovy.transform.CompileStatic
-import io.undertow.server.handlers.Cookie
-import io.undertow.util.HeaderMap
+import io.undertow.server.handlers.Cookie;
+import io.undertow.util.HeaderMap;
+
+import java.util.Deque;
+import java.util.Map;
 
 /**
  * An abstraction around the underlying HTTP server request that aids in matching and working with requests.
  */
-@CompileStatic
-interface ClientRequest {
+public interface ClientRequest {
 
     /**
      * Retrieves the HTTP method for the request.
      *
      * @return the HTTP method for the request
      */
-    HttpMethod getMethod()
+    HttpMethod getMethod();
 
     /**
      * Used to retrieve the request protocol, generally HTTP or HTTPS.
      *
      * @return the request protocol
      */
-    String getProtocol()
+    String getProtocol();
 
     /**
      * Retrieves the request path.
      *
      * @return the request path
      */
-    String getPath()
+    String getPath();
 
     /**
      * Retrieves the URL query string parameters for the request.
      *
      * @return the query string parameters
      */
-    Map<String, Deque<String>> getQueryParams()
+    Map<String, Deque<String>> getQueryParams();
 
     /**
      * Retrieves the request headers.
      *
      * @return the request headers
      */
-    HeaderMap getHeaders()
+    HeaderMap getHeaders();
 
     /**
      * Retrieves the cookies associated with the request.
      *
      * @return the request cookies
      */
-    Map<String, Cookie> getCookies()
+    Map<String, Cookie> getCookies();
 
     /**
      * Retrieves the body content (if any) as a byte array (null for an empty request).
      *
      * @return the optional body content as a byte array.
      */
-    byte[] getBody()
+    byte[] getBody();
 
     /**
      * Retrieves the content length of the request.
      *
      * @return the request content length
      */
-    long getContentLength()
+    long getContentLength();
 
     /**
      * Retrieves the request character encoding.
      *
      * @return the request character encoding
      */
-    String getCharacterEncoding()
+    String getCharacterEncoding();
 
     /**
      * Retrieves the request content type. Generally this will only be present for requests with body content.
      *
      * @return the request content type
      */
-    String getContentType()
+    String getContentType();
 }

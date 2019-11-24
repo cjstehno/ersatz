@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap
 class DigestSpec extends Specification {
 
     @AutoCleanup('stop')
-    private final ErsatzServer ersatzServer = new ErsatzServer({
+    private ErsatzServer ersatzServer = new ErsatzServer({
         authentication {
             digest()
         }

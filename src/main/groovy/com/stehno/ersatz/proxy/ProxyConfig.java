@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.proxy
+package com.stehno.ersatz.proxy;
 
-import groovy.transform.CompileStatic
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 
-import java.util.function.Consumer
+import java.net.URI;
+import java.net.URL;
+import java.util.function.Consumer;
 
-import static groovy.lang.Closure.DELEGATE_FIRST
+import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Configuration DSL interface for the ErsatzProxy server.
  */
-@CompileStatic @SuppressWarnings('ConfusingMethodName')
-interface ProxyConfig {
+ public interface ProxyConfig {
 
     /**
      * Toggles the server auto-start feature. By default the proxy server will start once it is configured.
@@ -33,7 +35,7 @@ interface ProxyConfig {
      * @param auto enable/disable auto-start
      * @return a reference to this configuration
      */
-    ProxyConfig autoStart(boolean auto)
+    ProxyConfig autoStart(boolean auto);
 
     /**
      * Specifies the target URI for the proxy server.
@@ -41,7 +43,7 @@ interface ProxyConfig {
      * @param value the target URI
      * @return a reference to this configuration
      */
-    ProxyConfig target(String value)
+    ProxyConfig target(String value);
 
     /**
      * Specifies the target URI for the proxy server.
@@ -49,7 +51,7 @@ interface ProxyConfig {
      * @param value the target URI
      * @return a reference to this configuration
      */
-    ProxyConfig target(URI value)
+    ProxyConfig target(URI value);
 
     /**
      * Specifies the target URI for the proxy server.
@@ -57,7 +59,7 @@ interface ProxyConfig {
      * @param value the target URI
      * @return a reference to this configuration
      */
-    ProxyConfig target(URL value)
+    ProxyConfig target(URL value);
 
     /**
      * Used to configure the proxy server expectations with a Groovy Closure, which delegates to an instance of ProxyExpectations.
@@ -65,7 +67,7 @@ interface ProxyConfig {
      * @param closure the Groovy closure
      * @return a reference to this configuration
      */
-    ProxyConfig expectations(@DelegatesTo(value = ProxyExpectations, strategy = DELEGATE_FIRST) Closure closure)
+    ProxyConfig expectations(@DelegatesTo(value = ProxyExpectations.class, strategy = DELEGATE_FIRST) Closure closure);
 
     /**
      * Used to configure the proxy server expectations with a Consumer, which will have an instance of ProxyExpectations passed into it.
@@ -73,5 +75,5 @@ interface ProxyConfig {
      * @param consumer the configuration consumer
      * @return a reference to this configuration
      */
-    ProxyConfig expectations(Consumer<ProxyExpectations> consumer)
+    ProxyConfig expectations(Consumer<ProxyExpectations> consumer);
 }

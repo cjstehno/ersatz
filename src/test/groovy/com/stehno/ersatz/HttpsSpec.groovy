@@ -21,9 +21,9 @@ import spock.lang.Specification
 
 class HttpsSpec extends Specification {
 
-    private final HttpClient http = new HttpClient(true)
+    private HttpClient http = new HttpClient(true)
 
-    @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer({
+    @AutoCleanup('stop') private ErsatzServer ersatzServer = new ErsatzServer({
         https()
     })
 

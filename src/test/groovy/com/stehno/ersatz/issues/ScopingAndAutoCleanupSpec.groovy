@@ -38,8 +38,8 @@ class ScopingAndAutoCleanupSpec extends Specification {
 
     private static final String INPUT_CONTENT = 'input'
     private static final String OUTPUT_CONTENT = 'output'
-    @AutoCleanup('stop') private final ErsatzServer server = new ErsatzServer()
-    private final HttpClient client = new HttpClient()
+    @AutoCleanup('stop') private ErsatzServer server = new ErsatzServer()
+    private HttpClient client = new HttpClient()
 
     void 'Posting One'() {
         setup:

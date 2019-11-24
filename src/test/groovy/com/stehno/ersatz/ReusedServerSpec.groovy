@@ -22,7 +22,7 @@ import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
 class ReusedServerSpec extends Specification {
 
-    @AutoCleanup private final ErsatzServer ersatzServer = new ErsatzServer({
+    @AutoCleanup private ErsatzServer ersatzServer = new ErsatzServer({
         expectations {
             get('/alpha').called(1).responds().body('alpha-response', TEXT_PLAIN)
             get('/bravo').called(2).responds().body('bravo-response', TEXT_PLAIN)

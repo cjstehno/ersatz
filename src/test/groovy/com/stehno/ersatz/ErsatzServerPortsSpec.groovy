@@ -23,13 +23,13 @@ class ErsatzServerPortsSpec extends Specification {
 
     // NOTE: if this test starts failing for odd reasons, add some logic to ensure port is available
 
-    @AutoCleanup private final ErsatzServer ersatz = new ErsatzServer({
+    @AutoCleanup private ErsatzServer ersatz = new ErsatzServer({
         httpPort 8675
         expectations {
             get('/hi').responds().code(200)
         }
     })
-    private final HttpClient http = new HttpClient()
+    private HttpClient http = new HttpClient()
 
     void 'running with explicit port'(){
         expect:

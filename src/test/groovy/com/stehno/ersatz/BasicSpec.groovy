@@ -22,12 +22,12 @@ import static com.stehno.ersatz.auth.SimpleIdentityManager.encodedCredential
 
 class BasicSpec extends Specification {
 
-    private final ErsatzServer ersatzServer = new ErsatzServer({
+    private ErsatzServer ersatzServer = new ErsatzServer({
         authentication {
             basic()
         }
     })
-    private final HttpClient http = new HttpClient()
+    private HttpClient http = new HttpClient()
 
     def 'BASIC auth'() {
         setup:

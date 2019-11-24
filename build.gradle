@@ -2,7 +2,6 @@ plugins {
     id 'groovy'
     id "com.github.hierynomus.license" version '0.15.0'
     id 'jacoco'
-    id 'codenarc'
     id 'maven'
     id 'maven-publish'
     id 'com.github.kt3k.coveralls' version '2.8.2'
@@ -18,22 +17,17 @@ plugins {
 group = 'com.stehno.ersatz'
 version = '1.10.0'
 
-sourceCompatibility = 8
-targetCompatibility = 8
+sourceCompatibility = 11
+targetCompatibility = 11
 
 repositories {
     jcenter()
 }
 
-configurations {
-    groovyDoc
-}
-
 dependencies {
-    if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-        // going to assume its 9+
-        implementation 'javax.activation:activation:1.1.1'
-    }
+    // FIXME: need documentation and code inspection support back in
+
+    implementation 'javax.activation:activation:1.1.1'
 
     implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
 
@@ -60,36 +54,6 @@ dependencies {
 
     testImplementation 'com.burgstaller:okhttp-digest:2.0'
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.60"
-
-    groovyDoc "org.codehaus.groovy:groovy-groovydoc:$groovyVersion"
-    groovyDoc "org.codehaus.groovy:groovy-ant:$groovyVersion"
-
-    codenarc(
-        'org.codenarc:CodeNarc:1.4',
-        "org.codehaus.groovy:groovy-all:$groovyVersion"
-    )
-}
-
-codenarc {
-    toolVersion = '1.4'
-}
-
-codenarcMain {
-    ignoreFailures false
-    configFile file('config/codenarc-main.rules')
-
-    maxPriority1Violations 0
-    maxPriority2Violations 5
-    maxPriority3Violations 10
-}
-
-codenarcTest {
-    ignoreFailures true
-    configFile file('config/codenarc-test.rules')
-}
-
-groovydoc {
-    groovyClasspath = configurations.groovyDoc
 }
 
 task sourcesJar(type: Jar) {
@@ -101,7 +65,7 @@ task sourcesJar(type: Jar) {
 task javadocJar(type: Jar) {
     description = 'Creates API documentation jar.'
     classifier = 'javadoc'
-    from groovydoc
+    from javadoc
 }
 
 test {
@@ -218,7 +182,7 @@ site {
     versionedFile 'src/docs/asciidoc/index.adoc'
 }
 
-tasks.site.dependsOn = ['build', 'groovydoc', 'jacocoTestReport', 'asciidoctor']
+tasks.site.dependsOn = ['build', 'javadoc', 'jacocoTestReport', 'asciidoctor']
 
 task publishSite(type: GradleBuild, group: 'Publishing', description: 'Publishes the documentation web site.', dependsOn: ['site']) {
     buildFile = 'publish.gradle'

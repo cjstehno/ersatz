@@ -22,9 +22,10 @@ import com.stehno.ersatz.HttpMethod
 import com.stehno.ersatz.MultipartResponseContent
 import com.stehno.ersatz.Response
 import com.stehno.ersatz.ResponseEncoders
-import com.stehno.ersatz.util.TimeSpan
+
 import groovy.transform.CompileStatic
 
+import java.time.Duration
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 import java.util.function.Function
@@ -191,7 +192,7 @@ class ErsatzResponse implements Response {
 
     @Override
     Response delay(final String time) {
-        this.delayTime = TimeSpan.parse(time).toMillis()
+        this.delayTime = Duration.parse(time).toMillis()
         this
     }
 

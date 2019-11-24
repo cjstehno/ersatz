@@ -27,9 +27,9 @@ import static org.hamcrest.Matchers.equalTo
 class ExpectationsImplSpec extends Specification {
 
     private static final String PATH = '/somewhere'
-    private final RequestDecoders decoders = new RequestDecoders()
-    private final ResponseEncoders encoders = new ResponseEncoders()
-    private final ExpectationsImpl expectations = new ExpectationsImpl(decoders, encoders)
+    private RequestDecoders decoders = new RequestDecoders()
+    private ResponseEncoders encoders = new ResponseEncoders()
+    private ExpectationsImpl expectations = new ExpectationsImpl(decoders, encoders)
 
     @Unroll '#method(String)'() {
         when:

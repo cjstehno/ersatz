@@ -34,8 +34,8 @@ import static org.hamcrest.xml.HasXPath.hasXPath
 
 class BodyContentMatcherSpec extends Specification {
 
-    @AutoCleanup private final ErsatzServer server = new ErsatzServer()
-    private final HttpClient http = new HttpClient()
+    @AutoCleanup private ErsatzServer server = new ErsatzServer()
+    private HttpClient http = new HttpClient()
 
     void 'matching all of body content'() {
         setup:

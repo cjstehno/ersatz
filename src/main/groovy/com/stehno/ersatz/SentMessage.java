@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,27 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz;
 
 /**
- * Describes a web socket reaction message - a message sent as an asynchronous "response" to a connection or another message.
+ * Defines a message sent by the web socket server.
  */
-@SuppressWarnings('ConfusingMethodName')
-interface MessageReaction {
+ public interface SentMessage {
 
     /**
      * Defines the message payload.
      *
      * @param obj the payload object
-     * @return a reference to this MessageReaction
+     * @return a reference to this SentMessage
      */
-    MessageReaction payload(Object obj)
+    SentMessage payload(Object obj);
 
     /**
      * Defines the message type.
      *
      * @param obj the payload type
-     * @return a reference to this MessageReaction
+     * @return a reference to this SentMessage
      */
-    MessageReaction messageType(WsMessageType type)
+    SentMessage messageType(WsMessageType type);
 }

@@ -85,12 +85,6 @@ class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithConte
     }
 
     @Override
-    RequestWithContent decoders(final RequestDecoders requestDecoders) {
-        decoderChain.second(requestDecoders)
-        this
-    }
-
-    @Override
     RequestWithContent param(String name, String value) {
         param name, value != null ? contains(value) : contains('')
     }

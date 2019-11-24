@@ -42,9 +42,9 @@ import static org.hamcrest.Matchers.nullValue
 class ErsatzRequestSpec extends Specification {
 
     private static final String STRING_CONTENT = 'Some content'
-    private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
-    private final ErsatzRequest request = new ErsatzRequest(POST, equalTo('/testing'), new ResponseEncoders())
-    @AutoCleanup('stop') private final ErsatzServer server = new ErsatzServer()
+    private OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
+    private ErsatzRequest request = new ErsatzRequest(POST, equalTo('/testing'), new ResponseEncoders())
+    @AutoCleanup('stop') private ErsatzServer server = new ErsatzServer()
 
     def 'to string'() {
         expect:

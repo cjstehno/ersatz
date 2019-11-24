@@ -21,7 +21,7 @@ import spock.lang.Unroll
 
 class SimpleIdentityManagerSpec extends Specification {
 
-    private final SimpleIdentityManager manager = new SimpleIdentityManager('testing', 's0meThing')
+    private SimpleIdentityManager manager = new SimpleIdentityManager('testing', 's0meThing')
 
     def 'encode credential'() {
         expect:

@@ -35,9 +35,9 @@ import static okio.ByteString.of
 
 class WebSocketsSpec extends Specification {
 
-    private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
+    private OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
 
-    @AutoCleanup('stop') private final ErsatzServer ersatz = new ErsatzServer()
+    @AutoCleanup('stop') private ErsatzServer ersatz = new ErsatzServer()
 
     def 'specified ws block should expect at least one connect'() {
         setup:

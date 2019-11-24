@@ -24,8 +24,8 @@ import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
 class ErsatzResponseSpec extends Specification {
 
-    private final ErsatzResponse response = new ErsatzResponse(false, new ResponseEncoders())
-    private final String CONTENT_A = 'content-A'
+    private ErsatzResponse response = new ErsatzResponse(false, new ResponseEncoders())
+    private String CONTENT_A = 'content-A'
 
     def 'content when empty'() {
         when:
@@ -80,7 +80,7 @@ class ErsatzResponseSpec extends Specification {
 
     def 'headers'() {
         when:
-        response.headers(alpha: 'something', bravo: 'other', charlie:['one', 'two'])
+        response.headers(alpha: 'something', bravo: 'other', charlie: ['one', 'two'])
 
         then:
         response.headers.alpha[0] == 'something'
@@ -129,28 +129,28 @@ class ErsatzResponseSpec extends Specification {
         response.code == 505
     }
 
-    def 'register encoder (string)'(){
+    def 'register encoder (string)'() {
         setup:
         response.content = 'foo'
-        response.encoder('text/plain', String, { o-> "${o}-bar"})
+        response.encoder('text/plain', String, { o -> "${o}-bar" })
 
         expect:
         response.content == 'foo-bar'
     }
 
-    def 'register encoder (object)'(){
+    def 'register encoder (object)'() {
         setup:
         response.content = 'foo'
-        response.encoder(TEXT_PLAIN, String, { o-> "${o}-bar"})
+        response.encoder(TEXT_PLAIN, String, { o -> "${o}-bar" })
 
         expect:
         response.content == 'foo-bar'
     }
 
-    def 'register encoders'(){
+    def 'register encoders'() {
         setup:
         ResponseEncoders encoders = new ResponseEncoders({
-            register TEXT_PLAIN, String, { o-> "${o}-baz"}
+            register TEXT_PLAIN, String, { o -> "${o}-baz" }
         })
 
         response.encoders encoders

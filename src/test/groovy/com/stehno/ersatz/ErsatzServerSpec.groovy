@@ -46,9 +46,9 @@ import static org.hamcrest.Matchers.startsWith
 
 class ErsatzServerSpec extends Specification {
 
-    private final HttpClient http = new HttpClient()
+    private HttpClient http = new HttpClient()
 
-    @AutoCleanup private final ErsatzServer ersatzServer = new ErsatzServer({
+    @AutoCleanup private ErsatzServer ersatzServer = new ErsatzServer({
         encoder MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
     })
 
@@ -101,8 +101,8 @@ class ErsatzServerSpec extends Specification {
 
         when:
         def results = [
-            http.get(ersatzServer.httpUrl('/bar')).body().string(),
-            http.get(ersatzServer.httpUrl('/bar')).body().string()
+                http.get(ersatzServer.httpUrl('/bar')).body().string(),
+                http.get(ersatzServer.httpUrl('/bar')).body().string()
         ]
 
         await().untilAtomic(counter, equalTo(2))
@@ -349,9 +349,9 @@ class ErsatzServerSpec extends Specification {
         elapsed >= (time - 10) // there is some wiggle room
 
         where:
-        delay   | time
-        1000    | 1000
-        '1 sec' | 1000
+        delay  | time
+        1000   | 1000
+        'PT1S' | 1000
     }
 
     @Unroll 'using closure as matcher (#path)'() {
@@ -384,9 +384,9 @@ class ErsatzServerSpec extends Specification {
         }
 
         OkHttpClient proxiedClient = new OkHttpClient.Builder()
-            .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress('localhost', proxyServer.httpPort)))
-            .cookieJar(new InMemoryCookieJar())
-            .build()
+                .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress('localhost', proxyServer.httpPort)))
+                .cookieJar(new InMemoryCookieJar())
+                .build()
 
         when:
         okhttp3.Response response = proxiedClient.newCall(new okhttp3.Request.Builder().get().url(ersatzServer.httpUrl('/proxied')).build()).execute()
@@ -532,9 +532,9 @@ class ErsatzServerSpec extends Specification {
 
         when:
         okhttp3.Response response = http.post(
-            ersatzServer.httpUrl('/postit'),
-            create(parse(APPLICATION_URLENCODED.value), 'Posted'),
-            'something-headery': 'a-value'
+                ersatzServer.httpUrl('/postit'),
+                create(parse(APPLICATION_URLENCODED.value), 'Posted'),
+                'something-headery': 'a-value'
         )
 
         then:
@@ -552,8 +552,8 @@ class ErsatzServerSpec extends Specification {
 
         when:
         okhttp3.Response response = http.post(
-            ersatzServer.httpUrl('/updates'),
-            create(parse(APPLICATION_URLENCODED.value), 'foo=bar')
+                ersatzServer.httpUrl('/updates'),
+                create(parse(APPLICATION_URLENCODED.value), 'foo=bar')
         )
 
         then:
@@ -595,8 +595,8 @@ class ErsatzServerSpec extends Specification {
 
         when:
         def response = http.post(
-            ersatzServer.httpUrl('/booga'),
-            create(parse('text/plain'), 'a request')
+                ersatzServer.httpUrl('/booga'),
+                create(parse('text/plain'), 'a request')
         )
 
         then:
@@ -605,10 +605,10 @@ class ErsatzServerSpec extends Specification {
 
     // FIXME: this issue needs to be fixed.
 
-    void 'Multiple responses for GET request'(){
+    void 'Multiple responses for GET request'() {
         setup:
         ersatzServer.expectations {
-            GET('/aclue'){
+            GET('/aclue') {
                 header 'Info', 'value'
                 responder {
                     code 200
@@ -636,10 +636,10 @@ class ErsatzServerSpec extends Specification {
         response.body().string() == 'Bravo'
     }
 
-    void 'Multiple responses for PUT request'(){
+    void 'Multiple responses for PUT request'() {
         setup:
         ersatzServer.expectations {
-            PUT('/aclue'){
+            PUT('/aclue') {
                 header 'Info', 'value'
                 responder {
                     code 200
@@ -669,10 +669,10 @@ class ErsatzServerSpec extends Specification {
     }
 
     @Ignore // FIXME: this is an open issue - need to investigate
-    void 'WEBDAV interactions'(){
+    void 'WEBDAV interactions'() {
         setup:
         ersatzServer.expectations {
-            PUT('/storage'){
+            PUT('/storage') {
                 decoder TEXT_PLAIN, Decoders.utf8String
                 header('Expect', '100-continue')
                 responder {
@@ -689,9 +689,9 @@ class ErsatzServerSpec extends Specification {
 
         when:
         def response = http.put(
-            ersatzServer.httpUrl('/storage'),
-            payload,
-            'Expect': '100-continue'
+                ersatzServer.httpUrl('/storage'),
+                payload,
+                'Expect': '100-continue'
         )
 
         then:
@@ -699,9 +699,9 @@ class ErsatzServerSpec extends Specification {
 
         when:
         response = http.put(
-            ersatzServer.httpUrl('/storage'),
-            payload,
-            'Expect': '100-continue'
+                ersatzServer.httpUrl('/storage'),
+                payload,
+                'Expect': '100-continue'
         )
 
         then:

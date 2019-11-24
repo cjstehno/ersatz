@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,54 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz;
 
-import groovy.transform.CompileStatic
-import org.hamcrest.Matcher
+import org.hamcrest.Matcher;
 
-import java.util.function.BiFunction
+import java.util.function.BiFunction;
 
 /**
  * Expectation configuration for a request with body content.
  */
-@CompileStatic
-interface RequestWithContent extends Request {
+public interface RequestWithContent extends Request {
 
     /**
      * Configures the expected body content of the request with the specified content type.
      *
-     * @param body the body content
+     * @param body        the body content
      * @param contentType the body content type
      * @return a reference to this request
      */
-    RequestWithContent body(final Object body, String contentType)
+    RequestWithContent body(final Object body, String contentType);
 
     /**
      * Configures the expected body content of the request with the specified content type.
      *
-     * @param matcher the body content matcher
+     * @param body     the body content matcher
      * @param contentType the body content type
      * @return a reference to this request
      */
-    RequestWithContent body(final Matcher<Object> body, String contentType)
+    RequestWithContent body(final Matcher<Object> body, String contentType);
 
     /**
      * Configures the expected body content of the request with the specified content type.
      *
-     * @param body the body content
+     * @param body        the body content
      * @param contentType the body content type
      * @return a reference to this request
      */
-    RequestWithContent body(final Object body, ContentType contentType)
+    RequestWithContent body(final Object body, ContentType contentType);
 
     /**
      * Configures the expected body content of the request with the specified content type.
      *
-     * @param matcher the body content matcher
+     * @param body     the body content matcher
      * @param contentType the body content type
      * @return a reference to this request
      */
-    RequestWithContent body(final Matcher<Object> body, ContentType contentType)
+    RequestWithContent body(final Matcher<Object> body, ContentType contentType);
 
     /**
      * Specifies a custom body content converter function. The function will have the client request body content as a byte array and it will be
@@ -68,10 +66,10 @@ interface RequestWithContent extends Request {
      * body expectation.
      *
      * @param contentType the content type that the convert will handle
-     * @param converter the conversion function
+     * @param decoder   the conversion function
      * @return a reference to this request
      */
-    RequestWithContent decoder(final String contentType, final BiFunction<byte[], DecodingContext, Object> decoder)
+    RequestWithContent decoder(final String contentType, final BiFunction<byte[], DecodingContext, Object> decoder);
 
     /**
      * Specifies a custom body content converter function. The function will have the client request body content as a byte array and it will be
@@ -79,48 +77,38 @@ interface RequestWithContent extends Request {
      * body expectation.
      *
      * @param contentType the content type that the convert will handle
-     * @param converter the conversion function
+     * @param decoder   the conversion function
      * @return a reference to this request
      */
-    RequestWithContent decoder(final ContentType contentType, final BiFunction<byte[], DecodingContext, Object> decoder)
-
-    /**
-     * Configures a parent collection of decoders to be searched when a decoder is not configured on the request itself.
-     *
-     * @param decoders the parent decoder collection
-     * @return a reference to this request
-     * @deprecated Use one of the other decoder configuration methods
-     */
-    @Deprecated // TODO: remove in 2.0
-    RequestWithContent decoders(final RequestDecoders decoders)
+    RequestWithContent decoder(final ContentType contentType, final BiFunction<byte[], DecodingContext, Object> decoder);
 
     /**
      * Configures an expectation matching parameters contained in the request body. The specified value must exist in the list
      * of parameters for the provided key.
      *
-     * @param name the parameter name
+     * @param name  the parameter name
      * @param value the expected parameter value
      * @return a reference to this request
      */
-    RequestWithContent param(final String name, final String value)
+    RequestWithContent param(final String name, final String value);
 
     /**
      * Configures an expectation matching parameters contained in the request body. The specified values must exist in the list
      * of parameters for the provided key.
      *
-     * @param name the parameter name
+     * @param name   the parameter name
      * @param values the expected parameter values
      * @return a reference to this request
      */
-    RequestWithContent param(final String name, final Iterable<String> values)
+    RequestWithContent param(final String name, final Iterable<String> values);
 
     /**
      * Configures an expectation matching parameters contained in the request body. The specified matchers must be satisifed
      * by the parameters mapped to the provided named parameter.
      *
-     * @param name the parameter name
-     * @param value the expected parameter value matchers
+     * @param name  the parameter name
+     * @param matchers the expected parameter value matchers
      * @return a reference to this request
      */
-    RequestWithContent param(final String name, final Matcher<Iterable<String>> matchers)
+    RequestWithContent param(final String name, final Matcher<Iterable<String>> matchers);
 }

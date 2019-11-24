@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz;
 
-import java.util.function.Consumer
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 
-import static groovy.lang.Closure.DELEGATE_FIRST
+import java.util.function.Consumer;
+
+import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Represents the expectation of a web service message sent by the client.
  */
-@SuppressWarnings('ConfusingMethodName')
-interface ReceivedMessage {
+ public interface ReceivedMessage {
 
     /**
      * The message payload, which will be resolved as either TEXT or BINARY type based on the object type.
@@ -31,15 +33,15 @@ interface ReceivedMessage {
      * @param obj the payload object
      * @return a reference to this ReceivedMessage
      */
-    ReceivedMessage payload(Object obj)
+    ReceivedMessage payload(Object obj);
 
     /**
      * The message payload type.
      *
-     * @param obj the payload type
+     * @param type the payload type
      * @return a reference to this ReceivedMessage
      */
-    ReceivedMessage messageType(WsMessageType type)
+    ReceivedMessage messageType(WsMessageType type);
 
     /**
      * Used to specify a reaction message to be sent after receiving this message. The message type will be determined
@@ -48,16 +50,16 @@ interface ReceivedMessage {
      * @param payload the payload object
      * @return a reference to this ReceivedMessage
      */
-    MessageReaction reaction(Object payload)
+    MessageReaction reaction(Object payload);
 
     /**
      * Used to specify a reaction message to be sent after receiving this message.
      *
-     * @param payload the payload object
+     * @param payload     the payload object
      * @param messageType the message type
      * @return a reference to this ReceivedMessage
      */
-    MessageReaction reaction(Object payload, WsMessageType messageType)
+    MessageReaction reaction(Object payload, WsMessageType messageType);
 
     /**
      * Used to specify a reaction message to be sent after receiving this message.
@@ -65,7 +67,7 @@ interface ReceivedMessage {
      * @param closure the reaction configuration closure
      * @return a reference to this ReceivedMessage
      */
-    MessageReaction reaction(@DelegatesTo(value = MessageReaction, strategy = DELEGATE_FIRST) Closure closure)
+    MessageReaction reaction(@DelegatesTo(value = com.stehno.ersatz.MessageReaction.class, strategy = DELEGATE_FIRST) Closure closure);
 
     /**
      * Used to specify a reaction message to be sent after receiving this message.
@@ -73,5 +75,5 @@ interface ReceivedMessage {
      * @param config the reaction configuration consumer
      * @return a reference to this ReceivedMessage
      */
-    MessageReaction reaction(Consumer<MessageReaction> config)
+    MessageReaction reaction(Consumer<MessageReaction> config);
 }
