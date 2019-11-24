@@ -36,6 +36,7 @@ class EncoderChain extends FunctionChain<ResponseEncoders> {
      * @param objectType the response object type
      * @return the encoder
      */
+    // TODO: make this use Optional
     Function<Object, String> resolve(final String contentType, final Class objectType) {
         resolveWith { ResponseEncoders i -> i.findEncoder(contentType, objectType) } as Function<Object, String>
     }

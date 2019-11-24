@@ -416,7 +416,7 @@ class ErsatzServerSpec extends Specification {
 
         then:
         response.code() == 200
-        response.body().string() == '[msg:World]'
+        response.body().string() == '{msg=World}'
 
         and:
         ersatzServer.verify()
@@ -442,7 +442,7 @@ class ErsatzServerSpec extends Specification {
 
         then:
         response.code() == 200
-        response.body().string() == '[msg:World]'
+        response.body().string() == '{msg=World}'
 
         and:
         ersatzServer.verify()

@@ -129,10 +129,11 @@ class ErsatzResponseSpec extends Specification {
         response.code == 505
     }
 
+    // TODO: these GSTring .toStrings will be resolved when I convert response to use bytes[]
     def 'register encoder (string)'() {
         setup:
         response.content = 'foo'
-        response.encoder('text/plain', String, { o -> "${o}-bar" })
+        response.encoder('text/plain', String, { o -> "${o}-bar".toString() })
 
         expect:
         response.content == 'foo-bar'
@@ -141,7 +142,7 @@ class ErsatzResponseSpec extends Specification {
     def 'register encoder (object)'() {
         setup:
         response.content = 'foo'
-        response.encoder(TEXT_PLAIN, String, { o -> "${o}-bar" })
+        response.encoder(TEXT_PLAIN, String, { o -> "${o}-bar".toString() })
 
         expect:
         response.content == 'foo-bar'
@@ -150,7 +151,7 @@ class ErsatzResponseSpec extends Specification {
     def 'register encoders'() {
         setup:
         ResponseEncoders encoders = new ResponseEncoders({
-            register TEXT_PLAIN, String, { o -> "${o}-baz" }
+            register TEXT_PLAIN, String, { o -> "${o}-baz".toString() }
         })
 
         response.encoders encoders
