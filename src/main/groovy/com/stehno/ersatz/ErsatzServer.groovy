@@ -157,11 +157,6 @@ class ErsatzServer implements ServerConfig, Closeable {
         this
     }
 
-    @Deprecated
-    ServerConfig autoStart() {
-        autoStart(true)
-    }
-
     /**
      * Used to specify the server request timeout property value on the server. If not specified, <code>SECONDS</code> will be used as the units.
      *
@@ -428,42 +423,42 @@ class ErsatzServer implements ServerConfig, Closeable {
             }
 
             BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(
-                applyAuthentication(
-                    new HttpTraceHandler(
-                        new HttpHandler() {
-                            @Override
-                            void handleRequest(final HttpServerExchange exchange) throws Exception {
-                                ClientRequest clientRequest = new UndertowClientRequest(exchange)
+                    applyAuthentication(
+                            new HttpTraceHandler(
+                                    new HttpHandler() {
+                                        @Override
+                                        void handleRequest(final HttpServerExchange exchange) throws Exception {
+                                            ClientRequest clientRequest = new UndertowClientRequest(exchange)
 
-                                log.debug 'Request: {}', clientRequest
+                                            log.debug 'Request: {}', clientRequest
 
-                                ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
-                                if (request) {
-                                    Response currentResponse = request.currentResponse
-                                    send(exchange, currentResponse)
-                                    request.mark(clientRequest)
+                                            ErsatzRequest request = expectations.findMatch(clientRequest) as ErsatzRequest
+                                            if (request) {
+                                                Response currentResponse = request.currentResponse
+                                                send(exchange, currentResponse)
+                                                request.mark(clientRequest)
 
-                                } else {
-                                    UnmatchedRequestReport report = new UnmatchedRequestReport(
-                                        clientRequest,
-                                        expectations.requests as List<ErsatzRequest>
-                                    )
+                                            } else {
+                                                UnmatchedRequestReport report = new UnmatchedRequestReport(
+                                                        clientRequest,
+                                                        expectations.requests as List<ErsatzRequest>
+                                                )
 
-                                    log.warn report.toString()
+                                                log.warn report.toString()
 
-                                    if (mismatchToConsole) {
-                                        println report
+                                                if (mismatchToConsole) {
+                                                    println report
+                                                }
+
+                                                exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
+                                            }
+                                        }
                                     }
-
-                                    exchange.setStatusCode(404).responseSender.send(NOT_FOUND_BODY)
-                                }
-                            }
-                        }
-                    )
-                ),
-                new ContentEncodingRepository()
-                    .addEncodingHandler('gzip', new GzipEncodingProvider(), 50)
-                    .addEncodingHandler('deflate', new DeflateEncodingProvider(), 50)
+                            )
+                    ),
+                    new ContentEncodingRepository()
+                            .addEncodingHandler('gzip', new GzipEncodingProvider(), 50)
+                            .addEncodingHandler('deflate', new DeflateEncodingProvider(), 50)
             ))
 
             WebSocketsHandlerBuilder wsBuilder = new WebSocketsHandlerBuilder(expectations, blockingHandler, mismatchToConsole)
@@ -516,7 +511,7 @@ class ErsatzServer implements ServerConfig, Closeable {
      *
      * @param timeout the timeout value (defaults to 1)
      * @param unit the timeout unit (defaults to SECONDS)
-     * @return <code>true</code> if all call criteria were met during test execution.
+     * @return <code> true</code> if all call criteria were met during test execution.
      */
     boolean verify(final long timeout = 1, final TimeUnit unit = SECONDS) {
         expectations.verify(timeout, unit)

@@ -30,8 +30,8 @@ class ErsatzProxySpec extends Specification {
         setup:
         ErsatzServer ersatzServer = new ErsatzServer({
             expectations {
-                get('/').called(1).responds().code(200).content('Hello', TEXT_PLAIN)
-                get('/foo').called(1).responds().code(200).content('Foo!', TEXT_PLAIN)
+                get('/').called(1).responds().code(200).body('Hello', TEXT_PLAIN)
+                get('/foo').called(1).responds().code(200).body('Foo!', TEXT_PLAIN)
             }
         })
 
@@ -68,8 +68,8 @@ class ErsatzProxySpec extends Specification {
         setup:
         ErsatzServer ersatzServer = new ErsatzServer({
             expectations {
-                get('/').called(1).responds().code(200).content('Hello', TEXT_PLAIN)
-                get('/foo').called(1).responds().code(200).content('Foo!', TEXT_PLAIN)
+                get('/').called(1).responds().code(200).body('Hello', TEXT_PLAIN)
+                get('/foo').called(1).responds().code(200).body('Foo!', TEXT_PLAIN)
             }
         })
 

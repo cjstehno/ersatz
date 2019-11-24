@@ -46,7 +46,7 @@ class ErsatzResponseSpec extends Specification {
 
     def 'content and content-type'() {
         when:
-        response.content(CONTENT_A, 'text/info')
+        response.body(CONTENT_A, 'text/info')
 
         then:
         response.content == CONTENT_A
@@ -55,7 +55,7 @@ class ErsatzResponseSpec extends Specification {
 
     def 'content and content-type object'() {
         when:
-        response.content(CONTENT_A, APPLICATION_JSON)
+        response.body(CONTENT_A, APPLICATION_JSON)
 
         then:
         response.content == CONTENT_A

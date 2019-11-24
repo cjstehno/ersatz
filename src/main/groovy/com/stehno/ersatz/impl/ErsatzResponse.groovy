@@ -63,21 +63,6 @@ class ErsatzResponse implements Response {
         }
     }
 
-    @Override @Deprecated
-    Response content(final Object content) {
-        body(content)
-    }
-
-    @Override @Deprecated
-    Response content(final Object content, final String contentType) {
-        body(content, contentType)
-    }
-
-    @Override @Deprecated
-    Response content(final Object content, final ContentType contentType) {
-        body(content, contentType.value)
-    }
-
     @Override
     Response body(Object content) {
         if (empty) {

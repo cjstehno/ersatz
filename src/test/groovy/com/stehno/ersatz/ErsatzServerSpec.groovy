@@ -23,7 +23,6 @@ import org.apache.commons.fileupload.FileItem
 import org.apache.commons.fileupload.FileUpload
 import org.apache.commons.fileupload.UploadContext
 import org.apache.commons.fileupload.disk.DiskFileItemFactory
-import org.awaitility.Awaitility
 import org.hamcrest.Matcher
 import spock.lang.AutoCleanup
 import spock.lang.Ignore
@@ -40,9 +39,7 @@ import static com.stehno.ersatz.CookieMatcher.cookieMatcher
 import static okhttp3.MediaType.parse
 import static okhttp3.RequestBody.create
 import static org.awaitility.Awaitility.await
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.greaterThanOrEqualTo
-import static org.hamcrest.Matchers.startsWith
+import static org.hamcrest.Matchers.*
 
 class ErsatzServerSpec extends Specification {
 
@@ -149,7 +146,7 @@ class ErsatzServerSpec extends Specification {
     def 'valueless query string param'() {
         setup:
         ersatzServer.expectations {
-            GET('/something').query('enabled').responds().code(200).content('OK', TEXT_PLAIN)
+            GET('/something').query('enabled').responds().code(200).body('OK', TEXT_PLAIN)
         }
 
         when:
@@ -336,7 +333,7 @@ class ErsatzServerSpec extends Specification {
     @Unroll 'delayed response (#delay)'() {
         setup:
         ersatzServer.expectations {
-            GET('/slow').responds().delay(delay).content('Done').code(200)
+            GET('/slow').responds().delay(delay).body('Done').code(200)
         }
 
         when:

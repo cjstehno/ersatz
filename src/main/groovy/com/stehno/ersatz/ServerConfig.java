@@ -58,18 +58,6 @@ public interface ServerConfig {
     ServerConfig autoStart(boolean enabled);
 
     /**
-     * Used to enable the auto-start feature, which will start the server after any call to either of the <code>expectations</code> configuration
-     * methods. With this setting enabled, any other calls to the <code>start()</code> method are ignored. Further configuration is
-     * allowed.
-     * <p>
-     * Auto-start is enabled by default.
-     *
-     * @return a reference to the server being configured
-     * @deprecated this method is no longer needed and will be removed in 2.0 since auto-start is enabled by default.
-     */
-    @Deprecated ServerConfig autoStart();
-
-    /**
      * Used to specify the server request timeout property value on the server.
      *
      * @param value the timeout value
