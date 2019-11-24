@@ -13,53 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.util
+package com.stehno.ersatz.util;
 
-import groovy.transform.CompileStatic
-import groovy.transform.TupleConstructor
-
-import static java.lang.Math.abs
-import static java.lang.Math.round
+import static java.lang.Math.abs;
+import static java.lang.Math.round;
 
 /**
  * Enum used to denote file size and memory storage size units.
  */
-@CompileStatic @TupleConstructor @SuppressWarnings(['DuplicateNumberLiteral', 'SpaceAroundOperator'])
-enum StorageUnit {
+public enum StorageUnit {
 
     BYTES(0),
     KILOBYTES(1),
     MEGABYTES(2),
     GIGABYTES(3),
-    TERABYTES(4)
+    TERABYTES(4);
 
-    final int mult
+    private final int mult;
+
+    StorageUnit(final int mult) {
+        this.mult = mult;
+    }
 
     /**
      * Converts the given source value to the desired unit.
      *
      * @param sourceValue the source size value (non-null)
-     * @param sourceUnit the source unit
+     * @param sourceUnit  the source unit
      * @return the converted value in the desired units
      */
-    double convert(final Number sourceValue, final StorageUnit sourceUnit) {
-        int m = sourceUnit.mult - mult
+    public double convert(final Number sourceValue, final StorageUnit sourceUnit) {
+        int m = sourceUnit.mult - mult;
         if (m == 0) {
-            return sourceValue.doubleValue()
+            return sourceValue.doubleValue();
         } else if (m > 0) {
-            return (sourceValue.doubleValue() * (1024**m)) as double
+            return (sourceValue.doubleValue() * (Math.pow(1024, m)));
         }
-        return (sourceValue.doubleValue() / (1024**abs(m))) as double
+        return (sourceValue.doubleValue() / (Math.pow(1024, abs(m))));
     }
 
     /**
      * Converts the given source value to the desired unit as a long approximation (rounded).
      *
      * @param sourceValue the source size value (non-null)
-     * @param sourceUnit the source unit
+     * @param sourceUnit  the source unit
      * @return the converted value rounded to a long value
      */
-    long approximate(final Number sourceValue, final StorageUnit sourceUnit) {
-        round(convert(sourceValue, sourceUnit))
+    public long approximate(final Number sourceValue, final StorageUnit sourceUnit) {
+        return round(convert(sourceValue, sourceUnit));
     }
 }

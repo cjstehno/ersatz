@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
-
-import groovy.transform.CompileStatic
+package com.stehno.ersatz;
 
 /**
  * Enumeration of the supported WebSocket message types.
  */
-@CompileStatic
-enum WsMessageType {
-    BINARY, TEXT
+public enum WsMessageType {
+
+    BINARY, TEXT;
 
     /**
      * Resolves the default message type for the specified object.
@@ -30,7 +28,7 @@ enum WsMessageType {
      * @param obj the payload object
      * @return the message type determined by content
      */
-    static WsMessageType resolve(final Object obj) {
-        obj instanceof byte[] ? BINARY : TEXT
+    public static WsMessageType resolve(final Object obj) {
+        return obj instanceof byte[] ? BINARY : TEXT;
     }
 }

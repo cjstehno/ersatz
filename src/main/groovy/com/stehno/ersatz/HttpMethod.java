@@ -13,14 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
-
-import groovy.transform.CompileStatic
+package com.stehno.ersatz;
 
 /**
- * Enumerates the supported authentication types.
+ * Enumeration of the supported HTTP request methods.
  */
-@CompileStatic
-enum Authentication {
-    BASIC, DIGEST
+public enum HttpMethod {
+
+    ANY("*"),
+    GET("GET"),
+    HEAD("HEAD"),
+    POST("POST"),
+    PUT("PUT"),
+    DELETE("DELETE"),
+    PATCH("PATCH"),
+    OPTIONS("OPTIONS"),
+    TRACE("TRACE");
+
+    private final String value;
+
+    HttpMethod(final String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    @Override public String toString() {
+        return value;
+    }
 }

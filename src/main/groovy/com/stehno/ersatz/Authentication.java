@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,30 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
-
-import groovy.transform.CompileStatic
-import groovy.transform.TupleConstructor
+package com.stehno.ersatz;
 
 /**
- * Enumeration of the supported HTTP request methods.
+ * Enumerates the supported authentication types.
  */
-@CompileStatic @TupleConstructor
-enum HttpMethod {
-
-    ANY('*'),
-    GET('GET'),
-    HEAD('HEAD'),
-    POST('POST'),
-    PUT('PUT'),
-    DELETE('DELETE'),
-    PATCH('PATCH'),
-    OPTIONS('OPTIONS'),
-    TRACE('TRACE')
-
-    final String value
-
-    @Override String toString() {
-        value
-    }
+public enum Authentication {
+    BASIC, DIGEST;
 }
