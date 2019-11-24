@@ -27,7 +27,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST
 /**
  * Implementation of the ProxyConfig interface providing the configuration functionality for the proxy server.
  */
-@CompileStatic @SuppressWarnings('ConfusingMethodName')
+@CompileStatic
 class ProxyConfigImpl implements ProxyConfig {
 
     /**

@@ -32,7 +32,6 @@ import static java.nio.charset.StandardCharsets.UTF_8
  * interface, which takes the request content as a byte array along with the <code>DecodingContext</code> to return an <code>Object</code>
  * representation of the request data.
  */
-@SuppressWarnings('PropertyName')
 class Decoders {
 
     /**

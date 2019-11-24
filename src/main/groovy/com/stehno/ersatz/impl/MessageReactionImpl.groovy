@@ -18,7 +18,6 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.MessageReaction
 import com.stehno.ersatz.WsMessageType
 
-@SuppressWarnings('ConfusingMethodName')
 class MessageReactionImpl implements MessageReaction {
 
     Object payload

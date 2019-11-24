@@ -32,7 +32,7 @@ import static com.stehno.ersatz.WsMessageType.TEXT
 import static com.stehno.ersatz.WsMessageType.resolve
 import static groovy.lang.Closure.DELEGATE_FIRST
 
-@Slf4j @SuppressWarnings('ConfusingMethodName')
+@Slf4j
 class ReceivedMessageImpl implements ReceivedMessage {
 
     Object payload

@@ -35,7 +35,6 @@ class RequestDecoders {
      *
      * @param closure the optional configuration closure
      */
-    @SuppressWarnings('ThisReferenceEscapesConstructor')
     RequestDecoders(@DelegatesTo(value = RequestDecoders, strategy = DELEGATE_FIRST) Closure closure = null) {
         if (closure) {
             ConsumerWithDelegate.create(closure).accept(this)

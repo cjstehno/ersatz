@@ -39,7 +39,6 @@ class ResponseEncoders {
      *
      * @param closure the optional configuration closure
      */
-    @SuppressWarnings('ThisReferenceEscapesConstructor')
     ResponseEncoders(@DelegatesTo(value = ResponseEncoders, strategy = DELEGATE_FIRST) Closure closure = null) {
         if (closure) {
             ConsumerWithDelegate.create(closure).accept(this)

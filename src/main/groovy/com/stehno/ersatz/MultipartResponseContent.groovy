@@ -35,7 +35,7 @@ import static java.util.Collections.shuffle
  *
  * Note that the globally configured encoders will be injected when this content object is added to the response body.
  */
-@CompileStatic @SuppressWarnings('ConfusingMethodName')
+@CompileStatic
 abstract class MultipartResponseContent {
 
     private static final String ALPHANUMERICS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'

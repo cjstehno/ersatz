@@ -28,7 +28,6 @@ import static groovy.lang.Closure.DELEGATE_FIRST
  * Ersatz abstraction of a request or response cookie. See also the <code>CookieMatcher</code>.
  */
 @CompileStatic @EqualsAndHashCode @ToString(includeNames = true)
-@SuppressWarnings('ConfusingMethodName')
 class Cookie {
 
     String value

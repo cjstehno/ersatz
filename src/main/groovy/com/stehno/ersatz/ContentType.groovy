@@ -22,7 +22,7 @@ import groovy.transform.Immutable
  * A content-type representation. Some of the standard content-types are provided as static constants for use elsewhere, others may be created as
  * instances of this class as needed.
  */
-@Immutable @CompileStatic @SuppressWarnings('GroovyUnusedDeclaration')
+@Immutable @CompileStatic
 class ContentType {
 
     public static final String CONTENT_TYPE_HEADER = 'Content-Type'

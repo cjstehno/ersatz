@@ -21,7 +21,6 @@ package com.stehno.ersatz
  * <code>delay</code> property used to determine the delay between each chunk - a range of values may be specified to cause
  * a random delay based on a value within the range (milliseconds).
  */
-@SuppressWarnings('ConfusingMethodName')
 class ChunkingConfig {
 
     private int chunks = 2

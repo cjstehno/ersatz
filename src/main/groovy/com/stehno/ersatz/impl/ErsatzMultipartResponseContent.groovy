@@ -27,7 +27,7 @@ import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 /**
  * Implementation of the multipart response content interface.
  */
-@CompileStatic @SuppressWarnings('ConfusingMethodName')
+@CompileStatic
 class ErsatzMultipartResponseContent extends MultipartResponseContent {
 
     private final List<MultipartPart> parts = []

@@ -56,7 +56,7 @@ public interface Request {
      * @param matcher the header value matcher
      * @return this request
      */
-    Request header(final String name, final Matcher<Iterable<String>> matcher);
+    Request header(final String name, final Matcher<Iterable<? super String>> matcher);
 
     /**
      * Specifies request headers as a Map of names to values to be configured in the expected request. The map values may be <code>String</code> or
@@ -96,7 +96,7 @@ public interface Request {
      * @param values the list of values
      * @return this request
      */
-    Request query(final String name, final Iterable<String> values);
+    Request query(final String name, final Iterable<? super String> values);
 
     /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
@@ -106,7 +106,7 @@ public interface Request {
      * @param matcher the query string matcher
      * @return this request
      */
-    Request query(final String name, final Matcher<Iterable<String>> matcher);
+    Request query(final String name, final Matcher<Iterable<? super String>> matcher);
 
     /**
      * Used to specify a map of request query parameters for configuration on the expected request. The map values may be Strings or Matchers.

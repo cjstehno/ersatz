@@ -21,7 +21,6 @@ import groovy.transform.CompileStatic
  * Provides a means to generate dummy request/response content for testing.
  */
 @CompileStatic
-@SuppressWarnings(['DuplicateNumberLiteral', 'SpaceAroundOperator', 'UnnecessaryElseStatement', 'DuplicateStringLiteral'])
 class DummyContentGenerator {
 
     /**

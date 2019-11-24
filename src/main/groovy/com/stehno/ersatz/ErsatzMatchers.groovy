@@ -91,7 +91,7 @@ class ErsatzMatchers {
         }
     }
 
-    @CompileStatic @SuppressWarnings('DuplicateNumberLiteral')
+    @CompileStatic
     private static class ByteArrayMatcher extends BaseMatcher<byte[]> {
 
         byte[] array

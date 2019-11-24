@@ -28,6 +28,7 @@ import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
@@ -36,6 +37,7 @@ import static com.stehno.ersatz.CookieMatcher.cookieMatcher
 import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
 import static com.stehno.ersatz.HttpMethod.POST
 import static com.stehno.ersatz.NoCookiesMatcher.noCookies
+import static java.util.concurrent.TimeUnit.SECONDS
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.nullValue
 
@@ -274,7 +276,7 @@ class ErsatzRequestSpec extends Specification {
         }
 
         then:
-        request.verify() == verified
+        request.verify(1, SECONDS) == verified
 
         where:
         expected | calls || verified

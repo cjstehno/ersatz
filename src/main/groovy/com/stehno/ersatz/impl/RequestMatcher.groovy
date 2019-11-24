@@ -88,7 +88,7 @@ class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param m the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    static RequestMatcher header(final String name, final Matcher<Iterable<String>> m) {
+    static RequestMatcher header(final String name, final Matcher<Iterable<? super String>> m) {
         new RequestMatcher(m, { ClientRequest cr ->
             cr.headers.get(name)?.toList()
         }, "Header $name matches ")
@@ -101,7 +101,7 @@ class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param m the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    static RequestMatcher query(final String name, final Matcher<Iterable<String>> m) {
+    static RequestMatcher query(final String name, final Matcher<Iterable<? super String>> m) {
         new RequestMatcher(m, { ClientRequest cr -> cr.queryParams.get(name) as List }, "Query string $name matches ")
     }
 
@@ -190,7 +190,6 @@ class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param crm the matcher
      * @return a configured RequestMatcher
      */
-    @SuppressWarnings('ConfusingMethodName')
     static RequestMatcher matcher(final Matcher<ClientRequest> crm) {
         new RequestMatcher(crm, { it }, "Request matches $crm")
     }

@@ -38,7 +38,7 @@ import static org.hamcrest.Matchers.equalTo
 /**
  * Implementation of the <code>Expectations</code> interface.
  */
-@CompileStatic @SuppressWarnings(['ConfusingMethodName', 'MethodCount', 'MethodName'])
+@CompileStatic
 class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = []

@@ -78,7 +78,7 @@ import static java.util.concurrent.TimeUnit.SECONDS
  * See the <a href="http://stehno.com/ersatz/asciidoc/html5/" target="_blank">User Guide</a> for more detailed information.
  */
 @CompileStatic
-@Slf4j @SuppressWarnings('MethodCount')
+@Slf4j
 class ErsatzServer implements ServerConfig, Closeable {
 
     /**
@@ -113,7 +113,6 @@ class ErsatzServer implements ServerConfig, Closeable {
      *
      * @param closure the configuration closure (delegated to <code>ServerConfig</code>)
      */
-    @SuppressWarnings('ThisReferenceEscapesConstructor')
     ErsatzServer(@DelegatesTo(value = ServerConfig, strategy = DELEGATE_FIRST) final Closure closure = null) {
         if (closure) {
             ConsumerWithDelegate.create(closure).accept(this)
@@ -126,7 +125,6 @@ class ErsatzServer implements ServerConfig, Closeable {
      *
      * @param consumer the configuration consumer
      */
-    @SuppressWarnings('ThisReferenceEscapesConstructor')
     ErsatzServer(final Consumer<ServerConfig> consumer) {
         consumer.accept(this)
     }
@@ -281,7 +279,6 @@ class ErsatzServer implements ServerConfig, Closeable {
      * @param expects the <code>Consumer<Expectations></code> instance to perform the configuration
      * @return a reference to this server
      */
-    @SuppressWarnings('ConfusingMethodName')
     ErsatzServer expectations(final Consumer<Expectations> expects) {
         expects.accept(expectations)
 
@@ -301,7 +298,6 @@ class ErsatzServer implements ServerConfig, Closeable {
      * @param closure the Groovy <code>Closure</code> which will provide expectation configuration via DSL
      * @return a reference to this server
      */
-    @SuppressWarnings('ConfusingMethodName')
     ErsatzServer expectations(@DelegatesTo(value = Expectations, strategy = DELEGATE_FIRST) final Closure closure) {
         expectations(ConsumerWithDelegate.create(closure))
     }
@@ -412,7 +408,6 @@ class ErsatzServer implements ServerConfig, Closeable {
      * Used to start the HTTP server for test interactions. This method should be called after configuration of expectations and before the test
      * interactions are executed against the server.
      */
-    @SuppressWarnings(['Println', 'DuplicateNumberLiteral'])
     void start() {
         if (!started) {
             Undertow.Builder builder = Undertow.builder().addHttpListener(desiredHttpPort, LOCALHOST)

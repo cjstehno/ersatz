@@ -20,7 +20,7 @@ import groovy.transform.CompileStatic
 /**
  * Abstraction for an object chain which will have method calls applied from "first" to "last" until a non-null result is returned.
  */
-@CompileStatic @SuppressWarnings('AbstractClassWithoutAbstractMethod')
+@CompileStatic
 abstract class FunctionChain<T> {
 
     private final List<T> items = []
@@ -91,7 +91,6 @@ abstract class FunctionChain<T> {
      *
      * @return iterator over the items
      */
-    @SuppressWarnings('ConfusingMethodName')
     Iterable<T> items() {
         items.asImmutable()
     }

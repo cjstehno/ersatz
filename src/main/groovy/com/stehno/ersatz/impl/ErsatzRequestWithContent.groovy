@@ -25,7 +25,6 @@ import static org.hamcrest.Matchers.*
 /**
  * Ersatz implementation of a <code>Request</code> with request body content.
  */
-@SuppressWarnings('ConfusingMethodName')
 class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
     private final RequestDecoders localDecoders = new RequestDecoders()

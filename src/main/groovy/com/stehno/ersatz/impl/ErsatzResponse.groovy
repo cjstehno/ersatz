@@ -40,7 +40,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS
 /**
  * Implementation of the <code>Response</code> interface.
  */
-@CompileStatic @SuppressWarnings('ConfusingMethodName')
+@CompileStatic
 class ErsatzResponse implements Response {
 
     private static final String ALLOW_HEADER = 'Allow'

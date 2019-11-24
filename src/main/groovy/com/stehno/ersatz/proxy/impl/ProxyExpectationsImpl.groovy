@@ -24,7 +24,7 @@ import org.hamcrest.Matchers
 /**
  * Implementation of the ProxyExpectations interface providing configuration of the expected requests to the proxy server.
  */
-@CompileStatic @SuppressWarnings('MethodCount')
+@CompileStatic
 class ProxyExpectationsImpl implements ProxyExpectations {
 
     /**

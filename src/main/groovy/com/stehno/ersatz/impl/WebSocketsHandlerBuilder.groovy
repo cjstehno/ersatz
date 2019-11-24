@@ -87,7 +87,7 @@ class WebSocketsHandlerBuilder {
         }))
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP) @SuppressWarnings('Println')
+    @CompileStatic(TypeCheckingMode.SKIP)
     private void handleMessage(final WebSocketExpectationsImpl wsExpectation, final WebSocketChannel ch, final Object message) {
         ReceivedMessageImpl expectation = wsExpectation.findMatch(message)
         if (expectation) {
