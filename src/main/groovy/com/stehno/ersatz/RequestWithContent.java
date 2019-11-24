@@ -100,7 +100,7 @@ public interface RequestWithContent extends Request {
      * @param values the expected parameter values
      * @return a reference to this request
      */
-    RequestWithContent param(final String name, final Iterable<String> values);
+    RequestWithContent param(final String name, final Iterable<? super String> values);
 
     /**
      * Configures an expectation matching parameters contained in the request body. The specified matchers must be satisifed
@@ -110,5 +110,5 @@ public interface RequestWithContent extends Request {
      * @param matchers the expected parameter value matchers
      * @return a reference to this request
      */
-    RequestWithContent param(final String name, final Matcher<Iterable<String>> matchers);
+    RequestWithContent param(final String name, final Matcher<Iterable<? super String>> matchers);
 }

@@ -112,7 +112,7 @@ class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param m the matchers
      * @return the configured RequestMatcher
      */
-    static RequestMatcher param(final String name, final Matcher<Iterable<String>> m) {
+    static RequestMatcher param(final String name, final Matcher<Iterable<? super String>> m) {
         new RequestMatcher(
             m,
             { ClientRequest cr ->
