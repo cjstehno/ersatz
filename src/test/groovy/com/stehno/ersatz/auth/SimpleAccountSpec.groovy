@@ -38,6 +38,6 @@ class SimpleAccountSpec extends Specification {
 
     def 'as string'() {
         expect:
-        new SimpleAccount('someuser') as String == 'com.stehno.ersatz.auth.SimpleAccount(user:someuser, roles:[TESTER])'
+        new SimpleAccount('someuser') as String == 'SimpleAccount{user=\'someuser\', roles=[TESTER]}'
     }
 }
