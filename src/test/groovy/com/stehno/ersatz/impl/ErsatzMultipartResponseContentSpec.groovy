@@ -25,7 +25,6 @@ import static com.stehno.ersatz.ContentType.*
 
 class ErsatzMultipartResponseContentSpec extends Specification {
 
-
     private static final List<String> MULTIPART_RESPONSE_TEXT = '''
             --abc123
             Content-Disposition: form-data; name="foo"

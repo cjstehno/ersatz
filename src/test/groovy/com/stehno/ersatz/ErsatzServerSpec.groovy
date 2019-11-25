@@ -199,7 +199,8 @@ class ErsatzServerSpec extends Specification {
                 responds().body(multipart {
                     boundary 'WyAJDTEVlYgGjdI13o'
                     encoder TEXT_PLAIN, CharSequence, { o -> o as String }
-                    encoder 'image/jpeg', InputStream, { o -> ((InputStream) o).bytes.encodeBase64() }
+                    // TODO: work to get rid of this .toString requirement
+                    encoder 'image/jpeg', InputStream, { o -> ((InputStream) o).bytes.encodeBase64().toString() }
                     part 'file', 'data.txt', TEXT_PLAIN, 'This is some file data'
                     part 'image', 'test-image.jpg', 'image/jpeg', ErsatzServerSpec.getResourceAsStream('/test-image.jpg'), 'base64'
                 })
