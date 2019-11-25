@@ -122,7 +122,7 @@ public class ErsatzServerTest {
     @Test
     public void alternateConfiguration() throws IOException {
         ErsatzServer server = new ErsatzServer(config -> {
-            config.expects().get(startsWith("/hello")).responds().body("ok");
+            config.expects().GET(startsWith("/hello")).responds().body("ok");
         });
         server.start();
 
