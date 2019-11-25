@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz;
+
+import groovy.lang.IntRange;
 
 /**
  * Configuration for a chunked response. The response content-type will be specified as "chunked" and the response itself
@@ -21,10 +23,10 @@ package com.stehno.ersatz
  * <code>delay</code> property used to determine the delay between each chunk - a range of values may be specified to cause
  * a random delay based on a value within the range (milliseconds).
  */
-class ChunkingConfig {
+public class ChunkingConfig {
 
-    private int chunks = 2
-    private IntRange range = 0..0
+    private int chunks = 2;
+    private IntRange range = new IntRange(0, 0);
 
     /**
      * Used to specify the number of chunks which the response will be broken into,
@@ -32,9 +34,9 @@ class ChunkingConfig {
      * @param value the number of chunks
      * @return a reference to the config
      */
-    ChunkingConfig chunks(final int value) {
-        chunks = value
-        this
+    public ChunkingConfig chunks(final int value) {
+        chunks = value;
+        return this;
     }
 
     /**
@@ -43,9 +45,9 @@ class ChunkingConfig {
      * @param value the delay value in milliseconds
      * @return a reference to the config
      */
-    ChunkingConfig delay(final int value) {
-        range = value..value
-        this
+    public ChunkingConfig delay(final int value) {
+        range = new IntRange(value, value);
+        return this;
     }
 
     /**
@@ -55,20 +57,20 @@ class ChunkingConfig {
      * @param delayRange the delay value range in milliseconds
      * @return a reference to the config
      */
-    ChunkingConfig delay(final IntRange delayRange) {
-        range = delayRange
-        this
+    public ChunkingConfig delay(final IntRange delayRange) {
+        range = delayRange;
+        return this;
     }
 
-    int getChunks() {
-        chunks
+    public int getChunks() {
+        return chunks;
     }
 
-    IntRange getDelay() {
-        range
+    public IntRange getDelay() {
+        return range;
     }
 
-    @Override String toString() {
-        "ChunkingConfig(chunks:$chunks, delay:${range.size() == 1 ? range.from : range.from + '..' + range.to})"
+    @Override public String toString() {
+        return "ChunkingConfig(chunks:" +  chunks+ ", delay:" + range + ")";
     }
 }
