@@ -19,6 +19,7 @@ import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.function.Consumer;
 
@@ -43,7 +44,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
      * @param value the target URI
      * @return a reference to this configuration
      */
-    ProxyConfig target(String value);
+    ProxyConfig target(String value) throws URISyntaxException;
 
     /**
      * Specifies the target URI for the proxy server.
@@ -59,7 +60,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
      * @param value the target URI
      * @return a reference to this configuration
      */
-    ProxyConfig target(URL value);
+    ProxyConfig target(URL value) throws URISyntaxException;
 
     /**
      * Used to configure the proxy server expectations with a Groovy Closure, which delegates to an instance of ProxyExpectations.
