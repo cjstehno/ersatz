@@ -16,7 +16,6 @@
 package com.stehno.ersatz;
 
 import com.stehno.ersatz.util.HttpClient;
-import org.awaitility.Awaitility;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
@@ -27,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static com.stehno.ersatz.ContentType.TEXT_PLAIN;
-import static com.stehno.ersatz.Decoders.getUtf8String;
+import static com.stehno.ersatz.Decoders.utf8String;
 import static java.util.Collections.singletonMap;
 import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
@@ -69,15 +68,15 @@ public class ErsatzServerTest {
 
             expectations.HEAD("/head").responds().header("foo", "blah").code(123);
 
-            expectations.POST("/form").body("some content", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, getUtf8String())
+            expectations.POST("/form").body("some content", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, utf8String)
                 .responds().body("response");
 
-            expectations.PUT("/update").body("more content", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, getUtf8String())
+            expectations.PUT("/update").body("more content", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, utf8String)
                 .responds().body("updated");
 
             expectations.DELETE("/remove").responds().body("removed");
 
-            expectations.POST("/patch").body("a change", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, getUtf8String())
+            expectations.POST("/patch").body("a change", "text/plain; charset=utf-8").decoder(TEXT_PLAIN, utf8String)
                 .responds().body("patched");
         });
 
