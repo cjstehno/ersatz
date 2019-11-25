@@ -13,42 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl
+package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.ContentType
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.ContentType;
+import com.stehno.ersatz.ResponseEncoders;
 
-import java.util.function.Function
+import java.util.function.Function;
 
 /**
  * A function chain for response encoders.
  */
-class EncoderChain extends FunctionChain<ResponseEncoders> {
+public class EncoderChain extends FunctionChain<ResponseEncoders> {
 
-    EncoderChain(final ResponseEncoders firstItem = null) {
-        super(firstItem)
+    public EncoderChain() {
+        this(null);
+    }
+
+    public EncoderChain(final ResponseEncoders firstItem) {
+        super(firstItem);
     }
 
     /**
      * Resolves the encoder for the specified response content-type and object type.
      *
      * @param contentType the response content-type
-     * @param objectType the response object type
+     * @param objectType  the response object type
      * @return the encoder
      */
-    // TODO: make this use Optional
-    Function<Object, String> resolve(final String contentType, final Class objectType) {
-        resolveWith { ResponseEncoders i -> i.findEncoder(contentType, objectType) } as Function<Object, String>
+    public Function<Object, String> resolve(final String contentType, final Class objectType) {
+        return resolveWith(e -> e.findEncoder(contentType, objectType));
     }
 
     /**
      * Resolves the encoder for the specified response content-type and object type.
      *
      * @param contentType the response content-type
-     * @param objectType the response object type
+     * @param objectType  the response object type
      * @return the encoder
      */
-    Function<Object, String> resolve(final ContentType contentType, final Class objectType) {
-        resolve contentType.value, objectType
+    public Function<Object, String> resolve(final ContentType contentType, final Class objectType) {
+        return resolve( contentType.getValue(), objectType);
     }
 }

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl
+package com.stehno.ersatz.impl;
 
-import groovy.transform.CompileStatic
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
+import static java.util.Collections.unmodifiableList;
 
 /**
  * Abstraction for an object chain which will have method calls applied from "first" to "last" until a non-null result is returned.
  */
-@CompileStatic
-abstract class FunctionChain<T> {
+public abstract class FunctionChain<T> {
 
-    private final List<T> items = []
+    private final List<T> items = new ArrayList<>();
 
     /**
      * Creates a new chain with the provided (optional) first item. If the item is null, it will not be added.
@@ -31,8 +34,8 @@ abstract class FunctionChain<T> {
      * @param firstItem the optional first item (may be null)
      */
     protected FunctionChain(final T firstItem) {
-        if (firstItem) {
-            first firstItem
+        if (firstItem != null) {
+            first(firstItem);
         }
     }
 
@@ -42,8 +45,8 @@ abstract class FunctionChain<T> {
      *
      * @param item the first item
      */
-    void first(final T item) {
-        items.add(0, item)
+    public void first(final T item) {
+        items.add(0, item);
     }
 
     /**
@@ -52,8 +55,8 @@ abstract class FunctionChain<T> {
      *
      * @param item the second item
      */
-    void second(final T item) {
-        items.add(items.size() > 0 ? 1 : 0, item)
+    public void second(final T item) {
+        items.add(items.size() > 0 ? 1 : 0, item);
     }
 
     /**
@@ -61,19 +64,23 @@ abstract class FunctionChain<T> {
      *
      * @param item the first item
      */
-    void last(final T item) {
-        items.add(item)
+    public void last(final T item) {
+        items.add(item);
     }
 
     /**
      * Used by extension classes to perform the result resolution based on the closure. The closure will be passed each item and must return a value
      * or null - null will cause the next item in the chain to be tested.
      *
-     * @param closure the resolution closure
-     * @return the resolved result
+     * @param resolver the resolution closure
+     * @return the resolved result or null
      */
-    protected resolveWith(final Closure closure) {
-        items.findResult closure
+    protected <F> F resolveWith(final Function<T, F> resolver) {
+        return items.stream()
+            .filter(i -> resolver.apply(i) != null)
+            .findFirst()
+            .map(resolver::apply)
+            .orElse(null);
     }
 
     /**
@@ -82,8 +89,8 @@ abstract class FunctionChain<T> {
      * @param index the index
      * @return the item stored at the index (or null)
      */
-    T getAt(int index) {
-        items[index]
+    public T getAt(int index) {
+        return ((T) (items.get(index)));
     }
 
     /**
@@ -91,8 +98,8 @@ abstract class FunctionChain<T> {
      *
      * @return iterator over the items
      */
-    Iterable<T> items() {
-        items.asImmutable()
+    public Iterable<T> items() {
+        return unmodifiableList(items);
     }
 
     /**
@@ -100,7 +107,7 @@ abstract class FunctionChain<T> {
      *
      * @return the size of the chain
      */
-    int size() {
-        items.size()
+    public int size() {
+        return items.size();
     }
 }

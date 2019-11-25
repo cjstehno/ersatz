@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl
+package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.ContentType
-import com.stehno.ersatz.DecodingContext
-import com.stehno.ersatz.RequestDecoders
-import groovy.transform.CompileStatic
+import com.stehno.ersatz.ContentType;
+import com.stehno.ersatz.DecodingContext;
+import com.stehno.ersatz.RequestDecoders;
 
-import java.util.function.BiFunction
+import java.util.function.BiFunction;
 
 /**
  * A function chain for request decoders.
  */
-@CompileStatic
-class DecoderChain extends FunctionChain<RequestDecoders> {
+public class DecoderChain extends FunctionChain<RequestDecoders> {
 
-    DecoderChain(final RequestDecoders firstItem = null) {
-        super(firstItem)
+    public DecoderChain() {
+        this(null);
+    }
+
+    public DecoderChain(final RequestDecoders firstItem) {
+        super(firstItem);
     }
 
     /**
@@ -38,8 +40,8 @@ class DecoderChain extends FunctionChain<RequestDecoders> {
      * @param contentType the request content-type
      * @return the decoder function
      */
-    BiFunction<byte[], DecodingContext, Object> resolve(final String contentType) {
-        resolveWith { RequestDecoders i -> i.findDecoder(contentType) } as BiFunction<byte[], DecodingContext, Object>
+    public BiFunction<byte[], DecodingContext, Object> resolve(final String contentType) {
+        return resolveWith(d -> d.findDecoder(contentType));
     }
 
     /**
@@ -48,8 +50,8 @@ class DecoderChain extends FunctionChain<RequestDecoders> {
      * @param contentType the request content-type
      * @return the decoder function
      */
-    BiFunction<byte[], DecodingContext, Object> resolve(final ContentType contentType) {
-        resolve contentType.value
+    public BiFunction<byte[], DecodingContext, Object> resolve(final ContentType contentType) {
+        return resolve( contentType.getValue());
     }
 }
 
