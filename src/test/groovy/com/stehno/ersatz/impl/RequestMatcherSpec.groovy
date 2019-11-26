@@ -19,11 +19,11 @@ import com.stehno.ersatz.*
 import org.hamcrest.Matcher
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ErsatzMatchers.collectionContains
 import static com.stehno.ersatz.HttpMethod.GET
 import static com.stehno.ersatz.HttpMethod.HEAD
 import static com.stehno.ersatz.impl.RequestMatcher.*
 import static org.hamcrest.Matchers.*
+import static org.hamcrest.core.IsIterableContaining.hasItem
 
 class RequestMatcherSpec extends Specification {
 
@@ -60,7 +60,7 @@ class RequestMatcherSpec extends Specification {
 
     def 'header'() {
         expect:
-        header('foo', collectionContains('bar')).matches(cr) == result
+        header('foo', hasItem('bar')).matches(cr) == result
 
         where:
         cr                                           || result
