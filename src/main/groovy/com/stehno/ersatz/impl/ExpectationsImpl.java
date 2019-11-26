@@ -58,8 +58,25 @@ public class ExpectationsImpl implements Expectations {
 
     @Override
     public Request ANY(final Matcher<String> matcher, final Consumer<Request> consumer) {
-        final Request request = new ErsatzRequestWithContent(HttpMethod.ANY, matcher, globalDecoders, globalEncoders);
+        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.ANY, matcher, globalDecoders, globalEncoders), consumer);
+    }
 
+    @Override
+    public Request GET(final Matcher<String> matcher, final Consumer<Request> consumer) {
+        return applyExpectation(new ErsatzRequest(HttpMethod.GET, matcher, globalEncoders), consumer);
+    }
+
+    @Override
+    public Request HEAD(final Matcher<String> matcher, final Consumer<Request> consumer) {
+        return applyExpectation(new ErsatzRequest(HttpMethod.HEAD, matcher, globalEncoders, true), consumer);
+    }
+
+    @Override
+    public RequestWithContent POST(Matcher<String> matcher, Consumer<RequestWithContent> consumer) {
+        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.POST, matcher, globalDecoders, globalEncoders), consumer);
+    }
+
+    private <R extends Request> R applyExpectation(final R request, final Consumer<R> consumer) {
         if (consumer != null) {
             consumer.accept(request);
         }
@@ -67,189 +84,6 @@ public class ExpectationsImpl implements Expectations {
         requests.add(request);
 
         return request;
-    }
-
-    @Override
-    public Request GET(final String path) {
-        return GET(pathMatcher(path));
-    }
-
-    @Override
-    public Request GET(final Matcher<String> matcher) {
-        return expect(new ErsatzRequest(HttpMethod.GET, matcher, globalEncoders));
-    }
-
-    @Override
-    public Request GET(final String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        return GET(pathMatcher(path), closure);
-    }
-
-    @Override
-    public Request GET(final Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        return expect(new ErsatzRequest(HttpMethod.GET, matcher, globalEncoders), closure);
-    }
-
-    @Override
-    public Request GET(String path, Consumer<Request> config) {
-        return GET(pathMatcher(path), config);
-    }
-
-    @Override
-    public Request GET(Matcher<String> matcher, Consumer<Request> config) {
-        return expect(new ErsatzRequest(HttpMethod.GET, matcher, globalEncoders), config);
-    }
-
-    @Override
-    public Request get(String path) {
-        return GET(path);
-    }
-
-    @Override
-    public Request get(Matcher<String> matcher) {
-        return GET(matcher);
-    }
-
-    @Override
-    public Request get(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return GET(path, closure);
-    }
-
-    @Override
-    public Request get(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return GET(matcher, closure);
-    }
-
-    @Override
-    public Request get(String path, Consumer<Request> config) {
-        return GET(path, config);
-    }
-
-    @Override
-    public Request get(Matcher<String> matcher, Consumer<Request> config) {
-        return GET(matcher, config);
-    }
-
-    @Override
-    public Request HEAD(String path) {
-        return HEAD(pathMatcher(path));
-    }
-
-    @Override
-    public Request HEAD(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return HEAD(pathMatcher(path), closure);
-    }
-
-    @Override
-    public Request HEAD(String path, Consumer<Request> config) {
-        return HEAD(pathMatcher(path), config);
-    }
-
-    @Override
-    public Request HEAD(Matcher<String> matcher) {
-        return expect(new ErsatzRequest(HttpMethod.HEAD, matcher, globalEncoders, true));
-    }
-
-    @Override
-    public Request HEAD(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return expect(new ErsatzRequest(HttpMethod.HEAD, matcher, globalEncoders, true), closure);
-    }
-
-    @Override
-    public Request HEAD(Matcher<String> matcher, Consumer<Request> config) {
-        return expect(new ErsatzRequest(HttpMethod.HEAD, matcher, globalEncoders), config);
-    }
-
-    @Override
-    public Request head(String path) {
-        return HEAD(path);
-    }
-
-    @Override
-    public Request head(Matcher<String> matcher) {
-        return HEAD(matcher);
-    }
-
-    @Override
-    public Request head(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return HEAD(path, closure);
-    }
-
-    @Override
-    public Request head(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return HEAD(matcher, closure);
-    }
-
-    @Override
-    public Request head(String path, Consumer<Request> config) {
-        return HEAD(path, config);
-    }
-
-    @Override
-    public Request head(Matcher<String> matcher, Consumer<Request> config) {
-        return HEAD(matcher, config);
-    }
-
-    @Override
-    public RequestWithContent POST(String path) {
-        return POST(pathMatcher(path));
-    }
-
-    @Override
-    public RequestWithContent POST(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return POST(pathMatcher(path), closure);
-    }
-
-    @Override
-    public RequestWithContent POST(String path, Consumer<RequestWithContent> config) {
-        return POST(pathMatcher(path), config);
-    }
-
-    @Override
-    public RequestWithContent POST(Matcher<String> matcher) {
-        return (RequestWithContent) expect(new ErsatzRequestWithContent(HttpMethod.POST, matcher, globalDecoders, globalEncoders));
-    }
-
-    @Override
-    public RequestWithContent POST(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return (RequestWithContent) expect(new ErsatzRequestWithContent(HttpMethod.POST, matcher, globalDecoders, globalEncoders), closure);
-    }
-
-    @Override
-    public RequestWithContent POST(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        final var request = new ErsatzRequestWithContent(HttpMethod.POST, matcher, globalDecoders, globalEncoders);
-        config.accept(request);
-        requests.add(request);
-        return request;
-    }
-
-    @Override
-    public RequestWithContent post(String path) {
-        return POST(path);
-    }
-
-    @Override
-    public RequestWithContent post(Matcher<String> matcher) {
-        return POST(matcher);
-    }
-
-    @Override
-    public RequestWithContent post(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return POST(path, closure);
-    }
-
-    @Override
-    public RequestWithContent post(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return POST(matcher, closure);
-    }
-
-    @Override
-    public RequestWithContent post(String path, Consumer<RequestWithContent> config) {
-        return POST(path, config);
-    }
-
-    @Override
-    public RequestWithContent post(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        return POST(matcher, config);
     }
 
     @Override
