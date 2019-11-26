@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz;
 
+import com.stehno.ersatz.impl.AnyExpectations;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import org.hamcrest.Matcher;
@@ -32,135 +33,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  * match for a specific expectation to be considered a match and if there are multiple matching expectations, the first one configured will be the
  * one considered as the match.
  */
-public interface Expectations {
-
-    /**
-     * Allows configuration of a request expectation matching any request method.
-     *
-     * @param path the expected request path
-     * @return a <code>Request</code> configuration object
-     */
-    @Deprecated(since = "2.0.0", forRemoval = true)
-    default Request any(String path){
-        return ANY(path);
-    }
-
-    /**
-     * Allows configuration of a request expectation matching any request method.
-     *
-     * @param matcher the path matcher
-     * @return a <code>Request</code> configuration object
-     */
-    @Deprecated(since = "2.0.0", forRemoval = true)
-    default Request any(Matcher<String> matcher){
-        return ANY(matcher);
-    }
-
-    /**
-     * Allows configuration of a request expectation matching any request method using the Groovy DSL.
-     *
-     * @param path the expected request path.
-     * @param closure the Groovy closure containing the configuration
-     * @return a <code>Request</code> configuration object
-     */
-    @Deprecated(since = "2.0.0", forRemoval = true)
-    default Request any(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure){
-        return ANY(path, closure);
-    }
-
-    /**
-     * Allows configuration of a request expectation matching any request method using the Groovy DSL.
-     *
-     * @param matcher the path matcher
-     * @return a <code>Request</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    @Deprecated(since = "2.0.0", forRemoval = true)
-    default Request any(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure){
-        return ANY(matcher, closure);
-    }
-
-    /**
-     * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
-     * <code>Consumer<Request></code> will have an instance of <code>Request</code> passed into it for configuration.
-     *
-     * @param path the expected request path
-     * @param consumer the configuration consumer
-     * @return a <code>Request</code> configuration object
-     */
-    @Deprecated(since = "2.0.0", forRemoval = true)
-    default Request any(String path, Consumer<Request> consumer){
-        return ANY(path, consumer);
-    }
-
-    /**
-     * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
-     * <code>Consumer<Request></code> will have an instance of <code>Request</code> passed into it for configuration.
-     *
-     * @param matcher the path matcher
-     * @param consumer the configuration consumer
-     * @return a <code>Request</code> configuration object
-     */
-    @Deprecated(since = "2.0.0", forRemoval = true)
-    default Request any(Matcher<String> matcher, Consumer<Request> consumer){
-        return ANY(matcher, consumer);
-    }
-
-    /**
-     * Allows configuration of a request expectation matching any request method.
-     *
-     * @param path the expected request path
-     * @return a <code>Request</code> configuration object
-     */
-    Request ANY(String path);
-
-    /**
-     * Allows configuration of a request expectation matching any request method.
-     *
-     * @param matcher the path matcher
-     * @return a <code>Request</code> configuration object
-     */
-    Request ANY(Matcher<String> matcher);
-
-    /**
-     * Allows configuration of a request expectation matching any request method using the Groovy DSL.
-     *
-     * @param path the expected request path.
-     * @return a <code>Request</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    Request ANY(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
-
-    /**
-     * Allows configuration of a request expectation matching any request method using the Groovy DSL.
-     *
-     * @param matcher the path matcher
-     * @return a <code>Request</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    Request ANY(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
-
-    /**
-     * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
-     * <code>Consumer<Request></code> will have an instance of <code>Request</code> passed into it for configuration.
-     *
-     * @param path the expected request path
-     * @return a <code>Request</code> configuration object
-     * @param config the configuration consumer
-     */
-    Request ANY(String path, Consumer<Request> consumer);
-
-    /**
-     * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
-     * <code>Consumer<Request></code> will have an instance of <code>Request</code> passed into it for configuration.
-     *
-     * @param matcher the path matcher
-     * @return a <code>Request</code> configuration object
-     * @param config the configuration consumer
-     */
-    Request ANY(Matcher<String> matcher, Consumer<Request> consumer);
-
-    // TODO: ANY (Above here)
+public interface Expectations extends AnyExpectations {
 
     /**
      * Allows configuration of a GET request expectation.

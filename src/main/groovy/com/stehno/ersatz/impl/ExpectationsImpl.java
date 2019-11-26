@@ -57,31 +57,6 @@ public class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    public Request ANY(final String path) {
-        return ANY(pathMatcher(path));
-    }
-
-    @Override
-    public Request ANY(final Matcher<String> matcher) {
-        return ANY(matcher, (Consumer<Request>) null);
-    }
-
-    @Override
-    public Request ANY(final String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        return ANY(pathMatcher(path), closure);
-    }
-
-    @Override
-    public Request ANY(final Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        return ANY(matcher, ConsumerWithDelegate.create(closure));
-    }
-
-    @Override
-    public Request ANY(final String path, final Consumer<Request> consumer) {
-        return ANY(pathMatcher(path), consumer);
-    }
-
-    @Override
     public Request ANY(final Matcher<String> matcher, final Consumer<Request> consumer) {
         final Request request = new ErsatzRequestWithContent(HttpMethod.ANY, matcher, globalDecoders, globalEncoders);
 
@@ -93,8 +68,6 @@ public class ExpectationsImpl implements Expectations {
 
         return request;
     }
-
-    /// TODO: any above here
 
     @Override
     public Request GET(final String path) {
@@ -624,6 +597,7 @@ public class ExpectationsImpl implements Expectations {
         return request;
     }
 
+    // TODO: remove duplication
     private static Matcher<String> pathMatcher(final String path) {
         return path.equals("*") ? Matchers.any(String.class) : equalTo(path);
     }
