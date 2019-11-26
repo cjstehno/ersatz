@@ -24,6 +24,8 @@ import org.hamcrest.Matcher;
  */
 public class ErsatzMatchers {
 
+    // FIXME: see if these can be removed
+
     /**
      * The provided matcher must match at least one element of the target collection (as Iterable).
      *
