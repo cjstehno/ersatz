@@ -58,33 +58,43 @@ public class ExpectationsImpl implements Expectations {
 
     @Override
     public Request ANY(final String path) {
-        return any(pathMatcher(path));
+        return ANY(pathMatcher(path));
     }
 
     @Override
     public Request ANY(final Matcher<String> matcher) {
-        return expect(new ErsatzRequestWithContent(HttpMethod.ANY, matcher, globalDecoders, globalEncoders));
+        return ANY(matcher, (Consumer<Request>) null);
     }
 
     @Override
     public Request ANY(final String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        return any(pathMatcher(path), closure);
+        return ANY(pathMatcher(path), closure);
     }
 
     @Override
     public Request ANY(final Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        return expect(new ErsatzRequestWithContent(HttpMethod.ANY, matcher, globalDecoders, globalEncoders), closure);
+        return ANY(matcher, ConsumerWithDelegate.create(closure));
     }
 
     @Override
     public Request ANY(final String path, final Consumer<Request> consumer) {
-        return any(pathMatcher(path), consumer);
+        return ANY(pathMatcher(path), consumer);
     }
 
     @Override
     public Request ANY(final Matcher<String> matcher, final Consumer<Request> consumer) {
-        return expect(new ErsatzRequestWithContent(HttpMethod.ANY, matcher, globalDecoders, globalEncoders), consumer);
+        final Request request = new ErsatzRequestWithContent(HttpMethod.ANY, matcher, globalDecoders, globalEncoders);
+
+        if (consumer != null) {
+            consumer.accept(request);
+        }
+
+        requests.add(request);
+
+        return request;
     }
+
+    /// TODO: any above here
 
     @Override
     public Request GET(final String path) {
