@@ -25,9 +25,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.core.IsIterableContaining;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER;
@@ -38,8 +36,6 @@ import static io.undertow.util.QueryParameterUtils.parseQueryString;
  */
 public class RequestMatcher extends BaseMatcher<ClientRequest> {
 
-    private static final String UTF_8 = "UTF-8";
-
     private final Matcher<?> matcher;
     private final Function<ClientRequest, Object> getter;
     private final String description;
@@ -48,6 +44,10 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
         this.matcher = matcher;
         this.getter = getter;
         this.description = description;
+    }
+
+    public Matcher<?> getMatcher() {
+        return matcher;
     }
 
     /**
@@ -103,7 +103,18 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @return a configured RequestMatcher
      */
     public static RequestMatcher query(final String name, final Matcher<Iterable<? super String>> m) {
-        return new RequestMatcher(m, cr -> Arrays.asList(cr.getQueryParams().get(name).toArray()), "Query string " + name + " matches ");
+        return new RequestMatcher(
+            m,
+            cr -> {
+                final var qs = cr.getQueryParams().get(name);
+                if( qs  != null){
+                    return new ArrayDeque<>(Arrays.asList(qs.toArray(new String[0])));
+                } else {
+                    return null;
+                }
+            },
+            "Query string " + name + " matches "
+        );
     }
 
     /**
@@ -118,7 +129,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
             m,
             cr -> {
                 final var qs = parseQueryString(new String(cr.getBody() != null ? cr.getBody() : new byte[0], StandardCharsets.UTF_8), StandardCharsets.UTF_8.displayName());
-                return Arrays.asList(qs.get(name).toArray());
+                return Arrays.asList(qs.containsKey(name) ? qs.get(name).toArray() : new String[0]);
             },
             "Parameter string " + name + " matches"
         );
