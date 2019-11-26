@@ -68,6 +68,9 @@ class ExpectationsImpl implements Expectations {
         expect new ErsatzRequestWithContent(HttpMethod.ANY, matcher, globalDecoders, globalEncoders)
     }
 
+    // FIXME: change any to ANY
+    // FIXME: move deprecated methods into interface defaults
+
     @Override
     Request any(final String path, @DelegatesTo(value = Request, strategy = DELEGATE_FIRST) final Closure closure) {
         any pathMatcher(path), closure

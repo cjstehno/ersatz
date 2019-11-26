@@ -18,6 +18,7 @@ package com.stehno.ersatz.impl;
 import groovy.transform.Memoized;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -28,36 +29,41 @@ public class UnmatchedWsReport {
     private static final String RESET = "\u001B[0m";
 
     private final WebSocketExpectationsImpl expectations;
+    private final AtomicReference<String> cached = new AtomicReference<>();
 
-    public UnmatchedWsReport(WebSocketExpectationsImpl expectations) {
+    public UnmatchedWsReport(final WebSocketExpectationsImpl expectations) {
         this.expectations = expectations;
     }
 
-    @Override @Memoized(maxCacheSize = 1, protectedCacheSize = 1)
+    @Override
     public String toString() {
-        final StringBuilder out = new StringBuilder();
+        if (cached.get() == null) {
+            final StringBuilder out = new StringBuilder();
 
-        out.append("# Unmatched Web Socket Message\n\n");
-        out.append("# Expectations\n\n");
+            out.append("# Unmatched Web Socket Message\n\n");
+            out.append("# Expectations\n\n");
 
-        out.append("Expectation (").append(expectations.getPath()).append("\n");
+            out.append("Expectation (").append(expectations.getPath()).append("\n");
 
-        out.append("  ").append(mark(expectations.isConnected())).append(" Client connection made.\n");
+            out.append("  ").append(mark(expectations.isConnected())).append(" Client connection made.\n");
 
-        final AtomicInteger failed = new AtomicInteger(0);
-        expectations.eachMessage(rm -> {
-            boolean matched = rm.marked(1, SECONDS);
-            out.append("  ").append(mark(matched)).append(" Received ").append(rm.getMessageType()).append(" message: ").append(rm.getPayload()).append("\n");
-            if (!matched) {
-                failed.incrementAndGet();
-            }
-        });
+            final AtomicInteger failed = new AtomicInteger(0);
+            expectations.eachMessage(rm -> {
+                boolean matched = rm.marked(1, SECONDS);
+                out.append("  ").append(mark(matched)).append(" Received ").append(rm.getMessageType()).append(" message: ").append(rm.getPayload()).append("\n");
+                if (!matched) {
+                    failed.incrementAndGet();
+                }
+            });
 
-        int count = expectations.getExpectedMessageCount() + 1;
-        int matchedCount = count - failed.get();
-        out.append("  (").append(count).append(" matchers: ").append(matchedCount).append(" matched, ").append((failed.get() > 0 ? RED : "") + failed).append(" failed").append(failed.get() > 0 ? RESET : "").append(")\n\n");
+            int count = expectations.getExpectedMessageCount() + 1;
+            int matchedCount = count - failed.get();
+            out.append("  (").append(count).append(" matchers: ").append(matchedCount).append(" matched, ").append((failed.get() > 0 ? RED : "") + failed).append(" failed").append(failed.get() > 0 ? RESET : "").append(")\n\n");
 
-        return out.toString();
+            cached.set(out.toString());
+        }
+
+        return cached.get();
     }
 
     private static String mark(final boolean ok) {
