@@ -40,7 +40,10 @@ public interface Expectations {
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
      */
-    Request any(String path);
+    @Deprecated(since = "2.0.0", forRemoval = true)
+    default Request any(String path){
+        return ANY(path);
+    }
 
     /**
      * Allows configuration of a request expectation matching any request method.
@@ -48,25 +51,94 @@ public interface Expectations {
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
      */
-    Request any(Matcher<String> matcher);
+    @Deprecated(since = "2.0.0", forRemoval = true)
+    default Request any(Matcher<String> matcher){
+        return ANY(matcher);
+    }
 
     /**
      * Allows configuration of a request expectation matching any request method using the Groovy DSL.
      *
      * @param path the expected request path.
+     * @param closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
      */
-    Request any(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
+    @Deprecated(since = "2.0.0", forRemoval = true)
+    default Request any(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure){
+        return ANY(path, closure);
+    }
 
     /**
      * Allows configuration of a request expectation matching any request method using the Groovy DSL.
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
-    Request any(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
+    @Deprecated(since = "2.0.0", forRemoval = true)
+    default Request any(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure){
+        return ANY(matcher, closure);
+    }
+
+    /**
+     * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<Request></code> will have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param path the expected request path
+     * @param consumer the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    @Deprecated(since = "2.0.0", forRemoval = true)
+    default Request any(String path, Consumer<Request> consumer){
+        return ANY(path, consumer);
+    }
+
+    /**
+     * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
+     * <code>Consumer<Request></code> will have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @param consumer the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    @Deprecated(since = "2.0.0", forRemoval = true)
+    default Request any(Matcher<String> matcher, Consumer<Request> consumer){
+        return ANY(matcher, consumer);
+    }
+
+    /**
+     * Allows configuration of a request expectation matching any request method.
+     *
+     * @param path the expected request path
+     * @return a <code>Request</code> configuration object
+     */
+    Request ANY(String path);
+
+    /**
+     * Allows configuration of a request expectation matching any request method.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     */
+    Request ANY(Matcher<String> matcher);
+
+    /**
+     * Allows configuration of a request expectation matching any request method using the Groovy DSL.
+     *
+     * @param path the expected request path.
+     * @return a <code>Request</code> configuration object
+     * @param closure the Groovy closure containing the configuration
+     */
+    Request ANY(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
+
+    /**
+     * Allows configuration of a request expectation matching any request method using the Groovy DSL.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @param closure the Groovy closure containing the configuration
+     */
+    Request ANY(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
 
     /**
      * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
@@ -74,9 +146,9 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
-    Request any(String path, Consumer<Request> consumer);
+    Request ANY(String path, Consumer<Request> consumer);
 
     /**
      * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
@@ -84,9 +156,11 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
-    Request any(Matcher<String> matcher, Consumer<Request> consumer);
+    Request ANY(Matcher<String> matcher, Consumer<Request> consumer);
+
+    // TODO: ANY (Above here)
 
     /**
      * Allows configuration of a GET request expectation.
@@ -125,7 +199,7 @@ public interface Expectations {
      *
      * @param path the expected request path.
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     Request get(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -135,7 +209,7 @@ public interface Expectations {
      *
      * @param path the expected request path.
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     Request GET(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -144,7 +218,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     Request get(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -154,7 +228,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     Request GET(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -164,7 +238,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) Request get(String path, Consumer<Request> config);
 
@@ -174,7 +248,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     Request GET(String path, Consumer<Request> config);
 
@@ -184,7 +258,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) Request get(Matcher<String> matcher, Consumer<Request> config);
 
@@ -194,7 +268,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     Request GET(Matcher<String> matcher, Consumer<Request> config);
 
@@ -235,7 +309,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     Request head(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -245,7 +319,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     Request HEAD(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -254,7 +328,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     Request head(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -264,7 +338,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     Request HEAD(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -274,7 +348,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) Request head(String path, Consumer<Request> config);
 
@@ -284,7 +358,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     Request HEAD(String path, Consumer<Request> config);
 
@@ -294,7 +368,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) Request head(Matcher<String> matcher, Consumer<Request> config);
 
@@ -304,7 +378,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     Request HEAD(Matcher<String> matcher, Consumer<Request> config);
 
@@ -345,7 +419,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     RequestWithContent post(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -355,7 +429,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     RequestWithContent POST(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -364,7 +438,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     RequestWithContent post(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -374,7 +448,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     RequestWithContent POST(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -384,7 +458,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) RequestWithContent post(String path, Consumer<RequestWithContent> config);
 
@@ -394,7 +468,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     RequestWithContent POST(String path, Consumer<RequestWithContent> config);
 
@@ -404,7 +478,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) RequestWithContent post(Matcher<String> matcher, Consumer<RequestWithContent> config);
 
@@ -414,7 +488,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     RequestWithContent POST(Matcher<String> matcher, Consumer<RequestWithContent> config);
 
@@ -455,7 +529,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     RequestWithContent put(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -465,7 +539,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     RequestWithContent PUT(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -474,7 +548,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     RequestWithContent put(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -484,7 +558,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     RequestWithContent PUT(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -494,7 +568,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) RequestWithContent put(String path, Consumer<RequestWithContent> config);
 
@@ -504,7 +578,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     RequestWithContent PUT(String path, Consumer<RequestWithContent> config);
 
@@ -514,7 +588,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) RequestWithContent put(Matcher<String> matcher, Consumer<RequestWithContent> config);
 
@@ -524,7 +598,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     RequestWithContent PUT(Matcher<String> matcher, Consumer<RequestWithContent> config);
 
@@ -565,7 +639,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     Request delete(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -575,7 +649,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     Request DELETE(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -584,7 +658,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     Request delete(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -594,7 +668,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     Request DELETE(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -604,7 +678,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) Request delete(String path, Consumer<Request> config);
 
@@ -614,7 +688,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     Request DELETE(String path, Consumer<Request> config);
 
@@ -624,7 +698,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) Request delete(Matcher<String> matcher, Consumer<Request> config);
 
@@ -634,7 +708,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     Request DELETE(Matcher<String> matcher, Consumer<Request> config);
 
@@ -675,7 +749,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     RequestWithContent patch(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -685,7 +759,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     RequestWithContent PATCH(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -694,7 +768,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -704,7 +778,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     RequestWithContent PATCH(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -714,7 +788,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) RequestWithContent patch(String path, Consumer<RequestWithContent> config);
 
@@ -724,7 +798,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     RequestWithContent PATCH(String path, Consumer<RequestWithContent> config);
 
@@ -734,7 +808,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) RequestWithContent patch(Matcher<String> matcher, Consumer<RequestWithContent> config);
 
@@ -744,7 +818,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     RequestWithContent PATCH(Matcher<String> matcher, Consumer<RequestWithContent> config);
 
@@ -785,7 +859,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     Request options(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -795,7 +869,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     Request OPTIONS(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -804,7 +878,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
     Request options(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
@@ -814,7 +888,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram closure the Groovy closure containing the configuration
+     * @param closure the Groovy closure containing the configuration
      */
     Request OPTIONS(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure);
 
@@ -824,7 +898,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) Request options(String path, Consumer<Request> config);
 
@@ -834,7 +908,7 @@ public interface Expectations {
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     Request OPTIONS(String path, Consumer<Request> config);
 
@@ -844,7 +918,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true) Request options(Matcher<String> matcher, Consumer<Request> config);
 
@@ -854,7 +928,7 @@ public interface Expectations {
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
-     * @pram config the configuration consumer
+     * @param config the configuration consumer
      */
     Request OPTIONS(Matcher<String> matcher, Consumer<Request> config);
 

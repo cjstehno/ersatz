@@ -57,32 +57,32 @@ public class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    public Request any(final String path) {
+    public Request ANY(final String path) {
         return any(pathMatcher(path));
     }
 
     @Override
-    public Request any(final Matcher<String> matcher) {
+    public Request ANY(final Matcher<String> matcher) {
         return expect(new ErsatzRequestWithContent(HttpMethod.ANY, matcher, globalDecoders, globalEncoders));
     }
 
     @Override
-    public Request any(final String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure) {
+    public Request ANY(final String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure) {
         return any(pathMatcher(path), closure);
     }
 
     @Override
-    public Request any(final Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure) {
+    public Request ANY(final Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure) {
         return expect(new ErsatzRequestWithContent(HttpMethod.ANY, matcher, globalDecoders, globalEncoders), closure);
     }
 
     @Override
-    public Request any(final String path, final Consumer<Request> consumer) {
+    public Request ANY(final String path, final Consumer<Request> consumer) {
         return any(pathMatcher(path), consumer);
     }
 
     @Override
-    public Request any(final Matcher<String> matcher, final Consumer<Request> consumer) {
+    public Request ANY(final Matcher<String> matcher, final Consumer<Request> consumer) {
         return expect(new ErsatzRequestWithContent(HttpMethod.ANY, matcher, globalDecoders, globalEncoders), consumer);
     }
 
