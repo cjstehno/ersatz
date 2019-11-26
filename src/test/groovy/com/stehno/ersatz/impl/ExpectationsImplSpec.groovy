@@ -194,9 +194,8 @@ class ExpectationsImplSpec extends Specification {
         expectations.verify()
 
         then:
-        def ae = thrown(AssertionError)
-        ae.message == 'Expectations for Expectations (ErsatzRequestWithContent): <POST>, "/alpha",  were not met.. ' +
-            'Expression: (com.stehno.ersatz.impl.ErsatzRequest -> com.stehno.ersatz.impl.ErsatzRequest) r.verify(timeout, unit)'
+        def ae = thrown(IllegalArgumentException)
+        ae.message == 'Expectations for Expectations (ErsatzRequestWithContent): <POST>, "/alpha",  were not met.'
     }
 
     @Unroll 'wildcard path (#path)'() {
