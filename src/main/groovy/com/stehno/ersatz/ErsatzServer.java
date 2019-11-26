@@ -49,8 +49,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static com.stehno.ersatz.Authentication.BASIC;
-import static com.stehno.ersatz.Authentication.DIGEST;
 import static com.stehno.ersatz.impl.ResponseChunker.prepareChunks;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 import static io.undertow.UndertowOptions.*;
