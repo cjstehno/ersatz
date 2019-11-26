@@ -13,26 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz;
 
-import groovy.transform.CompileStatic
-import org.hamcrest.BaseMatcher
-import org.hamcrest.Description
-import org.hamcrest.Matcher
-import space.jasan.support.groovy.closure.ConsumerWithDelegate
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
-import java.util.function.Consumer
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
-import static groovy.lang.Closure.DELEGATE_FIRST
-import static org.hamcrest.Matchers.equalTo
+import static groovy.lang.Closure.DELEGATE_FIRST;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Hamcrest matcher used to match Ersatz request cookie instances.
  */
-@CompileStatic
-class CookieMatcher extends BaseMatcher<Cookie> {
+public class CookieMatcher extends BaseMatcher<Cookie> {
 
-    private final Map<String, Matcher> matchers = [:]
+    private final Map<String, Matcher> matchers = new LinkedHashMap<>();
 
     /**
      * Configures the cookie matcher with a closure delegating to a <code>CookieMatcher</code> instance.
@@ -40,20 +42,20 @@ class CookieMatcher extends BaseMatcher<Cookie> {
      * @param closure the configuration closure
      * @return the configured matcher
      */
-    static CookieMatcher cookieMatcher(@DelegatesTo(value = CookieMatcher, strategy = DELEGATE_FIRST) final Closure closure) {
-        cookieMatcher(ConsumerWithDelegate.create(closure))
+    public static CookieMatcher cookieMatcher(@DelegatesTo(value = CookieMatcher.class, strategy = DELEGATE_FIRST) final Closure closure) {
+        return cookieMatcher(ConsumerWithDelegate.create(closure));
     }
 
     /**
      * Configures the cookie matcher with a consumer which is passed a <code>CookieMatcher</code> instance to configure.
      *
-     * @param closure the configuration consumer
+     * @param consumer the configuration consumer
      * @return the configured matcher
      */
-    static CookieMatcher cookieMatcher(final Consumer<CookieMatcher> consumer) {
-        CookieMatcher cookieMatcher = new CookieMatcher()
-        consumer.accept(cookieMatcher)
-        cookieMatcher
+    public static CookieMatcher cookieMatcher(final Consumer<CookieMatcher> consumer) {
+        CookieMatcher cookieMatcher = new CookieMatcher();
+        consumer.accept(cookieMatcher);
+        return cookieMatcher;
     }
 
     /**
@@ -62,8 +64,8 @@ class CookieMatcher extends BaseMatcher<Cookie> {
      * @param val the value string
      * @return a reference to the matcher being configured
      */
-    CookieMatcher value(final String val) {
-        value(equalTo(val))
+    public CookieMatcher value(final String val) {
+        return value(equalTo(val));
     }
 
     /**
@@ -72,9 +74,9 @@ class CookieMatcher extends BaseMatcher<Cookie> {
      * @param matcher the matcher to be used
      * @return a reference to the matcher being configured
      */
-    CookieMatcher value(final Matcher<String> matcher) {
-        matchers['value'] = matcher
-        this
+    public CookieMatcher value(final Matcher<String> matcher) {
+        matchers.put("value", matcher);
+        return this;
     }
 
     /**
@@ -83,8 +85,8 @@ class CookieMatcher extends BaseMatcher<Cookie> {
      * @param str the comment string
      * @return a reference to the matcher being configured
      */
-    CookieMatcher comment(final String str) {
-        comment equalTo(str)
+    public CookieMatcher comment(final String str) {
+        return comment(equalTo(str));
     }
 
     /**
@@ -93,9 +95,9 @@ class CookieMatcher extends BaseMatcher<Cookie> {
      * @param matcher the matcher to be used
      * @return a reference to the matcher being configured
      */
-    CookieMatcher comment(final Matcher<String> matcher) {
-        matchers['comment'] = matcher
-        this
+    public CookieMatcher comment(final Matcher<String> matcher) {
+        matchers.put("comment", matcher);
+        return this;
     }
 
     /**
@@ -104,8 +106,8 @@ class CookieMatcher extends BaseMatcher<Cookie> {
      * @param str the domain string
      * @return a reference to the matcher being configured
      */
-    CookieMatcher domain(final String str) {
-        domain equalTo(str)
+    public CookieMatcher domain(final String str) {
+        return domain(equalTo(str));
     }
 
     /**
@@ -114,9 +116,9 @@ class CookieMatcher extends BaseMatcher<Cookie> {
      * @param matcher the matcher to be used
      * @return a reference to the matcher being configured
      */
-    CookieMatcher domain(final Matcher<String> matcher) {
-        matchers['domain'] = matcher
-        this
+    public CookieMatcher domain(final Matcher<String> matcher) {
+        matchers.put("domain", matcher);
+        return this;
     }
 
     /**
@@ -125,8 +127,8 @@ class CookieMatcher extends BaseMatcher<Cookie> {
      * @param str the path string
      * @return a reference to the matcher being configured
      */
-    CookieMatcher path(final String str) {
-        path equalTo(str)
+    public CookieMatcher path(final String str) {
+        return path(equalTo(str));
     }
 
     /**
@@ -135,19 +137,19 @@ class CookieMatcher extends BaseMatcher<Cookie> {
      * @param matcher the matcher to be used
      * @return a reference to the matcher being configured
      */
-    CookieMatcher path(final Matcher<String> matcher) {
-        matchers['path'] = matcher
-        this
+    public CookieMatcher path(final Matcher<String> matcher) {
+        matchers.put("path", matcher);
+        return this;
     }
 
     /**
      * Applies a matcher for the specified cookie version value. This is equivalent to calling <code>version(Matchers.equalTo(1))</code>.
      *
-     * @param str the version string
+     * @param vers the version string
      * @return a reference to the matcher being configured
      */
-    CookieMatcher version(final int vers) {
-        version equalTo(vers)
+    public CookieMatcher version(final int vers) {
+        return version(equalTo(vers));
     }
 
     /**
@@ -156,30 +158,30 @@ class CookieMatcher extends BaseMatcher<Cookie> {
      * @param matcher the matcher to be used
      * @return a reference to the matcher being configured
      */
-    CookieMatcher version(final Matcher<Integer> matcher) {
-        matchers['version'] = matcher
-        this
+    public CookieMatcher version(final Matcher<Integer> matcher) {
+        matchers.put("version", matcher);
+        return this;
     }
 
     /**
      * Applies a matcher for the specified cookie http-only value.
      *
-     * @param str the httpOnly state
+     * @param httpOnly the httpOnly state
      * @return a reference to the matcher being configured
      */
-    CookieMatcher httpOnly(final boolean httpOnly) {
-        matchers['httpOnly'] = equalTo(httpOnly)
-        this
+    public CookieMatcher httpOnly(final boolean httpOnly) {
+        matchers.put("httpOnly", equalTo(httpOnly));
+        return this;
     }
 
     /**
      * Applies a matcher for the specified cookie max-age value. This is equivalent to calling <code>maxAge(Matchers.equalTo(age))</code>.
      *
-     * @param str the max-age value
+     * @param age the max-age value
      * @return a reference to the matcher being configured
      */
-    CookieMatcher maxAge(final int age) {
-        maxAge equalTo(age)
+    public CookieMatcher maxAge(final int age) {
+        return maxAge(equalTo(age));
     }
 
     /**
@@ -188,63 +190,66 @@ class CookieMatcher extends BaseMatcher<Cookie> {
      * @param matcher the matcher to be used
      * @return a reference to the matcher being configured
      */
-    CookieMatcher maxAge(final Matcher<Integer> matcher) {
-        matchers['maxAge'] = matcher
-        this
+    public CookieMatcher maxAge(final Matcher<Integer> matcher) {
+        matchers.put("maxAge", matcher);
+        return this;
     }
 
     /**
      * Applies a matcher for the specified cookie secure value.
      *
-     * @param str the secure state
+     * @param secure the secure state
      * @return a reference to the matcher being configured
      */
-    CookieMatcher secure(final boolean secure) {
-        matchers['secure'] = equalTo(secure)
-        this
+    public CookieMatcher secure(final boolean secure) {
+        matchers.put("secure", equalTo(secure));
+        return this;
     }
 
     @Override
-    boolean matches(final Object item) {
+    public boolean matches(final Object item) {
         if (!(item instanceof Cookie)) {
-            return false
+            return false;
         }
 
-        Cookie cookie = item as Cookie
+        final var cookie = (Cookie) item;
 
-        matchers.every { field, matcher ->
+        return matchers.entrySet().stream().allMatch(entry -> {
+            final var field = entry.getKey();
+            final var matcher = entry.getValue();
+
             switch (field) {
-                case 'value':
-                    return matcher.matches(cookie.value)
-                case 'comment':
-                    return matcher.matches(cookie.comment)
-                case 'domain':
-                    return matcher.matches(cookie.domain)
-                case 'path':
-                    return matcher.matches(cookie.path)
-                case 'maxAge':
-                    return matcher.matches(cookie.maxAge)
-                case 'httpOnly':
-                    return matcher.matches(cookie.httpOnly)
-                case 'secure':
-                    return matcher.matches(cookie.secure)
-                case 'version':
-                    return matcher.matches(cookie.version)
+                case "value":
+                    return matcher.matches(cookie.getValue());
+                case "comment":
+                    return matcher.matches(cookie.getComment());
+                case "domain":
+                    return matcher.matches(cookie.getDomain());
+                case "path":
+                    return matcher.matches(cookie.getPath());
+                case "maxAge":
+                    return matcher.matches(cookie.getMaxAge());
+                case "httpOnly":
+                    return matcher.matches(cookie.isHttpOnly());
+                case "secure":
+                    return matcher.matches(cookie.isSecure());
+                case "version":
+                    return matcher.matches(cookie.getVersion());
                 default:
-                    return false
+                    return false;
             }
-        }
+        });
     }
 
     @Override
-    void describeTo(final Description description) {
-        description.appendText('Cookie matching ')
+    public void describeTo(final Description description) {
+        description.appendText("Cookie matching ");
 
-        matchers.each { field, matcher ->
-            description.appendText("${field}(")
-            matcher.describeTo(description)
-            description.appendText(') ')
-        }
+        matchers.forEach((field, matcher) -> {
+            description.appendText(field + "(");
+            matcher.describeTo(description);
+            description.appendText(") ");
+        });
     }
 }
 

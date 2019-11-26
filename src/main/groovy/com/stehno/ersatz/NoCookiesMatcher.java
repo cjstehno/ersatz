@@ -13,33 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz
+package com.stehno.ersatz;
 
-import groovy.transform.CompileStatic
-import org.hamcrest.BaseMatcher
-import org.hamcrest.Description
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+
+import java.util.Map;
 
 /**
  * A Hamcrest matcher for matching the case when there should be no cookies configured in a request.
  */
-@CompileStatic
-class NoCookiesMatcher extends BaseMatcher<Map<String, Cookie>> {
+public class NoCookiesMatcher extends BaseMatcher<Map<String, Cookie>> {
 
-    static NoCookiesMatcher noCookies() {
-        new NoCookiesMatcher()
+    public static NoCookiesMatcher noCookies() {
+        return new NoCookiesMatcher();
     }
 
     @Override
-    boolean matches(final Object item) {
+    public boolean matches(final Object item) {
         if (!(item instanceof Map)) {
-            return false
+            return false;
         }
 
-        (item as Map).isEmpty()
+        return ((Map)item).isEmpty();
     }
 
     @Override
-    void describeTo(Description description) {
-        description.appendText('NoCookiesMatcher: ')
+    public void describeTo(Description description) {
+        description.appendText("NoCookiesMatcher: ");
     }
 }
