@@ -19,13 +19,12 @@ import com.stehno.ersatz.Request;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.util.function.Consumer;
 
+import static com.stehno.ersatz.ErsatzMatchers.pathMatcher;
 import static groovy.lang.Closure.DELEGATE_FIRST;
-import static org.hamcrest.Matchers.equalTo;
 
 public interface AnyExpectations {
 
@@ -164,9 +163,4 @@ public interface AnyExpectations {
      * @return a <code>Request</code> configuration object
      */
     Request ANY(Matcher<String> matcher, Consumer<Request> consumer);
-
-    // TODO: remove duplication
-    private static Matcher<String> pathMatcher(final String path) {
-        return path.equals("*") ? Matchers.any(String.class) : equalTo(path);
-    }
 }

@@ -26,56 +26,56 @@ import java.util.function.Consumer;
 import static com.stehno.ersatz.ErsatzMatchers.pathMatcher;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
-public interface PostExpectations {
+public interface PatchExpectations {
 
     /**
-     * Allows configuration of a POST request expectation.
+     * Allows configuration of a PATCH request expectation.
      *
-     * @param path the request path.
+     * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default RequestWithContent post(String path) {
-        return POST(path);
+    default RequestWithContent patch(String path) {
+        return PATCH(path);
     }
 
     /**
-     * Allows configuration of a POST request expectation.
+     * Allows configuration of a PATCH request expectation.
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default RequestWithContent post(Matcher<String> matcher) {
-        return POST(matcher);
+    default RequestWithContent patch(Matcher<String> matcher) {
+        return PATCH(matcher);
     }
 
     /**
-     * Allows configuration of a POST request expectation using the Groovy DSL.
+     * Allows configuration of a PATCH request expectation using the Groovy DSL.
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
      * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default RequestWithContent post(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return POST(path, closure);
+    default RequestWithContent patch(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
+        return PATCH(path, closure);
     }
 
     /**
-     * Allows configuration of a POST request expectation using the Groovy DSL.
+     * Allows configuration of a PATCH request expectation using the Groovy DSL.
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
      * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default RequestWithContent post(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return POST(matcher, closure);
+    default RequestWithContent patch(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
+        return PATCH(matcher, closure);
     }
 
     /**
-     * Allows configuration of a POST request expectation using the provided <code>Consumer<Request></code>. The
+     * Allows configuration of a PATCH request expectation using the provided <code>Consumer<Request></code>. The
      * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param path the expected request path
@@ -83,12 +83,12 @@ public interface PostExpectations {
      * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default RequestWithContent post(String path, Consumer<RequestWithContent> config) {
-        return POST(path, config);
+    default RequestWithContent patch(String path, Consumer<RequestWithContent> config) {
+        return PATCH(path, config);
     }
 
     /**
-     * Allows configuration of a POST request expectation using the provided <code>Consumer<Request></code>. The
+     * Allows configuration of a PATCH request expectation using the provided <code>Consumer<Request></code>. The
      * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param matcher the path matcher
@@ -96,71 +96,71 @@ public interface PostExpectations {
      * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default RequestWithContent post(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        return POST(matcher, config);
+    default RequestWithContent patch(Matcher<String> matcher, Consumer<RequestWithContent> config) {
+        return PATCH(matcher, config);
     }
 
     /**
-     * Allows configuration of a POST request expectation.
+     * Allows configuration of a PATCH request expectation.
      *
-     * @param path the request path.
+     * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
      */
-    default RequestWithContent POST(String path) {
-        return POST(pathMatcher(path));
+    default RequestWithContent PATCH(String path) {
+        return PATCH(pathMatcher(path));
     }
 
     /**
-     * Allows configuration of a POST request expectation.
+     * Allows configuration of a PATCH request expectation.
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
      */
-    default RequestWithContent POST(Matcher<String> matcher) {
-        return POST(matcher, (Consumer<RequestWithContent>) null);
+    default RequestWithContent PATCH(Matcher<String> matcher) {
+        return PATCH(matcher, (Consumer<RequestWithContent>) null);
     }
 
     /**
-     * Allows configuration of a POST request expectation using the Groovy DSL.
+     * Allows configuration of a PATCH request expectation using the Groovy DSL.
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
      * @param closure the Groovy closure containing the configuration
      */
-    default RequestWithContent POST(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return POST(pathMatcher(path), closure);
+    default RequestWithContent PATCH(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
+        return PATCH(pathMatcher(path), closure);
     }
 
     /**
-     * Allows configuration of a POST request expectation using the Groovy DSL.
+     * Allows configuration of a PATCH request expectation using the Groovy DSL.
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
      * @param closure the Groovy closure containing the configuration
      */
-    default RequestWithContent POST(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return POST(matcher, ConsumerWithDelegate.create(closure));
+    default RequestWithContent PATCH(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
+        return PATCH(matcher, ConsumerWithDelegate.create(closure));
     }
 
     /**
-     * Allows configuration of a POST request expectation using the provided <code>Consumer<Request></code>. The
+     * Allows configuration of a PATCH request expectation using the provided <code>Consumer<Request></code>. The
      * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
      * @param config the configuration consumer
      */
-    default RequestWithContent POST(String path, Consumer<RequestWithContent> config) {
-        return POST(pathMatcher(path), config);
+    default RequestWithContent PATCH(String path, Consumer<RequestWithContent> config) {
+        return PATCH(pathMatcher(path), config);
     }
 
     /**
-     * Allows configuration of a POST request expectation using the provided <code>Consumer<Request></code>. The
+     * Allows configuration of a PATCH request expectation using the provided <code>Consumer<Request></code>. The
      * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
      * @param config the configuration consumer
      */
-    RequestWithContent POST(Matcher<String> matcher, Consumer<RequestWithContent> config);
+    RequestWithContent PATCH(Matcher<String> matcher, Consumer<RequestWithContent> config);
 }

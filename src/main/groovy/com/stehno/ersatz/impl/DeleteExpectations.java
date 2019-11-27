@@ -26,141 +26,141 @@ import java.util.function.Consumer;
 import static com.stehno.ersatz.ErsatzMatchers.pathMatcher;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
-public interface GetExpectations {
+public interface DeleteExpectations {
 
     /**
-     * Allows configuration of a GET request expectation.
+     * Allows configuration of a DELETE request expectation.
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default Request get(String path) {
-        return GET(path);
+    default Request delete(String path) {
+        return DELETE(path);
     }
 
     /**
-     * Allows configuration of a GET request expectation.
+     * Allows configuration of a DELETE request expectation.
      *
-     * @param matcher the path matcher.
+     * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default Request get(Matcher<String> matcher) {
-        return GET(matcher);
+    default Request delete(Matcher<String> matcher) {
+        return DELETE(matcher);
     }
 
     /**
-     * Allows configuration of a GET request expectation using the Groovy DSL.
+     * Allows configuration of a DELETE request expectation using the Groovy DSL.
      *
-     * @param path the expected request path.
+     * @param path the expected request path
      * @return a <code>Request</code> configuration object
      * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default Request get(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return GET(path, closure);
+    default Request delete(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+        return DELETE(path, closure);
     }
 
     /**
-     * Allows configuration of a GET request expectation using the Groovy DSL.
+     * Allows configuration of a DELETE request expectation using the Groovy DSL.
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
      * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default Request get(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return GET(matcher, closure);
+    default Request delete(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+        return DELETE(matcher, closure);
     }
 
     /**
-     * Allows configuration of a GET request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * Allows configuration of a DELETE request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
      * have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param path the expected request path
-     * @param config the configuration consumer
-     * @return a <code>Request</code> configuration object
-     */
-    @Deprecated(since = "2.0", forRemoval = true)
-    default Request get(String path, Consumer<Request> config) {
-        return GET(path, config);
-    }
-
-    /**
-     * Allows configuration of a GET request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
-     * have an instance of <code>Request</code> passed into it for configuration.
-     *
-     * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
      * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default Request get(Matcher<String> matcher, Consumer<Request> config) {
-        return GET(matcher, config);
+    default Request delete(String path, Consumer<Request> config) {
+        return DELETE(path, config);
     }
 
     /**
-     * Allows configuration of a GET request expectation.
-     *
-     * @param path the expected request path
-     * @return a <code>Request</code> configuration object
-     */
-    default Request GET(String path) {
-        return GET(pathMatcher(path));
-    }
-
-    /**
-     * Allows configuration of a GET request expectation.
-     *
-     * @param matcher the path matcher.
-     * @return a <code>Request</code> configuration object
-     */
-    default Request GET(Matcher<String> matcher) {
-        return GET(matcher, (Consumer<Request>) null);
-    }
-
-    /**
-     * Allows configuration of a GET request expectation using the Groovy DSL.
-     *
-     * @param path the expected request path.
-     * @return a <code>Request</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    default Request GET(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return GET(pathMatcher(path), closure);
-    }
-
-    /**
-     * Allows configuration of a GET request expectation using the Groovy DSL.
-     *
-     * @param matcher the path matcher
-     * @return a <code>Request</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    default Request GET(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return GET(matcher, ConsumerWithDelegate.create(closure));
-    }
-
-    /**
-     * Allows configuration of a GET request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
-     * have an instance of <code>Request</code> passed into it for configuration.
-     *
-     * @param path the expected request path
-     * @return a <code>Request</code> configuration object
-     * @param config the configuration consumer
-     */
-    default Request GET(String path, Consumer<Request> config) {
-        return GET(pathMatcher(path), config);
-    }
-
-    /**
-     * Allows configuration of a GET request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * Allows configuration of a DELETE request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
      * have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
      * @param config the configuration consumer
      */
-    Request GET(Matcher<String> matcher, Consumer<Request> config);
+    @Deprecated(since = "2.0", forRemoval = true)
+    default Request delete(Matcher<String> matcher, Consumer<Request> config) {
+        return DELETE(matcher, config);
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation.
+     *
+     * @param path the expected request path
+     * @return a <code>Request</code> configuration object
+     */
+    default Request DELETE(String path) {
+        return DELETE(pathMatcher(path));
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     */
+    default Request DELETE(Matcher<String> matcher) {
+        return DELETE(matcher, (Consumer<Request>) null);
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation using the Groovy DSL.
+     *
+     * @param path the expected request path
+     * @return a <code>Request</code> configuration object
+     * @param closure the Groovy closure containing the configuration
+     */
+    default Request DELETE(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+        return DELETE(pathMatcher(path), closure);
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation using the Groovy DSL.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @param closure the Groovy closure containing the configuration
+     */
+    default Request DELETE(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+        return DELETE(matcher, ConsumerWithDelegate.create(closure));
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param path the expected request path
+     * @return a <code>Request</code> configuration object
+     * @param config the configuration consumer
+     */
+    default Request DELETE(String path, Consumer<Request> config) {
+        return DELETE(pathMatcher(path), config);
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @param config the configuration consumer
+     */
+    Request DELETE(Matcher<String> matcher, Consumer<Request> config);
 }

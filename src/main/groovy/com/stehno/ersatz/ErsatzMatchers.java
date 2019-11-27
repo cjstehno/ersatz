@@ -18,6 +18,9 @@ package com.stehno.ersatz;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Some reusable Hamcrest matchers useful in Ersatz expectations.
@@ -25,6 +28,10 @@ import org.hamcrest.Matcher;
 public class ErsatzMatchers {
 
     // FIXME: see if these can be removed
+
+    public static Matcher<String> pathMatcher(final String path) {
+        return path.equals("*") ? Matchers.any(String.class) : equalTo(path);
+    }
 
     /**
      * The provided matcher must match at least one element of the target collection (as Iterable).

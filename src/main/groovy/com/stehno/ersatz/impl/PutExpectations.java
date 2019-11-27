@@ -19,13 +19,12 @@ import com.stehno.ersatz.RequestWithContent;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.util.function.Consumer;
 
+import static com.stehno.ersatz.ErsatzMatchers.pathMatcher;
 import static groovy.lang.Closure.DELEGATE_FIRST;
-import static org.hamcrest.Matchers.equalTo;
 
 public interface PutExpectations {
 
@@ -36,7 +35,7 @@ public interface PutExpectations {
      * @return a <code>RequestWithContent</code> configuration object
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default RequestWithContent put(String path){
+    default RequestWithContent put(String path) {
         return PUT(path);
     }
 
@@ -59,7 +58,7 @@ public interface PutExpectations {
      * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default RequestWithContent put(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure){
+    default RequestWithContent put(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
         return PUT(path, closure);
     }
 
@@ -71,7 +70,7 @@ public interface PutExpectations {
      * @param closure the Groovy closure containing the configuration
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default RequestWithContent put(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure){
+    default RequestWithContent put(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
         return PUT(matcher, closure);
     }
 
@@ -84,8 +83,8 @@ public interface PutExpectations {
      * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default RequestWithContent put(String path, Consumer<RequestWithContent> config){
-        return PUT( path, config);
+    default RequestWithContent put(String path, Consumer<RequestWithContent> config) {
+        return PUT(path, config);
     }
 
     /**
@@ -97,7 +96,7 @@ public interface PutExpectations {
      * @param config the configuration consumer
      */
     @Deprecated(since = "2.0", forRemoval = true)
-    default RequestWithContent put(Matcher<String> matcher, Consumer<RequestWithContent> config){
+    default RequestWithContent put(Matcher<String> matcher, Consumer<RequestWithContent> config) {
         return PUT(matcher, config);
     }
 
@@ -107,7 +106,7 @@ public interface PutExpectations {
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
      */
-    default RequestWithContent PUT(String path){
+    default RequestWithContent PUT(String path) {
         return PUT(pathMatcher(path));
     }
 
@@ -117,7 +116,7 @@ public interface PutExpectations {
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
      */
-    default RequestWithContent PUT(Matcher<String> matcher){
+    default RequestWithContent PUT(Matcher<String> matcher) {
         return PUT(matcher, (Consumer<RequestWithContent>) null);
     }
 
@@ -128,7 +127,7 @@ public interface PutExpectations {
      * @return a <code>RequestWithContent</code> configuration object
      * @param closure the Groovy closure containing the configuration
      */
-    default RequestWithContent PUT(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure){
+    default RequestWithContent PUT(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
         return PUT(pathMatcher(path), closure);
     }
 
@@ -139,7 +138,7 @@ public interface PutExpectations {
      * @return a <code>RequestWithContent</code> configuration object
      * @param closure the Groovy closure containing the configuration
      */
-    default RequestWithContent PUT(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure){
+    default RequestWithContent PUT(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
         return PUT(matcher, ConsumerWithDelegate.create(closure));
     }
 
@@ -151,7 +150,7 @@ public interface PutExpectations {
      * @return a <code>RequestWithContent</code> configuration object
      * @param config the configuration consumer
      */
-    default RequestWithContent PUT(String path, Consumer<RequestWithContent> config){
+    default RequestWithContent PUT(String path, Consumer<RequestWithContent> config) {
         return PUT(pathMatcher(path), config);
     }
 
@@ -164,9 +163,4 @@ public interface PutExpectations {
      * @param config the configuration consumer
      */
     RequestWithContent PUT(Matcher<String> matcher, Consumer<RequestWithContent> config);
-
-    // TODO: remove duplication
-    private static Matcher<String> pathMatcher(final String path) {
-        return path.equals("*") ? Matchers.any(String.class) : equalTo(path);
-    }
 }
