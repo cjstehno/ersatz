@@ -129,7 +129,6 @@ class ErsatzResponseSpec extends Specification {
         response.code == 505
     }
 
-    // TODO: these GSTring .toStrings will be resolved when I convert response to use bytes[]
     def 'register encoder (string)'() {
         setup:
         response.content = 'foo'

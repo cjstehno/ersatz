@@ -199,7 +199,6 @@ class ErsatzServerSpec extends Specification {
                 responds().body(multipart {
                     boundary 'WyAJDTEVlYgGjdI13o'
                     encoder TEXT_PLAIN, CharSequence, { o -> o as String }
-                    // TODO: work to get rid of this .toString requirement
                     encoder 'image/jpeg', InputStream, { o -> ((InputStream) o).bytes.encodeBase64().toString() }
                     part 'file', 'data.txt', TEXT_PLAIN, 'This is some file data'
                     part 'image', 'test-image.jpg', 'image/jpeg', ErsatzServerSpec.getResourceAsStream('/test-image.jpg'), 'base64'
@@ -601,8 +600,6 @@ class ErsatzServerSpec extends Specification {
         response.body().string() == 'a response'
     }
 
-    // FIXME: this issue needs to be fixed.
-
     void 'Multiple responses for GET request'() {
         setup:
         ersatzServer.expectations {
@@ -664,46 +661,6 @@ class ErsatzServerSpec extends Specification {
         then:
         response.code() == 200
         response.body().string() == 'Bravo'
-    }
-
-    @Ignore // FIXME: this is an open issue - need to investigate
-    void 'WEBDAV interactions'() {
-        setup:
-        ersatzServer.expectations {
-            PUT('/storage') {
-                decoder TEXT_PLAIN, Decoders.utf8String
-                header('Expect', '100-continue')
-                responder {
-                    code(100)
-                }
-                responder {
-                    code(200)
-                }
-                called 2
-            }
-        }
-
-        def payload = create(parse('text/plain'), 'some stuff')
-
-        when:
-        def response = http.put(
-                ersatzServer.httpUrl('/storage'),
-                payload,
-                'Expect': '100-continue'
-        )
-
-        then:
-        response.code() == 100
-
-        when:
-        response = http.put(
-                ersatzServer.httpUrl('/storage'),
-                payload,
-                'Expect': '100-continue'
-        )
-
-        then:
-        response.code() == 200
     }
 
     @TupleConstructor
