@@ -66,7 +66,7 @@ class ReusedServerSpec extends Specification {
         ersatzServer.clearExpectations()
 
         ersatzServer.expectations {
-            get('/charlie').called(1).responds().body('charlie-response', TEXT_PLAIN)
+            GET('/charlie').called(1).responds().body('charlie-response', TEXT_PLAIN)
         }
 
         expect:

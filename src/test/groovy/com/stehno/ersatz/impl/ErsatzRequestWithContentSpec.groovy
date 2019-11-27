@@ -83,7 +83,7 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'matching: body and content-type'() {
         setup:
         server.expectations {
-            post('/posting').body(BODY_CONTENT, 'text/plain; charset=utf-8').decoder(TEXT_PLAIN, Decoders.utf8String).responds().body('accepted')
+            POST('/posting').body(BODY_CONTENT, 'text/plain; charset=utf-8').decoder(TEXT_PLAIN, Decoders.utf8String).responds().body('accepted')
         }.start()
 
         when:
@@ -102,7 +102,7 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'matching: body with converter (builder)'() {
         setup:
         server.expectations {
-            post('/posting').body([label: "Body Content", text: "This is some body content."], 'some/json; charset=utf-8')
+            POST('/posting').body([label: "Body Content", text: "This is some body content."], 'some/json; charset=utf-8')
                     .decoder('some/json; charset=utf-8', Decoders.parseJson)
                     .responds().body('accepted')
         }.start()
@@ -125,7 +125,7 @@ class ErsatzRequestWithContentSpec extends Specification {
         String responseContent = 'accepted'
 
         server.expectations {
-            post('/posting') {
+            POST('/posting') {
                 body([label: "Body Content", text: "This is some body content."], 'some/json; charset=utf-8')
                 decoder(new ContentType('some/json; charset=utf-8'), Decoders.parseJson)
                 responder {
@@ -150,7 +150,7 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'application/x-www-form-urlencoded'() {
         setup:
         server.expectations {
-            post('/form') {
+            POST('/form') {
                 decoder APPLICATION_URLENCODED, Decoders.urlEncoded
                 body([alpha: 'some data', bravo: '42', charlie: 'last'], 'application/x-www-form-urlencoded; charset=utf-8')
                 responder {
@@ -175,7 +175,7 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'multipart/form-data'() {
         setup:
         server.expectations {
-            post('/upload') {
+            POST('/upload') {
                 decoder TEXT_PLAIN, Decoders.utf8String
                 decoder MULTIPART_MIXED, Decoders.multipart
                 decoder IMAGE_PNG, Decoders.passthrough
@@ -209,7 +209,7 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'multipart/form-data using matcher object'() {
         setup:
         server.expectations {
-            post('/upload') {
+            POST('/upload') {
                 decoder TEXT_PLAIN, Decoders.utf8String
                 decoder MULTIPART_MIXED, Decoders.multipart
                 decoder IMAGE_PNG, Decoders.passthrough

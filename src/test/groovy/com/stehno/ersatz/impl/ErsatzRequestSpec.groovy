@@ -15,11 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.ErsatzServer
-import com.stehno.ersatz.InMemoryCookieJar
-import com.stehno.ersatz.Response
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Request.Builder
@@ -28,7 +24,6 @@ import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
@@ -145,12 +140,12 @@ class ErsatzRequestSpec extends Specification {
     def 'ensure matcher cookies'() {
         when:
         request.cookies([
-            foo: cookieMatcher {
-                value 'one'
-            },
-            bar: cookieMatcher {
-                value equalTo('two')
-            }
+                foo: cookieMatcher {
+                    value 'one'
+                },
+                bar: cookieMatcher {
+                    value equalTo('two')
+                }
         ])
 
         then:
@@ -180,10 +175,10 @@ class ErsatzRequestSpec extends Specification {
     def 'match one cookie present and one not'() {
         when:
         request.cookies([
-            foo: nullValue(),
-            bar: cookieMatcher {
-                value equalTo('two')
-            }
+                foo: nullValue(),
+                bar: cookieMatcher {
+                    value equalTo('two')
+                }
         ])
 
         then:
@@ -495,7 +490,7 @@ class ErsatzRequestSpec extends Specification {
         value == NOT_FOUND_BODY
     }
 
-    def 'generic matcher'(){
+    def 'generic matcher'() {
         setup:
         server.expectations {
             get('/testing').matcher({ ClientRequest cr ->

@@ -22,6 +22,8 @@ import org.hamcrest.Matcher;
  */
  public interface ProxyExpectations {
 
+    // FIXME: these should be upper-cased
+
     /**
      * Configures an expected request with any request method and the specified path.
      *

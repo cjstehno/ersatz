@@ -30,7 +30,7 @@ class HttpsSpec extends Specification {
     def 'https'() {
         setup:
         ersatzServer.expectations {
-            get('/hello').protocol('https').responds().body('This is HTTPS!')
+            GET('/hello').protocol('https').responds().body('This is HTTPS!')
         }
 
         when:

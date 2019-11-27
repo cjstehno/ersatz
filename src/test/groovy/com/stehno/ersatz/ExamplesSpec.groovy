@@ -27,7 +27,7 @@ class ExamplesSpec extends Specification {
         ErsatzServer ersatz = new ErsatzServer()
 
         ersatz.expectations {
-            get('/say/hello') {
+            GET('/say/hello') {
                 called 1
                 query 'name', 'Ersatz'
                 responder {
@@ -52,7 +52,7 @@ class ExamplesSpec extends Specification {
         ErsatzServer ersatz = new ErsatzServer()
 
         ersatz.expectations {
-            get('/say/hello'){
+            GET('/say/hello'){
                 called 1
                 query 'name','Ersatz'
                 responder {

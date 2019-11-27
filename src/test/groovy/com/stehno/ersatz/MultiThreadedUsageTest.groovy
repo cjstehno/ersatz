@@ -46,7 +46,7 @@ class MultiThreadedUsageTest {
         int requestCount = 8
 
         server.expectations {
-            get('/something') {
+            GET('/something') {
                 called requestCount
                 responder {
                     code 200
@@ -74,7 +74,7 @@ class MultiThreadedUsageTest {
         def counter = new AtomicInteger(0)
 
         server.expectations {
-            get('/something') {
+            GET('/something') {
                 called requestCount
                 listener {
                     counter.incrementAndGet()

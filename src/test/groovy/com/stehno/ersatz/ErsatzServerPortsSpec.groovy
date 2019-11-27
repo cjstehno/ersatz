@@ -26,7 +26,7 @@ class ErsatzServerPortsSpec extends Specification {
     @AutoCleanup private ErsatzServer ersatz = new ErsatzServer({
         httpPort 8675
         expectations {
-            get('/hi').responds().code(200)
+            GET('/hi').responds().code(200)
         }
     })
     private HttpClient http = new HttpClient()

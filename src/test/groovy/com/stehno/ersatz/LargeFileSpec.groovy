@@ -53,7 +53,7 @@ class LargeFileUploadSpec extends Specification {
         byte[] lob = generate(1.5d, GIGABYTES)
 
         server.expectations {
-            post('/push') {
+            POST('/push') {
                 called 1
                 body byteArrayLike(lob) as Matcher<Object>, IMAGE_JPG
 
@@ -98,7 +98,7 @@ class LargeFileDownloadSpec extends Specification {
         byte[] lob = generate(500, MEGABYTES)
 
         server.expectations {
-            get('/download').called(1).responds().code(200).content(lob, IMAGE_JPG)
+            GET('/download').called(1).responds().code(200).content(lob, IMAGE_JPG)
         }
 
         when:

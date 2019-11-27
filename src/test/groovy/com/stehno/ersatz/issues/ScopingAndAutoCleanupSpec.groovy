@@ -44,7 +44,7 @@ class ScopingAndAutoCleanupSpec extends Specification {
     void 'Posting One'() {
         setup:
         server.expectations {
-            post('/posting') {
+            POST('/posting') {
                 body INPUT_CONTENT, TEXT_PLAIN
                 decoder TEXT_PLAIN, utf8String
                 responder {
@@ -69,7 +69,7 @@ class ScopingAndAutoCleanupSpec extends Specification {
         String outputContent = OUTPUT_CONTENT
 
         server.expectations {
-            post('/posting') {
+            POST('/posting') {
                 body inputContent, TEXT_PLAIN
                 decoder TEXT_PLAIN, utf8String
                 responder {
@@ -91,7 +91,7 @@ class ScopingAndAutoCleanupSpec extends Specification {
     void 'Posting Three'() {
         setup:
         server.expectations {
-            post('/posting').body(INPUT_CONTENT, TEXT_PLAIN).decoder(TEXT_PLAIN, utf8String)
+            POST('/posting').body(INPUT_CONTENT, TEXT_PLAIN).decoder(TEXT_PLAIN, utf8String)
                 .responds().body(OUTPUT_CONTENT, TEXT_PLAIN)
         }
 
@@ -112,7 +112,7 @@ class ScopingAndAutoCleanupSpec extends Specification {
     void 'Posting Four'() {
         setup:
             server.expectations {
-                post(('/' + itsAKindOfMagic).trim()) {
+                POST(('/' + itsAKindOfMagic).trim()) {
                     body INPUT_CONTENT, TEXT_PLAIN
                     decoder TEXT_PLAIN, utf8String
                     responder {

@@ -41,6 +41,14 @@ public class MockClientRequest implements ClientRequest {
     private int contentLength;
     private String characterEncoding;
 
+    public MockClientRequest() {
+        // nothing
+    }
+
+    public MockClientRequest(final HttpMethod method) {
+        this.method = method;
+    }
+
     public void setCookies(Map<String, Cookie> cookies) {
         this.cookies = cookies;
     }

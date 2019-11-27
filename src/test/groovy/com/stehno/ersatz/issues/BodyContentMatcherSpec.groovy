@@ -43,7 +43,7 @@ class BodyContentMatcherSpec extends Specification {
         String responseXml = '<response>OK</response>'
 
         server.expectations {
-            post('/posting') {
+            POST('/posting') {
                 decoder 'text/xml; charset=utf-8', utf8String
                 body requestXml, 'text/xml; charset=utf-8'
                 responder {
@@ -66,7 +66,7 @@ class BodyContentMatcherSpec extends Specification {
         String responseXml = '<response>OK</response>'
 
         server.expectations {
-            post('/posting') {
+            POST('/posting') {
                 decoder('text/xml; charset=utf-8') { byte[] bytes, DecodingContext ctx ->
                     DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(bytes))
                 }
