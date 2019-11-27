@@ -36,7 +36,7 @@ class KotlinUsageTest {
 
         val http = OkHttpClient.Builder().build()
         val request: okhttp3.Request = okhttp3.Request.Builder().url("${ersatz.httpUrl}/kotlin").build()
-        assertEquals("Hello Kotlin!", http.newCall(request).execute().body()?.string())
+        assertEquals("Hello Kotlin!", http.newCall(request).execute().body?.string())
 
         assertTrue(ersatz.verify())
     }
@@ -54,7 +54,7 @@ class KotlinUsageTest {
 
         val http = OkHttpClient.Builder().build()
         val request: okhttp3.Request = okhttp3.Request.Builder().url("${ersatz.httpUrl}/kotlin").build()
-        assertEquals("Hello Kotlin!", http.newCall(request).execute().body()?.string())
+        assertEquals("Hello Kotlin!", http.newCall(request).execute().body?.string())
 
         assertTrue(ersatz.verify())
     }
