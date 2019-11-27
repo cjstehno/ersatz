@@ -42,13 +42,13 @@ class ExpectationsImplSpec extends Specification {
 
         where:
         code      | method
-        'any'     | GET
-        'any'     | HEAD
-        'any'     | DELETE
-        'get'     | GET
-        'head'    | HEAD
-        'delete'  | DELETE
-        'options' | OPTIONS
+        'ANY'     | GET
+        'ANY'     | HEAD
+        'ANY'     | DELETE
+        'GET'     | GET
+        'HEAD'    | HEAD
+        'DELETE'  | DELETE
+        'OPTIONS' | OPTIONS
     }
 
     @Unroll '#method(String,Closure)'() {
@@ -62,13 +62,13 @@ class ExpectationsImplSpec extends Specification {
 
         where:
         code      | method
-        'any'     | GET
-        'any'     | HEAD
-        'any'     | DELETE
-        'get'     | GET
-        'head'    | HEAD
-        'delete'  | DELETE
-        'options' | OPTIONS
+        'ANY'     | GET
+        'ANY'     | HEAD
+        'ANY'     | DELETE
+        'GET'     | GET
+        'HEAD'    | HEAD
+        'DELETE'  | DELETE
+        'OPTIONS' | OPTIONS
     }
 
     @Unroll '#method(String,Consumer)'() {
@@ -82,13 +82,13 @@ class ExpectationsImplSpec extends Specification {
 
         where:
         code      | method
-        'any'     | GET
-        'any'     | HEAD
-        'any'     | DELETE
-        'get'     | GET
-        'head'    | HEAD
-        'delete'  | DELETE
-        'options' | OPTIONS
+        'ANY'     | GET
+        'ANY'     | HEAD
+        'ANY'     | DELETE
+        'GET'     | GET
+        'HEAD'    | HEAD
+        'DELETE'  | DELETE
+        'OPTIONS' | OPTIONS
     }
 
     @Unroll '#method(String) (with content)'() {
@@ -102,12 +102,12 @@ class ExpectationsImplSpec extends Specification {
 
         where:
         code    | method
-        'any'   | POST
-        'any'   | PUT
-        'any'   | PATCH
-        'post'  | POST
-        'put'   | PUT
-        'patch' | PATCH
+        'ANY'   | POST
+        'ANY'   | PUT
+        'ANY'   | PATCH
+        'POST'  | POST
+        'PUT'   | PUT
+        'PATCH' | PATCH
     }
 
     @Unroll '#method(String,Closure) (with content)'() {
@@ -121,12 +121,12 @@ class ExpectationsImplSpec extends Specification {
 
         where:
         code    | method
-        'any'   | POST
-        'any'   | PUT
-        'any'   | PATCH
-        'post'  | POST
-        'put'   | PUT
-        'patch' | PATCH
+        'ANY'   | POST
+        'ANY'   | PUT
+        'ANY'   | PATCH
+        'POST'  | POST
+        'PUT'   | PUT
+        'PATCH' | PATCH
     }
 
     @Unroll '#method(String,Consumer) (with content)'() {
@@ -140,21 +140,21 @@ class ExpectationsImplSpec extends Specification {
 
         where:
         code    | method
-        'any'   | POST
-        'any'   | PUT
-        'any'   | PATCH
-        'post'  | POST
-        'put'   | PUT
-        'patch' | PATCH
+        'ANY'   | POST
+        'ANY'   | PUT
+        'ANY'   | PATCH
+        'POST'  | POST
+        'PUT'   | PUT
+        'PATCH' | PATCH
     }
 
     def 'matching'() {
         setup:
-        expectations.any('/charlie')
-        expectations.post('/alpha')
-        expectations.post('/bravo')
-        expectations.delete('/alpha')
-        expectations.get('/alpha')
+        expectations.ANY('/charlie')
+        expectations.POST('/alpha')
+        expectations.POST('/bravo')
+        expectations.DELETE('/alpha')
+        expectations.GET('/alpha')
 
         ClientRequest cr = new MockClientRequest(method: method, path: path)
 
@@ -179,7 +179,7 @@ class ExpectationsImplSpec extends Specification {
 
     def 'verification (success)'() {
         setup:
-        RequestWithContent req = expectations.post('/alpha').called(equalTo(1))
+        RequestWithContent req = expectations.POST('/alpha').called(equalTo(1))
         ((ErsatzRequestWithContent) req).mark(new MockClientRequest())
 
         expect:
@@ -188,7 +188,7 @@ class ExpectationsImplSpec extends Specification {
 
     def 'verification (failure)'() {
         setup:
-        expectations.post('/alpha').called(equalTo(1))
+        expectations.POST('/alpha').called(equalTo(1))
 
         when:
         expectations.verify()
@@ -200,7 +200,7 @@ class ExpectationsImplSpec extends Specification {
 
     @Unroll 'wildcard path (#path)'() {
         setup:
-        expectations.get('*')
+        expectations.GET('*')
 
         ClientRequest cr = new MockClientRequest(method: GET, path: path)
 
@@ -211,10 +211,9 @@ class ExpectationsImplSpec extends Specification {
         path << ['/alpha', '/bravo', '/charlie/delta']
     }
 
-
     @Unroll 'matching wildcarded any (#method)'() {
         setup:
-        expectations.any('*')
+        expectations.ANY('*')
 
         ClientRequest cr = new MockClientRequest(method: method, path: path)
 

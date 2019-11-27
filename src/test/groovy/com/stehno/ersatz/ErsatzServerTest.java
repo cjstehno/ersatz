@@ -16,10 +16,9 @@
 package com.stehno.ersatz;
 
 import com.stehno.ersatz.util.HttpClient;
-import org.junit.After;
-import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,7 +34,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ErsatzServerTest {
+class ErsatzServerTest {
 
     private ErsatzServer ersatzServer = new ErsatzServer();
     private final HttpClient http = new HttpClient();
@@ -48,8 +47,7 @@ public class ErsatzServerTest {
         ersatzServer.close();
     }
 
-    @Test
-    public void prototype() throws IOException {
+    @Test void prototype() throws IOException {
         final AtomicInteger counter = new AtomicInteger();
         final Consumer<ClientRequest> listener = request -> counter.incrementAndGet();
 
@@ -119,8 +117,7 @@ public class ErsatzServerTest {
         assertTrue(ersatzServer.verify());
     }
 
-    @Test
-    public void alternateConfiguration() throws IOException {
+    @Test void alternateConfiguration() throws IOException {
         ErsatzServer server = new ErsatzServer(config -> {
             config.expects().GET(startsWith("/hello")).responds().body("ok");
         });
@@ -129,10 +126,5 @@ public class ErsatzServerTest {
         assertEquals("ok", http.get(server.getHttpUrl() + "/hello/there").body().string());
 
         server.stop();
-    }
-
-    @After
-    public void after() {
-        ersatzServer.stop();
     }
 }

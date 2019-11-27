@@ -24,8 +24,8 @@ class ReusedServerSpec extends Specification {
 
     @AutoCleanup private ErsatzServer ersatzServer = new ErsatzServer({
         expectations {
-            get('/alpha').called(1).responds().body('alpha-response', TEXT_PLAIN)
-            get('/bravo').called(2).responds().body('bravo-response', TEXT_PLAIN)
+            GET('/alpha').called(1).responds().body('alpha-response', TEXT_PLAIN)
+            GET('/bravo').called(2).responds().body('bravo-response', TEXT_PLAIN)
         }
     })
 

@@ -104,30 +104,4 @@ class ScopingAndAutoCleanupSpec extends Specification {
         and:
         server.expectations.requests.size() == 1
     }
-
-    /**
-     * Example how any missing property is converted into `get(name)` expectation.
-     */
-    @Issue('https://github.com/cjstehno/ersatz/issues/110')
-    void 'Posting Four'() {
-        setup:
-            server.expectations {
-                POST(('/' + itsAKindOfMagic).trim()) {
-                    body INPUT_CONTENT, TEXT_PLAIN
-                    decoder TEXT_PLAIN, utf8String
-                    responder {
-                        body OUTPUT_CONTENT, TEXT_PLAIN
-                    }
-                }
-            }
-
-        when:
-            Response response = client.post(server.httpUrl('/Expectations (ErsatzRequest): <GET>, "itsAKindOfMagic",'), create(get('text/plain; charset=utf-8'), INPUT_CONTENT))
-
-        then:
-            response.body().string() == OUTPUT_CONTENT
-
-        and:
-            server.expectations.requests.size() == 2
-    }
 }
