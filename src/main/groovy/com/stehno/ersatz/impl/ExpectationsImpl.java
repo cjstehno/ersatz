@@ -76,6 +76,11 @@ public class ExpectationsImpl implements Expectations {
         return applyExpectation(new ErsatzRequestWithContent(HttpMethod.POST, matcher, globalDecoders, globalEncoders), consumer);
     }
 
+    @Override
+    public RequestWithContent PUT(Matcher<String> matcher, Consumer<RequestWithContent> config) {
+        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.PUT, matcher, globalDecoders, globalEncoders), config);
+    }
+
     private <R extends Request> R applyExpectation(final R request, final Consumer<R> consumer) {
         if (consumer != null) {
             consumer.accept(request);
@@ -84,69 +89,6 @@ public class ExpectationsImpl implements Expectations {
         requests.add(request);
 
         return request;
-    }
-
-    @Override
-    public RequestWithContent PUT(String path) {
-        return PUT(pathMatcher(path));
-    }
-
-    @Override
-    public RequestWithContent PUT(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return PUT(pathMatcher(path), closure);
-    }
-
-    @Override
-    public RequestWithContent PUT(String path, Consumer<RequestWithContent> config) {
-        return PUT(pathMatcher(path), config);
-    }
-
-    @Override
-    public RequestWithContent PUT(Matcher<String> matcher) {
-        return (RequestWithContent) expect(new ErsatzRequestWithContent(HttpMethod.PUT, matcher, globalDecoders, globalEncoders));
-    }
-
-    @Override
-    public RequestWithContent PUT(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return (RequestWithContent) expect(new ErsatzRequestWithContent(HttpMethod.PUT, matcher, globalDecoders, globalEncoders), closure);
-    }
-
-    @Override
-    public RequestWithContent PUT(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        final var request = new ErsatzRequestWithContent(HttpMethod.PUT, matcher, globalDecoders, globalEncoders);
-        config.accept(request);
-        requests.add(request);
-        return request;
-    }
-
-    @Override
-    public RequestWithContent put(String path) {
-        return PUT(path);
-    }
-
-    @Override
-    public RequestWithContent put(Matcher<String> matcher) {
-        return PUT(matcher);
-    }
-
-    @Override
-    public RequestWithContent put(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return PUT(path, closure);
-    }
-
-    @Override
-    public RequestWithContent put(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return PUT(matcher, closure);
-    }
-
-    @Override
-    public RequestWithContent put(String path, Consumer<RequestWithContent> config) {
-        return PUT(path, config);
-    }
-
-    @Override
-    public RequestWithContent put(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        return PUT(matcher, config);
     }
 
     @Override

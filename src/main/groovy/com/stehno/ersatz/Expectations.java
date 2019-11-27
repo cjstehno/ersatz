@@ -15,10 +15,7 @@
  */
 package com.stehno.ersatz;
 
-import com.stehno.ersatz.impl.AnyExpectations;
-import com.stehno.ersatz.impl.GetExpectations;
-import com.stehno.ersatz.impl.HeadExpectations;
-import com.stehno.ersatz.impl.PostExpectations;
+import com.stehno.ersatz.impl.*;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import org.hamcrest.Matcher;
@@ -36,117 +33,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  * match for a specific expectation to be considered a match and if there are multiple matching expectations, the first one configured will be the
  * one considered as the match.
  */
-public interface Expectations extends AnyExpectations, GetExpectations, HeadExpectations, PostExpectations {
-
-    /**
-     * Allows configuration of a PUT request expectation.
-     *
-     * @param path the expected request path
-     * @return a <code>RequestWithContent</code> configuration object
-     */
-    @Deprecated(since = "2.0", forRemoval = true) RequestWithContent put(String path);
-
-    /**
-     * Allows configuration of a PUT request expectation.
-     *
-     * @param path the expected request path
-     * @return a <code>RequestWithContent</code> configuration object
-     */
-    RequestWithContent PUT(String path);
-
-    /**
-     * Allows configuration of a PUT request expectation.
-     *
-     * @param matcher the path matcher
-     * @return a <code>RequestWithContent</code> configuration object
-     */
-    @Deprecated(since = "2.0", forRemoval = true) RequestWithContent put(Matcher<String> matcher);
-
-    /**
-     * Allows configuration of a PUT request expectation.
-     *
-     * @param matcher the path matcher
-     * @return a <code>RequestWithContent</code> configuration object
-     */
-    RequestWithContent PUT(Matcher<String> matcher);
-
-    /**
-     * Allows configuration of a PUT request expectation using the Groovy DSL.
-     *
-     * @param path the expected request path
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    @Deprecated(since = "2.0", forRemoval = true)
-    RequestWithContent put(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
-
-    /**
-     * Allows configuration of a PUT request expectation using the Groovy DSL.
-     *
-     * @param path the expected request path
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    RequestWithContent PUT(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
-
-    /**
-     * Allows configuration of a PUT request expectation using the Groovy DSL.
-     *
-     * @param matcher the path matcher
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    @Deprecated(since = "2.0", forRemoval = true)
-    RequestWithContent put(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
-
-    /**
-     * Allows configuration of a PUT request expectation using the Groovy DSL.
-     *
-     * @param matcher the path matcher
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    RequestWithContent PUT(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure);
-
-    /**
-     * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
-     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
-     *
-     * @param path the expected request path
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param config the configuration consumer
-     */
-    @Deprecated(since = "2.0", forRemoval = true) RequestWithContent put(String path, Consumer<RequestWithContent> config);
-
-    /**
-     * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
-     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
-     *
-     * @param path the expected request path
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param config the configuration consumer
-     */
-    RequestWithContent PUT(String path, Consumer<RequestWithContent> config);
-
-    /**
-     * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
-     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
-     *
-     * @param matcher the path matcher
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param config the configuration consumer
-     */
-    @Deprecated(since = "2.0", forRemoval = true) RequestWithContent put(Matcher<String> matcher, Consumer<RequestWithContent> config);
-
-    /**
-     * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
-     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
-     *
-     * @param matcher the path matcher
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param config the configuration consumer
-     */
-    RequestWithContent PUT(Matcher<String> matcher, Consumer<RequestWithContent> config);
+public interface Expectations extends AnyExpectations, GetExpectations, HeadExpectations, PostExpectations, PutExpectations {
 
     /**
      * Allows configuration of a DELETE request expectation.
