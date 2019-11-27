@@ -20,12 +20,12 @@ import groovy.lang.DelegatesTo;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import static com.stehno.ersatz.util.MimeTypes.createMimeType;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
@@ -66,7 +66,7 @@ public class RequestDecoders {
      * @param contentType the content type
      * @param decoder     the decoder function
      */
-    public void register(final String contentType, final BiFunction<byte[], DecodingContext, Object> decoder)  {
+    public void register(final String contentType, final BiFunction<byte[], DecodingContext, Object> decoder) {
         decoders.stream()
             .filter(m -> m.mimeType.toString().equals(contentType))
             .findFirst()
@@ -81,7 +81,7 @@ public class RequestDecoders {
      * @param contentType the content type
      * @return the decoder function
      */
-    public BiFunction<byte[], DecodingContext, Object> findDecoder(final ContentType contentType)  {
+    public BiFunction<byte[], DecodingContext, Object> findDecoder(final ContentType contentType) {
         return findDecoder(contentType.getValue());
     }
 
@@ -91,7 +91,7 @@ public class RequestDecoders {
      * @param contentType the content type
      * @return the decoder function
      */
-    public BiFunction<byte[], DecodingContext, Object> findDecoder(final String contentType)  {
+    public BiFunction<byte[], DecodingContext, Object> findDecoder(final String contentType) {
         final MimeType mimeType = createMimeType(contentType);
 
         final List<DecoderMapping> found = decoders.stream()
@@ -110,15 +110,6 @@ public class RequestDecoders {
 
         } else {
             return found.get(0).decoder;
-        }
-    }
-
-    private static MimeType createMimeType(final String value){
-        try {
-            return new MimeType(value);
-        } catch (MimeTypeParseException e) {
-            // TODO: better way?
-            throw new IllegalArgumentException(e);
         }
     }
 

@@ -67,7 +67,6 @@ public class Decoders {
                 try {
                     map.put(decode(parts[0], UTF_8.name()), decode(parts[1], UTF_8.name()));
                 } catch (UnsupportedEncodingException e) {
-                    // TODO: better?
                     throw new IllegalArgumentException(e);
                 }
             }
@@ -80,15 +79,14 @@ public class Decoders {
      * Decoder that converts request content bytes into a <code>MultipartRequestContent</code> object populated with the multipart request content.
      */
     public static final BiFunction<byte[], DecodingContext, Object> multipart = (content, ctx) -> {
-        File tempDir = null;
+        File tempDir;
         try {
             tempDir = Files.createTempDirectory("ersatz-").toFile();
         } catch (IOException e) {
-            // TODO: better
             throw new IllegalArgumentException(e);
         }
 
-        List<FileItem> parts = new LinkedList<>();
+        List<FileItem> parts;
         try {
             parts = new FileUpload(new DiskFileItemFactory(10_000, tempDir)).parseRequest(new UploadContext() {
                 @Override
@@ -117,7 +115,6 @@ public class Decoders {
                 }
             });
         } catch (FileUploadException e) {
-            // TODO: better
             throw new IllegalArgumentException(e);
         }
 

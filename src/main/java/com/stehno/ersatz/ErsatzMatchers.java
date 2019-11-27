@@ -30,13 +30,11 @@ import static org.hamcrest.Matchers.equalTo;
  */
 public class ErsatzMatchers {
 
-    // FIXME: see if these can be removed
-
     public static Matcher<String> pathMatcher(final String path) {
         return path.equals("*") ? Matchers.any(String.class) : equalTo(path);
     }
 
-    public static Matcher<Iterable<? super String>> stringIterableMatcher(final Collection<Matcher<? super String>> matchers){
+    public static Matcher<Iterable<? super String>> stringIterableMatcher(final Collection<Matcher<? super String>> matchers) {
         return new StringIterableMatcher(matchers);
     }
 
@@ -60,16 +58,6 @@ public class ErsatzMatchers {
     }
 
     /**
-     * The provided matcher must match at least one element of the target collection (as Iterable).
-     *
-     * @param matcher the matcher to be wrapped
-     * @return the wrapping matcher
-     */
-    public static <T> Matcher<Iterable<T>> collectionContainsMatch(final Matcher<T> matcher) {
-        return new CollectionContainsMatchMatcher<T>(matcher);
-    }
-
-    /**
      * The provided value must be a byte array with the same length and same first and last element values.
      *
      * @param array the array
@@ -79,36 +67,7 @@ public class ErsatzMatchers {
         return new ByteArrayMatcher(array);
     }
 
-    private static class CollectionContainsMatchMatcher<T> extends BaseMatcher<Iterable<T>> {
-
-        private final Matcher<T> matcher;
-
-        CollectionContainsMatchMatcher(final Matcher<T> matcher) {
-            this.matcher = matcher;
-        }
-
-        @Override
-        public boolean matches(final Object item) {
-            if( item instanceof  Iterable){
-                final var iter = (Iterable<T>)item;
-                for (final T t : iter) {
-                    if( matcher.matches(t)){
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public void describeTo(Description description) {
-            description.appendText("A collection matching ");
-            description.appendDescriptionOf(matcher);
-        }
-    }
-
     private static class ByteArrayMatcher extends BaseMatcher<byte[]> {
-        // FIXME: this can be better
 
         private final byte[] array;
 

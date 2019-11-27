@@ -44,11 +44,11 @@ public class Encoders {
      */
     public static final Function<Object, String> binaryBase64 = obj -> obj == null ? "" : Base64.getEncoder().encodeToString(toBytes(obj));
 
-    private static byte[] toBytes(final Object obj){
-        if( obj instanceof byte[]){
+    private static byte[] toBytes(final Object obj) {
+        if (obj instanceof byte[]) {
             return (byte[]) obj;
-        } else if( obj instanceof ByteArrayInputStream){
-            return ((ByteArrayInputStream)obj).readAllBytes();
+        } else if (obj instanceof ByteArrayInputStream) {
+            return ((ByteArrayInputStream) obj).readAllBytes();
         } else {
             return obj.toString().getBytes();
         }
@@ -61,8 +61,7 @@ public class Encoders {
      */
     public static final Function<Object, String> multipart = obj -> {
         if (!(obj instanceof MultipartResponseContent)) {
-            // TODO: better
-            throw new IllegalArgumentException("MultipartRequestContent is required.");
+            throw new IllegalArgumentException(obj.getClass() + " found, MultipartRequestContent is required.");
         }
 
         final ErsatzMultipartResponseContent mrc = (ErsatzMultipartResponseContent) obj;

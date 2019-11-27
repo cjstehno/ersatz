@@ -458,7 +458,7 @@ public class ErsatzServer implements ServerConfig, Closeable {
                                 } else {
                                     final UnmatchedRequestReport report = new UnmatchedRequestReport(clientRequest, expectations.getRequests().stream().map(r -> (ErsatzRequest) r).collect(toList()));
 
-                                    log.warn(report.toString());
+                                    log.warn(report.render());
 
                                     if (mismatchToConsole) {
                                         System.out.println(report);
@@ -647,7 +647,6 @@ public class ErsatzServer implements ServerConfig, Closeable {
             return sslContext;
 
         } catch (Exception ex) {
-            // FIXME: better?
             throw new IllegalStateException(ex);
         }
     }

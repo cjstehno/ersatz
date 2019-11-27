@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz;
 
+import com.stehno.ersatz.util.MimeTypes;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
@@ -25,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.stehno.ersatz.util.MimeTypes.createMimeType;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
@@ -59,15 +61,6 @@ public class ResponseEncoders {
      */
     public void register(final String contentType, final Class objectType, final Function<Object, String> encoder) {
         encoders.add(new EncoderMapping(createMimeType(contentType), objectType, encoder));
-    }
-
-    // FIXME: merge with the other one to remove duplication
-    private static MimeType createMimeType(final String value) {
-        try {
-            return new MimeType(value);
-        } catch (MimeTypeParseException e) {
-            throw new IllegalArgumentException(e);
-        }
     }
 
     /**

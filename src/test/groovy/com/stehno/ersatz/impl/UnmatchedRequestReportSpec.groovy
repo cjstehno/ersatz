@@ -63,7 +63,7 @@ class UnmatchedRequestReportSpec extends Specification {
         ]
 
         when:
-        String string = new UnmatchedRequestReport(request, expectations).toString()
+        String string = new UnmatchedRequestReport(request, expectations).render()
 
         then:
         string == """            # Unmatched Request

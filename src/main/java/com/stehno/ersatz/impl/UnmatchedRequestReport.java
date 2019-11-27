@@ -28,13 +28,9 @@ import static java.util.stream.Collectors.joining;
 /**
  * Helper object used to build and render a report of the unmatched request and the configured expectations.
  */
-public class UnmatchedRequestReport {
+public class UnmatchedRequestReport implements Report {
 
     private static final List<String> TEXT_CONTENT_HINTS = List.of("text/", "/json", "application/x-www-form-urlencoded");
-    // FIXME: these are duplicated in the reports
-    private static final String RED = "\u001B[31m";
-    private static final String GREEN = "\u001B[32m";
-    private static final String RESET = "\u001B[0m";
 
     private final ClientRequest request;
     private final List<ErsatzRequest> expectations;
@@ -45,7 +41,7 @@ public class UnmatchedRequestReport {
         this.expectations = expectations;
     }
 
-    public String toString() {
+    public String render() {
         if (cache.get() == null) {
             final StringBuilder out = new StringBuilder();
 

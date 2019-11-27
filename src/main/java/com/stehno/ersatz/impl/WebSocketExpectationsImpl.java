@@ -145,16 +145,14 @@ public class WebSocketExpectationsImpl implements WebSocketExpectations {
     }
 
     public boolean verify(final long timeout, final TimeUnit unit) {
-        boolean arrived;
+        return waitForLatch(timeout, unit) && receivedMessages.stream().allMatch(m -> m.marked(timeout, unit));
+    }
+
+    private boolean waitForLatch(final long timeout, final TimeUnit unit){
         try {
-            arrived = connectionLatch.await(timeout, unit);
+            return connectionLatch.await(timeout, unit);
         } catch (InterruptedException e) {
-            // TODO: better?
-            arrived = false;
+            return false;
         }
-
-        final var received = receivedMessages.stream().allMatch(m -> m.marked(timeout, unit));
-
-        return arrived && received;
     }
 }

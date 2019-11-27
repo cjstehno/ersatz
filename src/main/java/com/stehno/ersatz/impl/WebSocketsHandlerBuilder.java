@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Optional;
 
 /**
  * Used to build the HttpHandler chain for web socket support.
@@ -97,7 +96,7 @@ public class WebSocketsHandlerBuilder {
                 log.warn("Received ({}) message that has no configured expectation: {}", WsMessageType.resolve(message), message);
 
                 final var report = new UnmatchedWsReport(wsExpectation);
-                log.warn(report.toString());
+                log.warn(report.render());
 
                 if (mismatchToConsole) {
                     System.out.println(report);

@@ -15,18 +15,12 @@
  */
 package com.stehno.ersatz.impl;
 
-import groovy.transform.Memoized;
-
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-public class UnmatchedWsReport {
-
-    private static final String RED = "\u001B[31m";
-    private static final String GREEN = "\u001B[32m";
-    private static final String RESET = "\u001B[0m";
+public class UnmatchedWsReport implements Report {
 
     private final WebSocketExpectationsImpl expectations;
     private final AtomicReference<String> cached = new AtomicReference<>();
@@ -36,7 +30,7 @@ public class UnmatchedWsReport {
     }
 
     @Override
-    public String toString() {
+    public String render() {
         if (cached.get() == null) {
             final StringBuilder out = new StringBuilder();
 
