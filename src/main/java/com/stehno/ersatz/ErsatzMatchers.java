@@ -19,6 +19,9 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
+import org.hamcrest.collection.IsIterableContainingInAnyOrder;
+
+import java.util.Collection;
 
 import static org.hamcrest.Matchers.equalTo;
 
@@ -31,6 +34,29 @@ public class ErsatzMatchers {
 
     public static Matcher<String> pathMatcher(final String path) {
         return path.equals("*") ? Matchers.any(String.class) : equalTo(path);
+    }
+
+    public static Matcher<Iterable<? super String>> stringIterableMatcher(final Collection<Matcher<? super String>> matchers){
+        return new StringIterableMatcher(matchers);
+    }
+
+    private static class StringIterableMatcher extends BaseMatcher<Iterable<? super String>> {
+
+        private final Collection<Matcher<? super String>> matchers;
+
+        StringIterableMatcher(final Collection<Matcher<? super String>> matchers) {
+            this.matchers = matchers;
+        }
+
+        @Override public boolean matches(final Object item) {
+            return IsIterableContainingInAnyOrder.containsInAnyOrder(matchers).matches(item);
+        }
+
+        @Override public void describeTo(final Description description) {
+            description.appendText("An Iterable<String> matching {");
+            matchers.forEach(description::appendDescriptionOf);
+            description.appendText("}");
+        }
     }
 
     /**

@@ -19,11 +19,8 @@ import com.stehno.ersatz.*;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import org.awaitility.core.ConditionTimeoutException;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
-import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.hamcrest.core.IsIterableContaining;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
@@ -36,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+import static com.stehno.ersatz.ErsatzMatchers.stringIterableMatcher;
 import static com.stehno.ersatz.HttpMethod.*;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 import static java.util.Collections.unmodifiableList;
@@ -119,25 +117,7 @@ public class ErsatzRequest implements Request {
         final var queryMatchers = new LinkedList<Matcher<? super String>>();
         value.forEach(v -> queryMatchers.add(equalTo(v)));
 
-        return query(name, new QueryMatcher(queryMatchers));
-    }
-
-    // FIXME: refactor this somewhere
-    private static class QueryMatcher extends BaseMatcher<Iterable<? super String>> {
-
-        private final Collection<Matcher<? super String>> matchers;
-
-        QueryMatcher(final Collection<Matcher<? super String>> matchers) {
-            this.matchers = matchers;
-        }
-
-        @Override public boolean matches(final Object item) {
-            return IsIterableContainingInAnyOrder.containsInAnyOrder(matchers).matches(item);
-        }
-
-        @Override public void describeTo(final Description description) {
-            // fIXME: impl
-        }
+        return query(name, stringIterableMatcher(queryMatchers));
     }
 
     @Override

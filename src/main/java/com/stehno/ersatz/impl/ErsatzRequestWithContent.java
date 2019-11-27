@@ -16,16 +16,13 @@
 package com.stehno.ersatz.impl;
 
 import com.stehno.ersatz.*;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.hamcrest.core.IsIterableContaining;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.function.BiFunction;
 
+import static com.stehno.ersatz.ErsatzMatchers.stringIterableMatcher;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
 
@@ -64,17 +61,17 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
 
     @Override
     public RequestWithContent body(final Object obj, final String contentType) {
-      return  body (equalTo (obj), contentType);
+        return body(equalTo(obj), contentType);
     }
 
     @Override
     public RequestWithContent body(final Matcher<Object> bodyMatcher, final ContentType contentType) {
-        return body( bodyMatcher, contentType.getValue());
+        return body(bodyMatcher, contentType.getValue());
     }
 
     @Override
     public RequestWithContent body(final Object obj, final ContentType contentType) {
-        return body( obj, contentType.getValue());
+        return body(obj, contentType.getValue());
     }
 
     @Override
@@ -91,7 +88,7 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
 
     @Override
     public RequestWithContent param(String name, String value) {
-        return param( name, value !=null ? IsIterableContaining.hasItem(value) : IsIterableContaining.hasItem(""));
+        return param(name, value != null ? IsIterableContaining.hasItem(value) : IsIterableContaining.hasItem(""));
     }
 
     @Override
@@ -99,30 +96,12 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
         final var matchers = new LinkedList<Matcher<? super String>>();
         values.forEach(v -> matchers.add(equalTo(v)));
 
-        return param(name, new StringIterableMatcher(matchers));
-    }
-
-    // FIXME: merge with QueryMatcher to reduce duplication
-    private static class StringIterableMatcher extends BaseMatcher<Iterable<? super String>> {
-
-        private final Collection<Matcher<? super String>> matchers;
-
-        StringIterableMatcher(final Collection<Matcher<? super String>> matchers) {
-            this.matchers = matchers;
-        }
-
-        @Override public boolean matches(final Object item) {
-            return IsIterableContainingInAnyOrder.containsInAnyOrder(matchers).matches(item);
-        }
-
-        @Override public void describeTo(final Description description) {
-            // fIXME: impl
-        }
+        return param(name, stringIterableMatcher(matchers));
     }
 
     @Override
     public RequestWithContent param(String name, Matcher<Iterable<? super String>> matchers) {
-        addMatcher( RequestMatcher.param(name, matchers));
+        addMatcher(RequestMatcher.param(name, matchers));
         return this;
     }
 }
