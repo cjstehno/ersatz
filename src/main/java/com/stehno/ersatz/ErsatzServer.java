@@ -44,6 +44,7 @@ import java.net.InetSocketAddress;
 import java.net.URL;
 import java.security.KeyStore;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -449,23 +450,26 @@ public class ErsatzServer implements ServerConfig, Closeable {
 
                                 log.debug("Request: {}", clientRequest);
 
-                                final ErsatzRequest request = (ErsatzRequest) expectations.findMatch(clientRequest);
-                                if (request != null) {
-                                    Response currentResponse = request.getCurrentResponse();
-                                    send(exchange, currentResponse);
-                                    request.mark(clientRequest);
+                                final Optional<Request> request = expectations.findMatch(clientRequest);
 
-                                } else {
-                                    final UnmatchedRequestReport report = new UnmatchedRequestReport(clientRequest, expectations.getRequests().stream().map(r -> (ErsatzRequest) r).collect(toList()));
+                                request.ifPresentOrElse(
+                                    req -> {
+                                        final var ereq = (ErsatzRequest) req;
+                                        send(exchange, ereq.getCurrentResponse());
+                                        ereq.mark(clientRequest);
+                                    },
+                                    () -> {
+                                        final var report = new UnmatchedRequestReport(clientRequest, expectations.getRequests().stream().map(r -> (ErsatzRequest) r).collect(toList()));
 
-                                    log.warn(report.render());
+                                        log.warn(report.render());
 
-                                    if (mismatchToConsole) {
-                                        System.out.println(report);
+                                        if (mismatchToConsole) {
+                                            System.out.println(report);
+                                        }
+
+                                        exchange.setStatusCode(404).getResponseSender().send(NOT_FOUND_BODY);
                                     }
-
-                                    exchange.setStatusCode(404).getResponseSender().send(NOT_FOUND_BODY);
-                                }
+                                );
                             }
                         }
                     )

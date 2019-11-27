@@ -56,7 +56,6 @@ class ErsatzRequestWithContentSpec extends Specification {
     }
 
     def 'matching: body'() {
-        // FIXME: this test passes but shows a failed match - what gives?
         setup:
         server.expectations {
             POST('/posting') {

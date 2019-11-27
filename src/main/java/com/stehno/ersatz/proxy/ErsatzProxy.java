@@ -115,8 +115,7 @@ public class ErsatzProxy {
             client.setTtl(1000);
             client.addHost(targetUri);
 
-            // TODO: investigate deprecation of handler
-            final var proxyHandler = new ProxyHandler(client, null);
+            final var proxyHandler = ProxyHandler.builder().setProxyClient(client).build();
 
             builder.setHandler(new BlockingHandler(new HttpHandler() {
                 @Override public void handleRequest(final HttpServerExchange exchange) throws Exception {
@@ -148,7 +147,6 @@ public class ErsatzProxy {
     public boolean verify() {
         for (final ProxyRequestMatcher matcher : matchers) {
             if (matcher.getMatchCount() <= 0) {
-                // TODO: better way to handle?
                 throw new IllegalArgumentException("Expected requests were not matched.");
             }
         }

@@ -159,7 +159,7 @@ class ExpectationsImplSpec extends Specification {
         ClientRequest cr = new MockClientRequest(method: method, path: path)
 
         when:
-        Request req = expectations.findMatch(cr)
+        Request req = expectations.findMatch(cr).get()
 
         then:
         req.matches(cr)
@@ -205,7 +205,7 @@ class ExpectationsImplSpec extends Specification {
         ClientRequest cr = new MockClientRequest(method: GET, path: path)
 
         expect:
-        expectations.findMatch(cr).matches(cr)
+        expectations.findMatch(cr).get().matches(cr)
 
         where:
         path << ['/alpha', '/bravo', '/charlie/delta']
@@ -219,7 +219,7 @@ class ExpectationsImplSpec extends Specification {
         ClientRequest cr = new MockClientRequest(method: method, path: path)
 
         expect:
-        expectations.findMatch(cr).matches(cr)
+        expectations.findMatch(cr).get().matches(cr)
 
         where:
         method  | path

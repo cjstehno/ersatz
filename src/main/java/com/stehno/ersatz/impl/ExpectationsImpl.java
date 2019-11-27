@@ -119,9 +119,8 @@ public class ExpectationsImpl implements Expectations {
      * @param clientRequest the incoming client request
      * @return the matching request expectation
      */
-    // FIXME: consider converting to Optional<Request> here
-    public Request findMatch(final ClientRequest clientRequest) {
-        return requests.stream().filter(r -> ((ErsatzRequest) r).matches(clientRequest)).findFirst().orElse(null);
+    public Optional<Request> findMatch(final ClientRequest clientRequest) {
+        return requests.stream().filter(r -> ((ErsatzRequest) r).matches(clientRequest)).findFirst();
     }
 
     public WebSocketExpectations findWsMatch(final String path) {
@@ -147,7 +146,6 @@ public class ExpectationsImpl implements Expectations {
     public boolean verify(final long timeout, final TimeUnit unit) {
         for (final Request r : requests) {
             if (!((ErsatzRequest) r).verify(timeout, unit)) {
-                // FIXME: something else
                 throw new IllegalArgumentException("Expectations for " + r + " were not met.");
             }
         }
@@ -155,7 +153,6 @@ public class ExpectationsImpl implements Expectations {
         for (final String p : webSockets.keySet()) {
             final var w = webSockets.get(p);
             if (!(((WebSocketExpectationsImpl) w).verify(timeout, unit))) {
-                // FIXME: something else
                 throw new IllegalArgumentException("WebSocket expectations for " + w + " were not met.");
             }
         }
