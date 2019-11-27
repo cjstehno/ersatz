@@ -91,7 +91,7 @@ class UnmatchedRequestReportSpec extends Specification {
             Expectation 1 (3 matchers):
               ${RED}X HTTP method matches <PUT>${RESET}
               ${RED}X Path matches a string starting with "/alpha/bar"${RESET}
-              ${RED}X Protocol matches equalToIgnoringCase("HTTPS")${RESET}
+              ${RED}X Protocol matches a string equal to "HTTPS" ignoring case${RESET}
               (3 matchers: 0 matched, ${RED}3 failed${RESET})
               
         """.stripIndent()
