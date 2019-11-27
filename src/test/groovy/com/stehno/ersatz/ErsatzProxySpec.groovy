@@ -33,7 +33,7 @@ class ErsatzProxySpec extends Specification {
                 GET('/').called(1).responds().code(200).body('Hello', TEXT_PLAIN)
                 GET('/foo').called(1).responds().code(200).body('Foo!', TEXT_PLAIN)
             }
-        })
+        }).start()
 
         ErsatzProxy ersatzProxy = new ErsatzProxy({
             target ersatzServer.httpUrl
@@ -71,7 +71,7 @@ class ErsatzProxySpec extends Specification {
                 GET('/').called(1).responds().code(200).body('Hello', TEXT_PLAIN)
                 GET('/foo').called(1).responds().code(200).body('Foo!', TEXT_PLAIN)
             }
-        })
+        }).start()
 
         ErsatzProxy ersatzProxy = new ErsatzProxy(new Consumer<ProxyConfig>() {
             @Override void accept(final ProxyConfig config) {

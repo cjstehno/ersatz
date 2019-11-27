@@ -24,8 +24,8 @@ import spock.lang.AutoCleanup
 import spock.lang.Specification
 
 import static com.stehno.ersatz.ContentType.*
-import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
 import static com.stehno.ersatz.MultipartRequestMatcher.multipartMatcher
+import static com.stehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY
 import static okhttp3.MediaType.parse
 import static okhttp3.Request.Builder
 import static okhttp3.RequestBody.create

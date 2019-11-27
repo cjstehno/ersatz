@@ -29,10 +29,13 @@ class ErsatzServerPortsSpec extends Specification {
             GET('/hi').responds().code(200)
         }
     })
+
     private HttpClient http = new HttpClient()
 
     void 'running with explicit port'(){
         expect:
+        ersatz.start()
+
         http.get(ersatz.httpUrl('/hi')).code() == 200
 
         and:

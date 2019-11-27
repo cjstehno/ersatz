@@ -60,7 +60,7 @@ class ScopingAndAutoCleanupSpec extends Specification {
         response.body().string() == OUTPUT_CONTENT
 
         and:
-        server.expectations.requests.size() == 1
+        server.expects().requests.size() == 1
     }
 
     void 'Posting Two'() {
@@ -85,7 +85,7 @@ class ScopingAndAutoCleanupSpec extends Specification {
         response.body().string() == OUTPUT_CONTENT
 
         and:
-        server.expectations.requests.size() == 1
+        server.expects().requests.size() == 1
     }
 
     void 'Posting Three'() {
@@ -102,6 +102,6 @@ class ScopingAndAutoCleanupSpec extends Specification {
         response.body().string() == OUTPUT_CONTENT
 
         and:
-        server.expectations.requests.size() == 1
+        server.expects().requests.size() == 1
     }
 }

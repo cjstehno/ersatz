@@ -236,7 +236,7 @@ class ErsatzServerSpec extends Specification {
             expectations {
                 GET(startsWith('/hello')).responds().body('ok')
             }
-        })
+        }).start()
 
         expect:
         "${server.httpUrl}/hello/there".toURL().text == 'ok'
@@ -374,7 +374,7 @@ class ErsatzServerSpec extends Specification {
             expectations {
                 GET('/proxied').called(1).responds().body('forwarded').code(200)
             }
-        })
+        }).start()
 
         ersatzServer.expectations {
             GET('/proxied').called(0).responds().body('original').code(200)

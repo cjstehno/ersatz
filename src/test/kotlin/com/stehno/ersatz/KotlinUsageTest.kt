@@ -50,7 +50,7 @@ class KotlinUsageTest {
                     code(200)
                 }
             }
-        }
+        }.start()
 
         val http = OkHttpClient.Builder().build()
         val request: okhttp3.Request = okhttp3.Request.Builder().url("${ersatz.httpUrl}/kotlin").build()

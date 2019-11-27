@@ -22,12 +22,14 @@ import static com.stehno.ersatz.ContentType.TEXT_PLAIN
 
 class ReusedServerSpec extends Specification {
 
-    @AutoCleanup private ErsatzServer ersatzServer = new ErsatzServer({
-        expectations {
+    @AutoCleanup private ErsatzServer ersatzServer = new ErsatzServer()
+
+    def setup(){
+        ersatzServer.expectations {
             GET('/alpha').called(1).responds().body('alpha-response', TEXT_PLAIN)
             GET('/bravo').called(2).responds().body('bravo-response', TEXT_PLAIN)
         }
-    })
+    }
 
     def 'expected calls'() {
         when:
