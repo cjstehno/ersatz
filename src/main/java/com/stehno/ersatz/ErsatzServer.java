@@ -20,7 +20,6 @@ import com.stehno.ersatz.server.UnderlyingServer;
 import com.stehno.ersatz.server.undertow.UndertowUnderlyingServer;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import org.xnio.Options;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.io.Closeable;
@@ -28,8 +27,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
-import static io.undertow.UndertowOptions.*;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**

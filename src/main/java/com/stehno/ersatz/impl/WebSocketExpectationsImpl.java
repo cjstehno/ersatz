@@ -37,6 +37,8 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
 
 public class WebSocketExpectationsImpl implements WebSocketExpectations {
 
+    // FIXME: server-specific
+
     private final CountDownLatch connectionLatch = new CountDownLatch(1);
     private final List<ReceivedMessageImpl> receivedMessages = new LinkedList<>();
     private final List<SentMessageImpl> sentMessages = new LinkedList<>();

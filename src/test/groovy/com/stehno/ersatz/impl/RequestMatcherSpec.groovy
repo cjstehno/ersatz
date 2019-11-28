@@ -87,10 +87,10 @@ class RequestMatcherSpec extends Specification {
         param('email', contains(containsString('@goomail.com'))).matches(cr) == result
 
         where:
-        cr                                                          || result
-        new MockClientRequest()                                     || false
-        new MockClientRequest(body: 'email=foo@goomail.com&spam=n') || true
-        new MockClientRequest(body: 'spam=n')                       || false
+        cr                                                                                                                 || result
+        new MockClientRequest()                                                                                            || false
+        new MockClientRequest(bodyParameters: [email: ['foo@goomail.com'] as Deque<String>, spam: ['n'] as Deque<String>]) || true
+        new MockClientRequest(bodyParameters: [spam: ['n'] as Deque<String>])                                              || false
     }
 
     def 'cookie'() {

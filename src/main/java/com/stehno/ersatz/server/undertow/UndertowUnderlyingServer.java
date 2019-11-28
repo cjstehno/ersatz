@@ -16,9 +16,6 @@
 package com.stehno.ersatz.server.undertow;
 
 import com.stehno.ersatz.*;
-import com.stehno.ersatz.auth.BasicAuthHandler;
-import com.stehno.ersatz.auth.DigestAuthHandler;
-import com.stehno.ersatz.auth.SimpleIdentityManager;
 import com.stehno.ersatz.impl.*;
 import com.stehno.ersatz.server.UnderlyingServer;
 import io.undertow.Undertow;
@@ -47,8 +44,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 
 public class UndertowUnderlyingServer implements UnderlyingServer {
-
-    // FIXME: need to find and isolate all undertow-specific code
 
     private static final Logger log = LoggerFactory.getLogger(UndertowUnderlyingServer.class);
     private static final String LOCALHOST = "localhost";

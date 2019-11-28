@@ -18,13 +18,11 @@ package com.stehno.ersatz.impl;
 import com.stehno.ersatz.ClientRequest;
 import com.stehno.ersatz.Cookie;
 import com.stehno.ersatz.HttpMethod;
-import io.undertow.util.HttpString;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER;
 
@@ -35,6 +33,7 @@ public class MockClientRequest implements ClientRequest {
     private String path;
     private final Map<String, Deque<String>> queryParams = new LinkedHashMap<>();
     private final Map<String, Deque<String>> headers = new LinkedHashMap<>();
+    private final Map<String, Deque<String>> bodyParameters = new LinkedHashMap<>();
     private Map<String, Cookie> cookies = new LinkedHashMap<>();
     private byte[] body;
     private int contentLength;
@@ -83,6 +82,15 @@ public class MockClientRequest implements ClientRequest {
 
     @Override public byte[] getBody() {
         return body;
+    }
+
+    @Override public Map<String, Deque<String>> getBodyParameters() {
+        return bodyParameters;
+    }
+
+    public void setBodyParameters(final Map<String, Deque<String>> params) {
+        bodyParameters.clear();
+        bodyParameters.putAll(params);
     }
 
     @Override public long getContentLength() {

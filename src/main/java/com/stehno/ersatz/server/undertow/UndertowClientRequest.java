@@ -19,17 +19,18 @@ import com.stehno.ersatz.ClientRequest;
 import com.stehno.ersatz.Cookie;
 import com.stehno.ersatz.HttpMethod;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.util.HeaderMap;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER;
+import static io.undertow.util.QueryParameterUtils.parseQueryString;
 import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyMap;
 
 /**
  * The primary <code>ClientRequest</code> implementation used to wrap and expose the important parts of the underlying Undertow request context.
@@ -131,6 +132,11 @@ public class UndertowClientRequest implements ClientRequest {
         }
 
         return content.get();
+    }
+
+    @Override public Map<String, Deque<String>> getBodyParameters() {
+        final  var body = getBody();
+        return body != null ? parseQueryString(new String(body, UTF_8), UTF_8.displayName()) : emptyMap();
     }
 
     @Override

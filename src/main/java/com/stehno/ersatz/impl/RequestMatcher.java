@@ -24,15 +24,13 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.IsIterableContaining;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER;
-import static io.undertow.util.QueryParameterUtils.parseQueryString;
+import static java.util.Arrays.asList;
 
 /**
  * Request-specific wrapper around hamcrest matchers to provide property-based matching based on request attributes.
@@ -115,7 +113,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
             cr -> {
                 final var qs = cr.getQueryParams().get(name);
                 if (qs != null) {
-                    return new ArrayDeque<>(Arrays.asList(qs.toArray(new String[0])));
+                    return new ArrayDeque<>(asList(qs.toArray(new String[0])));
                 } else {
                     return null;
                 }
@@ -134,10 +132,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
     public static RequestMatcher param(final String name, final Matcher<Iterable<? super String>> m) {
         return new RequestMatcher(
             m,
-            cr -> {
-                final var qs = parseQueryString(new String(cr.getBody() != null ? cr.getBody() : new byte[0], StandardCharsets.UTF_8), StandardCharsets.UTF_8.displayName());
-                return Arrays.asList(qs.containsKey(name) ? qs.get(name).toArray() : new String[0]);
-            },
+            cr -> cr.getBodyParameters().getOrDefault(name, new ArrayDeque<>()),
             "Parameter string " + name + " matches"
         );
     }

@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl;
+package com.stehno.ersatz.server.undertow;
 
 import com.stehno.ersatz.WsMessageType;
+import com.stehno.ersatz.impl.ExpectationsImpl;
+import com.stehno.ersatz.impl.ReceivedMessageImpl;
+import com.stehno.ersatz.impl.UnmatchedWsReport;
+import com.stehno.ersatz.impl.WebSocketExpectationsImpl;
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.PathHandler;

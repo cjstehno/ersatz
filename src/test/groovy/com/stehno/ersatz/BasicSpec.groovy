@@ -18,7 +18,7 @@ package com.stehno.ersatz
 import com.stehno.ersatz.util.HttpClient
 import spock.lang.Specification
 
-import static com.stehno.ersatz.auth.SimpleIdentityManager.encodedCredential
+import static com.stehno.ersatz.server.undertow.SimpleIdentityManager.encodedCredential
 
 class BasicSpec extends Specification {
 

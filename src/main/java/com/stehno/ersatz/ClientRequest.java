@@ -73,6 +73,11 @@ public interface ClientRequest {
     byte[] getBody();
 
     /**
+     * Retrieves request parameters specified in the body content, if any.
+     */
+    Map<String, Deque<String> > getBodyParameters();
+
+    /**
      * Retrieves the content length of the request.
      *
      * @return the request content length

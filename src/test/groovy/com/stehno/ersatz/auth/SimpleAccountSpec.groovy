@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz.auth
 
+import com.stehno.ersatz.server.undertow.SimpleAccount
 import spock.lang.Specification
 
 class SimpleAccountSpec extends Specification {

@@ -103,7 +103,7 @@ public interface RequestWithContent extends Request {
     RequestWithContent param(final String name, final Iterable<? super String> values);
 
     /**
-     * Configures an expectation matching parameters contained in the request body. The specified matchers must be satisifed
+     * Configures an expectation matching parameters contained in the request body. The specified matchers must be satisfied
      * by the parameters mapped to the provided named parameter.
      *
      * @param name  the parameter name

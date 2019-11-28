@@ -135,6 +135,7 @@ public class ServerConfigImpl implements ServerConfig {
      * @return a reference to the server being configured
      */
     @Override public ServerConfig timeout(final int value, final TimeUnit units) {
+        // FIXME: server-specific
         timeoutConfig = builder -> {
             final var ms = (int) MILLISECONDS.convert(value, units);
             builder.setServerOption(IDLE_TIMEOUT, ms);

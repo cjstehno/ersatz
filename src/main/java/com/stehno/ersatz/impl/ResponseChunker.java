@@ -30,6 +30,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class ResponseChunker implements IoCallback {
 
+    // FIXME: server-specific
+
     private final List<String> chunks;
     public final IntRange delay;
 
