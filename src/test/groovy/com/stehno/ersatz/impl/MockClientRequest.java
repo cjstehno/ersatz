@@ -16,16 +16,15 @@
 package com.stehno.ersatz.impl;
 
 import com.stehno.ersatz.ClientRequest;
+import com.stehno.ersatz.Cookie;
 import com.stehno.ersatz.HttpMethod;
-import io.undertow.server.handlers.Cookie;
-import io.undertow.server.handlers.CookieImpl;
-import io.undertow.util.HeaderMap;
 import io.undertow.util.HttpString;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER;
 
@@ -35,7 +34,7 @@ public class MockClientRequest implements ClientRequest {
     private String protocol;
     private String path;
     private final Map<String, Deque<String>> queryParams = new LinkedHashMap<>();
-    private HeaderMap headers = new HeaderMap();
+    private final Map<String, Deque<String>> headers = new LinkedHashMap<>();
     private Map<String, Cookie> cookies = new LinkedHashMap<>();
     private byte[] body;
     private int contentLength;
@@ -53,8 +52,9 @@ public class MockClientRequest implements ClientRequest {
         this.cookies = cookies;
     }
 
-    public void setHeaders(HeaderMap headers) {
-        this.headers = headers;
+    public void setHeaders(Map<String, Deque<String>> headers) {
+        this.headers.clear();
+        this.headers.putAll(headers);
     }
 
     @Override public HttpMethod getMethod() {
@@ -73,11 +73,11 @@ public class MockClientRequest implements ClientRequest {
         return queryParams;
     }
 
-    @Override public HeaderMap getHeaders() {
+    @Override public Map<String, Deque<String>> getHeaders() {
         return headers;
     }
 
-    @Override public Map<String, Cookie> getCookies() {
+    @Override public Map<String, com.stehno.ersatz.Cookie> getCookies() {
         return cookies;
     }
 
@@ -94,11 +94,11 @@ public class MockClientRequest implements ClientRequest {
     }
 
     @Override public String getContentType() {
-        return headers.getFirst(CONTENT_TYPE_HEADER);
+        return headers.containsKey(CONTENT_TYPE_HEADER) ? headers.get(CONTENT_TYPE_HEADER).getFirst() : null;
     }
 
     public MockClientRequest header(final String name, final String value) {
-        headers.add(new HttpString(name), value);
+        headers.computeIfAbsent(name, s -> new ArrayDeque<>()).add(value);
         return this;
     }
 
@@ -145,24 +145,11 @@ public class MockClientRequest implements ClientRequest {
     }
 
     public MockClientRequest cookie(String name, String value) {
-        final CookieImpl cookie = new CookieImpl(name, value);
-        cookies.put(name, cookie);
-        return this;
+        return cookie(name, value, null, null, null, 0, false, false, 0);
     }
 
-    public MockClientRequest cookie(String name, String value, String comment, String domain, String path, Integer maxAge, Boolean httpOnly, Boolean secure, Integer version) {
-        final CookieImpl cookie = new CookieImpl(name, value);
-
-        cookie.setComment(comment);
-        cookie.setDomain(domain);
-        cookie.setPath(path);
-        cookie.setMaxAge(maxAge);
-        cookie.setHttpOnly(httpOnly);
-        cookie.setSecure(secure);
-        cookie.setVersion(version);
-
-        cookies.put(name, cookie);
-
+    public MockClientRequest cookie(final String name, String value, String comment, String domain, String path, Integer maxAge, Boolean httpOnly, Boolean secure, Integer version) {
+        cookies.put(name, new Cookie(value, comment, domain, path, version, httpOnly, maxAge, secure));
         return this;
     }
 }

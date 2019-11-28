@@ -15,16 +15,14 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.Cookie
 import com.stehno.ersatz.HttpMethod
 import com.stehno.ersatz.ResponseEncoders
-import io.undertow.server.handlers.CookieImpl
-import io.undertow.util.HeaderMap
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import static com.stehno.ersatz.HttpMethod.POST
 import static com.stehno.ersatz.HttpMethod.PUT
-import static io.undertow.util.HttpString.tryFromString
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.startsWith
 
@@ -38,28 +36,34 @@ class UnmatchedRequestReportSpec extends Specification {
     @Unroll
     void 'unmatched report with type #contentType should print #content'() {
         setup:
-        HeaderMap headers = new HeaderMap()
-        headers.add(tryFromString('alpha'), 'bravo-1')
-        headers.add(tryFromString('alpha'), 'bravo-2')
-        headers.add(tryFromString('charlie'), 'delta')
+        def headers = new LinkedHashMap<String, Deque<String>>()
+
+        Deque<String> alphas = new ArrayDeque<>();
+        alphas.add('bravo-1')
+        alphas.add('bravo-2')
+        headers.put('alpha', alphas)
+
+        Deque<String> charlies = new ArrayDeque<>();
+        charlies.add('delta')
+        headers.put('charlie', charlies)
 
         MockClientRequest request = new MockClientRequest(
-            method: HttpMethod.GET,
-            protocol: 'HTTP',
-            path: '/alpha/foo',
-            headers: headers,
-            contentLength: 1234,
-            contentType: contentType,
-            characterEncoding: 'UTF-8',
-            body: BODY.bytes,
-            cookies: [ident: new CookieImpl('ident', 'asdfasdfasdf')]
+                method: HttpMethod.GET,
+                protocol: 'HTTP',
+                path: '/alpha/foo',
+                headers: headers,
+                contentLength: 1234,
+                contentType: contentType,
+                characterEncoding: 'UTF-8',
+                body: BODY.bytes,
+                cookies: [ident: new Cookie('asdfasdfasdf', null, null, null, 0, false, 0, false)]
         )
         request.query('selected', 'one', 'two')
         request.query('id', '1002')
 
         List<ErsatzRequest> expectations = [
-            new ErsatzRequest(POST, equalTo('/alpha/foo'), new ResponseEncoders()),
-            new ErsatzRequest(PUT, startsWith('/alpha/bar'), new ResponseEncoders()).protocol('HTTPS')
+                new ErsatzRequest(POST, equalTo('/alpha/foo'), new ResponseEncoders()),
+                new ErsatzRequest(PUT, startsWith('/alpha/bar'), new ResponseEncoders()).protocol('HTTPS')
         ]
 
         when:

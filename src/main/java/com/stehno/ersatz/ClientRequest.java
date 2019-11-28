@@ -15,9 +15,6 @@
  */
 package com.stehno.ersatz;
 
-import io.undertow.server.handlers.Cookie;
-import io.undertow.util.HeaderMap;
-
 import java.util.Deque;
 import java.util.Map;
 
@@ -59,7 +56,7 @@ public interface ClientRequest {
      *
      * @return the request headers
      */
-    HeaderMap getHeaders();
+    Map<String, Deque<String>> getHeaders();
 
     /**
      * Retrieves the cookies associated with the request.

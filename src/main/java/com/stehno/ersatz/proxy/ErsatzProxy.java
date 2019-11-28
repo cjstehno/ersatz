@@ -16,7 +16,7 @@
 package com.stehno.ersatz.proxy;
 
 import com.stehno.ersatz.ClientRequest;
-import com.stehno.ersatz.impl.UndertowClientRequest;
+import com.stehno.ersatz.server.undertow.UndertowClientRequest;
 import com.stehno.ersatz.proxy.impl.ProxyConfigImpl;
 import com.stehno.ersatz.proxy.impl.ProxyRequestMatcher;
 import groovy.lang.Closure;

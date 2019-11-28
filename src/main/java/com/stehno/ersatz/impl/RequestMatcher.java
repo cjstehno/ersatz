@@ -25,7 +25,10 @@ import org.hamcrest.Matcher;
 import org.hamcrest.core.IsIterableContaining;
 
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER;
@@ -90,7 +93,11 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
     public static RequestMatcher header(final String name, final Matcher<Iterable<? super String>> m) {
         return new RequestMatcher(
             m,
-            cr -> cr.getHeaders().contains(name) ? Arrays.asList(cr.getHeaders().get(name).toArray()) : null,
+            cr -> cr.getHeaders().entrySet().stream()
+                .filter(h -> h.getKey().equalsIgnoreCase(name))
+                .findFirst()
+                .map(Map.Entry::getValue)
+                .orElse(null),
             "Header " + name + " matches "
         );
     }
@@ -107,7 +114,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
             m,
             cr -> {
                 final var qs = cr.getQueryParams().get(name);
-                if( qs  != null){
+                if (qs != null) {
                     return new ArrayDeque<>(Arrays.asList(qs.toArray(new String[0])));
                 } else {
                     return null;
@@ -145,25 +152,9 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
     public static RequestMatcher cookie(final String name, final Matcher<Cookie> m) {
         return new RequestMatcher(
             m,
-            cr -> {
-                final var undertowCookie = cr.getCookies().get(name);
-                return undertowCookie != null ? bake(undertowCookie) : null;
-            },
+            cr -> cr.getCookies().get(name),
             "Cookie " + name + " matches "
         );
-    }
-
-    private static Cookie bake(final io.undertow.server.handlers.Cookie cookie) {
-        final var localCookie = new Cookie();
-        localCookie.value(cookie.getValue());
-        localCookie.comment(cookie.getComment());
-        localCookie.domain(cookie.getDomain());
-        localCookie.path(cookie.getPath());
-        localCookie.maxAge(cookie.getMaxAge());
-        localCookie.httpOnly(cookie.isHttpOnly());
-        localCookie.secure(cookie.isSecure());
-        localCookie.version(cookie.getVersion());
-        return localCookie;
     }
 
     public static RequestMatcher cookies(final Matcher<Map<String, Cookie>> matcher) {
@@ -171,7 +162,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
             matcher,
             cr -> {
                 final var map = new LinkedHashMap<String, Cookie>();
-                cr.getCookies().forEach((name, cookie) -> map.put(name, bake(cookie)));
+                cr.getCookies().forEach(map::put);
                 return map;
             },
             "Cookies match "
@@ -181,9 +172,9 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
     /**
      * Creates a request matcher for request body content.
      *
-     * @param decoderChain    the available request decoders
-     * @param contentType the request content-type
-     * @param m           the hamcrest matcher to be wrapped
+     * @param decoderChain the available request decoders
+     * @param contentType  the request content-type
+     * @param m            the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
     public static RequestMatcher body(final DecoderChain decoderChain, final String contentType, final Matcher<Object> m) {
@@ -191,7 +182,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
             m,
             cr -> {
                 final var decoder = decoderChain.resolve(contentType);
-                if( decoder != null){
+                if (decoder != null) {
                     return decoder.apply(cr.getBody(), new DecodingContext(cr.getContentLength(), cr.getContentType(), cr.getCharacterEncoding(), decoderChain));
                 } else {
                     return null;
@@ -218,7 +209,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @return a configured RequestMatcher
      */
     public static RequestMatcher matcher(final Matcher<ClientRequest> crm) {
-       return new RequestMatcher(crm, cr -> cr, "Request matches " + crm);
+        return new RequestMatcher(crm, cr -> cr, "Request matches " + crm);
     }
 
     /**
@@ -229,7 +220,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      */
     @Override
     public boolean matches(final Object item) {
-        return matcher.matches(getter.apply((ClientRequest)item));
+        return matcher.matches(getter.apply((ClientRequest) item));
     }
 
     @Override

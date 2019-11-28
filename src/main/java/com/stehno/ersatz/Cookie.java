@@ -39,6 +39,21 @@ public class Cookie {
     private Integer maxAge;
     private boolean secure;
 
+    public Cookie(){
+        this(null, null, null, null, 0, false, 0, false);
+    }
+
+    public Cookie(String value, String comment, String domain, String path, int version, boolean httpOnly, Integer maxAge, boolean secure) {
+        this.value = value;
+        this.comment = comment;
+        this.domain = domain;
+        this.path = path;
+        this.version = version;
+        this.httpOnly = httpOnly;
+        this.maxAge = maxAge;
+        this.secure = secure;
+    }
+
     /**
      * Used to configure a request cookie with a configuration closure.
      *

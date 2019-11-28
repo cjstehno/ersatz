@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl;
+package com.stehno.ersatz.server.undertow;
 
 import com.stehno.ersatz.ClientRequest;
+import com.stehno.ersatz.Cookie;
 import com.stehno.ersatz.HttpMethod;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderMap;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER;
 import static java.lang.String.format;
@@ -81,8 +84,14 @@ public class UndertowClientRequest implements ClientRequest {
      *
      * @return the request headers
      */
-    public HeaderMap getHeaders() {
-        return exchange.getRequestHeaders();
+    public Map<String, Deque<String>> getHeaders() {
+        final var map = new LinkedHashMap<String, Deque<String>>();
+
+        exchange.getRequestHeaders().forEach(header -> {
+            map.computeIfAbsent(header.getHeaderName().toString(), s -> new ArrayDeque<>()).addAll(header);
+        });
+
+        return map;
     }
 
     /**
@@ -91,7 +100,22 @@ public class UndertowClientRequest implements ClientRequest {
      * @return the request cookies
      */
     public Map<String, Cookie> getCookies() {
-        return exchange.getRequestCookies();
+        final var cookies = new LinkedHashMap<String, Cookie>();
+
+        exchange.getRequestCookies().forEach((name, cookie) -> {
+            cookies.put(name, new Cookie(
+                cookie.getValue(),
+                cookie.getComment(),
+                cookie.getDomain(),
+                cookie.getPath(),
+                cookie.getVersion(),
+                cookie.isHttpOnly(),
+                cookie.getMaxAge(),
+                cookie.isSecure()
+            ));
+        });
+
+        return cookies;
     }
 
     /**

@@ -52,8 +52,8 @@ public class UnmatchedRequestReport implements Report {
 
             if (request.getHeaders() != null) {
                 out.append("Headers:\n");
-                request.getHeaders().forEach(h -> {
-                    out.append(" - ").append(h.getHeaderName()).append(": ").append(Arrays.toString(h.toArray())).append("\n");
+                request.getHeaders().forEach((hname, hvalues) -> {
+                    out.append(" - ").append(hname).append(": ").append(hvalues).append("\n");
                 });
             }
 
