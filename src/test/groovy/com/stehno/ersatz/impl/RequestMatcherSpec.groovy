@@ -18,6 +18,7 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.*
 import com.stehno.ersatz.cfg.ContentType
 import com.stehno.ersatz.cfg.HttpMethod
+import com.stehno.ersatz.encdec.DecoderChain
 import com.stehno.ersatz.match.CookieMatcher
 import com.stehno.ersatz.encdec.Decoders
 import com.stehno.ersatz.encdec.RequestDecoders

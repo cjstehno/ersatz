@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl;
+package com.stehno.ersatz.cfg.impl;
 
 import com.stehno.ersatz.cfg.MessageReaction;
 import com.stehno.ersatz.cfg.WsMessageType;

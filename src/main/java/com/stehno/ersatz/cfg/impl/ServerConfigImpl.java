@@ -22,7 +22,6 @@ import com.stehno.ersatz.cfg.ServerConfig;
 import com.stehno.ersatz.encdec.DecodingContext;
 import com.stehno.ersatz.encdec.RequestDecoders;
 import com.stehno.ersatz.encdec.ResponseEncoders;
-import com.stehno.ersatz.impl.ExpectationsImpl;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;

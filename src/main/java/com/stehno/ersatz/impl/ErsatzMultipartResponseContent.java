@@ -17,6 +17,7 @@ package com.stehno.ersatz.impl;
 
 import com.stehno.ersatz.MultipartResponseContent;
 import com.stehno.ersatz.cfg.ContentType;
+import com.stehno.ersatz.encdec.EncoderChain;
 import com.stehno.ersatz.encdec.ResponseEncoders;
 
 import java.util.Collections;

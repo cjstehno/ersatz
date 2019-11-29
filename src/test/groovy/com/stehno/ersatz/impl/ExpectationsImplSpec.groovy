@@ -21,6 +21,7 @@ import com.stehno.ersatz.cfg.Request
 import com.stehno.ersatz.cfg.RequestWithContent
 import com.stehno.ersatz.cfg.impl.ErsatzRequest
 import com.stehno.ersatz.cfg.impl.ErsatzRequestWithContent
+import com.stehno.ersatz.cfg.impl.ExpectationsImpl
 import com.stehno.ersatz.encdec.RequestDecoders
 import com.stehno.ersatz.encdec.ResponseEncoders
 import spock.lang.Specification

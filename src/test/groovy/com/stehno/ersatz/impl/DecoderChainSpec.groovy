@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
+import com.stehno.ersatz.encdec.DecoderChain
 import com.stehno.ersatz.encdec.RequestDecoders
 import spock.lang.Specification
 

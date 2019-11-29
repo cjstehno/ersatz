@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl;
+package com.stehno.ersatz.encdec;
 
 import com.stehno.ersatz.cfg.ContentType;
-import com.stehno.ersatz.encdec.DecodingContext;
-import com.stehno.ersatz.encdec.RequestDecoders;
 
 import java.util.function.BiFunction;
 

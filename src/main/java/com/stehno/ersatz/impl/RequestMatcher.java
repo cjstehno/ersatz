@@ -18,6 +18,7 @@ package com.stehno.ersatz.impl;
 import com.stehno.ersatz.ClientRequest;
 import com.stehno.ersatz.Cookie;
 import com.stehno.ersatz.cfg.HttpMethod;
+import com.stehno.ersatz.encdec.DecoderChain;
 import com.stehno.ersatz.encdec.DecodingContext;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;

@@ -17,6 +17,7 @@ package com.stehno.ersatz.impl;
 
 import com.stehno.ersatz.cfg.HttpMethod;
 import com.stehno.ersatz.cfg.Request;
+import com.stehno.ersatz.cfg.impl.ExpectationsImpl;
 import com.stehno.ersatz.encdec.RequestDecoders;
 import com.stehno.ersatz.encdec.ResponseEncoders;
 import org.junit.jupiter.api.BeforeEach;

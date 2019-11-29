@@ -22,7 +22,7 @@ import com.stehno.ersatz.cfg.ContentType;
 import com.stehno.ersatz.cfg.HttpMethod;
 import com.stehno.ersatz.cfg.Response;
 import com.stehno.ersatz.encdec.ResponseEncoders;
-import com.stehno.ersatz.impl.EncoderChain;
+import com.stehno.ersatz.encdec.EncoderChain;
 import com.stehno.ersatz.impl.ErsatzMultipartResponseContent;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;

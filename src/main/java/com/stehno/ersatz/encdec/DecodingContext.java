@@ -15,8 +15,6 @@
  */
 package com.stehno.ersatz.encdec;
 
-import com.stehno.ersatz.impl.DecoderChain;
-
 /**
  * Request-specific contextual information used by request content decoders.
  */

@@ -20,7 +20,7 @@ import com.stehno.ersatz.cfg.RequestWithContent;
 import com.stehno.ersatz.encdec.DecodingContext;
 import com.stehno.ersatz.encdec.RequestDecoders;
 import com.stehno.ersatz.encdec.ResponseEncoders;
-import com.stehno.ersatz.impl.DecoderChain;
+import com.stehno.ersatz.encdec.DecoderChain;
 import com.stehno.ersatz.impl.RequestMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.IsIterableContaining;

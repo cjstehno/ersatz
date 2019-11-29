@@ -46,6 +46,8 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  */
 public class ErsatzProxy {
 
+    // TODO: this needs to be pulled out into a separate project/library (ersatz-proxy)
+
     private static final Logger log = LoggerFactory.getLogger(ErsatzProxy.class);
     private static final String LOCALHOST = "localhost";
     private static final int EPHEMERAL_PORT = 0;

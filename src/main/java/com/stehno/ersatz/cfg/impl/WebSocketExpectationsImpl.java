@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl;
+package com.stehno.ersatz.cfg.impl;
 
 import com.stehno.ersatz.cfg.ReceivedMessage;
 import com.stehno.ersatz.cfg.SentMessage;
 import com.stehno.ersatz.cfg.WebSocketExpectations;
 import com.stehno.ersatz.cfg.WsMessageType;
+import com.stehno.ersatz.cfg.impl.ReceivedMessageImpl;
+import com.stehno.ersatz.cfg.impl.SentMessageImpl;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import io.undertow.websockets.core.BufferedBinaryMessage;

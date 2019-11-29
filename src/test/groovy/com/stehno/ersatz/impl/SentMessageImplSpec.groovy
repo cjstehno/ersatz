@@ -15,7 +15,7 @@
  */
 package com.stehno.ersatz.impl
 
-
+import com.stehno.ersatz.cfg.impl.SentMessageImpl
 import spock.lang.Specification
 
 import static com.stehno.ersatz.cfg.WsMessageType.BINARY

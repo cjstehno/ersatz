@@ -15,6 +15,8 @@
  */
 package com.stehno.ersatz.impl;
 
+import com.stehno.ersatz.cfg.impl.WebSocketExpectationsImpl;
+
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
