@@ -73,7 +73,7 @@ public class ResponseChunker implements IoCallback {
      *
      * @param str    the string to be chunked
      * @param chunks the number of chunks
-     * @return a List<String> containing the chunk data
+     * @return a List&lt;String&gt; containing the chunk data
      */
     public static List<String> prepareChunks(final String str, final int chunks) {
         int chunklen = str.length() / chunks;

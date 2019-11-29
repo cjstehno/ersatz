@@ -31,7 +31,7 @@ package com.stehno.ersatz.cfg;
     /**
      * Defines the message type.
      *
-     * @param obj the payload type
+     * @param type the payload type
      * @return a reference to this SentMessage
      */
     SentMessage messageType(WsMessageType type);

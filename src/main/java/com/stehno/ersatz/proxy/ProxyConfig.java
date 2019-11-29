@@ -59,6 +59,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
      *
      * @param value the target URI
      * @return a reference to this configuration
+     * @throws URISyntaxException if there is a problem with the URL
      */
     ProxyConfig target(URL value) throws URISyntaxException;
 

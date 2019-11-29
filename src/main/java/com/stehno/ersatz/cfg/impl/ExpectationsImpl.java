@@ -144,6 +144,8 @@ public class ExpectationsImpl implements Expectations {
      * <p>
      * This method will block until the call count expectations are met or the timeout expires.
      *
+     * @param timeout the amount of time to wait in the specified units
+     * @param unit the timeout unit to be used
      * @return a value of true if all requests are verified
      */
     public boolean verify(final long timeout, final TimeUnit unit) {

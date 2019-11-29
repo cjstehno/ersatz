@@ -34,7 +34,7 @@ import static java.net.URLDecoder.decode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * Reusable request content decoder functions. Decoders are simply implementations of the <code>BiFunction<byte[], DecodingContext, Object></code>
+ * Reusable request content decoder functions. Decoders are simply implementations of the <code>BiFunction&lt;byte[], DecodingContext, Object&gt;</code>
  * interface, which takes the request content as a byte array along with the <code>DecodingContext</code> to return an <code>Object</code>
  * representation of the request data.
  */

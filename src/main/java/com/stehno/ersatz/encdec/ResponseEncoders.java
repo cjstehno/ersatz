@@ -75,9 +75,8 @@ public class ResponseEncoders {
 
     /**
      * Used to find an encoder for the given content-type and object type.
-     * <p>
-     * param contentType the part content-type
      *
+     * @param contentType the part content-type
      * @param objectType the part object type
      * @return the encoder function if one exists or null
      */

@@ -25,7 +25,7 @@ import java.util.function.Function;
 import static groovy.json.JsonOutput.toJson;
 
 /**
- * Reusable response content encoders. An encoder is simply a <code>Function<Object,String></code> which is used to convert the configured response
+ * Reusable response content encoders. An encoder is simply a <code>Function&lt;Object,String&gt;</code> which is used to convert the configured response
  * content object into the String of response output.
  */
 public class Encoders {

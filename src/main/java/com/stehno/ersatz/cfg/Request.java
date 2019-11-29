@@ -43,7 +43,7 @@ public interface Request {
     /**
      * Specifies a request header to be configured in the expected request. The value specified must match one of the request header values mapped to
      * the expected header name. Multiple header specification may be added to the expectations; each specified header must exist in the request. If
-     * an OR-style match is desired a Hamcrest Matcher should be specified (see the <code>header(String, Matcher<Iterable<String>>)</code> method).
+     * an OR-style match is desired a Hamcrest Matcher should be specified (see the <code>header(String, Matcher&lt;Iterable&lt;String&gt;&gt;)</code> method).
      *
      * @param name  the header name
      * @param value the header value
@@ -63,7 +63,7 @@ public interface Request {
 
     /**
      * Specifies request headers as a Map of names to values to be configured in the expected request. The map values may be <code>String</code> or
-     * <code>Matcher<Iterable<String>></code> instances.
+     * <code>Matcher&lt;Iterable&lt;String&gt;&gt;</code> instances.
      *
      * @param heads the map of headers
      * @return this request
