@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.encdec.Encoders
 import spock.lang.Specification
 import spock.lang.Unroll
 

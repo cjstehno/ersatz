@@ -15,6 +15,8 @@
  */
 package com.stehno.ersatz;
 
+import com.stehno.ersatz.cfg.HttpMethod;
+
 import java.util.Deque;
 import java.util.Map;
 

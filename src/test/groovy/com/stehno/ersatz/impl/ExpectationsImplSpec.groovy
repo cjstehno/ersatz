@@ -15,13 +15,20 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+
+import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.cfg.Request
+import com.stehno.ersatz.cfg.RequestWithContent
+import com.stehno.ersatz.cfg.impl.ErsatzRequest
+import com.stehno.ersatz.cfg.impl.ErsatzRequestWithContent
+import com.stehno.ersatz.encdec.RequestDecoders
+import com.stehno.ersatz.encdec.ResponseEncoders
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.HttpMethod.*
+import static com.stehno.ersatz.cfg.HttpMethod.*
 import static org.hamcrest.Matchers.equalTo
 
 class ExpectationsImplSpec extends Specification {

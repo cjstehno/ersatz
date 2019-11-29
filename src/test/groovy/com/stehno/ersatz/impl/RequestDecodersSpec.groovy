@@ -15,12 +15,13 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.RequestDecoders
+
+import com.stehno.ersatz.encdec.RequestDecoders
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static com.stehno.ersatz.ContentType.APPLICATION_JSON
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.cfg.ContentType.APPLICATION_JSON
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
 
 class RequestDecodersSpec extends Specification {
 

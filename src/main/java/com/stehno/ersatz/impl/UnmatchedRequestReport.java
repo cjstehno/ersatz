@@ -16,6 +16,7 @@
 package com.stehno.ersatz.impl;
 
 import com.stehno.ersatz.ClientRequest;
+import com.stehno.ersatz.cfg.impl.ErsatzRequest;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;

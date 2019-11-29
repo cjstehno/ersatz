@@ -15,12 +15,13 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.encdec.ResponseEncoders
+import com.stehno.ersatz.cfg.impl.ErsatzResponse
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.APPLICATION_JSON
-import static com.stehno.ersatz.ContentType.APPLICATION_XML
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.cfg.ContentType.APPLICATION_JSON
+import static com.stehno.ersatz.cfg.ContentType.APPLICATION_XML
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
 
 class ErsatzResponseSpec extends Specification {
 

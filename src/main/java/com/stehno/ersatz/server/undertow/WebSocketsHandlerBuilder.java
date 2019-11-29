@@ -15,7 +15,7 @@
  */
 package com.stehno.ersatz.server.undertow;
 
-import com.stehno.ersatz.WsMessageType;
+import com.stehno.ersatz.cfg.WsMessageType;
 import com.stehno.ersatz.impl.ExpectationsImpl;
 import com.stehno.ersatz.impl.ReceivedMessageImpl;
 import com.stehno.ersatz.impl.UnmatchedWsReport;

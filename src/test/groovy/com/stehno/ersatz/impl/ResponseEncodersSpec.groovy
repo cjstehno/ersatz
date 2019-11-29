@@ -15,13 +15,13 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.encdec.ResponseEncoders
 import spock.lang.Specification
 
 import java.util.function.Function
 
-import static com.stehno.ersatz.ContentType.IMAGE_GIF
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.cfg.ContentType.IMAGE_GIF
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
 
 class ResponseEncodersSpec extends Specification {
 

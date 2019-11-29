@@ -22,7 +22,7 @@ import spock.lang.Specification
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
 
 class ErsatzProxySpec extends Specification {
 

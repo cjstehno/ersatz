@@ -17,8 +17,8 @@ package com.stehno.ersatz.impl;
 
 import com.stehno.ersatz.ClientRequest;
 import com.stehno.ersatz.Cookie;
-import com.stehno.ersatz.DecodingContext;
-import com.stehno.ersatz.HttpMethod;
+import com.stehno.ersatz.cfg.HttpMethod;
+import com.stehno.ersatz.encdec.DecodingContext;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER;
+import static com.stehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
 import static java.util.Arrays.asList;
 
 /**

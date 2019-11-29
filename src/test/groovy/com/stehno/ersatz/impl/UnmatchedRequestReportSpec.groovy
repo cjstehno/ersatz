@@ -16,13 +16,14 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.Cookie
-import com.stehno.ersatz.HttpMethod
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.cfg.HttpMethod
+import com.stehno.ersatz.cfg.impl.ErsatzRequest
+import com.stehno.ersatz.encdec.ResponseEncoders
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static com.stehno.ersatz.HttpMethod.POST
-import static com.stehno.ersatz.HttpMethod.PUT
+import static com.stehno.ersatz.cfg.HttpMethod.POST
+import static com.stehno.ersatz.cfg.HttpMethod.PUT
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.startsWith
 

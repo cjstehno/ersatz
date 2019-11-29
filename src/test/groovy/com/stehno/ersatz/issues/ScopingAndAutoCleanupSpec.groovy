@@ -19,11 +19,10 @@ import com.stehno.ersatz.ErsatzServer
 import com.stehno.ersatz.util.HttpClient
 import okhttp3.Response
 import spock.lang.AutoCleanup
-import spock.lang.Issue
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
-import static com.stehno.ersatz.Decoders.utf8String
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.encdec.Decoders.utf8String
 import static okhttp3.MediaType.get
 import static okhttp3.RequestBody.create
 

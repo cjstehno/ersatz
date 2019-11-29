@@ -15,12 +15,11 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.SentMessage
-import com.stehno.ersatz.WsMessageType
+
 import spock.lang.Specification
 
-import static com.stehno.ersatz.WsMessageType.BINARY
-import static com.stehno.ersatz.WsMessageType.TEXT
+import static com.stehno.ersatz.cfg.WsMessageType.BINARY
+import static com.stehno.ersatz.cfg.WsMessageType.TEXT
 
 class SentMessageImplSpec extends Specification {
 

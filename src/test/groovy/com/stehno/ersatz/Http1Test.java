@@ -27,7 +27,7 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.LinkedList;
 
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN;
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Http1Test {

@@ -24,8 +24,8 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN;
-import static com.stehno.ersatz.Decoders.utf8String;
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static com.stehno.ersatz.encdec.Decoders.utf8String;
 import static java.util.Collections.singletonMap;
 import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;

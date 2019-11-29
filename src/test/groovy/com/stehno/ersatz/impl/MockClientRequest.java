@@ -17,14 +17,14 @@ package com.stehno.ersatz.impl;
 
 import com.stehno.ersatz.ClientRequest;
 import com.stehno.ersatz.Cookie;
-import com.stehno.ersatz.HttpMethod;
+import com.stehno.ersatz.cfg.HttpMethod;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER;
+import static com.stehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
 
 public class MockClientRequest implements ClientRequest {
 

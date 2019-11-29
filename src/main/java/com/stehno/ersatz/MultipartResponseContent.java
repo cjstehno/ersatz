@@ -15,6 +15,8 @@
  */
 package com.stehno.ersatz;
 
+import com.stehno.ersatz.cfg.ContentType;
+import com.stehno.ersatz.encdec.ResponseEncoders;
 import com.stehno.ersatz.impl.ErsatzMultipartResponseContent;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;

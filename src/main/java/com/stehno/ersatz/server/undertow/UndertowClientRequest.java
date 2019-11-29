@@ -17,7 +17,7 @@ package com.stehno.ersatz.server.undertow;
 
 import com.stehno.ersatz.ClientRequest;
 import com.stehno.ersatz.Cookie;
-import com.stehno.ersatz.HttpMethod;
+import com.stehno.ersatz.cfg.HttpMethod;
 import io.undertow.server.HttpServerExchange;
 
 import java.util.ArrayDeque;
@@ -26,7 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.stehno.ersatz.ContentType.CONTENT_TYPE_HEADER;
+import static com.stehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
 import static io.undertow.util.QueryParameterUtils.parseQueryString;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;

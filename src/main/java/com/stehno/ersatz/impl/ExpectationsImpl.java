@@ -15,7 +15,12 @@
  */
 package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.*;
+import com.stehno.ersatz.ClientRequest;
+import com.stehno.ersatz.cfg.*;
+import com.stehno.ersatz.cfg.impl.ErsatzRequest;
+import com.stehno.ersatz.cfg.impl.ErsatzRequestWithContent;
+import com.stehno.ersatz.encdec.RequestDecoders;
+import com.stehno.ersatz.encdec.ResponseEncoders;
 import org.hamcrest.Matcher;
 
 import java.util.*;

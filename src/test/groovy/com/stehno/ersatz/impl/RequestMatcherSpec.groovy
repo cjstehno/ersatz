@@ -16,11 +16,16 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.*
+import com.stehno.ersatz.cfg.ContentType
+import com.stehno.ersatz.cfg.HttpMethod
+import com.stehno.ersatz.match.CookieMatcher
+import com.stehno.ersatz.encdec.Decoders
+import com.stehno.ersatz.encdec.RequestDecoders
 import org.hamcrest.Matcher
 import spock.lang.Specification
 
-import static com.stehno.ersatz.HttpMethod.GET
-import static com.stehno.ersatz.HttpMethod.HEAD
+import static com.stehno.ersatz.cfg.HttpMethod.GET
+import static com.stehno.ersatz.cfg.HttpMethod.HEAD
 import static com.stehno.ersatz.impl.RequestMatcher.*
 import static org.hamcrest.Matchers.*
 import static org.hamcrest.core.IsIterableContaining.hasItem

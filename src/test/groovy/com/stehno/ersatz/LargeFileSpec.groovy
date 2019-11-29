@@ -15,6 +15,8 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.encdec.Decoders
+import com.stehno.ersatz.encdec.Encoders
 import com.stehno.ersatz.util.HttpClient
 import com.stehno.ersatz.util.LongRunning
 import org.hamcrest.Matcher
@@ -23,9 +25,9 @@ import spock.lang.AutoCleanup
 import spock.lang.Ignore
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.IMAGE_JPG
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
-import static com.stehno.ersatz.ErsatzMatchers.byteArrayLike
+import static com.stehno.ersatz.cfg.ContentType.IMAGE_JPG
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.match.ErsatzMatchers.byteArrayLike
 import static com.stehno.ersatz.util.DummyContentGenerator.generate
 import static com.stehno.ersatz.util.StorageUnit.GIGABYTES
 import static com.stehno.ersatz.util.StorageUnit.MEGABYTES

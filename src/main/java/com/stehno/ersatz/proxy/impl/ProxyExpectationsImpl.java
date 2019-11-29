@@ -15,7 +15,7 @@
  */
 package com.stehno.ersatz.proxy.impl;
 
-import com.stehno.ersatz.HttpMethod;
+import com.stehno.ersatz.cfg.HttpMethod;
 import com.stehno.ersatz.proxy.ProxyExpectations;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;

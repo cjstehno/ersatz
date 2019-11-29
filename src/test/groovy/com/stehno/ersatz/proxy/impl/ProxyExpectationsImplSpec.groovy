@@ -16,12 +16,12 @@
 package com.stehno.ersatz.proxy.impl
 
 import com.stehno.ersatz.ClientRequest
-import com.stehno.ersatz.HttpMethod
+import com.stehno.ersatz.cfg.HttpMethod
 import com.stehno.ersatz.impl.MockClientRequest
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static com.stehno.ersatz.HttpMethod.*
+import static com.stehno.ersatz.cfg.HttpMethod.*
 import static org.hamcrest.Matchers.startsWith
 
 class ProxyExpectationsImplSpec extends Specification {

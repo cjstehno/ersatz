@@ -15,11 +15,10 @@
  */
 package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.HttpMethod;
-import com.stehno.ersatz.Request;
-import com.stehno.ersatz.RequestDecoders;
-import com.stehno.ersatz.ResponseEncoders;
-import org.hamcrest.CoreMatchers;
+import com.stehno.ersatz.cfg.HttpMethod;
+import com.stehno.ersatz.cfg.Request;
+import com.stehno.ersatz.encdec.RequestDecoders;
+import com.stehno.ersatz.encdec.ResponseEncoders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -88,7 +87,7 @@ class GetExpectationsTest {
         assertThat(match.isPresent(), equalTo(present));
     }
 
-    private static MockClientRequest request(final String path){
+    private static MockClientRequest request(final String path) {
         final var request = new MockClientRequest(HttpMethod.GET);
         request.setPath(path);
         return request;

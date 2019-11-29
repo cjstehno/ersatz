@@ -15,7 +15,10 @@
  */
 package com.stehno.ersatz
 
-import java.util.function.Consumer
+import com.stehno.ersatz.cfg.Expectations
+import com.stehno.ersatz.cfg.Request
+import com.stehno.ersatz.cfg.Response
+import com.stehno.ersatz.cfg.ServerConfig
 
 // Note: This is experimental code for kotlin support - it may not look anything like this in the end
 

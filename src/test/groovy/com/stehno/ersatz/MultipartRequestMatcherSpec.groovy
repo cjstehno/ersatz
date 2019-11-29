@@ -15,15 +15,16 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.match.MultipartRequestMatcher
 import org.hamcrest.Description
 import org.hamcrest.StringDescription
 import spock.lang.Specification
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.ContentType.*
+import static com.stehno.ersatz.cfg.ContentType.*
 import static com.stehno.ersatz.MultipartRequestContent.multipart
-import static com.stehno.ersatz.MultipartRequestMatcher.multipartMatcher
+import static com.stehno.ersatz.match.MultipartRequestMatcher.multipartMatcher
 import static org.hamcrest.Matchers.*
 
 class MultipartRequestMatcherSpec extends Specification {

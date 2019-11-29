@@ -15,10 +15,10 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.RequestDecoders
+import com.stehno.ersatz.encdec.RequestDecoders
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.*
+import static com.stehno.ersatz.cfg.ContentType.*
 
 class DecoderChainSpec extends Specification {
 

@@ -15,10 +15,10 @@
  */
 package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.ReceivedMessage;
-import com.stehno.ersatz.SentMessage;
-import com.stehno.ersatz.WebSocketExpectations;
-import com.stehno.ersatz.WsMessageType;
+import com.stehno.ersatz.cfg.ReceivedMessage;
+import com.stehno.ersatz.cfg.SentMessage;
+import com.stehno.ersatz.cfg.WebSocketExpectations;
+import com.stehno.ersatz.cfg.WsMessageType;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import io.undertow.websockets.core.BufferedBinaryMessage;
@@ -32,7 +32,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import static com.stehno.ersatz.WsMessageType.*;
+import static com.stehno.ersatz.cfg.WsMessageType.*;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
 public class WebSocketExpectationsImpl implements WebSocketExpectations {

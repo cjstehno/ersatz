@@ -20,8 +20,8 @@ import spock.lang.Specification
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.ContentType.IMAGE_PNG
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.cfg.ContentType.IMAGE_PNG
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
 import static com.stehno.ersatz.MultipartRequestContent.multipart
 
 class MultipartRequestContentSpec extends Specification {

@@ -16,8 +16,12 @@
 package com.stehno.ersatz.server.undertow;
 
 import com.stehno.ersatz.*;
-import com.stehno.ersatz.impl.ErsatzRequest;
-import com.stehno.ersatz.impl.ServerConfigImpl;
+import com.stehno.ersatz.cfg.ChunkingConfig;
+import com.stehno.ersatz.cfg.Response;
+import com.stehno.ersatz.cfg.impl.ChunkingConfigImpl;
+import com.stehno.ersatz.cfg.impl.ErsatzRequest;
+import com.stehno.ersatz.cfg.impl.ErsatzResponse;
+import com.stehno.ersatz.cfg.impl.ServerConfigImpl;
 import com.stehno.ersatz.impl.UnmatchedRequestReport;
 import com.stehno.ersatz.server.UnderlyingServer;
 import io.undertow.Undertow;
@@ -170,7 +174,7 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
         return result;
     }
 
-    private static void send(final HttpServerExchange exchange, final Response response) {
+    private static void send(final HttpServerExchange exchange, final ErsatzResponse response) {
         if (response != null) {
             if (response.getDelay() > 0) {
                 try {
@@ -213,7 +217,7 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
 
         final String responseContent = response != null ? response.getContent() : null;
         final String responsePreview = responseContent != null ? responseContent : EMPTY;
-        final ChunkingConfig chunking = response != null ? response.getChunkingConfig() : null;
+        final ChunkingConfigImpl chunking = response != null ? response.getChunkingConfig() : null;
         final var responseHeaders = exchange.getResponseHeaders() != null ? exchange.getResponseHeaders() : NO_HEADERS;
 
         if (responseContent != null && chunking != null) {

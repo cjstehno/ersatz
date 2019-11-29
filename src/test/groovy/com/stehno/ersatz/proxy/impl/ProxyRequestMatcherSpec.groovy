@@ -15,7 +15,7 @@
  */
 package com.stehno.ersatz.proxy.impl
 
-import com.stehno.ersatz.HttpMethod
+import com.stehno.ersatz.cfg.HttpMethod
 import com.stehno.ersatz.impl.MockClientRequest
 import org.hamcrest.Matchers
 import spock.lang.Specification

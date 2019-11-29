@@ -15,13 +15,13 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.Encoders
+import com.stehno.ersatz.encdec.Encoders
 import com.stehno.ersatz.MultipartResponseContent
 import spock.lang.Specification
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.ContentType.*
+import static com.stehno.ersatz.cfg.ContentType.*
 
 class ErsatzMultipartResponseContentSpec extends Specification {
 

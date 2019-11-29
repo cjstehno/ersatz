@@ -15,8 +15,8 @@
  */
 package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.ContentType;
-import com.stehno.ersatz.ResponseEncoders;
+import com.stehno.ersatz.cfg.ContentType;
+import com.stehno.ersatz.encdec.ResponseEncoders;
 
 import java.util.function.Function;
 

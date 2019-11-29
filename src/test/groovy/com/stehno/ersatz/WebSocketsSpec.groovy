@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.cfg.WebSocketExpectations
 import groovy.util.logging.Slf4j
 import okhttp3.OkHttpClient
 import okhttp3.WebSocket
@@ -28,8 +29,8 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.WsMessageType.BINARY
-import static com.stehno.ersatz.WsMessageType.TEXT
+import static com.stehno.ersatz.cfg.WsMessageType.BINARY
+import static com.stehno.ersatz.cfg.WsMessageType.TEXT
 import static java.util.concurrent.TimeUnit.SECONDS
 import static okio.ByteString.of
 

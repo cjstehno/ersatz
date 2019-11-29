@@ -18,7 +18,7 @@ package com.stehno.ersatz
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
 
 class ReusedServerSpec extends Specification {
 

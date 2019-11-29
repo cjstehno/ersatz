@@ -15,8 +15,8 @@
  */
 package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.MessageReaction;
-import com.stehno.ersatz.WsMessageType;
+import com.stehno.ersatz.cfg.MessageReaction;
+import com.stehno.ersatz.cfg.WsMessageType;
 
 public class MessageReactionImpl implements MessageReaction {
 

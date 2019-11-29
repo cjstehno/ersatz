@@ -15,16 +15,16 @@
  */
 package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.ContentType;
 import com.stehno.ersatz.MultipartResponseContent;
-import com.stehno.ersatz.ResponseEncoders;
+import com.stehno.ersatz.cfg.ContentType;
+import com.stehno.ersatz.encdec.ResponseEncoders;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN;
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 
 /**
  * Implementation of the multipart response content interface.

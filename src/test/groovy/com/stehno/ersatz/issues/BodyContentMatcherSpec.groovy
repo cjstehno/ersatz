@@ -15,8 +15,8 @@
  */
 package com.stehno.ersatz.issues
 
-import com.stehno.ersatz.DecodingContext
 import com.stehno.ersatz.ErsatzServer
+import com.stehno.ersatz.encdec.DecodingContext
 import com.stehno.ersatz.util.HttpClient
 import okhttp3.MediaType
 import okhttp3.Response
@@ -25,9 +25,9 @@ import spock.lang.Specification
 
 import javax.xml.parsers.DocumentBuilderFactory
 
-import static com.stehno.ersatz.ContentType.TEXT_XML
-import static com.stehno.ersatz.Decoders.utf8String
-import static com.stehno.ersatz.Encoders.text
+import static com.stehno.ersatz.cfg.ContentType.TEXT_XML
+import static com.stehno.ersatz.encdec.Decoders.utf8String
+import static com.stehno.ersatz.encdec.Encoders.text
 import static okhttp3.RequestBody.create
 import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.xml.HasXPath.hasXPath

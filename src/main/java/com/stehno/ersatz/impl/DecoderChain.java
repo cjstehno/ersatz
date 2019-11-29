@@ -15,9 +15,9 @@
  */
 package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.ContentType;
-import com.stehno.ersatz.DecodingContext;
-import com.stehno.ersatz.RequestDecoders;
+import com.stehno.ersatz.cfg.ContentType;
+import com.stehno.ersatz.encdec.DecodingContext;
+import com.stehno.ersatz.encdec.RequestDecoders;
 
 import java.util.function.BiFunction;
 
@@ -51,7 +51,7 @@ public class DecoderChain extends FunctionChain<RequestDecoders> {
      * @return the decoder function
      */
     public BiFunction<byte[], DecodingContext, Object> resolve(final ContentType contentType) {
-        return resolve( contentType.getValue());
+        return resolve(contentType.getValue());
     }
 }
 

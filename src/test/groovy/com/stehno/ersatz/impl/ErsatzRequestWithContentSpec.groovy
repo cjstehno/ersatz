@@ -16,6 +16,10 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.*
+import com.stehno.ersatz.cfg.ContentType
+import com.stehno.ersatz.cfg.HttpMethod
+import com.stehno.ersatz.cfg.impl.ErsatzRequestWithContent
+import com.stehno.ersatz.encdec.Decoders
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -23,8 +27,8 @@ import okhttp3.Response
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.*
-import static com.stehno.ersatz.MultipartRequestMatcher.multipartMatcher
+import static com.stehno.ersatz.cfg.ContentType.*
+import static com.stehno.ersatz.match.MultipartRequestMatcher.multipartMatcher
 import static com.stehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY
 import static okhttp3.MediaType.parse
 import static okhttp3.Request.Builder

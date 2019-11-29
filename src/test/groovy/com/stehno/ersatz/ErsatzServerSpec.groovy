@@ -15,6 +15,10 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.cfg.Expectations
+import com.stehno.ersatz.cfg.HttpMethod
+import com.stehno.ersatz.encdec.Decoders
+import com.stehno.ersatz.encdec.Encoders
 import com.stehno.ersatz.util.HttpClient
 import groovy.transform.TupleConstructor
 import okhttp3.OkHttpClient
@@ -25,7 +29,6 @@ import org.apache.commons.fileupload.UploadContext
 import org.apache.commons.fileupload.disk.DiskFileItemFactory
 import org.hamcrest.Matcher
 import spock.lang.AutoCleanup
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -34,8 +37,8 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
 import static MultipartResponseContent.multipart
-import static com.stehno.ersatz.ContentType.*
-import static com.stehno.ersatz.CookieMatcher.cookieMatcher
+import static com.stehno.ersatz.cfg.ContentType.*
+import static com.stehno.ersatz.match.CookieMatcher.cookieMatcher
 import static okhttp3.MediaType.parse
 import static okhttp3.RequestBody.create
 import static org.awaitility.Awaitility.await

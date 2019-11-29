@@ -15,8 +15,8 @@
  */
 package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.SentMessage;
-import com.stehno.ersatz.WsMessageType;
+import com.stehno.ersatz.cfg.SentMessage;
+import com.stehno.ersatz.cfg.WsMessageType;
 
 public class SentMessageImpl implements SentMessage {
 

@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz;
 
+import com.stehno.ersatz.cfg.ContentType;
 import com.stehno.ersatz.impl.MultipartPart;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
@@ -25,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN;
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
@@ -133,7 +134,7 @@ public class MultipartRequestContent {
      * @param fieldName the field name
      * @return the part or null if none is configured
      */
-    protected MultipartPart getAt(final String fieldName) {
+    public MultipartPart getAt(final String fieldName) {
         return parts.get(fieldName);
     }
 
