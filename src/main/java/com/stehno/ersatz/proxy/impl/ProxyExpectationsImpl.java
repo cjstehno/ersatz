@@ -35,82 +35,82 @@ public class ProxyExpectationsImpl implements ProxyExpectations {
     }
 
     @Override
-    public ProxyExpectations any(String path) {
+    public ProxyExpectations ANY(String path) {
         return matches(Matchers.any(HttpMethod.class), path);
     }
 
     @Override
-    public ProxyExpectations any(Matcher<String> matcher) {
+    public ProxyExpectations ANY(Matcher<String> matcher) {
         return matches(Matchers.any(HttpMethod.class), matcher);
     }
 
     @Override
-    public ProxyExpectations get(String path) {
+    public ProxyExpectations GET(String path) {
         return matches(Matchers.equalTo(HttpMethod.GET), path);
     }
 
     @Override
-    public ProxyExpectations get(Matcher<String> matcher) {
+    public ProxyExpectations GET(Matcher<String> matcher) {
         return matches( Matchers.equalTo(HttpMethod.GET), matcher);
     }
 
     @Override
-    public ProxyExpectations head(String path) {
+    public ProxyExpectations HEAD(String path) {
         return matches( Matchers.equalTo(HttpMethod.HEAD), path);
     }
 
     @Override
-    public ProxyExpectations head(Matcher<String> matcher) {
+    public ProxyExpectations HEAD(Matcher<String> matcher) {
         return matches( Matchers.equalTo(HttpMethod.HEAD), matcher);
     }
 
     @Override
-    public ProxyExpectations put(String path) {
+    public ProxyExpectations PUT(String path) {
         return matches( Matchers.equalTo(HttpMethod.PUT), path);
     }
 
     @Override
-    public ProxyExpectations put(Matcher<String> matcher) {
+    public ProxyExpectations PUT(Matcher<String> matcher) {
         return matches( Matchers.equalTo(HttpMethod.PUT), matcher);
     }
 
     @Override
-    public ProxyExpectations post(String path) {
+    public ProxyExpectations POST(String path) {
         return matches( Matchers.equalTo(HttpMethod.POST), path);
     }
 
     @Override
-    public ProxyExpectations post(Matcher<String> matcher) {
+    public ProxyExpectations POST(Matcher<String> matcher) {
         return matches( Matchers.equalTo(HttpMethod.POST), matcher);
     }
 
     @Override
-    public ProxyExpectations delete(String path) {
+    public ProxyExpectations DELETE(String path) {
         return matches( Matchers.equalTo(HttpMethod.DELETE), path);
     }
 
     @Override
-    public ProxyExpectations delete(Matcher<String> matcher) {
+    public ProxyExpectations DELETE(Matcher<String> matcher) {
         return matches( Matchers.equalTo(HttpMethod.DELETE), matcher);
     }
 
     @Override
-    public ProxyExpectations patch(String path) {
+    public ProxyExpectations PATCH(String path) {
         return matches( Matchers.equalTo(HttpMethod.PATCH), path);
     }
 
     @Override
-    public ProxyExpectations patch(Matcher<String> matcher) {
+    public ProxyExpectations PATCH(Matcher<String> matcher) {
         return matches( Matchers.equalTo(HttpMethod.PATCH), matcher);
     }
 
     @Override
-    public ProxyExpectations options(String path) {
+    public ProxyExpectations OPTIONS(String path) {
         return matches( Matchers.equalTo(HttpMethod.OPTIONS), path);
     }
 
     @Override
-    public ProxyExpectations options(Matcher<String> matcher) {
+    public ProxyExpectations OPTIONS(Matcher<String> matcher) {
         return matches( Matchers.equalTo(HttpMethod.OPTIONS), matcher);
     }
 

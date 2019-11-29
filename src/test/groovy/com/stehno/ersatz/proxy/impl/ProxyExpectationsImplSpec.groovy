@@ -38,22 +38,22 @@ class ProxyExpectationsImplSpec extends Specification {
 
         where:
         method    | path             || matches
-        'any'     | '/a'             || clientRequest(PUT, '/a')
-        'any'     | startsWith('/a') || clientRequest(DELETE, '/alpha')
-        'get'     | '/b'             || clientRequest(GET, '/b')
-        'get'     | startsWith('/b') || clientRequest(GET, '/bravo')
-        'head'    | '/c'             || clientRequest(HEAD, '/c')
-        'head'    | startsWith('/c') || clientRequest(HEAD, '/charlie')
-        'put'     | '/d'             || clientRequest(PUT, '/d')
-        'put'     | startsWith('/d') || clientRequest(PUT, '/delta')
-        'post'    | '/e'             || clientRequest(POST, '/e')
-        'post'    | startsWith('/e') || clientRequest(POST, '/echo')
-        'delete'  | '/f'             || clientRequest(DELETE, '/f')
-        'delete'  | startsWith('/f') || clientRequest(DELETE, '/foxtrot')
-        'patch'   | '/g'             || clientRequest(PATCH, '/g')
-        'patch'   | startsWith('/g') || clientRequest(PATCH, '/golf')
-        'options' | '/h'             || clientRequest(OPTIONS, '/h')
-        'options' | startsWith('/h') || clientRequest(OPTIONS, '/hotel')
+        'ANY'     | '/a'             || clientRequest(PUT, '/a')
+        'ANY'     | startsWith('/a') || clientRequest(DELETE, '/alpha')
+        'GET'     | '/b'             || clientRequest(GET, '/b')
+        'GET'     | startsWith('/b') || clientRequest(GET, '/bravo')
+        'HEAD'    | '/c'             || clientRequest(HEAD, '/c')
+        'HEAD'    | startsWith('/c') || clientRequest(HEAD, '/charlie')
+        'PUT'     | '/d'             || clientRequest(PUT, '/d')
+        'PUT'     | startsWith('/d') || clientRequest(PUT, '/delta')
+        'POST'    | '/e'             || clientRequest(POST, '/e')
+        'POST'    | startsWith('/e') || clientRequest(POST, '/echo')
+        'DELETE'  | '/f'             || clientRequest(DELETE, '/f')
+        'DELETE'  | startsWith('/f') || clientRequest(DELETE, '/foxtrot')
+        'PATCH'   | '/g'             || clientRequest(PATCH, '/g')
+        'PATCH'   | startsWith('/g') || clientRequest(PATCH, '/golf')
+        'OPTIONS' | '/h'             || clientRequest(OPTIONS, '/h')
+        'OPTIONS' | startsWith('/h') || clientRequest(OPTIONS, '/hotel')
     }
 
     private static ClientRequest clientRequest(final HttpMethod method, final String path) {

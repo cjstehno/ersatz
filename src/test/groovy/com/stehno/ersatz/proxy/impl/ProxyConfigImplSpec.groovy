@@ -29,7 +29,7 @@ class ProxyConfigImplSpec extends Specification {
 
         when:
         config.autoStart(false).target(target).expectations {
-            any('/')
+            ANY('/')
         }
 
         then:
@@ -51,7 +51,7 @@ class ProxyConfigImplSpec extends Specification {
         when:
         config.autoStart(true).target('http://localhost/bar').expectations(new Consumer<ProxyExpectations>() {
             @Override void accept(ProxyExpectations expects) {
-                expects.any('/blah')
+                expects.ANY('/blah')
             }
         })
 

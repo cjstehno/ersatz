@@ -38,8 +38,8 @@ class ErsatzProxySpec extends Specification {
         ErsatzProxy ersatzProxy = new ErsatzProxy({
             target ersatzServer.httpUrl
             expectations {
-                get '/'
-                get '/foo'
+                GET('/')
+                GET('/foo')
             }
         })
 
@@ -78,8 +78,8 @@ class ErsatzProxySpec extends Specification {
                 config.target ersatzServer.httpUrl
                 config.expectations(new Consumer<ProxyExpectations>() {
                     @Override void accept(final ProxyExpectations expect) {
-                        expect.get '/'
-                        expect.get '/foo'
+                        expect.GET('/')
+                        expect.GET('/foo')
                     }
                 })
             }

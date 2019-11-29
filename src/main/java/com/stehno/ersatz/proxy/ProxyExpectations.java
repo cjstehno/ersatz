@@ -22,15 +22,13 @@ import org.hamcrest.Matcher;
  */
  public interface ProxyExpectations {
 
-    // FIXME: these should be upper-cased
-
     /**
      * Configures an expected request with any request method and the specified path.
      *
      * @param path the expected path
      * @return a reference to this configuration
      */
-    ProxyExpectations any(String path);
+    ProxyExpectations ANY(String path);
 
     /**
      * Configures an expected request with any request method using the given path matcher.
@@ -38,7 +36,7 @@ import org.hamcrest.Matcher;
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyExpectations any(Matcher<String> matcher);
+    ProxyExpectations ANY(Matcher<String> matcher);
 
     /**
      * Configures an expected GET request with the specified path.
@@ -46,7 +44,7 @@ import org.hamcrest.Matcher;
      * @param path the expected path
      * @return a reference to this configuration
      */
-    ProxyExpectations get(String path);
+    ProxyExpectations GET(String path);
 
     /**
      * Configures an expected GET request using the provided matcher to match the path.
@@ -54,7 +52,7 @@ import org.hamcrest.Matcher;
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyExpectations get(Matcher<String> matcher);
+    ProxyExpectations GET(Matcher<String> matcher);
 
     /**
      * Configures an expected HEAD request with the specified path.
@@ -62,7 +60,7 @@ import org.hamcrest.Matcher;
      * @param path the expected path
      * @return a reference to this configuration
      */
-    ProxyExpectations head(String path);
+    ProxyExpectations HEAD(String path);
 
     /**
      * Configures an expected HEAD request using the provided matcher to match the path.
@@ -70,7 +68,7 @@ import org.hamcrest.Matcher;
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyExpectations head(Matcher<String> matcher);
+    ProxyExpectations HEAD(Matcher<String> matcher);
 
     /**
      * Configures an expected PUT request with the specified path.
@@ -78,7 +76,7 @@ import org.hamcrest.Matcher;
      * @param path the expected path
      * @return a reference to this configuration
      */
-    ProxyExpectations put(String path);
+    ProxyExpectations PUT(String path);
 
     /**
      * Configures an expected PUT request using the provided matcher to match the path.
@@ -86,7 +84,7 @@ import org.hamcrest.Matcher;
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyExpectations put(Matcher<String> matcher);
+    ProxyExpectations PUT(Matcher<String> matcher);
 
     /**
      * Configures an expected POST request with the specified path.
@@ -94,7 +92,7 @@ import org.hamcrest.Matcher;
      * @param path the expected path
      * @return a reference to this configuration
      */
-    ProxyExpectations post(String path);
+    ProxyExpectations POST(String path);
 
     /**
      * Configures an expected POST request using the provided matcher to match the path.
@@ -102,7 +100,7 @@ import org.hamcrest.Matcher;
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyExpectations post(Matcher<String> matcher);
+    ProxyExpectations POST(Matcher<String> matcher);
 
     /**
      * Configures an expected DELETE request with the specified path.
@@ -110,7 +108,7 @@ import org.hamcrest.Matcher;
      * @param path the expected path
      * @return a reference to this configuration
      */
-    ProxyExpectations delete(String path);
+    ProxyExpectations DELETE(String path);
 
     /**
      * Configures an expected DELETE request using the provided matcher to match the path.
@@ -118,7 +116,7 @@ import org.hamcrest.Matcher;
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyExpectations delete(Matcher<String> matcher);
+    ProxyExpectations DELETE(Matcher<String> matcher);
 
     /**
      * Configures an expected PATCH request with the specified path.
@@ -126,7 +124,7 @@ import org.hamcrest.Matcher;
      * @param path the expected path
      * @return a reference to this configuration
      */
-    ProxyExpectations patch(String path);
+    ProxyExpectations PATCH(String path);
 
     /**
      * Configures an expected PATCH request using the provided matcher to match the path.
@@ -134,7 +132,7 @@ import org.hamcrest.Matcher;
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyExpectations patch(Matcher<String> matcher);
+    ProxyExpectations PATCH(Matcher<String> matcher);
 
     /**
      * Configures an expected OPTIONS request with the specified path.
@@ -142,7 +140,7 @@ import org.hamcrest.Matcher;
      * @param path the expected path
      * @return a reference to this configuration
      */
-    ProxyExpectations options(String path);
+    ProxyExpectations OPTIONS(String path);
 
     /**
      * Configures an expected OPTIONS request using the provided matcher to match the path.
@@ -150,5 +148,5 @@ import org.hamcrest.Matcher;
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyExpectations options(Matcher<String> matcher);
+    ProxyExpectations OPTIONS(Matcher<String> matcher);
 }
