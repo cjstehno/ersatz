@@ -80,7 +80,7 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
                             public void handleRequest(final HttpServerExchange exchange) throws Exception {
                                 final ClientRequest clientRequest = new UndertowClientRequest(exchange);
 
-                                log.debug("Request: {}", clientRequest);
+                                log.debug("Request({}): {}", exchange.getProtocol(),  clientRequest);
 
                                 serverConfig.getExpectations().findMatch(clientRequest)
                                     .ifPresentOrElse(
@@ -223,7 +223,7 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
             exchange.getResponseSender().send(chunks.remove(0), new ResponseChunker(chunks, chunking.getDelay()));
 
         } else {
-            log.debug("Response({}): {}", responseHeaders, responsePreview);
+            log.debug("Response({}; {}): {}", exchange.getProtocol(), responseHeaders, responsePreview);
 
             exchange.getResponseSender().send(responseContent);
         }
