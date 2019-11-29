@@ -37,8 +37,6 @@ import static java.lang.System.arraycopy;
 
 public class ReceivedMessageImpl implements ReceivedMessage {
 
-    // FIXME: server-specific
-
     private Object payload;
     private WsMessageType messageType;
     private final List<MessageReactionImpl> reactions = new LinkedList<>();

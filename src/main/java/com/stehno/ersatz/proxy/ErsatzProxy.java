@@ -46,8 +46,6 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  */
 public class ErsatzProxy {
 
-    // FIXME: server-specific
-
     private static final Logger log = LoggerFactory.getLogger(ErsatzProxy.class);
     private static final String LOCALHOST = "localhost";
     private static final int EPHEMERAL_PORT = 0;
