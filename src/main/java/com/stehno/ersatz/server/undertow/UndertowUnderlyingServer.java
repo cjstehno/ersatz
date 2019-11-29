@@ -16,7 +16,9 @@
 package com.stehno.ersatz.server.undertow;
 
 import com.stehno.ersatz.*;
-import com.stehno.ersatz.impl.*;
+import com.stehno.ersatz.impl.ErsatzRequest;
+import com.stehno.ersatz.impl.ServerConfigImpl;
+import com.stehno.ersatz.impl.UnmatchedRequestReport;
 import com.stehno.ersatz.server.UnderlyingServer;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
@@ -30,6 +32,7 @@ import io.undertow.server.handlers.encoding.EncodingHandler;
 import io.undertow.server.handlers.encoding.GzipEncodingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xnio.Options;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -38,7 +41,8 @@ import java.net.InetSocketAddress;
 import java.security.KeyStore;
 import java.util.List;
 
-import static com.stehno.ersatz.impl.ResponseChunker.prepareChunks;
+import static com.stehno.ersatz.server.undertow.ResponseChunker.prepareChunks;
+import static io.undertow.UndertowOptions.*;
 import static io.undertow.util.HttpString.tryFromString;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
@@ -62,7 +66,7 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
     @Override public void start() {
         if (server == null) {
             final Undertow.Builder builder = Undertow.builder().addHttpListener(serverConfig.getDesiredHttpPort(), LOCALHOST);
-            serverConfig.getTimeoutConfig().accept(builder);
+            applyTimeout(builder, serverConfig.getTimeout());
 
             if (serverConfig.isHttpsEnabled()) {
                 builder.addHttpsListener(serverConfig.getDesiredHttpsPort(), LOCALHOST, sslContext());
@@ -112,6 +116,17 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
             server.start();
 
             applyPorts();
+        }
+    }
+
+    private void applyTimeout(final Undertow.Builder builder, final long timeout) {
+        if (timeout > 0) {
+            final var ms = (int) timeout;
+            builder.setServerOption(IDLE_TIMEOUT, ms);
+            builder.setServerOption(NO_REQUEST_TIMEOUT, ms);
+            builder.setServerOption(REQUEST_PARSE_TIMEOUT, ms);
+            builder.setSocketOption(Options.READ_TIMEOUT, ms);
+            builder.setSocketOption(Options.WRITE_TIMEOUT, ms);
         }
     }
 

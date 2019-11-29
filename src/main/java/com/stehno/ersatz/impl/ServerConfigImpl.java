@@ -23,6 +23,7 @@ import org.xnio.Options;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.net.URL;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -47,8 +48,7 @@ public class ServerConfigImpl implements ServerConfig {
     private final RequestDecoders globalDecoders = new RequestDecoders();
     private final ResponseEncoders globalEncoders = new ResponseEncoders();
     private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders);
-    private Consumer<Undertow.Builder> timeoutConfig = b -> {
-    };
+    private long timeout;
 
     /**
      * Used to control the enabled/disabled state of HTTPS on the server. By default HTTPS is disabled.
@@ -101,8 +101,8 @@ public class ServerConfigImpl implements ServerConfig {
         return expectations;
     }
 
-    public Consumer<Undertow.Builder> getTimeoutConfig() {
-        return timeoutConfig;
+    public long getTimeout() {
+        return timeout;
     }
 
     public void clearExpectations(){
@@ -135,15 +135,7 @@ public class ServerConfigImpl implements ServerConfig {
      * @return a reference to the server being configured
      */
     @Override public ServerConfig timeout(final int value, final TimeUnit units) {
-        // FIXME: server-specific
-        timeoutConfig = builder -> {
-            final var ms = (int) MILLISECONDS.convert(value, units);
-            builder.setServerOption(IDLE_TIMEOUT, ms);
-            builder.setServerOption(NO_REQUEST_TIMEOUT, ms);
-            builder.setServerOption(REQUEST_PARSE_TIMEOUT, ms);
-            builder.setSocketOption(Options.READ_TIMEOUT, ms);
-            builder.setSocketOption(Options.WRITE_TIMEOUT, ms);
-        };
+        this.timeout = MILLISECONDS.convert(value, units);
         return this;
     }
 

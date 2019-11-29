@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl;
+package com.stehno.ersatz.server.undertow;
 
 import groovy.lang.IntRange;
 import io.undertow.io.IoCallback;
@@ -29,8 +29,6 @@ import java.util.concurrent.ThreadLocalRandom;
  * Undertow server callback used to provide the delayed chunked content.
  */
 public class ResponseChunker implements IoCallback {
-
-    // FIXME: server-specific
 
     private final List<String> chunks;
     public final IntRange delay;
