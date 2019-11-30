@@ -226,7 +226,7 @@ public class ServerConfigImpl implements ServerConfig {
     }
 
     /**
-     * Registers authentication configuration as a <code>Consumer<AuthenticationConfig></code>.
+     * Registers authentication configuration as a <code>Consumer&lt;AuthenticationConfig&gt;</code>.
      *
      * @param config the configuration Consumer
      * @return a reference to this server configuration

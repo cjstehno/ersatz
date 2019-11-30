@@ -70,8 +70,8 @@ public interface AnyExpectations {
     }
 
     /**
-     * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
-     * <code>Consumer<Request></code> will have an instance of <code>Request</code> passed into it for configuration.
+     * Allows configuration of request expectation matching any request method using the provided <code>Consumer&lt;Request&gt;</code>. The
+     * <code>Consumer&lt;Request&gt;</code> will have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param path the expected request path
      * @param consumer the configuration consumer
@@ -82,8 +82,8 @@ public interface AnyExpectations {
     }
 
     /**
-     * Allows configuration of request expectation matching any request method using the provided <code>Consumer<Request></code>. The
-     * <code>Consumer<Request></code> will have an instance of <code>Request</code> passed into it for configuration.
+     * Allows configuration of request expectation matching any request method using the provided <code>Consumer&lt;Request&gt;</code>. The
+     * <code>Consumer&lt;Request&gt;</code> will have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param matcher the path matcher
      * @param consumer the configuration consumer

@@ -70,7 +70,7 @@ public interface DeleteExpectations {
     }
 
     /**
-     * Allows configuration of a DELETE request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * Allows configuration of a DELETE request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The <code>Consumer&lt;Request&gt;</code> will
      * have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param path the expected request path
@@ -82,7 +82,7 @@ public interface DeleteExpectations {
     }
 
     /**
-     * Allows configuration of a DELETE request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code> will
+     * Allows configuration of a DELETE request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The <code>Consumer&lt;Request&gt;</code> will
      * have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param matcher the path matcher

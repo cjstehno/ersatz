@@ -70,8 +70,8 @@ public interface PutExpectations {
     }
 
     /**
-     * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
-     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     * Allows configuration of a PUT request expectation using the provided <code>Consumer&lt;RequestWithContent&gt;</code>. The
+     * <code>Consumer&lt;RequestWithContent&gt;</code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
@@ -82,8 +82,8 @@ public interface PutExpectations {
     }
 
     /**
-     * Allows configuration of a PUT request expectation using the provided <code>Consumer<Request></code>. The
-     * <code>Consumer<RequestWithContent></code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
+     * Allows configuration of a PUT request expectation using the provided <code>Consumer&lt;RequestWithContent&gt;</code>. The
+     * <code>Consumer&lt;RequestWithContent&gt;</code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object

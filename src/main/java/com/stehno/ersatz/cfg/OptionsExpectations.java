@@ -70,8 +70,8 @@ public interface OptionsExpectations {
     }
 
     /**
-     * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code>
-     * will have an instance of <code>Request</code> passed into it for configuration.
+     * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code><code>Consumer&lt;Request&gt;</code>.
+     * The <code>Consumer&lt;Request&gt;</code> will have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param path   the expected request path
      * @param config the configuration consumer
@@ -82,8 +82,8 @@ public interface OptionsExpectations {
     }
 
     /**
-     * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer<Request></code>. The <code>Consumer<Request></code>
-     * will have an instance of <code>Request</code> passed into it for configuration.
+     * Allows configuration of a OPTIONS request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The
+     * <code>Consumer&lt;Request&gt;</code> will have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param matcher the path matcher
      * @param config  the configuration consumer

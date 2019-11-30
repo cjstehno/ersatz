@@ -149,12 +149,12 @@ public class ErsatzServer implements Closeable {
     }
 
     /**
-     * Used to configure HTTP expectations on the server; the provided <code>Consumer<Expectations></code> implementation will have an active
+     * Used to configure HTTP expectations on the server; the provided <code>Consumer&lt;Expectations&gt;</code> implementation will have an active
      * <code>Expectations</code> object passed into it for configuring server interaction expectations.
      * <p>
      * Calling this method when auto-start is enabled will start the server.
      *
-     * @param expects the <code>Consumer<Expectations></code> instance to perform the configuration
+     * @param expects the <code>Consumer&lt;Expectations&gt;</code> instance to perform the configuration
      * @return a reference to this server
      */
     public ErsatzServer expectations(final Consumer<Expectations> expects) {
