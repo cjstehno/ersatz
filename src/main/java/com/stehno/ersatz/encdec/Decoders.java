@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz.encdec;
 
-import com.stehno.ersatz.MultipartRequestContent;
 import groovy.json.JsonSlurper;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;

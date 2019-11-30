@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static com.stehno.ersatz.util.MimeTypes.createMimeType;
+import static com.stehno.ersatz.encdec.MimeTypes.createMimeType;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**

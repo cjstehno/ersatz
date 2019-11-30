@@ -16,13 +16,13 @@
 package com.stehno.ersatz.server.undertow;
 
 import com.stehno.ersatz.*;
-import com.stehno.ersatz.cfg.ChunkingConfig;
-import com.stehno.ersatz.cfg.Response;
 import com.stehno.ersatz.cfg.impl.ChunkingConfigImpl;
 import com.stehno.ersatz.cfg.impl.ErsatzRequest;
 import com.stehno.ersatz.cfg.impl.ErsatzResponse;
 import com.stehno.ersatz.cfg.impl.ServerConfigImpl;
-import com.stehno.ersatz.impl.UnmatchedRequestReport;
+import com.stehno.ersatz.encdec.Cookie;
+import com.stehno.ersatz.internal.UnmatchedRequestReport;
+import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.server.UnderlyingServer;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;

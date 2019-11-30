@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz;
 
+import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.util.HttpClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

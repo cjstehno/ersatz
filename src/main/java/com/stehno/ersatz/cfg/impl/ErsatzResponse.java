@@ -15,15 +15,15 @@
  */
 package com.stehno.ersatz.cfg.impl;
 
-import com.stehno.ersatz.Cookie;
-import com.stehno.ersatz.MultipartResponseContent;
+import com.stehno.ersatz.encdec.Cookie;
+import com.stehno.ersatz.encdec.MultipartResponseContent;
 import com.stehno.ersatz.cfg.ChunkingConfig;
 import com.stehno.ersatz.cfg.ContentType;
 import com.stehno.ersatz.cfg.HttpMethod;
 import com.stehno.ersatz.cfg.Response;
 import com.stehno.ersatz.encdec.ResponseEncoders;
 import com.stehno.ersatz.encdec.EncoderChain;
-import com.stehno.ersatz.impl.ErsatzMultipartResponseContent;
+import com.stehno.ersatz.encdec.ErsatzMultipartResponseContent;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;

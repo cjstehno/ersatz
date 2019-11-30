@@ -15,8 +15,8 @@
  */
 package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.ClientRequest;
-import com.stehno.ersatz.Cookie;
+import com.stehno.ersatz.server.ClientRequest;
+import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.cfg.HttpMethod;
 
 import java.util.ArrayDeque;
@@ -76,7 +76,7 @@ public class MockClientRequest implements ClientRequest {
         return headers;
     }
 
-    @Override public Map<String, com.stehno.ersatz.Cookie> getCookies() {
+    @Override public Map<String, Cookie> getCookies() {
         return cookies;
     }
 

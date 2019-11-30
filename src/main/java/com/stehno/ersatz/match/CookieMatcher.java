@@ -15,7 +15,7 @@
  */
 package com.stehno.ersatz.match;
 
-import com.stehno.ersatz.Cookie;
+import com.stehno.ersatz.encdec.Cookie;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import org.hamcrest.BaseMatcher;

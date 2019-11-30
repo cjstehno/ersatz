@@ -15,14 +15,15 @@
  */
 package com.stehno.ersatz
 
-import com.stehno.ersatz.impl.MultipartPart
+import com.stehno.ersatz.encdec.MultipartRequestContent
+import com.stehno.ersatz.encdec.MultipartPart
 import spock.lang.Specification
 
 import java.util.function.Consumer
 
 import static com.stehno.ersatz.cfg.ContentType.IMAGE_PNG
 import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
-import static com.stehno.ersatz.MultipartRequestContent.multipart
+import static com.stehno.ersatz.encdec.MultipartRequestContent.multipart
 
 class MultipartRequestContentSpec extends Specification {
 

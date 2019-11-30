@@ -15,9 +15,6 @@
  */
 package com.stehno.ersatz.encdec;
 
-import com.stehno.ersatz.MultipartResponseContent;
-import com.stehno.ersatz.impl.ErsatzMultipartResponseContent;
-
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
 import java.util.function.Function;

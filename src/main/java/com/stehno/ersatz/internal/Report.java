@@ -13,18 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.util;
+package com.stehno.ersatz.internal;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
+public interface Report {
 
-public class MimeTypes {
+    String RED = "\u001B[31m";
+    String GREEN = "\u001B[32m";
+    String RESET = "\u001B[0m";
 
-    public static MimeType createMimeType(final String value) {
-        try {
-            return new MimeType(value);
-        } catch (MimeTypeParseException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
+    String render();
 }

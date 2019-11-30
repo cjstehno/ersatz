@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl;
+package com.stehno.ersatz.cfg.impl;
 
-import com.stehno.ersatz.ClientRequest;
-import com.stehno.ersatz.Cookie;
+import com.stehno.ersatz.server.ClientRequest;
+import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.cfg.HttpMethod;
 import com.stehno.ersatz.encdec.DecoderChain;
 import com.stehno.ersatz.encdec.DecodingContext;
@@ -37,6 +37,7 @@ import static java.util.Arrays.asList;
  * Request-specific wrapper around hamcrest matchers to provide property-based matching based on request attributes.
  */
 public class RequestMatcher extends BaseMatcher<ClientRequest> {
+    // TODO: can these be made package-private?
 
     private final Matcher<?> matcher;
     private final Function<ClientRequest, Object> getter;

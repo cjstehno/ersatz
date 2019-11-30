@@ -15,7 +15,7 @@
  */
 package com.stehno.ersatz.match;
 
-import com.stehno.ersatz.Cookie;
+import com.stehno.ersatz.encdec.Cookie;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 

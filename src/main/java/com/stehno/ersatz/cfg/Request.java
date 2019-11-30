@@ -15,8 +15,8 @@
  */
 package com.stehno.ersatz.cfg;
 
-import com.stehno.ersatz.ClientRequest;
-import com.stehno.ersatz.Cookie;
+import com.stehno.ersatz.server.ClientRequest;
+import com.stehno.ersatz.encdec.Cookie;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import org.hamcrest.Matcher;

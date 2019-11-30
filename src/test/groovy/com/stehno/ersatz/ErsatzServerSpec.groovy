@@ -17,8 +17,10 @@ package com.stehno.ersatz
 
 import com.stehno.ersatz.cfg.Expectations
 import com.stehno.ersatz.cfg.HttpMethod
+import com.stehno.ersatz.encdec.Cookie
 import com.stehno.ersatz.encdec.Decoders
 import com.stehno.ersatz.encdec.Encoders
+import com.stehno.ersatz.encdec.MultipartResponseContent
 import com.stehno.ersatz.util.HttpClient
 import groovy.transform.TupleConstructor
 import okhttp3.OkHttpClient
@@ -36,7 +38,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
-import static MultipartResponseContent.multipart
+import static com.stehno.ersatz.encdec.MultipartResponseContent.multipart
 import static com.stehno.ersatz.cfg.ContentType.*
 import static com.stehno.ersatz.match.CookieMatcher.cookieMatcher
 import static okhttp3.MediaType.parse

@@ -15,8 +15,8 @@
  */
 package com.stehno.ersatz.server.undertow;
 
-import com.stehno.ersatz.ClientRequest;
-import com.stehno.ersatz.Cookie;
+import com.stehno.ersatz.server.ClientRequest;
+import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.cfg.HttpMethod;
 import io.undertow.server.HttpServerExchange;
 

@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.encdec.Cookie
 import spock.lang.Specification
 
 import java.util.function.Consumer

@@ -15,7 +15,7 @@
  */
 package com.stehno.ersatz.cfg.impl;
 
-import com.stehno.ersatz.ClientRequest;
+import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.cfg.*;
 import com.stehno.ersatz.encdec.RequestDecoders;
 import com.stehno.ersatz.encdec.ResponseEncoders;

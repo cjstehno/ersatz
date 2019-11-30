@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl;
+package com.stehno.ersatz.internal;
 
-import com.stehno.ersatz.ClientRequest;
+import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.cfg.impl.ErsatzRequest;
 
 import java.nio.charset.Charset;

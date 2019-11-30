@@ -15,7 +15,7 @@
  */
 package com.stehno.ersatz.match;
 
-import com.stehno.ersatz.MultipartRequestContent;
+import com.stehno.ersatz.encdec.MultipartRequestContent;
 import com.stehno.ersatz.cfg.ContentType;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;

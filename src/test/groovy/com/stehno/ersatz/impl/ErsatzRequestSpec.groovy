@@ -19,6 +19,7 @@ import com.stehno.ersatz.*
 import com.stehno.ersatz.cfg.Response
 import com.stehno.ersatz.cfg.impl.ErsatzRequest
 import com.stehno.ersatz.encdec.ResponseEncoders
+import com.stehno.ersatz.server.ClientRequest
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Request.Builder
@@ -30,7 +31,7 @@ import spock.lang.Unroll
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.Cookie.cookie
+import static com.stehno.ersatz.encdec.Cookie.cookie
 import static com.stehno.ersatz.match.CookieMatcher.cookieMatcher
 import static com.stehno.ersatz.cfg.HttpMethod.POST
 import static com.stehno.ersatz.match.NoCookiesMatcher.noCookies

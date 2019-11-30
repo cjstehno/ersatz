@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl;
+package com.stehno.ersatz.encdec;
 
-import com.stehno.ersatz.MultipartResponseContent;
 import com.stehno.ersatz.cfg.ContentType;
-import com.stehno.ersatz.encdec.EncoderChain;
-import com.stehno.ersatz.encdec.ResponseEncoders;
 
 import java.util.Collections;
 import java.util.LinkedList;

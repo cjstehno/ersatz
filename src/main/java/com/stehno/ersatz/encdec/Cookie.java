@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz;
+package com.stehno.ersatz.encdec;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;

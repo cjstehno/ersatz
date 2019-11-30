@@ -18,7 +18,7 @@ package com.stehno.ersatz.server.undertow;
 import com.stehno.ersatz.cfg.WsMessageType;
 import com.stehno.ersatz.cfg.impl.ExpectationsImpl;
 import com.stehno.ersatz.cfg.impl.ReceivedMessageImpl;
-import com.stehno.ersatz.impl.UnmatchedWsReport;
+import com.stehno.ersatz.internal.UnmatchedWsReport;
 import com.stehno.ersatz.cfg.impl.WebSocketExpectationsImpl;
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;

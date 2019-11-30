@@ -16,7 +16,7 @@
 package com.stehno.ersatz.impl
 
 
-import com.stehno.ersatz.ClientRequest
+import com.stehno.ersatz.server.ClientRequest
 import com.stehno.ersatz.cfg.Request
 import com.stehno.ersatz.cfg.RequestWithContent
 import com.stehno.ersatz.cfg.impl.ErsatzRequest

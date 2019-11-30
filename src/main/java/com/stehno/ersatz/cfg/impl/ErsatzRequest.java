@@ -15,13 +15,12 @@
  */
 package com.stehno.ersatz.cfg.impl;
 
-import com.stehno.ersatz.ClientRequest;
-import com.stehno.ersatz.Cookie;
+import com.stehno.ersatz.server.ClientRequest;
+import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.cfg.HttpMethod;
 import com.stehno.ersatz.cfg.Request;
 import com.stehno.ersatz.cfg.Response;
 import com.stehno.ersatz.encdec.ResponseEncoders;
-import com.stehno.ersatz.impl.RequestMatcher;
 import com.stehno.ersatz.match.CookieMatcher;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;

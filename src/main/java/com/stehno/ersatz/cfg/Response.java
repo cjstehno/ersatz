@@ -15,7 +15,7 @@
  */
 package com.stehno.ersatz.cfg;
 
-import com.stehno.ersatz.Cookie;
+import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.encdec.ResponseEncoders;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;

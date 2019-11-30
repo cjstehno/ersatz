@@ -16,7 +16,7 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.encdec.Encoders
-import com.stehno.ersatz.MultipartResponseContent
+import com.stehno.ersatz.encdec.MultipartResponseContent
 import spock.lang.Specification
 
 import java.util.function.Consumer
