@@ -15,11 +15,11 @@
  */
 package com.stehno.ersatz.cfg.impl;
 
-import com.stehno.ersatz.server.ClientRequest;
-import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.cfg.HttpMethod;
+import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.encdec.DecoderChain;
 import com.stehno.ersatz.encdec.DecodingContext;
+import com.stehno.ersatz.server.ClientRequest;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -37,7 +37,6 @@ import static java.util.Arrays.asList;
  * Request-specific wrapper around hamcrest matchers to provide property-based matching based on request attributes.
  */
 public class RequestMatcher extends BaseMatcher<ClientRequest> {
-    // TODO: can these be made package-private?
 
     private final Matcher<?> matcher;
     private final Function<ClientRequest, Object> getter;
@@ -49,7 +48,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
         this.description = description;
     }
 
-    public Matcher<?> getMatcher() {
+    Matcher<?> getMatcher() {
         return matcher;
     }
 
@@ -59,7 +58,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param m the hamcrest matcher for the protocol property
      * @return a configured RequestMatcher
      */
-    public static RequestMatcher protocol(final Matcher<String> m) {
+    static RequestMatcher protocol(final Matcher<String> m) {
         return new RequestMatcher(m, ClientRequest::getProtocol, "Protocol matches ");
     }
 
@@ -69,7 +68,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param m the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    public static RequestMatcher method(final Matcher<HttpMethod> m) {
+    static RequestMatcher method(final Matcher<HttpMethod> m) {
         return new RequestMatcher(m, ClientRequest::getMethod, "HTTP method matches ");
     }
 
@@ -79,7 +78,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param m the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    public static RequestMatcher path(final Matcher<String> m) {
+    static RequestMatcher path(final Matcher<String> m) {
         return new RequestMatcher(m, ClientRequest::getPath, "Path matches ");
     }
 
@@ -90,7 +89,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param m    the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    public static RequestMatcher header(final String name, final Matcher<Iterable<? super String>> m) {
+    static RequestMatcher header(final String name, final Matcher<Iterable<? super String>> m) {
         return new RequestMatcher(
             m,
             cr -> cr.getHeaders().entrySet().stream()
@@ -109,7 +108,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param m    the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    public static RequestMatcher query(final String name, final Matcher<Iterable<? super String>> m) {
+    static RequestMatcher query(final String name, final Matcher<Iterable<? super String>> m) {
         return new RequestMatcher(
             m,
             cr -> {
@@ -131,7 +130,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param m    the matchers
      * @return the configured RequestMatcher
      */
-    public static RequestMatcher param(final String name, final Matcher<Iterable<? super String>> m) {
+    static RequestMatcher param(final String name, final Matcher<Iterable<? super String>> m) {
         return new RequestMatcher(
             m,
             cr -> cr.getBodyParameters().getOrDefault(name, new ArrayDeque<>()),
@@ -146,7 +145,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param m    the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    public static RequestMatcher cookie(final String name, final Matcher<Cookie> m) {
+    static RequestMatcher cookie(final String name, final Matcher<Cookie> m) {
         return new RequestMatcher(
             m,
             cr -> cr.getCookies().get(name),
@@ -154,7 +153,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
         );
     }
 
-    public static RequestMatcher cookies(final Matcher<Map<String, Cookie>> matcher) {
+    static RequestMatcher cookies(final Matcher<Map<String, Cookie>> matcher) {
         return new RequestMatcher(
             matcher,
             cr -> {
@@ -174,7 +173,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param m            the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    public static RequestMatcher body(final DecoderChain decoderChain, final String contentType, final Matcher<Object> m) {
+    static RequestMatcher body(final DecoderChain decoderChain, final String contentType, final Matcher<Object> m) {
         return new RequestMatcher(
             m,
             cr -> {
@@ -195,7 +194,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param m the hamcrest matcher to be wrapped
      * @return a configured RequestMatcher
      */
-    public static RequestMatcher contentType(final Matcher<String> m) {
+    static RequestMatcher contentType(final Matcher<String> m) {
         return header(CONTENT_TYPE_HEADER, IsIterableContaining.hasItem(m));
     }
 
@@ -205,7 +204,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      * @param crm the matcher
      * @return a configured RequestMatcher
      */
-    public static RequestMatcher matcher(final Matcher<ClientRequest> crm) {
+    static RequestMatcher matcher(final Matcher<ClientRequest> crm) {
         return new RequestMatcher(crm, cr -> cr, "Request matches " + crm);
     }
 
