@@ -15,12 +15,14 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+
+import com.stehno.ersatz.ErsatzServer
+import com.stehno.ersatz.InMemoryCookieJar
 import com.stehno.ersatz.cfg.ContentType
 import com.stehno.ersatz.cfg.HttpMethod
-import com.stehno.ersatz.cfg.impl.ErsatzRequestWithContent
 import com.stehno.ersatz.encdec.Decoders
 import com.stehno.ersatz.encdec.MultipartRequestContent
+import com.stehno.ersatz.server.MockClientRequest
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request

@@ -17,7 +17,7 @@ package com.stehno.ersatz;
 
 import com.stehno.ersatz.cfg.Expectations;
 import com.stehno.ersatz.cfg.ServerConfig;
-import com.stehno.ersatz.cfg.impl.ServerConfigImpl;
+import com.stehno.ersatz.impl.ServerConfigImpl;
 import com.stehno.ersatz.server.UnderlyingServer;
 import com.stehno.ersatz.server.undertow.UndertowUnderlyingServer;
 import groovy.lang.Closure;

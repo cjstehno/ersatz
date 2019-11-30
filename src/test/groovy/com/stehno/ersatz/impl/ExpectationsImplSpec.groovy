@@ -19,11 +19,9 @@ package com.stehno.ersatz.impl
 import com.stehno.ersatz.server.ClientRequest
 import com.stehno.ersatz.cfg.Request
 import com.stehno.ersatz.cfg.RequestWithContent
-import com.stehno.ersatz.cfg.impl.ErsatzRequest
-import com.stehno.ersatz.cfg.impl.ErsatzRequestWithContent
-import com.stehno.ersatz.cfg.impl.ExpectationsImpl
 import com.stehno.ersatz.encdec.RequestDecoders
 import com.stehno.ersatz.encdec.ResponseEncoders
+import com.stehno.ersatz.server.MockClientRequest
 import spock.lang.Specification
 import spock.lang.Unroll
 

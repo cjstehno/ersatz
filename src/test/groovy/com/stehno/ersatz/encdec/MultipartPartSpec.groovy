@@ -13,34 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl
+package com.stehno.ersatz.encdec
 
+import com.stehno.ersatz.encdec.MultipartPart
 import spock.lang.Specification
 
-import static com.stehno.ersatz.cfg.WsMessageType.BINARY
-import static com.stehno.ersatz.cfg.WsMessageType.TEXT
+class MultipartPartSpec extends Specification {
 
-class SentMessageImplSpec extends Specification {
-
-    def 'methods'(){
-        setup:
-        SentMessageImpl message = new SentMessageImpl()
-
+    def 'properties'() {
         when:
-        message.payload('stuff')
-        message.messageType(BINARY)
+        def part = new MultipartPart('file', 'file.txt', 'text/plain', 'binary', 'some file')
 
         then:
-        message.payload == 'stuff'
-        message.messageType == BINARY
-    }
-
-    def 'builder'(){
-        when:
-        SentMessageImpl message = new SentMessageImpl().payload('builder').messageType(TEXT)
-
-        then:
-        message.payload == 'builder'
-        message.messageType == TEXT
+        part.fieldName == 'file'
+        part.fileName == 'file.txt'
+        part.contentType == 'text/plain'
+        part.transferEncoding == 'binary'
+        part.value == 'some file'
     }
 }

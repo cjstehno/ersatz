@@ -16,7 +16,6 @@
 package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.encdec.ResponseEncoders
-import com.stehno.ersatz.cfg.impl.ErsatzResponse
 import spock.lang.Specification
 
 import static com.stehno.ersatz.cfg.ContentType.APPLICATION_JSON

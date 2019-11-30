@@ -17,9 +17,8 @@ package com.stehno.ersatz.impl
 
 import com.stehno.ersatz.encdec.Cookie
 import com.stehno.ersatz.cfg.HttpMethod
-import com.stehno.ersatz.cfg.impl.ErsatzRequest
 import com.stehno.ersatz.encdec.ResponseEncoders
-import com.stehno.ersatz.internal.UnmatchedRequestReport
+import com.stehno.ersatz.server.MockClientRequest
 import spock.lang.Specification
 import spock.lang.Unroll
 
