@@ -226,15 +226,19 @@ public class ErsatzResponse implements Response {
     @Override
     public byte[] getContent() {
         if (content != null) {
-            if( cachedContent.get() == null) {
+            if (cachedContent.get() == null) {
                 final var encoder = encoderChain.resolve(getContentType(), content.getClass());
                 if (encoder != null) {
                     log.debug("Found encoder ({}) for content ({}).", encoder, content.getClass().getSimpleName());
-                    cachedContent.set( encoder.apply(content));
+                    cachedContent.set(encoder.apply(content));
+
+                } else if (content instanceof byte[]) {
+                    log.debug("No encoder configured for byte[] - returning raw bytes.");
+                    cachedContent.set((byte[]) content);
 
                 } else {
                     log.debug("No encoder configured for content ({}) - returning string bytes.", content.getClass().getSimpleName());
-                    cachedContent.set( content.toString().getBytes());
+                    cachedContent.set(content.toString().getBytes());
                 }
 
             }

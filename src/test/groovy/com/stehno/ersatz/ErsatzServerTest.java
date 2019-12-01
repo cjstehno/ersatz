@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz;
 
+import com.stehno.ersatz.cfg.ContentType;
 import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.util.HttpClient;
 import okhttp3.Response;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -34,8 +36,7 @@ import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ErsatzServerTest {
@@ -156,5 +157,32 @@ class ErsatzServerTest {
         assertEquals("", response.body().string());
 
         server.stop();
+    }
+
+    @Test @DisplayName("downloading file with GET")
+    void downloading_with_get() throws IOException {
+        final var zipBites = ErsatzServerTest.class.getResourceAsStream("/images.zip").readAllBytes();
+
+        final var server = new ErsatzServer(cfg -> {
+            cfg.expectations(exp -> {
+                exp.GET("/download", req -> {
+                    req.header("Content-Disposition", "attachment; filename=\"data.zip\"");
+                    req.responder(res -> {
+                        res.body(zipBites, "application/zip");
+                    });
+                });
+            });
+        }).start();
+
+        final var response = http.get(
+            Map.of("Content-Disposition", "attachment; filename=\"data.zip\""),
+            server.httpUrl("/download")
+        );
+
+        assertEquals(200, response.code());
+
+        final var responseBytes = response.body().bytes();
+        assertEquals(zipBites.length, responseBytes.length);
+        assertArrayEquals(zipBites, responseBytes);
     }
 }
