@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2019 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,8 +25,6 @@ import io.undertow.server.handlers.CookieImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 import static com.stehno.ersatz.server.undertow.ResponseChunker.prepareChunks;
 import static io.undertow.util.HttpString.tryFromString;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -38,6 +36,7 @@ class ErsatzHttpHandler implements HttpHandler {
     private static final String TRANSFER_ENCODING = "Transfer-encoding";
     private static final String NO_HEADERS = "<no-headers>";
     private static final String EMPTY = "<empty>";
+    private static final String EMPTY_RESPONSE = "";
     private final ExpectationsImpl expectations;
     private final boolean reportToConsole;
 
@@ -75,9 +74,9 @@ class ErsatzHttpHandler implements HttpHandler {
 
     private void send(final HttpServerExchange exchange, final ErsatzResponse response) {
         if (response == null) {
-            log.info("No response was configured - sending NO_CONTENT (204)");
+            log.debug("Unconfigured-Response: No Content (204)");
             exchange.setStatusCode(204);
-            sendFullResponse(exchange, "");
+            sendFullResponse(exchange, EMPTY_RESPONSE);
 
         } else {
             applyResponseDelay(response);
@@ -91,28 +90,28 @@ class ErsatzHttpHandler implements HttpHandler {
             final String responseContent = response.getContent();
             final ChunkingConfigImpl chunking = response.getChunkingConfig();
 
+            final var responseHeaders = exchange.getResponseHeaders() != null ? exchange.getResponseHeaders() : NO_HEADERS;
             if (responseContent == null) {
-                sendFullResponse(exchange, "");
+                log.debug("Empty-Response({}): {}", responseHeaders, EMPTY);
+                sendFullResponse(exchange, EMPTY_RESPONSE);
 
             } else if (chunking != null) {
+                log.debug("Chunked-Response({}; {}): {}", responseHeaders, chunking, responseContent.isBlank() ? EMPTY : responseContent);
                 sendChunkedResponse(exchange, responseContent, chunking);
 
             } else {
+                log.debug("Response({}): {}", responseHeaders, responseContent.isBlank() ? EMPTY : responseContent);
                 sendFullResponse(exchange, responseContent);
             }
         }
     }
 
     private void sendChunkedResponse(final HttpServerExchange exchange, final String responseContent, final ChunkingConfigImpl chunking) {
-        log.debug("Chunked-Response({}; {}): {}", exchange.getResponseHeaders() != null ? exchange.getResponseHeaders() : NO_HEADERS, chunking, responseContent != null ? responseContent : EMPTY);
-
-        final List<String> chunks = prepareChunks(responseContent, chunking.getChunks());
+        final var chunks = prepareChunks(responseContent, chunking.getChunks());
         exchange.getResponseSender().send(chunks.remove(0), new ResponseChunker(chunks, chunking.getDelay()));
     }
 
     private void sendFullResponse(final HttpServerExchange exchange, final String responseContent) {
-        log.debug("Response({}; {}): {}", exchange.getProtocol(), exchange.getResponseHeaders() != null ? exchange.getResponseHeaders() : NO_HEADERS, responseContent != null ? responseContent : EMPTY);
-
         exchange.getResponseSender().send(responseContent);
     }
 
