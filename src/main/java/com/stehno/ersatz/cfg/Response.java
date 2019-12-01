@@ -32,7 +32,6 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  * Used to configure the provided response to an HTTP request.
  */
 public interface Response {
-    // TODO: rename to ExpectedResponse
 
     /**
      * Defines the request content to be sent back to the client. In the case of <code>MultipartContent</code>, the content-type will also be set.

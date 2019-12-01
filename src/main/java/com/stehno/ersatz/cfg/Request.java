@@ -30,7 +30,6 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  * Configuration interface for HTTP request expectations.
  */
 public interface Request {
-    // TODO: rename to ExpectedRequest
 
     /**
      * Specifies that the request protocol be equal to (case-insensitive) the specified value.
