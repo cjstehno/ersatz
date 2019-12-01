@@ -15,20 +15,12 @@
  */
 package com.stehno.ersatz.server.undertow;
 
-import com.stehno.ersatz.*;
-import com.stehno.ersatz.impl.ChunkingConfigImpl;
-import com.stehno.ersatz.impl.ErsatzRequest;
-import com.stehno.ersatz.impl.ErsatzResponse;
+import com.stehno.ersatz.ErsatzServer;
 import com.stehno.ersatz.impl.ServerConfigImpl;
-import com.stehno.ersatz.encdec.Cookie;
-import com.stehno.ersatz.impl.UnmatchedRequestReport;
-import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.server.UnderlyingServer;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
-import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.BlockingHandler;
-import io.undertow.server.handlers.CookieImpl;
 import io.undertow.server.handlers.HttpTraceHandler;
 import io.undertow.server.handlers.encoding.ContentEncodingRepository;
 import io.undertow.server.handlers.encoding.DeflateEncodingProvider;
@@ -43,20 +35,13 @@ import javax.net.ssl.SSLContext;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.security.KeyStore;
-import java.util.List;
 
-import static com.stehno.ersatz.server.undertow.ResponseChunker.prepareChunks;
 import static io.undertow.UndertowOptions.*;
-import static io.undertow.util.HttpString.tryFromString;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.stream.Collectors.toList;
 
 public class UndertowUnderlyingServer implements UnderlyingServer {
 
     private static final Logger log = LoggerFactory.getLogger(UndertowUnderlyingServer.class);
     private static final String LOCALHOST = "localhost";
-    private static final String NO_HEADERS = "<no-headers>";
-    private static final String EMPTY = "<empty>";
     private static final int UNSPECIFIED_PORT = -1;
     private final ServerConfigImpl serverConfig;
     private Undertow server;
@@ -74,39 +59,13 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
 
             if (serverConfig.isHttpsEnabled()) {
                 builder.addHttpsListener(serverConfig.getDesiredHttpsPort(), LOCALHOST, sslContext());
+                log.debug("HTTPS listener enabled and configured.");
             }
 
-            BlockingHandler blockingHandler = new BlockingHandler(new EncodingHandler(
+            final var blockingHandler = new BlockingHandler(new EncodingHandler(
                 applyAuthentication(
                     new HttpTraceHandler(
-                        new HttpHandler() {
-                            @Override
-                            public void handleRequest(final HttpServerExchange exchange) throws Exception {
-                                final ClientRequest clientRequest = new UndertowClientRequest(exchange);
-
-                                log.debug("Request({}): {}", exchange.getProtocol(),  clientRequest);
-
-                                serverConfig.getExpectations().findMatch(clientRequest)
-                                    .ifPresentOrElse(
-                                        req -> {
-                                            final var ereq = (ErsatzRequest) req;
-                                            send(exchange, ereq.getCurrentResponse());
-                                            ereq.mark(clientRequest);
-                                        },
-                                        () -> {
-                                            final var report = new UnmatchedRequestReport(clientRequest, serverConfig.getExpectations().getRequests().stream().map(r -> (ErsatzRequest) r).collect(toList()));
-
-                                            log.warn(report.render());
-
-                                            if (serverConfig.isMismatchToConsole()) {
-                                                System.out.println(report);
-                                            }
-
-                                            exchange.setStatusCode(404).getResponseSender().send(NOT_FOUND_BODY);
-                                        }
-                                    );
-                            }
-                        }
+                        new ErsatzHttpHandler(serverConfig.getExpectations(), serverConfig.isMismatchToConsole())
                     )
                 ),
                 new ContentEncodingRepository()
@@ -114,12 +73,15 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
                     .addEncodingHandler("deflate", new DeflateEncodingProvider(), 50)
             ));
 
-            final WebSocketsHandlerBuilder wsBuilder = new WebSocketsHandlerBuilder(serverConfig.getExpectations(), blockingHandler, serverConfig.isMismatchToConsole());
+            server = builder.setHandler(
+                new WebSocketsHandlerBuilder(serverConfig.getExpectations(), blockingHandler, serverConfig.isMismatchToConsole()).build()
+            ).build();
 
-            server = builder.setHandler(wsBuilder.build()).build();
             server.start();
 
             applyPorts();
+
+            log.info("Started.");
         }
     }
 
@@ -131,6 +93,8 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
             builder.setServerOption(REQUEST_PARSE_TIMEOUT, ms);
             builder.setSocketOption(Options.READ_TIMEOUT, ms);
             builder.setSocketOption(Options.WRITE_TIMEOUT, ms);
+
+            log.debug("Timeout ({} ms) applied.", timeout);
         }
     }
 
@@ -143,6 +107,8 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
 
             server = null;
         }
+
+        log.info("Stopped.");
     }
 
     @Override public int getActualHttpPort() {
@@ -158,7 +124,7 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
 
         final var authConfig = serverConfig.getAuthenticationConfig();
         if (authConfig != null) {
-            SimpleIdentityManager identityManager = new SimpleIdentityManager(authConfig.getUsername(), authConfig.getPassword());
+            final var identityManager = new SimpleIdentityManager(authConfig.getUsername(), authConfig.getPassword());
             switch (authConfig.getType()) {
                 case BASIC:
                     result = new BasicAuthHandler(identityManager).apply(result);
@@ -169,68 +135,11 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
                 default:
                     throw new IllegalArgumentException("Invalid authentication configuration.");
             }
+
+            log.debug("Applied {} authentication (username:{}, password:{}).", authConfig.getType(), authConfig.getUsername(), authConfig.getPassword());
         }
 
         return result;
-    }
-
-    private static void send(final HttpServerExchange exchange, final ErsatzResponse response) {
-        if (response != null) {
-            if (response.getDelay() > 0) {
-                try {
-                    MILLISECONDS.sleep(response.getDelay());
-                } catch (InterruptedException e) {
-                    // ignore
-                }
-            }
-
-            exchange.setStatusCode(response.getCode());
-
-            response.getHeaders().forEach((k, v) -> {
-                v.forEach(value -> {
-                    exchange.getResponseHeaders().add(tryFromString(k), value);
-                });
-            });
-
-            if (response.getChunkingConfig() != null) {
-                exchange.getResponseHeaders().add(tryFromString("Transfer-encoding"), "chunked");
-            }
-
-            response.getCookies().forEach((k, v) -> {
-                if (v instanceof Cookie) {
-                    final Cookie ersatzCookie = (Cookie) v;
-                    final var cookie = new CookieImpl(k, ersatzCookie.getValue());
-                    cookie.setPath(ersatzCookie.getPath());
-                    cookie.setDomain(ersatzCookie.getDomain());
-                    cookie.setMaxAge(ersatzCookie.getMaxAge());
-                    cookie.setSecure(ersatzCookie.isSecure());
-                    cookie.setVersion(ersatzCookie.getVersion());
-                    cookie.setHttpOnly(ersatzCookie.isHttpOnly());
-                    cookie.setComment(ersatzCookie.getComment());
-                    exchange.getResponseCookies().put(k, cookie);
-
-                } else {
-                    exchange.getResponseCookies().put(k, new CookieImpl(k, v.toString()));
-                }
-            });
-        }
-
-        final String responseContent = response != null ? response.getContent() : null;
-        final String responsePreview = responseContent != null ? responseContent : EMPTY;
-        final ChunkingConfigImpl chunking = response != null ? response.getChunkingConfig() : null;
-        final var responseHeaders = exchange.getResponseHeaders() != null ? exchange.getResponseHeaders() : NO_HEADERS;
-
-        if (responseContent != null && chunking != null) {
-            log.debug("Chunked-Response({}; {}): {}", responseHeaders, chunking, responsePreview);
-
-            final List<String> chunks = prepareChunks(responseContent, chunking.getChunks());
-            exchange.getResponseSender().send(chunks.remove(0), new ResponseChunker(chunks, chunking.getDelay()));
-
-        } else {
-            log.debug("Response({}; {}): {}", exchange.getProtocol(), responseHeaders, responsePreview);
-
-            exchange.getResponseSender().send(responseContent);
-        }
     }
 
     private void applyPorts() {
@@ -239,6 +148,8 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
         if (serverConfig.isHttpsEnabled()) {
             actualHttpsPort = ((InetSocketAddress) server.getListenerInfo().get(1).getAddress()).getPort();
         }
+
+        log.debug("Applied ports (http:{}, https:{}).", actualHttpPort, actualHttpsPort);
     }
 
     private SSLContext sslContext() {
