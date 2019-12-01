@@ -13,9 +13,6 @@ plugins {
     id "com.github.johnrengelman.shadow" version '4.0.1'
 }
 
-group = 'com.stehno.ersatz'
-version = '2.0.0'
-
 sourceCompatibility = 11
 targetCompatibility = 11
 
@@ -24,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    api 'com.stehno.ersatz:ersatz:2.0.0'
+    compile project(':ersatz-core')
 
     implementation 'javax.activation:activation:1.1.1'
 

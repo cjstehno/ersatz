@@ -15,8 +15,8 @@
  */
 package com.stehno.ersatz.match;
 
-import com.stehno.ersatz.ClientRequest;
 import com.stehno.ersatz.cfg.HttpMethod;
+import com.stehno.ersatz.server.ClientRequest;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -46,7 +46,7 @@ public class ProxyRequestMatcher extends BaseMatcher<ClientRequest> {
 
     @Override
     public boolean matches(final Object item) {
-        final ClientRequest clientRequest = (ClientRequest) item;
+        final var clientRequest = (ClientRequest) item;
 
         boolean matched = methodMatcher.matches(clientRequest.getMethod()) && pathMatcher.matches(clientRequest.getPath());
 

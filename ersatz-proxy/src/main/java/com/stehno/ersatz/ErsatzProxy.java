@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz;
 
-import com.stehno.ersatz.ClientRequest;
 import com.stehno.ersatz.cfg.ProxyConfig;
 import com.stehno.ersatz.cfg.impl.ProxyConfigImpl;
 import com.stehno.ersatz.match.ProxyRequestMatcher;
@@ -47,7 +46,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  */
 public class ErsatzProxy {
 
-    // TODO: this needs to be pulled out into a separate project/library (ersatz-proxy)
+    // TODO: ensure that the packaging of this library conforms
 
     private static final Logger log = LoggerFactory.getLogger(ErsatzProxy.class);
     private static final String LOCALHOST = "localhost";
@@ -122,7 +121,7 @@ public class ErsatzProxy {
 
             builder.setHandler(new BlockingHandler(new HttpHandler() {
                 @Override public void handleRequest(final HttpServerExchange exchange) throws Exception {
-                    final ClientRequest clientRequest = new UndertowClientRequest(exchange);
+                    final var clientRequest = new UndertowClientRequest(exchange);
 
                     final var matched = matchers.stream().anyMatch(m -> m.matches(clientRequest));
                     if (!matched) {

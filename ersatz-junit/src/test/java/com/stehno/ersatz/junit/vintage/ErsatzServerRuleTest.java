@@ -33,11 +33,10 @@ class ErsatzServerRuleTest {
     private ErsatzServer server;
     @Rule ErsatzServerRule ersatzServerRule = new ErsatzServerRule(this);
 
-    // FIXME: make sure this test is actually run (its not)
     @Test
     void using_server() throws IOException, InterruptedException {
         server.expectations(expects -> {
-            expects.get("/foo", request -> {
+            expects.GET("/foo", request -> {
                 request.called(1);
                 request.responds().code(200);
             });
