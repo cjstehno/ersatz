@@ -212,11 +212,11 @@ public interface Response {
      * Used to retrieve the configured response content. The content will be converted to a String based on the encoder configured for the
      * content-type and content object type; if not encoder is found, the <code>toString()</code> method will be called on the content object.
      * <p>
-     * If no content exists, an empty string will be returned.
+     * If no content exists, an empty array will be returned.
      *
      * @return the response content (encoded)
      */
-    String getContent();
+    byte[] getContent();
 
     /**
      * Used to retrieve the configured response code.
@@ -234,7 +234,7 @@ public interface Response {
      * @param encoder    the encoder function
      * @return a reference to this response configuration
      */
-    Response encoder(String contentType, Class objectType, Function<Object, String> encoder);
+    Response encoder(String contentType, Class objectType, Function<Object, byte[]> encoder);
 
     /**
      * Registers a response body encoder for this response, which will override any matching encoders configured globally (or shared).
@@ -245,7 +245,7 @@ public interface Response {
      * @param encoder    the encoder function
      * @return a reference to this response configuration
      */
-    Response encoder(ContentType contentType, Class objectType, Function<Object, String> encoder);
+    Response encoder(ContentType contentType, Class objectType, Function<Object, byte[]> encoder);
 
     /**
      * Registers the collection of shared encoders. Encoders registered on the response itself, will override these, but the shared encoders will

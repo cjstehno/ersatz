@@ -58,7 +58,7 @@ public class ResponseEncoders {
      * @param objectType  the part object type
      * @param encoder     the encoder function
      */
-    public void register(final String contentType, final Class objectType, final Function<Object, String> encoder) {
+    public void register(final String contentType, final Class objectType, final Function<Object, byte[]> encoder) {
         encoders.add(new EncoderMapping(createMimeType(contentType), objectType, encoder));
     }
 
@@ -69,7 +69,7 @@ public class ResponseEncoders {
      * @param objectType  the part object type
      * @param encoder     the encoder function
      */
-    public void register(final ContentType contentType, final Class objectType, final Function<Object, String> encoder) {
+    public void register(final ContentType contentType, final Class objectType, final Function<Object, byte[]> encoder) {
         register(contentType.getValue(), objectType, encoder);
     }
 
@@ -80,7 +80,7 @@ public class ResponseEncoders {
      * @param objectType the part object type
      * @return the encoder function if one exists or null
      */
-    public Function<Object, String> findEncoder(final String contentType, final Class objectType) {
+    public Function<Object, byte[]> findEncoder(final String contentType, final Class objectType) {
         final var mime = createMimeType(contentType);
 
         return encoders.stream()
@@ -98,7 +98,7 @@ public class ResponseEncoders {
      * @param objectType the part object type
      * @return the encoder function if one exists or null
      */
-    public Function<Object, String> findEncoder(final ContentType contentType, final Class objectType) {
+    public Function<Object, byte[]> findEncoder(final ContentType contentType, final Class objectType) {
         return findEncoder(contentType.getValue(), objectType);
     }
 
@@ -109,9 +109,9 @@ public class ResponseEncoders {
 
         final MimeType contentType;
         final Class objectType;
-        final Function<Object, String> encoder;
+        final Function<Object, byte[]> encoder;
 
-        public EncoderMapping(MimeType contentType, Class objectType, Function<Object, String> encoder) {
+        public EncoderMapping(MimeType contentType, Class objectType, Function<Object, byte[]> encoder) {
             this.contentType = contentType;
             this.objectType = objectType;
             this.encoder = encoder;

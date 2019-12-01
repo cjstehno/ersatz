@@ -15,22 +15,21 @@
  */
 package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.encdec.Cookie;
-import com.stehno.ersatz.encdec.MultipartResponseContent;
 import com.stehno.ersatz.cfg.ChunkingConfig;
 import com.stehno.ersatz.cfg.ContentType;
 import com.stehno.ersatz.cfg.HttpMethod;
 import com.stehno.ersatz.cfg.Response;
-import com.stehno.ersatz.encdec.ResponseEncoders;
-import com.stehno.ersatz.encdec.EncoderChain;
-import com.stehno.ersatz.encdec.ErsatzMultipartResponseContent;
+import com.stehno.ersatz.encdec.*;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -46,6 +45,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class ErsatzResponse implements Response {
 
+    private static final Logger log = LoggerFactory.getLogger(ErsatzResponse.class);
     private static final String ALLOW_HEADER = "Allow";
     private final boolean empty;
     private final ResponseEncoders localEncoders = new ResponseEncoders();
@@ -54,6 +54,7 @@ public class ErsatzResponse implements Response {
     private final Map<String, List<String>> headers = new LinkedHashMap<>();
     private final Map<String, Object> cookies = new LinkedHashMap<>();
     private ChunkingConfigImpl chunkingConfig;
+    private final AtomicReference<byte[]> cachedContent = new AtomicReference<>();
     private Object content;
     private Integer code = 200;
     private long delayTime;
@@ -61,7 +62,7 @@ public class ErsatzResponse implements Response {
     public ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders) {
         this.empty = empty;
 
-        if (globalEncoders != null ) {
+        if (globalEncoders != null) {
             encoderChain.last(globalEncoders);
         }
     }
@@ -83,7 +84,7 @@ public class ErsatzResponse implements Response {
         this.content = content;
 
         if (content instanceof MultipartResponseContent) {
-            final var multipartContent = (ErsatzMultipartResponseContent)content;
+            final var multipartContent = (ErsatzMultipartResponseContent) content;
 
             // apply the configured encoders
             encoderChain.items().forEach(multipartContent::encoders);
@@ -121,9 +122,9 @@ public class ErsatzResponse implements Response {
 
     @Override
     public Response headers(final Map<String, Object> headers) {
-        headers.forEach((k,v) -> {
-            if( v instanceof List){
-                header(k, (List<String>)v);
+        headers.forEach((k, v) -> {
+            if (v instanceof List) {
+                header(k, (List<String>) v);
             } else {
                 header(k, v.toString());
             }
@@ -133,7 +134,7 @@ public class ErsatzResponse implements Response {
 
     @Override
     public Response allows(final HttpMethod... methods) {
-        header (ALLOW_HEADER, Arrays.stream(methods).map(HttpMethod::getValue).collect(toList()));
+        header(ALLOW_HEADER, Arrays.stream(methods).map(HttpMethod::getValue).collect(toList()));
         return this;
     }
 
@@ -223,12 +224,27 @@ public class ErsatzResponse implements Response {
     }
 
     @Override
-    public String getContent() {
+    public byte[] getContent() {
         if (content != null) {
-            final var encoder = encoderChain.resolve(getContentType(), content.getClass());
-            return encoder != null ? encoder.apply(content) : (content.toString());
+            if( cachedContent.get() == null) {
+                final var encoder = encoderChain.resolve(getContentType(), content.getClass());
+                if (encoder != null) {
+                    log.debug("Found encoder ({}) for content ({}).", encoder, content.getClass().getSimpleName());
+                    cachedContent.set( encoder.apply(content));
+
+                } else {
+                    log.debug("No encoder configured for content ({}) - returning string bytes.", content.getClass().getSimpleName());
+                    cachedContent.set( content.toString().getBytes());
+                }
+
+            }
+
+            return cachedContent.get();
         }
-        return "";
+
+        log.debug("No response content - returning empty array.");
+
+        return new byte[0];
     }
 
     @Override
@@ -237,13 +253,13 @@ public class ErsatzResponse implements Response {
     }
 
     @Override
-    public Response encoder(final String contentType, final Class objectType, final Function<Object, String> encoder) {
+    public Response encoder(final String contentType, final Class objectType, final Function<Object, byte[]> encoder) {
         localEncoders.register(contentType, objectType, encoder);
         return this;
     }
 
     @Override
-    public Response encoder(final ContentType contentType, final Class objectType, final Function<Object, String> encoder) {
+    public Response encoder(final ContentType contentType, final Class objectType, final Function<Object, byte[]> encoder) {
         localEncoders.register(contentType, objectType, encoder);
         return this;
     }

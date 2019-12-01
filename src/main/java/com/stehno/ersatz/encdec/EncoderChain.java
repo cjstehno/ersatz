@@ -39,7 +39,8 @@ public class EncoderChain extends FunctionChain<ResponseEncoders> {
      * @param objectType  the response object type
      * @return the encoder
      */
-    public Function<Object, String> resolve(final String contentType, final Class objectType) {
+    // TODO: consider changing to Optional
+    public Function<Object, byte[]> resolve(final String contentType, final Class objectType) {
         return resolveWith(e -> e.findEncoder(contentType, objectType));
     }
 
@@ -50,7 +51,7 @@ public class EncoderChain extends FunctionChain<ResponseEncoders> {
      * @param objectType  the response object type
      * @return the encoder
      */
-    public Function<Object, String> resolve(final ContentType contentType, final Class objectType) {
+    public Function<Object, byte[]> resolve(final ContentType contentType, final Class objectType) {
         return resolve( contentType.getValue(), objectType);
     }
 }

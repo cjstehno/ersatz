@@ -25,6 +25,8 @@ import static com.stehno.ersatz.cfg.ContentType.*
 
 class ErsatzMultipartResponseContentSpec extends Specification {
 
+    // FIXME: make this this works with real data
+
     private static final List<String> MULTIPART_RESPONSE_TEXT = '''
             --abc123
             Content-Disposition: form-data; name="foo"
@@ -60,8 +62,8 @@ class ErsatzMultipartResponseContentSpec extends Specification {
         MultipartResponseContent mc = MultipartResponseContent.multipart {
             boundary 'abc123'
 
-            encoder 'text/plain', String, { o -> o as String }
-            encoder APPLICATION_JSON, String, { o -> o as String }
+            encoder 'text/plain', String, { o -> (o as String).bytes }
+            encoder APPLICATION_JSON, String, { o -> (o as String).bytes }
             encoder 'image/jpeg', InputStream, Encoders.binaryBase64
 
             field 'foo', 'bar'
@@ -76,7 +78,7 @@ class ErsatzMultipartResponseContentSpec extends Specification {
         mc.contentType == 'multipart/mixed; boundary=abc123'
 
         and:
-        Encoders.multipart.apply(mc).trim().readLines() == MULTIPART_RESPONSE_TEXT
+        new String(Encoders.multipart.apply(mc)).trim() == MULTIPART_RESPONSE_TEXT.join('\r\n')
     }
 
     def 'multipart: consumer'() {
@@ -86,8 +88,8 @@ class ErsatzMultipartResponseContentSpec extends Specification {
             @Override void accept(final MultipartResponseContent mult) {
                 mult.boundary 'abc123'
 
-                mult.encoder 'text/plain', String, { o -> o as String }
-                mult.encoder APPLICATION_JSON, String, { o -> o as String }
+                mult.encoder 'text/plain', String, { o -> (o as String).bytes }
+                mult.encoder APPLICATION_JSON, String, { o -> (o as String).bytes }
                 mult.encoder 'image/jpeg', InputStream, Encoders.binaryBase64
 
                 mult.field 'foo', 'bar'
@@ -103,6 +105,6 @@ class ErsatzMultipartResponseContentSpec extends Specification {
         mc.contentType == 'multipart/mixed; boundary=abc123'
 
         and:
-        Encoders.multipart.apply(mc).trim().readLines() == MULTIPART_RESPONSE_TEXT
+        new String(Encoders.multipart.apply(mc)).trim() == MULTIPART_RESPONSE_TEXT.join('\r\n')
     }
 }

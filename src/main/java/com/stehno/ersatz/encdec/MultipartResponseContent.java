@@ -101,7 +101,7 @@ public abstract class MultipartResponseContent {
      * @param encoder     the encoder
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent encoder(final String contentType, final Class type, final Function<Object, String> encoder);
+    public abstract MultipartResponseContent encoder(final String contentType, final Class type, final Function<Object, byte[]> encoder);
 
     /**
      * Configures a response content encoder for the specified contentType and content class.
@@ -111,7 +111,7 @@ public abstract class MultipartResponseContent {
      * @param encoder     the encoder
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent encoder(final ContentType contentType, final Class type, final Function<Object, String> encoder);
+    public abstract MultipartResponseContent encoder(final ContentType contentType, final Class type, final Function<Object, byte[]> encoder);
 
     /**
      * Used to add a "field" part to the response.

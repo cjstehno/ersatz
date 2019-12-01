@@ -165,7 +165,7 @@ public interface ServerConfig {
      * @param encoder    the encoder function
      * @return a reference to this server configuration
      */
-    ServerConfig encoder(String contentType, Class objectType, Function<Object, String> encoder);
+    ServerConfig encoder(String contentType, Class objectType, Function<Object, byte[]> encoder);
 
     /**
      * Registers a global response body encoder.
@@ -176,7 +176,9 @@ public interface ServerConfig {
      * @param encoder    the encoder function
      * @return a reference to this server configuration
      */
-    ServerConfig encoder(ContentType contentType, Class objectType, Function<Object, String> encoder);
+    default ServerConfig encoder(ContentType contentType, Class objectType, Function<Object, byte[]> encoder){
+        return encoder(contentType.getValue(), objectType, encoder);
+    }
 
     /**
      * Registers authentication configuration as a Groovy Closure.

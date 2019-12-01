@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz.encdec
 
-import com.stehno.ersatz.encdec.Encoders
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -23,7 +22,7 @@ class EncodersSpec extends Specification {
 
     @Unroll 'json: #data'() {
         expect:
-        Encoders.json.apply(data) == result
+        Encoders.json.apply(data) == result.bytes
 
         where:
         data                     || result
@@ -34,7 +33,7 @@ class EncodersSpec extends Specification {
 
     @Unroll 'text: #data'() {
         expect:
-        Encoders.text.apply(data) == result
+        Encoders.text.apply(data) == result.bytes
 
         where:
         data                    || result
@@ -46,7 +45,7 @@ class EncodersSpec extends Specification {
 
     @Unroll 'binaryBase64'() {
         expect:
-        Encoders.binaryBase64.apply(data) == result
+        Encoders.binaryBase64.apply(data) == result.bytes
 
         where:
         data                                         || result

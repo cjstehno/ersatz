@@ -294,7 +294,7 @@ class ErsatzRequestSpec extends Specification {
         then:
         Response resp = request.currentResponse
         resp.contentType == 'something/else'
-        resp.content == body
+        resp.content == body.bytes
     }
 
     def 'responder (closure)'() {
@@ -313,7 +313,7 @@ class ErsatzRequestSpec extends Specification {
 
         then:
         resp.contentType == 'something/else'
-        resp.content == contentA
+        resp.content == contentA.bytes
 
         when:
         request.mark(clientRequest())
@@ -321,7 +321,7 @@ class ErsatzRequestSpec extends Specification {
 
         then:
         resp.contentType == 'test/date'
-        resp.content == contentB
+        resp.content == contentB.bytes
 
         when:
         request.mark(clientRequest())
@@ -329,7 +329,7 @@ class ErsatzRequestSpec extends Specification {
 
         then:
         resp.contentType == 'test/date'
-        resp.content == contentB
+        resp.content == contentB.bytes
     }
 
     def 'responder (consumer)'() {
@@ -351,7 +351,7 @@ class ErsatzRequestSpec extends Specification {
 
         then:
         resp.contentType == 'something/else'
-        resp.content == contentA
+        resp.content == contentA.bytes
 
         when:
         request.mark(clientRequest())
@@ -359,7 +359,7 @@ class ErsatzRequestSpec extends Specification {
 
         then:
         resp.contentType == 'test/date'
-        resp.content == contentB
+        resp.content == contentB.bytes
 
         when:
         request.mark(clientRequest())
@@ -367,7 +367,7 @@ class ErsatzRequestSpec extends Specification {
 
         then:
         resp.contentType == 'test/date'
-        resp.content == contentB
+        resp.content == contentB.bytes
     }
 
     def 'matching: not found'() {

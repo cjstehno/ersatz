@@ -21,6 +21,7 @@ import io.undertow.io.Sender;
 import io.undertow.server.HttpServerExchange;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -30,10 +31,10 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class ResponseChunker implements IoCallback {
 
-    private final List<String> chunks;
+    private final List<byte[]> chunks;
     public final IntRange delay;
 
-    public ResponseChunker(final List<String> chunks, final IntRange delay) {
+    public ResponseChunker(final List<byte[]> chunks, final IntRange delay) {
         this.chunks = chunks;
         this.delay = delay;
     }
@@ -42,7 +43,7 @@ public class ResponseChunker implements IoCallback {
     public void onComplete(final HttpServerExchange exchange, final Sender sender) {
         if (chunks != null && !chunks.isEmpty()) {
             rest();
-            sender.send(chunks.remove(0), this);
+            sender.send(ByteBuffer.wrap(chunks.remove(0)), this);
         }
     }
 
@@ -71,15 +72,15 @@ public class ResponseChunker implements IoCallback {
      * Splits the provided string of content into the specified number of chunks. Any remaining characters will be spread out over the chunks to
      * keep the sizes as even as possible.
      *
-     * @param str    the string to be chunked
+     * @param content    the content array to be chunked
      * @param chunks the number of chunks
      * @return a List&lt;String&gt; containing the chunk data
      */
-    public static List<String> prepareChunks(final String str, final int chunks) {
-        int chunklen = str.length() / chunks;
-        int remainder = str.length() % chunks;
+    public static List<byte[]> prepareChunks(final byte[] content, final int chunks) {
+        int chunklen = content.length / chunks;
+        int remainder = content.length % chunks;
 
-        final List<String> chunked = new LinkedList<>();
+        final List<byte[]> chunked = new LinkedList<>();
 
         int index = 0;
 
@@ -91,7 +92,11 @@ public class ResponseChunker implements IoCallback {
             }
 
             int len = chunklen + extra;
-            chunked.add(str.substring(index, index + len));
+
+            final byte[] chunk = new byte[len];
+            System.arraycopy(content, index, chunk, 0, len);
+            chunked.add(chunk);
+
             index += len;
         }
 

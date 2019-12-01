@@ -44,12 +44,12 @@ public class ErsatzMultipartResponseContent extends MultipartResponseContent {
         return this;
     }
 
-    public MultipartResponseContent encoder(final String contentType, final Class type, final Function<Object, String> encoder) {
+    public MultipartResponseContent encoder(final String contentType, final Class type, final Function<Object, byte[]> encoder) {
         localEncoders.register(contentType, type, encoder);
         return this;
     }
 
-    public MultipartResponseContent encoder(final ContentType contentType, final Class type, final Function<Object, String> encoder) {
+    public MultipartResponseContent encoder(final ContentType contentType, final Class type, final Function<Object, byte[]> encoder) {
         localEncoders.register(contentType.getValue(), type, encoder);
         return this;
     }
@@ -117,9 +117,8 @@ public class ErsatzMultipartResponseContent extends MultipartResponseContent {
         return Collections.unmodifiableList(parts);
     }
 
-    public Function<Object, String> encoder(final String contentType, final Class objectType) {
-        Function<Object, String> encoder = encoderChain.resolve(contentType, objectType);
-
+    public Function<Object, byte[]> encoder(final String contentType, final Class objectType) {
+        final var encoder = encoderChain.resolve(contentType, objectType);
         if (encoder != null) {
             return encoder;
         }

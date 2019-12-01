@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2019 Christopher J. Stehno
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +25,8 @@ import io.undertow.server.handlers.CookieImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
+
 import static com.stehno.ersatz.server.undertow.ResponseChunker.prepareChunks;
 import static io.undertow.util.HttpString.tryFromString;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -36,7 +38,7 @@ class ErsatzHttpHandler implements HttpHandler {
     private static final String TRANSFER_ENCODING = "Transfer-encoding";
     private static final String NO_HEADERS = "<no-headers>";
     private static final String EMPTY = "<empty>";
-    private static final String EMPTY_RESPONSE = "";
+    private static final byte[] EMPTY_RESPONSE = new byte[0];
     private final ExpectationsImpl expectations;
     private final boolean reportToConsole;
 
@@ -87,32 +89,27 @@ class ErsatzHttpHandler implements HttpHandler {
 
             applyResponseCookies(exchange, response);
 
-            final String responseContent = response.getContent();
+            final var responseHeaders = exchange.getResponseHeaders() != null ? exchange.getResponseHeaders() : NO_HEADERS;
             final ChunkingConfigImpl chunking = response.getChunkingConfig();
 
-            final var responseHeaders = exchange.getResponseHeaders() != null ? exchange.getResponseHeaders() : NO_HEADERS;
-            if (responseContent == null) {
-                log.debug("Empty-Response({}): {}", responseHeaders, EMPTY);
-                sendFullResponse(exchange, EMPTY_RESPONSE);
-
-            } else if (chunking != null) {
-                log.debug("Chunked-Response({}; {}): {}", responseHeaders, chunking, responseContent.isBlank() ? EMPTY : responseContent);
-                sendChunkedResponse(exchange, responseContent, chunking);
+            if ( response.getContent().length > 0 && chunking != null) {
+                log.debug("Chunked-Response({}; {}): {}", responseHeaders, chunking, response.getContent());
+                sendChunkedResponse(exchange, response.getContent(), chunking);
 
             } else {
-                log.debug("Response({}): {}", responseHeaders, responseContent.isBlank() ? EMPTY : responseContent);
-                sendFullResponse(exchange, responseContent);
+                log.debug("Response({}): {}", responseHeaders, response.getContent());
+                sendFullResponse(exchange, response.getContent());
             }
         }
     }
 
-    private void sendChunkedResponse(final HttpServerExchange exchange, final String responseContent, final ChunkingConfigImpl chunking) {
+    private void sendChunkedResponse(final HttpServerExchange exchange, final byte[] responseContent, final ChunkingConfigImpl chunking) {
         final var chunks = prepareChunks(responseContent, chunking.getChunks());
-        exchange.getResponseSender().send(chunks.remove(0), new ResponseChunker(chunks, chunking.getDelay()));
+        exchange.getResponseSender().send(ByteBuffer.wrap(chunks.remove(0)), new ResponseChunker(chunks, chunking.getDelay()));
     }
 
-    private void sendFullResponse(final HttpServerExchange exchange, final String responseContent) {
-        exchange.getResponseSender().send(responseContent);
+    private void sendFullResponse(final HttpServerExchange exchange, final byte[] responseContent) {
+        exchange.getResponseSender().send(ByteBuffer.wrap(responseContent));
     }
 
     private void applyResponseDelay(final ErsatzResponse response) {

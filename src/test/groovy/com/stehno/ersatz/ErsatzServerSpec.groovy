@@ -15,8 +15,10 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.cfg.ContentType
 import com.stehno.ersatz.cfg.Expectations
 import com.stehno.ersatz.cfg.HttpMethod
+import com.stehno.ersatz.cfg.PutExpectations
 import com.stehno.ersatz.encdec.Cookie
 import com.stehno.ersatz.encdec.Decoders
 import com.stehno.ersatz.encdec.Encoders
@@ -24,6 +26,7 @@ import com.stehno.ersatz.encdec.MultipartResponseContent
 import com.stehno.ersatz.util.HttpClient
 import groovy.transform.TupleConstructor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.ResponseBody
 import org.apache.commons.fileupload.FileItem
 import org.apache.commons.fileupload.FileUpload
@@ -171,7 +174,7 @@ class ErsatzServerSpec extends Specification {
             GET('/data') {
                 responds().body(multipart {
                     boundary 't8xOJjySKePdRgBHYD'
-                    encoder TEXT_PLAIN.value, CharSequence, { o -> o as String }
+                    encoder TEXT_PLAIN.value, CharSequence, { o -> (o as String).bytes }
                     field 'alpha', 'bravo'
                     part 'file', 'data.txt', TEXT_PLAIN, 'This is some file data'
                 })
@@ -179,7 +182,7 @@ class ErsatzServerSpec extends Specification {
         }.start()
 
         when:
-        okhttp3.Response response = http.get(ersatzServer.httpUrl('/data'))
+        Response response = http.get(ersatzServer.httpUrl('/data'))
 
         then:
         response.body().string().trim().readLines() == '''
@@ -203,8 +206,8 @@ class ErsatzServerSpec extends Specification {
             GET('/data') {
                 responds().body(multipart {
                     boundary 'WyAJDTEVlYgGjdI13o'
-                    encoder TEXT_PLAIN, CharSequence, { o -> o as String }
-                    encoder 'image/jpeg', InputStream, { o -> ((InputStream) o).bytes.encodeBase64().toString() }
+                    encoder TEXT_PLAIN, CharSequence, Encoders.text
+                    encoder 'image/jpeg', InputStream, Encoders.inputStream
                     part 'file', 'data.txt', TEXT_PLAIN, 'This is some file data'
                     part 'image', 'test-image.jpg', 'image/jpeg', ErsatzServerSpec.getResourceAsStream('/test-image.jpg'), 'base64'
                 })
@@ -229,10 +232,37 @@ class ErsatzServerSpec extends Specification {
         items[1].fieldName == 'image'
         items[1].name == 'test-image.jpg'
         items[1].contentType == 'image/jpeg'
+        items[1].size == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes.length
+        items[1].get() ==  ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes
+    }
 
-        byte[] bytes = Base64.decoder.decode(items[1].get())
-        bytes.length == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes.length
-        bytes == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes
+    def 'multipart binary (simpler)'() {
+        setup:
+        ersatzServer.expectations {
+            GET('/stuff') {
+                responds().body(multipart {
+                    boundary 'WyAJDTEVlYgGjdI13o'
+                    encoder IMAGE_JPG, InputStream, Encoders.inputStream
+                    part 'image', 'test-image.jpg', IMAGE_JPG, ErsatzServerSpec.getResourceAsStream('/test-image.jpg'), 'base64'
+                })
+            }
+        }.start()
+
+        when:
+        Response response = http.get(ersatzServer.httpUrl('/stuff'))
+
+        def down = new ResponseDownloadContent(response.body())
+        FileUpload fu = new FileUpload(new DiskFileItemFactory(100000, File.createTempDir()))
+        List<FileItem> items = fu.parseRequest(down)
+
+        then:
+        items.size() == 1
+
+        items[0].fieldName == 'image'
+        items[0].name == 'test-image.jpg'
+        items[0].contentType == 'image/jpeg'
+        items[0].size == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes.length
+        items[0].get() ==  ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes
     }
 
     def 'alternate construction'() {

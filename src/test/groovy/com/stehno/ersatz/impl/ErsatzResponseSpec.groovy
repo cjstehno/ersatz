@@ -41,7 +41,7 @@ class ErsatzResponseSpec extends Specification {
         response.body(CONTENT_A)
 
         then:
-        response.content == CONTENT_A
+        response.content == CONTENT_A.bytes
     }
 
     def 'content and content-type'() {
@@ -49,7 +49,7 @@ class ErsatzResponseSpec extends Specification {
         response.body(CONTENT_A, 'text/info')
 
         then:
-        response.content == CONTENT_A
+        response.content == CONTENT_A.bytes
         response.contentType == 'text/info'
     }
 
@@ -58,7 +58,7 @@ class ErsatzResponseSpec extends Specification {
         response.body(CONTENT_A, APPLICATION_JSON)
 
         then:
-        response.content == CONTENT_A
+        response.content == CONTENT_A.bytes
         response.contentType == APPLICATION_JSON.value
     }
 
@@ -132,25 +132,25 @@ class ErsatzResponseSpec extends Specification {
     def 'register encoder (string)'() {
         setup:
         response.content = 'foo'
-        response.encoder('text/plain', String, { o -> "${o}-bar".toString() })
+        response.encoder('text/plain', String, { o -> "${o}-bar".bytes })
 
         expect:
-        response.content == 'foo-bar'
+        response.content == 'foo-bar'.bytes
     }
 
     def 'register encoder (object)'() {
         setup:
         response.content = 'foo'
-        response.encoder(TEXT_PLAIN, String, { o -> "${o}-bar".toString() })
+        response.encoder(TEXT_PLAIN, String, { o -> "${o}-bar".bytes })
 
         expect:
-        response.content == 'foo-bar'
+        response.content == 'foo-bar'.bytes
     }
 
     def 'register encoders'() {
         setup:
         ResponseEncoders encoders = new ResponseEncoders({
-            register TEXT_PLAIN, String, { o -> "${o}-baz".toString() }
+            register TEXT_PLAIN, String, { o -> "${o}-baz".bytes }
         })
 
         response.encoders encoders
@@ -159,6 +159,6 @@ class ErsatzResponseSpec extends Specification {
         response.content = 'foo'
 
         then:
-        response.content == 'foo-baz'
+        response.content == 'foo-baz'.bytes
     }
 }

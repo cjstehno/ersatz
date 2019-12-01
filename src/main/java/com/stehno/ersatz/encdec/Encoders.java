@@ -15,8 +15,15 @@
  */
 package com.stehno.ersatz.encdec;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 
 import static groovy.json.JsonOutput.toJson;
@@ -27,20 +34,87 @@ import static groovy.json.JsonOutput.toJson;
  */
 public class Encoders {
 
+    private static final Logger log = LoggerFactory.getLogger(Encoders.class);
+
     /**
      * Encodes the object to JSON using the Groovy <code>JsonObject.toJson(Object)</code> method.
      */
-    public static final Function<Object, String> json = obj -> obj != null ? toJson(obj) : "{}";
+    public static final Function<Object, byte[]> json = obj -> (obj != null ? toJson(obj) : "{}").getBytes();
 
     /**
      * Encodes the object as a String of text.
      */
-    public static final Function<Object, String> text = obj -> obj != null ? obj.toString() : "";
+    public static final Function<Object, byte[]> text = obj ->( obj != null ? obj.toString() : "").getBytes();
 
     /**
      * Encodes a byte array, InputStream or other object with a "getBytes()" method into a base-64 string.
      */
-    public static final Function<Object, String> binaryBase64 = obj -> obj == null ? "" : Base64.getEncoder().encodeToString(toBytes(obj));
+    public static final Function<Object, byte[]> binaryBase64 = obj -> obj == null ? "".getBytes() : Base64.getEncoder().encode(toBytes(obj));
+
+    /**
+     * FIXME: document
+     */
+    public static final Function<Object, byte[]> inputStream = o -> {
+        try {
+            return ((InputStream) o).readAllBytes();
+        } catch (IOException e) {
+            log.warn("Unable to fully read bytes: {}", e.getMessage());
+            return new byte[0];
+        }
+    };
+
+    /**
+     * Encodes a <code>MultipartResponseContent</code> object to its multipart string representation. The generated multipart content is a simple
+     * message implementing the minimal multipart content specification - you may want to find a more robust implementation if you require a more
+     * detailed multipart API.
+     */
+    public static final Function<Object, byte[]> multipart = obj -> {
+        if (!(obj instanceof MultipartResponseContent)) {
+            throw new IllegalArgumentException(obj.getClass() + " found, MultipartRequestContent is required.");
+        }
+
+        final ErsatzMultipartResponseContent mrc = (ErsatzMultipartResponseContent) obj;
+
+        final var arrays = new LinkedList<byte[]>();
+
+        mrc.parts().forEach(p -> {
+            arrays.add( ("--" + mrc.getBoundary() + "\r\n").getBytes());
+
+            if (p.getFileName() != null) {
+                arrays.add(("Content-Disposition: form-data; name=\"" + p.getFieldName() + "\"; filename=\"" + p.getFileName() + "\"\r\n").getBytes());
+            } else {
+                arrays.add(("Content-Disposition: form-data; name=\"" + p.getFieldName() + "\"\r\n").getBytes());
+            }
+
+            if (p.getTransferEncoding() != null) {
+                arrays.add(("Content-Transfer-Encoding: " + p.getTransferEncoding() + "\r\n").getBytes());
+            }
+
+            arrays.add(("Content-Type: " + p.getContentType() + "\r\n\r\n").getBytes());
+
+            final Function<Object, byte[]> encoderFn = mrc.encoder(p.getContentType(), p.getValue().getClass());
+            final var encoded = encoderFn.apply(p.getValue());
+            arrays.add(encoded);
+            arrays.add("\r\n".getBytes());
+        });
+
+        arrays.add(("--" + mrc.getBoundary() + "--\r\n").getBytes());
+
+        return merge(arrays);
+    };
+
+    private static byte[] merge(final List<byte[]> arrays){
+        byte[] current = new byte[0];
+
+        for (final byte[] array : arrays) {
+            final byte[] merged = new byte[current.length + array.length];
+            System.arraycopy(current, 0, merged, 0, current.length);
+            System.arraycopy(array, 0, merged, current.length, array.length);
+            current = merged;
+        }
+
+        return current;
+    }
 
     private static byte[] toBytes(final Object obj) {
         if (obj instanceof byte[]) {
@@ -51,43 +125,4 @@ public class Encoders {
             return obj.toString().getBytes();
         }
     }
-
-    /**
-     * Encodes a <code>MultipartResponseContent</code> object to its multipart string representation. The generated multipart content is a simple
-     * message implementing the minimal multipart content specification - you may want to find a more robust implementation if you require a more
-     * detailed multipart API.
-     */
-    public static final Function<Object, String> multipart = obj -> {
-        if (!(obj instanceof MultipartResponseContent)) {
-            throw new IllegalArgumentException(obj.getClass() + " found, MultipartRequestContent is required.");
-        }
-
-        final ErsatzMultipartResponseContent mrc = (ErsatzMultipartResponseContent) obj;
-
-        final StringBuilder out = new StringBuilder();
-
-        mrc.parts().forEach(p -> {
-            out.append("--").append(mrc.getBoundary()).append("\r\n");
-
-            if (p.getFileName() != null) {
-                out.append("Content-Disposition: form-data; name=\"").append(p.getFieldName()).append("\"; filename=\"").append(p.getFileName()).append("\"\r\n");
-            } else {
-                out.append("Content-Disposition: form-data; name=\"").append(p.getFieldName()).append("\"\r\n");
-            }
-
-            if (p.getTransferEncoding() != null) {
-                out.append("Content-Transfer-Encoding: ").append(p.getTransferEncoding()).append("\r\n");
-            }
-
-            out.append("Content-Type: ").append(p.getContentType()).append("\r\n\r\n");
-
-            final Function<Object, String> encoderFn = mrc.encoder(p.getContentType(), p.getValue().getClass());
-            final String encoded = encoderFn.apply(p.getValue());
-            out.append(encoded).append("\r\n");
-        });
-
-        out.append("--").append(mrc.getBoundary()).append("--\r\n");
-
-        return out.toString();
-    };
 }
