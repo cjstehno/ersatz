@@ -35,6 +35,7 @@ import static java.util.stream.Collectors.toList;
 class ErsatzHttpHandler implements HttpHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ErsatzHttpHandler.class);
+    private static final String TRANSFER_ENCODING = "Transfer-encoding";
     private static final String NO_HEADERS = "<no-headers>";
     private static final String EMPTY = "<empty>";
     private final ExpectationsImpl expectations;
@@ -73,61 +74,88 @@ class ErsatzHttpHandler implements HttpHandler {
     }
 
     private void send(final HttpServerExchange exchange, final ErsatzResponse response) {
-        if (response != null) {
-            if (response.getDelay() > 0) {
-                try {
-                    MILLISECONDS.sleep(response.getDelay());
-                } catch (InterruptedException e) {
-                    // ignore
-                }
-            }
+        if (response == null) {
+            log.info("No response was configured - sending NO_CONTENT (204)");
+            exchange.setStatusCode(204);
+            sendFullResponse(exchange, "");
+
+        } else {
+            applyResponseDelay(response);
 
             exchange.setStatusCode(response.getCode());
 
-            response.getHeaders().forEach((k, v) -> {
-                v.forEach(value -> {
-                    exchange.getResponseHeaders().add(tryFromString(k), value);
-                });
-            });
+            applyResponseHeaders(exchange, response);
 
-            if (response.getChunkingConfig() != null) {
-                exchange.getResponseHeaders().add(tryFromString("Transfer-encoding"), "chunked");
+            applyResponseCookies(exchange, response);
+
+            final String responseContent = response.getContent();
+            final ChunkingConfigImpl chunking = response.getChunkingConfig();
+
+            if (responseContent == null) {
+                sendFullResponse(exchange, "");
+
+            } else if (chunking != null) {
+                sendChunkedResponse(exchange, responseContent, chunking);
+
+            } else {
+                sendFullResponse(exchange, responseContent);
             }
-
-            response.getCookies().forEach((k, v) -> {
-                if (v instanceof Cookie) {
-                    final Cookie ersatzCookie = (Cookie) v;
-                    final var cookie = new CookieImpl(k, ersatzCookie.getValue());
-                    cookie.setPath(ersatzCookie.getPath());
-                    cookie.setDomain(ersatzCookie.getDomain());
-                    cookie.setMaxAge(ersatzCookie.getMaxAge());
-                    cookie.setSecure(ersatzCookie.isSecure());
-                    cookie.setVersion(ersatzCookie.getVersion());
-                    cookie.setHttpOnly(ersatzCookie.isHttpOnly());
-                    cookie.setComment(ersatzCookie.getComment());
-                    exchange.getResponseCookies().put(k, cookie);
-
-                } else {
-                    exchange.getResponseCookies().put(k, new CookieImpl(k, v.toString()));
-                }
-            });
         }
+    }
 
-        final String responseContent = response != null ? response.getContent() : null;
-        final String responsePreview = responseContent != null ? responseContent : EMPTY;
-        final ChunkingConfigImpl chunking = response != null ? response.getChunkingConfig() : null;
-        final var responseHeaders = exchange.getResponseHeaders() != null ? exchange.getResponseHeaders() : NO_HEADERS;
+    private void sendChunkedResponse(final HttpServerExchange exchange, final String responseContent, final ChunkingConfigImpl chunking) {
+        log.debug("Chunked-Response({}; {}): {}", exchange.getResponseHeaders() != null ? exchange.getResponseHeaders() : NO_HEADERS, chunking, responseContent != null ? responseContent : EMPTY);
 
-        if (responseContent != null && chunking != null) {
-            log.debug("Chunked-Response({}; {}): {}", responseHeaders, chunking, responsePreview);
+        final List<String> chunks = prepareChunks(responseContent, chunking.getChunks());
+        exchange.getResponseSender().send(chunks.remove(0), new ResponseChunker(chunks, chunking.getDelay()));
+    }
 
-            final List<String> chunks = prepareChunks(responseContent, chunking.getChunks());
-            exchange.getResponseSender().send(chunks.remove(0), new ResponseChunker(chunks, chunking.getDelay()));
+    private void sendFullResponse(final HttpServerExchange exchange, final String responseContent) {
+        log.debug("Response({}; {}): {}", exchange.getProtocol(), exchange.getResponseHeaders() != null ? exchange.getResponseHeaders() : NO_HEADERS, responseContent != null ? responseContent : EMPTY);
 
-        } else {
-            log.debug("Response({}; {}): {}", exchange.getProtocol(), responseHeaders, responsePreview);
+        exchange.getResponseSender().send(responseContent);
+    }
 
-            exchange.getResponseSender().send(responseContent);
+    private void applyResponseDelay(final ErsatzResponse response) {
+        if (response.getDelay() > 0) {
+            try {
+                log.trace("Delaying the response for {} ms...", response.getDelay());
+
+                MILLISECONDS.sleep(response.getDelay());
+
+            } catch (InterruptedException e) {
+                // ignore
+            }
         }
+    }
+
+    private void applyResponseHeaders(final HttpServerExchange exchange, final ErsatzResponse response) {
+        response.getHeaders().forEach((k, v) -> {
+            v.forEach(value -> exchange.getResponseHeaders().add(tryFromString(k), value));
+        });
+
+        if (response.getChunkingConfig() != null) {
+            exchange.getResponseHeaders().add(tryFromString(TRANSFER_ENCODING), "chunked");
+        }
+    }
+
+    private void applyResponseCookies(final HttpServerExchange exchange, final ErsatzResponse response) {
+        response.getCookies().forEach((k, v) -> {
+            if (v instanceof Cookie) {
+                final Cookie ersatzCookie = (Cookie) v;
+                final var cookie = new CookieImpl(k, ersatzCookie.getValue());
+                cookie.setPath(ersatzCookie.getPath());
+                cookie.setDomain(ersatzCookie.getDomain());
+                cookie.setMaxAge(ersatzCookie.getMaxAge());
+                cookie.setSecure(ersatzCookie.isSecure());
+                cookie.setVersion(ersatzCookie.getVersion());
+                cookie.setHttpOnly(ersatzCookie.isHttpOnly());
+                cookie.setComment(ersatzCookie.getComment());
+                exchange.getResponseCookies().put(k, cookie);
+
+            } else {
+                exchange.getResponseCookies().put(k, new CookieImpl(k, v.toString()));
+            }
+        });
     }
 }

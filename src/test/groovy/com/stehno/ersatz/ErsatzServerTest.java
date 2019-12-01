@@ -17,8 +17,10 @@ package com.stehno.ersatz;
 
 import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.util.HttpClient;
+import okhttp3.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -34,6 +36,7 @@ import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ErsatzServerTest {
 
@@ -125,6 +128,32 @@ class ErsatzServerTest {
         server.start();
 
         assertEquals("ok", http.get(server.getHttpUrl() + "/hello/there").body().string());
+
+        server.stop();
+    }
+
+    @Test @DisplayName("Request matches but there is no response")
+    void no_response_configured() throws IOException {
+        final var server = new ErsatzServer(config -> {
+            config.expects().GET("/missing");
+        }).start();
+
+        final var response = http.get(server.httpUrl("/missing"));
+        assertEquals(204, response.code());
+        assertEquals("", response.body().string());
+
+        server.stop();
+    }
+
+    @Test @DisplayName("Request matches but sends null as response")
+    void responds_with_null() throws IOException {
+        final var server = new ErsatzServer(config -> {
+            config.expects().GET("/missing").responds().code(200).body(null);
+        }).start();
+
+        final var response = http.get(server.httpUrl("/missing"));
+        assertEquals(200, response.code());
+        assertEquals("", response.body().string());
 
         server.stop();
     }
