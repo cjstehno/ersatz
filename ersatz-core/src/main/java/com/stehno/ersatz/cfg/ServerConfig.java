@@ -33,8 +33,6 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  */
 public interface ServerConfig {
 
-    // fIXME: put auto-starter back into config ctor
-
     /**
      * Used to control the enabled/disabled state of HTTPS on the server. By default HTTPS is disabled.
      *
