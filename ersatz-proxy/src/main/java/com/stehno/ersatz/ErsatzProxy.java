@@ -16,7 +16,7 @@
 package com.stehno.ersatz;
 
 import com.stehno.ersatz.cfg.ProxyConfig;
-import com.stehno.ersatz.cfg.impl.ProxyConfigImpl;
+import com.stehno.ersatz.impl.ProxyConfigImpl;
 import com.stehno.ersatz.match.ProxyRequestMatcher;
 import com.stehno.ersatz.server.undertow.UndertowClientRequest;
 import groovy.lang.Closure;
@@ -46,7 +46,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  */
 public class ErsatzProxy {
 
-    // TODO: ensure that the packaging of this library conforms
+    // FIXME: extract the server parts similar to what was done in core
 
     private static final Logger log = LoggerFactory.getLogger(ErsatzProxy.class);
     private static final String LOCALHOST = "localhost";

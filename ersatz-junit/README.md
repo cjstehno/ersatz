@@ -1,6 +1,12 @@
-# Ersatz Server JUnit Extensions
+# Ersatz Server - JUnit Extensions
 
-TBD...
+An extension to the Ersatz Server library, providing a few useful helper classes related to testing with JUnit (5+ and 
+vintage).
 
-this project should be used with ersatz 1.10+ If you are using an older version it _might_ work, bug defer to the built-in 
-JUnit support if you run into problems (or upgrade your Ersatz library).
+## Building
+
+    ./gradlew clean build
+    
+## Artifacts
+
+TODO: document 
