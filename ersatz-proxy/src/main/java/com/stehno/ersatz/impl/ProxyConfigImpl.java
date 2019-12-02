@@ -47,25 +47,10 @@ public class ProxyConfigImpl implements ProxyConfig {
     }
 
     @Override
-    public ProxyConfig target(final String value) throws URISyntaxException {
-        return target(new URI(value));
-    }
-
-    @Override
     public ProxyConfig target(final URI value) {
-        ensure (value.getScheme().equalsIgnoreCase(HTTP), ONLY_HTTP_MESSAGE);
+        ensure(value.getScheme().equalsIgnoreCase(HTTP), ONLY_HTTP_MESSAGE);
         targetUri = value;
         return this;
-    }
-
-    @Override
-    public ProxyConfig target(URL value) throws URISyntaxException {
-        return target(value.toURI());
-    }
-
-    @Override
-    public ProxyConfig expectations(@DelegatesTo(value = ProxyExpectations.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return expectations(ConsumerWithDelegate.create(closure));
     }
 
     @Override

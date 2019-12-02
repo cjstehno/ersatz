@@ -35,8 +35,10 @@ dependencies {
     implementation 'org.hamcrest:hamcrest-library:2.2'
     implementation 'org.awaitility:awaitility:4.0.1'
 
+    testCompile project(':ersatz-junit')
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
 
+    testImplementation 'org.mockito:mockito-junit-jupiter:3.1.0'
     testImplementation "org.junit.jupiter:junit-jupiter-params:5.5.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.2"
 
@@ -117,92 +119,4 @@ license {
     ext.year = Calendar.instance.get(Calendar.YEAR)
 
     excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks', '**/*.jpg'])
-}
-
-bintray {
-    if (project.hasProperty('user') && project.hasProperty('key')) {
-        user = project.property('user')
-        key = project.property('key')
-
-        publications = ['ersatzPublication']
-
-        pkg {
-            repo = 'stehno'
-            name = 'ersatz'
-            desc = 'Mock server library for testing HTTP clients.'
-            licenses = ['Apache-2.0']
-            labels = ['groovy']
-            websiteUrl = 'http://stehno.com/ersatz'
-            issueTrackerUrl = 'https://github.com/cjstehno/ersatz/issues'
-            vcsUrl = 'https://github.com/cjstehno/ersatz'
-            publicDownloadNumbers = true
-
-            version {
-                name = project.version
-                vcsTag = "v${project.version}"
-                gpg {
-                    sign = true
-                }
-                mavenCentralSync {
-                    sync = true
-                    user = project.property('sonotypeUser')
-                    password = project.property('sonotypePass')
-                }
-            }
-        }
-    }
-}
-
-asciidoctor {
-    options doctype: 'book'
-
-    backends = ['html5']
-
-    attributes 'source-highlighter': 'coderay',
-        'coderay-linenums-mode': 'table',
-        icon: 'font',
-        linkattrs: true,
-        encoding: 'utf-8'
-}
-
-site {
-    versionedFile 'src/docs/asciidoc/index.adoc'
-}
-
-tasks.site.dependsOn = ['build', 'javadoc', 'jacocoTestReport', 'asciidoctor']
-
-task publishSite(type: GradleBuild, group: 'Publishing', description: 'Publishes the documentation web site.', dependsOn: ['site']) {
-    buildFile = 'publish.gradle'
-    tasks = ['gitPublishPush']
-}
-
-// FIXME: updates need to be applied
-shadowJar {
-    classifier = 'safe'
-    dependencies {
-        exclude(dependency('junit:junit:4.12'))
-        exclude(dependency("org.codehaus.groovy:groovy-all:$groovyVersion"))
-        exclude(dependency('org.slf4j:slf4j-api:1.7.20'))
-        exclude(dependency('ch.qos.logback:logback-classic:1.1.7'))
-        exclude(dependency('ch.qos.logback:logback-core:1.1.7'))
-        exclude(dependency('org.hamcrest:hamcrest-library:1.3'))
-        exclude(dependency('org.hamcrest:hamcrest-core:1.3'))
-        exclude(dependency('org.junit.jupiter:junit-jupiter-params:5.3.1'))
-        exclude(dependency('org.junit.jupiter:junit-jupiter-engine:5.3.1'))
-        exclude(dependency('org.junit.vintage:junit-vintage-engine:5.3.1'))
-        exclude(dependency('org.junit.jupiter:junit-jupiter-api:5.3.1'))
-        exclude(dependency('org.junit.platform:junit-platform-commons:1.3.1'))
-        exclude(dependency('org.junit.platform:junit-platform-engine:1.3.1'))
-        exclude(dependency('org.opentest4j:opentest4j:1.1.1'))
-        exclude(dependency('org.apiguardian:apiguardian-api:1.0.0'))
-    }
-
-    mergeServiceFiles()
-
-    relocate 'io.undertow', 'ersatz.undertow'
-    relocate 'org.jboss', 'ersatz.jboss'
-    relocate 'org.xnio', 'ersatz.xnio'
-    relocate 'javax.servlet', 'ersatz.servlet'
-    relocate 'org.apache.commons.fileupload', 'ersatz.fileupload'
-    relocate 'org.apache.commons.io', 'ersatz.io'
 }

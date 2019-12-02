@@ -17,24 +17,12 @@ package com.stehno.ersatz;
 
 import com.stehno.ersatz.cfg.ProxyConfig;
 import com.stehno.ersatz.impl.ProxyConfigImpl;
-import com.stehno.ersatz.match.ProxyRequestMatcher;
-import com.stehno.ersatz.server.undertow.UndertowClientRequest;
+import com.stehno.ersatz.server.UnderlyingProxyServer;
+import com.stehno.ersatz.server.undertow.UndertowUnderlyingProxyServer;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import io.undertow.Undertow;
-import io.undertow.server.HttpHandler;
-import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.BlockingHandler;
-import io.undertow.server.handlers.proxy.LoadBalancingProxyClient;
-import io.undertow.server.handlers.proxy.ProxyHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Consumer;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
@@ -46,18 +34,8 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  */
 public class ErsatzProxy {
 
-    // FIXME: extract the server parts similar to what was done in core
-
-    private static final Logger log = LoggerFactory.getLogger(ErsatzProxy.class);
-    private static final String LOCALHOST = "localhost";
-    private static final int EPHEMERAL_PORT = 0;
-    private static final int UNSPECIFIED_PORT = -1;
-
-    private final List<ProxyRequestMatcher> matchers = new LinkedList<>();
-    private final URI targetUri;
-    private int actualHttpPort = UNSPECIFIED_PORT;
-    private Undertow server;
-    private boolean started;
+    private final ProxyConfigImpl config = new ProxyConfigImpl();
+    private final UnderlyingProxyServer server;
 
     /**
      * Creates a new proxy server with the specified configuration. The configuration closure will delegate to an instance of <code>ProxyConfig</code>
@@ -68,15 +46,7 @@ public class ErsatzProxy {
      * @param closure the configuration closure.
      */
     public ErsatzProxy(@DelegatesTo(value = ProxyConfig.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        ProxyConfigImpl config = new ProxyConfigImpl();
-        ConsumerWithDelegate.create(closure).accept(config);
-
-        targetUri = config.getTargetUri();
-        matchers.addAll(config.getExpectations().getMatchers());
-
-        if (config.isAutoStart()) {
-            start();
-        }
+        this(ConsumerWithDelegate.create(closure));
     }
 
     /**
@@ -88,11 +58,9 @@ public class ErsatzProxy {
      * @param consumer the configuration consumer
      */
     public ErsatzProxy(final Consumer<ProxyConfig> consumer) {
-        ProxyConfigImpl config = new ProxyConfigImpl();
         consumer.accept(config);
 
-        targetUri = config.getTargetUri();
-        matchers.addAll(config.getExpectations().getMatchers());
+        this.server = new UndertowUnderlyingProxyServer(config);
 
         if (config.isAutoStart()) {
             start();
@@ -106,39 +74,7 @@ public class ErsatzProxy {
      * This method does not need to be called if auto-start is not disabled.
      */
     public void start() {
-        if (!started) {
-            final Undertow.Builder builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST);
-
-            final LoadBalancingProxyClient client = new LoadBalancingProxyClient();
-            client.setConnectionsPerThread(1);
-            client.setMaxQueueSize(10);
-            client.setProblemServerRetry(3);
-            client.setSoftMaxConnectionsPerThread(1);
-            client.setTtl(1000);
-            client.addHost(targetUri);
-
-            final var proxyHandler = ProxyHandler.builder().setProxyClient(client).build();
-
-            builder.setHandler(new BlockingHandler(new HttpHandler() {
-                @Override public void handleRequest(final HttpServerExchange exchange) throws Exception {
-                    final var clientRequest = new UndertowClientRequest(exchange);
-
-                    final var matched = matchers.stream().anyMatch(m -> m.matches(clientRequest));
-                    if (!matched) {
-                        log.warn("No proxy match found for request: {}", clientRequest);
-                    }
-
-                    proxyHandler.handleRequest(exchange);
-                }
-            }));
-
-            server = builder.build();
-            server.start();
-
-            actualHttpPort = ((InetSocketAddress) server.getListenerInfo().get(0).getAddress()).getPort();
-
-            started = true;
-        }
+        server.start();
     }
 
     /**
@@ -147,7 +83,7 @@ public class ErsatzProxy {
      * @return a value of true if the expected requests were proxied
      */
     public boolean verify() {
-        for (final ProxyRequestMatcher matcher : matchers) {
+        for (final var matcher : config.getExpectations().getMatchers()) {
             if (matcher.getMatchCount() <= 0) {
                 throw new IllegalArgumentException("Expected requests were not matched.");
             }
@@ -161,7 +97,7 @@ public class ErsatzProxy {
      * @return the full URL of the HTTP server
      */
     public String getUrl() {
-        return "http://localhost:" + getPort();
+        return server.getUrl();
     }
 
     /**
@@ -170,21 +106,13 @@ public class ErsatzProxy {
      * @return the port of the server
      */
     public int getPort() {
-        return actualHttpPort;
+        return server.getActualPort();
     }
 
     /**
      * Used to stop the proxy server, if it was running.
      */
     public void stop() {
-        if (started) {
-            actualHttpPort = UNSPECIFIED_PORT;
-
-            if (server != null) {
-                server.stop();
-            }
-
-            started = false;
-        }
+        server.stop();
     }
 }

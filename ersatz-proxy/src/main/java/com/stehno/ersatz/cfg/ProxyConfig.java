@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2019 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,7 @@ package com.stehno.ersatz.cfg;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
+import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,7 +29,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
 /**
  * Configuration DSL interface for the ErsatzProxy server.
  */
- public interface ProxyConfig {
+public interface ProxyConfig {
 
     /**
      * Toggles the server auto-start feature. By default the proxy server will start once it is configured.
@@ -44,7 +45,13 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
      * @param value the target URI
      * @return a reference to this configuration
      */
-    ProxyConfig target(String value) throws URISyntaxException;
+    default ProxyConfig target(String value) {
+        try {
+            return target(new URI(value));
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 
     /**
      * Specifies the target URI for the proxy server.
@@ -61,7 +68,13 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
      * @return a reference to this configuration
      * @throws URISyntaxException if there is a problem with the URL
      */
-    ProxyConfig target(URL value) throws URISyntaxException;
+    default ProxyConfig target(URL value) {
+        try {
+            return target(value.toURI());
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 
     /**
      * Used to configure the proxy server expectations with a Groovy Closure, which delegates to an instance of ProxyExpectations.
@@ -69,7 +82,9 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
      * @param closure the Groovy closure
      * @return a reference to this configuration
      */
-    ProxyConfig expectations(@DelegatesTo(value = ProxyExpectations.class, strategy = DELEGATE_FIRST) Closure closure);
+    default ProxyConfig expectations(@DelegatesTo(value = ProxyExpectations.class, strategy = DELEGATE_FIRST) Closure closure) {
+        return expectations(ConsumerWithDelegate.create(closure));
+    }
 
     /**
      * Used to configure the proxy server expectations with a Consumer, which will have an instance of ProxyExpectations passed into it.
