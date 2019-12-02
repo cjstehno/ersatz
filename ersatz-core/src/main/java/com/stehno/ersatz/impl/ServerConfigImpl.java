@@ -50,7 +50,12 @@ public class ServerConfigImpl implements ServerConfig {
     private final RequestDecoders globalDecoders = new RequestDecoders();
     private final ResponseEncoders globalEncoders = new ResponseEncoders();
     private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders);
+    private final Runnable starter;
     private long timeout;
+
+    public ServerConfigImpl(final Runnable starter) {
+        this.starter = starter;
+    }
 
     /**
      * Used to control the enabled/disabled state of HTTPS on the server. By default HTTPS is disabled.
@@ -107,7 +112,7 @@ public class ServerConfigImpl implements ServerConfig {
         return timeout;
     }
 
-    public void clearExpectations(){
+    public void clearExpectations() {
         expectations.clear();
     }
 
@@ -180,14 +185,14 @@ public class ServerConfigImpl implements ServerConfig {
         return keystore(location, "ersatz");
     }
 
-    // Note: that now the CTOR configuration does NOT auto-start the server,
-    @Override public ServerConfig expectations(Consumer<Expectations> expects) {
+    @Override public ServerConfig expectations(final Consumer<Expectations> expects) {
         expects.accept(expectations);
-        return this;
-    }
 
-    @Override public ServerConfig expectations(Closure closure) {
-        return expectations(ConsumerWithDelegate.create(closure));
+        if( autoStartEnabled ){
+            starter.run();
+        }
+
+        return this;
     }
 
     @Override public Expectations expects() {

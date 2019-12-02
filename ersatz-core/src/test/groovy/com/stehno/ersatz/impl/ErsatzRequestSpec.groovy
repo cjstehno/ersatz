@@ -374,7 +374,7 @@ class ErsatzRequestSpec extends Specification {
         setup:
         server.expectations {
             GET('/blah').responds().body(new Object())
-        }.start()
+        }
 
         expect:
         exec(clientGet('/test').build()).body().string() == NOT_FOUND_BODY
@@ -384,7 +384,7 @@ class ErsatzRequestSpec extends Specification {
         setup:
         server.expectations {
             GET('/test').header('one', 'blah').responds().body(STRING_CONTENT)
-        }.start()
+        }
 
         when:
         String value = exec(clientGet('/test').addHeader('one', 'blah').build()).body().string()
@@ -403,7 +403,7 @@ class ErsatzRequestSpec extends Specification {
         setup:
         server.expectations {
             GET('/test').headers(alpha: 'one', bravo: 'two').responds().body(STRING_CONTENT)
-        }.start()
+        }
 
         when:
         String value = exec(clientGet('/test').addHeader('alpha', 'one').addHeader('bravo', 'two').build()).body().string()
@@ -422,7 +422,7 @@ class ErsatzRequestSpec extends Specification {
         setup:
         server.expectations {
             GET('/testing').query('alpha', 'blah').responds().body(STRING_CONTENT)
-        }.start()
+        }
 
         when:
         String value = exec(clientGet('/testing?alpha=blah').build()).body().string()
@@ -441,7 +441,7 @@ class ErsatzRequestSpec extends Specification {
         setup:
         server.expectations {
             GET('/testing').queries(alpha: ['one'], bravo: ['two', 'three']).responds().body(STRING_CONTENT)
-        }.start()
+        }
 
         when:
         String value = exec(clientGet('/testing?alpha=one&bravo=two&bravo=three').build()).body().string()
@@ -460,7 +460,7 @@ class ErsatzRequestSpec extends Specification {
         setup:
         server.expectations {
             GET('/test').cookie('flavor', 'chocolate-chip').responds().body(STRING_CONTENT)
-        }.start()
+        }
 
         when:
         String value = exec(clientGet('/test').addHeader("Cookie", "flavor=chocolate-chip").build()).body().string()
@@ -479,7 +479,7 @@ class ErsatzRequestSpec extends Specification {
         setup:
         server.expectations {
             GET('/test').cookies(flavor: 'chocolate-chip').responds().body(STRING_CONTENT)
-        }.start()
+        }
 
         when:
         String value = exec(clientGet('/test').addHeader("Cookie", "flavor=chocolate-chip").build()).body().string()

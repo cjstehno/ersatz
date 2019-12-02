@@ -52,7 +52,7 @@ public class Encoders {
     public static final Function<Object, byte[]> binaryBase64 = obj -> obj == null ? "".getBytes() : Base64.getEncoder().encode(toBytes(obj));
 
     /**
-     * FIXME: document
+     * Encodes the bytes read from an InputStream.
      */
     public static final Function<Object, byte[]> inputStream = o -> {
         try {

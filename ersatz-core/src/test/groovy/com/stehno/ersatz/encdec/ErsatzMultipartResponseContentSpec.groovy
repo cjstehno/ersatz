@@ -15,8 +15,6 @@
  */
 package com.stehno.ersatz.encdec
 
-import com.stehno.ersatz.encdec.Encoders
-import com.stehno.ersatz.encdec.MultipartResponseContent
 import spock.lang.Specification
 
 import java.util.function.Consumer
@@ -24,8 +22,6 @@ import java.util.function.Consumer
 import static com.stehno.ersatz.cfg.ContentType.*
 
 class ErsatzMultipartResponseContentSpec extends Specification {
-
-    // FIXME: make this this works with real data
 
     private static final List<String> MULTIPART_RESPONSE_TEXT = '''
             --abc123

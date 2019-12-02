@@ -18,6 +18,7 @@ package com.stehno.ersatz.cfg;
 import com.stehno.ersatz.encdec.DecodingContext;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
+import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
@@ -117,6 +118,8 @@ public interface ServerConfig {
      * Used to configure HTTP expectations on the server; the provided <code>Consumer&lt;Expectations&gt;</code> implementation will have an active
      * <code>Expectations</code> object passed into it for configuring server interaction expectations.
      *
+     * If auto-start is enabled (default) the server will be started after the expectations are applied.
+     *
      * @param expects the <code>Consumer&lt;Expectations&gt;</code> instance to perform the configuration
      * @return a reference to this server
      */
@@ -126,10 +129,14 @@ public interface ServerConfig {
      * Used to configure HTTP expectations on the server; the provided Groovy <code>Closure</code> will delegate to an <code>Expectations</code>
      * instance for configuring server interaction expectations using the Groovy DSL.
      *
+     * If auto-start is enabled (default) the server will be started after the expectations are applied.
+     *
      * @param closure the Groovy <code>Closure</code> which will provide expectation configuration via DSL
      * @return a reference to this server
      */
-    ServerConfig expectations(@DelegatesTo(value = Expectations.class, strategy = DELEGATE_FIRST) final Closure closure);
+    default ServerConfig expectations(@DelegatesTo(value = Expectations.class, strategy = DELEGATE_FIRST) final Closure closure) {
+        return expectations(ConsumerWithDelegate.create(closure));
+    }
 
     /**
      * An alternate means of starting the expectation chain.
@@ -178,7 +185,7 @@ public interface ServerConfig {
      * @param encoder    the encoder function
      * @return a reference to this server configuration
      */
-    default ServerConfig encoder(ContentType contentType, Class objectType, Function<Object, byte[]> encoder){
+    default ServerConfig encoder(ContentType contentType, Class objectType, Function<Object, byte[]> encoder) {
         return encoder(contentType.getValue(), objectType, encoder);
     }
 

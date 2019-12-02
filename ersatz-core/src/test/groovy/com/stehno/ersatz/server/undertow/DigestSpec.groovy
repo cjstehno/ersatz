@@ -42,7 +42,7 @@ class DigestSpec extends Specification {
         setup:
         ersatzServer.expectations {
             GET('/secrets').responds().body('Something secure')
-        }.start()
+        }
 
         when:
         Response response = digestClient('admin', 'asdfasdfasdf').newCall(
@@ -57,7 +57,7 @@ class DigestSpec extends Specification {
         setup:
         ersatzServer.expectations {
             GET('/secrets').responds().body('Something secure')
-        }.start()
+        }
 
         when:
         Response response = digestClient('admin', '$3cr3t').newCall(

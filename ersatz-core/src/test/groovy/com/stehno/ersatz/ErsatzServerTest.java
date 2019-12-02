@@ -125,8 +125,7 @@ class ErsatzServerTest {
     @Test void alternateConfiguration() throws IOException {
         ErsatzServer server = new ErsatzServer(config -> {
             config.expects().GET(startsWith("/hello")).responds().body("ok");
-        });
-        server.start();
+        }).start();
 
         assertEquals("ok", http.get(server.getHttpUrl() + "/hello/there").body().string());
 
@@ -172,7 +171,7 @@ class ErsatzServerTest {
                     });
                 });
             });
-        }).start();
+        });
 
         final var response = http.get(
             Map.of("Content-Disposition", "attachment; filename=\"data.zip\""),

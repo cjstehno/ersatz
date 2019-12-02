@@ -90,8 +90,6 @@ class ErsatzServerSpec extends Specification {
             GET('/baz').query('alpha', '42').responds().body('The answer is 42')
         }
 
-        ersatzServer.start()
-
         when:
         def response = http.get(ersatzServer.httpUrl('/foo'))
 
@@ -179,7 +177,7 @@ class ErsatzServerSpec extends Specification {
                     part 'file', 'data.txt', TEXT_PLAIN, 'This is some file data'
                 })
             }
-        }.start()
+        }
 
         when:
         Response response = http.get(ersatzServer.httpUrl('/data'))
@@ -212,7 +210,7 @@ class ErsatzServerSpec extends Specification {
                     part 'image', 'test-image.jpg', 'image/jpeg', ErsatzServerSpec.getResourceAsStream('/test-image.jpg'), 'base64'
                 })
             }
-        }.start()
+        }
 
         when:
         okhttp3.Response response = http.get(ersatzServer.httpUrl('/data'))
@@ -246,7 +244,7 @@ class ErsatzServerSpec extends Specification {
                     part 'image', 'test-image.jpg', IMAGE_JPG, ErsatzServerSpec.getResourceAsStream('/test-image.jpg'), 'base64'
                 })
             }
-        }.start()
+        }
 
         when:
         Response response = http.get(ersatzServer.httpUrl('/stuff'))
@@ -271,7 +269,7 @@ class ErsatzServerSpec extends Specification {
             expectations {
                 GET(startsWith('/hello')).responds().body('ok')
             }
-        }).start()
+        })
 
         expect:
         "${server.httpUrl}/hello/there".toURL().text == 'ok'
@@ -409,7 +407,7 @@ class ErsatzServerSpec extends Specification {
             expectations {
                 GET('/proxied').called(1).responds().body('forwarded').code(200)
             }
-        }).start()
+        })
 
         ersatzServer.expectations {
             GET('/proxied').called(0).responds().body('original').code(200)

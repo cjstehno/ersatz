@@ -34,7 +34,7 @@ class BasicSpec extends Specification {
         setup:
         ersatzServer.expectations {
             GET('/secrets').responds().body('Something secure')
-        }.start()
+        }
 
         when:
         okhttp3.Response response = http.get("${ersatzServer.httpUrl}/secrets")

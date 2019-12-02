@@ -72,7 +72,7 @@ class ErsatzRequestWithContentSpec extends Specification {
                     body 'accepted', TEXT_PLAIN
                 }
             }
-        }.start()
+        }
 
         when:
         String value = exec(clientPost('/posting', 'text/plain', BODY_CONTENT).build()).body().string()
@@ -91,7 +91,7 @@ class ErsatzRequestWithContentSpec extends Specification {
         setup:
         server.expectations {
             POST('/posting').body(BODY_CONTENT, 'text/plain; charset=utf-8').decoder(TEXT_PLAIN, Decoders.utf8String).responds().body('accepted')
-        }.start()
+        }
 
         when:
         String value = exec(clientPost('/posting', 'text/plain; charset=utf-8', BODY_CONTENT).build()).body().string()
@@ -112,7 +112,7 @@ class ErsatzRequestWithContentSpec extends Specification {
             POST('/posting').body([label: "Body Content", text: "This is some body content."], 'some/json; charset=utf-8')
                     .decoder('some/json; charset=utf-8', Decoders.parseJson)
                     .responds().body('accepted')
-        }.start()
+        }
 
         when:
         String value = exec(clientPost('/posting', 'some/json; charset=utf-8', BODY_CONTENT).build()).body().string()
@@ -139,7 +139,7 @@ class ErsatzRequestWithContentSpec extends Specification {
                     body responseContent
                 }
             }
-        }.start()
+        }
 
         when:
         String value = exec(clientPost('/posting', 'some/json; charset=utf-8', BODY_CONTENT).build()).body().string()
@@ -164,7 +164,7 @@ class ErsatzRequestWithContentSpec extends Specification {
                     body 'ok'
                 }
             }
-        }.start()
+        }
 
         when:
         OkHttpClient client = new OkHttpClient()
@@ -195,7 +195,7 @@ class ErsatzRequestWithContentSpec extends Specification {
                     body 'ok'
                 }
             }
-        }.start()
+        }
 
         OkHttpClient client = new OkHttpClient()
 
@@ -229,7 +229,7 @@ class ErsatzRequestWithContentSpec extends Specification {
                     body 'ok'
                 }
             }
-        }.start()
+        }
 
         OkHttpClient client = new OkHttpClient()
 
