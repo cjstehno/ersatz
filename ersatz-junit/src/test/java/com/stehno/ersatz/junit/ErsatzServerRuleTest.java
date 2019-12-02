@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.junit.vintage;
+package com.stehno.ersatz.junit;
 
 import com.stehno.ersatz.ErsatzServer;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,15 +25,15 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ErsatzServerRuleTest {
+public class ErsatzServerRuleTest {
 
-    private ErsatzServer server;
-    @Rule ErsatzServerRule ersatzServerRule = new ErsatzServerRule(this);
+    @SuppressWarnings("unused") private ErsatzServer server;
+    @Rule public ErsatzServerRule ersatzServerRule = new ErsatzServerRule(this);
 
     @Test
-    void using_server() throws IOException, InterruptedException {
+    public void using_server() throws IOException, InterruptedException {
         server.expectations(expects -> {
             expects.GET("/foo", request -> {
                 request.called(1);

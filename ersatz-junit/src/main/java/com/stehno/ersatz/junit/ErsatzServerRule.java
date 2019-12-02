@@ -13,27 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.junit.vintage;
+package com.stehno.ersatz.junit;
 
-import com.stehno.ersatz.junit.TestingHarness;
 import org.junit.rules.ExternalResource;
 
 /**
- * FIXME: document
+ * A JUnit Vintage (4.x) test rule providing a simplified framework for using <code>ErsatzServer</code> in unit tests.
+ *
+ * Note: If you are using JUnit 5+ you must use the <code>ErsatzServerExtension</code> class instead.
  */
 public class ErsatzServerRule extends ExternalResource {
 
     private final TestingHarness harness = new TestingHarness();
     private final Object testInstance;
 
+    /**
+     * Creates the rule with a reference to the enclosing test.
+     *
+     * @param testInstance the enclosing test instance
+     */
     public ErsatzServerRule(final Object testInstance) {
         this.testInstance = testInstance;
     }
 
+    /**
+     * Finds a field of type <code>ErsatzServer</code> in the enclosing test class. If it is <code>null</code>, an instance
+     * of <code>ErsatzServer</code> will be created. The <code>clearExpectations()</code> method will then be called.
+     *
+     * @throws Throwable if there is a problem setting up the test components
+     */
     @Override protected void before() throws Throwable {
         harness.before(testInstance);
     }
 
+    /**
+     * Finds a field of type <code>ErsatzServer</code> and calls <code>close()</code> on it if it exists.
+     */
     @Override protected void after() {
         try {
             harness.after(testInstance);

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.junit.jupiter;
+package com.stehno.ersatz.junit;
 
 import com.stehno.ersatz.ErsatzServer;
-import org.junit.jupiter.api.Assertions;
+import com.stehno.ersatz.junit.ErsatzServerExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(ErsatzServerExtension.class)
 class ErsatzServerExtensionTest {
 
-    private ErsatzServer server;
+    @SuppressWarnings("unused") private ErsatzServer server;
 
     @Test @DisplayName("using provided server")
     void using_server() throws IOException, InterruptedException {

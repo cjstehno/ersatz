@@ -10,3 +10,5 @@ vintage).
 ## Artifacts
 
 TODO: document 
+
+TODO: show examples of vintage and jupiter usage

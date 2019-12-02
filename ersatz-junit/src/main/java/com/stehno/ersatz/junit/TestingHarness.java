@@ -23,16 +23,34 @@ import java.util.function.Supplier;
 import static java.util.Arrays.stream;
 
 /**
- * NOTE: creates one if null instance found
+ * JUnit test behavior for Ersatz, used by both versions.
  */
-public class TestingHarness {
+class TestingHarness {
 
-    public void before(final Object testInstance) throws Exception {
+    /**
+     * Finds a field in the test instance of type <code>ErsatzServer</code>, creating an instance if one does not
+     * already exist. The <code>ErsatzServer</code> instance will then <code>clearExpectations()</code> to remove any
+     * previous request expectations.
+     *
+     * @param testInstance the instance of the test class
+     * @throws Exception if there is a problem performing the operations
+     */
+    void before(final Object testInstance) throws Exception {
         findInstance(testInstance, true).clearExpectations();
     }
 
-    public void after(final Object testInstance) throws Exception {
-        findInstance(testInstance, false).close();
+    /**
+     * Finds a field in the test instance of type <code>ErsatzServer</code>. If an instance exists it will call
+     * <code>close()</code> on it, otherwise, no action will be taken.
+     *
+     * @param testInstance the instance of the test class
+     * @throws Exception if there is a problem performing the operations
+     */
+    void after(final Object testInstance) throws Exception {
+        final var ersatzInstance = findInstance(testInstance, false);
+        if (ersatzInstance != null) {
+            ersatzInstance.close();
+        }
     }
 
     private static ErsatzServer findInstance(final Object testInstance, final boolean create) throws Exception {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.junit.jupiter;
+package com.stehno.ersatz.junit;
 
 import com.stehno.ersatz.junit.TestingHarness;
 import org.junit.jupiter.api.extension.AfterEachCallback;
