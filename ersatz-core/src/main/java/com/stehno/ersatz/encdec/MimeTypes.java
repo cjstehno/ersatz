@@ -20,7 +20,14 @@ import javax.activation.MimeTypeParseException;
 
 public class MimeTypes {
 
-     static MimeType createMimeType(final String value) {
+    /**
+     * Creates a <code>MimeType</code> object from the specified string designator. If a parsing exception is thrown, it
+     * will be wrapped in an <code>IllegalArgumentException</code> and rethrown.
+     *
+     * @param value the mime-type text value
+     * @return the wrapped MimeType
+     */
+    static MimeType createMimeType(final String value) {
         try {
             return new MimeType(value);
         } catch (MimeTypeParseException e) {

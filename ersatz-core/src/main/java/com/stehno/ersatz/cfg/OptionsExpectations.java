@@ -25,6 +25,9 @@ import java.util.function.Consumer;
 import static com.stehno.ersatz.match.ErsatzMatchers.pathMatcher;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
+/**
+ * Defines the available OPTIONS request expectations.
+ */
 public interface OptionsExpectations {
 
     /**

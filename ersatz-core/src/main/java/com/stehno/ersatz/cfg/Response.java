@@ -209,8 +209,9 @@ public interface Response {
     Map<String, Object> getCookies();
 
     /**
-     * Used to retrieve the configured response content. The content will be converted to a String based on the encoder configured for the
-     * content-type and content object type; if not encoder is found, the <code>toString()</code> method will be called on the content object.
+     * Used to retrieve the configured response content. The content will be converted to a byte array based on the
+     * encoder configured for the content-type and content object type; if no encoder is found, the
+     * <code>toString()</code> method will be called on the content object and its bytes will be used.
      * <p>
      * If no content exists, an empty array will be returned.
      *

@@ -36,10 +36,11 @@ class TestingHarnessTest {
 
         harness.before(this);
 
-        verify(server, times(1)).clearExpectations();
+        verify(server, times(1)).start();
 
         harness.after(this);
 
+        verify(server, times(1)).clearExpectations();
         verify(server, times(1)).close();
     }
 

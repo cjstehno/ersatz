@@ -15,6 +15,9 @@
  */
 package com.stehno.ersatz.server;
 
+/**
+ * Defines the access points into the underlying HTTP server implementation.
+ */
 public interface UnderlyingServer {
 
     /**

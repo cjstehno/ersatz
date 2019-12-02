@@ -36,12 +36,12 @@ public interface AuthenticationConfig {
      */
     void basic(final String username, final String password);
 
-   default void basic(final String username){
-       basic(username, DEFAULT_PASSWORD);
-   }
+    default void basic(final String username) {
+        basic(username, DEFAULT_PASSWORD);
+    }
 
-    default void basic(){
-       basic(DEFAULT_USERNAME, DEFAULT_PASSWORD);
+    default void basic() {
+        basic(DEFAULT_USERNAME, DEFAULT_PASSWORD);
     }
 
     /**
@@ -52,11 +52,11 @@ public interface AuthenticationConfig {
      */
     void digest(final String username, final String password);
 
-    default void digest(final String username){
+    default void digest(final String username) {
         digest(username, DEFAULT_USERNAME);
     }
 
-    default void digest(){
+    default void digest() {
         digest(DEFAULT_USERNAME, DEFAULT_PASSWORD);
     }
 }

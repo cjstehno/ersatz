@@ -24,35 +24,36 @@ import java.util.function.Consumer;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
- * The <code>Expectations</code> interface is the root element of the expectation configuration, which provides the ability to define request
- * expectations and responses for test interactions.
+ * The <code>Expectations</code> interface is the root element of the expectation configuration, which provides the
+ * ability to define request expectations and responses for test interactions.
  * <p>
- * Internal expectation matching is done using <a href="http://hamcrest.org/" target="_blank">Hamcrest</a> <code>Matcher</code>s - the methods
- * without explicit Matches provide one as a convenience based on the property and value type (see method description). All configured matchers must
- * match for a specific expectation to be considered a match and if there are multiple matching expectations, the first one configured will be the
- * one considered as the match.
+ * Internal expectation matching is done using <a href="http://hamcrest.org/" target="_blank">Hamcrest</a>
+ * <code>Matcher</code>s - the methods without explicit Matches provide one as a convenience based on the property and
+ * value type (see method description). All configured matchers must match for a specific expectation to be considered
+ * a match and if there are multiple matching expectations, the first one configured will be the one considered as the
+ * match.
  */
 public interface Expectations extends AnyExpectations, GetExpectations, HeadExpectations, PostExpectations, PutExpectations, DeleteExpectations, PatchExpectations, OptionsExpectations {
 
     /**
-     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection will be expected in order
-     * for the verification to pass.
+     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection
+     * will be expected in order for the verification to pass.
      */
     default WebSocketExpectations ws(String path){
         return ws(path, (Consumer<WebSocketExpectations>) null);
     }
 
     /**
-     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection will be expected in order
-     * for the verification to pass.
+     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection
+     * will be expected in order for the verification to pass.
      */
     default WebSocketExpectations ws(String path, @DelegatesTo(value = WebSocketExpectations.class, strategy = DELEGATE_FIRST) Closure closure){
         return ws(path, ConsumerWithDelegate.create(closure));
     }
 
     /**
-     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection will be expected in order
-     * for the verification to pass.
+     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection
+     * will be expected in order for the verification to pass.
      */
     WebSocketExpectations ws(String path, Consumer<WebSocketExpectations> config);
 }
