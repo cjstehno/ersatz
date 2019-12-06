@@ -19,6 +19,7 @@ import com.stehno.ersatz.ErsatzServer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,16 +33,16 @@ class TestingHarnessTest {
 
     @Test @DisplayName("finding and operating on server")
     void find_operate_server() throws Exception {
-        server = mock(ErsatzServer.class);
+        server = Mockito.mock(ErsatzServer.class);
 
         harness.before(this);
 
-        verify(server, times(1)).start();
+        Mockito.verify(server, Mockito.times(1)).start();
 
         harness.after(this);
 
-        verify(server, times(1)).clearExpectations();
-        verify(server, times(1)).close();
+        Mockito.verify(server, Mockito.times(1)).clearExpectations();
+        Mockito.verify(server, Mockito.times(1)).close();
     }
 
     @Test @DisplayName("operating on null server creates instance")
