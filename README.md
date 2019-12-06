@@ -6,15 +6,39 @@
 
 * Site: http://stehno.com/ersatz
 * Project: https://github.com/cjstehno/ersatz
-* User Guide: http://stehno.com/ersatz/asciidoc/html5/
-* Groovy Docs: http://stehno.com/ersatz/groovydoc/
+* User Guide: http://stehno.com/ersatz/guide/
+* Java Docs: http://stehno.com/ersatz/javadoc/
 * Twitter: [@ErsatzServer](https://twitter.com/ersatzserver)
 
 ## Introduction
 
-The Ersatz Server is a HTTP client testing tool, which allows for request/response expectations to be configured in a 
+The Ersatz Server is a HTTP client testing tool which allows for request/response expectations to be configured in a 
 flexible manner. The expectations will respond in a configured manner to requests and allow testing with different 
 responses and/or error conditions without having to write a lot of boiler-plate code.
+
+> **Warning:** v2.0 is **NOT** directly backwards compatible with the 1.x codebase. See the 
+> [Migrating to 2.0](http://stehno.com/ersatz/guide/#_migrating_to_2.0) section of the User Guide for details.
+
+## Artifacts
+
+Project artifacts are available via the JCenter (Bintray) and Maven Central repositories.
+
+For Gradle:
+
+    testCompile 'com.stehno.ersatz:ersatz:2.0.0'
+
+For Maven:
+
+    <dependency>
+        <groupId>com.stehno.ersatz</groupId>
+        <artifactId>ersatz</artifactId>
+        <version>2.0.0</version>
+        <scope>test</scope>
+    </dependency>
+    
+Alternately, there is a `safe` (shadowed) version of the library available, which is useful in cases where you already 
+have a version of Undertow in use (to avoid version collisions). See the [Shadow Jar](http://stehno.com/ersatz/guide/#_shadow_jar) 
+section of the User Guide for more information.
 
 ## Build Instructions
 
@@ -25,7 +49,7 @@ Ersatz is built using Gradle with no custom build tasks:
 ## License
 
 ```
-Copyright (C) 2019 Christopher J. Stehno
+Copyright (C) 2020 Christopher J. Stehno
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -107,7 +107,7 @@ public class ErsatzServer implements Closeable {
      * @return the full URL of the HTTP server
      */
     public String getHttpUrl() {
-        return "http://localhost:" + getHttpPort();
+        return getUrl("http", getHttpPort());
     }
 
     /**
@@ -116,7 +116,7 @@ public class ErsatzServer implements Closeable {
      * @return the web socket URL
      */
     public String getWsUrl() {
-        return "ws://localhost:" + getHttpPort();
+        return getUrl("ws", getHttpPort());
     }
 
     /**
@@ -125,7 +125,15 @@ public class ErsatzServer implements Closeable {
      * @return the full URL of the HTTP server
      */
     public String getHttpsUrl() {
-        return "https://localhost:" + getHttpsPort();
+        return getUrl("https", getHttpsPort());
+    }
+
+    private String getUrl(final String prefix, final int port){
+        if( port > 0 ) {
+            return prefix + "://localhost:" + port;
+        } else {
+            throw new IllegalStateException("The port (" + port + ") is invalid: Has the server been started?");
+        }
     }
 
     /**

@@ -19,10 +19,7 @@ import com.stehno.ersatz.cfg.ContentType;
 import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.util.HttpClient;
 import okhttp3.Response;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.util.Map;
@@ -38,6 +35,7 @@ import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ErsatzServerTest {
 
@@ -183,5 +181,11 @@ class ErsatzServerTest {
         final var responseBytes = response.body().bytes();
         assertEquals(zipBites.length, responseBytes.length);
         assertArrayEquals(zipBites, responseBytes);
+    }
+
+    @Test @DisplayName("not started should give useful error")
+    void not_started(){
+        final var thrown = assertThrows(IllegalStateException.class, ()-> ersatzServer.httpUrl("/nothing"));
+        assertEquals("The port (-1) is invalid: Has the server been started?", thrown.getMessage());
     }
 }
