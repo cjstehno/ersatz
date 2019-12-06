@@ -11,7 +11,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.60'
     id 'com.github.ben-manes.versions' version '0.25.0'
     id "com.github.johnrengelman.shadow" version '5.2.0'
-//    id "com.github.spotbugs" version "3.0.0"
+    id "com.github.spotbugs" version "3.0.0"
 }
 
 group = 'com.stehno.ersatz'
@@ -35,6 +35,8 @@ dependencies {
     implementation 'javax.activation:activation:1.1.1'
     implementation 'ch.qos.logback:logback-classic:1.1.7'
     implementation 'commons-fileupload:commons-fileupload:1.4'
+    implementation 'com.github.spotbugs:spotbugs-annotations:3.1.12'
+
 
     implementation 'junit:junit:4.12'
     implementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
@@ -272,4 +274,18 @@ shadowJar {
     relocate 'org.apache.commons.fileupload', 'ersatz.fileupload'
     relocate 'org.apache.commons.io', 'ersatz.io'
     relocate 'org.awaitility', 'ersatz.awaitility'
+}
+
+spotbugs {
+    ignoreFailures = true
+    effort = 'max'
+    reportLevel = 'low'
+}
+
+tasks.withType(com.github.spotbugs.SpotBugsTask) {
+    reports {
+        xml.enabled false
+        html.enabled true
+        html.stylesheet resources.text.fromFile('config/findbugs-styles.xsl')
+    }
 }

@@ -32,7 +32,7 @@ import static io.undertow.security.api.AuthenticationMode.PRO_ACTIVE;
  */
 public class BasicAuthHandler {
 
-    private final String realm = "BasicTesting";
+    private static final String REALM = "BasicTesting";
     private final IdentityManager identityManager;
 
     public BasicAuthHandler(final IdentityManager identityManager) {
@@ -51,7 +51,7 @@ public class BasicAuthHandler {
                 new AuthenticationConstraintHandler(
                     new AuthenticationCallHandler(handler)
                 ),
-                List.of(new BasicAuthenticationMechanism(realm))
+                List.of(new BasicAuthenticationMechanism(REALM))
             )
         );
     }

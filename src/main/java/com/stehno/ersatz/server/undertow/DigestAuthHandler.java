@@ -32,7 +32,7 @@ import static io.undertow.security.api.AuthenticationMode.PRO_ACTIVE;
  */
 public class DigestAuthHandler {
 
-    private final String realm = "DigestTesting";
+    private static final String REALM = "DigestTesting";
     private final IdentityManager identityManager;
 
     public DigestAuthHandler(final IdentityManager identityManager){
@@ -51,7 +51,7 @@ public class DigestAuthHandler {
                 new AuthenticationConstraintHandler(
                     new AuthenticationCallHandler(handler)
                 ),
-                List.of(new DigestAuthenticationMechanism(realm, "localhost", "DIGEST", identityManager))
+                List.of(new DigestAuthenticationMechanism(REALM, "localhost", "DIGEST", identityManager))
             )
         );
     }
