@@ -6,9 +6,8 @@ plugins {
     id 'maven-publish'
     id 'com.github.kt3k.coveralls' version '2.8.2'
     id 'com.jfrog.bintray' version '1.8.4'
-    id "org.asciidoctor.convert" version '1.5.8.1'
+    id 'org.asciidoctor.convert' version '2.4.0'
     id "com.stehno.gradle.webpreview" version '0.3.0'
-    id "com.stehno.gradle.site" version '0.0.3'
     id 'org.jetbrains.kotlin.jvm' version '1.3.60'
     id 'com.github.ben-manes.versions' version '0.25.0'
     id "com.github.johnrengelman.shadow" version '4.0.1'
@@ -177,11 +176,53 @@ asciidoctor {
             encoding: 'utf-8'
 }
 
-site {
-    versionedFile 'src/docs/asciidoc/index.adoc'
+webPreview {
+    resourceDir = file('build/site')
 }
 
-tasks.site.dependsOn = ['build', 'javadoc', 'jacocoTestReport', 'asciidoctor']
+task site(dependsOn: ['build', 'javadoc', 'jacocoTestReport', 'asciidoctor']) {
+    doLast {
+        def vars = [
+                project_version: project.version,
+                year           : Calendar.instance.get(Calendar.YEAR)
+        ]
+
+        mkdir 'build/site'
+
+        copy {
+            from 'src/site'
+            into 'build/site'
+            include '**/*.html'
+            expand vars
+        }
+
+        copy {
+            from 'src/site'
+            into 'build/site'
+            include '**/css/**'
+            include '**/js/**'
+            include '**/img/**'
+        }
+
+        copy {
+            from 'build/reports'
+            include '**/**'
+            into 'build/site/reports'
+        }
+
+        copy {
+            from 'build/docs'
+            include '**/**'
+            into 'build/site/docs'
+        }
+
+        copy {
+            from 'build/asciidoc/html5'
+            include '**/**'
+            into 'build/site/guide'
+        }
+    }
+}
 
 task publishSite(type: GradleBuild, group: 'Publishing', description: 'Publishes the documentation web site.', dependsOn: ['site']) {
     buildFile = 'publish.gradle'

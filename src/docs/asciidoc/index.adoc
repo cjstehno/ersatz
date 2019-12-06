@@ -28,6 +28,7 @@ frameworks.
 == What's New in 2.0
 
 * Not directly backward compatible with 1.x codebase (see migration notes below).
+* Requires Java 11+.
 * Refactored code and packaging as well as code-conversion from Groovy to Java (no loss of support for using with Groovy).
 * Removed deprecated methods.
 * Refactored the HTTP method names to be uppercase.
@@ -96,7 +97,7 @@ class HelloSpec extends Specification {
                 called 1
                 query 'name','Ersatz'
                 responder {
-                    content 'Hello Ersatz','text/plain'
+                    body 'Hello Ersatz','text/plain'
                 }
             }
         }
@@ -394,7 +395,7 @@ As an example, the default JSON decoder (provided in `com.stehno.ersatz.Decoders
 [source,groovy]
 ----
 static final BiFunction<byte[], DecodingContext, Object> parseJson = { byte[] content, DecodingContext ctx ->
-    new JsonSlurper().parse(content ?: '{}'.bytes)
+    new JsonSlurper().parse(content ?: '{}').bytes
 }
 ----
 
