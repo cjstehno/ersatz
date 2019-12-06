@@ -10,7 +10,7 @@ plugins {
     id "com.stehno.gradle.webpreview" version '0.3.0'
     id 'org.jetbrains.kotlin.jvm' version '1.3.60'
     id 'com.github.ben-manes.versions' version '0.25.0'
-    id "com.github.johnrengelman.shadow" version '4.0.1'
+    id "com.github.johnrengelman.shadow" version '5.2.0'
 //    id "com.github.spotbugs" version "3.0.0"
 }
 
@@ -75,7 +75,7 @@ artifacts {
     archives jar
     archives sourcesJar
     archives javadocJar
-//    archives shadowJar TODO: restore
+    archives shadowJar
 }
 
 publishing {
@@ -142,7 +142,7 @@ bintray {
             name = 'ersatz'
             desc = 'Mock server library for testing HTTP clients.'
             licenses = ['Apache-2.0']
-            labels = ['groovy']
+            labels = ['groovy', 'java', 'mocking']
             websiteUrl = 'http://stehno.com/ersatz'
             issueTrackerUrl = 'https://github.com/cjstehno/ersatz/issues'
             vcsUrl = 'https://github.com/cjstehno/ersatz'
@@ -241,25 +241,30 @@ compileTestKotlin {
     }
 }
 
-// FIXME: updates need to be applied
+// FIXME: https://imperceptiblethoughts.com/shadow/introduction/
 shadowJar {
     classifier = 'safe'
     dependencies {
-        exclude(dependency('junit:junit:4.12'))
-        exclude(dependency("org.codehaus.groovy:groovy-all:$groovyVersion"))
+        exclude(dependency('junit:junit:.*'))
+        exclude(dependency('org.junit.jupiter::.*'))
+        exclude(dependency('org.junit.platform::.*'))
+        exclude(dependency('javax.activation:activation:1.1.1'))
+        exclude(dependency("org.codehaus.groovy::$groovyVersion"))
         exclude(dependency('org.slf4j:slf4j-api:1.7.20'))
         exclude(dependency('ch.qos.logback:logback-classic:1.1.7'))
         exclude(dependency('ch.qos.logback:logback-core:1.1.7'))
-        exclude(dependency('org.hamcrest:hamcrest-library:1.3'))
-        exclude(dependency('org.hamcrest:hamcrest-core:1.3'))
-        exclude(dependency('org.junit.jupiter:junit-jupiter-params:5.3.1'))
-        exclude(dependency('org.junit.jupiter:junit-jupiter-engine:5.3.1'))
-        exclude(dependency('org.junit.vintage:junit-vintage-engine:5.3.1'))
-        exclude(dependency('org.junit.jupiter:junit-jupiter-api:5.3.1'))
-        exclude(dependency('org.junit.platform:junit-platform-commons:1.3.1'))
-        exclude(dependency('org.junit.platform:junit-platform-engine:1.3.1'))
-        exclude(dependency('org.opentest4j:opentest4j:1.1.1'))
-        exclude(dependency('org.apiguardian:apiguardian-api:1.0.0'))
+        exclude(dependency('org.hamcrest:hamcrest:2.2'))
+        exclude(dependency('org.hamcrest:hamcrest-library:2.2'))
+        exclude(dependency('org.hamcrest:hamcrest-core:2.2'))
+        exclude(dependency('org.opentest4j:opentest4j:1.2.0'))
+        exclude(dependency('org.apiguardian:apiguardian-api:1.1.0'))
+        exclude(dependency('jline:jline:.*'))
+        exclude(dependency('com.beust:jcommander:.*'))
+        exclude(dependency('com.thoughtworks.qdox:qdox:.*'))
+        exclude(dependency('commons-cli:commons-cli:.*'))
+        exclude(dependency('org.testng:testng:.*'))
+        exclude(dependency('info.picocli:picocli:.*'))
+        exclude(dependency('org.apache.ant::.*'))
     }
 
     mergeServiceFiles()
@@ -270,4 +275,5 @@ shadowJar {
     relocate 'javax.servlet', 'ersatz.servlet'
     relocate 'org.apache.commons.fileupload', 'ersatz.fileupload'
     relocate 'org.apache.commons.io', 'ersatz.io'
+    relocate 'org.awaitility', 'ersatz.awaitility'
 }
