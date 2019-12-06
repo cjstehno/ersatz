@@ -25,23 +25,19 @@ repositories {
 }
 
 dependencies {
+    api "org.codehaus.groovy:groovy:$groovyVersion"
+    api "org.codehaus.groovy:groovy-json:$groovyVersion"
+    api 'io.undertow:undertow-core:2.0.28.Final'
+    api 'javax.servlet:javax.servlet-api:3.1.0'
+    api 'org.hamcrest:hamcrest-library:2.2'
+    api 'org.awaitility:awaitility:4.0.1'
+
     implementation 'javax.activation:activation:1.1.1'
-
-    api "org.codehaus.groovy:groovy-all:$groovyVersion"
-
-    implementation 'io.undertow:undertow-core:2.0.28.Final'
-
     implementation 'ch.qos.logback:logback-classic:1.1.7'
-
     implementation 'commons-fileupload:commons-fileupload:1.4'
-    implementation 'javax.servlet:javax.servlet-api:3.1.0'
 
-    // these are used to provide junit helpers in production code
-    implementation 'org.hamcrest:hamcrest-library:2.2'
-    implementation 'org.awaitility:awaitility:4.0.1'
-
-    compile 'junit:junit:4.12'
-    compile "org.junit.jupiter:junit-jupiter-api:5.5.2"
+    implementation 'junit:junit:4.12'
+    implementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
 
     testImplementation "org.junit.jupiter:junit-jupiter-params:5.5.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.2"
