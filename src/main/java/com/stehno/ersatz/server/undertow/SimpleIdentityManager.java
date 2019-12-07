@@ -17,12 +17,14 @@ package com.stehno.ersatz.server.undertow;
 
 import io.undertow.security.idm.*;
 
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 import static io.undertow.util.HexConverter.convertToHexBytes;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * IdentityManager used by the <code>BasicAuthFeature</code>. The default username is "admin" and the default password is "$3cr3t".
@@ -52,7 +54,7 @@ public class SimpleIdentityManager implements IdentityManager {
         } else if (credential instanceof DigestCredential) {
             try {
                 final DigestCredential digestCredential = (DigestCredential) credential;
-                final var bytes = digestCredential.getAlgorithm().getMessageDigest().digest((format("%s:%s:%s", username, digestCredential.getRealm(), password)).getBytes());
+                final var bytes = digestCredential.getAlgorithm().getMessageDigest().digest((format("%s:%s:%s", username, digestCredential.getRealm(), password)).getBytes(UTF_8));
 
                 if (digestCredential.verifyHA1(convertToHexBytes(bytes))) {
                     return new SimpleAccount(id);
@@ -80,7 +82,7 @@ public class SimpleIdentityManager implements IdentityManager {
      * @return the encoded credential string
      */
     public static String encodedCredential(final String user, final String pass) {
-        return "Basic " + Base64.getEncoder().encodeToString((user + ":" + pass).getBytes());
+        return "Basic " + Base64.getEncoder().encodeToString((user + ":" + pass).getBytes(UTF_8));
     }
 }
 

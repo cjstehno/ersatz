@@ -31,6 +31,7 @@ import java.util.function.Consumer
 
 import static com.stehno.ersatz.cfg.WsMessageType.BINARY
 import static com.stehno.ersatz.cfg.WsMessageType.TEXT
+import static java.nio.charset.StandardCharsets.UTF_8
 import static java.util.concurrent.TimeUnit.SECONDS
 import static okio.ByteString.of
 
@@ -38,7 +39,7 @@ class WebSocketsSpec extends Specification {
 
     private OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
 
-    @AutoCleanup('stop') private ErsatzServer ersatz = new ErsatzServer()
+    @AutoCleanup private ErsatzServer ersatz = new ErsatzServer()
 
     def 'specified ws block should expect at least one connect'() {
         setup:
@@ -85,9 +86,9 @@ class WebSocketsSpec extends Specification {
         ersatz.verify()
 
         where:
-        type   | sentMessage           || receivedMessage
-        TEXT   | 'the message'         || 'the message'
-        BINARY | of('somebytes'.bytes) || 'somebytes'.bytes
+        type   | sentMessage                     || receivedMessage
+        TEXT   | 'the message'                   || 'the message'
+        BINARY | of('somebytes'.getBytes(UTF_8)) || 'somebytes'.getBytes(UTF_8)
     }
 
     @Unroll 'specify a ws block and expect a received message (consumer: #type)'() {
@@ -113,12 +114,12 @@ class WebSocketsSpec extends Specification {
         ersatz.verify()
 
         where:
-        type   | sentMessage           || receivedMessage
-        TEXT   | 'the message'         || 'the message'
-        BINARY | of('somebytes'.bytes) || 'somebytes'.bytes
+        type   | sentMessage                     || receivedMessage
+        TEXT   | 'the message'                   || 'the message'
+        BINARY | of('somebytes'.getBytes(UTF_8)) || 'somebytes'.getBytes(UTF_8)
     }
 
-    @Unroll 'specify a ws block and expect a received message (closure)'() {
+    @Unroll 'specify a ws block and expect a received message (closure: #type)'() {
         setup:
         ersatz.expectations {
             ws('/ws') {
@@ -138,9 +139,9 @@ class WebSocketsSpec extends Specification {
         ersatz.verify()
 
         where:
-        type   | sentMessage           || receivedMessage
-        TEXT   | 'the message'         || 'the message'
-        BINARY | of('somebytes'.bytes) || 'somebytes'.bytes
+        type   | sentMessage                     || receivedMessage
+        TEXT   | 'the message'                   || 'the message'
+        BINARY | of('somebytes'.getBytes(UTF_8)) || 'somebytes'.getBytes(UTF_8)
     }
 
     @Unroll 'ws block expects a message and then reacts (method: #type)'() {
@@ -166,9 +167,9 @@ class WebSocketsSpec extends Specification {
         listener.messages == [clientMessage]
 
         where:
-        type   | reactionMessage   || clientMessage
-        TEXT   | 'the message'     || 'the message'
-        BINARY | 'somebytes'.bytes || of('somebytes'.bytes)
+        type   | reactionMessage             || clientMessage
+        TEXT   | 'the message'               || 'the message'
+        BINARY | 'somebytes'.getBytes(UTF_8) || of('somebytes'.getBytes(UTF_8))
     }
 
     @Unroll 'ws block expects a message and then reacts (closure: #type)'() {
@@ -197,9 +198,9 @@ class WebSocketsSpec extends Specification {
         listener.messages == [clientMessage]
 
         where:
-        type   | reactionMessage   || clientMessage
-        TEXT   | 'the message'     || 'the message'
-        BINARY | 'somebytes'.bytes || of('somebytes'.bytes)
+        type   | reactionMessage             || clientMessage
+        TEXT   | 'the message'               || 'the message'
+        BINARY | 'somebytes'.getBytes(UTF_8) || of('somebytes'.getBytes(UTF_8))
     }
 
     @Unroll 'ws block connects and sends message (method: #type)'() {
@@ -223,9 +224,9 @@ class WebSocketsSpec extends Specification {
         listener.messages == [clientMessage]
 
         where:
-        type   | sentMessage                  || clientMessage
-        TEXT   | 'message for you, sir'       || 'message for you, sir'
-        BINARY | 'message for you, sir'.bytes || of('message for you, sir'.bytes)
+        type   | sentMessage                            || clientMessage
+        TEXT   | 'message for you, sir'                 || 'message for you, sir'
+        BINARY | 'message for you, sir'.getBytes(UTF_8) || of('message for you, sir'.getBytes(UTF_8))
     }
 
     @Unroll 'ws block connects and sends message (closure: #type)'() {
@@ -252,9 +253,9 @@ class WebSocketsSpec extends Specification {
         listener.messages == [clientMessage]
 
         where:
-        type   | sentMessage                  || clientMessage
-        TEXT   | 'message for you, sir'       || 'message for you, sir'
-        BINARY | 'message for you, sir'.bytes || of('message for you, sir'.bytes)
+        type   | sentMessage                            || clientMessage
+        TEXT   | 'message for you, sir'                 || 'message for you, sir'
+        BINARY | 'message for you, sir'.getBytes(UTF_8) || of('message for you, sir'.getBytes(UTF_8))
     }
 
     private void openWebSocket(final String url, Closure closure = null) {

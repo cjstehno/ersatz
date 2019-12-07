@@ -23,6 +23,8 @@ import org.apache.commons.fileupload.UploadContext;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +54,7 @@ public class Decoders {
     /**
      * Decoder that converts request content bytes into a string of JSON and then parses it with <code>JsonSlurper</code> to return parsed JSON data.
      */
-    public static final BiFunction<byte[], DecodingContext, Object> parseJson = (content, ctx) -> new JsonSlurper().parse(content != null ? content : "{}".getBytes());
+    public static final BiFunction<byte[], DecodingContext, Object> parseJson = (content, ctx) -> new JsonSlurper().parse(content != null ? content : "{}".getBytes(UTF_8));
 
     /**
      * Decoder that converts request content bytes in a url-encoded format into a map of name/value pairs.

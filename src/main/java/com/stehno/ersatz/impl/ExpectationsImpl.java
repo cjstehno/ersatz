@@ -155,10 +155,9 @@ public class ExpectationsImpl implements Expectations {
             }
         }
 
-        for (final String p : webSockets.keySet()) {
-            final var w = webSockets.get(p);
-            if (!(((WebSocketExpectationsImpl) w).verify(timeout, unit))) {
-                throw new IllegalArgumentException("WebSocket expectations for " + w + " were not met.");
+        for (final var entry : webSockets.entrySet()) {
+            if (!(((WebSocketExpectationsImpl) entry.getValue()).verify(timeout, unit))) {
+                throw new IllegalArgumentException("WebSocket expectations for " + entry.getValue() + " were not met.");
             }
         }
 

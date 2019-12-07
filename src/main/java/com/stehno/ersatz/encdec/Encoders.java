@@ -23,10 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Function;
 
+import static com.stehno.ersatz.util.ByteArrays.join;
 import static groovy.json.JsonOutput.toJson;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Reusable response content encoders. An encoder is simply a <code>Function&lt;Object,String&gt;</code> which is used to convert the configured response
@@ -39,17 +40,17 @@ public class Encoders {
     /**
      * Encodes the object to JSON using the Groovy <code>JsonObject.toJson(Object)</code> method.
      */
-    public static final Function<Object, byte[]> json = obj -> (obj != null ? toJson(obj) : "{}").getBytes();
+    public static final Function<Object, byte[]> json = obj -> (obj != null ? toJson(obj) : "{}").getBytes(UTF_8);
 
     /**
      * Encodes the object as a String of text.
      */
-    public static final Function<Object, byte[]> text = obj ->( obj != null ? obj.toString() : "").getBytes();
+    public static final Function<Object, byte[]> text = obj ->( obj != null ? obj.toString() : "").getBytes(UTF_8);
 
     /**
      * Encodes a byte array, InputStream or other object with a "getBytes()" method into a base-64 string.
      */
-    public static final Function<Object, byte[]> binaryBase64 = obj -> obj == null ? "".getBytes() : Base64.getEncoder().encode(toBytes(obj));
+    public static final Function<Object, byte[]> binaryBase64 = obj -> obj == null ? "".getBytes(UTF_8) : Base64.getEncoder().encode(toBytes(obj));
 
     /**
      * Encodes the bytes read from an InputStream.
@@ -78,7 +79,7 @@ public class Encoders {
         final var arrays = new LinkedList<byte[]>();
 
         mrc.parts().forEach(p -> {
-            arrays.add( ("--" + mrc.getBoundary() + "\r\n").getBytes());
+            arrays.add( ("--" + mrc.getBoundary() + "\r\n").getBytes(UTF_8));
 
             if (p.getFileName() != null) {
                 arrays.add(("Content-Disposition: form-data; name=\"" + p.getFieldName() + "\"; filename=\"" + p.getFileName() + "\"\r\n").getBytes());
@@ -98,23 +99,10 @@ public class Encoders {
             arrays.add("\r\n".getBytes());
         });
 
-        arrays.add(("--" + mrc.getBoundary() + "--\r\n").getBytes());
+        arrays.add(("--" + mrc.getBoundary() + "--\r\n").getBytes(UTF_8));
 
-        return merge(arrays);
+        return join(arrays);
     };
-
-    private static byte[] merge(final List<byte[]> arrays){
-        byte[] current = new byte[0];
-
-        for (final byte[] array : arrays) {
-            final byte[] merged = new byte[current.length + array.length];
-            System.arraycopy(current, 0, merged, 0, current.length);
-            System.arraycopy(array, 0, merged, current.length, array.length);
-            current = merged;
-        }
-
-        return current;
-    }
 
     private static byte[] toBytes(final Object obj) {
         if (obj instanceof byte[]) {
@@ -122,7 +110,7 @@ public class Encoders {
         } else if (obj instanceof ByteArrayInputStream) {
             return ((ByteArrayInputStream) obj).readAllBytes();
         } else {
-            return obj.toString().getBytes();
+            return obj.toString().getBytes(UTF_8);
         }
     }
 }

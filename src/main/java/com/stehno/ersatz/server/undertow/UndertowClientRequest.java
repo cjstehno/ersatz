@@ -18,6 +18,7 @@ package com.stehno.ersatz.server.undertow;
 import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.cfg.HttpMethod;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.undertow.server.HttpServerExchange;
 
 import java.util.ArrayDeque;
@@ -124,6 +125,7 @@ public class UndertowClientRequest implements ClientRequest {
      *
      * @return the optional body content as a byte array.
      */
+    @SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
     public byte[] getBody() {
         if (content == null) {
             content = new AtomicReference<>();
@@ -145,7 +147,7 @@ public class UndertowClientRequest implements ClientRequest {
 
         final var body = getBody();
         if (body != null && getContentType() != null && getContentType().startsWith("text/")) {
-            contentString = new String(body);
+            contentString = new String(body, UTF_8);
         } else if (body != null) {
             contentString = format("<%d of %s content>", getContentLength(), getContentType());
         }

@@ -18,13 +18,14 @@ package com.stehno.ersatz.impl;
 import com.stehno.ersatz.cfg.MessageReaction;
 import com.stehno.ersatz.cfg.ReceivedMessage;
 import com.stehno.ersatz.cfg.WsMessageType;
+import com.stehno.ersatz.util.ByteArrays;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import io.undertow.websockets.core.BufferedBinaryMessage;
 import io.undertow.websockets.core.BufferedTextMessage;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
-import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -33,7 +34,6 @@ import java.util.function.Consumer;
 
 import static com.stehno.ersatz.cfg.WsMessageType.*;
 import static groovy.lang.Closure.DELEGATE_FIRST;
-import static java.lang.System.arraycopy;
 
 public class ReceivedMessageImpl implements ReceivedMessage {
 
@@ -92,22 +92,7 @@ public class ReceivedMessageImpl implements ReceivedMessage {
     }
 
     public boolean matches(final BufferedBinaryMessage message) {
-        byte[] incoming = new byte[0];
-
-        for (final ByteBuffer b : message.getData().getResource()) {
-            final byte[] data = new byte[b.remaining()];
-            b.get(data);
-            incoming = merge(incoming, data);
-        }
-
-        return messageType == BINARY && incoming.equals(payload);
-    }
-
-    private static byte[] merge(final byte[] first, final byte[] second) {
-        byte[] combined = new byte[first.length + second.length];
-        arraycopy(first, 0, combined, 0, first.length);
-        arraycopy(second, 0, combined, first.length, second.length);
-        return combined;
+        return messageType == BINARY && Arrays.equals(ByteArrays.join(message.getData().getResource()), (byte[]) payload);
     }
 
     public boolean matches(BufferedTextMessage message) {
@@ -120,8 +105,7 @@ public class ReceivedMessageImpl implements ReceivedMessage {
 
     public boolean marked(final long timeout, final TimeUnit unit) {
         try {
-            matchLatch.await(timeout, unit);
-            return true;
+            return matchLatch.await(timeout, unit);
         } catch (InterruptedException e) {
             return false;
         }

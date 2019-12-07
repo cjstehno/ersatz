@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +37,7 @@ import java.util.function.Function;
 import static com.stehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
 import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static groovy.lang.Closure.DELEGATE_FIRST;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
@@ -238,7 +240,7 @@ public class ErsatzResponse implements Response {
 
                 } else {
                     log.debug("No encoder configured for content ({}) - returning string bytes.", content.getClass().getSimpleName());
-                    cachedContent.set(content.toString().getBytes());
+                    cachedContent.set(content.toString().getBytes(UTF_8));
                 }
 
             }
