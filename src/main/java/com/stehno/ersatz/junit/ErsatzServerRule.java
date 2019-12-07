@@ -15,6 +15,7 @@
  */
 package com.stehno.ersatz.junit;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.rules.ExternalResource;
 
 /**
@@ -49,7 +50,8 @@ public class ErsatzServerRule extends ExternalResource {
     /**
      * Finds a field of type <code>ErsatzServer</code> and calls <code>close()</code> on it if it exists.
      */
-    @Override protected void after() {
+    @Override @SuppressFBWarnings("DE_MIGHT_IGNORE")
+    protected void after() {
         try {
             harness.after(testInstance);
         } catch (Exception e) {
