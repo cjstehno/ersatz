@@ -6,6 +6,7 @@ env:
   - TERM=dumb
 before_script:
   - ./gradlew --version
-script: ./gradlew -Pskip-long-running build
+script: ./gradlew build
 after_success:
-  - ./gradlew -Pskip-long-running jacocoTestReport coveralls
+  - ./gradlew jacocoTestReport coveralls
+  - curl -F 'json_file=@build/coveralls/report.json' 'https://coveralls.io/api/v1/jobs'
