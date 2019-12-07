@@ -36,6 +36,7 @@ public interface ServerConfig {
     /**
      * Used to control the enabled/disabled state of HTTPS on the server. By default HTTPS is disabled.
      *
+     * @param enabled whether or not HTTPS support is enabled
      * @return a reference to the server being configured
      */
     ServerConfig https(boolean enabled);
@@ -168,6 +169,7 @@ public interface ServerConfig {
      * <p>
      * param contentType the response content-type to be encoded
      *
+     * @param contentType the response content type to be encoded
      * @param objectType the response object type to be encoded
      * @param encoder    the encoder function
      * @return a reference to this server configuration
@@ -179,6 +181,7 @@ public interface ServerConfig {
      * <p>
      * param contentType the response content-type to be encoded
      *
+     * @param contentType the response content type to be encoded
      * @param objectType the response object type to be encoded
      * @param encoder    the encoder function
      * @return a reference to this server configuration
@@ -209,6 +212,9 @@ public interface ServerConfig {
      * other running servers on the host.
      * <p>
      * Do NOT specify this setting unless you really need to.
+     *
+     * @param value the desired HTTP port
+     * @return a reference to this server configuration
      */
     ServerConfig httpPort(int value);
 
@@ -218,6 +224,9 @@ public interface ServerConfig {
      * other running servers on the host.
      * <p>
      * Do NOT specify this setting unless you really need to.
+     *
+     * @param value the desired HTTPS port
+     * @return a reference to this server configuration
      */
     ServerConfig httpsPort(int value);
 }

@@ -96,6 +96,7 @@ public class ResponseEncoders {
      * <p>
      * param contentType the part content-type
      *
+     * @param contentType the response content type to be encoded
      * @param objectType the part object type
      * @return the encoder function if one exists or null
      */

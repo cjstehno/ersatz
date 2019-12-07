@@ -231,6 +231,7 @@ public interface Response {
      * <p>
      * param contentType the response content-type to be encoded
      *
+     * @param contentType the response content type to be encoded
      * @param objectType the response object type to be encoded
      * @param encoder    the encoder function
      * @return a reference to this response configuration
@@ -242,6 +243,7 @@ public interface Response {
      * <p>
      * param contentType the response content-type to be encoded
      *
+     * @param contentType the response content type to be encoded
      * @param objectType the response object type to be encoded
      * @param encoder    the encoder function
      * @return a reference to this response configuration

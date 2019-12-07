@@ -212,6 +212,8 @@ public class ErsatzServer implements Closeable {
     /**
      * Used to start the HTTP server for test interactions. This method should be called after configuration of expectations and before the test
      * interactions are executed against the server.
+     *
+     * @return a reference to this server
      */
     public ErsatzServer start() {
         underlyingServer.start();

@@ -45,6 +45,8 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
      *
      * @param method      the request method
      * @param pathMatcher the request path matcher
+     * @param globalDecoders the shared global decoders
+     * @param globalEncoders the shared global encoders
      */
     public ErsatzRequestWithContent(final HttpMethod method, final Matcher<String> pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
         super(method, pathMatcher, globalEncoders);

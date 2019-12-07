@@ -66,7 +66,6 @@ public interface ProxyConfig {
      *
      * @param value the target URI
      * @return a reference to this configuration
-     * @throws URISyntaxException if there is a problem with the URL
      */
     default ProxyConfig target(URL value) {
         try {

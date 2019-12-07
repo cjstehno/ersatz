@@ -77,6 +77,8 @@ public interface ClientRequest {
 
     /**
      * Retrieves request parameters specified in the body content, if any.
+     *
+     * @return a Map containing the body parameters
      */
     Map<String, Deque<String> > getBodyParameters();
 

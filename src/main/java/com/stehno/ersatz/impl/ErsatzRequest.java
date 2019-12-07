@@ -15,13 +15,13 @@
  */
 package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.server.ClientRequest;
-import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.cfg.HttpMethod;
 import com.stehno.ersatz.cfg.Request;
 import com.stehno.ersatz.cfg.Response;
+import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.encdec.ResponseEncoders;
 import com.stehno.ersatz.match.CookieMatcher;
+import com.stehno.ersatz.server.ClientRequest;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import org.awaitility.core.ConditionTimeoutException;
@@ -65,6 +65,7 @@ public class ErsatzRequest implements Request {
      *
      * @param meth        the request method
      * @param pathMatcher the path matcher
+     * @param globalEncoders the shared global encoders
      * @param noResponse  whether or not this is a request with an empty response (defaults to false)
      */
     public ErsatzRequest(final HttpMethod meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse) {
@@ -225,6 +226,8 @@ public class ErsatzRequest implements Request {
      * <p>
      * This method will block until the call count condition is met or the timeout is exceeded.
      *
+     * @param timeout the timeout duration
+     * @param unit the timeout duration units
      * @return true if the call count matches the expected verification criteria
      */
     public boolean verify(final long timeout, final TimeUnit unit) {
@@ -279,6 +282,8 @@ public class ErsatzRequest implements Request {
 
     /**
      * Used to mark the request as having been called. Any configured listeners will be called after the call count has been incremented.
+     *
+     * @param cr the client request to be marked
      */
     public void mark(final ClientRequest cr) {
         callCount.incrementAndGet();

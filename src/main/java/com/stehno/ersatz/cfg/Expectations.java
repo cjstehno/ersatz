@@ -38,6 +38,9 @@ public interface Expectations extends AnyExpectations, GetExpectations, HeadExpe
     /**
      * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection
      * will be expected in order for the verification to pass.
+     *
+     * @param path the request path
+     * @return a reference to the web socket expectations
      */
     default WebSocketExpectations ws(String path){
         return ws(path, (Consumer<WebSocketExpectations>) null);
@@ -46,6 +49,10 @@ public interface Expectations extends AnyExpectations, GetExpectations, HeadExpe
     /**
      * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection
      * will be expected in order for the verification to pass.
+     *
+     * @param path the request path
+     * @param closure the configuration closure
+     * @return a reference to the web socket expectations
      */
     default WebSocketExpectations ws(String path, @DelegatesTo(value = WebSocketExpectations.class, strategy = DELEGATE_FIRST) Closure closure){
         return ws(path, ConsumerWithDelegate.create(closure));
@@ -54,6 +61,10 @@ public interface Expectations extends AnyExpectations, GetExpectations, HeadExpe
     /**
      * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection
      * will be expected in order for the verification to pass.
+     *
+     * @param path the request path
+     * @param config the configuration consumer
+     * @return a reference to the web socket expectations
      */
     WebSocketExpectations ws(String path, Consumer<WebSocketExpectations> config);
 }

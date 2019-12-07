@@ -73,6 +73,7 @@ public abstract class FunctionChain<T> {
      * Used by extension classes to perform the result resolution based on the closure. The closure will be passed each item and must return a value
      * or null - null will cause the next item in the chain to be tested.
      *
+     * @param <F> the contained type being resolved
      * @param resolver the resolution closure
      * @return the resolved result or null
      */
