@@ -82,21 +82,21 @@ public class Encoders {
             arrays.add( ("--" + mrc.getBoundary() + "\r\n").getBytes(UTF_8));
 
             if (p.getFileName() != null) {
-                arrays.add(("Content-Disposition: form-data; name=\"" + p.getFieldName() + "\"; filename=\"" + p.getFileName() + "\"\r\n").getBytes());
+                arrays.add(("Content-Disposition: form-data; name=\"" + p.getFieldName() + "\"; filename=\"" + p.getFileName() + "\"\r\n").getBytes(UTF_8));
             } else {
-                arrays.add(("Content-Disposition: form-data; name=\"" + p.getFieldName() + "\"\r\n").getBytes());
+                arrays.add(("Content-Disposition: form-data; name=\"" + p.getFieldName() + "\"\r\n").getBytes(UTF_8));
             }
 
             if (p.getTransferEncoding() != null) {
-                arrays.add(("Content-Transfer-Encoding: " + p.getTransferEncoding() + "\r\n").getBytes());
+                arrays.add(("Content-Transfer-Encoding: " + p.getTransferEncoding() + "\r\n").getBytes(UTF_8));
             }
 
-            arrays.add(("Content-Type: " + p.getContentType() + "\r\n\r\n").getBytes());
+            arrays.add(("Content-Type: " + p.getContentType() + "\r\n\r\n").getBytes(UTF_8));
 
             final Function<Object, byte[]> encoderFn = mrc.encoder(p.getContentType(), p.getValue().getClass());
             final var encoded = encoderFn.apply(p.getValue());
             arrays.add(encoded);
-            arrays.add("\r\n".getBytes());
+            arrays.add("\r\n".getBytes(UTF_8));
         });
 
         arrays.add(("--" + mrc.getBoundary() + "--\r\n").getBytes(UTF_8));

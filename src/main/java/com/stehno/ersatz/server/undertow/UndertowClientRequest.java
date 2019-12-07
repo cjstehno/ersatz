@@ -125,7 +125,6 @@ public class UndertowClientRequest implements ClientRequest {
      *
      * @return the optional body content as a byte array.
      */
-    @SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
     public byte[] getBody() {
         if (content == null) {
             content = new AtomicReference<>();
