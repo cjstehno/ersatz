@@ -32,8 +32,10 @@ import org.xnio.Options;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
 import static io.undertow.UndertowOptions.*;
@@ -170,7 +172,7 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
 
             return sslContext;
 
-        } catch (Exception ex) {
+        } catch (IOException | GeneralSecurityException ex) {
             throw new IllegalStateException(ex);
         }
     }
