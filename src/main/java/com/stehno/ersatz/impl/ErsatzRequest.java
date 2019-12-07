@@ -49,6 +49,7 @@ import static org.hamcrest.Matchers.*;
 /**
  * <code>Request</code> implementation representing requests without body content.
  */
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ErsatzRequest implements Request {
 
     private final List<RequestMatcher> matchers = new LinkedList<>();

@@ -36,6 +36,7 @@ import java.nio.ByteBuffer;
 /**
  * Used to build the HttpHandler chain for web socket support.
  */
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class WebSocketsHandlerBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(WebSocketsHandlerBuilder.class);

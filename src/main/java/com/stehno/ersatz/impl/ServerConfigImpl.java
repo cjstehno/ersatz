@@ -36,6 +36,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+@SuppressWarnings({"PMD.AvoidFieldNameMatchingMethodName", "PMD.BeanMembersShouldSerialize"})
 public class ServerConfigImpl implements ServerConfig {
 
     private static final int EPHEMERAL_PORT = 0;

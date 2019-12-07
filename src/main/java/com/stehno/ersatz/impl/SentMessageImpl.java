@@ -18,6 +18,7 @@ package com.stehno.ersatz.impl;
 import com.stehno.ersatz.cfg.SentMessage;
 import com.stehno.ersatz.cfg.WsMessageType;
 
+@SuppressWarnings({"PMD.AvoidFieldNameMatchingMethodName", "PMD.BeanMembersShouldSerialize"})
 public class SentMessageImpl implements SentMessage {
 
     private Object payload;

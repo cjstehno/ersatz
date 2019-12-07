@@ -24,6 +24,7 @@ import static java.util.Collections.unmodifiableList;
 /**
  * Abstraction for an object chain which will have method calls applied from "first" to "last" until a non-null result is returned.
  */
+@SuppressWarnings({"PMD.AvoidFieldNameMatchingMethodName", "PMD.BeanMembersShouldSerialize"})
 public abstract class FunctionChain<T> {
 
     private final List<T> items = new ArrayList<>();
@@ -45,7 +46,7 @@ public abstract class FunctionChain<T> {
      *
      * @param item the first item
      */
-    public void first(final T item) {
+    public final void first(final T item) {
         items.add(0, item);
     }
 

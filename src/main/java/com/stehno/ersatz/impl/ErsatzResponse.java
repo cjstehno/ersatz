@@ -45,6 +45,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Implementation of the <code>Response</code> interface.
  */
+@SuppressWarnings({"PMD.AvoidFieldNameMatchingMethodName", "PMD.BeanMembersShouldSerialize"})
 public class ErsatzResponse implements Response {
 
     private static final Logger log = LoggerFactory.getLogger(ErsatzResponse.class);

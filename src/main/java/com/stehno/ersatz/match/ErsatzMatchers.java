@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Some reusable Hamcrest matchers useful in Ersatz expectations.
  */
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ErsatzMatchers {
 
     public static Matcher<String> pathMatcher(final String path) {

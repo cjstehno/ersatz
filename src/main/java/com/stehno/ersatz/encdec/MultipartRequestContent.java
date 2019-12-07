@@ -35,6 +35,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  * If partial or more flexible content matching is preferred, the <code>MultipartRequestMatcher</code> class provides a Hamcrest matcher for matching
  * multipart content, based on the model presented by this class.
  */
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class MultipartRequestContent {
 
     private final Map<String, MultipartPart> parts = new LinkedHashMap<>();

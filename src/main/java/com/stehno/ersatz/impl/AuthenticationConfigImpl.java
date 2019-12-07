@@ -18,6 +18,7 @@ package com.stehno.ersatz.impl;
 import com.stehno.ersatz.cfg.Authentication;
 import com.stehno.ersatz.cfg.AuthenticationConfig;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class AuthenticationConfigImpl implements AuthenticationConfig {
 
     private String username = DEFAULT_USERNAME;

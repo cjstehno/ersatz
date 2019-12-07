@@ -20,6 +20,7 @@ import groovy.lang.IntRange;
 
 import static java.lang.String.format;
 
+@SuppressWarnings({"PMD.AvoidFieldNameMatchingMethodName", "PMD.BeanMembersShouldSerialize"})
 public class ChunkingConfigImpl implements ChunkingConfig {
 
     private int chunks = 2;

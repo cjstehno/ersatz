@@ -12,6 +12,7 @@ plugins {
     id 'com.github.ben-manes.versions' version '0.25.0'
     id "com.github.johnrengelman.shadow" version '5.2.0'
     id "com.github.spotbugs" version "3.0.0"
+    id 'pmd'
 }
 
 group = 'com.stehno.ersatz'
@@ -239,7 +240,6 @@ compileTestKotlin {
     }
 }
 
-// FIXME: https://imperceptiblethoughts.com/shadow/introduction/
 shadowJar {
     classifier = 'safe'
     dependencies {
@@ -288,4 +288,9 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
         html.enabled true
         html.stylesheet resources.text.fromFile('config/findbugs-styles.xsl')
     }
+}
+
+pmd {
+    ignoreFailures = true
+    toolVersion = '6.20.0'
 }

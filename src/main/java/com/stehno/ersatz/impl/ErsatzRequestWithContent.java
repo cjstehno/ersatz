@@ -34,6 +34,7 @@ import static org.hamcrest.Matchers.startsWith;
 /**
  * Ersatz implementation of a <code>Request</code> with request body content.
  */
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
     private final RequestDecoders localDecoders = new RequestDecoders();

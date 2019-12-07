@@ -35,6 +35,7 @@ import java.util.function.Consumer;
 import static com.stehno.ersatz.cfg.WsMessageType.*;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class WebSocketExpectationsImpl implements WebSocketExpectations {
 
     private final CountDownLatch connectionLatch = new CountDownLatch(1);

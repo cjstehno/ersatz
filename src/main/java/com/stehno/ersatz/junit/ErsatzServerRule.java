@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz.junit;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.rules.ExternalResource;
 
 /**
@@ -23,6 +22,7 @@ import org.junit.rules.ExternalResource;
  *
  * Note: If you are using JUnit 5+ you must use the <code>ErsatzServerExtension</code> class instead.
  */
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ErsatzServerRule extends ExternalResource {
 
     private final TestingHarness harness = new TestingHarness();
@@ -50,12 +50,12 @@ public class ErsatzServerRule extends ExternalResource {
     /**
      * Finds a field of type <code>ErsatzServer</code> and calls <code>close()</code> on it if it exists.
      */
-    @Override @SuppressFBWarnings("DE_MIGHT_IGNORE")
+    @Override
     protected void after() {
         try {
             harness.after(testInstance);
         } catch (Exception e) {
-            // ignore
+            throw new IllegalStateException(e);
         }
     }
 }

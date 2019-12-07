@@ -31,6 +31,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
 /**
  * Implementation of the ProxyConfig interface providing the configuration functionality for the proxy server.
  */
+@SuppressWarnings({"PMD.AvoidFieldNameMatchingMethodName", "PMD.BeanMembersShouldSerialize"})
 public class ProxyConfigImpl implements ProxyConfig {
 
     private static final String ONLY_HTTP_MESSAGE = "Only HTTP targets are supported at this time.";

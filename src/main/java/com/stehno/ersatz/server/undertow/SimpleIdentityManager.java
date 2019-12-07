@@ -29,6 +29,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 /**
  * IdentityManager used by the <code>BasicAuthFeature</code>. The default username is "admin" and the default password is "$3cr3t".
  */
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class SimpleIdentityManager implements IdentityManager {
 
     private final String username;

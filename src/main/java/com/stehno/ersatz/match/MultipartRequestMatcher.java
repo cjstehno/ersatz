@@ -15,8 +15,8 @@
  */
 package com.stehno.ersatz.match;
 
-import com.stehno.ersatz.encdec.MultipartRequestContent;
 import com.stehno.ersatz.cfg.ContentType;
+import com.stehno.ersatz.encdec.MultipartRequestContent;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import org.hamcrest.BaseMatcher;
@@ -36,8 +36,12 @@ import static org.hamcrest.Matchers.*;
  * A Hamcrest matcher used to match <code>MultipartRequestContent</code>. The matcher may be created directly or by using the closure or consumer
  * static configuration methods.
  */
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class MultipartRequestMatcher extends BaseMatcher<MultipartRequestContent> {
 
+    private static final String VALUE = "value";
+    private static final String CONTENT_TYPE = "contentType";
+    private static final String FILE_NAME = "fileName";
     private final Map<String, Map<String, Matcher>> matchers = new LinkedHashMap<>();
 
     /**
@@ -81,7 +85,7 @@ public class MultipartRequestMatcher extends BaseMatcher<MultipartRequestContent
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName, final Matcher<Object> value) {
-        matchers.put(fieldName, Map.of("value", value));
+        matchers.put(fieldName, Map.of(VALUE, value));
         return this;
     }
 
@@ -106,7 +110,7 @@ public class MultipartRequestMatcher extends BaseMatcher<MultipartRequestContent
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName, final Matcher<String> contentType, final Matcher<Object> value) {
-        matchers.put(fieldName, Map.of("contentType", contentType, "value", value));
+        matchers.put(fieldName, Map.of("contentType", contentType, VALUE, value));
         return this;
     }
 
@@ -146,7 +150,7 @@ public class MultipartRequestMatcher extends BaseMatcher<MultipartRequestContent
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(String fieldName, Matcher<String> fileName, Matcher<String> contentType, Matcher<Object> value) {
-        matchers.put(fieldName, Map.of("fileName", fileName, "contentType", contentType, "value", value));
+        matchers.put(fieldName, Map.of("fileName", fileName, "contentType", contentType, VALUE, value));
         return this;
     }
 
@@ -199,16 +203,16 @@ public class MultipartRequestMatcher extends BaseMatcher<MultipartRequestContent
         matchers.forEach((fn, matcher) -> {
             final var part = mrc.getAt(fn);
             if (part != null) {
-                if (matcher.containsKey("fileName")) {
-                    results.add(matcher.get("fileName").matches(part.getFileName()));
+                if (matcher.containsKey(FILE_NAME)) {
+                    results.add(matcher.get(FILE_NAME).matches(part.getFileName()));
                 }
 
-                if (matcher.containsKey("contentType")) {
-                    results.add(matcher.get("contentType").matches(part.getContentType()));
+                if (matcher.containsKey(CONTENT_TYPE)) {
+                    results.add(matcher.get(CONTENT_TYPE).matches(part.getContentType()));
                 }
 
-                if (matcher.containsKey("value")) {
-                    results.add(matcher.get("value").matches(part.getValue()));
+                if (matcher.containsKey(VALUE)) {
+                    results.add(matcher.get(VALUE).matches(part.getValue()));
                 }
             } else {
                 results.add(false);

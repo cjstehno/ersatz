@@ -28,7 +28,7 @@ import static java.util.Objects.hash;
 /**
  * Simple implementation of the <code>Account</code> interface used for BASIC and DIGEST authentication testing.
  */
-@SuppressFBWarnings("SE_NO_SERIALVERSIONID")
+@SuppressFBWarnings("SE_NO_SERIALVERSIONID") @SuppressWarnings("PMD.MissingSerialVersionUID")
 public class SimpleAccount implements Account {
 
     private final Set<String> roles;

@@ -32,6 +32,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  * <p>
  * At this time, only HTTP proxies are supported.
  */
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ErsatzProxy {
 
     private final ProxyConfigImpl config = new ProxyConfigImpl();
@@ -73,7 +74,7 @@ public class ErsatzProxy {
      * <p>
      * This method does not need to be called if auto-start is not disabled.
      */
-    public void start() {
+    public final void start() {
         server.start();
     }
 

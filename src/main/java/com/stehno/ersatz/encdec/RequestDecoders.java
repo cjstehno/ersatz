@@ -32,6 +32,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
 /**
  * Configuration manager for a collection of request content decoders.
  */
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class RequestDecoders {
 
     private final List<DecoderMapping> decoders = new LinkedList<>();
@@ -92,6 +93,7 @@ public class RequestDecoders {
      * @param contentType the content type
      * @return the decoder function
      */
+    @SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.AvoidLiteralsInIfCondition"})
     public BiFunction<byte[], DecodingContext, Object> findDecoder(final String contentType) {
         final MimeType mimeType = createMimeType(contentType);
 

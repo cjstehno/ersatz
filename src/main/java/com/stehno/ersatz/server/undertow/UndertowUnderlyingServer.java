@@ -40,6 +40,7 @@ import java.security.KeyStore;
 
 import static io.undertow.UndertowOptions.*;
 
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class UndertowUnderlyingServer implements UnderlyingServer {
 
     private static final Logger log = LoggerFactory.getLogger(UndertowUnderlyingServer.class);
@@ -100,7 +101,7 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
         }
     }
 
-    @Override public void stop() {
+    @Override @SuppressWarnings("PMD.NullAssignment") public void stop() {
         if (server != null) {
             actualHttpPort = UNSPECIFIED_PORT;
             actualHttpsPort = UNSPECIFIED_PORT;

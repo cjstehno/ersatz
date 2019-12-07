@@ -18,6 +18,7 @@ package com.stehno.ersatz.impl;
 import com.stehno.ersatz.cfg.MessageReaction;
 import com.stehno.ersatz.cfg.WsMessageType;
 
+@SuppressWarnings({"PMD.AvoidFieldNameMatchingMethodName", "PMD.BeanMembersShouldSerialize"})
 public class MessageReactionImpl implements MessageReaction {
 
     private Object payload;
