@@ -20,7 +20,7 @@
 <tr>
 <td>
 <div class="infoBox" id="tests">
-<div class="counter">345</div>
+<div class="counter">365</div>
 <p>tests</p>
 </div>
 </td>
@@ -32,13 +32,13 @@
 </td>
 <td>
 <div class="infoBox" id="ignored">
-<div class="counter">0</div>
+<div class="counter">2</div>
 <p>ignored</p>
 </div>
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">1m53.60s</div>
+<div class="counter">2m25.58s</div>
 <p>duration</p>
 </div>
 </td>
@@ -47,7 +47,7 @@
 </div>
 </td>
 <td>
-<div class="infoBox success" id="successRate">
+<div class="infoBox skipped" id="successRate">
 <div class="percent">100%</div>
 <p>successful</p>
 </div>
@@ -58,13 +58,29 @@
 <div id="tabs">
 <ul class="tabLinks">
 <li>
-<a href="#tab0">Packages</a>
+<a href="#tab0">Ignored tests</a>
 </li>
 <li>
-<a href="#tab1">Classes</a>
+<a href="#tab1">Packages</a>
+</li>
+<li>
+<a href="#tab2">Classes</a>
 </li>
 </ul>
 <div id="tab0" class="tab">
+<h2>Ignored tests</h2>
+<ul class="linkList">
+<li>
+<a href="classes/com.stehno.ersatz.MultiThreadedUsageTest.html">MultiThreadedUsageTest</a>.
+<a href="classes/com.stehno.ersatz.MultiThreadedUsageTest.html#Multiple concurrent calls with listener()">Multiple concurrent calls with listener()</a>
+</li>
+<li>
+<a href="classes/com.stehno.ersatz.MultiThreadedUsageTest.html">MultiThreadedUsageTest</a>.
+<a href="classes/com.stehno.ersatz.MultiThreadedUsageTest.html#Multiple concurrent calls()">Multiple concurrent calls()</a>
+</li>
+</ul>
+</div>
+<div id="tab1" class="tab">
 <h2>Packages</h2>
 <table>
 <thead>
@@ -79,73 +95,73 @@
 </thead>
 <tbody>
 <tr>
-<td class="success">
+<td class="skipped">
 <a href="packages/com.stehno.ersatz.html">com.stehno.ersatz</a>
 </td>
-<td>89</td>
+<td>67</td>
 <td>0</td>
-<td>0</td>
-<td>1m17.46s</td>
-<td class="success">100%</td>
+<td>2</td>
+<td>58.733s</td>
+<td class="skipped">100%</td>
 </tr>
 <tr>
 <td class="success">
-<a href="packages/com.stehno.ersatz.auth.html">com.stehno.ersatz.auth</a>
+<a href="packages/com.stehno.ersatz.encdec.html">com.stehno.ersatz.encdec</a>
 </td>
-<td>10</td>
+<td>29</td>
 <td>0</td>
 <td>0</td>
-<td>9.480s</td>
+<td>37.677s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
 <td class="success">
 <a href="packages/com.stehno.ersatz.impl.html">com.stehno.ersatz.impl</a>
 </td>
-<td>134</td>
+<td>135</td>
 <td>0</td>
 <td>0</td>
-<td>21.520s</td>
+<td>27.555s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
 <td class="success">
 <a href="packages/com.stehno.ersatz.issues.html">com.stehno.ersatz.issues</a>
 </td>
-<td>7</td>
+<td>6</td>
 <td>0</td>
 <td>0</td>
-<td>3.027s</td>
+<td>16.256s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
 <td class="success">
 <a href="packages/com.stehno.ersatz.junit.html">com.stehno.ersatz.junit</a>
 </td>
-<td>3</td>
+<td>4</td>
 <td>0</td>
 <td>0</td>
-<td>0.369s</td>
+<td>0.992s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
 <td class="success">
-<a href="packages/com.stehno.ersatz.junit5.html">com.stehno.ersatz.junit5</a>
+<a href="packages/com.stehno.ersatz.match.html">com.stehno.ersatz.match</a>
 </td>
-<td>2</td>
+<td>22</td>
 <td>0</td>
 <td>0</td>
-<td>0.447s</td>
+<td>1.549s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
 <td class="success">
-<a href="packages/com.stehno.ersatz.proxy.impl.html">com.stehno.ersatz.proxy.impl</a>
+<a href="packages/com.stehno.ersatz.server.undertow.html">com.stehno.ersatz.server.undertow</a>
 </td>
-<td>21</td>
+<td>15</td>
 <td>0</td>
 <td>0</td>
-<td>0.254s</td>
+<td>1.842s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
@@ -155,13 +171,23 @@
 <td>79</td>
 <td>0</td>
 <td>0</td>
-<td>1.041s</td>
+<td>0.319s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="packages/space.jasan.support.groovy.closure.html">space.jasan.support.groovy.closure</a>
+</td>
+<td>8</td>
+<td>0</td>
+<td>0</td>
+<td>0.659s</td>
 <td class="success">100%</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div id="tab1" class="tab">
+<div id="tab2" class="tab">
 <h2>Classes</h2>
 <table>
 <thead>
@@ -176,80 +202,129 @@
 </thead>
 <tbody>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.BasicSpec.html">com.stehno.ersatz.BasicSpec</a>
+<td class="success">
+<a href="classes/com.stehno.ersatz.ErsatzProxyTest.html">com.stehno.ersatz.ErsatzProxyTest</a>
+</td>
 <td>1</td>
 <td>0</td>
 <td>0</td>
-<td>11.374s</td>
+<td>5.187s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.CookieSpec.html">com.stehno.ersatz.CookieSpec</a>
+<td class="success">
+<a href="classes/com.stehno.ersatz.ErsatzServerPortsSpec.html">com.stehno.ersatz.ErsatzServerPortsSpec</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>6.935s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.ErsatzServerSpec.html">com.stehno.ersatz.ErsatzServerSpec</a>
+</td>
+<td>31</td>
+<td>0</td>
+<td>0</td>
+<td>15.623s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.ErsatzServerTest.html">com.stehno.ersatz.ErsatzServerTest</a>
+</td>
+<td>6</td>
+<td>0</td>
+<td>0</td>
+<td>1.464s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.ExamplesSpec.html">com.stehno.ersatz.ExamplesSpec</a>
+</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0.234s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.Http1Test.html">com.stehno.ersatz.Http1Test</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.120s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.HttpsSpec.html">com.stehno.ersatz.HttpsSpec</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>15.903s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.KotlinUsageTest.html">com.stehno.ersatz.KotlinUsageTest</a>
+</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>6.331s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="skipped">
+<a href="classes/com.stehno.ersatz.MultiThreadedUsageTest.html">com.stehno.ersatz.MultiThreadedUsageTest</a>
+</td>
+<td>2</td>
+<td>0</td>
+<td>2</td>
+<td>0.001s</td>
+<td class="skipped">-</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.ReusedServerSpec.html">com.stehno.ersatz.ReusedServerSpec</a>
+</td>
 <td>4</td>
 <td>0</td>
 <td>0</td>
-<td>0.321s</td>
+<td>6.181s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.EncodersSpec.html">com.stehno.ersatz.EncodersSpec</a>
-<td>11</td>
+<td class="success">
+<a href="classes/com.stehno.ersatz.WebSocketsSpec.html">com.stehno.ersatz.WebSocketsSpec</a>
+</td>
+<td>16</td>
 <td>0</td>
 <td>0</td>
-<td>1.829s</td>
+<td>0.754s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.ErsatzProxySpec.html">com.stehno.ersatz.ErsatzProxySpec</a>
-<td>2</td>
+<td class="success">
+<a href="classes/com.stehno.ersatz.encdec.CookieSpec.html">com.stehno.ersatz.encdec.CookieSpec</a>
+</td>
+<td>4</td>
 <td>0</td>
 <td>0</td>
-<td>7.127s</td>
+<td>6.967s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.ErsatzServerPortsSpec.html">com.stehno.ersatz.ErsatzServerPortsSpec</a>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>10.601s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.ErsatzServerSpec.html">com.stehno.ersatz.ErsatzServerSpec</a>
-<td>28</td>
-<td>0</td>
-<td>0</td>
-<td>18.044s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.ErsatzServerTest.html">com.stehno.ersatz.ErsatzServerTest</a>
-<td>2</td>
-<td>0</td>
-<td>0</td>
-<td>1.881s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.ExamplesSpec.html">com.stehno.ersatz.ExamplesSpec</a>
-<td>2</td>
-<td>0</td>
-<td>0</td>
-<td>0.023s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.HttpsSpec.html">com.stehno.ersatz.HttpsSpec</a>
+<td class="success">
+<a href="classes/com.stehno.ersatz.encdec.DecoderChainSpec.html">com.stehno.ersatz.encdec.DecoderChainSpec</a>
+</td>
 <td>1</td>
 <td>0</td>
 <td>0</td>
@@ -257,309 +332,413 @@
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.KotlinUsageTest.html">com.stehno.ersatz.KotlinUsageTest</a>
-<td>2</td>
-<td>0</td>
-<td>0</td>
-<td>10.274s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.MultipartRequestContentSpec.html">com.stehno.ersatz.MultipartRequestContentSpec</a>
-<td>2</td>
-<td>0</td>
-<td>0</td>
-<td>0.048s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.MultipartRequestMatcherSpec.html">com.stehno.ersatz.MultipartRequestMatcherSpec</a>
-<td>13</td>
-<td>0</td>
-<td>0</td>
-<td>0.470s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.ReusedServerSpec.html">com.stehno.ersatz.ReusedServerSpec</a>
-<td>4</td>
-<td>0</td>
-<td>0</td>
-<td>0.073s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.WebSocketsSpec.html">com.stehno.ersatz.WebSocketsSpec</a>
-<td>16</td>
-<td>0</td>
-<td>0</td>
-<td>8.880s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.auth.SimpleAccountSpec.html">com.stehno.ersatz.auth.SimpleAccountSpec</a>
-<td>2</td>
-<td>0</td>
-<td>0</td>
-<td>4.438s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.auth.SimpleIdentityManagerSpec.html">com.stehno.ersatz.auth.SimpleIdentityManagerSpec</a>
-<td>8</td>
-<td>0</td>
-<td>0</td>
-<td>5.042s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.DecoderChainSpec.html">com.stehno.ersatz.impl.DecoderChainSpec</a>
+<td class="success">
+<a href="classes/com.stehno.ersatz.encdec.EncoderChainSpec.html">com.stehno.ersatz.encdec.EncoderChainSpec</a>
+</td>
 <td>1</td>
 <td>0</td>
 <td>0</td>
-<td>5.321s</td>
+<td>6.996s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.DigestSpec.html">com.stehno.ersatz.impl.DigestSpec</a>
+<td class="success">
+<a href="classes/com.stehno.ersatz.encdec.EncodersSpec.html">com.stehno.ersatz.encdec.EncodersSpec</a>
+</td>
+<td>11</td>
+<td>0</td>
+<td>0</td>
+<td>2.256s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.encdec.ErsatzMultipartResponseContentSpec.html">com.stehno.ersatz.encdec.ErsatzMultipartResponseContentSpec</a>
+</td>
 <td>2</td>
 <td>0</td>
 <td>0</td>
-<td>0.844s</td>
+<td>0.912s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.EncoderChainSpec.html">com.stehno.ersatz.impl.EncoderChainSpec</a>
+<td class="success">
+<a href="classes/com.stehno.ersatz.encdec.MultipartPartSpec.html">com.stehno.ersatz.encdec.MultipartPartSpec</a>
+</td>
 <td>1</td>
 <td>0</td>
 <td>0</td>
-<td>0.515s</td>
+<td>6.377s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.ErsatzMultipartResponseContentSpec.html">com.stehno.ersatz.impl.ErsatzMultipartResponseContentSpec</a>
+<td class="success">
+<a href="classes/com.stehno.ersatz.encdec.MultipartRequestContentSpec.html">com.stehno.ersatz.encdec.MultipartRequestContentSpec</a>
+</td>
 <td>2</td>
 <td>0</td>
 <td>0</td>
-<td>0.575s</td>
+<td>7.474s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.ErsatzRequestSpec.html">com.stehno.ersatz.impl.ErsatzRequestSpec</a>
-<td>29</td>
-<td>0</td>
-<td>0</td>
-<td>2.388s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.ErsatzRequestWithContentSpec.html">com.stehno.ersatz.impl.ErsatzRequestWithContentSpec</a>
-<td>9</td>
-<td>0</td>
-<td>0</td>
-<td>9.102s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.ErsatzResponseSpec.html">com.stehno.ersatz.impl.ErsatzResponseSpec</a>
-<td>15</td>
-<td>0</td>
-<td>0</td>
-<td>0.496s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.ExpectationsImplSpec.html">com.stehno.ersatz.impl.ExpectationsImplSpec</a>
-<td>51</td>
-<td>0</td>
-<td>0</td>
-<td>0.834s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.MultipartPartSpec.html">com.stehno.ersatz.impl.MultipartPartSpec</a>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>0.003s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.RequestDecodersSpec.html">com.stehno.ersatz.impl.RequestDecodersSpec</a>
+<td class="success">
+<a href="classes/com.stehno.ersatz.encdec.RequestDecodersSpec.html">com.stehno.ersatz.encdec.RequestDecodersSpec</a>
+</td>
 <td>6</td>
 <td>0</td>
 <td>0</td>
-<td>0.063s</td>
+<td>0.117s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.RequestMatcherSpec.html">com.stehno.ersatz.impl.RequestMatcherSpec</a>
+<td class="success">
+<a href="classes/com.stehno.ersatz.encdec.ResponseEncodersSpec.html">com.stehno.ersatz.encdec.ResponseEncodersSpec</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.064s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.ErsatzRequestSpec.html">com.stehno.ersatz.impl.ErsatzRequestSpec</a>
+</td>
+<td>29</td>
+<td>0</td>
+<td>0</td>
+<td>4.238s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.ErsatzRequestWithContentSpec.html">com.stehno.ersatz.impl.ErsatzRequestWithContentSpec</a>
+</td>
 <td>9</td>
 <td>0</td>
 <td>0</td>
-<td>1.038s</td>
+<td>0.225s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.ResponseEncodersSpec.html">com.stehno.ersatz.impl.ResponseEncodersSpec</a>
-<td>1</td>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.ErsatzResponseSpec.html">com.stehno.ersatz.impl.ErsatzResponseSpec</a>
+</td>
+<td>15</td>
 <td>0</td>
 <td>0</td>
-<td>0.222s</td>
+<td>7.991s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.SentMessageImplSpec.html">com.stehno.ersatz.impl.SentMessageImplSpec</a>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.ExpectationsImplSpec.html">com.stehno.ersatz.impl.ExpectationsImplSpec</a>
+</td>
+<td>30</td>
+<td>0</td>
+<td>0</td>
+<td>2.241s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.GetExpectationsGroovyTest.html">com.stehno.ersatz.impl.GetExpectationsGroovyTest</a>
+</td>
 <td>2</td>
 <td>0</td>
 <td>0</td>
-<td>0.062s</td>
+<td>0.343s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.impl.UnmatchedRequestReportSpec.html">com.stehno.ersatz.impl.UnmatchedRequestReportSpec</a>
-<td>5</td>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.GetExpectationsTest.html">com.stehno.ersatz.impl.GetExpectationsTest</a>
+</td>
+<td>6</td>
 <td>0</td>
 <td>0</td>
-<td>0.057s</td>
+<td>0.117s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.issues.BodyContentMatcherSpec.html">com.stehno.ersatz.issues.BodyContentMatcherSpec</a>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.HeadExpectationsGroovyTest.html">com.stehno.ersatz.impl.HeadExpectationsGroovyTest</a>
+</td>
 <td>2</td>
 <td>0</td>
 <td>0</td>
-<td>0.335s</td>
+<td>0.232s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.issues.DSLScopingSpec.html">com.stehno.ersatz.issues.DSLScopingSpec</a>
-<td>1</td>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.HeadExpectationsTest.html">com.stehno.ersatz.impl.HeadExpectationsTest</a>
+</td>
+<td>6</td>
 <td>0</td>
 <td>0</td>
-<td>0.147s</td>
+<td>0.370s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.issues.ScopingAndAutoCleanupSpec.html">com.stehno.ersatz.issues.ScopingAndAutoCleanupSpec</a>
-<td>4</td>
-<td>0</td>
-<td>0</td>
-<td>2.545s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.junit.ErsatzServerRuleEmptyTest.html">com.stehno.ersatz.junit.ErsatzServerRuleEmptyTest</a>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>0.178s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.junit.ErsatzServerRuleGroovyTest.html">com.stehno.ersatz.junit.ErsatzServerRuleGroovyTest</a>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>0.181s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.junit.ErsatzServerRuleTest.html">com.stehno.ersatz.junit.ErsatzServerRuleTest</a>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>0.010s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.junit5.Junit5Test.html">com.stehno.ersatz.junit5.Junit5Test</a>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.PatchExpectationsGroovyTest.html">com.stehno.ersatz.impl.PatchExpectationsGroovyTest</a>
+</td>
 <td>2</td>
 <td>0</td>
 <td>0</td>
-<td>0.447s</td>
+<td>0.045s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.proxy.impl.ProxyConfigImplSpec.html">com.stehno.ersatz.proxy.impl.ProxyConfigImplSpec</a>
-<td>4</td>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.PatchExpectationsTest.html">com.stehno.ersatz.impl.PatchExpectationsTest</a>
+</td>
+<td>6</td>
 <td>0</td>
 <td>0</td>
-<td>0.104s</td>
+<td>0.021s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.proxy.impl.ProxyExpectationsImplSpec.html">com.stehno.ersatz.proxy.impl.ProxyExpectationsImplSpec</a>
-<td>16</td>
-<td>0</td>
-<td>0</td>
-<td>0.063s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.proxy.impl.ProxyRequestMatcherSpec.html">com.stehno.ersatz.proxy.impl.ProxyRequestMatcherSpec</a>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>0.087s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.util.DummyContentGeneratorSpec.html">com.stehno.ersatz.util.DummyContentGeneratorSpec</a>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>0.154s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.util.StorageUnitSpec.html">com.stehno.ersatz.util.StorageUnitSpec</a>
-<td>75</td>
-<td>0</td>
-<td>0</td>
-<td>0.337s</td>
-<td class="success">100%</td>
-</tr>
-<tr>
-<td class="success"/>
-<a href="classes/com.stehno.ersatz.util.TimeSpanSpec.html">com.stehno.ersatz.util.TimeSpanSpec</a>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.ProxyConfigImplTest.html">com.stehno.ersatz.impl.ProxyConfigImplTest</a>
+</td>
 <td>3</td>
 <td>0</td>
 <td>0</td>
-<td>0.550s</td>
+<td>0.035s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.ProxyExpectationsImplTest.html">com.stehno.ersatz.impl.ProxyExpectationsImplTest</a>
+</td>
+<td>16</td>
+<td>0</td>
+<td>0</td>
+<td>1.832s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.ProxyRequestMatcherTest.html">com.stehno.ersatz.impl.ProxyRequestMatcherTest</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>2.949s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.ReceivedMessageImplTest.html">com.stehno.ersatz.impl.ReceivedMessageImplTest</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>5.532s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.SentMessageImplSpec.html">com.stehno.ersatz.impl.SentMessageImplSpec</a>
+</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0.093s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.impl.UnmatchedRequestReportSpec.html">com.stehno.ersatz.impl.UnmatchedRequestReportSpec</a>
+</td>
+<td>5</td>
+<td>0</td>
+<td>0</td>
+<td>1.291s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.issues.BodyContentMatcherSpec.html">com.stehno.ersatz.issues.BodyContentMatcherSpec</a>
+</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>8.913s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.issues.DSLScopingSpec.html">com.stehno.ersatz.issues.DSLScopingSpec</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.495s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.issues.ScopingAndAutoCleanupSpec.html">com.stehno.ersatz.issues.ScopingAndAutoCleanupSpec</a>
+</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>6.848s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.junit.ErsatzServerExtensionTest.html">com.stehno.ersatz.junit.ErsatzServerExtensionTest</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.191s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.junit.ErsatzServerRuleTest.html">com.stehno.ersatz.junit.ErsatzServerRuleTest</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.551s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.junit.TestingHarnessTest.html">com.stehno.ersatz.junit.TestingHarnessTest</a>
+</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0.250s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.match.MultipartRequestMatcherSpec.html">com.stehno.ersatz.match.MultipartRequestMatcherSpec</a>
+</td>
+<td>13</td>
+<td>0</td>
+<td>0</td>
+<td>0.240s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.match.RequestMatcherSpec.html">com.stehno.ersatz.match.RequestMatcherSpec</a>
+</td>
+<td>9</td>
+<td>0</td>
+<td>0</td>
+<td>1.309s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.server.undertow.BasicSpec.html">com.stehno.ersatz.server.undertow.BasicSpec</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.352s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.server.undertow.DigestSpec.html">com.stehno.ersatz.server.undertow.DigestSpec</a>
+</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>1.367s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.server.undertow.ResponseChunkerTest.html">com.stehno.ersatz.server.undertow.ResponseChunkerTest</a>
+</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0.008s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.server.undertow.SimpleAccountSpec.html">com.stehno.ersatz.server.undertow.SimpleAccountSpec</a>
+</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0.032s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.server.undertow.SimpleIdentityManagerSpec.html">com.stehno.ersatz.server.undertow.SimpleIdentityManagerSpec</a>
+</td>
+<td>8</td>
+<td>0</td>
+<td>0</td>
+<td>0.083s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.util.ByteArraysTest.html">com.stehno.ersatz.util.ByteArraysTest</a>
+</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>0.007s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.util.DummyContentGeneratorSpec.html">com.stehno.ersatz.util.DummyContentGeneratorSpec</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.248s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/com.stehno.ersatz.util.StorageUnitSpec.html">com.stehno.ersatz.util.StorageUnitSpec</a>
+</td>
+<td>75</td>
+<td>0</td>
+<td>0</td>
+<td>0.064s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/space.jasan.support.groovy.closure.ConsumerWithDelegateSpec.html">space.jasan.support.groovy.closure.ConsumerWithDelegateSpec</a>
+</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>0.034s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="classes/space.jasan.support.groovy.closure.GroovyClosureSpec.html">space.jasan.support.groovy.closure.GroovyClosureSpec</a>
+</td>
+<td>5</td>
+<td>0</td>
+<td>0</td>
+<td>0.625s</td>
 <td class="success">100%</td>
 </tr>
 </tbody>
@@ -573,7 +752,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 4.10.2</a> at Dec 9, 2018 7:27:55 AM</p>
+<a href="http://www.gradle.org">Gradle 5.6.4</a> at Dec 8, 2019, 6:58:27 AM</p>
 </div>
 </div>
 </body>

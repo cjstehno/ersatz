@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzResponse.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.impl</a> &gt; <span class="el_source">ErsatzResponse.java</span></div><h1>ErsatzResponse.java</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2019 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.impl;
+
+import com.stehno.ersatz.cfg.ChunkingConfig;
+import com.stehno.ersatz.cfg.ContentType;
+import com.stehno.ersatz.cfg.HttpMethod;
+import com.stehno.ersatz.cfg.Response;
+import com.stehno.ersatz.encdec.*;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import space.jasan.support.groovy.closure.ConsumerWithDelegate;
+
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import static com.stehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static groovy.lang.Closure.DELEGATE_FIRST;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.stream.Collectors.toList;
+
+/**
+ * Implementation of the &lt;code&gt;Response&lt;/code&gt; interface.
+ */
+@SuppressWarnings({&quot;PMD.AvoidFieldNameMatchingMethodName&quot;, &quot;PMD.BeanMembersShouldSerialize&quot;})
+public class ErsatzResponse implements Response {
+
+<span class="fc" id="L51">    private static final Logger log = LoggerFactory.getLogger(ErsatzResponse.class);</span>
+    private static final String ALLOW_HEADER = &quot;Allow&quot;;
+    private final boolean empty;
+<span class="fc" id="L54">    private final ResponseEncoders localEncoders = new ResponseEncoders();</span>
+<span class="fc" id="L55">    private final EncoderChain encoderChain = new EncoderChain(localEncoders);</span>
+
+<span class="fc" id="L57">    private final Map&lt;String, List&lt;String&gt;&gt; headers = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L58">    private final Map&lt;String, Object&gt; cookies = new LinkedHashMap&lt;&gt;();</span>
+    private ChunkingConfigImpl chunkingConfig;
+<span class="fc" id="L60">    private final AtomicReference&lt;byte[]&gt; cachedContent = new AtomicReference&lt;&gt;();</span>
+    private Object content;
+<span class="fc" id="L62">    private Integer code = 200;</span>
+    private long delayTime;
+
+<span class="fc" id="L65">    public ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders) {</span>
+<span class="fc" id="L66">        this.empty = empty;</span>
+
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        if (globalEncoders != null) {</span>
+<span class="fc" id="L69">            encoderChain.last(globalEncoders);</span>
+        }
+<span class="fc" id="L71">    }</span>
+
+    public ErsatzResponse(final boolean empty) {
+<span class="fc" id="L74">        this(empty, null);</span>
+<span class="fc" id="L75">    }</span>
+
+    public ChunkingConfigImpl getChunkingConfig() {
+<span class="fc" id="L78">        return chunkingConfig;</span>
+    }
+
+    @Override
+    public Response body(Object content) {
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (empty) {</span>
+<span class="fc" id="L84">            throw new IllegalArgumentException(&quot;The response is configured as EMPTY and cannot have content.&quot;);</span>
+        }
+
+<span class="fc" id="L87">        this.content = content;</span>
+
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (content instanceof MultipartResponseContent) {</span>
+<span class="fc" id="L90">            final var multipartContent = (ErsatzMultipartResponseContent) content;</span>
+
+            // apply the configured encoders
+<span class="fc" id="L93">            encoderChain.items().forEach(multipartContent::encoders);</span>
+
+            // apply the content type (with boundary)
+<span class="fc" id="L96">            contentType(multipartContent.getContentType());</span>
+        }
+
+<span class="fc" id="L99">        return this;</span>
+    }
+
+    @Override
+    public Response body(Object data, String contentType) {
+<span class="fc" id="L104">        body(data);</span>
+<span class="fc" id="L105">        return this.contentType(contentType);</span>
+    }
+
+    @Override
+    public Response body(Object data, ContentType contentType) {
+<span class="fc" id="L110">        return body(data, contentType.getValue());</span>
+    }
+
+    @Override
+    public Response header(final String name, final String... value) {
+<span class="fc" id="L115">        final List&lt;String&gt; list = headers.computeIfAbsent(name, s -&gt; new LinkedList&lt;&gt;());</span>
+<span class="fc" id="L116">        list.addAll(Arrays.asList(value));</span>
+<span class="fc" id="L117">        return this;</span>
+    }
+
+    public Response header(final String name, final List&lt;String&gt; values) {
+<span class="fc" id="L121">        final List&lt;String&gt; list = headers.computeIfAbsent(name, s -&gt; new LinkedList&lt;&gt;());</span>
+<span class="fc" id="L122">        list.addAll(values);</span>
+<span class="fc" id="L123">        return this;</span>
+    }
+
+    @Override
+    public Response headers(final Map&lt;String, Object&gt; headers) {
+<span class="fc" id="L128">        headers.forEach((k, v) -&gt; {</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">            if (v instanceof List) {</span>
+<span class="fc" id="L130">                header(k, (List&lt;String&gt;) v);</span>
+            } else {
+<span class="fc" id="L132">                header(k, v.toString());</span>
+            }
+<span class="fc" id="L134">        });</span>
+<span class="fc" id="L135">        return this;</span>
+    }
+
+    @Override
+    public Response allows(final HttpMethod... methods) {
+<span class="fc" id="L140">        header(ALLOW_HEADER, Arrays.stream(methods).map(HttpMethod::getValue).collect(toList()));</span>
+<span class="fc" id="L141">        return this;</span>
+    }
+
+    @Override
+    public Response cookies(final Map&lt;String, String&gt; cookies) {
+<span class="fc" id="L146">        this.cookies.putAll(cookies);</span>
+<span class="fc" id="L147">        return this;</span>
+    }
+
+    @Override
+    public Response cookie(final String name, final String value) {
+<span class="fc" id="L152">        cookies.put(name, value);</span>
+<span class="fc" id="L153">        return this;</span>
+    }
+
+    @Override
+    public Response cookie(final String name, final Cookie cookie) {
+<span class="fc" id="L158">        cookies.put(name, cookie);</span>
+<span class="fc" id="L159">        return this;</span>
+    }
+
+    @Override
+    public Response contentType(final String contentType) {
+<span class="fc" id="L164">        header(CONTENT_TYPE_HEADER, contentType);</span>
+<span class="fc" id="L165">        return this;</span>
+    }
+
+    @Override
+    public Response contentType(final ContentType contentType) {
+<span class="fc" id="L170">        header(CONTENT_TYPE_HEADER, contentType.getValue());</span>
+<span class="fc" id="L171">        return this;</span>
+    }
+
+    @Override
+    public String getContentType() {
+<span class="fc" id="L176">        final var type = headers.get(CONTENT_TYPE_HEADER);</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        return type != null ? String.join(&quot;,&quot;, type) : TEXT_PLAIN.getValue();</span>
+    }
+
+    public Response code(final int code) {
+<span class="fc" id="L181">        this.code = code;</span>
+<span class="fc" id="L182">        return this;</span>
+    }
+
+    @Override
+    public Response delay(final long time) {
+<span class="fc" id="L187">        return delay(time, MILLISECONDS);</span>
+    }
+
+    @Override
+    public Response delay(final long time, final TimeUnit unit) {
+<span class="fc" id="L192">        this.delayTime = MILLISECONDS.convert(time, unit);</span>
+<span class="fc" id="L193">        return this;</span>
+    }
+
+    @Override
+    public Response delay(final String time) {
+<span class="fc" id="L198">        this.delayTime = Duration.parse(time).toMillis();</span>
+<span class="fc" id="L199">        return this;</span>
+    }
+
+    @Override
+    public long getDelay() {
+<span class="fc" id="L204">        return this.delayTime;</span>
+    }
+
+    @Override
+    public Response chunked(@DelegatesTo(value = ChunkingConfig.class, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="fc" id="L209">        return chunked(ConsumerWithDelegate.create(closure));</span>
+    }
+
+    @Override
+    public Response chunked(Consumer&lt;ChunkingConfig&gt; config) {
+<span class="fc" id="L214">        chunkingConfig = new ChunkingConfigImpl();</span>
+<span class="fc" id="L215">        config.accept(chunkingConfig);</span>
+<span class="fc" id="L216">        return this;</span>
+    }
+
+    @Override
+    public Map&lt;String, List&lt;String&gt;&gt; getHeaders() {
+<span class="fc" id="L221">        return unmodifiableMap(headers);</span>
+    }
+
+    @Override
+    public Map&lt;String, Object&gt; getCookies() {
+<span class="fc" id="L226">        return unmodifiableMap(cookies);</span>
+    }
+
+    @Override
+    public byte[] getContent() {
+<span class="fc bfc" id="L231" title="All 2 branches covered.">        if (content != null) {</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">            if (cachedContent.get() == null) {</span>
+<span class="fc" id="L233">                final var encoder = encoderChain.resolve(getContentType(), content.getClass());</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">                if (encoder != null) {</span>
+<span class="fc" id="L235">                    log.debug(&quot;Found encoder ({}) for content ({}).&quot;, encoder, content.getClass().getSimpleName());</span>
+<span class="fc" id="L236">                    cachedContent.set(encoder.apply(content));</span>
+
+<span class="fc bfc" id="L238" title="All 2 branches covered.">                } else if (content instanceof byte[]) {</span>
+<span class="fc" id="L239">                    log.debug(&quot;No encoder configured for byte[] - returning raw bytes.&quot;);</span>
+<span class="fc" id="L240">                    cachedContent.set((byte[]) content);</span>
+
+                } else {
+<span class="fc" id="L243">                    log.debug(&quot;No encoder configured for content ({}) - returning string bytes.&quot;, content.getClass().getSimpleName());</span>
+<span class="fc" id="L244">                    cachedContent.set(content.toString().getBytes(UTF_8));</span>
+                }
+
+            }
+
+<span class="fc" id="L249">            return cachedContent.get();</span>
+        }
+
+<span class="fc" id="L252">        log.debug(&quot;No response content - returning empty array.&quot;);</span>
+
+<span class="fc" id="L254">        return new byte[0];</span>
+    }
+
+    @Override
+    public Integer getCode() {
+<span class="fc" id="L259">        return code;</span>
+    }
+
+    @Override
+    public Response encoder(final String contentType, final Class objectType, final Function&lt;Object, byte[]&gt; encoder) {
+<span class="fc" id="L264">        localEncoders.register(contentType, objectType, encoder);</span>
+<span class="fc" id="L265">        return this;</span>
+    }
+
+    @Override
+    public Response encoder(final ContentType contentType, final Class objectType, final Function&lt;Object, byte[]&gt; encoder) {
+<span class="fc" id="L270">        localEncoders.register(contentType, objectType, encoder);</span>
+<span class="fc" id="L271">        return this;</span>
+    }
+
+    @Override
+    public Response encoders(final ResponseEncoders encoders) {
+<span class="fc" id="L276">        encoderChain.second(encoders);</span>
+<span class="fc" id="L277">        return this;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

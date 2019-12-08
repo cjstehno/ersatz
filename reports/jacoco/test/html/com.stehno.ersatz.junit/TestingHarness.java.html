@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TestingHarness.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.junit</a> &gt; <span class="el_source">TestingHarness.java</span></div><h1>TestingHarness.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2019 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.junit;
+
+import com.stehno.ersatz.ErsatzServer;
+
+import java.lang.reflect.Field;
+import java.util.function.Supplier;
+
+import static java.util.Arrays.stream;
+
+/**
+ * JUnit test behavior for Ersatz, used by both versions.
+ */
+<span class="fc" id="L28">class TestingHarness {</span>
+
+    /**
+     * Finds a field in the test instance of type &lt;code&gt;ErsatzServer&lt;/code&gt;, creating an instance if one does not
+     * already exist. The &lt;code&gt;ErsatzServer&lt;/code&gt; instance will then have &lt;code&gt;start()&lt;/code&gt; called on it.
+     *
+     * @param testInstance the instance of the test class
+     * @throws Exception if there is a problem performing the operations
+     */
+    void before(final Object testInstance) throws Exception {
+<span class="fc" id="L38">        findInstance(testInstance, true).start();</span>
+<span class="fc" id="L39">    }</span>
+
+    /**
+     * Finds a field in the test instance of type &lt;code&gt;ErsatzServer&lt;/code&gt;. If an instance exists it will call
+     * &lt;code&gt;close()&lt;/code&gt; and &lt;code&gt;clearExpectations()&lt;/code&gt; on it, otherwise, no action will be taken.
+     *
+     * @param testInstance the instance of the test class
+     * @throws Exception if there is a problem performing the operations
+     */
+    void after(final Object testInstance) throws Exception {
+<span class="fc" id="L49">        final var ersatzInstance = findInstance(testInstance, false);</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if (ersatzInstance != null) {</span>
+<span class="fc" id="L51">            ersatzInstance.close();</span>
+<span class="fc" id="L52">            ersatzInstance.clearExpectations();</span>
+        }
+<span class="fc" id="L54">    }</span>
+
+    private static ErsatzServer findInstance(final Object testInstance, final boolean create) throws Exception {
+        try {
+<span class="fc" id="L58">            final Field field = findField(testInstance);</span>
+<span class="fc" id="L59">            ErsatzServer instance = (ErsatzServer) field.get(testInstance);</span>
+
+<span class="pc bpc" id="L61" title="1 of 4 branches missed.">            if (instance == null &amp;&amp; create) {</span>
+<span class="fc" id="L62">                instance = new ErsatzServer();</span>
+<span class="fc" id="L63">                field.set(testInstance, instance);</span>
+            }
+
+<span class="fc" id="L66">            return instance;</span>
+
+<span class="nc" id="L68">        } catch (Exception throwable) {</span>
+<span class="nc" id="L69">            throw new Exception(throwable);</span>
+        }
+    }
+
+    private static Field findField(final Object testInstance) throws Exception {
+<span class="fc" id="L74">        final Field field = stream(testInstance.getClass().getDeclaredFields())</span>
+<span class="fc" id="L75">            .filter(f -&gt; f.getType().equals(ErsatzServer.class))</span>
+<span class="fc" id="L76">            .findFirst()</span>
+<span class="pc" id="L77">            .orElseThrow((Supplier&lt;Exception&gt;) () -&gt; new IllegalArgumentException(&quot;An ErsatzServer field must be specified.&quot;));</span>
+
+<span class="fc" id="L79">        field.setAccessible(true);</span>
+<span class="fc" id="L80">        return field;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

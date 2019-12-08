@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzServer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz</a> &gt; <span class="el_source">ErsatzServer.java</span></div><h1>ErsatzServer.java</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2019 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz;
+
+import com.stehno.ersatz.cfg.Expectations;
+import com.stehno.ersatz.cfg.ServerConfig;
+import com.stehno.ersatz.impl.ServerConfigImpl;
+import com.stehno.ersatz.server.UnderlyingServer;
+import com.stehno.ersatz.server.undertow.UndertowUnderlyingServer;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import space.jasan.support.groovy.closure.ConsumerWithDelegate;
+
+import java.io.Closeable;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import static groovy.lang.Closure.DELEGATE_FIRST;
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+/**
+ * The main entry point for configuring an Ersatz server, which allows configuring of the expectations and management of the server itself. This is
+ * the class that should be instantiated in unit tests.
+ * &lt;p&gt;
+ * The server will be started on an ephemeral port so as not to collide with itself or other server applications running in the test environment. In
+ * your tests, you can retrieve the server port or URL using the &lt;code&gt;getPort()&lt;/code&gt; and &lt;code&gt;getServerUrl()&lt;/code&gt; methods respectively.
+ * &lt;p&gt;
+ * Using the &lt;code&gt;ErsatzServer&lt;/code&gt; follows the workflow:
+ *
+ * &lt;ol&gt;
+ *     &lt;li&gt;Create the &lt;code&gt;ErsatzServer&lt;/code&gt; instance.&lt;/li&gt;
+ *     &lt;li&gt;Configure the expectations.&lt;/li&gt;
+ *     &lt;li&gt;Start the server&lt;/li&gt;
+ *     &lt;li&gt;Run your client tests against the server.&lt;/li&gt;
+ *     &lt;li&gt;Verify the expectations.&lt;/li&gt;
+ *     &lt;li&gt;Stop the server.&lt;/li&gt;
+ * &lt;/ol&gt;
+ * &lt;p&gt;
+ * See the &lt;a href=&quot;http://stehno.com/ersatz/asciidoc/html5/&quot; target=&quot;_blank&quot;&gt;User Guide&lt;/a&gt; for more detailed information.
+ */
+@SuppressWarnings(&quot;PMD.BeanMembersShouldSerialize&quot;)
+public class ErsatzServer implements Closeable {
+
+    private final UnderlyingServer underlyingServer;
+    private final ServerConfigImpl serverConfig;
+
+<span class="fc" id="L60">    public ErsatzServer() {</span>
+<span class="fc" id="L61">        this.serverConfig = new ServerConfigImpl(this::start);</span>
+<span class="fc" id="L62">        this.underlyingServer = new UndertowUnderlyingServer(serverConfig);</span>
+<span class="fc" id="L63">    }</span>
+
+    /**
+     * Creates a new Ersatz server instance with either the default configuration or a configuration provided by the Groovy DSL closure.
+     *
+     * @param closure the configuration closure (delegated to &lt;code&gt;ServerConfig&lt;/code&gt;)
+     */
+    public ErsatzServer(@DelegatesTo(value = ServerConfig.class, strategy = DELEGATE_FIRST) final Closure closure) {
+<span class="fc" id="L71">        this(ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Creates a new Ersatz server instance configured by the provided &lt;code&gt;Consumer&lt;/code&gt;, which will have an instance of &lt;code&gt;ServerConfig&lt;/code&gt;
+     * passed into it for server configuration.
+     *
+     * @param consumer the configuration consumer
+     */
+    public ErsatzServer(final Consumer&lt;ServerConfig&gt; consumer) {
+<span class="fc" id="L81">        this();</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if (consumer != null) {</span>
+<span class="fc" id="L83">            consumer.accept(serverConfig);</span>
+        }
+<span class="fc" id="L85">    }</span>
+
+    /**
+     * Used to retrieve the port where the HTTP server is running.
+     *
+     * @return the HTTP port
+     */
+    public int getHttpPort() {
+<span class="fc" id="L93">        return underlyingServer.getActualHttpPort();</span>
+    }
+
+    /**
+     * Used to retrieve the port where the HTTPS server is running.
+     *
+     * @return the HTTPS port
+     */
+    public int getHttpsPort() {
+<span class="fc" id="L102">        return underlyingServer.getActualHttpsPort();</span>
+    }
+
+    /**
+     * Used to retrieve the full URL of the HTTP server.
+     *
+     * @return the full URL of the HTTP server
+     */
+    public String getHttpUrl() {
+<span class="fc" id="L111">        return getUrl(&quot;http&quot;, getHttpPort());</span>
+    }
+
+    /**
+     * Used to retrieve the Web Socket URL.
+     *
+     * @return the web socket URL
+     */
+    public String getWsUrl() {
+<span class="fc" id="L120">        return getUrl(&quot;ws&quot;, getHttpPort());</span>
+    }
+
+    /**
+     * Used to retrieve the full URL of the HTTPS server.
+     *
+     * @return the full URL of the HTTP server
+     */
+    public String getHttpsUrl() {
+<span class="fc" id="L129">        return getUrl(&quot;https&quot;, getHttpsPort());</span>
+    }
+
+    private String getUrl(final String prefix, final int port){
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        if( port &gt; 0 ) {</span>
+<span class="fc" id="L134">            return prefix + &quot;://localhost:&quot; + port;</span>
+        } else {
+<span class="fc" id="L136">            throw new IllegalStateException(&quot;The port (&quot; + port + &quot;) is invalid: Has the server been started?&quot;);</span>
+        }
+    }
+
+    /**
+     * A helper method which may be used to append the given path to the server HTTP url.
+     *
+     * @param path the path to be applied
+     * @return the resulting URL
+     */
+    public String httpUrl(final String path) {
+<span class="fc" id="L147">        return getHttpUrl() + path;</span>
+    }
+
+    /**
+     * A helper method which may be used to append the given path to the server HTTPS url.
+     *
+     * @param path the path to be applied
+     * @return the resulting URL
+     */
+    public String httpsUrl(final String path) {
+<span class="nc" id="L157">        return getHttpsUrl() + path;</span>
+    }
+
+    /**
+     * Used to configure HTTP expectations on the server; the provided &lt;code&gt;Consumer&amp;lt;Expectations&amp;gt;&lt;/code&gt; implementation will have an active
+     * &lt;code&gt;Expectations&lt;/code&gt; object passed into it for configuring server interaction expectations.
+     * &lt;p&gt;
+     * Calling this method when auto-start is enabled will start the server.
+     *
+     * @param expects the &lt;code&gt;Consumer&amp;lt;Expectations&amp;gt;&lt;/code&gt; instance to perform the configuration
+     * @return a reference to this server
+     */
+    public ErsatzServer expectations(final Consumer&lt;Expectations&gt; expects) {
+<span class="fc" id="L170">        serverConfig.expectations(expects);</span>
+
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        if (serverConfig.isAutoStartEnabled()) {</span>
+<span class="fc" id="L173">            underlyingServer.start();</span>
+        }
+
+<span class="fc" id="L176">        return this;</span>
+    }
+
+    /**
+     * Used to configure HTTP expectations on the server; the provided Groovy &lt;code&gt;Closure&lt;/code&gt; will delegate to an &lt;code&gt;Expectations&lt;/code&gt;
+     * instance for configuring server interaction expectations using the Groovy DSL.
+     * &lt;p&gt;
+     * Calling this method when auto-start is enabled will start the server.
+     *
+     * @param closure the Groovy &lt;code&gt;Closure&lt;/code&gt; which will provide expectation configuration via DSL
+     * @return a reference to this server
+     */
+    public ErsatzServer expectations(@DelegatesTo(value = Expectations.class, strategy = DELEGATE_FIRST) final Closure closure) {
+<span class="fc" id="L189">        return expectations(ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * An alternate means of starting the expectation chain.
+     * &lt;p&gt;
+     * Calling this method when auto-start is enabled will &lt;b&gt;NOT&lt;/b&gt; start the server. Use one of the other expectation configuration method if
+     * auto-start functionality is desired.
+     *
+     * @return the reference to the Expectation configuration object
+     */
+    public Expectations expects() {
+<span class="fc" id="L201">        return serverConfig.expects();</span>
+    }
+
+    public ServerConfig timeout(final int value, final TimeUnit units) {
+<span class="fc" id="L205">        return serverConfig.timeout(value, units);</span>
+    }
+
+    public ServerConfig timeout(final int value) {
+<span class="nc" id="L209">        return timeout(value, SECONDS);</span>
+    }
+
+    /**
+     * Used to start the HTTP server for test interactions. This method should be called after configuration of expectations and before the test
+     * interactions are executed against the server.
+     *
+     * @return a reference to this server
+     */
+    public ErsatzServer start() {
+<span class="fc" id="L219">        underlyingServer.start();</span>
+<span class="fc" id="L220">        return this;</span>
+    }
+
+    /**
+     * Clears all configured expectations from the server. Does not affect global encoders or decoders.
+     */
+    public void clearExpectations() {
+<span class="fc" id="L227">        serverConfig.clearExpectations();</span>
+<span class="fc" id="L228">    }</span>
+
+    /**
+     * Used to stop the HTTP server. The server may be restarted after it has been stopped.
+     */
+    public void stop() {
+<span class="fc" id="L234">        underlyingServer.stop();</span>
+<span class="fc" id="L235">    }</span>
+
+    /**
+     * An alias to the &lt;code&gt;stop()&lt;/code&gt; method.
+     */
+    @Override
+    public void close() {
+<span class="fc" id="L242">        stop();</span>
+<span class="fc" id="L243">    }</span>
+
+    /**
+     * Used to verify that all of the expected request interactions were called the appropriate number of times. This method should be called after
+     * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back
+     * from the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
+     * &lt;p&gt;
+     * If there are web socket expectations configured, this method will be blocking against the expected operations. Expectations involving web
+     * sockets should consider using the timeout parameters - the default is 1s.
+     *
+     * @param timeout the timeout value (defaults to 1)
+     * @param unit    the timeout unit (defaults to SECONDS)
+     * @return &lt;code&gt; true&lt;/code&gt; if all call criteria were met during test execution.
+     */
+    public boolean verify(final long timeout, final TimeUnit unit) {
+<span class="fc" id="L258">        return serverConfig.getExpectations().verify(timeout, unit);</span>
+    }
+
+    public boolean verify(final long timeout) {
+<span class="nc" id="L262">        return verify(timeout, SECONDS);</span>
+    }
+
+    public boolean verify() {
+<span class="fc" id="L266">        return verify(1, SECONDS);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

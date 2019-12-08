@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebSocketExpectationsImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.impl</a> &gt; <span class="el_source">WebSocketExpectationsImpl.java</span></div><h1>WebSocketExpectationsImpl.java</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2019 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.impl;
+
+import com.stehno.ersatz.cfg.ReceivedMessage;
+import com.stehno.ersatz.cfg.SentMessage;
+import com.stehno.ersatz.cfg.WebSocketExpectations;
+import com.stehno.ersatz.cfg.WsMessageType;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import io.undertow.websockets.core.BufferedBinaryMessage;
+import io.undertow.websockets.core.BufferedTextMessage;
+import space.jasan.support.groovy.closure.ConsumerWithDelegate;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import static com.stehno.ersatz.cfg.WsMessageType.*;
+import static groovy.lang.Closure.DELEGATE_FIRST;
+
+@SuppressWarnings(&quot;PMD.BeanMembersShouldSerialize&quot;)
+public class WebSocketExpectationsImpl implements WebSocketExpectations {
+
+<span class="fc" id="L41">    private final CountDownLatch connectionLatch = new CountDownLatch(1);</span>
+<span class="fc" id="L42">    private final List&lt;ReceivedMessageImpl&gt; receivedMessages = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L43">    private final List&lt;SentMessageImpl&gt; sentMessages = new LinkedList&lt;&gt;();</span>
+    private final String path;
+
+<span class="fc" id="L46">    public WebSocketExpectationsImpl(final String path) {</span>
+<span class="fc" id="L47">        this.path = path;</span>
+<span class="fc" id="L48">    }</span>
+
+    public String getPath() {
+<span class="nc" id="L51">        return path;</span>
+    }
+
+    public void connect() {
+<span class="fc" id="L55">        connectionLatch.countDown();</span>
+<span class="fc" id="L56">    }</span>
+
+    public boolean isConnected() {
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        return connectionLatch.getCount() == 0;</span>
+    }
+
+    @Override
+    public ReceivedMessage receive(Object payload) {
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">        if (resolve(payload) == BINARY) {</span>
+<span class="nc" id="L65">            return receive(payload, BINARY);</span>
+        }
+<span class="fc" id="L67">        return receive(payload.toString(), TEXT);</span>
+    }
+
+    @Override
+    public ReceivedMessage receive(Object payload, WsMessageType messageType) {
+<span class="fc" id="L72">        ReceivedMessageImpl message = new ReceivedMessageImpl(payload, messageType);</span>
+<span class="fc" id="L73">        receivedMessages.add(message);</span>
+<span class="fc" id="L74">        return message;</span>
+    }
+
+    @Override
+    public ReceivedMessage receive(@DelegatesTo(value = ReceivedMessage.class, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="fc" id="L79">        return receive(ConsumerWithDelegate.create(closure));</span>
+    }
+
+    @Override
+    public SentMessage send(Object payload) {
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (resolve(payload) == BINARY) {</span>
+<span class="nc" id="L85">            return send(payload, BINARY);</span>
+        }
+<span class="nc" id="L87">        return send(payload.toString(), TEXT);</span>
+    }
+
+    @Override
+    public SentMessage send(Object payload, WsMessageType messageType) {
+<span class="fc" id="L92">        SentMessageImpl message = new SentMessageImpl(payload, messageType);</span>
+<span class="fc" id="L93">        sentMessages.add(message);</span>
+<span class="fc" id="L94">        return message;</span>
+    }
+
+    @Override
+    public SentMessage send(@DelegatesTo(value = SentMessage.class, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="fc" id="L99">        return send(ConsumerWithDelegate.create(closure));</span>
+    }
+
+    @Override
+    public ReceivedMessage receive(Consumer&lt;ReceivedMessage&gt; config) {
+<span class="fc" id="L104">        ReceivedMessageImpl message = new ReceivedMessageImpl();</span>
+<span class="fc" id="L105">        config.accept(message);</span>
+<span class="fc" id="L106">        receivedMessages.add(message);</span>
+<span class="fc" id="L107">        return message;</span>
+    }
+
+    @Override
+    public SentMessage send(Consumer&lt;SentMessage&gt; config) {
+<span class="fc" id="L112">        SentMessageImpl message = new SentMessageImpl();</span>
+<span class="fc" id="L113">        config.accept(message);</span>
+<span class="fc" id="L114">        sentMessages.add(message);</span>
+<span class="fc" id="L115">        return message;</span>
+    }
+
+    public int getExpectedMessageCount() {
+<span class="nc" id="L119">        return receivedMessages.size();</span>
+    }
+
+    public void eachSender(Consumer&lt;SentMessageImpl&gt; consumer) {
+<span class="fc" id="L123">        sentMessages.forEach(consumer);</span>
+<span class="fc" id="L124">    }</span>
+
+    public void eachMessage(Consumer&lt;ReceivedMessageImpl&gt; consumer) {
+<span class="nc" id="L127">        receivedMessages.forEach(consumer);</span>
+<span class="nc" id="L128">    }</span>
+
+    public Optional&lt;ReceivedMessageImpl&gt; findMatch(final Object message){
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        if( message instanceof BufferedTextMessage){</span>
+<span class="fc" id="L132">            return findMatch((BufferedTextMessage) message);</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        } else if( message instanceof  BufferedBinaryMessage ){</span>
+<span class="fc" id="L134">            return findMatch((BufferedBinaryMessage) message);</span>
+        } else {
+<span class="nc" id="L136">            return Optional.empty();</span>
+        }
+    }
+
+    private Optional&lt;ReceivedMessageImpl&gt; findMatch(final BufferedTextMessage message) {
+<span class="fc" id="L141">        return receivedMessages.stream().filter(m -&gt; m.matches(message)).findFirst();</span>
+    }
+
+    private Optional&lt;ReceivedMessageImpl&gt; findMatch(final BufferedBinaryMessage message) {
+<span class="fc" id="L145">        return receivedMessages.stream().filter(m -&gt; m.matches(message)).findFirst();</span>
+    }
+
+    public boolean verify(final long timeout, final TimeUnit unit) {
+<span class="pc bpc" id="L149" title="2 of 4 branches missed.">        return waitForLatch(timeout, unit) &amp;&amp; receivedMessages.stream().allMatch(m -&gt; m.marked(timeout, unit));</span>
+    }
+
+    private boolean waitForLatch(final long timeout, final TimeUnit unit){
+        try {
+<span class="fc" id="L154">            return connectionLatch.await(timeout, unit);</span>
+<span class="nc" id="L155">        } catch (InterruptedException e) {</span>
+<span class="nc" id="L156">            return false;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

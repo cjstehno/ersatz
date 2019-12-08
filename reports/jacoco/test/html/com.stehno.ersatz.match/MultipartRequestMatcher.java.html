@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MultipartRequestMatcher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.match</a> &gt; <span class="el_source">MultipartRequestMatcher.java</span></div><h1>MultipartRequestMatcher.java</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2019 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.match;
+
+import com.stehno.ersatz.cfg.ContentType;
+import com.stehno.ersatz.encdec.MultipartRequestContent;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import space.jasan.support.groovy.closure.ConsumerWithDelegate;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.function.Consumer;
+
+import static groovy.lang.Closure.DELEGATE_FIRST;
+import static org.hamcrest.Matchers.*;
+
+/**
+ * A Hamcrest matcher used to match &lt;code&gt;MultipartRequestContent&lt;/code&gt;. The matcher may be created directly or by using the closure or consumer
+ * static configuration methods.
+ */
+@SuppressWarnings(&quot;PMD.BeanMembersShouldSerialize&quot;)
+<span class="fc" id="L40">public class MultipartRequestMatcher extends BaseMatcher&lt;MultipartRequestContent&gt; {</span>
+
+    private static final String VALUE = &quot;value&quot;;
+    private static final String CONTENT_TYPE = &quot;contentType&quot;;
+    private static final String FILE_NAME = &quot;fileName&quot;;
+<span class="fc" id="L45">    private final Map&lt;String, Map&lt;String, Matcher&gt;&gt; matchers = new LinkedHashMap&lt;&gt;();</span>
+
+    /**
+     * Creates a new multipart matcher with a Groovy DSL closure (delegating to &lt;code&gt;MultipartRequestMatcher&lt;/code&gt;).
+     *
+     * @param closure the configuration closure
+     * @return a configured matcher instance
+     */
+    public static MultipartRequestMatcher multipartMatcher(@DelegatesTo(value = MultipartRequestMatcher.class, strategy = DELEGATE_FIRST) final Closure closure) {
+<span class="fc" id="L54">        return multipartMatcher(ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Creates a new multipart matcher with a consumer - it will have an instance of &lt;code&gt;MultipartRequestMatcher&lt;/code&gt; passed into it for
+     * configuration of the matcher.
+     *
+     * @param config the configuration consumer
+     * @return a configured matcher instance
+     */
+    public static MultipartRequestMatcher multipartMatcher(final Consumer&lt;MultipartRequestMatcher&gt; config) {
+<span class="fc" id="L65">        MultipartRequestMatcher matcher = new MultipartRequestMatcher();</span>
+<span class="fc" id="L66">        config.accept(matcher);</span>
+<span class="fc" id="L67">        return matcher;</span>
+    }
+
+    /**
+     * Applies a matcher to match when a part with the specified field name exists in the multipart request (and has a non-null value).
+     *
+     * @param fieldName the field name
+     * @return a reference to this multipart request matcher
+     */
+    public MultipartRequestMatcher part(final String fieldName) {
+<span class="fc" id="L77">        return part(fieldName, notNullValue());</span>
+    }
+
+    /**
+     * Applies the specified content matcher to the part with the specified field name.
+     *
+     * @param fieldName the field name
+     * @param value     the value matcher
+     * @return a reference to this multipart request matcher
+     */
+    public MultipartRequestMatcher part(final String fieldName, final Matcher&lt;Object&gt; value) {
+<span class="fc" id="L88">        matchers.put(fieldName, Map.of(VALUE, value));</span>
+<span class="fc" id="L89">        return this;</span>
+    }
+
+    /**
+     * Applies a matcher for the field part value where the value must be equal to the specified value. This is simply an alias to calling
+     * &lt;code&gt;part(fieldName, equalsTo(value))&lt;/code&gt;.
+     *
+     * @param fieldName the field name
+     * @param value     the field value
+     * @return a reference to this multipart request matcher
+     */
+    public MultipartRequestMatcher part(final String fieldName, final String value) {
+<span class="fc" id="L101">        return part(fieldName, equalTo(value));</span>
+    }
+
+    /**
+     * Applies the specified content matcher and content-type matcher to the part with the specified field name.
+     *
+     * @param fieldName   the field name
+     * @param contentType the content type matcher
+     * @param value       the value matcher
+     * @return a reference to this multipart request matcher
+     */
+    public MultipartRequestMatcher part(final String fieldName, final Matcher&lt;String&gt; contentType, final Matcher&lt;Object&gt; value) {
+<span class="fc" id="L113">        matchers.put(fieldName, Map.of(&quot;contentType&quot;, contentType, VALUE, value));</span>
+<span class="fc" id="L114">        return this;</span>
+    }
+
+    /**
+     * Applies the specified content matcher matcher to the part with the specified field name and where the content type starts with the specified
+     * string value. This is analogous to calling &lt;code&gt;part(fieldName, startsWith(contentType), value)&lt;/code&gt;.
+     *
+     * @param fieldName   the field name
+     * @param contentType the content type
+     * @param value       the value matcher
+     * @return a reference to this multipart request matcher
+     */
+    public MultipartRequestMatcher part(final String fieldName, final String contentType, final Matcher&lt;Object&gt; value) {
+<span class="fc" id="L127">        return part(fieldName, startsWith(contentType), value);</span>
+    }
+
+    /**
+     * Applies the specified content matcher matcher to the part with the specified field name and where the content type starts with the specified
+     * string value. This is analogous to calling &lt;code&gt;part(fieldName, startsWith(contentType), value)&lt;/code&gt;.
+     *
+     * @param fieldName   the field name
+     * @param contentType the content type
+     * @param value       the value matcher
+     * @return a reference to this multipart request matcher
+     */
+    public MultipartRequestMatcher part(final String fieldName, final ContentType contentType, final Matcher&lt;Object&gt; value) {
+<span class="fc" id="L140">        return part(fieldName, contentType.getValue(), value);</span>
+    }
+
+    /**
+     * Applies the specified content matcher, file name matcher and content-type matcher to the part with the specified field name.
+     *
+     * @param fieldName   the field name
+     * @param fileName    the file name matcher
+     * @param contentType the content type matcher
+     * @param value       the value matcher
+     * @return a reference to this multipart request matcher
+     */
+    public MultipartRequestMatcher part(String fieldName, Matcher&lt;String&gt; fileName, Matcher&lt;String&gt; contentType, Matcher&lt;Object&gt; value) {
+<span class="fc" id="L153">        matchers.put(fieldName, Map.of(&quot;fileName&quot;, fileName, &quot;contentType&quot;, contentType, VALUE, value));</span>
+<span class="fc" id="L154">        return this;</span>
+    }
+
+    /**
+     * Applies the value matcher to the part with the specified field name, where the file name must be equal to the given string, and the content
+     * type must start with the specified value. This is analogous to calling:
+     * &lt;code&gt;part(fieldName, equalTo(fileName), startsWith(contentType), value)&lt;/code&gt;
+     *
+     * @param fieldName   the field name
+     * @param fileName    the file name
+     * @param contentType the content type
+     * @param value       the value matcher
+     * @return a reference to this multipart request matcher
+     */
+    public MultipartRequestMatcher part(String fieldName, String fileName, String contentType, Matcher&lt;Object&gt; value) {
+<span class="fc" id="L169">        return part(fieldName, equalTo(fileName), startsWith(contentType), value);</span>
+    }
+
+    /**
+     * Applies the value matcher to the part with the specified field name, where the file name must be equal to the given string, and the content
+     * type must start with the specified value. This is analogous to calling:
+     * &lt;code&gt;part(fieldName, equalTo(fileName), startsWith(contentType.value), value)&lt;/code&gt;
+     *
+     * @param fieldName   the field name
+     * @param fileName    the file name
+     * @param contentType the content type
+     * @param value       the value matcher
+     * @return a reference to this multipart request matcher
+     */
+    public MultipartRequestMatcher part(String fieldName, String fileName, ContentType contentType, Matcher&lt;Object&gt; value) {
+<span class="fc" id="L184">        return part(fieldName, fileName, contentType.getValue(), value);</span>
+    }
+
+    /**
+     * Determines whether or not the given object matches the configured matchers.
+     *
+     * @param item the item being matched (must be an instance of MultipartRequestContent)
+     * @return whether or not the match is accepted
+     */
+    @Override
+    public boolean matches(final Object item) {
+<span class="fc bfc" id="L195" title="All 2 branches covered.">        if (!(item instanceof MultipartRequestContent)) {</span>
+<span class="fc" id="L196">            return false;</span>
+        }
+
+<span class="fc" id="L199">        final var results = new LinkedList&lt;Boolean&gt;();</span>
+
+<span class="fc" id="L201">        final MultipartRequestContent mrc = (MultipartRequestContent) item;</span>
+
+<span class="fc" id="L203">        matchers.forEach((fn, matcher) -&gt; {</span>
+<span class="fc" id="L204">            final var part = mrc.getAt(fn);</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">            if (part != null) {</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">                if (matcher.containsKey(FILE_NAME)) {</span>
+<span class="fc" id="L207">                    results.add(matcher.get(FILE_NAME).matches(part.getFileName()));</span>
+                }
+
+<span class="fc bfc" id="L210" title="All 2 branches covered.">                if (matcher.containsKey(CONTENT_TYPE)) {</span>
+<span class="fc" id="L211">                    results.add(matcher.get(CONTENT_TYPE).matches(part.getContentType()));</span>
+                }
+
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">                if (matcher.containsKey(VALUE)) {</span>
+<span class="fc" id="L215">                    results.add(matcher.get(VALUE).matches(part.getValue()));</span>
+                }
+            } else {
+<span class="fc" id="L218">                results.add(false);</span>
+            }
+<span class="fc" id="L220">        });</span>
+
+<span class="fc" id="L222">        return results.stream().allMatch(r -&gt; r);</span>
+    }
+
+    /**
+     * Describes the matcher.
+     *
+     * @param description the description container
+     */
+    @Override
+    public void describeTo(final Description description) {
+<span class="fc" id="L232">        description.appendText(&quot;MultipartRequestMatcher: &quot;);</span>
+
+<span class="fc" id="L234">        matchers.forEach((fn, map) -&gt; {</span>
+<span class="fc" id="L235">            map.forEach((f, m) -&gt; {</span>
+<span class="fc" id="L236">                description.appendText(f + &quot;(&quot;);</span>
+<span class="fc" id="L237">                m.describeTo(description);</span>
+<span class="fc" id="L238">                description.appendText(&quot;) &quot;);</span>
+<span class="fc" id="L239">            });</span>
+<span class="fc" id="L240">        });</span>
+<span class="fc" id="L241">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

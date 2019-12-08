@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CookieMatcher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.match</a> &gt; <span class="el_source">CookieMatcher.java</span></div><h1>CookieMatcher.java</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2019 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.match;
+
+import com.stehno.ersatz.encdec.Cookie;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import space.jasan.support.groovy.closure.ConsumerWithDelegate;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
+import static groovy.lang.Closure.DELEGATE_FIRST;
+import static org.hamcrest.Matchers.equalTo;
+
+/**
+ * Hamcrest matcher used to match Ersatz request cookie instances.
+ */
+@SuppressWarnings(&quot;PMD.BeanMembersShouldSerialize&quot;)
+<span class="fc" id="L37">public class CookieMatcher extends BaseMatcher&lt;Cookie&gt; {</span>
+
+<span class="fc" id="L39">    private final Map&lt;String, Matcher&gt; matchers = new LinkedHashMap&lt;&gt;();</span>
+
+    /**
+     * Configures the cookie matcher with a closure delegating to a &lt;code&gt;CookieMatcher&lt;/code&gt; instance.
+     *
+     * @param closure the configuration closure
+     * @return the configured matcher
+     */
+    public static CookieMatcher cookieMatcher(@DelegatesTo(value = CookieMatcher.class, strategy = DELEGATE_FIRST) final Closure closure) {
+<span class="fc" id="L48">        return cookieMatcher(ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Configures the cookie matcher with a consumer which is passed a &lt;code&gt;CookieMatcher&lt;/code&gt; instance to configure.
+     *
+     * @param consumer the configuration consumer
+     * @return the configured matcher
+     */
+    public static CookieMatcher cookieMatcher(final Consumer&lt;CookieMatcher&gt; consumer) {
+<span class="fc" id="L58">        CookieMatcher cookieMatcher = new CookieMatcher();</span>
+<span class="fc" id="L59">        consumer.accept(cookieMatcher);</span>
+<span class="fc" id="L60">        return cookieMatcher;</span>
+    }
+
+    /**
+     * Applies a matcher for the specified cookie value. This is equivalent to calling &lt;code&gt;value(Matchers.equalTo('some value'))&lt;/code&gt;.
+     *
+     * @param val the value string
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher value(final String val) {
+<span class="fc" id="L70">        return value(equalTo(val));</span>
+    }
+
+    /**
+     * Applies the specified matcher to the cookie value.
+     *
+     * @param matcher the matcher to be used
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher value(final Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L80">        matchers.put(&quot;value&quot;, matcher);</span>
+<span class="fc" id="L81">        return this;</span>
+    }
+
+    /**
+     * Applies a matcher for the specified cookie comment value. This is equivalent to calling &lt;code&gt;comment(Matchers.equalTo('some value'))&lt;/code&gt;.
+     *
+     * @param str the comment string
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher comment(final String str) {
+<span class="fc" id="L91">        return comment(equalTo(str));</span>
+    }
+
+    /**
+     * Applies the specified matcher to the cookie comment.
+     *
+     * @param matcher the matcher to be used
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher comment(final Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L101">        matchers.put(&quot;comment&quot;, matcher);</span>
+<span class="fc" id="L102">        return this;</span>
+    }
+
+    /**
+     * Applies a matcher for the specified cookie domain value. This is equivalent to calling &lt;code&gt;domain(Matchers.equalTo('some value'))&lt;/code&gt;.
+     *
+     * @param str the domain string
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher domain(final String str) {
+<span class="fc" id="L112">        return domain(equalTo(str));</span>
+    }
+
+    /**
+     * Applies the specified matcher to the cookie domain.
+     *
+     * @param matcher the matcher to be used
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher domain(final Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L122">        matchers.put(&quot;domain&quot;, matcher);</span>
+<span class="fc" id="L123">        return this;</span>
+    }
+
+    /**
+     * Applies a matcher for the specified cookie path value. This is equivalent to calling &lt;code&gt;path(Matchers.equalTo('some value'))&lt;/code&gt;.
+     *
+     * @param str the path string
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher path(final String str) {
+<span class="fc" id="L133">        return path(equalTo(str));</span>
+    }
+
+    /**
+     * Applies the specified matcher to the cookie path.
+     *
+     * @param matcher the matcher to be used
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher path(final Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L143">        matchers.put(&quot;path&quot;, matcher);</span>
+<span class="fc" id="L144">        return this;</span>
+    }
+
+    /**
+     * Applies a matcher for the specified cookie version value. This is equivalent to calling &lt;code&gt;version(Matchers.equalTo(1))&lt;/code&gt;.
+     *
+     * @param vers the version string
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher version(final int vers) {
+<span class="fc" id="L154">        return version(equalTo(vers));</span>
+    }
+
+    /**
+     * Applies the specified matcher to the cookie version.
+     *
+     * @param matcher the matcher to be used
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher version(final Matcher&lt;Integer&gt; matcher) {
+<span class="fc" id="L164">        matchers.put(&quot;version&quot;, matcher);</span>
+<span class="fc" id="L165">        return this;</span>
+    }
+
+    /**
+     * Applies a matcher for the specified cookie http-only value.
+     *
+     * @param httpOnly the httpOnly state
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher httpOnly(final boolean httpOnly) {
+<span class="fc" id="L175">        matchers.put(&quot;httpOnly&quot;, equalTo(httpOnly));</span>
+<span class="fc" id="L176">        return this;</span>
+    }
+
+    /**
+     * Applies a matcher for the specified cookie max-age value. This is equivalent to calling &lt;code&gt;maxAge(Matchers.equalTo(age))&lt;/code&gt;.
+     *
+     * @param age the max-age value
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher maxAge(final int age) {
+<span class="fc" id="L186">        return maxAge(equalTo(age));</span>
+    }
+
+    /**
+     * Applies the specified matcher to the cookie max-age value.
+     *
+     * @param matcher the matcher to be used
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher maxAge(final Matcher&lt;Integer&gt; matcher) {
+<span class="fc" id="L196">        matchers.put(&quot;maxAge&quot;, matcher);</span>
+<span class="fc" id="L197">        return this;</span>
+    }
+
+    /**
+     * Applies a matcher for the specified cookie secure value.
+     *
+     * @param secure the secure state
+     * @return a reference to the matcher being configured
+     */
+    public CookieMatcher secure(final boolean secure) {
+<span class="fc" id="L207">        matchers.put(&quot;secure&quot;, equalTo(secure));</span>
+<span class="fc" id="L208">        return this;</span>
+    }
+
+    @Override
+    public boolean matches(final Object item) {
+<span class="fc bfc" id="L213" title="All 2 branches covered.">        if (!(item instanceof Cookie)) {</span>
+<span class="fc" id="L214">            return false;</span>
+        }
+
+<span class="fc" id="L217">        final var cookie = (Cookie) item;</span>
+
+<span class="fc" id="L219">        return matchers.entrySet().stream().allMatch(entry -&gt; {</span>
+<span class="fc" id="L220">            final var field = entry.getKey();</span>
+<span class="fc" id="L221">            final var matcher = entry.getValue();</span>
+
+<span class="pc bpc" id="L223" title="1 of 9 branches missed.">            switch (field) {</span>
+                case &quot;value&quot;:
+<span class="fc" id="L225">                    return matcher.matches(cookie.getValue());</span>
+                case &quot;comment&quot;:
+<span class="fc" id="L227">                    return matcher.matches(cookie.getComment());</span>
+                case &quot;domain&quot;:
+<span class="fc" id="L229">                    return matcher.matches(cookie.getDomain());</span>
+                case &quot;path&quot;:
+<span class="fc" id="L231">                    return matcher.matches(cookie.getPath());</span>
+                case &quot;maxAge&quot;:
+<span class="fc" id="L233">                    return matcher.matches(cookie.getMaxAge());</span>
+                case &quot;httpOnly&quot;:
+<span class="fc" id="L235">                    return matcher.matches(cookie.isHttpOnly());</span>
+                case &quot;secure&quot;:
+<span class="fc" id="L237">                    return matcher.matches(cookie.isSecure());</span>
+                case &quot;version&quot;:
+<span class="fc" id="L239">                    return matcher.matches(cookie.getVersion());</span>
+                default:
+<span class="nc" id="L241">                    return false;</span>
+            }
+        });
+    }
+
+    @Override
+    public void describeTo(final Description description) {
+<span class="fc" id="L248">        description.appendText(&quot;Cookie matching &quot;);</span>
+
+<span class="fc" id="L250">        matchers.forEach((field, matcher) -&gt; {</span>
+<span class="fc" id="L251">            description.appendText(field + &quot;(&quot;);</span>
+<span class="fc" id="L252">            matcher.describeTo(description);</span>
+<span class="fc" id="L253">            description.appendText(&quot;) &quot;);</span>
+<span class="fc" id="L254">        });</span>
+<span class="fc" id="L255">    }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

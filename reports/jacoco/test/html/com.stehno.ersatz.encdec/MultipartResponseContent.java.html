@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MultipartResponseContent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.encdec</a> &gt; <span class="el_source">MultipartResponseContent.java</span></div><h1>MultipartResponseContent.java</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2019 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.encdec;
+
+import com.stehno.ersatz.cfg.ContentType;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import space.jasan.support.groovy.closure.ConsumerWithDelegate;
+
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import static groovy.lang.Closure.DELEGATE_FIRST;
+
+/**
+ * Response content object used to return a multipart response to a request. Note that multipart responses are not reliably supported by most
+ * browsers; this feature is mainly intended to support RESTful interfaces that may want to implement multipart response content.
+ * &lt;p&gt;
+ * When configuring multipart content, encoders must be provided to convert the content objects into the serialized transfer format. If a shared
+ * &lt;code&gt;ResponseEncoders&lt;/code&gt; is provided, they will be used as defaults and overridden by any encoders specified on the response configuration
+ * itself.
+ * &lt;p&gt;
+ * Note that the globally configured encoders will be injected when this content object is added to the response body.
+ */
+<span class="fc" id="L39">public abstract class MultipartResponseContent {</span>
+
+<span class="fc" id="L41">    private static final char[] ALPHANUMERICS = &quot;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&quot;.toCharArray();</span>
+
+    /**
+     * Creates a new multipart response content object with the optional boundary (random default) and a Closure used to configure the parts.
+     *
+     * @param closure the configuration closure (Delegates to MultipartContent instance)
+     * @return a reference to this MultipartResponseContent instance
+     */
+    public static MultipartResponseContent multipart(final @DelegatesTo(value = MultipartResponseContent.class, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="fc" id="L50">        return multipart(ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Creates a new multipart response content object with the optional boundary (random default) and a Consumer used to configure the parts. The
+     * Consumer will have an instance of MultipartContent passed into it for configuration.
+     *
+     * @param consumer the configuration consumer (given an instance of MultipartContent)
+     * @return a reference to this MultipartResponseContent instance
+     */
+    public static MultipartResponseContent multipart(final Consumer&lt;MultipartResponseContent&gt; consumer) {
+<span class="fc" id="L61">        MultipartResponseContent content = new ErsatzMultipartResponseContent();</span>
+<span class="fc" id="L62">        consumer.accept(content);</span>
+<span class="fc" id="L63">        return content;</span>
+    }
+
+    /**
+     * Used to generate a random boundary tag.
+     *
+     * @return a random boundary label
+     */
+    public static String generateBoundary() {
+<span class="fc" id="L72">        final StringBuilder buffer = new StringBuilder();</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        for (int i = 0; i &lt; 18; i++) {</span>
+<span class="fc" id="L74">            buffer.append(ALPHANUMERICS[ThreadLocalRandom.current().nextInt(0,ALPHANUMERICS.length)]);</span>
+        }
+<span class="fc" id="L76">        return buffer.toString();</span>
+    }
+
+    /**
+     * Used to specify the set of shared (parent) encoders used - this encoder collection will be called when no encoder is specified in the current
+     * response configuration.
+     *
+     * @param responseEncoders the parent set of shared encoders
+     * @return a reference to this MultipartResponseContent instance
+     */
+    public abstract MultipartResponseContent encoders(final ResponseEncoders responseEncoders);
+
+    /**
+     * Used to override the default random boundary value with the provided one.
+     *
+     * @param value the boundary label to be used
+     * @return a reference to this MultipartResponseContent instance
+     */
+    public abstract MultipartResponseContent boundary(final String value);
+
+    /**
+     * Configures a response content encoder for the specified contentType and content class.
+     *
+     * @param contentType the response content-type
+     * @param type        the response object type
+     * @param encoder     the encoder
+     * @return a reference to this MultipartResponseContent instance
+     */
+    public abstract MultipartResponseContent encoder(final String contentType, final Class type, final Function&lt;Object, byte[]&gt; encoder);
+
+    /**
+     * Configures a response content encoder for the specified contentType and content class.
+     *
+     * @param contentType the response content-type
+     * @param type        the response object type
+     * @param encoder     the encoder
+     * @return a reference to this MultipartResponseContent instance
+     */
+    public abstract MultipartResponseContent encoder(final ContentType contentType, final Class type, final Function&lt;Object, byte[]&gt; encoder);
+
+    /**
+     * Used to add a &quot;field&quot; part to the response.
+     *
+     * @param fieldName the field name
+     * @param value     the field value
+     * @return a reference to this MultipartResponseContent instance
+     */
+    public abstract MultipartResponseContent field(final String fieldName, final String value);
+
+    /**
+     * Used to add a &quot;field&quot; part to the response.
+     *
+     * @param fieldName   the field name
+     * @param contentType the response part content-type
+     * @param value       the field value
+     * @return a reference to this MultipartResponseContent instance
+     */
+    public abstract MultipartResponseContent part(final String fieldName, final String contentType, final Object value);
+
+    /**
+     * Used to add a &quot;field&quot; part to the response.
+     *
+     * @param fieldName        the field name
+     * @param contentType      the response part content-type
+     * @param value            the field value
+     * @param transferEncoding the content-transfer-encoding value (defaults to none)
+     * @return a reference to this MultipartResponseContent instance
+     */
+    public abstract MultipartResponseContent part(final String fieldName, final ContentType contentType, final Object value, final String transferEncoding);
+
+    public abstract MultipartResponseContent part(final String fieldName, final ContentType contentType, final Object value);
+
+    /**
+     * Used to add a &quot;file&quot; part to the response.
+     *
+     * @param fieldName        the field name
+     * @param fileName         the file name
+     * @param contentType      the response part content-type
+     * @param value            the field value
+     * @param transferEncoding the content-transfer-encoding value (defaults to none)
+     * @return a reference to this MultipartResponseContent instance
+     */
+    public abstract MultipartResponseContent part(String fieldName, String fileName, String contentType, Object value, String transferEncoding);
+
+    public abstract MultipartResponseContent part(String fieldName, String fileName, String contentType, Object value);
+
+    /**
+     * Used to add a &quot;file&quot; part to the response.
+     *
+     * @param fieldName        the field name
+     * @param fileName         the file name
+     * @param contentType      the response part content-type
+     * @param value            the field value
+     * @param transferEncoding the content-transfer-encoding value (defaults to none)
+     * @return a reference to this MultipartResponseContent instance
+     */
+    public abstract MultipartResponseContent part(String fieldName, String fileName, ContentType contentType, Object value, String transferEncoding);
+
+    public abstract MultipartResponseContent part(String fieldName, String fileName, ContentType contentType, Object value);
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

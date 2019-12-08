@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Cookie.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.encdec</a> &gt; <span class="el_source">Cookie.java</span></div><h1>Cookie.java</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2019 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.encdec;
+
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import space.jasan.support.groovy.closure.ConsumerWithDelegate;
+
+import java.util.Objects;
+import java.util.function.Consumer;
+
+import static groovy.lang.Closure.DELEGATE_FIRST;
+import static java.lang.String.format;
+
+/**
+ * Ersatz abstraction of a request or response cookie. See also the &lt;code&gt;CookieMatcher&lt;/code&gt;.
+ */
+@SuppressWarnings({&quot;PMD.AvoidFieldNameMatchingMethodName&quot;, &quot;PMD.BeanMembersShouldSerialize&quot;})
+public class Cookie {
+
+    private String value;
+    private String comment;
+    private String domain;
+    private String path;
+    private int version;
+    private boolean httpOnly;
+    private Integer maxAge;
+    private boolean secure;
+
+    public Cookie(){
+<span class="fc" id="L44">        this(null, null, null, null, 0, false, 0, false);</span>
+<span class="fc" id="L45">    }</span>
+
+<span class="fc" id="L47">    public Cookie(String value, String comment, String domain, String path, int version, boolean httpOnly, Integer maxAge, boolean secure) {</span>
+<span class="fc" id="L48">        this.value = value;</span>
+<span class="fc" id="L49">        this.comment = comment;</span>
+<span class="fc" id="L50">        this.domain = domain;</span>
+<span class="fc" id="L51">        this.path = path;</span>
+<span class="fc" id="L52">        this.version = version;</span>
+<span class="fc" id="L53">        this.httpOnly = httpOnly;</span>
+<span class="fc" id="L54">        this.maxAge = maxAge;</span>
+<span class="fc" id="L55">        this.secure = secure;</span>
+<span class="fc" id="L56">    }</span>
+
+    /**
+     * Used to configure a request cookie with a configuration closure.
+     *
+     * @param closure the configuration closure
+     * @return the configured cookie
+     */
+    public static Cookie cookie(@DelegatesTo(value = Cookie.class, strategy = DELEGATE_FIRST) final Closure closure) {
+<span class="fc" id="L65">        return cookie(ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Used to configure a request cookie with a configuration consumer.
+     *
+     * @param consumer the configuration consumer
+     * @return the configured cookie
+     */
+    public static Cookie cookie(final Consumer&lt;Cookie&gt; consumer) {
+<span class="fc" id="L75">        Cookie cookie = new Cookie();</span>
+<span class="fc" id="L76">        consumer.accept(cookie);</span>
+<span class="fc" id="L77">        return cookie;</span>
+    }
+
+    /**
+     * Used to configure the value of the cookie as a String.
+     *
+     * @param value the cookie value
+     * @return this cookie
+     */
+    public Cookie value(String value) {
+<span class="fc" id="L87">        this.value = value;</span>
+<span class="fc" id="L88">        return this;</span>
+    }
+
+    /**
+     * Used to configure the cookie comment.
+     *
+     * @param comment the cookie comment
+     * @return this cookie
+     */
+    public Cookie comment(final String comment) {
+<span class="fc" id="L98">        this.comment = comment;</span>
+<span class="fc" id="L99">        return this;</span>
+    }
+
+    /**
+     * Used to configure the domain of the cookie.
+     *
+     * @param domain the cookie domain
+     * @return this cookie
+     */
+    public Cookie domain(final String domain) {
+<span class="fc" id="L109">        this.domain = domain;</span>
+<span class="fc" id="L110">        return this;</span>
+    }
+
+    /**
+     * Used to configure the cookie path.
+     *
+     * @param path the cookie path
+     * @return this cookie
+     */
+    public Cookie path(final String path) {
+<span class="fc" id="L120">        this.path = path;</span>
+<span class="fc" id="L121">        return this;</span>
+    }
+
+    /**
+     * Used to configure the cookie API version.
+     *
+     * @param version the cookie version
+     * @return this cookie
+     */
+    public Cookie version(final int version) {
+<span class="fc" id="L131">        this.version = version;</span>
+<span class="fc" id="L132">        return this;</span>
+    }
+
+    /**
+     * Used to configure the &lt;code&gt;httpOnly&lt;/code&gt; property of the cookie.
+     *
+     * @param httpOnly the httpOnly property value
+     * @return this cookie
+     */
+    public Cookie httpOnly(final boolean httpOnly) {
+<span class="fc" id="L142">        this.httpOnly = httpOnly;</span>
+<span class="fc" id="L143">        return this;</span>
+    }
+
+    /**
+     * Used to configure the max age value for the cookie.
+     *
+     * @param maxAge the max cookie age
+     * @return this cookie
+     */
+    public Cookie maxAge(final Integer maxAge) {
+<span class="fc" id="L153">        this.maxAge = maxAge;</span>
+<span class="fc" id="L154">        return this;</span>
+    }
+
+    /**
+     * Used to configure whether or not the cookie is marked as secure.
+     *
+     * @param secure the value
+     * @return this cookie
+     */
+    public Cookie secure(final boolean secure) {
+<span class="fc" id="L164">        this.secure = secure;</span>
+<span class="fc" id="L165">        return this;</span>
+    }
+
+    public String getValue() {
+<span class="fc" id="L169">        return value;</span>
+    }
+
+    public String getComment() {
+<span class="fc" id="L173">        return comment;</span>
+    }
+
+    public String getDomain() {
+<span class="fc" id="L177">        return domain;</span>
+    }
+
+    public String getPath() {
+<span class="fc" id="L181">        return path;</span>
+    }
+
+    public int getVersion() {
+<span class="fc" id="L185">        return version;</span>
+    }
+
+    public boolean isHttpOnly() {
+<span class="fc" id="L189">        return httpOnly;</span>
+    }
+
+    public Integer getMaxAge() {
+<span class="fc" id="L193">        return maxAge;</span>
+    }
+
+    public boolean isSecure() {
+<span class="fc" id="L197">        return secure;</span>
+    }
+
+    @Override public boolean equals(Object o) {
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">        if (this == o) return true;</span>
+<span class="pc bpc" id="L202" title="2 of 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="fc" id="L203">        final Cookie cookie = (Cookie) o;</span>
+<span class="pc bpc" id="L204" title="3 of 6 branches missed.">        return version == cookie.version &amp;&amp;</span>
+            httpOnly == cookie.httpOnly &amp;&amp;
+            secure == cookie.secure &amp;&amp;
+<span class="fc bfc" id="L207" title="All 2 branches covered.">            Objects.equals(value, cookie.value) &amp;&amp;</span>
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">            Objects.equals(comment, cookie.comment) &amp;&amp;</span>
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">            Objects.equals(domain, cookie.domain) &amp;&amp;</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">            Objects.equals(path, cookie.path) &amp;&amp;</span>
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">            Objects.equals(maxAge, cookie.maxAge);</span>
+    }
+
+    @Override public int hashCode() {
+<span class="nc" id="L215">        return Objects.hash(value, comment, domain, path, version, httpOnly, maxAge, secure);</span>
+    }
+
+    @Override public String toString() {
+<span class="fc" id="L219">        return format(</span>
+            &quot;Cookie{value='%s', comment='%s', domain='%s', path='%s', version=%d, httpOnly=%s, maxAge=%d, secure=%s}&quot;,
+<span class="fc" id="L221">            value, comment, domain, path, version, httpOnly, maxAge, secure</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

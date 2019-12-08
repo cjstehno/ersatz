@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - ErsatzProxyTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>ErsatzProxyTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.stehno.ersatz.html">com.stehno.ersatz</a> &gt; ErsatzProxyTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">5.187s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Method name</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">configuration with consumer</td>
+<td class="success">config_consumer()</td>
+<td class="success">5.187s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>06:58:13.593 [Test worker] DEBUG org.jboss.logging - Logging Provider: org.jboss.logging.Slf4jLoggerProvider
+06:58:13.867 [Test worker] INFO io.undertow - starting server: Undertow - 2.0.28.Final
+06:58:14.020 [Test worker] INFO org.xnio - XNIO version 3.3.8.Final
+06:58:14.193 [Test worker] INFO org.xnio.nio - XNIO NIO Implementation Version 3.3.8.Final
+06:58:14.747 [XNIO-1 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-1', selector sun.nio.ch.EPollSelectorImpl@211840c7
+06:58:14.750 [XNIO-1 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-2', selector sun.nio.ch.EPollSelectorImpl@72c8d990
+06:58:14.772 [XNIO-1 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-3', selector sun.nio.ch.EPollSelectorImpl@2f692eca
+06:58:14.791 [XNIO-1 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-4', selector sun.nio.ch.EPollSelectorImpl@51f57090
+06:58:14.811 [XNIO-1 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-5', selector sun.nio.ch.EPollSelectorImpl@6deb75a6
+06:58:14.826 [XNIO-1 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-6', selector sun.nio.ch.EPollSelectorImpl@20b1bb91
+06:58:14.829 [XNIO-1 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-7', selector sun.nio.ch.EPollSelectorImpl@1c55bf70
+06:58:14.847 [XNIO-1 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-8', selector sun.nio.ch.EPollSelectorImpl@27203393
+06:58:14.873 [XNIO-1 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 Accept', selector sun.nio.ch.EPollSelectorImpl@3f4e0f1
+06:58:14.878 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+06:58:15.136 [Test worker] DEBUG com.stehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:45579, https:-1).
+06:58:15.136 [Test worker] INFO com.stehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
+06:58:15.503 [Test worker] INFO io.undertow - starting server: Undertow - 2.0.28.Final
+06:58:15.543 [XNIO-2 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-1', selector sun.nio.ch.EPollSelectorImpl@25f84b69
+06:58:15.567 [XNIO-2 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-2', selector sun.nio.ch.EPollSelectorImpl@62847c4d
+06:58:15.580 [XNIO-2 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-3', selector sun.nio.ch.EPollSelectorImpl@498def54
+06:58:15.631 [XNIO-2 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-4', selector sun.nio.ch.EPollSelectorImpl@4d56f846
+06:58:15.633 [XNIO-2 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-5', selector sun.nio.ch.EPollSelectorImpl@202d6066
+06:58:15.651 [XNIO-2 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-6', selector sun.nio.ch.EPollSelectorImpl@347830fe
+06:58:15.656 [XNIO-2 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-7', selector sun.nio.ch.EPollSelectorImpl@26761308
+06:58:15.695 [XNIO-2 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-8', selector sun.nio.ch.EPollSelectorImpl@55d26e12
+06:58:15.699 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+06:58:15.714 [XNIO-2 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 Accept', selector sun.nio.ch.EPollSelectorImpl@b7f9f0
+06:58:17.261 [XNIO-2 I/O-4] DEBUG io.undertow.server.handlers.proxy - Sending request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} to target localhost/127.0.0.1:45579 for exchange HttpServerExchange{ GET /}
+06:58:17.330 [XNIO-2 I/O-4] DEBUG io.undertow.server.handlers.proxy - Sent request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} to target 127.0.0.1 for exchange HttpServerExchange{ GET /}
+06:58:17.415 [XNIO-2 I/O-4] DEBUG io.undertow.client.http.HttpClientExchange - request terminated for request to localhost/127.0.0.1:45579 /
+06:58:17.431 [XNIO-1 task-1] DEBUG com.stehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { GET /(query={}, headers={X-Forwarded-Server=[localhost], Upgrade=[h2c], User-Agent=[Java-http-client/11.0.5-ea], Connection=[keep-alive], HTTP2-Settings=[AAEAAEAAAAIAAAABAAMAAABkAAQBAAAAAAUAAEAA], X-Forwarded-Proto=[http], X-Forwarded-Port=[45857], X-Forwarded-For=[127.0.0.1], Content-Length=[0], Host=[localhost:45857], X-Forwarded-Host=[localhost]}, cookies={}): &lt;0 of null content&gt; }
+06:58:17.506 [XNIO-1 task-1] DEBUG com.stehno.ersatz.impl.ErsatzResponse - No encoder configured for content (String) - returning string bytes.
+06:58:17.506 [XNIO-1 task-1] DEBUG com.stehno.ersatz.server.undertow.ErsatzHttpHandler - Response({Content-Type=[text/plain]}): [72, 101, 108, 108, 111]
+06:58:17.749 [XNIO-2 I/O-4] DEBUG io.undertow.server.handlers.proxy - Received response ClientResponse{responseHeaders={Connection=[keep-alive], Content-Type=[text/plain], Content-Length=[5], Date=[Sun, 08 Dec 2019 12:58:17 GMT]}, responseCode=200, status='OK', protocol=HTTP/1.1} for request ClientRequest{path='/', method=GET, protocol=HTTP/1.1} for exchange HttpServerExchange{ GET /}
+06:58:17.765 [XNIO-2 I/O-4] DEBUG io.undertow.client.http.HttpClientExchange - response terminated for request to localhost/127.0.0.1:45579 /
+06:58:17.765 [XNIO-2 I/O-4] DEBUG io.undertow.client.http.HttpClientConnection - exchange complete in connection to localhost/127.0.0.1:45579
+06:58:17.856 [XNIO-2 I/O-4] DEBUG io.undertow.server.handlers.proxy - Sending request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} to target localhost/127.0.0.1:45579 for exchange HttpServerExchange{ GET /foo}
+06:58:17.856 [XNIO-2 I/O-4] DEBUG io.undertow.server.handlers.proxy - Sent request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} to target 127.0.0.1 for exchange HttpServerExchange{ GET /foo}
+06:58:17.857 [XNIO-2 I/O-4] DEBUG io.undertow.client.http.HttpClientExchange - request terminated for request to localhost/127.0.0.1:45579 /foo
+06:58:17.870 [XNIO-1 task-2] DEBUG com.stehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { GET /foo(query={}, headers={X-Forwarded-Server=[localhost], Upgrade=[h2c], User-Agent=[Java-http-client/11.0.5-ea], Connection=[keep-alive], HTTP2-Settings=[AAEAAEAAAAIAAAABAAMAAABkAAQBAAAAAAUAAEAA], X-Forwarded-Proto=[http], X-Forwarded-Port=[45857], X-Forwarded-For=[127.0.0.1], Content-Length=[0], Host=[localhost:45857], X-Forwarded-Host=[localhost]}, cookies={}): &lt;0 of null content&gt; }
+06:58:17.875 [XNIO-1 task-2] DEBUG com.stehno.ersatz.impl.ErsatzResponse - No encoder configured for content (String) - returning string bytes.
+06:58:17.875 [XNIO-1 task-2] DEBUG com.stehno.ersatz.server.undertow.ErsatzHttpHandler - Response({Content-Type=[text/plain]}): [70, 111, 111, 33]
+06:58:17.880 [XNIO-2 I/O-4] DEBUG io.undertow.server.handlers.proxy - Received response ClientResponse{responseHeaders={Connection=[keep-alive], Content-Type=[text/plain], Content-Length=[4], Date=[Sun, 08 Dec 2019 12:58:17 GMT]}, responseCode=200, status='OK', protocol=HTTP/1.1} for request ClientRequest{path='/foo', method=GET, protocol=HTTP/1.1} for exchange HttpServerExchange{ GET /foo}
+06:58:17.881 [XNIO-2 I/O-4] DEBUG io.undertow.client.http.HttpClientExchange - response terminated for request to localhost/127.0.0.1:45579 /foo
+06:58:17.881 [XNIO-2 I/O-4] DEBUG io.undertow.client.http.HttpClientConnection - exchange complete in connection to localhost/127.0.0.1:45579
+06:58:18.269 [Test worker] INFO io.undertow - stopping server: Undertow - 2.0.28.Final
+06:58:18.273 [XNIO-2 I/O-4] DEBUG io.undertow.client - Connection to localhost/127.0.0.1:45579 was closed by the target server
+06:58:18.273 [XNIO-2 I/O-4] DEBUG io.undertow.client.http.HttpClientConnection - close called on connection to localhost/127.0.0.1:45579
+06:58:18.276 [Test worker] INFO com.stehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
+06:58:18.279 [XNIO-2 I/O-4] DEBUG io.undertow.client.http.HttpClientConnection - connection to localhost/127.0.0.1:45579 closed
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 5.6.4</a> at Dec 8, 2019, 6:58:27 AM</p>
+</div>
+</div>
+</body>
+</html>

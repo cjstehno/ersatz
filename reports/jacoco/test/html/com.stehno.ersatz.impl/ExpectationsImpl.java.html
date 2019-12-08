@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExpectationsImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.impl</a> &gt; <span class="el_source">ExpectationsImpl.java</span></div><h1>ExpectationsImpl.java</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2019 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.impl;
+
+import com.stehno.ersatz.server.ClientRequest;
+import com.stehno.ersatz.cfg.*;
+import com.stehno.ersatz.encdec.RequestDecoders;
+import com.stehno.ersatz.encdec.ResponseEncoders;
+import org.hamcrest.Matcher;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import static java.util.Collections.unmodifiableList;
+
+/**
+ * Implementation of the &lt;code&gt;Expectations&lt;/code&gt; interface.
+ */
+@SuppressWarnings(&quot;PMD.BeanMembersShouldSerialize&quot;)
+public class ExpectationsImpl implements Expectations {
+
+<span class="fc" id="L36">    private final List&lt;Request&gt; requests = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L37">    private final Map&lt;String, WebSocketExpectations&gt; webSockets = new LinkedHashMap&lt;&gt;();</span>
+    private final RequestDecoders globalDecoders;
+    private final ResponseEncoders globalEncoders;
+
+<span class="fc" id="L41">    public ExpectationsImpl(final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {</span>
+<span class="fc" id="L42">        this.globalDecoders = globalDecoders;</span>
+<span class="fc" id="L43">        this.globalEncoders = globalEncoders;</span>
+<span class="fc" id="L44">    }</span>
+
+    /**
+     * Removes all expectation configuration, but does not modify global encoders or decoders.
+     */
+    public void clear() {
+<span class="fc" id="L50">        requests.clear();</span>
+<span class="fc" id="L51">    }</span>
+
+    @Override
+    public Request ANY(final Matcher&lt;String&gt; matcher, final Consumer&lt;Request&gt; consumer) {
+<span class="fc" id="L55">        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.ANY, matcher, globalDecoders, globalEncoders), consumer);</span>
+    }
+
+    @Override
+    public Request GET(final Matcher&lt;String&gt; matcher, final Consumer&lt;Request&gt; consumer) {
+<span class="fc" id="L60">        return applyExpectation(new ErsatzRequest(HttpMethod.GET, matcher, globalEncoders), consumer);</span>
+    }
+
+    @Override
+    public Request HEAD(final Matcher&lt;String&gt; matcher, final Consumer&lt;Request&gt; consumer) {
+<span class="fc" id="L65">        return applyExpectation(new ErsatzRequest(HttpMethod.HEAD, matcher, globalEncoders, true), consumer);</span>
+    }
+
+    @Override
+    public RequestWithContent POST(Matcher&lt;String&gt; matcher, Consumer&lt;RequestWithContent&gt; consumer) {
+<span class="fc" id="L70">        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.POST, matcher, globalDecoders, globalEncoders), consumer);</span>
+    }
+
+    @Override
+    public RequestWithContent PUT(Matcher&lt;String&gt; matcher, Consumer&lt;RequestWithContent&gt; config) {
+<span class="fc" id="L75">        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.PUT, matcher, globalDecoders, globalEncoders), config);</span>
+    }
+
+    @Override
+    public Request DELETE(Matcher&lt;String&gt; matcher, Consumer&lt;Request&gt; config) {
+<span class="fc" id="L80">        return applyExpectation(new ErsatzRequest(HttpMethod.DELETE, matcher, globalEncoders), config);</span>
+    }
+
+    @Override
+    public RequestWithContent PATCH(Matcher&lt;String&gt; matcher, Consumer&lt;RequestWithContent&gt; config) {
+<span class="fc" id="L85">        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.PATCH, matcher, globalDecoders, globalEncoders), config);</span>
+    }
+
+    @Override
+    public Request OPTIONS(Matcher&lt;String&gt; matcher, Consumer&lt;Request&gt; config) {
+<span class="fc" id="L90">        return applyExpectation(new ErsatzRequest(HttpMethod.OPTIONS, matcher, globalEncoders), config);</span>
+    }
+
+    @Override
+    public WebSocketExpectations ws(final String path, Consumer&lt;WebSocketExpectations&gt; config) {
+<span class="fc" id="L95">        final WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path);</span>
+
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (config != null) {</span>
+<span class="fc" id="L98">            config.accept(wse);</span>
+        }
+
+<span class="fc" id="L101">        webSockets.put(path, wse);</span>
+
+<span class="fc" id="L103">        return wse;</span>
+    }
+
+    private &lt;R extends Request&gt; R applyExpectation(final R request, final Consumer&lt;R&gt; consumer) {
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        if (consumer != null) {</span>
+<span class="fc" id="L108">            consumer.accept(request);</span>
+        }
+
+<span class="fc" id="L111">        requests.add(request);</span>
+
+<span class="fc" id="L113">        return request;</span>
+    }
+
+    public Set&lt;String&gt; getWebSocketPaths() {
+<span class="fc" id="L117">        return webSockets.keySet();</span>
+    }
+
+    /**
+     * Used to find a request matching the given incoming client request. The first match will be returned.
+     *
+     * @param clientRequest the incoming client request
+     * @return the matching request expectation
+     */
+    public Optional&lt;Request&gt; findMatch(final ClientRequest clientRequest) {
+<span class="fc" id="L127">        return requests.stream().filter(r -&gt; ((ErsatzRequest) r).matches(clientRequest)).findFirst();</span>
+    }
+
+    public WebSocketExpectations findWsMatch(final String path) {
+<span class="fc" id="L131">        return webSockets.get(path);</span>
+    }
+
+    /**
+     * Retrieves an immutable list of the stored request expectations.
+     *
+     * @return the list of request expectations
+     */
+    public List&lt;Request&gt; getRequests() {
+<span class="fc" id="L140">        return unmodifiableList(requests);</span>
+    }
+
+    /**
+     * Used to verify that all request expectations have been called the expected number of times.
+     * &lt;p&gt;
+     * This method will block until the call count expectations are met or the timeout expires.
+     *
+     * @param timeout the amount of time to wait in the specified units
+     * @param unit the timeout unit to be used
+     * @return a value of true if all requests are verified
+     */
+    public boolean verify(final long timeout, final TimeUnit unit) {
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        for (final Request r : requests) {</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">            if (!((ErsatzRequest) r).verify(timeout, unit)) {</span>
+<span class="fc" id="L155">                throw new IllegalArgumentException(&quot;Expectations for &quot; + r + &quot; were not met.&quot;);</span>
+            }
+<span class="fc" id="L157">        }</span>
+
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        for (final var entry : webSockets.entrySet()) {</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">            if (!(((WebSocketExpectationsImpl) entry.getValue()).verify(timeout, unit))) {</span>
+<span class="nc" id="L161">                throw new IllegalArgumentException(&quot;WebSocket expectations for &quot; + entry.getValue() + &quot; were not met.&quot;);</span>
+            }
+<span class="fc" id="L163">        }</span>
+
+<span class="fc" id="L165">        return true;</span>
+    }
+
+    public boolean verify(final long timeout) {
+<span class="nc" id="L169">        return verify(timeout, TimeUnit.SECONDS);</span>
+    }
+
+    public boolean verify() {
+<span class="fc" id="L173">        return verify(1, TimeUnit.SECONDS);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

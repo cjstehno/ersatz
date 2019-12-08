@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DeleteExpectations.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.cfg</a> &gt; <span class="el_source">DeleteExpectations.java</span></div><h1>DeleteExpectations.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2019 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.cfg;
+
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import org.hamcrest.Matcher;
+import space.jasan.support.groovy.closure.ConsumerWithDelegate;
+
+import java.util.function.Consumer;
+
+import static com.stehno.ersatz.match.ErsatzMatchers.pathMatcher;
+import static groovy.lang.Closure.DELEGATE_FIRST;
+
+/**
+ * Defines the available DELETE request expectations.
+ */
+public interface DeleteExpectations {
+
+    /**
+     * Allows configuration of a DELETE request expectation.
+     *
+     * @param path the expected request path
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    default Request DELETE(String path) {
+<span class="fc" id="L40">        return DELETE(pathMatcher(path));</span>
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation.
+     *
+     * @param matcher the path matcher
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    default Request DELETE(Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L50">        return DELETE(matcher, (Consumer&lt;Request&gt;) null);</span>
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation using the Groovy DSL.
+     *
+     * @param path the expected request path
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     * @param closure the Groovy closure containing the configuration
+     */
+    default Request DELETE(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="nc" id="L61">        return DELETE(pathMatcher(path), closure);</span>
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation using the Groovy DSL.
+     *
+     * @param matcher the path matcher
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     * @param closure the Groovy closure containing the configuration
+     */
+    default Request DELETE(Matcher&lt;String&gt; matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
+<span class="nc" id="L72">        return DELETE(matcher, ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation using the provided &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt;. The &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt; will
+     * have an instance of &lt;code&gt;Request&lt;/code&gt; passed into it for configuration.
+     *
+     * @param path the expected request path
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     * @param config the configuration consumer
+     */
+    default Request DELETE(String path, Consumer&lt;Request&gt; config) {
+<span class="nc" id="L84">        return DELETE(pathMatcher(path), config);</span>
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation using the provided &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt;. The &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt; will
+     * have an instance of &lt;code&gt;Request&lt;/code&gt; passed into it for configuration.
+     *
+     * @param matcher the path matcher
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     * @param config the configuration consumer
+     */
+    Request DELETE(Matcher&lt;String&gt; matcher, Consumer&lt;Request&gt; config);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleIdentityManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">com.stehno.ersatz.server.undertow</a> &gt; <span class="el_source">SimpleIdentityManager.java</span></div><h1>SimpleIdentityManager.java</h1><pre class="source lang-java linenums">/*
+ * Copyright (C) 2019 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.server.undertow;
+
+import io.undertow.security.idm.*;
+
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+
+import static io.undertow.util.HexConverter.convertToHexBytes;
+import static java.lang.String.format;
+import static java.lang.String.valueOf;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+/**
+ * IdentityManager used by the &lt;code&gt;BasicAuthFeature&lt;/code&gt;. The default username is &quot;admin&quot; and the default password is &quot;$3cr3t&quot;.
+ */
+@SuppressWarnings(&quot;PMD.BeanMembersShouldSerialize&quot;)
+public class SimpleIdentityManager implements IdentityManager {
+
+    private final String username;
+    private final String password;
+
+<span class="fc" id="L38">    public SimpleIdentityManager(final String username, final String password) {</span>
+<span class="fc" id="L39">        this.username = username;</span>
+<span class="fc" id="L40">        this.password = password;</span>
+<span class="fc" id="L41">    }</span>
+
+    @Override
+    public Account verify(final Account account) {
+<span class="fc" id="L45">        throw new UnsupportedOperationException();</span>
+    }
+
+    @Override
+    public Account verify(final String id, final Credential credential) {
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (credential instanceof PasswordCredential) {</span>
+<span class="fc bfc" id="L51" title="All 4 branches covered.">            if (username.equals(id) &amp;&amp; password.equals(valueOf(((PasswordCredential) credential).getPassword()))) {</span>
+<span class="fc" id="L52">                return new SimpleAccount(id);</span>
+            }
+
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        } else if (credential instanceof DigestCredential) {</span>
+            try {
+<span class="fc" id="L57">                final DigestCredential digestCredential = (DigestCredential) credential;</span>
+<span class="fc" id="L58">                final var bytes = digestCredential.getAlgorithm().getMessageDigest().digest((format(&quot;%s:%s:%s&quot;, username, digestCredential.getRealm(), password)).getBytes(UTF_8));</span>
+
+<span class="fc bfc" id="L60" title="All 2 branches covered.">                if (digestCredential.verifyHA1(convertToHexBytes(bytes))) {</span>
+<span class="fc" id="L61">                    return new SimpleAccount(id);</span>
+                }
+
+<span class="nc" id="L64">            } catch (NoSuchAlgorithmException e) {</span>
+<span class="nc" id="L65">                return null;</span>
+<span class="fc" id="L66">            }</span>
+
+        }
+
+<span class="fc" id="L70">        return null;</span>
+    }
+
+    @Override
+    public Account verify(Credential credential) {
+<span class="fc" id="L75">        throw new UnsupportedOperationException();</span>
+    }
+
+    /**
+     * Creates the encoded credential string required for the BASIC authentication header.
+     *
+     * @param user the username
+     * @param pass the password
+     * @return the encoded credential string
+     */
+    public static String encodedCredential(final String user, final String pass) {
+<span class="fc" id="L86">        return &quot;Basic &quot; + Base64.getEncoder().encodeToString((user + &quot;:&quot; + pass).getBytes(UTF_8));</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

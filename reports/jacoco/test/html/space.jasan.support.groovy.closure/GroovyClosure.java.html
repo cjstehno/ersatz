@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GroovyClosure.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">space.jasan.support.groovy.closure</a> &gt; <span class="el_source">GroovyClosure.java</span></div><h1>GroovyClosure.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2019 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package space.jasan.support.groovy.closure;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import groovy.lang.Closure;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Map;
+
+/*
+    I hate to do this, but I only use a couple classes from this library
+    (https://github.com/jasanspace/groovy-closure-support/blob/master/src/main/java/space/jasan/support/groovy/closure/ConsumerWithDelegate.java)
+    and it does not publish to Maven Central (which I understand), but I cannot remove support for my library simply
+    because they don't want to publish to the most-used (and most annoying) public repository.
+ */
+
+/**
+ * Makes Java API Groovy Closure friendly.
+ */
+<span class="nc" id="L37">public class GroovyClosure {</span>
+
+    private static final int DELEGATE_FIRST = 1;
+    private static final String CLOSURE_CLASS_NAME = &quot;groovy.lang.Closure&quot;;
+    private static final Class&lt;?&gt; CLOSURE_CLASS;
+    private static final String CONVERSION_HANDLER_CLASS_NAME = &quot;org.codehaus.groovy.runtime.ConversionHandler&quot;;
+    private static final Class&lt;?&gt; CONVERSION_HANDLER_CLASS;
+    private static final String SET_DELEGATE_NAME = &quot;setDelegate&quot;;
+    private static final Method SET_DELEGATE_METHOD;
+    private static final String SET_RESOLVE_STRATEGY_NAME = &quot;setResolveStrategy&quot;;
+    private static final Method SET_RESOLVE_STRATEGY_METHOD;
+    private static final String GET_DELEGATE_NAME = &quot;getDelegate&quot;;
+    private static final Method GET_DELEGATE_METHOD;
+    private static final String SAM_PROXY_SUFFIX = &quot;_groovyProxy&quot;;
+    private static final String SAM_PROXY_MAP_FIELD = &quot;$closures$delegate$map&quot;;
+
+    static {
+<span class="fc" id="L54">        CLOSURE_CLASS = getClassIfAvailable(CLOSURE_CLASS_NAME);</span>
+<span class="fc" id="L55">        CONVERSION_HANDLER_CLASS = getClassIfAvailable(CONVERSION_HANDLER_CLASS_NAME);</span>
+
+<span class="fc" id="L57">        Method setDelegateMethod = null;</span>
+<span class="fc" id="L58">        Method setResolveStrategyMethod = null;</span>
+
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">        if (CLOSURE_CLASS != null) {</span>
+            try {
+<span class="fc" id="L62">                setDelegateMethod = CLOSURE_CLASS.getMethod(SET_DELEGATE_NAME, Object.class);</span>
+<span class="fc" id="L63">                setResolveStrategyMethod = CLOSURE_CLASS.getMethod(SET_RESOLVE_STRATEGY_NAME, int.class);</span>
+<span class="nc" id="L64">            } catch (NoSuchMethodException nsme) {</span>
+<span class="nc" id="L65">                throw new IllegalStateException(&quot;Closure class does not contain expected methods&quot;, nsme);</span>
+<span class="fc" id="L66">            }</span>
+        }
+<span class="fc" id="L68">        SET_DELEGATE_METHOD = setDelegateMethod;</span>
+<span class="fc" id="L69">        SET_RESOLVE_STRATEGY_METHOD = setResolveStrategyMethod;</span>
+
+<span class="fc" id="L71">        Method getDelegateMethod = null;</span>
+
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        if (CONVERSION_HANDLER_CLASS != null) {</span>
+            try {
+<span class="fc" id="L75">                getDelegateMethod = CONVERSION_HANDLER_CLASS.getMethod(GET_DELEGATE_NAME);</span>
+<span class="nc" id="L76">            } catch (NoSuchMethodException nsme) {</span>
+<span class="nc" id="L77">                throw new IllegalStateException(&quot;Converted closure class does not contain expected methods&quot;, nsme);</span>
+<span class="fc" id="L78">            }</span>
+        }
+<span class="fc" id="L80">        GET_DELEGATE_METHOD = getDelegateMethod;</span>
+<span class="fc" id="L81">    }</span>
+
+    private static Class&lt;?&gt; getClassIfAvailable(String name) {
+        Class&lt;?&gt; closureClass;
+        try {
+<span class="fc" id="L86">            closureClass = Class.forName(name, false, ClassLoader.getSystemClassLoader());</span>
+<span class="nc" id="L87">        } catch (ClassNotFoundException ignored) {</span>
+<span class="nc" id="L88">            closureClass = null;</span>
+<span class="fc" id="L89">        }</span>
+<span class="fc" id="L90">        return closureClass;</span>
+    }
+
+    /**
+     * Attempts to set delegate of object which might be a Closure.
+     * &lt;p&gt;
+     * This usually happens when the object is functional interface or single abstract method class. Only the first
+     * use case is supported at the moment.
+     * &lt;p&gt;
+     * The possibility of delegate being set should be documented with @DelegatesTo annotation (use provided scope to
+     * groovy dependency to retain the annotation to Groovy enabled projects).
+     *
+     * @param potentialClosure object which might be backed by Groovy closure
+     * @param delegateWanted   delegate to be set if the object is backed by Groovy closure
+     * @param &lt;T&gt;              the type of the object which might be backed by Groovy closure
+     * @return always the original potentialClosure parameter which might have the delegate set if possible
+     */
+    @SuppressFBWarnings(&quot;REC_CATCH_EXCEPTION&quot;)
+    public static &lt;T&gt; T setDelegate(T potentialClosure, Object delegateWanted) {
+<span class="pc bpc" id="L109" title="4 of 8 branches missed.">        if (potentialClosure == null || CLOSURE_CLASS == null || SET_RESOLVE_STRATEGY_METHOD == null || SET_DELEGATE_METHOD == null) {</span>
+<span class="nc" id="L110">            return potentialClosure;</span>
+        }
+
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        if (Proxy.isProxyClass(potentialClosure.getClass())) {</span>
+<span class="nc" id="L114">            InvocationHandler handler = Proxy.getInvocationHandler(potentialClosure);</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">            if (CONVERSION_HANDLER_CLASS.isInstance(handler)) {</span>
+                try {
+<span class="nc" id="L117">                    Object shouldBeClosure = GET_DELEGATE_METHOD.invoke(handler);</span>
+<span class="nc" id="L118">                    setDelegate(shouldBeClosure, delegateWanted);</span>
+<span class="nc" id="L119">                } catch (Exception e) {</span>
+<span class="nc" id="L120">                    throw new RuntimeException(&quot;Failed to get closure delegate from &quot; + handler, e);</span>
+<span class="nc" id="L121">                }</span>
+            }
+<span class="pc bfc" id="L123" title="All 2 branches covered.">        } else if (CLOSURE_CLASS.isInstance(potentialClosure)) {</span>
+            try {
+<span class="fc" id="L125">                SET_RESOLVE_STRATEGY_METHOD.invoke(potentialClosure, DELEGATE_FIRST);</span>
+<span class="fc" id="L126">                SET_DELEGATE_METHOD.invoke(potentialClosure, delegateWanted);</span>
+<span class="nc" id="L127">            } catch (Exception e) {</span>
+<span class="nc" id="L128">                throw new RuntimeException(&quot;Failed to set delegate &quot; + delegateWanted + &quot; to &quot; + potentialClosure, e);</span>
+<span class="fc" id="L129">            }</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        } else if (potentialClosure.getClass().getSimpleName().endsWith(SAM_PROXY_SUFFIX)) {</span>
+            try {
+<span class="fc" id="L132">                Class&lt;?&gt; proxyClass = potentialClosure.getClass();</span>
+<span class="fc" id="L133">                Field field = proxyClass.getDeclaredField(SAM_PROXY_MAP_FIELD);</span>
+<span class="fc" id="L134">                field.setAccessible(true);</span>
+<span class="fc" id="L135">                Object delegateMapValue = field.get(potentialClosure);</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">                if (!(delegateMapValue instanceof Map)) {</span>
+<span class="nc" id="L137">                    throw new IllegalStateException(&quot;Map field is not a map: &quot; + delegateMapValue);</span>
+                }
+<span class="fc" id="L139">                Map delegateMap = (Map) delegateMapValue;</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">                if (delegateMap.size() != 1) {</span>
+<span class="nc" id="L141">                    throw new IllegalStateException(&quot;Map field contains unexpected number of items: &quot; + delegateMap.size());</span>
+                }
+<span class="fc" id="L143">                setDelegate(delegateMap.values().iterator().next(), delegateWanted);</span>
+<span class="nc" id="L144">            } catch (Exception e) {</span>
+<span class="nc" id="L145">                throw new RuntimeException(&quot;Failed to set closure delegate to &quot; + potentialClosure, e);</span>
+<span class="fc" id="L146">            }</span>
+        }
+
+<span class="fc" id="L149">        return potentialClosure;</span>
+    }
+
+    /**
+     * Returns closure's owner if the object is closure or the object self otherwise
+     * @param object maybe a closure
+     * @return closure's owner if the object is closure or the object self otherwise
+     */
+    public static Object getPropagatedOwner(Object object) {
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        if (object instanceof Closure) {</span>
+<span class="fc" id="L159">            return ((Closure) object).getOwner();</span>
+        }
+<span class="fc" id="L161">        return object;</span>
+    }
+
+    public static &lt;T&gt; Closure&lt;T&gt; cloneWithTopLevelOwner(Closure&lt;T&gt; closure) {
+<span class="fc" id="L165">        return cloneWithTopLevelOwner(closure, closure.getDelegate());</span>
+    }
+
+    public static &lt;T&gt; Closure&lt;T&gt; cloneWithTopLevelOwner(Closure&lt;T&gt; closure, Object delegate) {
+<span class="fc" id="L169">        return cloneWithTopLevelOwner(closure, delegate, Closure.DELEGATE_FIRST);</span>
+    }
+
+    public static &lt;T&gt; Closure&lt;T&gt; cloneWithTopLevelOwner(Closure&lt;T&gt; closure, Object delegate, int strategy) {
+<span class="fc" id="L173">        Closure&lt;T&gt; clone = closure.rehydrate(delegate, getPropagatedOwner(closure.getOwner()), closure.getThisObject());</span>
+<span class="fc" id="L174">        clone.setResolveStrategy(strategy);</span>
+<span class="fc" id="L175">        return clone;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>
