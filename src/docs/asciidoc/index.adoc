@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno <chris@stehno.com>
-v1.9.0.1, October 2018
+v2.0.0, January 2020
 :toc: left
 :toclevels: 4
 
@@ -25,6 +25,26 @@ allows two main forms, a Java-style chained builder, and a Groovy DSL, both of w
 Ersatz is developed with testing in mind. It does not favor any specific testing framework, but it does work well with both the JUnit and Spock
 frameworks.
 
+== What's New in 2.0
+
+* Not directly backward compatible with 1.x codebase (see migration notes below).
+* Requires Java 11+.
+* Refactored code and packaging as well as code-conversion from Groovy to Java (no loss of support for using with Groovy).
+* Removed deprecated methods.
+* Refactored the HTTP method names to be uppercase.
+* Added optional timeout for standard request verify calls.
+* Converted the underlying response content from String to byte[] (also changed response encoder API)
+* Refactored the underlying server into a more abstract integration so that it may be swapped out in the future.
+* Pulled external Closure helper API code into codebase (to avoid breaking maven-central support)
+* Refactored the JUnit support (4 and 5)
+
+=== Migrating to 2.0
+
+* Change all HTTP method names to uppercase (e.g. if you have a `head('/foo')` call, change it to `HEAD('/foo')`).
+* Replace any deprecated method usages with appropriate replacements.
+* If you use the `ErsatzProxy` or JUnit helper classes, you will need to change the package information.
+* Most of the DSL classes were repackaged and will require updates to the package names imported.
+
 == What's New in 1.9
 
 * Corrections to the closure variable scoping.
@@ -47,14 +67,14 @@ methods:
 
 For Gradle add the following to your `build.gradle` file:
 
-    testCompile 'com.stehno.ersatz:ersatz:1.9.0.1'
+    testCompile 'com.stehno.ersatz:ersatz:2.0.0'
 
 For Maven add the code below to your `pom.xml` file:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>1.9.0.1</version>
+        <version>2.0.0</version>
         <scope>test</scope>
     </dependency>
 
@@ -73,11 +93,11 @@ class HelloSpec extends Specification {
         ErsatzServer ersatz = new ErsatzServer()
 
         ersatz.expectations {
-            get('/say/hello'){
+            GET('/say/hello'){
                 called 1
                 query 'name','Ersatz'
                 responder {
-                    content 'Hello Ersatz','text/plain'
+                    body 'Hello Ersatz','text/plain'
                 }
             }
         }
@@ -107,7 +127,7 @@ A similar test could be written in JUnit with Java 8, as follows (using the prov
 .HelloTest.java
 ----
 import com.stehno.ersatz.ErsatzServer;
-import com.stehno.ersatz.ContentType;
+import com.stehno.ersatz.cfg.ContentType;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.Before;
@@ -119,7 +139,7 @@ import static org.junit.Assert.assertEquals;
 public class HelloTest {
 
     @Rule
-    public ErsatzServerRule ersatzServer = new ErsatzServerRule();
+    public ErsatzServerRule ersatzServer = new ErsatzServerRule(this);
 
     private OkHttpClient client;
 
@@ -131,23 +151,23 @@ public class HelloTest {
     @Test
     public sayHello(){
         ersatzServer.expectations(expectations -> {
-            expectations.get("/say/hello").called(1).query("name","Ersatz")
-                .responder().body("Hello Ersatz", ContentType.TEXT_PLAIN)
-        })
+            expectations.GET("/say/hello").called(1).query("name","Ersatz")
+                .responder().body("Hello Ersatz", ContentType.TEXT_PLAIN);
+        });
 
         String url = ersatzServer.getHttpUrl() + "/say/hello?name=Ersatz";
-        okhttp3.Request request = new okhttp3.Request.Builder().url(url)).build();
+        okhttp3.Request request = new okhttp3.Request.Builder().url(url).build();
 
         assertEquals("Hello Ersatz", client.newCall(request).execute().body().string());
     }
 }
 ----
 
-The two testing approaches are interchangeable and equally supported.
+The two testing approaches are interchangeable and equally supported. There is also a JUnit 5 extension, see `ErsatzServerExtension` for usage.
 
 == Ersatz Server
 
-The core component for the Ersatz Mock Server is the `com.stehno.erstaz.ErsatzServer` class. It is used to manage the server lifecycle as well as
+The core component for the Ersatz Mock Server is the `com.stehno.ersatz.ErsatzServer` class. It is used to manage the server lifecycle as well as
 provide a configuration interface.
 
 === Lifecycle
@@ -194,7 +214,7 @@ Once the request expectations are configured, the server will automatically star
 the server must be started by calling the `ErsatzServer::start()` method. This will start the underlying embedded HTTP server and register the
 configured expectations. If the server is not started, you will receive connection errors during testing.
 
-Further details about configuration options and examples can be found in the Configuration section of this user guide.
+Further details about configuration options and examples can be found in the Expectation Configuration section of this user guide.
 
 ==== Testing
 
@@ -210,7 +230,7 @@ interface provides a `called` method to add call count verification per configur
 
 [source,groovy]
 ----
-post('/user').body(content, 'application/json').called(1)
+POST('/user').body(content, 'application/json').called(1)
     .responds().body(successContent, 'application/json')
 ----
 
@@ -218,7 +238,8 @@ This would match a `POST` request to `/user` with request body content matching 
 `verify()` is called it will return `true` if this request has only been matched once, otherwise it will return `false`. This allows testing to
 ensure that requests are not made more often than expected or at unexpected times.
 
-Verification is optional and may simply be skipped if not needed.
+Verification is optional and may simply be skipped if not needed, though generally if you specify request `called` counts, you _should_ end your
+test with a call to `verify` to ensure that the calls were made.
 
 ==== Cleanup
 
@@ -238,15 +259,15 @@ after each test method, though the `start()` method must still be called manuall
 
 [source,java]
 ----
-@Rule ErsatzServerRule ersatzServer = new ErsatzServerRule()
+@Rule public ErsatzServerRule ersatzServer = new ErsatzServerRule(this);
 
 @Test public void hello(){
     ersatzServer.expectations(expectations -> {
-        expectations.get("/testing").responds().body("ok");
+        expectations.GET("/testing").responds().body("ok");
     }).start();
 
     okhttp3.Response response = new OkHttpClient().newCall(
-        new Request.Builder().url(format("%s/testing", ersatzServer.getHttpUrl())).build()
+        new Request.Builder().url(ersatzServer.httpUrl("/testing")).build()
     ).execute();
 
     assertEquals(200, response.code());
@@ -260,16 +281,16 @@ Also, there is an `Extension` for JUnit 5 providing a similar interface:
 
 [source,java]
 ----
-@ExtendWith(ErsatzServerSupport.class)
+@ExtendWith(ErsatzServerExtension.class)
 class Junit5Test {
 
-    private ErsatzServer server = new ErsatzServer();
+    private ErsatzServer server;
     private final HttpClient http = new HttpClient();
 
     @Test @DisplayName("Testing JUnit 5 Support")
     void testing_junit5_support() throws IOException {
         server.expectations(expects -> {
-            expects.get("/junit5").responds().code(200).body("Hi", TEXT_PLAIN);
+            expects.GET("/junit5").responds().code(200).body("Hi", TEXT_PLAIN);
         });
 
         assertThat(http.get(server.httpUrl("/junit5")).body().string(), equalTo("Hi"));
@@ -339,15 +360,12 @@ def ersatz = new ErsatzServer({
 This toggling capability allows for an external configuration source to determine whether or not auto-start is enabled. An instance of `ErsatzServer`
 may be started multiple times without any effect, only the first call to `start()` will take effect, though any new expectations will be applied.
 
-TIP: While the auto-start methods may be used in the constructor or instance configuration, it is generally meant for use in the constructor, as a
-global configuration.
-
 === Content Translation
 
 The translation of request/response body content between types is performed using:
 
 * Decoders to convert incoming request body content into an expected comparison type
-* Encoders to convert outgoing response body configuration types into HTTP string data
+* Encoders to convert outgoing response body configuration types into HTTP byte[] data
 
 The request/response content body decoders/encoders are configured in a layered manner so that they may be configured and shared across multiple
 instances without copying the configuration.
@@ -377,7 +395,7 @@ As an example, the default JSON decoder (provided in `com.stehno.ersatz.Decoders
 [source,groovy]
 ----
 static final BiFunction<byte[], DecodingContext, Object> parseJson = { byte[] content, DecodingContext ctx ->
-    new JsonSlurper().parse(content ?: '{}'.bytes)
+    new JsonSlurper().parse(content ?: '{}').bytes
 }
 ----
 
@@ -397,32 +415,32 @@ The two approaches are functionally the same.
 ==== Encoders
 
 The Encoders are used to convert response configuration data types into the outbound request content string. They are implemented as a
-`Function<Object,String>` with the input `Object` being the configuration object being converted, and the `String` is the return type.
+`Function<Object,byte[]>` with the input `Object` being the configuration object being converted, and the `byte[]` is the return type.
 
 The various configuration levels have the same method signature:
 
 [source,groovy]
 ----
-ServerConfig encoder(String contentType, Class objectType, Function<Object, String> encoder)
+ServerConfig encoder(String contentType, Class objectType, Function<Object, byte[]> encoder)
 ----
 
 The `contentType` is the response content type to be encoded and the `objectType` is the type of configuration object to be encoded - this allows for
 the same content-type to have different encoders for different configuration object types.
 
-A simple example of an encoder would be the default JSON encoder (provided in the `com.stehno.ersatz.Encoders` class):
+A simple example of an encoder would be the default JSON encoder (provided in the `com.stehno.ersatz.encdec.Encoders` class):
 
 [source,groovy]
 ----
-static final Function<Object, String> json = { obj -> obj != null ? toJson(obj) : '{}' }
+static final Function<Object, byte[]> json = { obj -> (obj != null ? toJson(obj) : '{}').bytes }
 ----
 
-You may also configure encoders as Groovy `Closure`s with the same parameters:
+You may also configure encoders as a Groovy `Closure` with the same parameters:
 
 [source,groovy]
 ----
 def server = new ErsatzServer({
     encoder('application/json',Map){ obj->
-        obj != null ? toJson(obj) : '{}'
+        (bj != null ? toJson(obj) : '{}').bytes
     }
 })
 ----
@@ -444,14 +462,14 @@ general types of methods are:
 
 The `Consumer<Request>` methods will provide a `Consumer<Request>` implementation to perform the configuration on a `Request` instance passed into
 the consumer function. The `path` strings in the verb methods may be called with `*` as a wildcard value - this will match any request with that
-request method (e.g. `get('*')` would match any GET request while `any('*')` could be used to match _any_ request made on the server).
+request method (e.g. `GET('*')` would match any GET request while `any('*')` could be used to match _ANY_ request made on the server).
 
 The `Closure` support is similar to that of the consumer; however, this is a Groovy DSL approach where the `Closure` operations are delegated onto the
 a `Request` instance in order to configure the request.
 
 All of the expectation method types return an instance of the request being configured (`Request` or `RequestWithContent`).
 
-There is also an `any` request method matcher configuration which will match a request regardless of the request method, if it matches the rest of the
+There is also an `ANY` request method matcher configuration which will match a request regardless of the request method, if it matches the rest of the
 configured criteria.
 
 The primary role of expectations is to provide a means of matching incoming requests in order to respond in a desired and repeatable manner. They are
@@ -462,7 +480,7 @@ The configuration interfaces support three main approaches to configuration, a c
 
 [source,groovy]
 ----
-head('/foo')
+HEAD('/foo')
     .query('a','42')
     .cookie('stamp','1234')
     .respond().header('ok','true')
@@ -473,7 +491,7 @@ language, the Groovy DSL approach would code the same thing as:
 
 [source,groovy]
 ----
-head('/foo'){
+HEAD('/foo'){
     query 'a', '42'
     cookie 'stamp', '1234'
     responder {
@@ -487,7 +505,7 @@ Groovy DSL, using the `Consumer<?>` methods of the interface, this would yield:
 
 [source,java]
 ----
-head('/foo', req -> {
+HEAD('/foo', req -> {
     req.query("a", "42")
     req.cookie("stamp", "1234")
     req.responder( res-> {
@@ -507,7 +525,7 @@ configure multiple responses, in order:
 
 [source,groovy]
 ----
-get('/something'){
+GET('/something'){
     responder {
         content 'Hello'
     }
@@ -555,7 +573,7 @@ A `HEAD` request is used to retrieve the headers for a URL, basically a `GET` re
 [source,groovy]
 ----
 ersatzServer.expectations {
-    head('/something').responds().header('X-Alpha','Interesting-data').code(200)
+    HEAD('/something').responds().header('X-Alpha','Interesting-data').code(200)
 }
 ----
 
@@ -569,7 +587,7 @@ using the `get()` methods, as follows:
 [source,groovy]
 ----
 ersatzServer.expectations {
-    get('/something').responds().body('This is INTERESTING!', 'text/plain').code(200)
+    GET('/something').responds().body('This is INTERESTING!', 'text/plain').code(200)
 }
 ----
 
@@ -587,8 +605,8 @@ In order to mock out an `OPTIONS` request, you will want to respond with a provi
 [source,groovy]
 ----
 ersatzServer.expectations {
-    options('/options').responds().allows(GET, POST).code(200)
-    options('/*').responds().allows(DELETE, GET, OPTIONS).code(200)
+    OPTIONS('/options').responds().allows(GET, POST).code(200)
+    OPTIONS('/*').responds().allows(DELETE, GET, OPTIONS).code(200)
 }
 ----
 
@@ -603,10 +621,10 @@ The `POST` request is often used to send browser form data to a backend server. 
 [source,groovy]
 ----
 ersatzServer.expectations {
-    post('/form'){
+    POST('/form'){
         body([first:'John', last:'Doe'], APPLICATION_URLENCODED)
         responder {
-            body('{ status:'saved' }', APPLICATION_JSON)
+            body('{ status:"saved" }', APPLICATION_JSON)
         }
     }
 }
@@ -621,7 +639,7 @@ A `PUT` request is similar to a `POST` except that while there is request conten
 [source,groovy]
 ----
 ersatzServer.expectations {
-    put('/form'){
+    PUT('/form'){
         query('id','1234')
         body([middle:'Q'], APPLICATION_URLENCODED)
         responder {
@@ -640,7 +658,7 @@ A `DELETE` request has not request or response content. It would look something 
 [source,groovy]
 ----
 ersatzServer.expectations {
-    delete('/user').query('id','1234').responds().code(200)
+    DELETE('/user').query('id','1234').responds().code(200)
 }
 ----
 
@@ -653,7 +671,7 @@ The `PATCH` request method creates a request that can have body content; however
 [source,groovy]
 ----
 ersatzServer.expectations {
-    patch('/user'){
+    PATCH('/user'){
         query('id','1234')
         body('{ "middle":"Q"}', APPLICATION_JSON)
         responder {
@@ -842,11 +860,11 @@ rich and expressive matching configuration. Consider the following configuration
 [source,groovy]
 ----
 server.expectations {
-    get( startsWith('/foo') ){
+    GET( startsWith('/foo') ){
         called greaterThanOrEqualTo(2)
         query 'user-key', notNullValue()
         responder {
-            content 'ok', TEXT_PLAIN
+            body 'ok', TEXT_PLAIN
         }
     }
 }
@@ -855,8 +873,8 @@ server.expectations {
 This configuration would match a `GET` request to a URL starting with `/foo`, with a non-null query string "user-key" value. This request matcher is
  expected to be called at least twice and it will respond with a `text/plain` response of `ok`.
 
-The methods that accept matchers will have a non-matcher version which provides a sensible default matcher (e.g. `get(Matcher)` has `get(String)` which
-provides delegates to `get( equalTo( string ) )` to wrap the provided path string in a matcher.
+The methods that accept matchers will have a non-matcher version which provides a sensible default matcher (e.g. `GET(Matcher)` has `GET(String)` which
+provides delegates to `GET( equalTo( string ) )` to wrap the provided path string in a matcher.
 
 If you are using Groovy, you can actually replace Hamcrest matchers with a `Closure` emulating the same interface - basically a method that takes
 the parameter and returns whether or not the condition was matched. The same example above could be re-written as:
@@ -864,11 +882,11 @@ the parameter and returns whether or not the condition was matched. The same exa
 [source,groovy]
 ----
 server.expectations {
-    get({ p-> p.startsWith('/foo') }){
+    GET({ p-> p.startsWith('/foo') }){
         called { i-> i >= 2 }
         query 'user-key', notNullValue()
         responder {
-            content 'ok', TEXT_PLAIN
+            body 'ok', TEXT_PLAIN
         }
     }
 }
@@ -878,7 +896,7 @@ This allows for additional flexibility in configuring expectations.
 
 ==== Matching Cookies
 
-There are four methods for matching cookies associated with a request (found in the `com.stehno.ersatz.Request` interface):
+There are four methods for matching cookies associated with a request (found in the `com.stehno.ersatz.cfg.Request` interface):
 
 ===== By Name and Matcher
 
@@ -887,7 +905,7 @@ The `cookie(String name, Matcher<Cookie> matcher)` method configures the specifi
 [source,groovy]
 ----
 server.expectations {
-    get('/somewhere'){
+    GET('/somewhere'){
         cookie 'user-key', CookieMatcher.cookieMatcher {
             value startsWith('key-')
             domain 'mydomain.com'
@@ -897,7 +915,7 @@ server.expectations {
 }
 ----
 
-The Hamcrest matcher used may be a custom `Matcher` implementation, or the provided `com.stehno.ersatz.CookieMatcher`.
+The Hamcrest matcher used may be a custom `Matcher` implementation, or the provided `com.stehno.ersatz.match.CookieMatcher`.
 
 ===== By Name and Value
 
@@ -907,7 +925,7 @@ specified value. An example:
 [source,groovy]
 ----
 server.expectations {
-    get('/somewhere').cookie('user-key', 'key-23435HJKSDGF86').responds().code(200)
+    GET('/somewhere').cookie('user-key', 'key-23435HJKSDGF86').responds().code(200)
 }
 ----
 
@@ -916,7 +934,7 @@ This is equivalent to calling the matcher-based version of the method:
 [source,groovy]
 ----
 server.expectations {
-    get('/somewhere'){
+    GET('/somewhere'){
         cookie 'user-key', CookieMatcher.cookieMatcher {
             value equalTo('key-23435HJKSDGF86')
         }
@@ -934,7 +952,7 @@ an 'app-id' cookie with a value of "user-manager", and finally the request shoul
 [source,groovy]
 ----
 server.expectations {
-    get('/something'){
+    GET('/something'){
         cookies([
             'user-key': cookieMatcher {
                 value startsWith('key-')
@@ -949,8 +967,8 @@ server.expectations {
 
 ==== Overall Matcher
 
-The `cookies(Matcher<Map<String,Cookie>)` method is used to specify a `Matcher` for the map of cookie names to `com.stehno.ersatz.Cookie` objects. The
-matcher may be any custom matcher, or the `com.stehno.ersatz.NoCookiesMatcher` may be used to match for the case where no cookies should be defined
+The `cookies(Matcher<Map<String,Cookie>)` method is used to specify a `Matcher` for the map of cookie names to `com.stehno.ersatz.cfg.Cookie` objects. The
+matcher may be any custom matcher, or the `com.stehno.ersatz.match.NoCookiesMatcher` may be used to match for the case where no cookies should be defined
 in the request:
 
 [source,groovy]
@@ -972,7 +990,7 @@ expectation to HTTP or HTTPS, apply the `protocol(String)` matcher method with t
 [source,groovy]
 ----
 server.expectations {
-    get('/something').protocol('https').responding('thing')
+    GET('/something').protocol('https').responding('thing')
 }
 ----
 
@@ -1040,7 +1058,7 @@ To configure a chunked response, provide a `ChunkingConfig` to the response conf
 [source,groovy]
 ----
 ersatzServer.expectations {
-    get('/chunky').responder {
+    GET('/chunky').responder {
         body 'This is chunked content', TEXT_PLAIN
         chunked {
             chunks 3
@@ -1064,8 +1082,7 @@ configured using the `MultipartRequestContent` class to build up an equivalent m
 [source,groovy]
 ----
 ersatz.expectataions {
-    post('/upload') {
-        decoders decoders
+    POST('/upload') {
         decoder MULTIPART_MIXED, Decoders.multipart
         decoder IMAGE_PNG, Decoders.passthrough
         body multipart {
@@ -1074,7 +1091,7 @@ ersatz.expectataions {
             part 'imageFile', 'image.png', IMAGE_PNG, imageBytes
         }, MULTIPART_MIXED
         responder {
-            content 'ok'
+            body 'ok'
         }
     }
 }
@@ -1086,8 +1103,7 @@ provide a more flexible Hamcrest-based matching of the request body:
 [source,groovy]
 ----
 server.expectations {
-    post('/upload') {
-        decoders decoders
+    POST('/upload') {
         decoder MULTIPART_MIXED, Decoders.multipart
         decoder IMAGE_PNG, Decoders.passthrough
         body multipartMatcher {
@@ -1096,7 +1112,7 @@ server.expectations {
             part 'imageFile', endsWith('.png'), IMAGE_PNG, notNullValue()
         }, MULTIPART_MIXED
         responder {
-            content 'ok'
+            body 'ok'
         }
     }
 }
@@ -1123,8 +1139,8 @@ response).
 The content parts are provided as "field" parts with only a field name and value, or as "file" parts with a field name, content-type, file name and
 content object. These configurations are made on the `MultipartResponseContent` object via DSL or functional interface.
 
-The part content objects are serialized for data transfer as `String` content using configured encoders, which are simply instances of
-`Function<Object,String>` used to do the object to string conversion. These are configured either on a per-response basis or by sharing a
+The part content objects are serialized for data transfer as `byte[]` content using configured encoders, which are simply instances of
+`Function<Object,byte[]>` used to do the object to byte array conversion. These are configured either on a per-response basis or by sharing a
 `ResponseEncoders` instance between multipart configurations - the shared encoders will be used if not explicitly overridden by the multipart
 response configuration. No part encoders are provided by default.
 
@@ -1133,13 +1149,13 @@ An example multipart response with a field and an image file would be something 
 [source,groovy]
 ----
 ersatz.expectations {
-    get('/data') {
+    GET('/data') {
         responder {
             encoder ContentType.MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
             body(multipart {
                 // configure the part encoders
-                encoder TEXT_PLAIN, CharSequence, { o -> o as String }
-                encoder IMAGE_JPG, File, { o -> ((File)o).bytes.encodeBase64() }
+                encoder TEXT_PLAIN, CharSequence, { o -> (o as String).bytes }
+                encoder IMAGE_JPG, File, { o -> ((File)o).bytes }
 
                 // a field part
                 field 'comments', 'This is a cool image.'
@@ -1173,7 +1189,7 @@ the unit tests).
 
 == Proxy Server
 
-Starting in v1.6.1 a standalone proxy server was available. The `com.stehno.ersatz.proxy.ErsatzProxy` is useful for testing proxied HTTP connections.
+Starting in v1.6.1 a standalone proxy server was available. The `com.stehno.ersatz.ErsatzProxy` is useful for testing proxied HTTP connections.
 The proxy server has a similar configuration to the `ErsatzServer` and allows limited expectation configuration; it is expected that more detailed
 expectation configuration will be done on a standard `ErsatzServer` instance at the other end of the proxy.
 
@@ -1181,16 +1197,16 @@ expectation configuration will be done on a standard `ErsatzServer` instance at 
 ----
 ErsatzServer ersatzServer = new ErsatzServer({
     expectations {
-        get('/').called(1).responds().code(200).body('Hello', TEXT_PLAIN)
-        get('/foo').called(1).responds().code(200).body('Foo!', TEXT_PLAIN)
+        GET('/').called(1).responds().code(200).body('Hello', TEXT_PLAIN)
+        GET('/foo').called(1).responds().code(200).body('Foo!', TEXT_PLAIN)
     }
 })
 
 ErsatzProxy ersatzProxy = new ErsatzProxy({
     target ersatzServer.httpUrl
     expectations {
-        get '/'
-        get '/foo'
+        GET('/')
+        GET('/foo')
     }
 })
 
@@ -1210,14 +1226,12 @@ ersatzServer.stop()
 Notice that the `ErsatzProxy` has the same lifecycle as the `ErsatzServer`: you should call the `verify()` method to ensure that the expected requests
 were proxied, and the `stop()` method must be closed once the server is no longer needed.
 
-NOTE: One difference from the `ErsatzServer` lifecycle is that the proxy server defaults auto-starting, and must be disabled if this is not desired.
-
 The requests made to the proxy server are passed through to the `targetUri` and the response from that server is returned as the response from the
 proxy server.
 
 The proxy server is usable from both Java and Groovy based on the use of Groovy `Closure`s or Java `Consumer`s for configuration.
 
-Currently, the proxy server only supports HTTP endpoints (HTTPS will be supported in a future release).
+Currently, the proxy server only supports HTTP endpoints (HTTPS will be supported in a future release once a bug is fixed in the underlying server).
 
 == Sightings
 
@@ -1233,14 +1247,14 @@ The embedded version of Undertow used by Ersatz has caused issues with some serv
 If you run into errors using the standard jar distribution, please try using the `safe` distribution, which is a shadowed jar which includes the
 Undertow library and its JBoss dependencies repackaged in the jar. You can use this version with the following coordinates:
 
-    testCompile 'com.stehno.ersatz:ersatz:1.9.0.1:safe@jar'
+    testCompile 'com.stehno.ersatz:ersatz:2.0.0:safe@jar'
 
 For a Maven `pom.xml` entry, this would be:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>1.9.0.1</version>
+        <version>2.0.0</version>
         <type>jar</type>
         <scope>test</scope>
         <classifier>safe</classifier>
@@ -1282,7 +1296,7 @@ example would be:
 [source,groovy]
 ----
 server.expectations {
-    post('/form') {
+    POST('/form') {
         body([alpha: 'some data', bravo: '42'], 'application/x-www-form-urlencoded')
         responder {
             body 'ok'
@@ -1312,7 +1326,7 @@ def ersatz = new ErsatzServer({
 def file = new File(/* some file */)
 
 ersatz.expectations {
-    post('/upload') {
+    POST('/upload') {
         decoders TEXT_PLAIN, Decoders.utf8String
         decoder MULTIPART_MIXED, Decoders.multipart
 
@@ -1322,7 +1336,7 @@ ersatz.expectations {
         }, MULTIPART_MIXED
 
         responder {
-            content 'ok'
+            body 'ok'
         }
     }
 }
@@ -1346,7 +1360,7 @@ def ersatz = new ErsatzServer({
 def file = new File(/* some file */)
 
 ersatz.expectations {
-    get('/download'){
+    GET('/download'){
         responder {
             header 'Content-Disposition', "attachment; filename=\"${file.name}\""
             body file, TEXT_PLAIN
@@ -1366,7 +1380,7 @@ You can use the Ersatz Server from the Kotlin programming language just as easil
 val ersatz = ErsatzServer { config -> config.autoStart(true) }
 
 ersatz.expectations { expectations ->
-    expectations.get("/kotlin").called(1).responder { response ->
+    expectations.GET("/kotlin").called(1).responder { response ->
         response.body("Hello Kotlin!", ContentType.TEXT_PLAIN).code(200)
     }
 }
@@ -1385,7 +1399,7 @@ a summary is provided below:
 
 [source,groovy]
 ----
-import com.stehno.ersatz.DecodingContext
+import com.stehno.ersatz.encdec.DecodingContext
 import com.stehno.ersatz.ErsatzServer
 import com.stehno.ersatz.util.HttpClient
 import okhttp3.MediaType
@@ -1395,9 +1409,9 @@ import spock.lang.Specification
 
 import javax.xml.parsers.DocumentBuilderFactory
 
-import static com.stehno.ersatz.ContentType.TEXT_XML
-import static com.stehno.ersatz.Decoders.utf8String
-import static com.stehno.ersatz.Encoders.text
+import static com.stehno.ersatz.encdec.ContentType.TEXT_XML
+import static com.stehno.ersatz.encdec.Decoders.utf8String
+import static com.stehno.ersatz.encdec.Encoders.text
 import static okhttp3.RequestBody.create
 import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.xml.HasXPath.hasXPath
@@ -1413,7 +1427,7 @@ class BodyContentMatcherSpec extends Specification {
         String responseXml = '<response>OK</response>'
 
         server.expectations {
-            post('/posting') {
+            POST('/posting') {
                 decoder('text/xml; charset=utf-8') { byte[] bytes, DecodingContext ctx ->
                     DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(bytes))
                 }

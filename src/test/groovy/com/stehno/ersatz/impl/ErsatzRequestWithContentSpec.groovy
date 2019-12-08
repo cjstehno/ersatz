@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,14 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ContentType
-import com.stehno.ersatz.Decoders
+
 import com.stehno.ersatz.ErsatzServer
 import com.stehno.ersatz.InMemoryCookieJar
-import com.stehno.ersatz.MultipartRequestContent
-import com.stehno.ersatz.RequestDecoders
+import com.stehno.ersatz.cfg.ContentType
+import com.stehno.ersatz.cfg.HttpMethod
+import com.stehno.ersatz.encdec.Decoders
+import com.stehno.ersatz.encdec.MultipartRequestContent
+import com.stehno.ersatz.server.MockClientRequest
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -28,13 +30,9 @@ import okhttp3.Response
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.APPLICATION_URLENCODED
-import static com.stehno.ersatz.ContentType.IMAGE_PNG
-import static com.stehno.ersatz.ContentType.MULTIPART_MIXED
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
-import static com.stehno.ersatz.ErsatzServer.NOT_FOUND_BODY
-import static com.stehno.ersatz.HttpMethod.POST
-import static com.stehno.ersatz.MultipartRequestMatcher.multipartMatcher
+import static com.stehno.ersatz.cfg.ContentType.*
+import static com.stehno.ersatz.match.MultipartRequestMatcher.multipartMatcher
+import static com.stehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY
 import static okhttp3.MediaType.parse
 import static okhttp3.Request.Builder
 import static okhttp3.RequestBody.create
@@ -44,20 +42,16 @@ import static org.hamcrest.Matchers.notNullValue
 class ErsatzRequestWithContentSpec extends Specification {
 
     private static final String BODY_CONTENT = '{"label":"Body Content", "text":"This is some body content."}'
-    private final OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
-    private final ErsatzRequestWithContent request = new ErsatzRequestWithContent(POST, equalTo('/posting'))
-    @AutoCleanup('stop') private final ErsatzServer server = new ErsatzServer()
-
-    private static final RequestDecoders sharedDecoders = new RequestDecoders({
-        register TEXT_PLAIN, Decoders.utf8String
-    })
+    private OkHttpClient client = new OkHttpClient.Builder().cookieJar(new InMemoryCookieJar()).build()
+    private ErsatzRequestWithContent request = new ErsatzRequestWithContent(HttpMethod.POST, equalTo('/posting'))
+    @AutoCleanup('stop') private ErsatzServer server = new ErsatzServer()
 
     def 'body with content-type'() {
         when:
-        request.body(BODY_CONTENT, TEXT_PLAIN).decoders(sharedDecoders)
+        request.body(BODY_CONTENT, TEXT_PLAIN).decoder(TEXT_PLAIN, Decoders.utf8String)
 
         then:
-        request.matches(new MockClientRequest(method: POST, path: '/posting', body: BODY_CONTENT.bytes).header('Content-Type', TEXT_PLAIN.value))
+        request.matches(new MockClientRequest(method: HttpMethod.POST, path: '/posting', body: BODY_CONTENT.bytes).header('Content-Type', TEXT_PLAIN.value))
     }
 
     def 'to string'() {
@@ -65,14 +59,20 @@ class ErsatzRequestWithContentSpec extends Specification {
         request.body('Some body', TEXT_PLAIN)
 
         expect:
-        request.toString() == 'Expectations (ErsatzRequestWithContent): <POST>, "/posting", A collection matching a string starting with "text/plain", "Some body", '
+        request.toString() == 'Expectations (ErsatzRequestWithContent): <POST>, "/posting", a collection containing a string starting with "text/plain", "Some body", '
     }
 
     def 'matching: body'() {
         setup:
         server.expectations {
-            post('/posting').body(BODY_CONTENT, TEXT_PLAIN).decoders(sharedDecoders).responds().body('accepted')
-        }.start()
+            POST('/posting') {
+                body BODY_CONTENT, TEXT_PLAIN
+                decoder TEXT_PLAIN, Decoders.utf8String
+                responder {
+                    body 'accepted', TEXT_PLAIN
+                }
+            }
+        }
 
         when:
         String value = exec(clientPost('/posting', 'text/plain', BODY_CONTENT).build()).body().string()
@@ -90,8 +90,8 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'matching: body and content-type'() {
         setup:
         server.expectations {
-            post('/posting').body(BODY_CONTENT, 'text/plain; charset=utf-8').decoders(sharedDecoders).responds().body('accepted')
-        }.start()
+            POST('/posting').body(BODY_CONTENT, 'text/plain; charset=utf-8').decoder(TEXT_PLAIN, Decoders.utf8String).responds().body('accepted')
+        }
 
         when:
         String value = exec(clientPost('/posting', 'text/plain; charset=utf-8', BODY_CONTENT).build()).body().string()
@@ -109,10 +109,10 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'matching: body with converter (builder)'() {
         setup:
         server.expectations {
-            post('/posting').body([label: "Body Content", text: "This is some body content."], 'some/json; charset=utf-8')
-                .decoder('some/json; charset=utf-8', Decoders.parseJson)
-                .responds().body('accepted')
-        }.start()
+            POST('/posting').body([label: "Body Content", text: "This is some body content."], 'some/json; charset=utf-8')
+                    .decoder('some/json; charset=utf-8', Decoders.parseJson)
+                    .responds().body('accepted')
+        }
 
         when:
         String value = exec(clientPost('/posting', 'some/json; charset=utf-8', BODY_CONTENT).build()).body().string()
@@ -132,14 +132,14 @@ class ErsatzRequestWithContentSpec extends Specification {
         String responseContent = 'accepted'
 
         server.expectations {
-            post('/posting') {
+            POST('/posting') {
                 body([label: "Body Content", text: "This is some body content."], 'some/json; charset=utf-8')
                 decoder(new ContentType('some/json; charset=utf-8'), Decoders.parseJson)
                 responder {
                     body responseContent
                 }
             }
-        }.start()
+        }
 
         when:
         String value = exec(clientPost('/posting', 'some/json; charset=utf-8', BODY_CONTENT).build()).body().string()
@@ -157,21 +157,21 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'application/x-www-form-urlencoded'() {
         setup:
         server.expectations {
-            post('/form') {
+            POST('/form') {
                 decoder APPLICATION_URLENCODED, Decoders.urlEncoded
                 body([alpha: 'some data', bravo: '42', charlie: 'last'], 'application/x-www-form-urlencoded; charset=utf-8')
                 responder {
                     body 'ok'
                 }
             }
-        }.start()
+        }
 
         when:
         OkHttpClient client = new OkHttpClient()
 
         Builder builder = new Builder().post(create(parse('application/x-www-form-urlencoded'), 'alpha=some+data&bravo=42&charlie=last'))
-            .url("${server.httpUrl}/form")
-            .addHeader('Content-Type', 'application/x-www-form-urlencoded')
+                .url("${server.httpUrl}/form")
+                .addHeader('Content-Type', 'application/x-www-form-urlencoded')
 
         Response response = client.newCall(builder.build()).execute()
 
@@ -182,7 +182,7 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'multipart/form-data'() {
         setup:
         server.expectations {
-            post('/upload') {
+            POST('/upload') {
                 decoder TEXT_PLAIN, Decoders.utf8String
                 decoder MULTIPART_MIXED, Decoders.multipart
                 decoder IMAGE_PNG, Decoders.passthrough
@@ -195,15 +195,15 @@ class ErsatzRequestWithContentSpec extends Specification {
                     body 'ok'
                 }
             }
-        }.start()
+        }
 
         OkHttpClient client = new OkHttpClient()
 
         when:
         MultipartBody.Builder bodyBuilder = new MultipartBody.Builder()
-            .addFormDataPart('something', 'interesting')
-            .addFormDataPart('infoFile', 'info.txt', create(parse('text/plain'), 'This is some interesting file content.'))
-            .addFormDataPart('dataFile', 'data.bin', create(parse('image/png'), [8, 6, 7, 5, 3, 0, 9] as byte[]))
+                .addFormDataPart('something', 'interesting')
+                .addFormDataPart('infoFile', 'info.txt', create(parse('text/plain'), 'This is some interesting file content.'))
+                .addFormDataPart('dataFile', 'data.bin', create(parse('image/png'), [8, 6, 7, 5, 3, 0, 9] as byte[]))
 
         Builder builder = new Builder().post(bodyBuilder.build()).url("${server.httpUrl}/upload").addHeader('Content-Type', 'multipart/form-data')
 
@@ -216,7 +216,7 @@ class ErsatzRequestWithContentSpec extends Specification {
     def 'multipart/form-data using matcher object'() {
         setup:
         server.expectations {
-            post('/upload') {
+            POST('/upload') {
                 decoder TEXT_PLAIN, Decoders.utf8String
                 decoder MULTIPART_MIXED, Decoders.multipart
                 decoder IMAGE_PNG, Decoders.passthrough
@@ -229,15 +229,15 @@ class ErsatzRequestWithContentSpec extends Specification {
                     body 'ok'
                 }
             }
-        }.start()
+        }
 
         OkHttpClient client = new OkHttpClient()
 
         when:
         MultipartBody.Builder bodyBuilder = new MultipartBody.Builder()
-            .addFormDataPart('something', 'interesting')
-            .addFormDataPart('infoFile', 'info.txt', create(parse('text/plain'), 'This is some interesting file content.'))
-            .addFormDataPart('dataFile', 'data.bin', create(parse('image/png'), [8, 6, 7, 5, 3, 0, 9] as byte[]))
+                .addFormDataPart('something', 'interesting')
+                .addFormDataPart('infoFile', 'info.txt', create(parse('text/plain'), 'This is some interesting file content.'))
+                .addFormDataPart('dataFile', 'data.bin', create(parse('image/png'), [8, 6, 7, 5, 3, 0, 9] as byte[]))
 
         Builder builder = new Builder().post(bodyBuilder.build()).url("${server.httpUrl}/upload").addHeader('Content-Type', 'multipart/form-data')
 

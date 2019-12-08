@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +23,19 @@ class ErsatzServerPortsSpec extends Specification {
 
     // NOTE: if this test starts failing for odd reasons, add some logic to ensure port is available
 
-    @AutoCleanup private final ErsatzServer ersatz = new ErsatzServer({
+    @AutoCleanup private ErsatzServer ersatz = new ErsatzServer({
         httpPort 8675
         expectations {
-            get('/hi').responds().code(200)
+            GET('/hi').responds().code(200)
         }
     })
-    private final HttpClient http = new HttpClient()
+
+    private HttpClient http = new HttpClient()
 
     void 'running with explicit port'(){
         expect:
+        ersatz.start()
+
         http.get(ersatz.httpUrl('/hi')).code() == 200
 
         and:

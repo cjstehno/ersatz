@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,32 +15,37 @@
  */
 package com.stehno.ersatz.junit;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
+import com.stehno.ersatz.ErsatzServer;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
-import static java.lang.String.format;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ErsatzServerRuleTest {
 
-    @Rule
-    public ErsatzServerRule ersatzServer = new ErsatzServerRule(config -> {
-        config.expects().get("/testing").responds().body("ok");
-    });
+    @SuppressWarnings("unused") private ErsatzServer server;
+    @Rule public ErsatzServerRule ersatzServerRule = new ErsatzServerRule(this);
 
     @Test
-    public void testing() throws IOException {
-        ersatzServer.start();
+    public void using_server() throws IOException, InterruptedException {
+        server.expectations(expects -> {
+            expects.GET("/foo", request -> {
+                request.called(1);
+                request.responds().code(200);
+            });
+        });
 
-        okhttp3.Response response = new OkHttpClient().newCall(
-            new Request.Builder().url(format("%s/testing", ersatzServer.getHttpUrl())).build()
-        ).execute();
+        final HttpResponse<String> response = HttpClient.newHttpClient().send(
+            HttpRequest.newBuilder(URI.create(server.httpUrl("/foo"))).GET().build(),
+            HttpResponse.BodyHandlers.ofString()
+        );
 
-        assertEquals(200, response.code());
-        assertEquals("ok", response.body().string());
+        assertEquals(200, response.statusCode());
     }
 }

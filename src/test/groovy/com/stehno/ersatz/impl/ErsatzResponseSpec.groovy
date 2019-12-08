@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,17 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.ResponseEncoders
+import com.stehno.ersatz.encdec.ResponseEncoders
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.APPLICATION_JSON
-import static com.stehno.ersatz.ContentType.APPLICATION_XML
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.cfg.ContentType.APPLICATION_JSON
+import static com.stehno.ersatz.cfg.ContentType.APPLICATION_XML
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
 
 class ErsatzResponseSpec extends Specification {
 
-    private final ErsatzResponse response = new ErsatzResponse(false, new ResponseEncoders())
-    private final String CONTENT_A = 'content-A'
+    private ErsatzResponse response = new ErsatzResponse(false, new ResponseEncoders())
+    private String CONTENT_A = 'content-A'
 
     def 'content when empty'() {
         when:
@@ -41,24 +41,24 @@ class ErsatzResponseSpec extends Specification {
         response.body(CONTENT_A)
 
         then:
-        response.content == CONTENT_A
+        response.content == CONTENT_A.bytes
     }
 
     def 'content and content-type'() {
         when:
-        response.content(CONTENT_A, 'text/info')
+        response.body(CONTENT_A, 'text/info')
 
         then:
-        response.content == CONTENT_A
+        response.content == CONTENT_A.bytes
         response.contentType == 'text/info'
     }
 
     def 'content and content-type object'() {
         when:
-        response.content(CONTENT_A, APPLICATION_JSON)
+        response.body(CONTENT_A, APPLICATION_JSON)
 
         then:
-        response.content == CONTENT_A
+        response.content == CONTENT_A.bytes
         response.contentType == APPLICATION_JSON.value
     }
 
@@ -80,7 +80,7 @@ class ErsatzResponseSpec extends Specification {
 
     def 'headers'() {
         when:
-        response.headers(alpha: 'something', bravo: 'other', charlie:['one', 'two'])
+        response.headers(alpha: 'something', bravo: 'other', charlie: ['one', 'two'])
 
         then:
         response.headers.alpha[0] == 'something'
@@ -129,28 +129,28 @@ class ErsatzResponseSpec extends Specification {
         response.code == 505
     }
 
-    def 'register encoder (string)'(){
+    def 'register encoder (string)'() {
         setup:
         response.content = 'foo'
-        response.encoder('text/plain', String, { o-> "${o}-bar"})
+        response.encoder('text/plain', String, { o -> "${o}-bar".bytes })
 
         expect:
-        response.content == 'foo-bar'
+        response.content == 'foo-bar'.bytes
     }
 
-    def 'register encoder (object)'(){
+    def 'register encoder (object)'() {
         setup:
         response.content = 'foo'
-        response.encoder(TEXT_PLAIN, String, { o-> "${o}-bar"})
+        response.encoder(TEXT_PLAIN, String, { o -> "${o}-bar".bytes })
 
         expect:
-        response.content == 'foo-bar'
+        response.content == 'foo-bar'.bytes
     }
 
-    def 'register encoders'(){
+    def 'register encoders'() {
         setup:
         ResponseEncoders encoders = new ResponseEncoders({
-            register TEXT_PLAIN, String, { o-> "${o}-baz"}
+            register TEXT_PLAIN, String, { o -> "${o}-baz".bytes }
         })
 
         response.encoders encoders
@@ -159,6 +159,6 @@ class ErsatzResponseSpec extends Specification {
         response.content = 'foo'
 
         then:
-        response.content == 'foo-baz'
+        response.content == 'foo-baz'.bytes
     }
 }

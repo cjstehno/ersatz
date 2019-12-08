@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,10 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.SentMessage
-import com.stehno.ersatz.WsMessageType
 import spock.lang.Specification
 
-import static com.stehno.ersatz.WsMessageType.BINARY
-import static com.stehno.ersatz.WsMessageType.TEXT
+import static com.stehno.ersatz.cfg.WsMessageType.BINARY
+import static com.stehno.ersatz.cfg.WsMessageType.TEXT
 
 class SentMessageImplSpec extends Specification {
 

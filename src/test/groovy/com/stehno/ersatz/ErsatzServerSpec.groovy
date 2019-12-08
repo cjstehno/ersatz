@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,18 @@
  */
 package com.stehno.ersatz
 
+import com.stehno.ersatz.cfg.ContentType
+import com.stehno.ersatz.cfg.Expectations
+import com.stehno.ersatz.cfg.HttpMethod
+import com.stehno.ersatz.cfg.PutExpectations
+import com.stehno.ersatz.encdec.Cookie
+import com.stehno.ersatz.encdec.Decoders
+import com.stehno.ersatz.encdec.Encoders
+import com.stehno.ersatz.encdec.MultipartResponseContent
 import com.stehno.ersatz.util.HttpClient
 import groovy.transform.TupleConstructor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.ResponseBody
 import org.apache.commons.fileupload.FileItem
 import org.apache.commons.fileupload.FileUpload
@@ -32,34 +41,27 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
-import static MultipartResponseContent.multipart
-import static com.stehno.ersatz.ContentType.APPLICATION_URLENCODED
-import static com.stehno.ersatz.ContentType.MESSAGE_HTTP
-import static com.stehno.ersatz.ContentType.MULTIPART_MIXED
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
-import static com.stehno.ersatz.CookieMatcher.cookieMatcher
-import static com.stehno.ersatz.HttpMethod.DELETE
-import static com.stehno.ersatz.HttpMethod.GET
-import static com.stehno.ersatz.HttpMethod.OPTIONS
-import static com.stehno.ersatz.HttpMethod.POST
+import static com.stehno.ersatz.encdec.MultipartResponseContent.multipart
+import static com.stehno.ersatz.cfg.ContentType.*
+import static com.stehno.ersatz.match.CookieMatcher.cookieMatcher
 import static okhttp3.MediaType.parse
 import static okhttp3.RequestBody.create
-import static org.hamcrest.Matchers.greaterThanOrEqualTo
-import static org.hamcrest.Matchers.startsWith
+import static org.awaitility.Awaitility.await
+import static org.hamcrest.Matchers.*
 
 class ErsatzServerSpec extends Specification {
 
-    private final HttpClient http = new HttpClient()
+    private HttpClient http = new HttpClient()
 
-    @AutoCleanup private final ErsatzServer ersatzServer = new ErsatzServer({
+    @AutoCleanup private ErsatzServer ersatzServer = new ErsatzServer({
         encoder MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
     })
 
     def 'prototype: functional'() {
         setup:
         ersatzServer.expectations({ expectations ->
-            expectations.get('/foo').responds().body('This is Ersatz!!')
-            expectations.get('/bar').responds().body('This is Bar!!')
+            expectations.GET('/foo').responds().body('This is Ersatz!!')
+            expectations.GET('/bar').responds().body('This is Bar!!')
         } as Consumer<Expectations>)
 
         expect:
@@ -71,13 +73,13 @@ class ErsatzServerSpec extends Specification {
         final AtomicInteger counter = new AtomicInteger()
 
         ersatzServer.expectations {
-            get('/foo').called(greaterThanOrEqualTo(1)).responder {
+            GET('/foo').called(greaterThanOrEqualTo(1)).responder {
                 body 'This is Ersatz!!'
             }.responder {
                 body 'This is another response'
             }
 
-            get('/bar') {
+            GET('/bar') {
                 called greaterThanOrEqualTo(2)
                 listener { req -> counter.incrementAndGet() }
                 responder {
@@ -85,10 +87,8 @@ class ErsatzServerSpec extends Specification {
                 }
             }
 
-            get('/baz').query('alpha', '42').responds().body('The answer is 42')
+            GET('/baz').query('alpha', '42').responds().body('The answer is 42')
         }
-
-        ersatzServer.start()
 
         when:
         def response = http.get(ersatzServer.httpUrl('/foo'))
@@ -104,12 +104,13 @@ class ErsatzServerSpec extends Specification {
 
         when:
         def results = [
-            http.get(ersatzServer.httpUrl('/bar')).body().string(),
-            http.get(ersatzServer.httpUrl('/bar')).body().string()
+                http.get(ersatzServer.httpUrl('/bar')).body().string(),
+                http.get(ersatzServer.httpUrl('/bar')).body().string()
         ]
 
+        await().untilAtomic(counter, equalTo(2))
+
         then:
-        counter.get() == 2
         results.every { it == 'This is Bar!!' }
 
         when:
@@ -126,7 +127,7 @@ class ErsatzServerSpec extends Specification {
         setup:
         ersatzServer.timeout(1, TimeUnit.MINUTES)
         ersatzServer.expectations {
-            get('/chunky').responder {
+            GET('/chunky').responder {
                 body 'This is chunked content', TEXT_PLAIN
                 chunked {
                     chunks 3
@@ -151,7 +152,7 @@ class ErsatzServerSpec extends Specification {
     def 'valueless query string param'() {
         setup:
         ersatzServer.expectations {
-            get('/something').query('enabled').responds().code(200).content('OK', TEXT_PLAIN)
+            GET('/something').query('enabled').responds().code(200).body('OK', TEXT_PLAIN)
         }
 
         when:
@@ -168,18 +169,18 @@ class ErsatzServerSpec extends Specification {
     def 'multipart text'() {
         setup:
         ersatzServer.expectations {
-            get('/data') {
+            GET('/data') {
                 responds().body(multipart {
                     boundary 't8xOJjySKePdRgBHYD'
-                    encoder TEXT_PLAIN.value, CharSequence, { o -> o as String }
+                    encoder TEXT_PLAIN.value, CharSequence, { o -> (o as String).bytes }
                     field 'alpha', 'bravo'
                     part 'file', 'data.txt', TEXT_PLAIN, 'This is some file data'
                 })
             }
-        }.start()
+        }
 
         when:
-        okhttp3.Response response = http.get(ersatzServer.httpUrl('/data'))
+        Response response = http.get(ersatzServer.httpUrl('/data'))
 
         then:
         response.body().string().trim().readLines() == '''
@@ -200,16 +201,16 @@ class ErsatzServerSpec extends Specification {
     def 'multipart binary'() {
         setup:
         ersatzServer.expectations {
-            get('/data') {
+            GET('/data') {
                 responds().body(multipart {
                     boundary 'WyAJDTEVlYgGjdI13o'
-                    encoder TEXT_PLAIN, CharSequence, { o -> o as String }
-                    encoder 'image/jpeg', InputStream, { o -> ((InputStream) o).bytes.encodeBase64() }
+                    encoder TEXT_PLAIN, CharSequence, Encoders.text
+                    encoder 'image/jpeg', InputStream, Encoders.inputStream
                     part 'file', 'data.txt', TEXT_PLAIN, 'This is some file data'
                     part 'image', 'test-image.jpg', 'image/jpeg', ErsatzServerSpec.getResourceAsStream('/test-image.jpg'), 'base64'
                 })
             }
-        }.start()
+        }
 
         when:
         okhttp3.Response response = http.get(ersatzServer.httpUrl('/data'))
@@ -229,17 +230,44 @@ class ErsatzServerSpec extends Specification {
         items[1].fieldName == 'image'
         items[1].name == 'test-image.jpg'
         items[1].contentType == 'image/jpeg'
+        items[1].size == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes.length
+        items[1].get() ==  ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes
+    }
 
-        byte[] bytes = Base64.decoder.decode(items[1].get())
-        bytes.length == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes.length
-        bytes == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes
+    def 'multipart binary (simpler)'() {
+        setup:
+        ersatzServer.expectations {
+            GET('/stuff') {
+                responds().body(multipart {
+                    boundary 'WyAJDTEVlYgGjdI13o'
+                    encoder IMAGE_JPG, InputStream, Encoders.inputStream
+                    part 'image', 'test-image.jpg', IMAGE_JPG, ErsatzServerSpec.getResourceAsStream('/test-image.jpg'), 'base64'
+                })
+            }
+        }
+
+        when:
+        Response response = http.get(ersatzServer.httpUrl('/stuff'))
+
+        def down = new ResponseDownloadContent(response.body())
+        FileUpload fu = new FileUpload(new DiskFileItemFactory(100000, File.createTempDir()))
+        List<FileItem> items = fu.parseRequest(down)
+
+        then:
+        items.size() == 1
+
+        items[0].fieldName == 'image'
+        items[0].name == 'test-image.jpg'
+        items[0].contentType == 'image/jpeg'
+        items[0].size == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes.length
+        items[0].get() ==  ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes
     }
 
     def 'alternate construction'() {
         setup:
         def server = new ErsatzServer({
             expectations {
-                get(startsWith('/hello')).responds().body('ok')
+                GET(startsWith('/hello')).responds().body('ok')
             }
         })
 
@@ -253,7 +281,7 @@ class ErsatzServerSpec extends Specification {
     def 'gzip compression supported'() {
         setup:
         ersatzServer.expectations {
-            get('/gzip').header('Accept-Encoding', 'gzip').responds().body('x' * 1000, TEXT_PLAIN)
+            GET('/gzip').header('Accept-Encoding', 'gzip').responds().body('x' * 1000, TEXT_PLAIN)
         }
 
         when:
@@ -267,7 +295,7 @@ class ErsatzServerSpec extends Specification {
     def 'non-compression supported'() {
         setup:
         ersatzServer.expectations {
-            get('/gzip').header('Accept-Encoding', '').responds().body('x' * 1000, TEXT_PLAIN)
+            GET('/gzip').header('Accept-Encoding', '').responds().body('x' * 1000, TEXT_PLAIN)
         }
 
         when:
@@ -281,7 +309,7 @@ class ErsatzServerSpec extends Specification {
     def 'deflate supported'() {
         setup:
         ersatzServer.expectations {
-            get('/gzip').header('Accept-Encoding', 'deflate').responds().body('x' * 1000, TEXT_PLAIN)
+            GET('/gzip').header('Accept-Encoding', 'deflate').responds().body('x' * 1000, TEXT_PLAIN)
         }
 
         when:
@@ -295,8 +323,8 @@ class ErsatzServerSpec extends Specification {
     @Unroll 'OPTIONS #path allows #allowed'() {
         setup:
         ersatzServer.expectations {
-            options('/options').responds().allows(GET, POST).code(200)
-            options('/*').responds().allows(DELETE, GET, OPTIONS).code(200)
+            OPTIONS('/options').responds().allows(HttpMethod.GET, HttpMethod.POST).code(200)
+            OPTIONS('/*').responds().allows(HttpMethod.DELETE, HttpMethod.GET, HttpMethod.OPTIONS).code(200)
         }
 
         when:
@@ -338,7 +366,7 @@ class ErsatzServerSpec extends Specification {
     @Unroll 'delayed response (#delay)'() {
         setup:
         ersatzServer.expectations {
-            get('/slow').responds().delay(delay).content('Done').code(200)
+            GET('/slow').responds().delay(delay).body('Done').code(200)
         }
 
         when:
@@ -351,23 +379,23 @@ class ErsatzServerSpec extends Specification {
         elapsed >= (time - 10) // there is some wiggle room
 
         where:
-        delay   | time
-        1000    | 1000
-        '1 sec' | 1000
+        delay  | time
+        1000   | 1000
+        'PT1S' | 1000
     }
 
     @Unroll 'using closure as matcher (#path)'() {
         setup:
         ersatzServer.expectations {
-            get({ p -> p.startsWith('/general') } as Matcher<String>).responds().body('ok').code(200)
-            get('/other').responds().body('err').code(200)
+            GET({ p -> p.startsWith('/general') } as Matcher<String>).responds().body('ok').code(200)
+            GET('/other').responds().body('err').code(200)
         }
 
         expect:
-        ersatzServer.httpUrl(path).toURL().text == response
+        ersatzServer.httpUrl(path).toURL().text == resp
 
         where:
-        path           || response
+        path           || resp
         '/general/one' || 'ok'
         '/general/two' || 'ok'
         '/other'       || 'err'
@@ -377,18 +405,18 @@ class ErsatzServerSpec extends Specification {
         setup:
         ErsatzServer proxyServer = new ErsatzServer({
             expectations {
-                get('/proxied').called(1).responds().body('forwarded').code(200)
+                GET('/proxied').called(1).responds().body('forwarded').code(200)
             }
         })
 
         ersatzServer.expectations {
-            get('/proxied').called(0).responds().body('original').code(200)
+            GET('/proxied').called(0).responds().body('original').code(200)
         }
 
         OkHttpClient proxiedClient = new OkHttpClient.Builder()
-            .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress('localhost', proxyServer.httpPort)))
-            .cookieJar(new InMemoryCookieJar())
-            .build()
+                .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress('localhost', proxyServer.httpPort)))
+                .cookieJar(new InMemoryCookieJar())
+                .build()
 
         when:
         okhttp3.Response response = proxiedClient.newCall(new okhttp3.Request.Builder().get().url(ersatzServer.httpUrl('/proxied')).build()).execute()
@@ -405,7 +433,7 @@ class ErsatzServerSpec extends Specification {
     def 'multiple header matching support'() {
         setup:
         ersatzServer.expectations {
-            get('/api/hello') {
+            GET('/api/hello') {
                 called 1
                 header 'Accept', 'application/json'
                 header 'Accept', 'application/vnd.company+json'
@@ -421,7 +449,7 @@ class ErsatzServerSpec extends Specification {
 
         then:
         response.code() == 200
-        response.body().string() == '[msg:World]'
+        response.body().string() == '{msg=World}'
 
         and:
         ersatzServer.verify()
@@ -430,7 +458,7 @@ class ErsatzServerSpec extends Specification {
     def 'multiple header matching support (using matcher)'() {
         setup:
         ersatzServer.expectations {
-            get('/api/hello') {
+            GET('/api/hello') {
                 called 1
                 header 'Accept', { x ->
                     'application/vnd.company+json' in x || 'application/json' in x
@@ -447,7 +475,7 @@ class ErsatzServerSpec extends Specification {
 
         then:
         response.code() == 200
-        response.body().string() == '[msg:World]'
+        response.body().string() == '{msg=World}'
 
         and:
         ersatzServer.verify()
@@ -459,7 +487,7 @@ class ErsatzServerSpec extends Specification {
     def 'multiple header matching support (expecting two headers and had one)'() {
         setup:
         ersatzServer.expectations {
-            get('/api/hello') {
+            GET('/api/hello') {
                 called 0
                 header 'Accept', 'application/json'
                 header 'Accept', 'application/vnd.company+json'
@@ -483,7 +511,7 @@ class ErsatzServerSpec extends Specification {
     def 'baking cookies'() {
         setup:
         ersatzServer.expectations {
-            get('/setkermit').called(1).responder {
+            GET('/setkermit').called(1).responder {
                 body('ok', TEXT_PLAIN)
                 cookie('kermit', Cookie.cookie {
                     value 'frog'
@@ -491,7 +519,7 @@ class ErsatzServerSpec extends Specification {
                 })
             }
 
-            get('/showkermit').cookie('kermit', cookieMatcher {
+            GET('/showkermit').cookie('kermit', cookieMatcher {
                 value startsWith('frog')
             }).called(1).responder {
                 body('ok', TEXT_PLAIN)
@@ -525,7 +553,7 @@ class ErsatzServerSpec extends Specification {
     def 'variable-case headers'() {
         setup:
         ersatzServer.expectations {
-            post('*') {
+            POST('*') {
                 body({ true } as Matcher<Object>, APPLICATION_URLENCODED)
                 header('Something-Headery', 'a-value')
                 responds().body('OK')
@@ -534,9 +562,9 @@ class ErsatzServerSpec extends Specification {
 
         when:
         okhttp3.Response response = http.post(
-            ersatzServer.httpUrl('/postit'),
-            create(parse(APPLICATION_URLENCODED.value), 'Posted'),
-            'something-headery': 'a-value'
+                ersatzServer.httpUrl('/postit'),
+                create(parse(APPLICATION_URLENCODED.value), 'Posted'),
+                'something-headery': 'a-value'
         )
 
         then:
@@ -546,7 +574,7 @@ class ErsatzServerSpec extends Specification {
     def 'post params'() {
         setup:
         ersatzServer.expectations {
-            post('/updates') {
+            POST('/updates') {
                 param('foo', 'bar')
                 responds().code(201)
             }
@@ -554,8 +582,8 @@ class ErsatzServerSpec extends Specification {
 
         when:
         okhttp3.Response response = http.post(
-            ersatzServer.httpUrl('/updates'),
-            create(parse(APPLICATION_URLENCODED.value), 'foo=bar')
+                ersatzServer.httpUrl('/updates'),
+                create(parse(APPLICATION_URLENCODED.value), 'foo=bar')
         )
 
         then:
@@ -565,7 +593,7 @@ class ErsatzServerSpec extends Specification {
     void 'Proper closure delegation'() {
         setup:
         ersatzServer.expectations {
-            get("/headers") {
+            GET("/headers") {
                 header('Accept', 'application/json')
 
                 responder {
@@ -586,7 +614,7 @@ class ErsatzServerSpec extends Specification {
     void 'Proper delegation of content body request/response'() {
         setup:
         ersatzServer.expectations {
-            post('/booga') {
+            POST('/booga') {
                 decoder TEXT_PLAIN, Decoders.utf8String
                 body 'a request', TEXT_PLAIN
                 responder {
@@ -597,12 +625,75 @@ class ErsatzServerSpec extends Specification {
 
         when:
         def response = http.post(
-            ersatzServer.httpUrl('/booga'),
-            create(parse('text/plain'), 'a request')
+                ersatzServer.httpUrl('/booga'),
+                create(parse('text/plain'), 'a request')
         )
 
         then:
         response.body().string() == 'a response'
+    }
+
+    void 'Multiple responses for GET request'() {
+        setup:
+        ersatzServer.expectations {
+            GET('/aclue') {
+                header 'Info', 'value'
+                responder {
+                    code 200
+                    body 'Alpha', TEXT_PLAIN
+                }
+                responder {
+                    code 200
+                    body 'Bravo', TEXT_PLAIN
+                }
+            }
+        }
+
+        when:
+        def response = http.get(ersatzServer.httpUrl('/aclue'), Info: 'value')
+
+        then:
+        response.code() == 200
+        response.body().string() == 'Alpha'
+
+        when:
+        response = http.get(ersatzServer.httpUrl('/aclue'), Info: 'value')
+
+        then:
+        response.code() == 200
+        response.body().string() == 'Bravo'
+    }
+
+    void 'Multiple responses for PUT request'() {
+        setup:
+        ersatzServer.expectations {
+            PUT('/aclue') {
+                header 'Info', 'value'
+                responder {
+                    code 200
+                }
+                responder {
+                    code 200
+                    body 'Bravo', TEXT_PLAIN
+                }
+            }
+        }
+
+        def payload = create(parse('text/plain'), 'payload')
+
+        when:
+        def response = http.put(ersatzServer.httpUrl('/aclue'), payload, Info: 'value')
+
+        then:
+        response.code() == 200
+        response.body().string() == ''
+
+        when:
+        response = http.put(ersatzServer.httpUrl('/aclue'), payload, Info: 'value')
+
+        then:
+        response.code() == 200
+        response.body().string() == 'Bravo'
     }
 
     @TupleConstructor

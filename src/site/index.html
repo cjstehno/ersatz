@@ -65,7 +65,7 @@
 
             <ul>
                 <li>Uses an embedded <a href="http://undertow.io/">Undertow server</a> to setup the HTTP server</li>
-                <li>Provides a Java 8 compatible builder interface</li>
+                <li>Works with Java 11+</li>
                 <li>Provides a Groovy configuration DSL</li>
                 <li>Works well with Kotlin</li>
                 <li>Compatible with the <a href="http://junit.org/">JUnit (4 or 5)</a> and <a href="http://spockframework.org/">Spock</a> testing
@@ -89,14 +89,14 @@
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Getting Started</h2>
 
-            <p>The Ersatz <a href="asciidoc/html5" target="_blank">User Guide</a> and <a href="docs/groovydoc" target="_blank">Groovy Docs</a> provide
+            <p>The Ersatz <a href="guide" target="_blank">User Guide</a> and <a href="docs/javadoc" target="_blank">Java Docs</a> provide
             detailed documentation of the features and configuration; however, a simple example of the expectation configuration would be (using
                 Groovy):</p>
 
             <pre><code>ErsatzServer ersatz = new ErsatzServer()
 
 ersatz.expectations {
-    get('/say/hello') {
+    GET('/say/hello') {
         called 1
         query 'name', 'Ersatz'
         responder {
@@ -117,16 +117,16 @@ ersatz.stop()</code></pre>
                 builder form, such as:</p>
 
             <pre><code>server.expectations {
-    get('/say/hello').called(1).query('name','Ersatz')
+    GET('/say/hello').called(1).query('name','Ersatz')
         .responds().body('Hello Ersatz','text/plain')
 }</code></pre>
 
-            <p>Standard Java 8 may also be used; the `expectations` block in the example above would look very similar in Java:</p>
+            <p>Standard Java 11+ may also be used; the `expectations` block in the example above would look very similar in Java:</p>
 
             <pre><code>ErsatzServer ersatz = new ErsatzServer();
 
 server.expectations(expectations -> {
-    expectations.get("/say/hello", req -> {
+    expectations.GET("/say/hello", req -> {
         req.called(1)
         req.query("name","Ersatz")
         req.responder().body("Hello Ersatz","text/plain")
@@ -152,52 +152,39 @@ server.expectations(expectations -> {
 
             There is also a "safe" (shadow jar) artifact available for situations where the Undertow server is already being used (e.g. Grails or
             Spring-Boot using Undertow as the embedded server) - see the
-            <a href="/asciidoc/html5/#_shadow_jar">Shadow Jar</a> section of the User Guide for more information.
+            <a href="/guide/#_shadow_jar">Shadow Jar</a> section of the User Guide for more information.
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Documentation</h2>
 
-            <p>The best place to learn how to use the Ersatz Server is in the <a href="asciidoc/html5" target="_blank">User Guide</a> (especially the <a
-                href="asciidoc/html5/#_getting_started" target="_blank">Getting Started</a> section) or the
-                <a href="docs/groovydoc" target="_blank">Groovy Docs</a>; however, there are a few other interesting documents available:</p>
+            <p>The best place to learn how to use the Ersatz Server is in the <a href="guide" target="_blank">User Guide</a> (especially the <a
+                href="guide/#_getting_started" target="_blank">Getting Started</a> section) or the
+                <a href="docs/javadoc" target="_blank">Java Docs</a>; however, there are a few other interesting documents available:</p>
 
             <ul>
                 <li><a href="https://github.com/cjstehno/ersatz" target="_blank">GitHub Project</a> - the GitHub project has all the source code as
-                    well as links to
-                    all of the documentation.
-                </li>
+                    well as links to all of the documentation.</li>
                 <li><a href="reports/tests/test" target="_blank">Unit Test Report</a> - the build-generated unit test results report.</li>
-                <li><a href="reports/jacoco/test/html" target="_blank">Test Coverage Report</a> - the build-generated unit test coverage report (via Jacoco).
-                </li>
-                <li><a href="reports/codenarc/main.html" target="_blank">CodeNarc Report (main)</a> - the build-generated code quality summary (via CodeNarc).
+                <li><a href="reports/jacoco/test/html" target="_blank">Test Coverage Report</a> - the build-generated unit test coverage report (via Jacoco).</li>
                 </li>
             </ul>
 
             <p>If you find any issues with the library or the documentation, please feel free to <a
                 href="https://github.com/cjstehno/ersatz/issues/new">create an issue</a> with a description of the problem or
                 suggestion.</p>
-
             <hr/>
 
             <p>Ersatz is developed and maintained by <a
                 href="https://github.com/cjstehno">Christopher J. Stehno</a> under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache
-                2</a> open
-                source license. This page was originally generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by
-                <a
-                    href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+                2</a> open source license. This page was originally generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by
+                <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
         </section>
 
         <aside id="sidebar">
-            <a href="https://github.com/cjstehno/ersatz/zipball/master" class="button">
-                <small>Download</small>
-                .zip file
-            </a>
-            <a href="https://github.com/cjstehno/ersatz/tarball/master" class="button">
-                <small>Download</small>
-                .tar.gz file
-            </a>
+            <a href="https://github.com/cjstehno/ersatz/zipball/master" class="button"><small>Download</small> .zip file</a>
+            <a href="https://github.com/cjstehno/ersatz/tarball/master" class="button"><small>Download</small> .tar.gz file</a>
 
-            <p><strong>References:</strong><br/><a href="asciidoc/html5" target="_blank">User Guide</a> &bull;
-                <a href="docs/groovydoc" target="_blank">Groovy Docs</a></p>
+            <p><strong>References:</strong><br/><a href="guide" target="_blank">User Guide</a> &bull;
+                <a href="docs/javadoc" target="_blank">Java Docs</a></p>
 
             <p class="repo-owner"><a href="https://github.com/cjstehno/ersatz"></a> Maintained & Developed by<br/><a
                 href="https://github.com/cjstehno">Christopher J. Stehno</a>.</p>

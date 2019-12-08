@@ -72,7 +72,7 @@
             <body>
 
                 <h1>FindBugs Report</h1>
-                <p>Produced using <a href="http://findbugs.sourceforge.net">FindBugs</a> <xsl:value-of select="/BugCollection/@version"/>.</p>
+                <p>Produced using <a href="https://spotbugs.github.io/#using-spotbugs">SpotBugs</a> <xsl:value-of select="/BugCollection/@version"/>.</p>
                 <p>Project:
                     <xsl:choose>
                         <xsl:when test='string-length(/BugCollection/Project/@projectName)>0'><xsl:value-of select="/BugCollection/Project/@projectName" /></xsl:when>

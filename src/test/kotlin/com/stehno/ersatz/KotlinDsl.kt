@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
  */
 package com.stehno.ersatz
 
-import java.util.function.Consumer
+import com.stehno.ersatz.cfg.Expectations
+import com.stehno.ersatz.cfg.Request
+import com.stehno.ersatz.cfg.Response
+import com.stehno.ersatz.cfg.ServerConfig
 
 // Note: This is experimental code for kotlin support - it may not look anything like this in the end
 

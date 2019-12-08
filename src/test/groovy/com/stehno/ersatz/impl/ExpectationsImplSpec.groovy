@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,27 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.*
+
+import com.stehno.ersatz.server.ClientRequest
+import com.stehno.ersatz.cfg.Request
+import com.stehno.ersatz.cfg.RequestWithContent
+import com.stehno.ersatz.encdec.RequestDecoders
+import com.stehno.ersatz.encdec.ResponseEncoders
+import com.stehno.ersatz.server.MockClientRequest
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.function.Consumer
 
-import static com.stehno.ersatz.HttpMethod.*
+import static com.stehno.ersatz.cfg.HttpMethod.*
 import static org.hamcrest.Matchers.equalTo
 
 class ExpectationsImplSpec extends Specification {
 
     private static final String PATH = '/somewhere'
-    private final RequestDecoders decoders = new RequestDecoders()
-    private final ResponseEncoders encoders = new ResponseEncoders()
-    private final ExpectationsImpl expectations = new ExpectationsImpl(decoders, encoders)
+    private RequestDecoders decoders = new RequestDecoders()
+    private ResponseEncoders encoders = new ResponseEncoders()
+    private ExpectationsImpl expectations = new ExpectationsImpl(decoders, encoders)
 
     @Unroll '#method(String)'() {
         when:
@@ -42,13 +48,13 @@ class ExpectationsImplSpec extends Specification {
 
         where:
         code      | method
-        'any'     | GET
-        'any'     | HEAD
-        'any'     | DELETE
-        'get'     | GET
-        'head'    | HEAD
-        'delete'  | DELETE
-        'options' | OPTIONS
+        'ANY'     | GET
+        'ANY'     | HEAD
+        'ANY'     | DELETE
+        'GET'     | GET
+        'HEAD'    | HEAD
+        'DELETE'  | DELETE
+        'OPTIONS' | OPTIONS
     }
 
     @Unroll '#method(String,Closure)'() {
@@ -62,13 +68,13 @@ class ExpectationsImplSpec extends Specification {
 
         where:
         code      | method
-        'any'     | GET
-        'any'     | HEAD
-        'any'     | DELETE
-        'get'     | GET
-        'head'    | HEAD
-        'delete'  | DELETE
-        'options' | OPTIONS
+        'ANY'     | GET
+        'ANY'     | HEAD
+        'ANY'     | DELETE
+        'GET'     | GET
+        'HEAD'    | HEAD
+        'DELETE'  | DELETE
+        'OPTIONS' | OPTIONS
     }
 
     @Unroll '#method(String,Consumer)'() {
@@ -82,13 +88,13 @@ class ExpectationsImplSpec extends Specification {
 
         where:
         code      | method
-        'any'     | GET
-        'any'     | HEAD
-        'any'     | DELETE
-        'get'     | GET
-        'head'    | HEAD
-        'delete'  | DELETE
-        'options' | OPTIONS
+        'ANY'     | GET
+        'ANY'     | HEAD
+        'ANY'     | DELETE
+        'GET'     | GET
+        'HEAD'    | HEAD
+        'DELETE'  | DELETE
+        'OPTIONS' | OPTIONS
     }
 
     @Unroll '#method(String) (with content)'() {
@@ -102,12 +108,12 @@ class ExpectationsImplSpec extends Specification {
 
         where:
         code    | method
-        'any'   | POST
-        'any'   | PUT
-        'any'   | PATCH
-        'post'  | POST
-        'put'   | PUT
-        'patch' | PATCH
+        'ANY'   | POST
+        'ANY'   | PUT
+        'ANY'   | PATCH
+        'POST'  | POST
+        'PUT'   | PUT
+        'PATCH' | PATCH
     }
 
     @Unroll '#method(String,Closure) (with content)'() {
@@ -121,12 +127,12 @@ class ExpectationsImplSpec extends Specification {
 
         where:
         code    | method
-        'any'   | POST
-        'any'   | PUT
-        'any'   | PATCH
-        'post'  | POST
-        'put'   | PUT
-        'patch' | PATCH
+        'ANY'   | POST
+        'ANY'   | PUT
+        'ANY'   | PATCH
+        'POST'  | POST
+        'PUT'   | PUT
+        'PATCH' | PATCH
     }
 
     @Unroll '#method(String,Consumer) (with content)'() {
@@ -140,26 +146,26 @@ class ExpectationsImplSpec extends Specification {
 
         where:
         code    | method
-        'any'   | POST
-        'any'   | PUT
-        'any'   | PATCH
-        'post'  | POST
-        'put'   | PUT
-        'patch' | PATCH
+        'ANY'   | POST
+        'ANY'   | PUT
+        'ANY'   | PATCH
+        'POST'  | POST
+        'PUT'   | PUT
+        'PATCH' | PATCH
     }
 
     def 'matching'() {
         setup:
-        expectations.any('/charlie')
-        expectations.post('/alpha')
-        expectations.post('/bravo')
-        expectations.delete('/alpha')
-        expectations.get('/alpha')
+        expectations.ANY('/charlie')
+        expectations.POST('/alpha')
+        expectations.POST('/bravo')
+        expectations.DELETE('/alpha')
+        expectations.GET('/alpha')
 
         ClientRequest cr = new MockClientRequest(method: method, path: path)
 
         when:
-        Request req = expectations.findMatch(cr)
+        Request req = expectations.findMatch(cr).get()
 
         then:
         req.matches(cr)
@@ -179,7 +185,7 @@ class ExpectationsImplSpec extends Specification {
 
     def 'verification (success)'() {
         setup:
-        RequestWithContent req = expectations.post('/alpha').called(equalTo(1))
+        RequestWithContent req = expectations.POST('/alpha').called(equalTo(1))
         ((ErsatzRequestWithContent) req).mark(new MockClientRequest())
 
         expect:
@@ -188,39 +194,37 @@ class ExpectationsImplSpec extends Specification {
 
     def 'verification (failure)'() {
         setup:
-        expectations.post('/alpha').called(equalTo(1))
+        expectations.POST('/alpha').called(equalTo(1))
 
         when:
         expectations.verify()
 
         then:
-        def ae = thrown(AssertionError)
-        ae.message == 'Expectations for Expectations (ErsatzRequestWithContent): <POST>, "/alpha",  were not met.. ' +
-            'Expression: (com.stehno.ersatz.impl.ErsatzRequest -> com.stehno.ersatz.impl.ErsatzRequest) r.verify()'
+        def ae = thrown(IllegalArgumentException)
+        ae.message == 'Expectations for Expectations (ErsatzRequestWithContent): <POST>, "/alpha",  were not met.'
     }
 
     @Unroll 'wildcard path (#path)'() {
         setup:
-        expectations.get('*')
+        expectations.GET('*')
 
         ClientRequest cr = new MockClientRequest(method: GET, path: path)
 
         expect:
-        expectations.findMatch(cr).matches(cr)
+        expectations.findMatch(cr).get().matches(cr)
 
         where:
         path << ['/alpha', '/bravo', '/charlie/delta']
     }
 
-
     @Unroll 'matching wildcarded any (#method)'() {
         setup:
-        expectations.any('*')
+        expectations.ANY('*')
 
         ClientRequest cr = new MockClientRequest(method: method, path: path)
 
         expect:
-        expectations.findMatch(cr).matches(cr)
+        expectations.findMatch(cr).get().matches(cr)
 
         where:
         method  | path

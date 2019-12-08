@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 package com.stehno.ersatz.issues
 
-import com.stehno.ersatz.DecodingContext
 import com.stehno.ersatz.ErsatzServer
+import com.stehno.ersatz.encdec.DecodingContext
 import com.stehno.ersatz.util.HttpClient
 import okhttp3.MediaType
 import okhttp3.Response
@@ -25,17 +25,17 @@ import spock.lang.Specification
 
 import javax.xml.parsers.DocumentBuilderFactory
 
-import static com.stehno.ersatz.ContentType.TEXT_XML
-import static com.stehno.ersatz.Decoders.utf8String
-import static com.stehno.ersatz.Encoders.text
+import static com.stehno.ersatz.cfg.ContentType.TEXT_XML
+import static com.stehno.ersatz.encdec.Decoders.utf8String
+import static com.stehno.ersatz.encdec.Encoders.text
 import static okhttp3.RequestBody.create
 import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.xml.HasXPath.hasXPath
 
 class BodyContentMatcherSpec extends Specification {
 
-    @AutoCleanup private final ErsatzServer server = new ErsatzServer()
-    private final HttpClient http = new HttpClient()
+    @AutoCleanup private ErsatzServer server = new ErsatzServer()
+    private HttpClient http = new HttpClient()
 
     void 'matching all of body content'() {
         setup:
@@ -43,7 +43,7 @@ class BodyContentMatcherSpec extends Specification {
         String responseXml = '<response>OK</response>'
 
         server.expectations {
-            post('/posting') {
+            POST('/posting') {
                 decoder 'text/xml; charset=utf-8', utf8String
                 body requestXml, 'text/xml; charset=utf-8'
                 responder {
@@ -66,7 +66,7 @@ class BodyContentMatcherSpec extends Specification {
         String responseXml = '<response>OK</response>'
 
         server.expectations {
-            post('/posting') {
+            POST('/posting') {
                 decoder('text/xml; charset=utf-8') { byte[] bytes, DecodingContext ctx ->
                     DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(bytes))
                 }

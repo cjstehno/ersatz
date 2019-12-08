@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ class ExamplesSpec extends Specification {
         ErsatzServer ersatz = new ErsatzServer()
 
         ersatz.expectations {
-            get('/say/hello') {
+            GET('/say/hello') {
                 called 1
                 query 'name', 'Ersatz'
                 responder {
@@ -52,7 +52,7 @@ class ExamplesSpec extends Specification {
         ErsatzServer ersatz = new ErsatzServer()
 
         ersatz.expectations {
-            get('/say/hello'){
+            GET('/say/hello'){
                 called 1
                 query 'name','Ersatz'
                 responder {

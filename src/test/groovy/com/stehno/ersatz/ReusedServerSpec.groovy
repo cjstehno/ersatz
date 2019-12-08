@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,18 @@ package com.stehno.ersatz
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
 
 class ReusedServerSpec extends Specification {
 
-    @AutoCleanup private final ErsatzServer ersatzServer = new ErsatzServer({
-        expectations {
-            get('/alpha').called(1).responds().body('alpha-response', TEXT_PLAIN)
-            get('/bravo').called(2).responds().body('bravo-response', TEXT_PLAIN)
+    @AutoCleanup private ErsatzServer ersatzServer = new ErsatzServer()
+
+    def setup(){
+        ersatzServer.expectations {
+            GET('/alpha').called(1).responds().body('alpha-response', TEXT_PLAIN)
+            GET('/bravo').called(2).responds().body('bravo-response', TEXT_PLAIN)
         }
-    })
+    }
 
     def 'expected calls'() {
         when:
@@ -66,7 +68,7 @@ class ReusedServerSpec extends Specification {
         ersatzServer.clearExpectations()
 
         ersatzServer.expectations {
-            get('/charlie').called(1).responds().body('charlie-response', TEXT_PLAIN)
+            GET('/charlie').called(1).responds().body('charlie-response', TEXT_PLAIN)
         }
 
         expect:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Christopher J. Stehno
+ * Copyright (C) 2019 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,16 @@ import spock.lang.Specification
 
 class HttpsSpec extends Specification {
 
-    private final HttpClient http = new HttpClient(true)
+    private HttpClient http = new HttpClient(true)
 
-    @AutoCleanup('stop') private final ErsatzServer ersatzServer = new ErsatzServer({
+    @AutoCleanup('stop') private ErsatzServer ersatzServer = new ErsatzServer({
         https()
     })
 
     def 'https'() {
         setup:
         ersatzServer.expectations {
-            get('/hello').protocol('https').responds().body('This is HTTPS!')
+            GET('/hello').protocol('https').responds().body('This is HTTPS!')
         }
 
         when:
