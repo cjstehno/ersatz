@@ -9,10 +9,8 @@ plugins {
     id 'org.asciidoctor.convert' version '2.4.0'
     id "com.stehno.gradle.webpreview" version '0.3.0'
     id 'org.jetbrains.kotlin.jvm' version '1.3.60'
-    id 'com.github.ben-manes.versions' version '0.25.0'
+    id 'com.github.ben-manes.versions' version '0.29.0'
     id "com.github.johnrengelman.shadow" version '5.2.0'
-    id "com.github.spotbugs" version "3.0.0"
-    id 'pmd'
 }
 
 group = 'com.stehno.ersatz'
@@ -27,7 +25,7 @@ repositories {
 
 dependencies {
     api "org.codehaus.groovy:groovy:$groovyVersion"
-    api "org.codehaus.groovy:groovy-json:$groovyVersion"
+    api "org.codehaus.groovy:groovy-json:$groovyVersion"                // FIXME: needed?
     api 'io.undertow:undertow-core:2.0.28.Final'
     api 'javax.servlet:javax.servlet-api:3.1.0'
     api 'org.hamcrest:hamcrest-library:2.2'
@@ -36,20 +34,19 @@ dependencies {
     implementation 'javax.activation:activation:1.1.1'
     implementation 'ch.qos.logback:logback-classic:1.1.7'
     implementation 'commons-fileupload:commons-fileupload:1.4'
-    implementation 'com.github.spotbugs:spotbugs-annotations:3.1.12'
 
-    implementation 'junit:junit:4.12'
+    implementation 'junit:junit:4.12'                                   // FIXME: needed?
     implementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
 
     testImplementation "org.junit.jupiter:junit-jupiter-params:5.5.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.2"
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.5.2'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.5.2'      // FIXME: needed?
 
-    testImplementation 'com.squareup.okhttp3:okhttp:4.2.2'
-    testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
+    testImplementation 'com.squareup.okhttp3:okhttp:4.2.2'              // FIXME: needed?
+    testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'   // FIXME: needed?
     testImplementation 'org.mockito:mockito-junit-jupiter:3.1.0'
-    testImplementation 'com.burgstaller:okhttp-digest:2.0'
-    testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.60"
+    testImplementation 'com.burgstaller:okhttp-digest:2.0'              // FIXME: needed?
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.60" // FIXME: needed?
 }
 
 task sourcesJar(type: Jar) {
