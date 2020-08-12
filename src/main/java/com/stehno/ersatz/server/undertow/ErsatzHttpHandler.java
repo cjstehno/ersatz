@@ -32,7 +32,6 @@ import static io.undertow.util.HttpString.tryFromString;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 class ErsatzHttpHandler implements HttpHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ErsatzHttpHandler.class);

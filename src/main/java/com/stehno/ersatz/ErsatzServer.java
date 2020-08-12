@@ -51,7 +51,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * <p>
  * See the <a href="http://stehno.com/ersatz/asciidoc/html5/" target="_blank">User Guide</a> for more detailed information.
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ErsatzServer implements Closeable {
 
     private final UnderlyingServer underlyingServer;

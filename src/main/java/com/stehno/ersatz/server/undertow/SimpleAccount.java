@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz.server.undertow;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.undertow.security.idm.Account;
 
 import java.security.Principal;
@@ -28,12 +27,11 @@ import static java.util.Objects.hash;
 /**
  * Simple implementation of the <code>Account</code> interface used for BASIC and DIGEST authentication testing.
  */
-@SuppressFBWarnings("SE_NO_SERIALVERSIONID") @SuppressWarnings("PMD.MissingSerialVersionUID")
 public class SimpleAccount implements Account {
 
     private final Set<String> roles;
     private final String user;
-    @SuppressFBWarnings("SE_BAD_FIELD") private final Principal principal;
+    private final Principal principal;
 
     public SimpleAccount(final String user, final Set<String> roles) {
         this.user = user;

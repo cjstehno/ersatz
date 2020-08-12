@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.net.URI;
 
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class UndertowUnderlyingProxyServer implements UnderlyingProxyServer {
 
     private static final Logger log = LoggerFactory.getLogger(ErsatzProxy.class);
@@ -80,7 +79,7 @@ public class UndertowUnderlyingProxyServer implements UnderlyingProxyServer {
         }
     }
 
-    @Override @SuppressWarnings("PMD.NullAssignment") public void stop() {
+    @Override public void stop() {
         if (server != null) {
             actualHttpPort = UNSPECIFIED_PORT;
 

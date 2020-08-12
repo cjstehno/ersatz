@@ -18,7 +18,6 @@ package com.stehno.ersatz.server.undertow;
 import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.cfg.HttpMethod;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.undertow.server.HttpServerExchange;
 
 import java.util.ArrayDeque;
@@ -36,7 +35,6 @@ import static java.util.Collections.emptyMap;
 /**
  * The primary <code>ClientRequest</code> implementation used to wrap and expose the important parts of the underlying Undertow request context.
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class UndertowClientRequest implements ClientRequest {
 
     private final HttpServerExchange exchange;

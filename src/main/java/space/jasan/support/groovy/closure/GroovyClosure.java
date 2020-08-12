@@ -15,7 +15,6 @@
  */
 package space.jasan.support.groovy.closure;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import groovy.lang.Closure;
 
 import java.lang.reflect.Field;
@@ -104,7 +103,6 @@ public class GroovyClosure {
      * @param <T>              the type of the object which might be backed by Groovy closure
      * @return always the original potentialClosure parameter which might have the delegate set if possible
      */
-    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
     public static <T> T setDelegate(T potentialClosure, Object delegateWanted) {
         if (potentialClosure == null || CLOSURE_CLASS == null || SET_RESOLVE_STRATEGY_METHOD == null || SET_DELEGATE_METHOD == null) {
             return potentialClosure;

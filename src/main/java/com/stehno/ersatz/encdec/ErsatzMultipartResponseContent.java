@@ -27,7 +27,6 @@ import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 /**
  * Implementation of the multipart response content interface.
  */
-@SuppressWarnings({"PMD.AvoidFieldNameMatchingMethodName", "PMD.BeanMembersShouldSerialize"})
 public class ErsatzMultipartResponseContent extends MultipartResponseContent {
 
     private final List<MultipartPart> parts = new LinkedList<>();

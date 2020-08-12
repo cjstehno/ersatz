@@ -22,7 +22,6 @@ import static java.lang.String.format;
 /**
  * Representation of a multipart part for requests and responses.
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class MultipartPart {
 
     private String fieldName;

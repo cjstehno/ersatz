@@ -32,7 +32,6 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  * Provides management of response encoders. You may share an instance of this class to define response part encoders across multiple multipart
  * response configurations.
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ResponseEncoders {
 
     private final List<EncoderMapping> encoders = new LinkedList<>();

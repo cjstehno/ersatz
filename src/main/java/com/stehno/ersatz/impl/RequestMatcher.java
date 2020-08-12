@@ -36,7 +36,6 @@ import static java.util.Arrays.asList;
 /**
  * Request-specific wrapper around hamcrest matchers to provide property-based matching based on request attributes.
  */
-@SuppressWarnings({"PMD.AvoidFieldNameMatchingMethodName", "PMD.BeanMembersShouldSerialize"})
 public class RequestMatcher extends BaseMatcher<ClientRequest> {
 
     private final Matcher<?> matcher;

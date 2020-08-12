@@ -24,7 +24,6 @@ import org.hamcrest.Matcher;
 /**
  * Hamcrest Matcher implementation for matching an incoming HTTP request with the configured matcher conditions.
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ProxyRequestMatcher extends BaseMatcher<ClientRequest> {
 
     private final Matcher<HttpMethod> methodMatcher;

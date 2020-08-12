@@ -28,21 +28,21 @@ class GetExpectationsGroovyTest extends ExpectationHarness {
 
     @ParameterizedTest @DisplayName("GET(path,closure)")
     @CsvSource([
-            "alpha,alpha,true",
-            "alpha,bravo,false"
+        "alpha,alpha,true",
+        "alpha,bravo,false"
     ])
     void get_path_closure(final String label, final String expectedLabel, final boolean present) {
         execAndAssert(
-                { mock ->
-                    mock.setPath("/blah");
-                    mock.query("label", label);
-                },
-                { expectations ->
-                    expectations.GET('/blah') {
-                        query('label', expectedLabel)
-                    }
-                },
-                present
+            { mock ->
+                mock.setPath("/blah");
+                mock.query("label", label);
+            },
+            { expectations ->
+                expectations.GET('/blah') {
+                    query('label', expectedLabel)
+                }
+            },
+            present
         )
     }
 }

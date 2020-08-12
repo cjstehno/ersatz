@@ -29,6 +29,8 @@ import java.util.concurrent.CompletableFuture
 
 class HttpClient {
 
+    // FIXME: once the tests have been converted, look into using the Java 9 client instead
+
     private final OkHttpClient client
 
     HttpClient(final boolean enableHttps = false, final Closure<Void> config = null) {

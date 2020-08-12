@@ -35,7 +35,6 @@ import java.util.function.Consumer;
 import static com.stehno.ersatz.cfg.WsMessageType.*;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
-@SuppressWarnings({"PMD.AvoidFieldNameMatchingMethodName", "PMD.BeanMembersShouldSerialize"})
 public class ReceivedMessageImpl implements ReceivedMessage {
 
     private Object payload;

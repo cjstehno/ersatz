@@ -33,7 +33,6 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Hamcrest matcher used to match Ersatz request cookie instances.
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class CookieMatcher extends BaseMatcher<Cookie> {
 
     private final Map<String, Matcher> matchers = new LinkedHashMap<>();

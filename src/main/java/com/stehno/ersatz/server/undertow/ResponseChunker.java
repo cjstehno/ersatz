@@ -29,7 +29,6 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Undertow server callback used to provide the delayed chunked content.
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ResponseChunker implements IoCallback {
 
     private final List<byte[]> chunks;

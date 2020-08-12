@@ -28,7 +28,6 @@ import static java.lang.String.format;
 /**
  * Ersatz abstraction of a request or response cookie. See also the <code>CookieMatcher</code>.
  */
-@SuppressWarnings({"PMD.AvoidFieldNameMatchingMethodName", "PMD.BeanMembersShouldSerialize"})
 public class Cookie {
 
     private String value;

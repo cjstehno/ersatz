@@ -36,7 +36,6 @@ import static org.hamcrest.Matchers.*;
  * A Hamcrest matcher used to match <code>MultipartRequestContent</code>. The matcher may be created directly or by using the closure or consumer
  * static configuration methods.
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class MultipartRequestMatcher extends BaseMatcher<MultipartRequestContent> {
 
     private static final String VALUE = "value";

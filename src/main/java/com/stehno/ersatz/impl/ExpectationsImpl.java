@@ -30,7 +30,6 @@ import static java.util.Collections.unmodifiableList;
 /**
  * Implementation of the <code>Expectations</code> interface.
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = new LinkedList<>();

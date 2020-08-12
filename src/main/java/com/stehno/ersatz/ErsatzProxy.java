@@ -32,7 +32,6 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  * <p>
  * At this time, only HTTP proxies are supported.
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ErsatzProxy {
 
     private final ProxyConfigImpl config = new ProxyConfigImpl();

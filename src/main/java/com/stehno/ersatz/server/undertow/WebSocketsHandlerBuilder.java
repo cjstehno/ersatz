@@ -20,7 +20,6 @@ import com.stehno.ersatz.impl.ExpectationsImpl;
 import com.stehno.ersatz.impl.ReceivedMessageImpl;
 import com.stehno.ersatz.impl.UnmatchedWsReport;
 import com.stehno.ersatz.impl.WebSocketExpectationsImpl;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.PathHandler;
@@ -36,7 +35,6 @@ import java.nio.ByteBuffer;
 /**
  * Used to build the HttpHandler chain for web socket support.
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class WebSocketsHandlerBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(WebSocketsHandlerBuilder.class);
@@ -92,7 +90,6 @@ public class WebSocketsHandlerBuilder {
         }));
     }
 
-    @SuppressFBWarnings("UPM_UNCALLED_PRIVATE_METHOD")
     private void handleMessage(final WebSocketExpectationsImpl wsExpectation, final WebSocketChannel ch, final Object message) {
         wsExpectation.findMatch(message).ifPresentOrElse(
             expect -> {

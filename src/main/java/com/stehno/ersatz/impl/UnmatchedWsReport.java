@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class UnmatchedWsReport implements Report {
 
     private final WebSocketExpectationsImpl expectations;

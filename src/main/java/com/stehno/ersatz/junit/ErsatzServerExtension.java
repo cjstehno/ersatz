@@ -27,7 +27,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * BeforeEach test - the expectations will be cleared.
  * AfterEach test - the server will be stopped.
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallback {
 
     private final TestingHarness harness = new TestingHarness();

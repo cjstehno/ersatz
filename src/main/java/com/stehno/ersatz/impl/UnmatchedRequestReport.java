@@ -28,7 +28,6 @@ import static java.util.stream.Collectors.joining;
 /**
  * Helper object used to build and render a report of the unmatched request and the configured expectations.
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class UnmatchedRequestReport implements Report {
 
     private static final List<String> TEXT_CONTENT_HINTS = List.of("text/", "/json", "application/x-www-form-urlencoded");
