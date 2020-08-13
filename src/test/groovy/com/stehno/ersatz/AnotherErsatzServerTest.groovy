@@ -15,16 +15,18 @@
  */
 package com.stehno.ersatz
 
-
 import com.stehno.ersatz.cfg.Expectations
 import com.stehno.ersatz.cfg.HttpMethod
 import com.stehno.ersatz.encdec.Cookie
 import com.stehno.ersatz.encdec.Decoders
 import com.stehno.ersatz.encdec.Encoders
+import com.stehno.ersatz.encdec.ErsatzMultipartResponseContent
 import com.stehno.ersatz.encdec.MultipartResponseContent
+import com.stehno.ersatz.junit.ErsatzServerExtension
 import com.stehno.ersatz.util.HttpClient
 import groovy.transform.TupleConstructor
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody
 import org.apache.commons.fileupload.FileItem
@@ -32,46 +34,56 @@ import org.apache.commons.fileupload.FileUpload
 import org.apache.commons.fileupload.UploadContext
 import org.apache.commons.fileupload.disk.DiskFileItemFactory
 import org.hamcrest.Matcher
-import spock.lang.AutoCleanup
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.MethodSource
 import spock.lang.Specification
-import spock.lang.Unroll
 
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
+import java.util.stream.Stream
 
 import static com.stehno.ersatz.cfg.ContentType.*
 import static com.stehno.ersatz.encdec.MultipartResponseContent.multipart
 import static com.stehno.ersatz.match.CookieMatcher.cookieMatcher
+import static java.lang.System.currentTimeMillis
+import static java.util.concurrent.TimeUnit.MINUTES
 import static okhttp3.MediaType.parse
 import static okhttp3.RequestBody.create
 import static org.awaitility.Awaitility.await
 import static org.hamcrest.Matchers.*
+import static org.junit.jupiter.api.Assertions.*
+import static org.junit.jupiter.params.provider.Arguments.arguments
 
-class ErsatzServerSpec extends Specification {
+@ExtendWith(ErsatzServerExtension)
+class AnotherErsatzServerTest {
 
-    // FIXME: convert the spock tests to JUnit 5 - keep at least one comprehensive Groovy test to verify groovy works
+    // FIXME: see how much is the same between ErsatzServerTest and this class (reduce duplication)
 
-    private HttpClient http = new HttpClient()
-
-    @AutoCleanup
     private ErsatzServer ersatzServer = new ErsatzServer({
         encoder MULTIPART_MIXED, MultipartResponseContent, Encoders.multipart
     })
+    private HttpClient http
 
-    def 'prototype: functional'() {
-        setup:
+    @BeforeEach void beforeEach() {
+        http = new HttpClient()
+    }
+
+    @Test void 'prototype: functional'() {
         ersatzServer.expectations({ expectations ->
             expectations.GET('/foo').responds().body('This is Ersatz!!')
             expectations.GET('/bar').responds().body('This is Bar!!')
         } as Consumer<Expectations>)
 
-        expect:
-        "http://localhost:${ersatzServer.httpPort}/foo".toURL().text == 'This is Ersatz!!'
+        assertEquals 'This is Ersatz!!', "http://localhost:${ersatzServer.httpPort}/foo".toURL().text
     }
 
-    def 'prototype: groovy'() {
-        setup:
+    @Test void 'prototype: groovy'() {
         final AtomicInteger counter = new AtomicInteger()
 
         ersatzServer.expectations {
@@ -92,43 +104,31 @@ class ErsatzServerSpec extends Specification {
             GET('/baz').query('alpha', '42').responds().body('The answer is 42')
         }
 
-        when:
         def response = http.get(ersatzServer.httpUrl('/foo'))
+        assertEquals 'This is Ersatz!!', response.body().string()
 
-        then:
-        response.body().string() == 'This is Ersatz!!'
-
-        when:
         response = http.get(ersatzServer.httpUrl('/foo'))
+        assertEquals 'This is another response', response.body().string()
 
-        then:
-        response.body().string() == 'This is another response'
-
-        when:
         def results = [
-                http.get(ersatzServer.httpUrl('/bar')).body().string(),
-                http.get(ersatzServer.httpUrl('/bar')).body().string()
+            http.get(ersatzServer.httpUrl('/bar')).body().string(),
+            http.get(ersatzServer.httpUrl('/bar')).body().string()
         ]
 
         await().untilAtomic(counter, equalTo(2))
 
-        then:
-        results.every { it == 'This is Bar!!' }
+        assertTrue results.every { it == 'This is Bar!!' }
 
-        when:
         response = http.get(ersatzServer.httpUrl('/baz?alpha=42'))
 
-        then:
-        response.body().string() == 'The answer is 42'
+        assertEquals 'The answer is 42', response.body().string()
 
-        and:
-        ersatzServer.verify()
+        assertTrue ersatzServer.verify()
     }
 
-    @Unroll
-    'chunked response: #chunkDelay'() {
-        setup:
-        ersatzServer.timeout(1, TimeUnit.MINUTES)
+    @ParameterizedTest @DisplayName('chunked response: #chunkDelay') @MethodSource('chunkDelayProvider')
+    void chunkedResponseWithDelay(String label, chunkDelay) {
+        ersatzServer.timeout(1, MINUTES)
         ersatzServer.expectations {
             GET('/chunky').responder {
                 body 'This is chunked content', TEXT_PLAIN
@@ -139,50 +139,46 @@ class ErsatzServerSpec extends Specification {
             }
         }
 
-        when:
         def response = http.get(ersatzServer.httpUrl('/chunky'))
 
-        then:
-        response.header('Transfer-encoding') == 'chunked'
-        response.body().string() == 'This is chunked content'
-
-        where:
-        label   | chunkDelay
-        'range' | 10..25
-        'fixed' | 15
+        assertEquals 'chunked', response.header('Transfer-encoding')
+        assertEquals 'This is chunked content', response.body().string()
     }
 
-    def 'valueless query string param'() {
-        setup:
+    private static Stream<Arguments> chunkDelayProvider() {
+        Stream.of(
+            arguments('range', 10..25),
+            arguments('fixed', 15)
+        )
+    }
+
+    @Test void 'valueless query string param'() {
         ersatzServer.expectations {
             GET('/something').query('enabled').responds().code(200).body('OK', TEXT_PLAIN)
         }
 
-        when:
         def response = http.get(ersatzServer.httpUrl('/something?enabled'))
 
-        then:
-        response.code() == 200
-        response.body().string() == 'OK'
-
-        and:
-        ersatzServer.verify()
+        assertEquals 200, response.code()
+        assertEquals 'OK', response.body().string()
+        assertTrue ersatzServer.verify()
     }
 
-    def 'multipart text'() {
-        setup:
+    @Test void 'multipart text'() {
         ersatzServer.expectations {
             GET('/data') {
-                responds().body(multipart {
-                    boundary 't8xOJjySKePdRgBHYD'
-                    encoder TEXT_PLAIN.value, CharSequence, { o -> (o as String).bytes }
-                    field 'alpha', 'bravo'
-                    part 'file', 'data.txt', TEXT_PLAIN, 'This is some file data'
-                })
+                responder {
+                    encoder MULTIPART_MIXED, ErsatzMultipartResponseContent, Encoders.multipart
+                    body multipart {
+                        boundary 't8xOJjySKePdRgBHYD'
+                        encoder TEXT_PLAIN.value, CharSequence, { o -> (o as String).bytes }
+                        field 'alpha', 'bravo'
+                        part 'file', 'data.txt', TEXT_PLAIN, 'This is some file data'
+                    }
+                }
             }
         }
 
-        when:
         Response response = http.get(ersatzServer.httpUrl('/data'))
 
         def expectedLines = '''
@@ -201,223 +197,204 @@ class ErsatzServerSpec extends Specification {
 
         def actualLines = response.body().string().trim().readLines()
 
-        then:
-        expectedLines.size() == actualLines.size()
+        assertEquals expectedLines.size(), actualLines.size()
 
-        expectedLines.eachWithIndex { li, idx->
-            // FIXME: this is not actually asserting them!
-            li.trim() == actualLines[idx].trim()
+        expectedLines.eachWithIndex { li, idx ->
+            assertEquals li.trim(), actualLines[idx].trim()
         }
     }
 
-    def 'multipart binary'() {
-        setup:
+    @Test void 'multipart binary'() {
         ersatzServer.expectations {
             GET('/data') {
-                responds().body(multipart {
-                    boundary 'WyAJDTEVlYgGjdI13o'
-                    encoder TEXT_PLAIN, CharSequence, Encoders.text
-                    encoder 'image/jpeg', InputStream, Encoders.inputStream
-                    part 'file', 'data.txt', TEXT_PLAIN, 'This is some file data'
-                    part 'image', 'test-image.jpg', 'image/jpeg', ErsatzServerSpec.getResourceAsStream('/test-image.jpg'), 'base64'
-                })
+                responder {
+                    encoder MULTIPART_MIXED, ErsatzMultipartResponseContent, Encoders.multipart
+                    body multipart {
+                        boundary 'WyAJDTEVlYgGjdI13o'
+                        encoder TEXT_PLAIN, CharSequence, Encoders.text
+                        encoder 'image/jpeg', InputStream, Encoders.inputStream
+                        part 'file', 'data.txt', TEXT_PLAIN, 'This is some file data'
+                        part 'image', 'test-image.jpg', 'image/jpeg', AnotherErsatzServerTest.getResourceAsStream('/test-image.jpg'), 'base64'
+                    }
+                }
             }
         }
 
-        when:
-        okhttp3.Response response = http.get(ersatzServer.httpUrl('/data'))
+        Response response = http.get(ersatzServer.httpUrl('/data'))
 
         def down = new ResponseDownloadContent(response.body())
         FileUpload fu = new FileUpload(new DiskFileItemFactory(100000, File.createTempDir()))
         List<FileItem> items = fu.parseRequest(down)
 
-        then:
-        items.size() == 2
+        assertEquals 2, items.size()
 
-        items[0].fieldName == 'file'
-        items[0].name == 'data.txt'
-        items[0].contentType == 'text/plain'
-        items[0].get().length == 22
+        assertEquals 'file', items[0].fieldName
+        assertEquals 'data.txt', items[0].name
+        assertEquals 'text/plain', items[0].contentType
+        assertEquals 22, items[0].get().length
 
-        items[1].fieldName == 'image'
-        items[1].name == 'test-image.jpg'
-        items[1].contentType == 'image/jpeg'
-        items[1].size == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes.length
-        items[1].get() == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes
+        assertEquals 'image', items[1].fieldName
+        assertEquals 'test-image.jpg', items[1].name
+        assertEquals 'image/jpeg', items[1].contentType
+        assertEquals AnotherErsatzServerTest.getResourceAsStream('/test-image.jpg').bytes.length, items[1].size
+        assertArrayEquals AnotherErsatzServerTest.getResourceAsStream('/test-image.jpg').bytes, items[1].get()
     }
 
-    def 'multipart binary (simpler)'() {
-        setup:
+    @Test @DisplayName( 'multipart binary (simpler)')
+    void multipartBinarySimpler() {
         ersatzServer.expectations {
             GET('/stuff') {
-                responds().body(multipart {
-                    boundary 'WyAJDTEVlYgGjdI13o'
-                    encoder IMAGE_JPG, InputStream, Encoders.inputStream
-                    part 'image', 'test-image.jpg', IMAGE_JPG, ErsatzServerSpec.getResourceAsStream('/test-image.jpg'), 'base64'
-                })
+                responder {
+                    encoder MULTIPART_MIXED, ErsatzMultipartResponseContent, Encoders.multipart
+                    body(multipart {
+                        boundary 'WyAJDTEVlYgGjdI13o'
+                        encoder IMAGE_JPG, InputStream, Encoders.inputStream
+                        part 'image', 'test-image.jpg', IMAGE_JPG, AnotherErsatzServerTest.getResourceAsStream('/test-image.jpg'), 'base64'
+                    })
+                }
             }
         }
 
-        when:
         Response response = http.get(ersatzServer.httpUrl('/stuff'))
 
         def down = new ResponseDownloadContent(response.body())
         FileUpload fu = new FileUpload(new DiskFileItemFactory(100000, File.createTempDir()))
         List<FileItem> items = fu.parseRequest(down)
 
-        then:
-        items.size() == 1
+        assertEquals 1, items.size()
 
-        items[0].fieldName == 'image'
-        items[0].name == 'test-image.jpg'
-        items[0].contentType == 'image/jpeg'
-        items[0].size == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes.length
-        items[0].get() == ErsatzServerSpec.getResourceAsStream('/test-image.jpg').bytes
+        assertEquals 'image', items[0].fieldName
+        assertEquals 'test-image.jpg', items[0].name
+        assertEquals 'image/jpeg', items[0].contentType
+        assertEquals AnotherErsatzServerTest.getResourceAsStream('/test-image.jpg').bytes.length, items[0].size
+        assertArrayEquals AnotherErsatzServerTest.getResourceAsStream('/test-image.jpg').bytes, items[0].get()
     }
 
-    def 'alternate construction'() {
-        setup:
+    @Test void 'alternate construction'() {
         def server = new ErsatzServer({
             expectations {
                 GET(startsWith('/hello')).responds().body('ok')
             }
         })
 
-        expect:
-        "${server.httpUrl}/hello/there".toURL().text == 'ok'
+        assertEquals 'ok', "${server.httpUrl}/hello/there".toURL().text
 
-        cleanup:
         server.stop()
     }
 
-    def 'gzip compression supported'() {
-        setup:
+    @Test void 'gzip compression supported'() {
         ersatzServer.expectations {
             GET('/gzip').header('Accept-Encoding', 'gzip').responds().body('x' * 1000, TEXT_PLAIN)
         }
 
-        when:
-        okhttp3.Response response = http.get(ersatzServer.httpUrl('/gzip'))
+        Response response = http.get(ersatzServer.httpUrl('/gzip'))
 
-        then:
-        response.code() == 200
-        response.networkResponse().headers('Content-Encoding').contains('gzip')
+        assertEquals 200, response.code()
+        assertTrue response.networkResponse().headers('Content-Encoding').contains('gzip')
     }
 
-    def 'non-compression supported'() {
-        setup:
+    @Test void 'non-compression supported'() {
         ersatzServer.expectations {
             GET('/gzip').header('Accept-Encoding', '').responds().body('x' * 1000, TEXT_PLAIN)
         }
 
-        when:
-        okhttp3.Response response = http.get(ersatzServer.httpUrl('/gzip'), 'Accept-Encoding': '')
+        Response response = http.get(ersatzServer.httpUrl('/gzip'), 'Accept-Encoding': '')
 
-        then:
-        response.code() == 200
-        !response.networkResponse().headers('Content-Encoding').contains('gzip')
+        assertEquals 200, response.code()
+        assertFalse response.networkResponse().headers('Content-Encoding').contains('gzip')
     }
 
-    def 'deflate supported'() {
-        setup:
+    @Test void 'deflate supported'() {
         ersatzServer.expectations {
             GET('/gzip').header('Accept-Encoding', 'deflate').responds().body('x' * 1000, TEXT_PLAIN)
         }
 
-        when:
-        okhttp3.Response response = http.get(ersatzServer.httpUrl('/gzip'), 'Accept-Encoding': 'deflate')
+        Response response = http.get(ersatzServer.httpUrl('/gzip'), 'Accept-Encoding': 'deflate')
 
-        then:
-        response.code() == 200
-        response.networkResponse().headers('Content-Encoding').contains('deflate')
+        assertEquals 200, response.code()
+        assertTrue response.networkResponse().headers('Content-Encoding').contains('deflate')
     }
 
-    @Unroll
-    'OPTIONS #path allows #allowed'() {
-        setup:
+    @ParameterizedTest @DisplayName('OPTIONS #path allows #allowed') @MethodSource('optionsProvider')
+    void optionsPathAllows(String path, Collection<String> allowed) {
         ersatzServer.expectations {
             OPTIONS('/options').responds().allows(HttpMethod.GET, HttpMethod.POST).code(200)
             OPTIONS('/*').responds().allows(HttpMethod.DELETE, HttpMethod.GET, HttpMethod.OPTIONS).code(200)
         }
 
-        when:
         HttpURLConnection connection = new URL("${ersatzServer.httpUrl}/$path").openConnection() as HttpURLConnection
         connection.requestMethod = 'OPTIONS'
 
-        then:
-        connection.responseCode == 200
-        connection.headerFields['Allow'].size() == allowed.size()
-        connection.headerFields['Allow'].containsAll(allowed)
-        !connection.inputStream.text
-
-        where:
-        path      || allowed
-        'options' || ['GET', 'POST']
-        '*'       || ['OPTIONS', 'GET', 'DELETE']
+        assertEquals 200, connection.responseCode
+        assertEquals allowed.size(), connection.headerFields['Allow'].size()
+        assertTrue connection.headerFields['Allow'].containsAll(allowed)
+        assertEquals '', connection.inputStream.text
     }
 
-    def 'TRACE sends back request'() {
-        setup:
+    private static Stream<Arguments> optionsProvider() {
+        Stream.of(
+            arguments('options', ['GET', 'POST']),
+            arguments('*', ['OPTIONS', 'GET', 'DELETE'])
+        )
+    }
+
+    @Test void 'TRACE sends back request'() {
         ersatzServer.start()
 
-        when:
         HttpURLConnection connection = new URL("${ersatzServer.httpUrl}/info?data=foo+bar").openConnection() as HttpURLConnection
         connection.requestMethod = 'TRACE'
 
-        then:
-        connection.contentType == MESSAGE_HTTP.value
-        connection.inputStream.text.readLines()*.trim() == """TRACE /info?data=foo+bar HTTP/1.1
+        assertEquals MESSAGE_HTTP.value, connection.contentType
+        assertEquals(
+            """TRACE /info?data=foo+bar HTTP/1.1
             Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
             Connection: keep-alive
             User-Agent: Java/${System.getProperty('java.version')}
             Host: localhost:${ersatzServer.httpPort}
-        """.readLines()*.trim()
+        """.readLines()*.trim(),
+            connection.inputStream.text.readLines()*.trim()
+        )
 
-        connection.responseCode == 200
+        assertEquals 200, connection.responseCode
     }
 
-    @Unroll
-    'delayed response (#delay)'() {
-        setup:
+    @ParameterizedTest @DisplayName('delayed response (#delay)') @MethodSource('delayProvider')
+    void delayedResponse(delay, long time) {
         ersatzServer.expectations {
             GET('/slow').responds().delay(delay).body('Done').code(200)
         }
 
-        when:
-        long started = System.currentTimeMillis()
+        long started = currentTimeMillis()
         String response = "${ersatzServer.httpUrl}/slow".toURL().text
-        long elapsed = System.currentTimeMillis() - started
+        long elapsed = currentTimeMillis() - started
 
-        then:
-        response == 'Done'
-        elapsed >= (time - 10) // there is some wiggle room
-
-        where:
-        delay  | time
-        1000   | 1000
-        'PT1S' | 1000
+        assertEquals 'Done', response
+        assertTrue elapsed >= (time - 10) // there is some wiggle room
     }
 
-    @Unroll
-    'using closure as matcher (#path)'() {
-        setup:
+    private static Stream<Arguments> delayProvider() {
+        Stream.of(
+            arguments(1000, 1000),
+            arguments('PT1S', 1000)
+        )
+    }
+
+    @ParameterizedTest @DisplayName('using closure as matcher (#path)')
+    @CsvSource([
+        '/general/one,ok',
+        '/general/two,ok',
+        '/other,err'
+    ])
+    void usingClosureAsMatcher(String path, String resp) {
         ersatzServer.expectations {
             GET({ p -> p.startsWith('/general') } as Matcher<String>).responds().body('ok').code(200)
             GET('/other').responds().body('err').code(200)
         }
 
-        expect:
-        ersatzServer.httpUrl(path).toURL().text == resp
-
-        where:
-        path           || resp
-        '/general/one' || 'ok'
-        '/general/two' || 'ok'
-        '/other'       || 'err'
+        assertEquals resp, ersatzServer.httpUrl(path).toURL().text
     }
 
-    def 'proxied request should return proxy not original'() {
-        setup:
+    @Test 'proxied request should return proxy not original'() {
         ErsatzServer proxyServer = new ErsatzServer({
             expectations {
                 GET('/proxied').called(1).responds().body('forwarded').code(200)
@@ -429,24 +406,20 @@ class ErsatzServerSpec extends Specification {
         }
 
         OkHttpClient proxiedClient = new OkHttpClient.Builder()
-                .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress('localhost', proxyServer.httpPort)))
-                .cookieJar(new InMemoryCookieJar())
-                .build()
+            .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress('localhost', proxyServer.httpPort)))
+            .cookieJar(new InMemoryCookieJar())
+            .build()
 
-        when:
-        okhttp3.Response response = proxiedClient.newCall(new okhttp3.Request.Builder().get().url(ersatzServer.httpUrl('/proxied')).build()).execute()
+        Response response = proxiedClient.newCall(new Request.Builder().get().url(ersatzServer.httpUrl('/proxied')).build()).execute()
 
-        then:
-        response.code() == 200
-        response.body().bytes() == 'forwarded'.bytes
+        assertEquals 200, response.code()
+        assertEquals 'forwarded'.bytes, response.body().bytes()
 
-        and:
-        proxyServer.verify()
-        ersatzServer.verify()
+        assertTrue proxyServer.verify()
+        assertTrue ersatzServer.verify()
     }
 
-    def 'multiple header matching support'() {
-        setup:
+    @Test void 'multiple header matching support'() {
         ersatzServer.expectations {
             GET('/api/hello') {
                 called 1
@@ -459,19 +432,20 @@ class ErsatzServerSpec extends Specification {
             }
         }
 
-        when:
-        okhttp3.Response response = http.get(ersatzServer.httpUrl('/api/hello'), 'Accept': ['application/json', 'application/vnd.company+json'])
+        Response response = http.get(ersatzServer.httpUrl('/api/hello'), 'Accept': ['application/json', 'application/vnd.company+json'])
 
-        then:
-        response.code() == 200
-        response.body().string() == '{msg=World}'
+        assertEquals 200, response.code()
+        assertEquals '{msg=World}', response.body().string()
 
-        and:
-        ersatzServer.verify()
+        assertTrue ersatzServer.verify()
     }
 
-    def 'multiple header matching support (using matcher)'() {
-        setup:
+    @ParameterizedTest @DisplayName('multiple header matching support (using matcher)')
+    @CsvSource([
+        'application/vnd.company+json',
+        'application/json'
+    ])
+    void multipleHeaderMatchingSupport(String headerValue) {
         ersatzServer.expectations {
             GET('/api/hello') {
                 called 1
@@ -485,22 +459,16 @@ class ErsatzServerSpec extends Specification {
             }
         }
 
-        when:
-        okhttp3.Response response = http.get(ersatzServer.httpUrl('/api/hello'), 'Accept': headerValue)
+        Response response = http.get(ersatzServer.httpUrl('/api/hello'), 'Accept': headerValue)
 
-        then:
-        response.code() == 200
-        response.body().string() == '{msg=World}'
+        assertEquals 200, response.code()
+        assertEquals '{msg=World}', response.body().string()
 
-        and:
-        ersatzServer.verify()
-
-        where:
-        headerValue << ['application/vnd.company+json', 'application/json']
+        assertTrue ersatzServer.verify()
     }
 
-    def 'multiple header matching support (expecting two headers and had one)'() {
-        setup:
+    @Test @DisplayName('multiple header matching support (expecting two headers and had one)')
+    void multipleHeaderExpecting2Had1() {
         ersatzServer.expectations {
             GET('/api/hello') {
                 called 0
@@ -513,18 +481,15 @@ class ErsatzServerSpec extends Specification {
             }
         }
 
-        when:
-        okhttp3.Response response = http.get(ersatzServer.httpUrl('/api/hello'), 'Accept': 'application/json')
+        Response response = http.get(ersatzServer.httpUrl('/api/hello'), 'Accept': 'application/json')
 
-        then:
-        response.code() == 404
+        assertEquals 404, response.code()
 
-        and:
-        ersatzServer.verify()
+        assertTrue ersatzServer.verify()
     }
 
-    def 'baking cookies'() {
-        setup:
+    @Test @DisplayName('baking cookies')
+    void bakingCookies() {
         ersatzServer.expectations {
             GET('/setkermit').called(1).responder {
                 body('ok', TEXT_PLAIN)
@@ -549,24 +514,17 @@ class ErsatzServerSpec extends Specification {
             }
         }
 
-        when:
-        okhttp3.Response response = http.get(ersatzServer.httpUrl('/setkermit'))
+        Response response = http.get(ersatzServer.httpUrl('/setkermit'))
+        assertEquals 'ok', response.body().string()
 
-        then:
-        response.body().string() == 'ok'
-
-        when:
         response = http.get(ersatzServer.httpUrl('/showkermit'), 'Cookie': 'kermit=frog; path=/showkermit')
+        assertEquals 'ok', response.body().string()
 
-        then:
-        response.body().string() == 'ok'
-
-        and:
-        ersatzServer.verify()
+        assertTrue ersatzServer.verify()
     }
 
-    def 'variable-case headers'() {
-        setup:
+    @Test @DisplayName('variable-case headers')
+    void variableCaseHeaders() {
         ersatzServer.expectations {
             POST('*') {
                 body({ true } as Matcher<Object>, APPLICATION_URLENCODED)
@@ -575,19 +533,17 @@ class ErsatzServerSpec extends Specification {
             }
         }
 
-        when:
-        okhttp3.Response response = http.post(
-                ersatzServer.httpUrl('/postit'),
-                create(parse(APPLICATION_URLENCODED.value), 'Posted'),
-                'something-headery': 'a-value'
+        Response response = http.post(
+            ersatzServer.httpUrl('/postit'),
+            create(parse(APPLICATION_URLENCODED.value), 'Posted'),
+            'something-headery': 'a-value'
         )
 
-        then:
-        response.body().string() == 'OK'
+        assertEquals 'OK', response.body().string()
     }
 
-    def 'post params'() {
-        setup:
+    @Test @DisplayName('post params')
+    void postParams() {
         ersatzServer.expectations {
             POST('/updates') {
                 param('foo', 'bar')
@@ -595,18 +551,16 @@ class ErsatzServerSpec extends Specification {
             }
         }
 
-        when:
-        okhttp3.Response response = http.post(
-                ersatzServer.httpUrl('/updates'),
-                create(parse(APPLICATION_URLENCODED.value), 'foo=bar')
+        Response response = http.post(
+            ersatzServer.httpUrl('/updates'),
+            create(parse(APPLICATION_URLENCODED.value), 'foo=bar')
         )
 
-        then:
-        response.code() == 201
+        assertEquals 201, response.code()
     }
 
-    void 'Proper closure delegation'() {
-        setup:
+    @Test @DisplayName('Proper closure delegation')
+    void properClosureDelegate() {
         ersatzServer.expectations {
             GET("/headers") {
                 header('Accept', 'application/json')
@@ -618,16 +572,14 @@ class ErsatzServerSpec extends Specification {
             }
         }
 
-        when:
-        okhttp3.Response response = http.get(ersatzServer.httpUrl('/headers'), Accept: 'application/json')
+        Response response = http.get(ersatzServer.httpUrl('/headers'), Accept: 'application/json')
 
-        then:
-        response.body().string() == '{"hello":"world"}'
-        response.header('Bad') == 'code'
+        assertEquals '{"hello":"world"}', response.body().string()
+        assertEquals 'code', response.header('Bad')
     }
 
-    void 'Proper delegation of content body request/response'() {
-        setup:
+    @Test @DisplayName('Proper delegation of content body request/response')
+    void properDelegationofContentBody() {
         ersatzServer.expectations {
             POST('/booga') {
                 decoder TEXT_PLAIN, Decoders.utf8String
@@ -638,18 +590,16 @@ class ErsatzServerSpec extends Specification {
             }
         }
 
-        when:
         def response = http.post(
-                ersatzServer.httpUrl('/booga'),
-                create(parse('text/plain'), 'a request')
+            ersatzServer.httpUrl('/booga'),
+            create(parse('text/plain'), 'a request')
         )
 
-        then:
-        response.body().string() == 'a response'
+        assertEquals 'a response', response.body().string()
     }
 
-    void 'Multiple responses for GET request'() {
-        setup:
+    @Test @DisplayName('Multiple responses for GET request')
+    void multipleResponsesForGet() {
         ersatzServer.expectations {
             GET('/aclue') {
                 header 'Info', 'value'
@@ -664,23 +614,19 @@ class ErsatzServerSpec extends Specification {
             }
         }
 
-        when:
         def response = http.get(ersatzServer.httpUrl('/aclue'), Info: 'value')
 
-        then:
-        response.code() == 200
-        response.body().string() == 'Alpha'
+        assertEquals 200, response.code()
+        assertEquals 'Alpha', response.body().string()
 
-        when:
         response = http.get(ersatzServer.httpUrl('/aclue'), Info: 'value')
 
-        then:
-        response.code() == 200
-        response.body().string() == 'Bravo'
+        assertEquals 200, response.code()
+        assertEquals 'Bravo', response.body().string()
     }
 
-    void 'Multiple responses for PUT request'() {
-        setup:
+    @Test @DisplayName('Multiple responses for PUT request')
+    void multipleResponsesForPut() {
         ersatzServer.expectations {
             PUT('/aclue') {
                 header 'Info', 'value'
@@ -696,19 +642,15 @@ class ErsatzServerSpec extends Specification {
 
         def payload = create(parse('text/plain'), 'payload')
 
-        when:
         def response = http.put(ersatzServer.httpUrl('/aclue'), payload, Info: 'value')
 
-        then:
-        response.code() == 200
-        response.body().string() == ''
+        assertEquals 200, response.code()
+        assertEquals '', response.body().string()
 
-        when:
         response = http.put(ersatzServer.httpUrl('/aclue'), payload, Info: 'value')
 
-        then:
-        response.code() == 200
-        response.body().string() == 'Bravo'
+        assertEquals 200, response.code()
+        assertEquals 'Bravo', response.body().string()
     }
 
     @TupleConstructor

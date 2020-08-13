@@ -109,7 +109,7 @@ public class MultipartRequestMatcher extends BaseMatcher<MultipartRequestContent
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName, final Matcher<String> contentType, final Matcher<Object> value) {
-        matchers.put(fieldName, Map.of("contentType", contentType, VALUE, value));
+        matchers.put(fieldName, Map.of(CONTENT_TYPE, contentType, VALUE, value));
         return this;
     }
 

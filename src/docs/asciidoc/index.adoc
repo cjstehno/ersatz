@@ -1264,25 +1264,6 @@ Notice the `safe` classifier in both examples.
 
 NOTE: This version of the library will NOT bring any of its other dependencies with it, so you will need to ensure that you have Hamcrest and JUnit defined, if they are needed by your project.
 
-== Utilities
-
-The Ersatz project also contains some useful helper utility classes.
-
-=== `DummyContentGenerator`
-
-The `DummyContentGenerator` class provides a simple method for quickly generating request/response content bytes of various sizes. The generated data is simply `(byte)1` values. Usage is pretty
-straight-forward:
-
-[source,groovy]
-----
-import static com.stehno.ersatz.util.DummyContentGenerator.generate
-import static com.stehno.ersatz.util.StorageUnit.MEGABYTES
-
-byte[] content = generate(10, MEGABYTES)
-----
-
-which will generate an array with 10 MB of data.
-
 == Usage Examples
 
 This section contains some recipe-style usage examples.

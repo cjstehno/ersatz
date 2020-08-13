@@ -123,6 +123,6 @@ public class ErsatzMultipartResponseContent extends MultipartResponseContent {
             return encoder;
         }
 
-        throw new IllegalArgumentException("No encoder found for content-type ($contentType) and object type (${objectType.simpleName}).");
+        throw new IllegalArgumentException("No encoder found for content-type (" + contentType + ") and object type (" + objectType.getSimpleName() + ").");
     }
 }

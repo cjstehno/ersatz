@@ -16,10 +16,7 @@
 package com.stehno.ersatz.util
 
 import com.stehno.ersatz.InMemoryCookieJar
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.Response
+import okhttp3.*
 
 import javax.net.ssl.*
 import java.security.SecureRandom
@@ -135,6 +132,18 @@ class HttpClient {
         }
 
         client.newCall(request.build()).execute()
+    }
+
+    void openWebSocket(final String url, Closure closure = null) {
+        openWebSocket(url, null, closure)
+    }
+
+    void openWebSocket(final String url, WebSocketListener listener, Closure closure = null) {
+        WebSocket webSocket = client.newWebSocket(new Request.Builder().url(url).build(), listener)
+
+        closure?.call(webSocket)
+
+        webSocket.close(1000, 'done')
     }
 
     private static void configureHttps(final OkHttpClient.Builder builder) {

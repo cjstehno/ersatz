@@ -184,7 +184,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
                     return null;
                 }
             },
-            "Body ($contentType) matches "
+            "Body (" + contentType + ") matches "
         );
     }
 

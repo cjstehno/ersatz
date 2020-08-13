@@ -15,56 +15,61 @@
  */
 package com.stehno.ersatz.impl
 
-import com.stehno.ersatz.encdec.Cookie
 import com.stehno.ersatz.cfg.HttpMethod
+import com.stehno.ersatz.encdec.Cookie
 import com.stehno.ersatz.encdec.ResponseEncoders
 import com.stehno.ersatz.server.MockClientRequest
-import spock.lang.Specification
-import spock.lang.Unroll
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+
+import java.util.stream.Stream
 
 import static com.stehno.ersatz.cfg.HttpMethod.POST
 import static com.stehno.ersatz.cfg.HttpMethod.PUT
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.startsWith
+import static org.junit.jupiter.params.provider.Arguments.arguments
 
-class UnmatchedRequestReportSpec extends Specification {
+class UnmatchedRequestReportTest {
 
     private static final String RED = '\u001b[31m'
     private static final String GREEN = '\u001b[32m'
     private static final String RESET = '\u001b[0m'
     private static final String BODY = 'This is some text content'
 
-    @Unroll
-    void 'unmatched report with type #contentType should print #content'() {
-        setup:
+    @ParameterizedTest @DisplayName('unmatched report with type #contentType should print #content')
+    @MethodSource('contentProvider')
+    void unmatched(String contentType, String content) {
         def headers = new LinkedHashMap<String, Deque<String>>()
 
-        Deque<String> alphas = new ArrayDeque<>();
+        Deque<String> alphas = new ArrayDeque<>()
         alphas.add('bravo-1')
         alphas.add('bravo-2')
         headers.put('alpha', alphas)
 
-        Deque<String> charlies = new ArrayDeque<>();
+        Deque<String> charlies = new ArrayDeque<>()
         charlies.add('delta')
         headers.put('charlie', charlies)
 
         MockClientRequest request = new MockClientRequest(
-                method: HttpMethod.GET,
-                protocol: 'HTTP',
-                path: '/alpha/foo',
-                headers: headers,
-                contentLength: 1234,
-                contentType: contentType,
-                characterEncoding: 'UTF-8',
-                body: BODY.bytes,
-                cookies: [ident: new Cookie('asdfasdfasdf', null, null, null, 0, false, 0, false)]
+            method: HttpMethod.GET,
+            protocol: 'HTTP',
+            path: '/alpha/foo',
+            headers: headers,
+            contentLength: 1234,
+            contentType: contentType,
+            characterEncoding: 'UTF-8',
+            body: BODY.bytes,
+            cookies: [ident: new Cookie('asdfasdfasdf', null, null, null, 0, false, 0, false)]
         )
         request.query('selected', 'one', 'two')
         request.query('id', '1002')
 
         List<ErsatzRequest> expectations = [
-                new ErsatzRequest(POST, equalTo('/alpha/foo'), new ResponseEncoders()),
-                new ErsatzRequest(PUT, startsWith('/alpha/bar'), new ResponseEncoders()).protocol('HTTPS')
+            new ErsatzRequest(POST, equalTo('/alpha/foo'), new ResponseEncoders()),
+            new ErsatzRequest(PUT, startsWith('/alpha/bar'), new ResponseEncoders()).protocol('HTTPS')
         ]
 
         when:
@@ -100,13 +105,15 @@ class UnmatchedRequestReportSpec extends Specification {
               (3 matchers: 0 matched, ${RED}3 failed${RESET})
               
         """.stripIndent()
+    }
 
-        where:
-        contentType                         | content
-        'application/octet-stream'          | '[84, 104, 105, 115, 32, 105, 115, 32, 115, 111, 109, 101, 32, 116, 101, 120, 116, 32, 99, 111, 110, 116, 101, 110, 116]'
-        'text/plain'                        | BODY
-        'text/csv'                          | BODY
-        'application/json'                  | BODY
-        'application/x-www-form-urlencoded' | BODY
+    private static Stream<Arguments> contentProvider() {
+        Stream.of(
+            arguments('application/octet-stream', '[84, 104, 105, 115, 32, 105, 115, 32, 115, 111, 109, 101, 32, 116, 101, 120, 116, 32, 99, 111, 110, 116, 101, 110, 116]'),
+            arguments('text/plain', BODY),
+            arguments('text/csv', BODY),
+            arguments('application/json', BODY),
+            arguments('application/x-www-form-urlencoded', BODY)
+        )
     }
 }

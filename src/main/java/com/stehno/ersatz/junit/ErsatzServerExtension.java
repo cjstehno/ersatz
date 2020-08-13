@@ -29,6 +29,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  */
 public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallback {
 
+    // FIXME: document that verify is not called and (maybe add a config to make it do so)
+
     private final TestingHarness harness = new TestingHarness();
 
     @Override public void beforeEach(final ExtensionContext context) throws Exception {
