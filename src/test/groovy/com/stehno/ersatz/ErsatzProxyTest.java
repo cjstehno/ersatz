@@ -32,8 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(ErsatzServerExtension.class)
 class ErsatzProxyTest {
 
-    // FIXME: need to test closure
-
     @SuppressWarnings("unused") private ErsatzServer ersatz;
 
     @Test @DisplayName("configuration with consumer")

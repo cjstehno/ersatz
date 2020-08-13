@@ -26,10 +26,11 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * <p>
  * BeforeEach test - the expectations will be cleared.
  * AfterEach test - the server will be stopped.
+ *
+ * Note: the <code>verify()</code> method is intentionally NOT called by this extension so that it may be called
+ * only when needed.
  */
 public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallback {
-
-    // FIXME: document that verify is not called and (maybe add a config to make it do so)
 
     private final TestingHarness harness = new TestingHarness();
 

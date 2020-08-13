@@ -15,13 +15,18 @@
  */
 package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.server.ClientRequest;
-import com.stehno.ersatz.cfg.*;
+import com.stehno.ersatz.cfg.Expectations;
+import com.stehno.ersatz.cfg.HttpMethod;
+import com.stehno.ersatz.cfg.Request;
+import com.stehno.ersatz.cfg.RequestWithContent;
 import com.stehno.ersatz.encdec.RequestDecoders;
 import com.stehno.ersatz.encdec.ResponseEncoders;
+import com.stehno.ersatz.server.ClientRequest;
 import org.hamcrest.Matcher;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -33,7 +38,6 @@ import static java.util.Collections.unmodifiableList;
 public class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = new LinkedList<>();
-    private final Map<String, WebSocketExpectations> webSockets = new LinkedHashMap<>();
     private final RequestDecoders globalDecoders;
     private final ResponseEncoders globalEncoders;
 
@@ -89,19 +93,6 @@ public class ExpectationsImpl implements Expectations {
         return applyExpectation(new ErsatzRequest(HttpMethod.OPTIONS, matcher, globalEncoders), config);
     }
 
-    @Override
-    public WebSocketExpectations ws(final String path, Consumer<WebSocketExpectations> config) {
-        final WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path);
-
-        if (config != null) {
-            config.accept(wse);
-        }
-
-        webSockets.put(path, wse);
-
-        return wse;
-    }
-
     private <R extends Request> R applyExpectation(final R request, final Consumer<R> consumer) {
         if (consumer != null) {
             consumer.accept(request);
@@ -112,10 +103,6 @@ public class ExpectationsImpl implements Expectations {
         return request;
     }
 
-    public Set<String> getWebSocketPaths() {
-        return webSockets.keySet();
-    }
-
     /**
      * Used to find a request matching the given incoming client request. The first match will be returned.
      *
@@ -124,10 +111,6 @@ public class ExpectationsImpl implements Expectations {
      */
     public Optional<Request> findMatch(final ClientRequest clientRequest) {
         return requests.stream().filter(r -> ((ErsatzRequest) r).matches(clientRequest)).findFirst();
-    }
-
-    public WebSocketExpectations findWsMatch(final String path) {
-        return webSockets.get(path);
     }
 
     /**
@@ -152,12 +135,6 @@ public class ExpectationsImpl implements Expectations {
         for (final Request r : requests) {
             if (!((ErsatzRequest) r).verify(timeout, unit)) {
                 throw new IllegalArgumentException("Expectations for " + r + " were not met.");
-            }
-        }
-
-        for (final var entry : webSockets.entrySet()) {
-            if (!(((WebSocketExpectationsImpl) entry.getValue()).verify(timeout, unit))) {
-                throw new IllegalArgumentException("WebSocket expectations for " + entry.getValue() + " were not met.");
             }
         }
 

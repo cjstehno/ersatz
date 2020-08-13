@@ -15,14 +15,6 @@
  */
 package com.stehno.ersatz.cfg;
 
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
-
-import java.util.function.Consumer;
-
-import static groovy.lang.Closure.DELEGATE_FIRST;
-
 /**
  * The <code>Expectations</code> interface is the root element of the expectation configuration, which provides the
  * ability to define request expectations and responses for test interactions.
@@ -35,36 +27,5 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  */
 public interface Expectations extends AnyExpectations, GetExpectations, HeadExpectations, PostExpectations, PutExpectations, DeleteExpectations, PatchExpectations, OptionsExpectations {
 
-    /**
-     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection
-     * will be expected in order for the verification to pass.
-     *
-     * @param path the request path
-     * @return a reference to the web socket expectations
-     */
-    default WebSocketExpectations ws(String path){
-        return ws(path, (Consumer<WebSocketExpectations>) null);
-    }
-
-    /**
-     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection
-     * will be expected in order for the verification to pass.
-     *
-     * @param path the request path
-     * @param closure the configuration closure
-     * @return a reference to the web socket expectations
-     */
-    default WebSocketExpectations ws(String path, @DelegatesTo(value = WebSocketExpectations.class, strategy = DELEGATE_FIRST) Closure closure){
-        return ws(path, ConsumerWithDelegate.create(closure));
-    }
-
-    /**
-     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection
-     * will be expected in order for the verification to pass.
-     *
-     * @param path the request path
-     * @param config the configuration consumer
-     * @return a reference to the web socket expectations
-     */
-    WebSocketExpectations ws(String path, Consumer<WebSocketExpectations> config);
+    // just the place they all come together.
 }

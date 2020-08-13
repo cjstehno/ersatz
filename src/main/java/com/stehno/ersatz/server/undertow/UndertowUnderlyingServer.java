@@ -75,9 +75,7 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
                     .addEncodingHandler("deflate", new DeflateEncodingProvider(), 50)
             ));
 
-            server = builder.setHandler(
-                new WebSocketsHandlerBuilder(serverConfig.getExpectations(), blockingHandler, serverConfig.isMismatchToConsole()).build()
-            ).build();
+            server = builder.setHandler(blockingHandler).build();
 
             server.start();
 

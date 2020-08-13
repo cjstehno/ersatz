@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
     api "org.codehaus.groovy:groovy:$groovyVersion"
-    api "org.codehaus.groovy:groovy-json:$groovyVersion"                // FIXME: needed?
+    api "org.codehaus.groovy:groovy-json:$groovyVersion"                // FIXME: consider replacing with https://javaee.github.io/jsonp/index.html
     api 'io.undertow:undertow-core:2.0.28.Final'
     api 'javax.servlet:javax.servlet-api:3.1.0'
     api 'org.hamcrest:hamcrest-library:2.2'
@@ -35,7 +35,7 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.1.7'               // TODO: make this use provided or default
     implementation 'commons-fileupload:commons-fileupload:1.4'          // FIXME: can I replace this?
 
-    implementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"          // TODO: make this use provided or default
+    implementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"  // TODO: make this use provided or default
 
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
