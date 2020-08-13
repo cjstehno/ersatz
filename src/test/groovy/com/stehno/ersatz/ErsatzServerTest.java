@@ -15,11 +15,12 @@
  */
 package com.stehno.ersatz;
 
-import com.stehno.ersatz.cfg.ContentType;
 import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.util.HttpClient;
-import okhttp3.Response;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Map;
@@ -33,9 +34,7 @@ import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ErsatzServerTest {
 
@@ -184,8 +183,8 @@ class ErsatzServerTest {
     }
 
     @Test @DisplayName("not started should give useful error")
-    void not_started(){
-        final var thrown = assertThrows(IllegalStateException.class, ()-> ersatzServer.httpUrl("/nothing"));
+    void not_started() {
+        final var thrown = assertThrows(IllegalStateException.class, () -> ersatzServer.httpUrl("/nothing"));
         assertEquals("The port (-1) is invalid: Has the server been started?", thrown.getMessage());
     }
 }

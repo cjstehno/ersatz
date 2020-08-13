@@ -22,10 +22,7 @@ import com.stehno.ersatz.junit.ErsatzServerExtension;
 import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.server.MockClientRequest;
 import com.stehno.ersatz.util.HttpClient;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -45,7 +42,7 @@ import static com.stehno.ersatz.match.NoCookiesMatcher.noCookies;
 import static com.stehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @ExtendWith(ErsatzServerExtension.class)

@@ -17,12 +17,9 @@ package com.stehno.ersatz
 
 import com.stehno.ersatz.util.HttpClient
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import spock.lang.AutoCleanup
-import spock.lang.Specification
 
 import static org.junit.jupiter.api.Assertions.assertEquals
 
@@ -31,24 +28,24 @@ class HttpsTest {
     private HttpClient http
     private ErsatzServer server;
 
-    @BeforeEach void beforeEach(){
+    @BeforeEach void beforeEach() {
         http = new HttpClient(true)
         server = new ErsatzServer({
             https()
         })
     }
 
-    @AfterEach void afterEach(){
+    @AfterEach void afterEach() {
         server.close()
     }
 
-    @Test @DisplayName('Https server') void httpsServer(){
+    @Test @DisplayName('Https server') void httpsServer() {
         server.expectations {
             GET('/hello').protocol('https').responds().body('This is HTTPS!')
         }
 
         def response = http.get(server.httpsUrl('/hello'))
 
-        assertEquals('This is HTTPS!', response.body().string() )
+        assertEquals('This is HTTPS!', response.body().string())
     }
 }

@@ -17,11 +17,7 @@ package com.stehno.ersatz
 
 import com.stehno.ersatz.cfg.Expectations
 import com.stehno.ersatz.cfg.HttpMethod
-import com.stehno.ersatz.encdec.Cookie
-import com.stehno.ersatz.encdec.Decoders
-import com.stehno.ersatz.encdec.Encoders
-import com.stehno.ersatz.encdec.ErsatzMultipartResponseContent
-import com.stehno.ersatz.encdec.MultipartResponseContent
+import com.stehno.ersatz.encdec.*
 import com.stehno.ersatz.junit.ErsatzServerExtension
 import com.stehno.ersatz.util.HttpClient
 import groovy.transform.TupleConstructor
@@ -42,7 +38,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
-import spock.lang.Specification
 
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
@@ -240,7 +235,7 @@ class AnotherErsatzServerTest {
         assertArrayEquals AnotherErsatzServerTest.getResourceAsStream('/test-image.jpg').bytes, items[1].get()
     }
 
-    @Test @DisplayName( 'multipart binary (simpler)')
+    @Test @DisplayName('multipart binary (simpler)')
     void multipartBinarySimpler() {
         ersatzServer.expectations {
             GET('/stuff') {

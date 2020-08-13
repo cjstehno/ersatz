@@ -17,8 +17,6 @@ package com.stehno.ersatz.impl;
 
 import io.undertow.util.ImmediatePooled;
 import io.undertow.websockets.core.BufferedBinaryMessage;
-import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,12 +25,13 @@ import java.nio.ByteBuffer;
 
 import static com.stehno.ersatz.cfg.WsMessageType.BINARY;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 class ReceivedMessageImplTest {
 
     @Test @DisplayName("matching binary message type")
-    void matching_binary(){
+    void matching_binary() {
         final var message = new ReceivedMessageImpl("a bunch of bytes and some more bytes".getBytes(UTF_8), BINARY);
 
         final var buffers = new ByteBuffer[]{
@@ -43,7 +42,6 @@ class ReceivedMessageImplTest {
         final var incomingMessage = Mockito.mock(BufferedBinaryMessage.class);
         when(incomingMessage.getData()).thenReturn(new ImmediatePooled<>(buffers));
 
-        final var matches = message.matches(incomingMessage);
-        Assertions.assertTrue(matches);
+        assertTrue(message.matches(incomingMessage));
     }
 }
