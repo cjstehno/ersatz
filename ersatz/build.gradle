@@ -1,0 +1,260 @@
+plugins {
+    id 'java-library'
+    id 'groovy'
+    id "com.github.hierynomus.license" version '0.15.0'
+    id 'jacoco'
+    id 'maven'
+    id 'maven-publish'
+    id 'com.github.kt3k.coveralls' version '2.8.4'
+    id 'com.jfrog.bintray' version '1.8.4'
+    id 'org.asciidoctor.convert' version '2.4.0'
+    id "com.stehno.gradle.webpreview" version '0.3.0'
+    id 'com.github.ben-manes.versions' version '0.29.0'
+    id "com.github.johnrengelman.shadow" version '5.2.0'
+}
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    api "org.codehaus.groovy:groovy:$groovyVersion"                     // FIXME: remove this once groovy interfaces extracted
+    api "org.codehaus.groovy:groovy-json:$groovyVersion"                // FIXME: consider replacing with https://javaee.github.io/jsonp/index.html
+
+    api 'io.undertow:undertow-core:2.0.28.Final'
+    api 'javax.servlet:javax.servlet-api:3.1.0'
+    api 'org.hamcrest:hamcrest-library:2.2'
+    api 'org.awaitility:awaitility:4.0.1'
+
+    implementation 'javax.activation:activation:1.1.1'
+    implementation 'ch.qos.logback:logback-classic:1.1.7'               // TODO: make this use provided or default
+    implementation 'commons-fileupload:commons-fileupload:1.4'          // FIXME: can I replace this?
+
+    implementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"  // TODO: make this use provided or default
+
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testImplementation 'com.squareup.okhttp3:okhttp:4.2.2'              // FIXME: needed?
+    testImplementation 'org.mockito:mockito-junit-jupiter:3.4.6'
+    testImplementation 'com.burgstaller:okhttp-digest:2.0'              // FIXME: needed?
+}
+
+task sourcesJar(type: Jar) {
+    description = 'Creates sources jar.'
+    classifier = 'sources'
+    from project.sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    description = 'Creates API documentation jar.'
+    classifier = 'javadoc'
+    from javadoc
+}
+
+test {
+    useJUnitPlatform()
+    maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+    archives shadowJar
+}
+
+publishing {
+    publications {
+        ersatzPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            artifact shadowJar
+            groupId project.group
+            artifactId 'ersatz'
+            version project.version
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'Mock server library for testing HTTP clients.')
+                root.appendNode('name', 'ersatz')
+                root.appendNode('url', 'http://stehno.com/ersatz')
+
+                def licenseNode = root.appendNode('licenses').appendNode('license')
+                licenseNode.appendNode('name', 'The Apache Software License, Version 2.0')
+                licenseNode.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                licenseNode.appendNode('distribution', 'repo')
+
+                def developersNode = root.appendNode('developers').appendNode('developer')
+                developersNode.appendNode('id', 'cjstehno')
+                developersNode.appendNode('name', 'Christopher J Stehno')
+                developersNode.appendNode('email', 'chris@stehno.com')
+
+                def scmNode = root.appendNode('scm')
+                scmNode.appendNode('connection', 'scm:git:git@github.com:cjstehno/ersatz.git')
+                scmNode.appendNode('developerConnection', 'scm:git:git@github.com:cjstehno/ersatz.git')
+                scmNode.appendNode('url', 'https://github.com/cjstehno/ersatz')
+            }
+        }
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true // coveralls plugin depends on xml format report
+        html.enabled = true
+    }
+}
+
+license {
+    header = file('../config/license_header.txt')
+
+    ignoreFailures false
+
+    ext.year = Calendar.instance.get(Calendar.YEAR)
+
+    excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks', '**/*.jpg'])
+}
+
+bintray {
+    if (project.hasProperty('user') && project.hasProperty('key')) {
+        user = project.property('user')
+        key = project.property('key')
+
+        publications = ['ersatzPublication']
+
+        pkg {
+            repo = 'stehno'
+            name = 'ersatz'
+            desc = 'Mock server library for testing HTTP clients.'
+            licenses = ['Apache-2.0']
+            labels = ['groovy', 'java', 'mocking']
+            websiteUrl = 'http://stehno.com/ersatz'
+            issueTrackerUrl = 'https://github.com/cjstehno/ersatz/issues'
+            vcsUrl = 'https://github.com/cjstehno/ersatz'
+            publicDownloadNumbers = true
+
+            version {
+                name = project.version
+                vcsTag = "v${project.version}"
+                gpg {
+                    sign = true
+                }
+                mavenCentralSync {
+                    sync = true
+                    user = project.property('sonotypeUser')
+                    password = project.property('sonotypePass')
+                }
+            }
+        }
+    }
+}
+
+asciidoctor {
+    options doctype: 'book'
+
+    backends = ['html5']
+
+    attributes 'source-highlighter': 'coderay',
+            'coderay-linenums-mode': 'table',
+            icon: 'font',
+            linkattrs: true,
+            encoding: 'utf-8'
+}
+
+webPreview {
+    resourceDir = file('build/site')
+}
+
+task site(dependsOn: ['build', 'javadoc', 'jacocoTestReport', 'asciidoctor']) {
+    doLast {
+        def vars = [
+                project_version: project.version,
+                year           : Calendar.instance.get(Calendar.YEAR)
+        ]
+
+        mkdir 'build/site'
+
+        copy {
+            from 'src/site'
+            into 'build/site'
+            include '**/*.html'
+            expand vars
+        }
+
+        copy {
+            from 'src/site'
+            into 'build/site'
+            include '**/css/**'
+            include '**/js/**'
+            include '**/img/**'
+        }
+
+        copy {
+            from 'build/reports'
+            include '**/**'
+            into 'build/site/reports'
+        }
+
+        copy {
+            from 'build/docs'
+            include '**/**'
+            into 'build/site/docs'
+        }
+
+        copy {
+            from 'build/asciidoc/html5'
+            include '**/**'
+            into 'build/site/guide'
+        }
+    }
+}
+
+task publishSite(type: GradleBuild, group: 'Publishing', description: 'Publishes the documentation web site.', dependsOn: ['site']) {
+    buildFile = 'publish.gradle'
+    tasks = ['gitPublishPush']
+}
+
+// FIXME: update and cleanup
+shadowJar {
+    classifier = 'safe'
+    dependencies {
+        exclude(dependency('junit:junit:.*'))
+        exclude(dependency('org.junit.jupiter::.*'))
+        exclude(dependency('org.junit.platform::.*'))
+        exclude(dependency('javax.activation:activation:1.1.1'))
+        exclude(dependency("org.codehaus.groovy::$groovyVersion"))
+        exclude(dependency('org.slf4j:slf4j-api:1.7.20'))
+        exclude(dependency('ch.qos.logback:logback-classic:1.1.7'))
+        exclude(dependency('ch.qos.logback:logback-core:1.1.7'))
+        exclude(dependency('org.hamcrest:hamcrest:2.2'))
+        exclude(dependency('org.hamcrest:hamcrest-library:2.2'))
+        exclude(dependency('org.hamcrest:hamcrest-core:2.2'))
+        exclude(dependency('org.opentest4j:opentest4j:1.2.0'))
+        exclude(dependency('org.apiguardian:apiguardian-api:1.1.0'))
+        exclude(dependency('jline:jline:.*'))
+        exclude(dependency('com.beust:jcommander:.*'))
+        exclude(dependency('com.thoughtworks.qdox:qdox:.*'))
+        exclude(dependency('commons-cli:commons-cli:.*'))
+        exclude(dependency('org.testng:testng:.*'))
+        exclude(dependency('info.picocli:picocli:.*'))
+        exclude(dependency('org.apache.ant::.*'))
+    }
+
+    mergeServiceFiles()
+
+    relocate 'io.undertow', 'ersatz.undertow'
+    relocate 'org.jboss', 'ersatz.jboss'
+    relocate 'org.xnio', 'ersatz.xnio'
+    relocate 'javax.servlet', 'ersatz.servlet'
+    relocate 'org.apache.commons.fileupload', 'ersatz.fileupload'
+    relocate 'org.apache.commons.io', 'ersatz.io'
+    relocate 'org.awaitility', 'ersatz.awaitility'
+}
+
+coveralls {
+    saveAsFile = true
+    sendToCoveralls = false
+}

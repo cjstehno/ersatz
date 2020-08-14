@@ -1,0 +1,40 @@
+plugins {
+    id 'java-library'
+    id 'groovy'
+    id "com.github.hierynomus.license" version '0.15.0'
+    id 'jacoco'
+}
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation project(':ersatz')
+	implementation "org.codehaus.groovy:groovy-all:3.0.5"
+	
+	testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.5.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.2"
+}
+
+test {
+    useJUnitPlatform()
+    maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
+}
+
+
+license {
+    header = file('../config/license_header.txt')
+
+    ignoreFailures false
+
+    ext.year = Calendar.instance.get(Calendar.YEAR)
+
+    excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks', '**/*.jpg'])
+}
+
+// FIXME: should have its own publish and shaded jar config
