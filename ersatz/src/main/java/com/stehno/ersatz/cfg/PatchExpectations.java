@@ -15,15 +15,11 @@
  */
 package com.stehno.ersatz.cfg;
 
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
 import org.hamcrest.Matcher;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.util.function.Consumer;
 
 import static com.stehno.ersatz.match.ErsatzMatchers.pathMatcher;
-import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Defines the available PATCH request expectations.
@@ -48,28 +44,6 @@ public interface PatchExpectations {
      */
     default RequestWithContent PATCH(Matcher<String> matcher) {
         return PATCH(matcher, (Consumer<RequestWithContent>) null);
-    }
-
-    /**
-     * Allows configuration of a PATCH request expectation using the Groovy DSL.
-     *
-     * @param path the expected request path
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    default RequestWithContent PATCH(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return PATCH(pathMatcher(path), closure);
-    }
-
-    /**
-     * Allows configuration of a PATCH request expectation using the Groovy DSL.
-     *
-     * @param matcher the path matcher
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    default RequestWithContent PATCH(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return PATCH(matcher, ConsumerWithDelegate.create(closure));
     }
 
     /**

@@ -44,7 +44,7 @@ import java.util.function.Consumer
 import java.util.stream.Stream
 
 import static com.stehno.ersatz.cfg.ContentType.*
-import static com.stehno.ersatz.encdec.MultipartResponseContent.multipart
+import static com.stehno.ersatz.encdec.MultipartResponseContent.multipartResponse
 import static com.stehno.ersatz.match.CookieMatcher.cookieMatcher
 import static java.lang.System.currentTimeMillis
 import static java.util.concurrent.TimeUnit.MINUTES
@@ -164,7 +164,7 @@ class AnotherErsatzServerTest {
             GET('/data') {
                 responder {
                     encoder MULTIPART_MIXED, ErsatzMultipartResponseContent, Encoders.multipart
-                    body multipart {
+                    body multipartResponse {
                         boundary 't8xOJjySKePdRgBHYD'
                         encoder TEXT_PLAIN.value, CharSequence, { o -> (o as String).bytes }
                         field 'alpha', 'bravo'
@@ -204,7 +204,7 @@ class AnotherErsatzServerTest {
             GET('/data') {
                 responder {
                     encoder MULTIPART_MIXED, ErsatzMultipartResponseContent, Encoders.multipart
-                    body multipart {
+                    body multipartResponse {
                         boundary 'WyAJDTEVlYgGjdI13o'
                         encoder TEXT_PLAIN, CharSequence, Encoders.text
                         encoder 'image/jpeg', InputStream, Encoders.inputStream
@@ -241,7 +241,7 @@ class AnotherErsatzServerTest {
             GET('/stuff') {
                 responder {
                     encoder MULTIPART_MIXED, ErsatzMultipartResponseContent, Encoders.multipart
-                    body(multipart {
+                    body(multipartResponse {
                         boundary 'WyAJDTEVlYgGjdI13o'
                         encoder IMAGE_JPG, InputStream, Encoders.inputStream
                         part 'image', 'test-image.jpg', IMAGE_JPG, AnotherErsatzServerTest.getResourceAsStream('/test-image.jpg'), 'base64'

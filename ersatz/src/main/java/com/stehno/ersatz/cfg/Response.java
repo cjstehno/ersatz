@@ -180,14 +180,6 @@ public interface Response {
     /**
      * Configures the response as "chunked", with the specified chunking configuration.
      *
-     * @param closure the chunking configuration
-     * @return a reference to this response
-     */
-    Response chunked(@DelegatesTo(value = ChunkingConfig.class, strategy = DELEGATE_FIRST) Closure closure);
-
-    /**
-     * Configures the response as "chunked", with the specified chunking configuration.
-     *
      * @param config the chunking configuration
      * @return a reference to this response
      */

@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2020 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,13 +22,10 @@ import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.encdec.ResponseEncoders;
 import com.stehno.ersatz.match.CookieMatcher;
 import com.stehno.ersatz.server.ClientRequest;
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
 import org.awaitility.core.ConditionTimeoutException;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.hamcrest.core.IsIterableContaining;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -41,7 +38,6 @@ import java.util.function.Consumer;
 
 import static com.stehno.ersatz.cfg.HttpMethod.*;
 import static com.stehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
-import static groovy.lang.Closure.DELEGATE_FIRST;
 import static java.util.Collections.unmodifiableList;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.*;
@@ -198,11 +194,6 @@ public class ErsatzRequest implements Request {
     }
 
     @Override
-    public Request responder(@DelegatesTo(value = Response.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        return responder(ConsumerWithDelegate.create(closure));
-    }
-
-    @Override
     public Request called(final Matcher<Integer> callVerifier) {
         this.callVerifier = callVerifier;
         return this;
@@ -263,8 +254,16 @@ public class ErsatzRequest implements Request {
         matchers.add(matcher);
     }
 
-    private Response newResponse() {
+    protected Response newResponse() {
         return new ErsatzResponse(emptyResponse, globalEncoders);
+    }
+
+    protected final boolean isEmptyResponse() {
+        return emptyResponse;
+    }
+
+    protected final ResponseEncoders getGlobalEncoders() {
+        return globalEncoders;
     }
 
     /**
@@ -276,7 +275,7 @@ public class ErsatzRequest implements Request {
     public ErsatzResponse getCurrentResponse() {
         final int currentCount = callCount.get();
         final int index = currentCount >= responses.size() ? responses.size() - 1 : currentCount;
-        return index >= 0 ? (ErsatzResponse)responses.get(index) : null;
+        return index >= 0 ? (ErsatzResponse) responses.get(index) : null;
     }
 
     /**

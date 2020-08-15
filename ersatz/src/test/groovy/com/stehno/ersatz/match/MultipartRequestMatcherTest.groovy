@@ -17,7 +17,6 @@ package com.stehno.ersatz.match
 
 
 import com.stehno.ersatz.encdec.MultipartRequestContent
-import com.stehno.ersatz.match.MultipartRequestMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
@@ -33,7 +32,7 @@ import java.util.function.Consumer
 import java.util.stream.Stream
 
 import static com.stehno.ersatz.cfg.ContentType.*
-import static com.stehno.ersatz.encdec.MultipartRequestContent.multipart
+import static com.stehno.ersatz.encdec.MultipartRequestContent.multipartRequest
 import static com.stehno.ersatz.match.MultipartRequestMatcher.multipartMatcher
 import static org.hamcrest.Matchers.*
 import static org.junit.jupiter.api.Assertions.*
@@ -44,7 +43,7 @@ class MultipartRequestMatcherTest {
     private MultipartRequestContent content
 
     @BeforeEach void beforeEach() {
-        content = multipart {
+        content = multipartRequest {
             part 'alpha', 'one'
             part 'bravo', 'bravo.dat', APPLICATION_JSON, '{"label":"This is content!"}'
         }

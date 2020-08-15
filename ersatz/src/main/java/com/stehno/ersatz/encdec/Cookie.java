@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2020 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,14 +15,9 @@
  */
 package com.stehno.ersatz.encdec;
 
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
-
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static groovy.lang.Closure.DELEGATE_FIRST;
 import static java.lang.String.format;
 
 /**
@@ -39,7 +34,7 @@ public class Cookie {
     private Integer maxAge;
     private boolean secure;
 
-    public Cookie(){
+    public Cookie() {
         this(null, null, null, null, 0, false, 0, false);
     }
 
@@ -52,16 +47,6 @@ public class Cookie {
         this.httpOnly = httpOnly;
         this.maxAge = maxAge;
         this.secure = secure;
-    }
-
-    /**
-     * Used to configure a request cookie with a configuration closure.
-     *
-     * @param closure the configuration closure
-     * @return the configured cookie
-     */
-    public static Cookie cookie(@DelegatesTo(value = Cookie.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        return cookie(ConsumerWithDelegate.create(closure));
     }
 
     /**

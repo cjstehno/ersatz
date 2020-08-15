@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2020 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,15 +15,11 @@
  */
 package com.stehno.ersatz.cfg;
 
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
 import org.hamcrest.Matcher;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.util.function.Consumer;
 
 import static com.stehno.ersatz.match.ErsatzMatchers.pathMatcher;
-import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Defines the available POST request expectations.
@@ -48,28 +44,6 @@ public interface PostExpectations {
      */
     default RequestWithContent POST(Matcher<String> matcher) {
         return POST(matcher, (Consumer<RequestWithContent>) null);
-    }
-
-    /**
-     * Allows configuration of a POST request expectation using the Groovy DSL.
-     *
-     * @param path the expected request path
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    default RequestWithContent POST(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return POST(pathMatcher(path), closure);
-    }
-
-    /**
-     * Allows configuration of a POST request expectation using the Groovy DSL.
-     *
-     * @param matcher the path matcher
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    default RequestWithContent POST(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return POST(matcher, ConsumerWithDelegate.create(closure));
     }
 
     /**

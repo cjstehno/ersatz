@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2020 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,13 +19,8 @@ import com.stehno.ersatz.cfg.ProxyConfig;
 import com.stehno.ersatz.impl.ProxyConfigImpl;
 import com.stehno.ersatz.server.UnderlyingProxyServer;
 import com.stehno.ersatz.server.undertow.UndertowUnderlyingProxyServer;
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.util.function.Consumer;
-
-import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Standalone simple proxy server useful for testing proxy configurations.
@@ -34,20 +29,8 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
  */
 public class ErsatzProxy {
 
-    private final ProxyConfigImpl config = new ProxyConfigImpl();
     private final UnderlyingProxyServer server;
-
-    /**
-     * Creates a new proxy server with the specified configuration. The configuration closure will delegate to an instance of <code>ProxyConfig</code>
-     * for the actual configuration.
-     * <p>
-     * If auto-start is not disabled, the server will be started upon creation.
-     *
-     * @param closure the configuration closure.
-     */
-    public ErsatzProxy(@DelegatesTo(value = ProxyConfig.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        this(ConsumerWithDelegate.create(closure));
-    }
+    private ProxyConfigImpl config = new ProxyConfigImpl();
 
     /**
      * Creates a new proxy server with the specified configuration. The configuration consumer will be provided an instance of
@@ -58,9 +41,14 @@ public class ErsatzProxy {
      * @param consumer the configuration consumer
      */
     public ErsatzProxy(final Consumer<ProxyConfig> consumer) {
-        consumer.accept(config);
+        this(new ProxyConfigImpl(), consumer);
+    }
 
+    protected ErsatzProxy(final ProxyConfigImpl proxyConfig, final Consumer<ProxyConfig> consumer) {
+        this.config = proxyConfig;
         this.server = new UndertowUnderlyingProxyServer(config);
+
+        consumer.accept(config);
 
         if (config.isAutoStart()) {
             start();

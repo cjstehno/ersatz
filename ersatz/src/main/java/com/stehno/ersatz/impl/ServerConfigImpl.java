@@ -22,9 +22,6 @@ import com.stehno.ersatz.cfg.ServerConfig;
 import com.stehno.ersatz.encdec.DecodingContext;
 import com.stehno.ersatz.encdec.RequestDecoders;
 import com.stehno.ersatz.encdec.ResponseEncoders;
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +29,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static groovy.lang.Closure.DELEGATE_FIRST;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -49,11 +45,20 @@ public class ServerConfigImpl implements ServerConfig {
     private int desiredHttpsPort = EPHEMERAL_PORT;
     private final RequestDecoders globalDecoders = new RequestDecoders();
     private final ResponseEncoders globalEncoders = new ResponseEncoders();
-    private final ExpectationsImpl expectations = new ExpectationsImpl(globalDecoders, globalEncoders);
-    private final Runnable starter;
+    private final ExpectationsImpl expectations;
+    private Runnable starter;
     private long timeout;
 
-    public ServerConfigImpl(final Runnable starter) {
+    public ServerConfigImpl() {
+        this(new ExpectationsImpl());
+    }
+
+    protected ServerConfigImpl(final ExpectationsImpl expectations) {
+        this.expectations = expectations;
+        this.expectations.encdec(globalEncoders, globalDecoders);
+    }
+
+    public void setStarter(final Runnable starter) {
         this.starter = starter;
     }
 
@@ -188,7 +193,7 @@ public class ServerConfigImpl implements ServerConfig {
     @Override public ServerConfig expectations(final Consumer<Expectations> expects) {
         expects.accept(expectations);
 
-        if( autoStartEnabled ){
+        if (autoStartEnabled) {
             starter.run();
         }
 
@@ -213,17 +218,6 @@ public class ServerConfigImpl implements ServerConfig {
     @Override public ServerConfig encoder(String contentType, Class objectType, Function<Object, byte[]> encoder) {
         globalEncoders.register(contentType, objectType, encoder);
         return this;
-    }
-
-    /**
-     * Registers authentication configuration as a Groovy Closure.
-     *
-     * @param closure the configuration closure
-     * @return a reference to this server configuration
-     */
-    @Override
-    public ServerConfig authentication(@DelegatesTo(value = AuthenticationConfig.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        return authentication(ConsumerWithDelegate.create(closure));
     }
 
     /**

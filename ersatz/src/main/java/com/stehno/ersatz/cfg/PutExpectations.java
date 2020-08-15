@@ -15,15 +15,11 @@
  */
 package com.stehno.ersatz.cfg;
 
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
 import org.hamcrest.Matcher;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.util.function.Consumer;
 
 import static com.stehno.ersatz.match.ErsatzMatchers.pathMatcher;
-import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Defines the available PUT request expectations.
@@ -48,28 +44,6 @@ public interface PutExpectations {
      */
     default RequestWithContent PUT(Matcher<String> matcher) {
         return PUT(matcher, (Consumer<RequestWithContent>) null);
-    }
-
-    /**
-     * Allows configuration of a PUT request expectation using the Groovy DSL.
-     *
-     * @param path the expected request path
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    default RequestWithContent PUT(String path, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return PUT(pathMatcher(path), closure);
-    }
-
-    /**
-     * Allows configuration of a PUT request expectation using the Groovy DSL.
-     *
-     * @param matcher the path matcher
-     * @return a <code>RequestWithContent</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    default RequestWithContent PUT(Matcher<String> matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return PUT(matcher, ConsumerWithDelegate.create(closure));
     }
 
     /**

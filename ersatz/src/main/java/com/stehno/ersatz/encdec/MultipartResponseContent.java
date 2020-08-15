@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2020 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,15 +16,10 @@
 package com.stehno.ersatz.encdec;
 
 import com.stehno.ersatz.cfg.ContentType;
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Response content object used to return a multipart response to a request. Note that multipart responses are not reliably supported by most
@@ -41,23 +36,13 @@ public abstract class MultipartResponseContent {
     private static final char[] ALPHANUMERICS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
 
     /**
-     * Creates a new multipart response content object with the optional boundary (random default) and a Closure used to configure the parts.
-     *
-     * @param closure the configuration closure (Delegates to MultipartContent instance)
-     * @return a reference to this MultipartResponseContent instance
-     */
-    public static MultipartResponseContent multipart(final @DelegatesTo(value = MultipartResponseContent.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return multipart(ConsumerWithDelegate.create(closure));
-    }
-
-    /**
      * Creates a new multipart response content object with the optional boundary (random default) and a Consumer used to configure the parts. The
      * Consumer will have an instance of MultipartContent passed into it for configuration.
      *
      * @param consumer the configuration consumer (given an instance of MultipartContent)
      * @return a reference to this MultipartResponseContent instance
      */
-    public static MultipartResponseContent multipart(final Consumer<MultipartResponseContent> consumer) {
+    public static MultipartResponseContent multipartResponse(final Consumer<MultipartResponseContent> consumer) {
         MultipartResponseContent content = new ErsatzMultipartResponseContent();
         consumer.accept(content);
         return content;
@@ -71,7 +56,7 @@ public abstract class MultipartResponseContent {
     public static String generateBoundary() {
         final StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < 18; i++) {
-            buffer.append(ALPHANUMERICS[ThreadLocalRandom.current().nextInt(0,ALPHANUMERICS.length)]);
+            buffer.append(ALPHANUMERICS[ThreadLocalRandom.current().nextInt(0, ALPHANUMERICS.length)]);
         }
         return buffer.toString();
     }

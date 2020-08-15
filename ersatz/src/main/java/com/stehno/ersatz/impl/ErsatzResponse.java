@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2020 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,13 +20,9 @@ import com.stehno.ersatz.cfg.ContentType;
 import com.stehno.ersatz.cfg.HttpMethod;
 import com.stehno.ersatz.cfg.Response;
 import com.stehno.ersatz.encdec.*;
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +32,6 @@ import java.util.function.Function;
 
 import static com.stehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
 import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
-import static groovy.lang.Closure.DELEGATE_FIRST;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -201,11 +196,6 @@ public class ErsatzResponse implements Response {
     @Override
     public long getDelay() {
         return this.delayTime;
-    }
-
-    @Override
-    public Response chunked(@DelegatesTo(value = ChunkingConfig.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return chunked(ConsumerWithDelegate.create(closure));
     }
 
     @Override

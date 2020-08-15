@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2020 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,17 +16,14 @@
 package com.stehno.ersatz.encdec;
 
 import com.stehno.ersatz.cfg.ContentType;
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import javax.activation.MimeType;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.stehno.ersatz.encdec.MimeTypes.createMimeType;
-import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Provides management of response encoders. You may share an instance of this class to define response part encoders across multiple multipart
@@ -36,19 +33,10 @@ public class ResponseEncoders {
 
     private final List<EncoderMapping> encoders = new LinkedList<>();
 
-    /**
-     * Creates a response encoder collection with optionally specified configuration.
-     *
-     * @param closure the optional configuration closure
-     */
-    public ResponseEncoders(@DelegatesTo(value = ResponseEncoders.class, strategy = DELEGATE_FIRST) Closure closure) {
-        if (closure != null) {
-            ConsumerWithDelegate.create(closure).accept(this);
-        }
-    }
-
-    public ResponseEncoders() {
-        this(null);
+    public static ResponseEncoders encoders(final Consumer<ResponseEncoders> consumer) {
+        final var encoders = new ResponseEncoders();
+        consumer.accept(encoders);
+        return encoders;
     }
 
     /**
@@ -77,7 +65,7 @@ public class ResponseEncoders {
      * Used to find an encoder for the given content-type and object type.
      *
      * @param contentType the part content-type
-     * @param objectType the part object type
+     * @param objectType  the part object type
      * @return the encoder function if one exists or null
      */
     public Function<Object, byte[]> findEncoder(final String contentType, final Class objectType) {
@@ -96,7 +84,7 @@ public class ResponseEncoders {
      * param contentType the part content-type
      *
      * @param contentType the response content type to be encoded
-     * @param objectType the part object type
+     * @param objectType  the part object type
      * @return the encoder function if one exists or null
      */
     public Function<Object, byte[]> findEncoder(final ContentType contentType, final Class objectType) {

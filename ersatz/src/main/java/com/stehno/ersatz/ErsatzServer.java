@@ -20,15 +20,11 @@ import com.stehno.ersatz.cfg.ServerConfig;
 import com.stehno.ersatz.impl.ServerConfigImpl;
 import com.stehno.ersatz.server.UnderlyingServer;
 import com.stehno.ersatz.server.undertow.UndertowUnderlyingServer;
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.io.Closeable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import static groovy.lang.Closure.DELEGATE_FIRST;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
@@ -57,17 +53,14 @@ public class ErsatzServer implements Closeable {
     private final ServerConfigImpl serverConfig;
 
     public ErsatzServer() {
-        this.serverConfig = new ServerConfigImpl(this::start);
-        this.underlyingServer = new UndertowUnderlyingServer(serverConfig);
+        this(new ServerConfigImpl());
     }
 
-    /**
-     * Creates a new Ersatz server instance with either the default configuration or a configuration provided by the Groovy DSL closure.
-     *
-     * @param closure the configuration closure (delegated to <code>ServerConfig</code>)
-     */
-    public ErsatzServer(@DelegatesTo(value = ServerConfig.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        this(ConsumerWithDelegate.create(closure));
+    protected ErsatzServer(final ServerConfigImpl serverConfig) {
+        this.serverConfig = serverConfig;
+        this.serverConfig.setStarter(this::start);
+
+        this.underlyingServer = new UndertowUnderlyingServer(serverConfig);
     }
 
     /**
@@ -128,8 +121,8 @@ public class ErsatzServer implements Closeable {
         return getUrl("https", getHttpsPort());
     }
 
-    private String getUrl(final String prefix, final int port){
-        if( port > 0 ) {
+    private String getUrl(final String prefix, final int port) {
+        if (port > 0) {
             return prefix + "://localhost:" + port;
         } else {
             throw new IllegalStateException("The port (" + port + ") is invalid: Has the server been started?");
@@ -173,19 +166,6 @@ public class ErsatzServer implements Closeable {
         }
 
         return this;
-    }
-
-    /**
-     * Used to configure HTTP expectations on the server; the provided Groovy <code>Closure</code> will delegate to an <code>Expectations</code>
-     * instance for configuring server interaction expectations using the Groovy DSL.
-     * <p>
-     * Calling this method when auto-start is enabled will start the server.
-     *
-     * @param closure the Groovy <code>Closure</code> which will provide expectation configuration via DSL
-     * @return a reference to this server
-     */
-    public ErsatzServer expectations(@DelegatesTo(value = Expectations.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        return expectations(ConsumerWithDelegate.create(closure));
     }
 
     /**

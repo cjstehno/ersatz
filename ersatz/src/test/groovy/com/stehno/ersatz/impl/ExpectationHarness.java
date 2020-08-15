@@ -39,7 +39,8 @@ abstract class ExpectationHarness {
     }
 
     @BeforeEach public void beforeEach() {
-        expectations = new ExpectationsImpl(new RequestDecoders(), new ResponseEncoders());
+        expectations = new ExpectationsImpl();
+        expectations.encdec(new ResponseEncoders(), new RequestDecoders());
     }
 
     void execAndAssert(final Consumer<MockClientRequest> requestConfig, final Function<ExpectationsImpl, Request> methodExecutor, final boolean matchExists) {

@@ -38,12 +38,20 @@ import static java.util.Collections.unmodifiableList;
 public class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = new LinkedList<>();
-    private final RequestDecoders globalDecoders;
-    private final ResponseEncoders globalEncoders;
+    private RequestDecoders globalDecoders;
+    private ResponseEncoders globalEncoders;
 
-    public ExpectationsImpl(final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
-        this.globalDecoders = globalDecoders;
-        this.globalEncoders = globalEncoders;
+    public void encdec(final ResponseEncoders encoders, final RequestDecoders decoders) {
+        this.globalEncoders = encoders;
+        this.globalDecoders = decoders;
+    }
+
+    protected final RequestDecoders getGlobalDecoders(){
+        return globalDecoders;
+    }
+
+    protected  final ResponseEncoders getGlobalEncoders(){
+        return globalEncoders;
     }
 
     /**
@@ -93,7 +101,7 @@ public class ExpectationsImpl implements Expectations {
         return applyExpectation(new ErsatzRequest(HttpMethod.OPTIONS, matcher, globalEncoders), config);
     }
 
-    private <R extends Request> R applyExpectation(final R request, final Consumer<R> consumer) {
+    protected final <R extends Request> R applyExpectation(final R request, final Consumer<R> consumer) {
         if (consumer != null) {
             consumer.accept(request);
         }

@@ -15,15 +15,11 @@
  */
 package com.stehno.ersatz.cfg;
 
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
 import org.hamcrest.Matcher;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.util.function.Consumer;
 
 import static com.stehno.ersatz.match.ErsatzMatchers.pathMatcher;
-import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Defines the available HEAD request expectations.
@@ -48,28 +44,6 @@ public interface HeadExpectations {
      */
     default Request HEAD(Matcher<String> matcher) {
         return HEAD(matcher, (Consumer<Request>) null);
-    }
-
-    /**
-     * Allows configuration of a HEAD request expectation using the Groovy DSL.
-     *
-     * @param path    the expected request path
-     * @param closure the Groovy closure containing the configuration
-     * @return a <code>Request</code> configuration object
-     */
-    default Request HEAD(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return HEAD(pathMatcher(path), closure);
-    }
-
-    /**
-     * Allows configuration of a HEAD request expectation using the Groovy DSL.
-     *
-     * @param matcher the path matcher
-     * @param closure the Groovy closure containing the configuration
-     * @return a <code>Request</code> configuration object
-     */
-    default Request HEAD(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return HEAD(matcher, ConsumerWithDelegate.create(closure));
     }
 
     /**

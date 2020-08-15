@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2020 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,18 +16,14 @@
 package com.stehno.ersatz.match;
 
 import com.stehno.ersatz.encdec.Cookie;
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static groovy.lang.Closure.DELEGATE_FIRST;
 import static org.hamcrest.Matchers.equalTo;
 
 /**
@@ -36,16 +32,6 @@ import static org.hamcrest.Matchers.equalTo;
 public class CookieMatcher extends BaseMatcher<Cookie> {
 
     private final Map<String, Matcher> matchers = new LinkedHashMap<>();
-
-    /**
-     * Configures the cookie matcher with a closure delegating to a <code>CookieMatcher</code> instance.
-     *
-     * @param closure the configuration closure
-     * @return the configured matcher
-     */
-    public static CookieMatcher cookieMatcher(@DelegatesTo(value = CookieMatcher.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        return cookieMatcher(ConsumerWithDelegate.create(closure));
-    }
 
     /**
      * Configures the cookie matcher with a consumer which is passed a <code>CookieMatcher</code> instance to configure.

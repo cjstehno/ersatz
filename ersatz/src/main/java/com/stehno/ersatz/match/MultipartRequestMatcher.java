@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2020 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,19 +17,15 @@ package com.stehno.ersatz.match;
 
 import com.stehno.ersatz.cfg.ContentType;
 import com.stehno.ersatz.encdec.MultipartRequestContent;
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static groovy.lang.Closure.DELEGATE_FIRST;
 import static org.hamcrest.Matchers.*;
 
 /**
@@ -42,16 +38,6 @@ public class MultipartRequestMatcher extends BaseMatcher<MultipartRequestContent
     private static final String CONTENT_TYPE = "contentType";
     private static final String FILE_NAME = "fileName";
     private final Map<String, Map<String, Matcher>> matchers = new LinkedHashMap<>();
-
-    /**
-     * Creates a new multipart matcher with a Groovy DSL closure (delegating to <code>MultipartRequestMatcher</code>).
-     *
-     * @param closure the configuration closure
-     * @return a configured matcher instance
-     */
-    public static MultipartRequestMatcher multipartMatcher(@DelegatesTo(value = MultipartRequestMatcher.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        return multipartMatcher(ConsumerWithDelegate.create(closure));
-    }
 
     /**
      * Creates a new multipart matcher with a consumer - it will have an instance of <code>MultipartRequestMatcher</code> passed into it for

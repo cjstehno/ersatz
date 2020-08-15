@@ -15,8 +15,7 @@
  */
 package com.stehno.ersatz.encdec
 
-import com.stehno.ersatz.encdec.MultipartPart
-import com.stehno.ersatz.encdec.MultipartRequestContent
+
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -24,13 +23,13 @@ import java.util.function.Consumer
 
 import static com.stehno.ersatz.cfg.ContentType.IMAGE_PNG
 import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
-import static com.stehno.ersatz.encdec.MultipartRequestContent.multipart
+import static com.stehno.ersatz.encdec.MultipartRequestContent.multipartRequest
 import static org.junit.jupiter.api.Assertions.assertEquals
 
 class MultipartRequestContentTest {
 
     @Test @DisplayName('closure configuration') void closure() {
-        MultipartRequestContent content = multipart {
+        MultipartRequestContent content = multipartRequest {
             part 'alpha', 'one'
             part 'bravo', 'text/markdown', 'this _is_ *rich^ text'
             part 'charlie', IMAGE_PNG, [8, 6, 7, 5, 3, 0, 9] as byte[]
@@ -46,7 +45,7 @@ class MultipartRequestContentTest {
     }
 
     @Test @DisplayName('consumer configuration') void consumer(){
-        MultipartRequestContent content = multipart(new Consumer<MultipartRequestContent>() {
+        MultipartRequestContent content = multipartRequest(new Consumer<MultipartRequestContent>() {
             @Override void accept(final MultipartRequestContent mrc) {
                 mrc.part 'alpha', 'one'
                 mrc.part 'bravo', 'text/markdown', 'this _is_ *rich^ text'

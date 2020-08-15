@@ -202,13 +202,4 @@ public interface Request {
      * @return a reference to this request
      */
     Request responder(final Consumer<Response> responder);
-
-    /**
-     * Allows for configuration of a <code>Response</code> by the given Groovy <code>Closure</code>, which will delegate to a <code>Response</code>
-     * instance passed into it for configuration using the Groovy DSL.
-     *
-     * @param closure the <code>Consumer&lt;Response&gt;</code> to provide configuration of the response
-     * @return a reference to this request
-     */
-    Request responder(@DelegatesTo(value = Response.class, strategy = DELEGATE_FIRST) final Closure closure);
 }

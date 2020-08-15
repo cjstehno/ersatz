@@ -36,7 +36,7 @@ import java.util.Map;
 
 import static com.stehno.ersatz.cfg.ContentType.*;
 import static com.stehno.ersatz.cfg.HttpMethod.POST;
-import static com.stehno.ersatz.encdec.MultipartRequestContent.multipart;
+import static com.stehno.ersatz.encdec.MultipartRequestContent.multipartRequest;
 import static com.stehno.ersatz.match.MultipartRequestMatcher.multipartMatcher;
 import static com.stehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
 import static org.hamcrest.Matchers.equalTo;
@@ -162,7 +162,7 @@ class ErsatzRequestWithContentTest {
                 req.decoder(TEXT_PLAIN, Decoders.utf8String);
                 req.decoder(MULTIPART_MIXED, Decoders.multipart);
                 req.decoder(IMAGE_PNG, Decoders.passthrough);
-                req.body(multipart(mrc -> {
+                req.body(multipartRequest(mrc -> {
                     mrc.part("something", TEXT_PLAIN, "interesting");
                     mrc.part("infoFile", "info.txt", "text/plain; charset=utf-8", "This is some interesting file content.");
                     mrc.part("dataFile", "data.bin", IMAGE_PNG, new byte[]{8, 6, 7, 5, 3, 0, 9});

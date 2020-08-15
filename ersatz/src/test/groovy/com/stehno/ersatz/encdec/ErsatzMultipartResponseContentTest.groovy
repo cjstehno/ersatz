@@ -39,7 +39,7 @@ class ErsatzMultipartResponseContentTest {
 
     @Test @DisplayName("multipart content: consumer")
     void multipartConsumer() throws Exception {
-        def multipartContent = (ErsatzMultipartResponseContent) MultipartResponseContent.multipart(new Consumer<MultipartResponseContent>() {
+        def multipartContent = (ErsatzMultipartResponseContent) MultipartResponseContent.multipartResponse(new Consumer<MultipartResponseContent>() {
             @Override void accept(final MultipartResponseContent mult) {
                 mult.boundary("abc123");
 
@@ -73,7 +73,7 @@ class ErsatzMultipartResponseContentTest {
 
     @Test @DisplayName('multipart content: closure')
     void multipartClosure() throws Exception {
-        MultipartResponseContent mc = MultipartResponseContent.multipart {
+        MultipartResponseContent mc = MultipartResponseContent.multipartResponse {
             boundary 'abc123'
 
             encoder 'text/plain', String, { o -> (o as String).bytes }

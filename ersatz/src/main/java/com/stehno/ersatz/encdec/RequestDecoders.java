@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2020 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,18 +16,15 @@
 package com.stehno.ersatz.encdec;
 
 import com.stehno.ersatz.cfg.ContentType;
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import javax.activation.MimeType;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.stehno.ersatz.encdec.MimeTypes.createMimeType;
-import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Configuration manager for a collection of request content decoders.
@@ -36,19 +33,10 @@ public class RequestDecoders {
 
     private final List<DecoderMapping> decoders = new LinkedList<>();
 
-    /**
-     * Creates a new decoder collection optionally registering decoders with the Groovy DSL closure.
-     *
-     * @param closure the optional configuration closure
-     */
-    public RequestDecoders(@DelegatesTo(value = RequestDecoders.class, strategy = DELEGATE_FIRST) Closure closure) {
-        if (closure != null) {
-            ConsumerWithDelegate.create(closure).accept(this);
-        }
-    }
-
-    public RequestDecoders() {
-        this(null);
+    public static RequestDecoders decoders(final Consumer<RequestDecoders> consumer) {
+        final var decoders = new RequestDecoders();
+        consumer.accept(decoders);
+        return decoders;
     }
 
     /**

@@ -15,15 +15,11 @@
  */
 package com.stehno.ersatz.cfg;
 
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
 import org.hamcrest.Matcher;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.util.function.Consumer;
 
 import static com.stehno.ersatz.match.ErsatzMatchers.pathMatcher;
-import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Defines the available DELETE request expectations.
@@ -48,28 +44,6 @@ public interface DeleteExpectations {
      */
     default Request DELETE(Matcher<String> matcher) {
         return DELETE(matcher, (Consumer<Request>) null);
-    }
-
-    /**
-     * Allows configuration of a DELETE request expectation using the Groovy DSL.
-     *
-     * @param path the expected request path
-     * @return a <code>Request</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    default Request DELETE(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return DELETE(pathMatcher(path), closure);
-    }
-
-    /**
-     * Allows configuration of a DELETE request expectation using the Groovy DSL.
-     *
-     * @param matcher the path matcher
-     * @return a <code>Request</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    default Request DELETE(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return DELETE(matcher, ConsumerWithDelegate.create(closure));
     }
 
     /**

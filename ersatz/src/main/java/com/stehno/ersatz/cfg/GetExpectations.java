@@ -15,15 +15,11 @@
  */
 package com.stehno.ersatz.cfg;
 
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
 import org.hamcrest.Matcher;
-import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import java.util.function.Consumer;
 
 import static com.stehno.ersatz.match.ErsatzMatchers.pathMatcher;
-import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Defines the available GET request expectations.
@@ -50,27 +46,6 @@ public interface GetExpectations {
         return GET(matcher, (Consumer<Request>) null);
     }
 
-    /**
-     * Allows configuration of a GET request expectation using the Groovy DSL.
-     *
-     * @param path the expected request path.
-     * @return a <code>Request</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    default Request GET(String path, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return GET(pathMatcher(path), closure);
-    }
-
-    /**
-     * Allows configuration of a GET request expectation using the Groovy DSL.
-     *
-     * @param matcher the path matcher
-     * @return a <code>Request</code> configuration object
-     * @param closure the Groovy closure containing the configuration
-     */
-    default Request GET(Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure) {
-        return GET(matcher, ConsumerWithDelegate.create(closure));
-    }
 
     /**
      * Allows configuration of a GET request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The <code>Consumer&lt;Request&gt;</code> will
