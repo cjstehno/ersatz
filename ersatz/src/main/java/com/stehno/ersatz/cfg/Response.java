@@ -17,16 +17,12 @@ package com.stehno.ersatz.cfg;
 
 import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.encdec.ResponseEncoders;
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Used to configure the provided response to an HTTP request.

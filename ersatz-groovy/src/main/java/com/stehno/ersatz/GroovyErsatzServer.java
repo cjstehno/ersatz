@@ -15,21 +15,19 @@
  */
 package com.stehno.ersatz;
 
-import com.stehno.ersatz.cfg.GroovyExpectations;
-import com.stehno.ersatz.cfg.GroovyServerConfig;
-import com.stehno.ersatz.impl.GroovyServerConfigImpl;
+import com.stehno.ersatz.cfg.Expectations;
+import com.stehno.ersatz.cfg.ServerConfig;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
+// FIXME: note - really only provides the constructor (any way around)?
 public class GroovyErsatzServer extends ErsatzServer {
 
-    // FIXME: consider how much of this could be done with module-extensions rather then actual classes
-
-    public GroovyErsatzServer(){
-        super(new GroovyServerConfigImpl());
+    public GroovyErsatzServer() {
+        super();
     }
 
     /**
@@ -37,7 +35,7 @@ public class GroovyErsatzServer extends ErsatzServer {
      *
      * @param closure the configuration closure (delegated to <code>ServerConfig</code>)
      */
-    public GroovyErsatzServer(@DelegatesTo(value = GroovyServerConfig.class, strategy = DELEGATE_FIRST) final Closure closure) {
+    public GroovyErsatzServer(@DelegatesTo(value = ServerConfig.class, strategy = DELEGATE_FIRST) final Closure closure) {
         super(ConsumerWithDelegate.create(closure));
     }
 
@@ -50,7 +48,7 @@ public class GroovyErsatzServer extends ErsatzServer {
      * @param closure the Groovy <code>Closure</code> which will provide expectation configuration via DSL
      * @return a reference to this server
      */
-    public GroovyErsatzServer expectations(@DelegatesTo(value = GroovyExpectations.class, strategy = DELEGATE_FIRST) final Closure closure) {
+    public GroovyErsatzServer expectations(@DelegatesTo(value = Expectations.class, strategy = DELEGATE_FIRST) final Closure closure) {
         return (GroovyErsatzServer) expectations(ConsumerWithDelegate.create(closure));
     }
 }

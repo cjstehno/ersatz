@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2020 Christopher J. Stehno
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,11 +41,6 @@ public class ErsatzProxy {
      * @param consumer the configuration consumer
      */
     public ErsatzProxy(final Consumer<ProxyConfig> consumer) {
-        this(new ProxyConfigImpl(), consumer);
-    }
-
-    protected ErsatzProxy(final ProxyConfigImpl proxyConfig, final Consumer<ProxyConfig> consumer) {
-        this.config = proxyConfig;
         this.server = new UndertowUnderlyingProxyServer(config);
 
         consumer.accept(config);

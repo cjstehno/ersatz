@@ -19,9 +19,11 @@ package com.stehno.ersatz.impl;
 import com.stehno.ersatz.ErsatzServer;
 import com.stehno.ersatz.cfg.ContentType;
 import com.stehno.ersatz.encdec.Decoders;
+import com.stehno.ersatz.encdec.DecodingContext;
 import com.stehno.ersatz.junit.ErsatzServerExtension;
 import com.stehno.ersatz.server.MockClientRequest;
 import com.stehno.ersatz.util.HttpClient;
+import groovy.json.JsonSlurper;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -32,13 +34,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import static com.stehno.ersatz.cfg.ContentType.*;
 import static com.stehno.ersatz.cfg.HttpMethod.POST;
 import static com.stehno.ersatz.encdec.MultipartRequestContent.multipartRequest;
 import static com.stehno.ersatz.match.MultipartRequestMatcher.multipartMatcher;
 import static com.stehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -122,7 +127,7 @@ class ErsatzRequestWithContentTest {
                     ),
                     "some/json; charset=utf-8"
                 );
-                req.decoder(new ContentType("some/json; charset=utf-8"), Decoders.parseJson);
+                req.decoder(new ContentType("some/json; charset=utf-8"), parseJson);
                 req.responds().body("accepted");
             });
         });
@@ -133,6 +138,8 @@ class ErsatzRequestWithContentTest {
         response = client.post(server.httpUrl("/posting"), RequestBody.create(BODY_CONTENT, MediaType.get("text/html")));
         assertEquals(NOT_FOUND_BODY, response.body().string());
     }
+
+    private static final BiFunction<byte[], DecodingContext, Object> parseJson = (content, ctx) -> new JsonSlurper().parse(content != null ? content : "{}".getBytes(UTF_8));
 
     @Test @DisplayName("application/x-www-form-urlencoded")
     void applicationFormEncoded() throws IOException {

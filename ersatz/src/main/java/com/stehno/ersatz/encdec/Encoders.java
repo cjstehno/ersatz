@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.function.Function;
 
 import static com.stehno.ersatz.util.ByteArrays.join;
-import static groovy.json.JsonOutput.toJson;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -38,14 +37,9 @@ public class Encoders {
     private static final Logger log = LoggerFactory.getLogger(Encoders.class);
 
     /**
-     * Encodes the object to JSON using the Groovy <code>JsonObject.toJson(Object)</code> method.
-     */
-    public static final Function<Object, byte[]> json = obj -> (obj != null ? toJson(obj) : "{}").getBytes(UTF_8);
-
-    /**
      * Encodes the object as a String of text.
      */
-    public static final Function<Object, byte[]> text = obj ->( obj != null ? obj.toString() : "").getBytes(UTF_8);
+    public static final Function<Object, byte[]> text = obj -> (obj != null ? obj.toString() : "").getBytes(UTF_8);
 
     /**
      * Encodes a byte array, InputStream or other object with a "getBytes()" method into a base-64 string.
@@ -79,7 +73,7 @@ public class Encoders {
         final var arrays = new LinkedList<byte[]>();
 
         mrc.parts().forEach(p -> {
-            arrays.add( ("--" + mrc.getBoundary() + "\r\n").getBytes(UTF_8));
+            arrays.add(("--" + mrc.getBoundary() + "\r\n").getBytes(UTF_8));
 
             if (p.getFileName() != null) {
                 arrays.add(("Content-Disposition: form-data; name=\"" + p.getFieldName() + "\"; filename=\"" + p.getFileName() + "\"\r\n").getBytes(UTF_8));

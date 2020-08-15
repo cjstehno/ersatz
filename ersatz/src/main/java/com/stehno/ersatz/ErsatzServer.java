@@ -53,11 +53,7 @@ public class ErsatzServer implements Closeable {
     private final ServerConfigImpl serverConfig;
 
     public ErsatzServer() {
-        this(new ServerConfigImpl());
-    }
-
-    protected ErsatzServer(final ServerConfigImpl serverConfig) {
-        this.serverConfig = serverConfig;
+        this.serverConfig = new ServerConfigImpl();
         this.serverConfig.setStarter(this::start);
 
         this.underlyingServer = new UndertowUnderlyingServer(serverConfig);

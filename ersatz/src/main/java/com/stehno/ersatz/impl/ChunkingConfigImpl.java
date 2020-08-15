@@ -16,14 +16,13 @@
 package com.stehno.ersatz.impl;
 
 import com.stehno.ersatz.cfg.ChunkingConfig;
-import groovy.lang.IntRange;
 
 import static java.lang.String.format;
 
 public class ChunkingConfigImpl implements ChunkingConfig {
 
     private int chunks = 2;
-    private IntRange range = new IntRange(0, 0);
+    private int delay;
 
     /**
      * Used to specify the number of chunks which the response will be broken into,
@@ -43,19 +42,7 @@ public class ChunkingConfigImpl implements ChunkingConfig {
      * @return a reference to the config
      */
     public ChunkingConfig delay(final int value) {
-        range = new IntRange(value, value);
-        return this;
-    }
-
-    /**
-     * Used to specify the delay time between each chunk as a range of millisecond values. The actual delay value will
-     * be determined at runtime as a random value within the specified range.
-     *
-     * @param delayRange the delay value range in milliseconds
-     * @return a reference to the config
-     */
-    public ChunkingConfig delay(final IntRange delayRange) {
-        range = delayRange;
+        this.delay = value;
         return this;
     }
 
@@ -63,11 +50,11 @@ public class ChunkingConfigImpl implements ChunkingConfig {
         return chunks;
     }
 
-    public IntRange getDelay() {
-        return range;
+    public int getDelay() {
+        return delay;
     }
 
     @Override public String toString() {
-        return format("ChunkingConfig(chunks:%d, delay:%s)", chunks, range);
+        return format("ChunkingConfig(chunks:%d, delay:%s)", chunks, delay);
     }
 }

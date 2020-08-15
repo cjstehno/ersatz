@@ -21,7 +21,7 @@ import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
-public interface GroovyServerConfig extends ServerConfig {
+public class ServerConfigExtensions {
 
     /**
      * Used to configure HTTP expectations on the server; the provided Groovy <code>Closure</code> will delegate to an <code>Expectations</code>
@@ -32,8 +32,11 @@ public interface GroovyServerConfig extends ServerConfig {
      * @param closure the Groovy <code>Closure</code> which will provide expectation configuration via DSL
      * @return a reference to this server
      */
-    default GroovyServerConfig expectations(@DelegatesTo(value = GroovyExpectations.class, strategy = DELEGATE_FIRST) final Closure closure) {
-        return (GroovyServerConfig) expectations(ConsumerWithDelegate.create(closure));
+    public static ServerConfig expectations(
+        final ServerConfig self,
+        @DelegatesTo(value = Expectations.class, strategy = DELEGATE_FIRST) final Closure closure
+    ) {
+        return self.expectations(ConsumerWithDelegate.create(closure));
     }
 
     /**
@@ -42,5 +45,10 @@ public interface GroovyServerConfig extends ServerConfig {
      * @param closure the configuration closure
      * @return a reference to this server configuration
      */
-    GroovyServerConfig authentication(@DelegatesTo(value = AuthenticationConfig.class, strategy = DELEGATE_FIRST) Closure closure);
+    public static ServerConfig authentication(
+        final ServerConfig self,
+        @DelegatesTo(value = AuthenticationConfig.class, strategy = DELEGATE_FIRST) final Closure closure
+    ) {
+        return self.authentication(ConsumerWithDelegate.create(closure));
+    }
 }

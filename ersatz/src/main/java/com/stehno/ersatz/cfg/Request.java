@@ -15,16 +15,12 @@
  */
 package com.stehno.ersatz.cfg;
 
-import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.encdec.Cookie;
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
+import com.stehno.ersatz.server.ClientRequest;
 import org.hamcrest.Matcher;
 
 import java.util.Map;
 import java.util.function.Consumer;
-
-import static groovy.lang.Closure.DELEGATE_FIRST;
 
 /**
  * Configuration interface for HTTP request expectations.

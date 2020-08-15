@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz.encdec;
 
-import groovy.json.JsonSlurper;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.FileUploadException;
@@ -48,11 +47,6 @@ public class Decoders {
      * Decoder that converts request content bytes into a UTF-8 string.
      */
     public static final BiFunction<byte[], DecodingContext, Object> utf8String = (content, ctx) -> content != null ? new String(content, UTF_8) : "";
-
-    /**
-     * Decoder that converts request content bytes into a string of JSON and then parses it with <code>JsonSlurper</code> to return parsed JSON data.
-     */
-    public static final BiFunction<byte[], DecodingContext, Object> parseJson = (content, ctx) -> new JsonSlurper().parse(content != null ? content : "{}".getBytes(UTF_8));
 
     /**
      * Decoder that converts request content bytes in a url-encoded format into a map of name/value pairs.

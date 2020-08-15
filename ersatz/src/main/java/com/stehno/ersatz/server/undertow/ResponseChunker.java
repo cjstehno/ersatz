@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz.server.undertow;
 
-import groovy.lang.IntRange;
 import io.undertow.io.IoCallback;
 import io.undertow.io.Sender;
 import io.undertow.server.HttpServerExchange;
@@ -24,7 +23,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Undertow server callback used to provide the delayed chunked content.
@@ -32,9 +30,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ResponseChunker implements IoCallback {
 
     private final List<byte[]> chunks;
-    public final IntRange delay;
+    public final int delay;
 
-    public ResponseChunker(final List<byte[]> chunks, final IntRange delay) {
+    public ResponseChunker(final List<byte[]> chunks, final int delay) {
         this.chunks = chunks;
         this.delay = delay;
     }
@@ -48,18 +46,12 @@ public class ResponseChunker implements IoCallback {
     }
 
     private void rest() {
-        if (delay.size() > 1) {
-            sleep(ThreadLocalRandom.current().nextLong(delay.getFrom(), delay.getTo()));
-        } else {
-            sleep(ThreadLocalRandom.current().nextLong(delay.getFrom()));
-        }
-    }
-
-    private static void sleep(final long duration) {
-        try {
-            Thread.sleep(duration);
-        } catch (InterruptedException e) {
-            // ignore
+        if (delay > 0) {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                // ignore
+            }
         }
     }
 
@@ -72,8 +64,8 @@ public class ResponseChunker implements IoCallback {
      * Splits the provided string of content into the specified number of chunks. Any remaining characters will be spread out over the chunks to
      * keep the sizes as even as possible.
      *
-     * @param content    the content array to be chunked
-     * @param chunks the number of chunks
+     * @param content the content array to be chunked
+     * @param chunks  the number of chunks
      * @return a List&lt;String&gt; containing the chunk data
      */
     public static List<byte[]> prepareChunks(final byte[] content, final int chunks) {

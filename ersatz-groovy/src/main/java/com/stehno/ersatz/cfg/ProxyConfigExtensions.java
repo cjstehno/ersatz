@@ -17,16 +17,22 @@ package com.stehno.ersatz.cfg;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
+import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
-public interface GroovyResponse extends Response {
+public class ProxyConfigExtensions {
 
     /**
-     * Configures the response as "chunked", with the specified chunking configuration.
+     * Used to configure the proxy server expectations with a Groovy Closure, which delegates to an instance of ProxyExpectations.
      *
-     * @param closure the chunking configuration
-     * @return a reference to this response
+     * @param closure the Groovy closure
+     * @return a reference to this configuration
      */
-    GroovyResponse chunked(@DelegatesTo(value = ChunkingConfig.class, strategy = DELEGATE_FIRST) Closure closure);
+    public static ProxyConfig expectations(
+        final ProxyConfig self,
+        @DelegatesTo(value = ProxyExpectations.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+        return self.expectations(ConsumerWithDelegate.create(closure));
+    }
 }
