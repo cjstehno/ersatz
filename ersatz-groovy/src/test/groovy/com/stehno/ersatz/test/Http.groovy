@@ -18,6 +18,8 @@ package com.stehno.ersatz.test
 import com.stehno.ersatz.ErsatzServer
 
 import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpRequest.BodyPublisher
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandler
 
@@ -35,13 +37,22 @@ class Http {
         this.server = server
     }
 
-    public <T> HttpResponse<T> GET(final Map<String, String> headers, final String path, final BodyHandler<T> bodyHandler = ofString()) {
-        def request = newBuilder().GET().uri(new URI(server.httpUrl(path)))
+    public <T> HttpResponse<T> GET(final Map<String, String> headers = [:], final String path, final BodyHandler<T> responseHandler = ofString()) {
+        send(headers, newBuilder().GET().uri(new URI(server.httpUrl(path))), responseHandler)
+    }
 
+    public <T> HttpResponse<T> POST(final Map<String, String> headers = [:], final String path, final BodyPublisher requestBody, final BodyHandler<T> responseHandler = ofString()) {
+        send(headers, newBuilder().POST(requestBody).uri(new URI(server.httpUrl(path))), responseHandler)
+    }
+
+    private <T> HttpResponse<T> send(final Map<String, String> headers, final HttpRequest.Builder request, final BodyHandler<T> bodyHandler) {
+        client.send(applyHeaders(request, headers).build(), bodyHandler)
+    }
+
+    private static HttpRequest.Builder applyHeaders(final HttpRequest.Builder request, final Map<String, String> headers) {
         headers?.forEach { n, v ->
             request.header(n, v)
         }
-
-        client.send(request.build(), bodyHandler)
+        request
     }
 }

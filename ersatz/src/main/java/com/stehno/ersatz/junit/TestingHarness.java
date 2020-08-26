@@ -56,14 +56,14 @@ class TestingHarness {
     private static ErsatzServer findInstance(final Object testInstance, final boolean create) throws Exception {
         try {
             final Field field = findField(testInstance);
-            ErsatzServer instance = (ErsatzServer) field.get(testInstance);
+            Object instance = field.get(testInstance);
 
             if (instance == null && create) {
-                instance = new ErsatzServer();
+                instance = field.getType().getDeclaredConstructor().newInstance();
                 field.set(testInstance, instance);
             }
 
-            return instance;
+            return (ErsatzServer) instance;
 
         } catch (Exception throwable) {
             throw new Exception(throwable);
@@ -72,7 +72,7 @@ class TestingHarness {
 
     private static Field findField(final Object testInstance) throws Exception {
         final Field field = stream(testInstance.getClass().getDeclaredFields())
-            .filter(f -> f.getType().equals(ErsatzServer.class))
+            .filter(f -> f.getType().getSimpleName().endsWith("ErsatzServer"))
             .findFirst()
             .orElseThrow((Supplier<Exception>) () -> new IllegalArgumentException("An ErsatzServer field must be specified."));
 

@@ -13,36 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz.impl
+package com.stehno.ersatz.match
 
-import com.stehno.ersatz.cfg.HttpMethod
+import com.stehno.ersatz.encdec.Cookie
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
-class GetExpectationsGroovyTest extends ExpectationHarness {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    GetExpectationsGroovyTest() {
-        super(HttpMethod.GET)
-    }
+class CookieMatcherTest {
 
-    @ParameterizedTest @DisplayName("GET(path,closure)")
+    @ParameterizedTest @DisplayName('cookie matcher config')
     @CsvSource([
-        "alpha,alpha,true",
-        "alpha,bravo,false"
+        '/foo,stuff,true,true',
+        '/foo,other,true,false',
+        '/bar,stuff,true,false'
     ])
-    void get_path_closure(final String label, final String expectedLabel, final boolean present) {
-        execAndAssert(
-            { mock ->
-                mock.setPath("/blah");
-                mock.query("label", label);
-            },
-            { expectations ->
-                expectations.GET('/blah') {
-                    query('label', expectedLabel)
-                }
-            },
-            present
-        )
+    void cookieMatcherConfig(final String cookiePath, final String cookieValue, final boolean http, final boolean result) {
+        def matcher = CookieMatcher.cookieMatcher {
+            path '/foo'
+            value 'stuff'
+            httpOnly true
+        }
+
+        assertEquals result, matcher.matches(Cookie.cookie {
+            path cookiePath
+            value cookieValue
+            httpOnly http
+        })
     }
 }

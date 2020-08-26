@@ -15,10 +15,9 @@
  */
 package com.stehno.ersatz.issues
 
-import com.stehno.ersatz.ErsatzServer
+import com.stehno.ersatz.GroovyErsatzServer
 import com.stehno.ersatz.junit.ErsatzServerExtension
-import com.stehno.ersatz.util.HttpClient
-import okhttp3.Response
+import com.stehno.ersatz.test.Http
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -26,9 +25,10 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
 import static com.stehno.ersatz.encdec.Decoders.utf8String
-import static okhttp3.MediaType.get
-import static okhttp3.RequestBody.create
+import static java.net.http.HttpRequest.BodyPublishers.ofString
+import static java.nio.charset.StandardCharsets.UTF_8
 import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 /**
  * Tests related to a couple reported issues:
@@ -42,17 +42,18 @@ class ScopingAndAutoCleanupTest {
 
     private static final String INPUT_CONTENT = 'input'
     private static final String OUTPUT_CONTENT = 'output'
-    private ErsatzServer server
-    private HttpClient client
+    private GroovyErsatzServer server
+    private Http http
 
     @BeforeEach void beforeEach() {
-        client = new HttpClient()
+        http = new Http(server)
     }
 
     @Test @DisplayName('Posting One')
     void postingOne() {
         server.expectations {
             POST('/posting') {
+                called 1
                 body INPUT_CONTENT, TEXT_PLAIN
                 decoder TEXT_PLAIN, utf8String
                 responder {
@@ -61,10 +62,10 @@ class ScopingAndAutoCleanupTest {
             }
         }
 
-        Response response = client.post(server.httpUrl('/posting'), okhttp3.RequestBody.create(okhttp3.MediaType.get('text/plain; charset=utf-8'), INPUT_CONTENT))
+        def response = http.POST('Content-Type': TEXT_PLAIN.value, '/posting', ofString(INPUT_CONTENT, UTF_8))
 
-        assertEquals OUTPUT_CONTENT, response.body().string()
-        assertEquals 1, server.expects().requests.size() as int
+        assertEquals OUTPUT_CONTENT, response.body()
+        assertTrue server.verify()
     }
 
     @Test @DisplayName('Posting Two')
@@ -74,6 +75,7 @@ class ScopingAndAutoCleanupTest {
 
         server.expectations {
             POST('/posting') {
+                called 1
                 body inputContent, TEXT_PLAIN
                 decoder TEXT_PLAIN, utf8String
                 responder {
@@ -82,22 +84,22 @@ class ScopingAndAutoCleanupTest {
             }
         }
 
-        Response response = client.post(server.httpUrl('/posting'), okhttp3.RequestBody.create(okhttp3.MediaType.get('text/plain; charset=utf-8'), INPUT_CONTENT))
+        def response = http.POST('Content-Type': TEXT_PLAIN.value, '/posting', ofString(INPUT_CONTENT, UTF_8))
 
-        assertEquals OUTPUT_CONTENT, response.body().string()
-        assertEquals 1, server.expects().requests.size() as int
+        assertEquals OUTPUT_CONTENT, response.body()
+        assertTrue server.verify()
     }
 
     @Test @DisplayName('Posting Three')
     void postingThree() {
         server.expectations {
-            POST('/posting').body(INPUT_CONTENT, TEXT_PLAIN).decoder(TEXT_PLAIN, utf8String)
+            POST('/posting').body(INPUT_CONTENT, TEXT_PLAIN).decoder(TEXT_PLAIN, utf8String).called(1)
                 .responds().body(OUTPUT_CONTENT, TEXT_PLAIN)
         }
 
-        Response response = client.post(server.httpUrl('/posting'), okhttp3.RequestBody.create(okhttp3.MediaType.get('text/plain; charset=utf-8'), INPUT_CONTENT))
+        def response = http.POST('Content-Type': TEXT_PLAIN.value, '/posting', ofString(INPUT_CONTENT, UTF_8))
 
-        assertEquals OUTPUT_CONTENT, response.body().string()
-        assertEquals 1, server.expects().requests.size() as int
+        assertEquals OUTPUT_CONTENT, response.body()
+        assertTrue server.verify()
     }
 }

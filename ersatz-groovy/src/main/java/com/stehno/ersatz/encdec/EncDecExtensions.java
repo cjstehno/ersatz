@@ -23,6 +23,8 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
 
 public class EncDecExtensions {
 
+    // FIXME: test these
+
     /**
      * Used to configure a request cookie with a configuration closure.
      *
@@ -57,7 +59,7 @@ public class EncDecExtensions {
      * @return a configured instance of MultipartRequestContent
      */
     public static MultipartRequestContent multipartRequest(
-        final MultipartResponseContent type,
+        final MultipartRequestContent type,
         @DelegatesTo(value = MultipartRequestContent.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return MultipartRequestContent.multipartRequest(ConsumerWithDelegate.create(closure));

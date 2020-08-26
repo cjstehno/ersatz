@@ -25,6 +25,8 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
 
 public class RequestResponseExtensions {
 
+    // FIXME: test these
+
     /**
      * Allows for configuration of a <code>Response</code> by the given Groovy <code>Closure</code>, which will delegate to a <code>Response</code>
      * instance passed into it for configuration using the Groovy DSL.

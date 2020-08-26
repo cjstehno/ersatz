@@ -23,6 +23,8 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
 
 public class ServerConfigExtensions {
 
+    // FIXME: test these
+
     /**
      * Used to configure HTTP expectations on the server; the provided Groovy <code>Closure</code> will delegate to an <code>Expectations</code>
      * instance for configuring server interaction expectations using the Groovy DSL.
