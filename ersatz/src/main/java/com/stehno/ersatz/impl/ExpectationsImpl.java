@@ -41,17 +41,9 @@ public class ExpectationsImpl implements Expectations {
     private RequestDecoders globalDecoders;
     private ResponseEncoders globalEncoders;
 
-    public void encdec(final ResponseEncoders encoders, final RequestDecoders decoders) {
+    public ExpectationsImpl(final ResponseEncoders encoders, final RequestDecoders decoders) {
         this.globalEncoders = encoders;
         this.globalDecoders = decoders;
-    }
-
-    protected final RequestDecoders getGlobalDecoders(){
-        return globalDecoders;
-    }
-
-    protected  final ResponseEncoders getGlobalEncoders(){
-        return globalEncoders;
     }
 
     /**

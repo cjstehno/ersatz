@@ -50,12 +50,7 @@ public class ServerConfigImpl implements ServerConfig {
     private long timeout;
 
     public ServerConfigImpl() {
-        this(new ExpectationsImpl());
-    }
-
-    protected ServerConfigImpl(final ExpectationsImpl expectations) {
-        this.expectations = expectations;
-        this.expectations.encdec(globalEncoders, globalDecoders);
+        this.expectations = new ExpectationsImpl(globalEncoders, globalDecoders);
     }
 
     public void setStarter(final Runnable starter) {

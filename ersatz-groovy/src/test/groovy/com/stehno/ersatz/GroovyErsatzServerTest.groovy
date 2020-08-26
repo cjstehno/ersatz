@@ -55,6 +55,22 @@ class GroovyErsatzServerTest {
         assertEquals('Groovy, baby!', value)
     }
 
+    //    @ParameterizedTest @DisplayName("using closure as matcher (#path)")
+//    @CsvSource([
+//        "/general/one,ok",
+//        "/general/two,ok",
+//        "/other,err"
+//    ])
+//    void usingClosureAsMatcher(String path, String resp) {
+//        ersatzServer.expectations {
+//            GET({ p -> p.startsWith("/general") } as Matcher<String>).responds().body("ok").code(200)
+//            GET("/other").responds().body("err").code(200)
+//        }
+//
+//        assertEquals resp, ersatzServer.httpUrl(path).toURL().text
+//    }
+//
+
     @Test @DisplayName('ctor with config')
     void ctorConfig() {
         server = new GroovyErsatzServer({

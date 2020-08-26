@@ -158,6 +158,8 @@ public interface Response {
      */
     Response delay(final long time, TimeUnit unit);
 
+    // FIXME: add a dely(Duration) version
+
     /**
      * Used to specify a delay in the response time for the request as a <code>Duration</code> string.
      *

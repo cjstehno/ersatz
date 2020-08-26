@@ -92,6 +92,7 @@ class ErsatzHttpHandler implements HttpHandler {
             final var responseHeaders = exchange.getResponseHeaders() != null ? exchange.getResponseHeaders() : NO_HEADERS;
             final ChunkingConfigImpl chunking = response.getChunkingConfig();
 
+            // TODO: better logging here
             if ( response.getContent().length > 0 && chunking != null) {
                 log.debug("Chunked-Response({}; {}): {}", responseHeaders, chunking, response.getContent());
                 sendChunkedResponse(exchange, response.getContent(), chunking);

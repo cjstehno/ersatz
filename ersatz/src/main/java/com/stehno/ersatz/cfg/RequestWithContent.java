@@ -34,14 +34,14 @@ public interface RequestWithContent extends Request {
      * @param contentType the body content type
      * @return a reference to this request
      */
-    default RequestWithContent body(final Object body, String contentType){
-        return body(equalTo(body), contentType);
+    default RequestWithContent body(final Object body, String contentType) {
+        return body(body instanceof Matcher ? (Matcher<Object>) body : equalTo(body), contentType);
     }
 
     /**
      * Configures the expected body content of the request with the specified content type.
      *
-     * @param body     the body content matcher
+     * @param body        the body content matcher
      * @param contentType the body content type
      * @return a reference to this request
      */
@@ -54,18 +54,18 @@ public interface RequestWithContent extends Request {
      * @param contentType the body content type
      * @return a reference to this request
      */
-    default RequestWithContent body(final Object body, ContentType contentType){
+    default RequestWithContent body(final Object body, ContentType contentType) {
         return body(body, contentType.getValue());
     }
 
     /**
      * Configures the expected body content of the request with the specified content type.
      *
-     * @param body     the body content matcher
+     * @param body        the body content matcher
      * @param contentType the body content type
      * @return a reference to this request
      */
-    default RequestWithContent body(final Matcher<Object> body, ContentType contentType){
+    default RequestWithContent body(final Matcher<Object> body, ContentType contentType) {
         return body(body, contentType.getValue());
     }
 
@@ -75,7 +75,7 @@ public interface RequestWithContent extends Request {
      * body expectation.
      *
      * @param contentType the content type that the convert will handle
-     * @param decoder   the conversion function
+     * @param decoder     the conversion function
      * @return a reference to this request
      */
     RequestWithContent decoder(final String contentType, final BiFunction<byte[], DecodingContext, Object> decoder);
@@ -86,10 +86,10 @@ public interface RequestWithContent extends Request {
      * body expectation.
      *
      * @param contentType the content type that the convert will handle
-     * @param decoder   the conversion function
+     * @param decoder     the conversion function
      * @return a reference to this request
      */
-    default RequestWithContent decoder(final ContentType contentType, final BiFunction<byte[], DecodingContext, Object> decoder){
+    default RequestWithContent decoder(final ContentType contentType, final BiFunction<byte[], DecodingContext, Object> decoder) {
         return decoder(contentType.getValue(), decoder);
     }
 
@@ -117,7 +117,7 @@ public interface RequestWithContent extends Request {
      * Configures an expectation matching parameters contained in the request body. The specified matchers must be satisfied
      * by the parameters mapped to the provided named parameter.
      *
-     * @param name  the parameter name
+     * @param name     the parameter name
      * @param matchers the expected parameter value matchers
      * @return a reference to this request
      */
