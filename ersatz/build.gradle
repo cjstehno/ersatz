@@ -1,14 +1,11 @@
 plugins {
     id 'java-library'
-    id 'groovy'
+    id 'groovy' // FIXME: can probably remove
     id "com.github.hierynomus.license" version '0.15.0'
     id 'jacoco'
     id 'maven'
     id 'maven-publish'
-    id 'com.github.kt3k.coveralls' version '2.8.4'
     id 'com.jfrog.bintray' version '1.8.4'
-    id 'org.asciidoctor.convert' version '2.4.0'
-    id "com.stehno.gradle.webpreview" version '0.3.0'
     id 'com.github.ben-manes.versions' version '0.29.0'
     id "com.github.johnrengelman.shadow" version '5.2.0'
 }
@@ -35,8 +32,6 @@ dependencies {
 
     implementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"  // TODO: make this provided (cant remove otherwise cant use in my tests)
 
-//    testImplementation "org.codehaus.groovy:groovy:$groovyVersion"
-//    testImplementation "org.codehaus.groovy:groovy-json:$groovyVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     testImplementation 'com.squareup.okhttp3:okhttp:4.2.2'              // FIXME: needed?
@@ -154,71 +149,6 @@ bintray {
     }
 }
 
-asciidoctor {
-    options doctype: 'book'
-
-    backends = ['html5']
-
-    attributes 'source-highlighter': 'coderay',
-            'coderay-linenums-mode': 'table',
-            icon: 'font',
-            linkattrs: true,
-            encoding: 'utf-8'
-}
-
-webPreview {
-    resourceDir = file('build/site')
-}
-
-task site(dependsOn: ['build', 'javadoc', 'jacocoTestReport', 'asciidoctor']) {
-    doLast {
-        def vars = [
-                project_version: project.version,
-                year           : Calendar.instance.get(Calendar.YEAR)
-        ]
-
-        mkdir 'build/site'
-
-        copy {
-            from 'src/site'
-            into 'build/site'
-            include '**/*.html'
-            expand vars
-        }
-
-        copy {
-            from 'src/site'
-            into 'build/site'
-            include '**/css/**'
-            include '**/js/**'
-            include '**/img/**'
-        }
-
-        copy {
-            from 'build/reports'
-            include '**/**'
-            into 'build/site/reports'
-        }
-
-        copy {
-            from 'build/docs'
-            include '**/**'
-            into 'build/site/docs'
-        }
-
-        copy {
-            from 'build/asciidoc/html5'
-            include '**/**'
-            into 'build/site/guide'
-        }
-    }
-}
-
-task publishSite(type: GradleBuild, group: 'Publishing', description: 'Publishes the documentation web site.', dependsOn: ['site']) {
-    buildFile = 'publish.gradle'
-    tasks = ['gitPublishPush']
-}
-
 // FIXME: update and cleanup
 shadowJar {
     classifier = 'safe'
@@ -256,7 +186,3 @@ shadowJar {
     relocate 'org.awaitility', 'ersatz.awaitility'
 }
 
-coveralls {
-    saveAsFile = true
-    sendToCoveralls = false
-}
