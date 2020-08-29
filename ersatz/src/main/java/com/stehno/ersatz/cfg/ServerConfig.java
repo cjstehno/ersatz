@@ -203,4 +203,25 @@ public interface ServerConfig {
      * @return a reference to this server configuration
      */
     ServerConfig httpsPort(int value);
+
+    /**
+     * Causes the full response content to be rendered in the server log message (if true) for the cases where the
+     * response content is a renderable textual response. If false (or binary response) only the number of bytes and
+     * content type will be rendered for the response.
+     *
+     * @param value whether or not to enable logging of response content (false by default)
+     * @return a reference to this server configuration.
+     */
+    ServerConfig logResponseContent(final boolean value);
+
+    /**
+     * Causes the full response content to be rendered in the server log message for the cases where the response
+     * content is a renderable textual response. If false (or binary response) only the number of bytes and content type
+     * will be rendered for the response.
+     *
+     * @return a reference to this server configuration.
+     */
+    default ServerConfig logResponseContent(){
+        return logResponseContent(true);
+    }
 }

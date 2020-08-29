@@ -58,6 +58,7 @@ class ErsatzServerTest {
     // FIXME: try using the junit extension here
 
     private ErsatzServer ersatzServer = new ErsatzServer(c -> {
+        c.logResponseContent(true);
         c.encoder(MULTIPART_MIXED, MultipartResponseContent.class, Encoders.multipart);
     });
     private HttpClient http;

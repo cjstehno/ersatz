@@ -48,6 +48,7 @@ public class ServerConfigImpl implements ServerConfig {
     private final ExpectationsImpl expectations;
     private Runnable starter;
     private long timeout;
+    private boolean logResponseContent;
 
     public ServerConfigImpl() {
         this.expectations = new ExpectationsImpl(globalEncoders, globalDecoders);
@@ -114,6 +115,10 @@ public class ServerConfigImpl implements ServerConfig {
 
     public void clearExpectations() {
         expectations.clear();
+    }
+
+    public boolean isLogResponseContent() {
+        return logResponseContent;
     }
 
     /**
@@ -237,6 +242,11 @@ public class ServerConfigImpl implements ServerConfig {
     @Override
     public ServerConfig httpsPort(int serverPort) {
         desiredHttpsPort = serverPort;
+        return this;
+    }
+
+    @Override public ServerConfig logResponseContent(boolean value) {
+        logResponseContent = value;
         return this;
     }
 }

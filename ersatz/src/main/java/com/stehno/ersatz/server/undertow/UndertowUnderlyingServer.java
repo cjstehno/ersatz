@@ -67,7 +67,7 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
             final var blockingHandler = new BlockingHandler(new EncodingHandler(
                 applyAuthentication(
                     new HttpTraceHandler(
-                        new ErsatzHttpHandler(serverConfig.getExpectations(), serverConfig.isMismatchToConsole())
+                        new ErsatzHttpHandler(serverConfig.getExpectations(), serverConfig.isMismatchToConsole(), serverConfig.isLogResponseContent())
                     )
                 ),
                 new ContentEncodingRepository()

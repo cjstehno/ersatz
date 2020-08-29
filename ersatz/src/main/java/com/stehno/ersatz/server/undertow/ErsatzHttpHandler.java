@@ -29,6 +29,7 @@ import java.nio.ByteBuffer;
 
 import static com.stehno.ersatz.server.undertow.ResponseChunker.prepareChunks;
 import static io.undertow.util.HttpString.tryFromString;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 
@@ -41,10 +42,12 @@ class ErsatzHttpHandler implements HttpHandler {
     private static final byte[] EMPTY_RESPONSE = new byte[0];
     private final ExpectationsImpl expectations;
     private final boolean reportToConsole;
+    private final boolean logResponseContent;
 
-    ErsatzHttpHandler(final ExpectationsImpl expectations, final boolean reportToConsole) {
+    ErsatzHttpHandler(final ExpectationsImpl expectations, final boolean reportToConsole, final boolean logResponseContent) {
         this.expectations = expectations;
         this.reportToConsole = reportToConsole;
+        this.logResponseContent = logResponseContent;
     }
 
     @Override
@@ -92,16 +95,34 @@ class ErsatzHttpHandler implements HttpHandler {
             final var responseHeaders = exchange.getResponseHeaders() != null ? exchange.getResponseHeaders() : NO_HEADERS;
             final ChunkingConfigImpl chunking = response.getChunkingConfig();
 
-            // TODO: better logging here
-            if ( response.getContent().length > 0 && chunking != null) {
-                log.debug("Chunked-Response({}; {}): {}", responseHeaders, chunking, response.getContent());
+            if (response.getContent().length > 0 && chunking != null) {
+                log.debug("Chunked-Response({}; {}; {}; {}): {}", exchange.getProtocol(), exchange.getRequestURL(), responseHeaders, chunking, renderResponse(response));
                 sendChunkedResponse(exchange, response.getContent(), chunking);
 
             } else {
-                log.debug("Response({}): {}", responseHeaders, response.getContent());
+                log.debug("Response({}; {}; {}): {}", exchange.getProtocol(), exchange.getRequestURL(), responseHeaders, renderResponse(response));
                 sendFullResponse(exchange, response.getContent());
             }
         }
+    }
+
+    private String renderResponse(final ErsatzResponse response) {
+        final var bytes = response.getContent();
+
+        if (logResponseContent && isContentTypeRenderable(response.getContentType())) {
+            return new String(response.getContent(), UTF_8);
+        } else {
+            return "<" + bytes.length + " bytes of " + response.getContentType() + " content>";
+        }
+    }
+
+    private static boolean isContentTypeRenderable(final String contentType) {
+        return contentType != null && (
+            contentType.startsWith("text/") ||
+                contentType.endsWith("/json") ||
+                contentType.endsWith("/javascript") ||
+                contentType.endsWith("/xml")
+        );
     }
 
     private void sendChunkedResponse(final HttpServerExchange exchange, final byte[] responseContent, final ChunkingConfigImpl chunking) {
