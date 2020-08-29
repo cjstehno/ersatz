@@ -22,6 +22,7 @@ import org.hamcrest.Matchers;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 import static org.hamcrest.Matchers.equalTo;
 
@@ -34,8 +35,53 @@ public class ErsatzMatchers {
         return path.equals("*") ? Matchers.any(String.class) : equalTo(path);
     }
 
+    /**
+     * Matcher that matches if the object is an Iterable of Strings whose elements match (in any order) the provided
+     * matchers.
+     *
+     * @param matchers the element matchers
+     * @return the wrapping matcher
+     */
     public static Matcher<Iterable<? super String>> stringIterableMatcher(final Collection<Matcher<? super String>> matchers) {
         return new StringIterableMatcher(matchers);
+    }
+
+    /**
+     * The provided value must be a byte array with the same length and same first and last element values.
+     *
+     * @param array the array
+     * @return the resulting matcher
+     */
+    public static Matcher<byte[]> byteArrayLike(final byte[] array) {
+        return new ByteArrayMatcher(array);
+    }
+
+    /**
+     * The provided function is used to verify the match, wrapped in a Matcher.
+     *
+     * @param fun the function being wrapped (a true response implies a match)
+     * @param <T> the type of object(s) being matched
+     * @return the function wrapped in a matcher
+     */
+    public static <T> Matcher<T> functionMatcher(final Function<T, Boolean> fun) {
+        return new FunctionMatcher<>(fun);
+    }
+
+    private static class FunctionMatcher<T> extends BaseMatcher<T> {
+
+        private final Function<T, Boolean> function;
+
+        private FunctionMatcher(final Function<T, Boolean> function) {
+            this.function = function;
+        }
+
+        @Override public boolean matches(Object actual) {
+            return function.apply((T) actual);
+        }
+
+        @Override public void describeTo(Description description) {
+            description.appendText("A function that checks for matching.");
+        }
     }
 
     private static class StringIterableMatcher extends BaseMatcher<Iterable<? super String>> {
@@ -55,16 +101,6 @@ public class ErsatzMatchers {
             matchers.forEach(description::appendDescriptionOf);
             description.appendText("}");
         }
-    }
-
-    /**
-     * The provided value must be a byte array with the same length and same first and last element values.
-     *
-     * @param array the array
-     * @return the resulting matcher
-     */
-    public static Matcher<byte[]> byteArrayLike(final byte[] array) {
-        return new ByteArrayMatcher(array);
     }
 
     private static class ByteArrayMatcher extends BaseMatcher<byte[]> {

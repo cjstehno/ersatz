@@ -20,6 +20,7 @@ import com.stehno.ersatz.encdec.Encoders;
 import com.stehno.ersatz.encdec.ErsatzMultipartResponseContent;
 import com.stehno.ersatz.encdec.MultipartResponseContent;
 import com.stehno.ersatz.junit.ErsatzServerExtension;
+import com.stehno.ersatz.match.ErsatzMatchers;
 import com.stehno.ersatz.util.HttpClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -60,6 +61,7 @@ import static com.stehno.ersatz.cfg.ContentType.*;
 import static com.stehno.ersatz.cfg.HttpMethod.DELETE;
 import static com.stehno.ersatz.cfg.HttpMethod.GET;
 import static com.stehno.ersatz.encdec.MultipartResponseContent.multipartResponse;
+import static com.stehno.ersatz.match.ErsatzMatchers.functionMatcher;
 import static java.lang.System.currentTimeMillis;
 import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toList;
@@ -288,8 +290,8 @@ class AnotherErsatzServerTest {
         "application/json"
     })
     void multipleHeaderMatchingSupport(String headerValue) throws IOException {
-        final var headerMatcher = new FunctionMatcher<Iterable<? super String>>(obj -> {
-            for (final var it : (Iterable<? super String>) obj) {
+        final var headerMatcher = functionMatcher((Function<Iterable<? super String>, Boolean>) objects -> {
+            for (final var it : (Iterable<? super String>) objects) {
                 if (it.equals("application/vnd.company+json") || it.equals("application/json")) {
                     return true;
                 }
@@ -314,24 +316,6 @@ class AnotherErsatzServerTest {
         assertEquals("{msg=World}", response.body().string());
 
         assertTrue(ersatzServer.verify());
-    }
-
-    // TODO: this would be useful in the main code base (with some refactoring)
-    private static class FunctionMatcher<T> extends BaseMatcher<T> {
-
-        private final Function<T, Boolean> function;
-
-        private FunctionMatcher(final Function<T, Boolean> function) {
-            this.function = function;
-        }
-
-        @Override public boolean matches(Object actual) {
-            return function.apply((T) actual);
-        }
-
-        @Override public void describeTo(Description description) {
-            // no description
-        }
     }
 
     @Test @DisplayName("multiple header matching support (expecting two headers and had one)")
