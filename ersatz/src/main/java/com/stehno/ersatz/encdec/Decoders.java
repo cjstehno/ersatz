@@ -22,6 +22,7 @@ import org.apache.commons.fileupload.UploadContext;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +47,36 @@ public class Decoders {
     /**
      * Decoder that converts request content bytes into a UTF-8 string.
      */
-    public static final BiFunction<byte[], DecodingContext, Object> utf8String = (content, ctx) -> content != null ? new String(content, UTF_8) : "";
+    public static final BiFunction<byte[], DecodingContext, Object> utf8String = string(UTF_8);
+
+    /**
+     * Decoder that converts request content bytes into a UTF-8 string.
+     *
+     * @return the decoded bytes as a string
+     */
+    public static BiFunction<byte[], DecodingContext, Object> string() {
+        return string(UTF_8);
+    }
+
+    /**
+     * Decoder that converts request content bytes into a string of the specified charset.
+     *
+     * @param charset the name of the charset
+     * @return the decoded bytes as a string
+     */
+    public static BiFunction<byte[], DecodingContext, Object> string(final String charset) {
+        return string(Charset.forName(charset));
+    }
+
+    /**
+     * Decoder that converts request content bytes into a string of the specified charset.
+     *
+     * @param charset the charset to be used
+     * @return the decoded bytes as a string
+     */
+    public static BiFunction<byte[], DecodingContext, Object> string(final Charset charset) {
+        return (content, ctx) -> content != null ? new String(content, charset) : "";
+    }
 
     /**
      * Decoder that converts request content bytes in a url-encoded format into a map of name/value pairs.

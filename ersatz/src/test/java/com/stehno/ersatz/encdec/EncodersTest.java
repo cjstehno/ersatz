@@ -21,16 +21,30 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class EncodersTest {
 
-    @ParameterizedTest @MethodSource("textProvider")
-    @DisplayName("text data") void textData(final Object data, final String text) {
+    @ParameterizedTest @DisplayName("text data") @MethodSource("textProvider")
+    void textData(final Object data, final String text) {
         assertArrayEquals(text.getBytes(), Encoders.text.apply(data));
+    }
+
+    @ParameterizedTest @DisplayName("text data with charset (String)") @MethodSource("textProvider")
+    void textDataWithCharsetString(final Object data, final String text) {
+        assertArrayEquals(text.getBytes(UTF_8), Encoders.text("UTF-8").apply(data));
+    }
+
+    @ParameterizedTest @DisplayName("text data with charset (Charset)") @MethodSource("textProvider")
+    void textDataWithCharset(final Object data, final String text) {
+        assertArrayEquals(text.getBytes(UTF_8), Encoders.text(UTF_8).apply(data));
     }
 
     private static Stream<Arguments> textProvider() {
@@ -53,6 +67,20 @@ class EncodersTest {
             arguments(new byte[0], ""),
             arguments("some bytes".getBytes(), "c29tZSBieXRlcw=="),
             arguments(new ByteArrayInputStream("more bytes".getBytes()), "bW9yZSBieXRlcw==")
+        );
+    }
+
+    @ParameterizedTest @DisplayName("content encoder") @MethodSource("contentProvider")
+    void content(final Object object){
+        assertArrayEquals("This is some file content.".getBytes(), Encoders.content.apply(object));
+    }
+
+    private static Stream<Arguments> contentProvider() throws URISyntaxException {
+        return Stream.of(
+            arguments("/content.txt"),
+            arguments(new File(Encoders.class.getResource("/content.txt").toURI())),
+            arguments(Encoders.class.getResource("/content.txt")),
+            arguments(Encoders.class.getResource("/content.txt").toURI())
         );
     }
 }
