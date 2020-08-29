@@ -98,7 +98,7 @@ public class UnmatchedRequestReport implements Report {
                 req.getRequestMatchers().forEach(matcher -> {
                     boolean matches = matcher.matches(request);
                     if (matches) {
-                        out.append("  ").append(GREEN).append("✓").append(RESET).append(" ").append(matcher).append("\n");
+                        out.append("  ").append(GREEN).append(CHECKMARK).append(RESET).append(" ").append(matcher).append("\n");
                     } else {
                         out.append("  ").append(RED).append("X ").append(matcher).append(RESET).append("\n");
                         failed.incrementAndGet();

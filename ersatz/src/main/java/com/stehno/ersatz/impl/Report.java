@@ -20,6 +20,7 @@ public interface Report {
     String RED = "\u001B[31m";
     String GREEN = "\u001B[32m";
     String RESET = "\u001B[0m";
+    String CHECKMARK = "+";
 
     String render();
 }
