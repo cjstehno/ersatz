@@ -16,33 +16,16 @@ The Ersatz Server is a HTTP client testing tool which allows for request/respons
 flexible manner. The expectations will respond in a configured manner to requests and allow testing with different 
 responses and/or error conditions without having to write a lot of boiler-plate code.
 
+> **Warning:** v2.1 has removed some unused features of the library and extracted the Groovy support into it's own 
+> extension library. See the [What's New in 2.1](http://stehno.com/ersatz/guide/#_whats_new_in_2.1) section of the User 
+> Guide for details.
+
 > **Warning:** v2.0 is **NOT** directly backwards compatible with the 1.x codebase. See the 
 > [Migrating to 2.0](http://stehno.com/ersatz/guide/#_migrating_to_2.0) section of the User Guide for details.
 
-## Artifacts
-
-Project artifacts are available via the JCenter (Bintray) and Maven Central repositories.
-
-For Gradle:
-
-    testCompile 'com.stehno.ersatz:ersatz:2.0.0'
-
-For Maven:
-
-    <dependency>
-        <groupId>com.stehno.ersatz</groupId>
-        <artifactId>ersatz</artifactId>
-        <version>2.0.0</version>
-        <scope>test</scope>
-    </dependency>
-    
-Alternately, there is a `safe` (shadowed) version of the library available, which is useful in cases where you already 
-have a version of Undertow in use (to avoid version collisions). See the [Shadow Jar](http://stehno.com/ersatz/guide/#_shadow_jar) 
-section of the User Guide for more information.
-
 ## Build Instructions
 
-Ersatz is built using Gradle with no custom build tasks:
+Ersatz is built using Gradle:
 
     ./gradlew clean build
     

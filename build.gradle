@@ -53,15 +53,15 @@ task site(dependsOn: [
         }
 
         copy {
-            from 'build/reports'
+            from 'ersatz/build/docs'
             include '**/**'
-            into 'build/site/reports'
+            into 'build/site/docs/ersatz'
         }
 
         copy {
-            from 'build/docs'
+            from 'ersatz-groovy/build/docs'
             include '**/**'
-            into 'build/site/docs'
+            into 'build/site/docs/ersatz-groovy'
         }
 
         copy {

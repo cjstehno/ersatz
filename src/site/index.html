@@ -66,7 +66,7 @@
             <ul>
                 <li>Uses an embedded <a href="http://undertow.io/">Undertow server</a> to setup the HTTP server</li>
                 <li>Works with Java 11+</li>
-                <li>Provides a Groovy configuration DSL</li>
+                <li>Provides an extension (see ersatz-groovy) with a Groovy configuration DSL</li>
                 <li>Works well with Kotlin</li>
                 <li>Compatible with the <a href="http://junit.org/">JUnit (4 or 5)</a> and <a href="http://spockframework.org/">Spock</a> testing
                     frameworks (and probably others).
@@ -80,20 +80,18 @@
                 <li>Request/Response compression (gzip and/or deflate) supported.</li>
                 <li>Support for GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, and TRACE request methods.</li>
                 <li>Ability to delay the response from the server to simulate slow connections.</li>
-                <li>Provides a simple standalone proxy server for testing proxied connections.</li>
-                <li>Alternate distribution as a shadowed jar with the Undertow library repackaged to avoid collisions.</li>
-                <li>Support for upload requests with up to 1.5 GB of content and response downloads of up to 500 MG.</li>
-                <li>Support for simulating web socket message sending and receiving.</li>
+                <li>Alternate distribution as a shadowed jar with many of the dependencies repackaged to avoid collisions.</li>
+                <li>Support for upload requests with up to 1.5 GB of content and response downloads of up to 500 MB.</li>
                 <li>Support for chunked response content (e.g. Transfer-encoding: "chunked"), with optional delay times.</li>
             </ul>
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Getting Started</h2>
 
-            <p>The Ersatz <a href="guide" target="_blank">User Guide</a> and <a href="docs/javadoc" target="_blank">Java Docs</a> provide
+            <p>The Ersatz <a href="guide" target="_blank">User Guide</a> and <a href="docs/ersatz/javadoc" target="_blank">Java Docs</a> provide
             detailed documentation of the features and configuration; however, a simple example of the expectation configuration would be (using
                 Groovy):</p>
 
-            <pre><code>ErsatzServer ersatz = new ErsatzServer()
+            <pre><code>def ersatz = new GroovyErsatzServer()
 
 ersatz.expectations {
     GET('/say/hello') {
@@ -121,15 +119,15 @@ ersatz.stop()</code></pre>
         .responds().body('Hello Ersatz','text/plain')
 }</code></pre>
 
-            <p>Standard Java 11+ may also be used; the `expectations` block in the example above would look very similar in Java:</p>
+            <p>Standard Java 11+ may also be used; the "expectations" block in the example above would look very similar in Java:</p>
 
             <pre><code>ErsatzServer ersatz = new ErsatzServer();
 
 server.expectations(expectations -> {
     expectations.GET("/say/hello", req -> {
-        req.called(1)
-        req.query("name","Ersatz")
-        req.responder().body("Hello Ersatz","text/plain")
+        req.called(1);
+        req.query("name","Ersatz");
+        req.responder().body("Hello Ersatz","text/plain");
     }
 }).start();
 </code></pre>
@@ -142,13 +140,27 @@ server.expectations(expectations -> {
 
             <pre><code>testCompile 'com.stehno.ersatz:ersatz:${project_version}'</code></pre>
 
-            or for Maven:
+            for Java, and
+
+            <pre><code>testCompile 'com.stehno.ersatz:ersatz-groovy:${project_version}'</code></pre>
+
+            for Groovy (and Java). Or, if you are using Maven:
 
             <pre><code>&lt;dependency&gt;
     &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
     &lt;version&gt;${project_version}&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
+
+            and
+
+            <pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;com.stehno.ersatz&lt;/groupId&gt;
+    &lt;artifactId&gt;ersatz-groovy&lt;/artifactId&gt;
+    &lt;version&gt;${project_version}&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+
+            respectively.
 
             There is also a "safe" (shadow jar) artifact available for situations where the Undertow server is already being used (e.g. Grails or
             Spring-Boot using Undertow as the embedded server) - see the
@@ -158,15 +170,9 @@ server.expectations(expectations -> {
 
             <p>The best place to learn how to use the Ersatz Server is in the <a href="guide" target="_blank">User Guide</a> (especially the <a
                 href="guide/#_getting_started" target="_blank">Getting Started</a> section) or the
-                <a href="docs/javadoc" target="_blank">Java Docs</a>; however, there are a few other interesting documents available:</p>
-
-            <ul>
-                <li><a href="https://github.com/cjstehno/ersatz" target="_blank">GitHub Project</a> - the GitHub project has all the source code as
-                    well as links to all of the documentation.</li>
-                <li><a href="reports/tests/test" target="_blank">Unit Test Report</a> - the build-generated unit test results report.</li>
-                <li><a href="reports/jacoco/test/html" target="_blank">Test Coverage Report</a> - the build-generated unit test coverage report (via Jacoco).</li>
-                </li>
-            </ul>
+                <a href="docs/ersatz/javadoc" target="_blank">Java Docs</a> and <a href="docs/ersatz-groovy/javadoc" target="_blank">Groovy Extension Docs</a>.
+                The <a href="https://github.com/cjstehno/ersatz" target="_blank">GitHub Project</a> also has useful information.
+            </p>
 
             <p>If you find any issues with the library or the documentation, please feel free to <a
                 href="https://github.com/cjstehno/ersatz/issues/new">create an issue</a> with a description of the problem or
@@ -184,7 +190,8 @@ server.expectations(expectations -> {
             <a href="https://github.com/cjstehno/ersatz/tarball/master" class="button"><small>Download</small> .tar.gz file</a>
 
             <p><strong>References:</strong><br/><a href="guide" target="_blank">User Guide</a> &bull;
-                <a href="docs/javadoc" target="_blank">Java Docs</a></p>
+                <a href="docs/ersatz/javadoc" target="_blank">Java</a> &bull;
+            <a href="docs/ersatz-groovy/javadoc" target="_blank">Groovy</a></p>
 
             <p class="repo-owner"><a href="https://github.com/cjstehno/ersatz"></a> Maintained & Developed by<br/><a
                 href="https://github.com/cjstehno">Christopher J. Stehno</a>.</p>
