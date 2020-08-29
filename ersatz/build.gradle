@@ -26,15 +26,17 @@ dependencies {
     api 'org.awaitility:awaitility:4.0.1'
 
     implementation 'javax.activation:activation:1.1.1'
-    implementation 'ch.qos.logback:logback-classic:1.1.7'               // TODO: make this use provided or default
+    implementation 'org.slf4j:slf4j-api:1.7.20'
     implementation 'commons-fileupload:commons-fileupload:1.4'          // FIXME: can I replace this?
 
-    implementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"  // TODO: make this provided (cant remove otherwise cant use in my tests)
+    compileOnly "org.junit.jupiter:junit-jupiter-api:$junitVersion"  // TODO: make this provided (cant remove otherwise cant use in my tests)
 
+    testRuntimeOnly 'ch.qos.logback:logback-classic:1.1.7'
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-    testImplementation 'com.squareup.okhttp3:okhttp:4.2.2'              // FIXME: needed?
     testImplementation 'org.mockito:mockito-junit-jupiter:3.4.6'
+
+    testImplementation 'com.squareup.okhttp3:okhttp:4.2.2'              // FIXME: needed?
     testImplementation 'com.burgstaller:okhttp-digest:2.0'              // FIXME: needed?
 }
 
