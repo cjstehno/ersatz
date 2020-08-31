@@ -49,7 +49,6 @@ shadowJar {
         exclude(dependency('org.slf4j:slf4j-api:.*'))
         exclude(dependency('org.hamcrest::.*'))
         exclude(dependency('org.wildfly.client::.*'))
-        exclude(dependency('org.wildfly.common::.*'))
         exclude(dependency('org.codehaus.groovy::.*'))
     }
 
@@ -64,4 +63,5 @@ shadowJar {
     relocate 'org.awaitility', 'ersatz.awaitility'
     relocate 'org.awaitility', 'ersatz.awaitility'
     relocate 'space.jasan.support.groovy', 'ersatz.groovy'
+    relocate 'org.wildfly.common', 'ersazt.wildfly.common'
 }
