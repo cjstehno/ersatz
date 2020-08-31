@@ -6,7 +6,7 @@ plugins {
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.8.5'
     id 'com.github.ben-manes.versions' version '0.29.0'
-    id "com.github.johnrengelman.shadow" version '5.2.0' // FIXME: 6.0.0
+    id "com.github.johnrengelman.shadow" version '6.0.0'
 }
 
 group = rootProject.group
@@ -29,7 +29,7 @@ dependencies {
 
     implementation 'javax.activation:activation:1.1.1'
     implementation 'org.slf4j:slf4j-api:1.7.25'
-    implementation 'commons-fileupload:commons-fileupload:1.4'          // FIXME: can I replace this?
+    implementation 'commons-fileupload:commons-fileupload:1.4'
 
     compileOnly "org.junit.jupiter:junit-jupiter-api:$junitVersion"
 
@@ -40,7 +40,6 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     testImplementation 'org.mockito:mockito-junit-jupiter:3.4.6'
 
-    // TODO: look at using internal client for testing
     testImplementation 'com.squareup.okhttp3:okhttp:4.8.1'
     testImplementation 'com.burgstaller:okhttp-digest:2.5'
 }
@@ -155,30 +154,14 @@ bintray {
     }
 }
 
-// FIXME: update and cleanup
 shadowJar {
     classifier = 'safe'
     dependencies {
-        exclude(dependency('junit:junit:.*'))
-        exclude(dependency('org.junit.jupiter::.*'))
-        exclude(dependency('org.junit.platform::.*'))
-        exclude(dependency('javax.activation:activation:1.1.1'))
-        exclude(dependency("org.codehaus.groovy::$groovyVersion"))
-        exclude(dependency('org.slf4j:slf4j-api:1.7.20'))
-        exclude(dependency('ch.qos.logback:logback-classic:1.1.7'))
-        exclude(dependency('ch.qos.logback:logback-core:1.1.7'))
-        exclude(dependency('org.hamcrest:hamcrest:2.2'))
-        exclude(dependency('org.hamcrest:hamcrest-library:2.2'))
-        exclude(dependency('org.hamcrest:hamcrest-core:2.2'))
-        exclude(dependency('org.opentest4j:opentest4j:1.2.0'))
-        exclude(dependency('org.apiguardian:apiguardian-api:1.1.0'))
-        exclude(dependency('jline:jline:.*'))
-        exclude(dependency('com.beust:jcommander:.*'))
-        exclude(dependency('com.thoughtworks.qdox:qdox:.*'))
-        exclude(dependency('commons-cli:commons-cli:.*'))
-        exclude(dependency('org.testng:testng:.*'))
-        exclude(dependency('info.picocli:picocli:.*'))
-        exclude(dependency('org.apache.ant::.*'))
+        exclude(dependency('javax.activation:activation:.*'))
+        exclude(dependency('org.slf4j:slf4j-api:.*'))
+        exclude(dependency('org.hamcrest::.*'))
+        exclude(dependency('org.wildfly.client::.*'))
+        exclude(dependency('org.wildfly.common::.*'))
     }
 
     mergeServiceFiles()
