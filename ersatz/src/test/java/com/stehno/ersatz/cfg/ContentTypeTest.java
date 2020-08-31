@@ -17,7 +17,10 @@ package com.stehno.ersatz.cfg;
 
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+
 import static com.stehno.ersatz.cfg.ContentType.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ContentTypeTest {
@@ -25,6 +28,7 @@ class ContentTypeTest {
     @Test void propertiesPredefined() {
         assertEquals("application/x-www-form-urlencoded", APPLICATION_URLENCODED.getValue());
         assertEquals("text/html; charset=utf-8", TEXT_HTML.withCharset("utf-8").getValue());
+        assertEquals("text/html; charset=utf-8", TEXT_HTML.withCharset(UTF_8).getValue());
     }
 
     @Test void propertiesCreated() {

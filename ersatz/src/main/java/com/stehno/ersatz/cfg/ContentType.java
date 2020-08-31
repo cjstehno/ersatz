@@ -15,6 +15,8 @@
  */
 package com.stehno.ersatz.cfg;
 
+import java.nio.charset.Charset;
+
 import static java.util.Objects.hash;
 
 /**
@@ -76,6 +78,10 @@ public class ContentType {
      */
     public ContentType withCharset(final String charset) {
         return new ContentType(value, charset);
+    }
+
+    public ContentType withCharset(final Charset charset){
+        return new ContentType(value, charset.name().toLowerCase());
     }
 
     @Override public boolean equals(Object o) {
