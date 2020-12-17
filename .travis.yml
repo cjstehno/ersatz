@@ -8,5 +8,5 @@ before_script:
   - ./gradlew --version
 script: ./gradlew build
 after_success:
-  - ./gradlew jacocoTestReport coveralls
+  - ./gradlew coveralls
   - curl -F 'json_file=@build/coveralls/report.json' 'https://coveralls.io/api/v1/jobs'

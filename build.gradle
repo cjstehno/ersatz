@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.stehno.ersatz'
-version = '2.1.0'
+version = '3.0.0'
 
 asciidoctor {
     options doctype: 'book'
@@ -26,7 +26,6 @@ webPreview {
 task site(dependsOn: [
     'build',
     'ersatz:javadoc', 'ersatz-groovy:javadoc',
-    'ersatz:jacocoTestReport','ersatz-groovy:jacocoTestReport',
     'asciidoctor'
 ]) {
     doLast {

@@ -8,14 +8,14 @@ Project artifacts are available via the JCenter (Bintray) and Maven Central repo
 
 For Gradle:
 
-    testCompile 'com.stehno.ersatz:ersatz:2.1.0'
+    testCompile 'com.stehno.ersatz:ersatz:3.0.0'
 
 For Maven:
 
     <dependency>
         <groupId>com.stehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>2.1.0</version>
+        <version>3.0.0</version>
         <scope>test</scope>
     </dependency>
     
