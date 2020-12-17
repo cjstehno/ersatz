@@ -20,14 +20,49 @@ package com.stehno.ersatz.cfg;
  */
 public enum HttpMethod {
 
+    /**
+     * Wildcard matching any HTTP method.
+     */
     ANY("*"),
+
+    /**
+     * HTTP GET method matcher.
+     */
     GET("GET"),
+
+    /**
+     * HTTP HEAD method matcher.
+     */
     HEAD("HEAD"),
+
+    /**
+     * HTTP POST method matcher.
+     */
     POST("POST"),
+
+    /**
+     * HTTP PUT method matcher.
+     */
     PUT("PUT"),
+
+    /**
+     * HTTP DELETE method matcher.
+     */
     DELETE("DELETE"),
+
+    /**
+     * HTTP PATCH method matcher.
+     */
     PATCH("PATCH"),
+
+    /**
+     * HTTP OPTIONS method matcher.
+     */
     OPTIONS("OPTIONS"),
+
+    /**
+     * HTTP TRACE method matcher.
+     */
     TRACE("TRACE");
 
     private final String value;

@@ -31,6 +31,12 @@ import static org.hamcrest.Matchers.equalTo;
  */
 public class ErsatzMatchers {
 
+    /**
+     * Matcher that matches a request path. A wildcard (*) may be used to match any request path.
+     *
+     * @param path the path to be matched or * for wildcard
+     * @return the matcher
+     */
     public static Matcher<String> pathMatcher(final String path) {
         return path.equals("*") ? Matchers.any(String.class) : equalTo(path);
     }

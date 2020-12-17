@@ -15,12 +15,35 @@
  */
 package com.stehno.ersatz.impl;
 
+/**
+ * Defines a match-error report.
+ */
 public interface Report {
 
+    /**
+     * Console code for the color RED.
+     */
     String RED = "\u001B[31m";
+
+    /**
+     * Console code for the color GREEN.
+     */
     String GREEN = "\u001B[32m";
+
+    /**
+     * Console code to reset the color.
+     */
     String RESET = "\u001B[0m";
+
+    /**
+     * A "checkmark" symbol.
+     */
     String CHECKMARK = "+";
 
+    /**
+     * Renders the report as a String.
+     *
+     * @return the report, as a String
+     */
     String render();
 }

@@ -20,8 +20,17 @@ import java.util.List;
 
 import static java.lang.System.arraycopy;
 
+/**
+ * Utilities for working with arrays of <code>byte</code>s.
+ */
 public class ByteArrays {
 
+    /**
+     * Joins all of the byte arrays in the list, in order.
+     *
+     * @param arrays the list of byte arrays
+     * @return a joined list of byte arrays
+     */
     public static byte[] join(final List<byte[]> arrays) {
         byte[] current = new byte[0];
 
@@ -32,6 +41,13 @@ public class ByteArrays {
         return current;
     }
 
+    /**
+     * Joins the two byte arrays into a single byte array, as first, then second.
+     *
+     * @param first the first byte array
+     * @param second the second byte array
+     * @return a merged byte array of the two in order
+     */
     public static byte[] join(final byte[] first, final byte[] second) {
         byte[] combined = new byte[first.length + second.length];
         arraycopy(first, 0, combined, 0, first.length);
@@ -39,6 +55,12 @@ public class ByteArrays {
         return combined;
     }
 
+    /**
+     * Used to join the array of <code>ByteBuffer</code>s into a single array of bytes.
+     *
+     * @param buffers the ByteBuffers to be joined
+     * @return a byte array container the merged bytes from the buffers
+     */
     public static byte[] join(final ByteBuffer[] buffers) {
         byte[] incoming = new byte[0];
 

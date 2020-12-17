@@ -18,6 +18,9 @@ package com.stehno.ersatz.encdec;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 
+/**
+ * Helpers for working with <code>MimeType</code> objects.
+ */
 public class MimeTypes {
 
     /**

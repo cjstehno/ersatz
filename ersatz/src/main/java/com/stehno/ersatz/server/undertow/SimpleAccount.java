@@ -27,27 +27,27 @@ import static java.util.Objects.hash;
 /**
  * Simple implementation of the <code>Account</code> interface used for BASIC and DIGEST authentication testing.
  */
-public class SimpleAccount implements Account {
+class SimpleAccount implements Account {
 
     private final Set<String> roles;
     private final String user;
     private final Principal principal;
 
-    public SimpleAccount(final String user, final Set<String> roles) {
+    SimpleAccount(final String user, final Set<String> roles) {
         this.user = user;
         this.principal = () -> user;
         this.roles = roles;
     }
 
-    public SimpleAccount(final String user) {
+    SimpleAccount(final String user) {
         this(user, Set.of("TESTER"));
     }
 
-    public SimpleAccount() {
+    SimpleAccount() {
         this(null);
     }
 
-    public String getUser() {
+    String getUser() {
         return user;
     }
 

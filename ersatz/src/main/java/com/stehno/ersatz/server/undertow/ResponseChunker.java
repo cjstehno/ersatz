@@ -27,12 +27,12 @@ import java.util.List;
 /**
  * Undertow server callback used to provide the delayed chunked content.
  */
-public class ResponseChunker implements IoCallback {
+class ResponseChunker implements IoCallback {
 
     private final List<byte[]> chunks;
     public final int delay;
 
-    public ResponseChunker(final List<byte[]> chunks, final int delay) {
+    ResponseChunker(final List<byte[]> chunks, final int delay) {
         this.chunks = chunks;
         this.delay = delay;
     }

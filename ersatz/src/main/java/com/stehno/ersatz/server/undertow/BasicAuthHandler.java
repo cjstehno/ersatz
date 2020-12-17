@@ -35,15 +35,16 @@ public class BasicAuthHandler {
     private static final String REALM = "BasicTesting";
     private final IdentityManager identityManager;
 
+    /**
+     * Creates an auth handler with the provided identity manager.
+     *
+     * @param identityManager the identity manager to be used
+     */
     public BasicAuthHandler(final IdentityManager identityManager) {
         this.identityManager = identityManager;
     }
 
-    public IdentityManager getIdentityManager() {
-        return identityManager;
-    }
-
-    public HttpHandler apply(final HttpHandler handler) {
+    HttpHandler apply(final HttpHandler handler) {
         return new SecurityInitialHandler(
             PRO_ACTIVE,
             identityManager,

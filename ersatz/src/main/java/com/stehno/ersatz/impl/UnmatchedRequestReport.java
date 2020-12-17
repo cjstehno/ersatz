@@ -36,12 +36,18 @@ public class UnmatchedRequestReport implements Report {
     private final List<ErsatzRequest> expectations;
     private final AtomicReference<String> cache = new AtomicReference<>();
 
+    /**
+     * Creates a request report for the given request and expectations.
+     *
+     * @param request the request being matched
+     * @param expectations the configured expectations
+     */
     public UnmatchedRequestReport(final ClientRequest request, final List<ErsatzRequest> expectations) {
         this.request = request;
         this.expectations = expectations;
     }
 
-    public String render() {
+    @Override public String render() {
         if (cache.get() == null) {
             final StringBuilder out = new StringBuilder();
 

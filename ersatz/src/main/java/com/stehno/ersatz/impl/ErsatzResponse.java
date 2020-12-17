@@ -68,6 +68,11 @@ public class ErsatzResponse implements Response {
         this(empty, null);
     }
 
+    /**
+     * Used to retrieve the chunking configuration, if any.
+     *
+     * @return the chunking configuration
+     */
     public ChunkingConfigImpl getChunkingConfig() {
         return chunkingConfig;
     }
@@ -111,6 +116,7 @@ public class ErsatzResponse implements Response {
         return this;
     }
 
+    @Override
     public Response header(final String name, final List<String> values) {
         final List<String> list = headers.computeIfAbsent(name, s -> new LinkedList<>());
         list.addAll(values);
@@ -171,7 +177,7 @@ public class ErsatzResponse implements Response {
         return type != null ? String.join(",", type) : TEXT_PLAIN.getValue();
     }
 
-    public Response code(final int code) {
+    @Override public Response code(final int code) {
         this.code = code;
         return this;
     }

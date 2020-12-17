@@ -40,6 +40,9 @@ import java.security.KeyStore;
 
 import static io.undertow.UndertowOptions.*;
 
+/**
+ * An <code>UnderlyingServer</code> implementation based on the Undertow server platform.
+ */
 public class UndertowUnderlyingServer implements UnderlyingServer {
 
     private static final Logger log = LoggerFactory.getLogger(UndertowUnderlyingServer.class);
@@ -50,6 +53,11 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
     private int actualHttpPort = UNSPECIFIED_PORT;
     private int actualHttpsPort = UNSPECIFIED_PORT;
 
+    /**
+     * Creates a new Undertow underlying server with the specified server config.
+     *
+     * @param serverConfig the server config information
+     */
     public UndertowUnderlyingServer(final ServerConfigImpl serverConfig) {
         this.serverConfig = serverConfig;
     }

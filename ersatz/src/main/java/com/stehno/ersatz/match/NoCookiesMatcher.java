@@ -26,6 +26,11 @@ import java.util.Map;
  */
 public class NoCookiesMatcher extends BaseMatcher<Map<String, Cookie>> {
 
+    /**
+     * Provides a matcher which expects there to be no cookies.
+     *
+     * @return a matcher which expects there to be no cookies
+     */
     public static NoCookiesMatcher noCookies() {
         return new NoCookiesMatcher();
     }

@@ -52,6 +52,9 @@ public class ErsatzServer implements Closeable {
     private final UnderlyingServer underlyingServer;
     private final ServerConfigImpl serverConfig;
 
+    /**
+     * Creates a new Ersatz server instance with empty (default) configuration.
+     */
     public ErsatzServer() {
         this.serverConfig = new ServerConfigImpl();
         this.serverConfig.setStarter(this::start);
@@ -176,10 +179,29 @@ public class ErsatzServer implements Closeable {
         return serverConfig.expects();
     }
 
+    /**
+     * Used to specify the server request timeout property value on the server.
+     * <p>
+     * The IDLE_TIMEOUT, NO_REQUEST_TIMEOUT, REQUEST_PARSE_TIMEOUT, READ_TIMEOUT and WRITE_TIMEOUT are all configured to the same specified
+     * value.
+     *
+     * @param value the timeout value
+     * @param units the units the timeout is specified with
+     * @return a reference to the server being configured
+     */
     public ServerConfig timeout(final int value, final TimeUnit units) {
         return serverConfig.timeout(value, units);
     }
 
+    /**
+     * Used to specify the server request timeout property value on the server (in seconds).
+     * <p>
+     * The IDLE_TIMEOUT, NO_REQUEST_TIMEOUT, REQUEST_PARSE_TIMEOUT, READ_TIMEOUT and WRITE_TIMEOUT are all configured to the same specified
+     * value.
+     *
+     * @param value the timeout value
+     * @return a reference to the server being configured
+     */
     public ServerConfig timeout(final int value) {
         return timeout(value, SECONDS);
     }

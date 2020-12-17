@@ -32,6 +32,9 @@ import java.util.function.Function;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+/**
+ * Default implementation of the <code>ServerConfig</code> interface.
+ */
 public class ServerConfigImpl implements ServerConfig {
 
     private static final int EPHEMERAL_PORT = 0;
@@ -50,10 +53,18 @@ public class ServerConfigImpl implements ServerConfig {
     private long timeout;
     private boolean logResponseContent;
 
+    /**
+     * Creates a new empty configuration instance.
+     */
     public ServerConfigImpl() {
         this.expectations = new ExpectationsImpl(globalEncoders, globalDecoders);
     }
 
+    /**
+     * Used to inject the server-starter handle.
+     *
+     * @param starter the server-starter handle to be used
+     */
     public void setStarter(final Runnable starter) {
         this.starter = starter;
     }
@@ -73,50 +84,108 @@ public class ServerConfigImpl implements ServerConfig {
         return https(true);
     }
 
+    /**
+     * Whether or not the https support is enabled. Defaults to <code>false</code>.
+     *
+     * @return true, if the https support is enabled
+     */
     public boolean isHttpsEnabled() {
         return httpsEnabled;
     }
 
+    /**
+     * Whether or not the auto-start condition is enabled. Defaults to <code>true</code>.
+     *
+     * @return true, if the auto-start condition is enabled.
+     */
     public boolean isAutoStartEnabled() {
         return autoStartEnabled;
     }
 
+    /**
+     * Whether or not the mismatched request conditions should be logged to the console. Defaults to <code>false</code>.
+     *
+     * @return true, if the mismatched request conditions should be logged to the console
+     */
     public boolean isMismatchToConsole() {
         return mismatchToConsole;
     }
 
+    /**
+     * Retrieves the location for the HTTPS keystore.
+     *
+     * @return the keystore location (URL)
+     */
     public URL getKeystoreLocation() {
         return keystoreLocation;
     }
 
+    /**
+     * Retrieves the HTTPS keystore password.
+     *
+     * @return the keystore password
+     */
     public String getKeystorePass() {
         return keystorePass;
     }
 
+    /**
+     * Retrieves the <code>AuthenticationConfig</code> defined in this server config instance.
+     *
+     * @return the authentication configuration
+     */
     public AuthenticationConfigImpl getAuthenticationConfig() {
         return authenticationConfig;
     }
 
+    /**
+     * Retrieves the configured (desired) HTTP port - this may be overridden by the server itself.
+     *
+     * @return the HTTP port
+     */
     public int getDesiredHttpPort() {
         return desiredHttpPort;
     }
 
+    /**
+     * Retrieves the configured (desired) HTTPS port - this may be overridden by the server itself.
+     *
+     * @return the HTTPS port
+     */
     public int getDesiredHttpsPort() {
         return desiredHttpsPort;
     }
 
+    /**
+     * Retrieves the configuration request expectations.
+     *
+     * @return the expectations
+     */
     public ExpectationsImpl getExpectations() {
         return expectations;
     }
 
+    /**
+     * Retrieves the configured timeout value for server requests.
+     *
+     * @return the server timeout value
+     */
     public long getTimeout() {
         return timeout;
     }
 
+    /**
+     * Used to clear out the configured expectations.
+     */
     public void clearExpectations() {
         expectations.clear();
     }
 
+    /**
+     * Whether or not the response content should be logged for each request.
+     *
+     * @return true, if the response content should be logged
+     */
     public boolean isLogResponseContent() {
         return logResponseContent;
     }

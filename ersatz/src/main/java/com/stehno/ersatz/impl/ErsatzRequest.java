@@ -71,6 +71,13 @@ public class ErsatzRequest implements Request {
         this.emptyResponse = noResponse;
     }
 
+    /**
+     * Creates a new request with the specified method, path matcher.
+     *
+     * @param meth        the request method
+     * @param pathMatcher the path matcher
+     * @param globalEncoders the shared global encoders
+     */
     public ErsatzRequest(final HttpMethod meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders) {
         this(meth, pathMatcher, globalEncoders, false);
     }
@@ -250,20 +257,22 @@ public class ErsatzRequest implements Request {
         return unmodifiableList(matchers);
     }
 
+    /**
+     * Adds a request matcher to the configured list of matchers.
+     *
+     * @param matcher the matcher to be added
+     */
     protected void addMatcher(final RequestMatcher matcher) {
         matchers.add(matcher);
     }
 
+    /**
+     * Creates a new response container for this request.
+     *
+     * @return a new response container
+     */
     protected Response newResponse() {
         return new ErsatzResponse(emptyResponse, globalEncoders);
-    }
-
-    protected final boolean isEmptyResponse() {
-        return emptyResponse;
-    }
-
-    protected final ResponseEncoders getGlobalEncoders() {
-        return globalEncoders;
     }
 
     /**

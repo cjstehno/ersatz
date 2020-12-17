@@ -41,6 +41,12 @@ public class ExpectationsImpl implements Expectations {
     private RequestDecoders globalDecoders;
     private ResponseEncoders globalEncoders;
 
+    /**
+     * Creates a new expectations container with the given encoders and decoders.
+     *
+     * @param encoders the response encoders
+     * @param decoders the request decoders
+     */
     public ExpectationsImpl(final ResponseEncoders encoders, final RequestDecoders decoders) {
         this.globalEncoders = encoders;
         this.globalDecoders = decoders;
@@ -93,7 +99,7 @@ public class ExpectationsImpl implements Expectations {
         return applyExpectation(new ErsatzRequest(HttpMethod.OPTIONS, matcher, globalEncoders), config);
     }
 
-    protected final <R extends Request> R applyExpectation(final R request, final Consumer<R> consumer) {
+    private <R extends Request> R applyExpectation(final R request, final Consumer<R> consumer) {
         if (consumer != null) {
             consumer.accept(request);
         }
@@ -141,10 +147,24 @@ public class ExpectationsImpl implements Expectations {
         return true;
     }
 
+    /**
+     * Used to verify that all request expectations have been called the expected number of times.
+     * <p>
+     * This method will block until the call count expectations are met or the timeout expires.
+     *
+     * @param timeout the amount of time to wait (in seconds)
+     * @return a value of true if all requests are verified
+     */
     public boolean verify(final long timeout) {
         return verify(timeout, TimeUnit.SECONDS);
     }
 
+    /**
+     * Used to verify that all request expectations have been called the expected number of times.
+     * This method will block until the call count expectations are met or the timeout (1 second) expires.
+     *
+     * @return a value of true if all requests are verified
+     */
     public boolean verify() {
         return verify(1, TimeUnit.SECONDS);
     }

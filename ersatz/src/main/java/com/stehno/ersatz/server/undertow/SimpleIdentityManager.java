@@ -17,7 +17,6 @@ package com.stehno.ersatz.server.undertow;
 
 import io.undertow.security.idm.*;
 
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
@@ -29,12 +28,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 /**
  * IdentityManager used by the <code>BasicAuthFeature</code>. The default username is "admin" and the default password is "$3cr3t".
  */
-public class SimpleIdentityManager implements IdentityManager {
+class SimpleIdentityManager implements IdentityManager {
 
     private final String username;
     private final String password;
 
-    public SimpleIdentityManager(final String username, final String password) {
+    SimpleIdentityManager(final String username, final String password) {
         this.username = username;
         this.password = password;
     }
@@ -81,7 +80,7 @@ public class SimpleIdentityManager implements IdentityManager {
      * @param pass the password
      * @return the encoded credential string
      */
-    public static String encodedCredential(final String user, final String pass) {
+    static String encodedCredential(final String user, final String pass) {
         return "Basic " + Base64.getEncoder().encodeToString((user + ":" + pass).getBytes(UTF_8));
     }
 }

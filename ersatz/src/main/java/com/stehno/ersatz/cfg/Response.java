@@ -69,6 +69,15 @@ public interface Response {
     Response header(final String name, final String... value);
 
     /**
+     * Used to add a header to the response with the given name and value.
+     *
+     * @param name  the header name
+     * @param values the header values
+     * @return this response
+     */
+    Response header(final String name, final List<String> values);
+
+    /**
      * Used to add multiple headers to the response.
      *
      * @param headers the headers

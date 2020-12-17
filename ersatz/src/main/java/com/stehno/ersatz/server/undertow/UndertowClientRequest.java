@@ -15,9 +15,9 @@
  */
 package com.stehno.ersatz.server.undertow;
 
-import com.stehno.ersatz.server.ClientRequest;
-import com.stehno.ersatz.encdec.Cookie;
 import com.stehno.ersatz.cfg.HttpMethod;
+import com.stehno.ersatz.encdec.Cookie;
+import com.stehno.ersatz.server.ClientRequest;
 import io.undertow.server.HttpServerExchange;
 
 import java.util.ArrayDeque;
@@ -35,12 +35,12 @@ import static java.util.Collections.emptyMap;
 /**
  * The primary <code>ClientRequest</code> implementation used to wrap and expose the important parts of the underlying Undertow request context.
  */
-public class UndertowClientRequest implements ClientRequest {
+class UndertowClientRequest implements ClientRequest {
 
     private final HttpServerExchange exchange;
     private AtomicReference<byte[]> content;
 
-    public UndertowClientRequest(final HttpServerExchange exchange) {
+    UndertowClientRequest(final HttpServerExchange exchange) {
         this.exchange = exchange;
     }
 
@@ -49,7 +49,7 @@ public class UndertowClientRequest implements ClientRequest {
      *
      * @return the request protocol
      */
-    public String getProtocol() {
+    @Override public String getProtocol() {
         return exchange.getRequestScheme();
     }
 
@@ -58,7 +58,7 @@ public class UndertowClientRequest implements ClientRequest {
      *
      * @return the HTTP method for the request
      */
-    public HttpMethod getMethod() {
+    @Override public HttpMethod getMethod() {
         return HttpMethod.valueOf(exchange.getRequestMethod().toString());
     }
 
@@ -67,7 +67,7 @@ public class UndertowClientRequest implements ClientRequest {
      *
      * @return the request path
      */
-    public String getPath() {
+    @Override public String getPath() {
         return exchange.getRequestPath();
     }
 
@@ -76,7 +76,7 @@ public class UndertowClientRequest implements ClientRequest {
      *
      * @return the query string parameters
      */
-    public Map<String, Deque<String>> getQueryParams() {
+    @Override public Map<String, Deque<String>> getQueryParams() {
         return exchange.getQueryParameters();
     }
 
@@ -85,7 +85,7 @@ public class UndertowClientRequest implements ClientRequest {
      *
      * @return the request headers
      */
-    public Map<String, Deque<String>> getHeaders() {
+    @Override public Map<String, Deque<String>> getHeaders() {
         final var map = new LinkedHashMap<String, Deque<String>>();
 
         exchange.getRequestHeaders().forEach(header -> {
@@ -100,7 +100,7 @@ public class UndertowClientRequest implements ClientRequest {
      *
      * @return the request cookies
      */
-    public Map<String, Cookie> getCookies() {
+    @Override public Map<String, Cookie> getCookies() {
         final var cookies = new LinkedHashMap<String, Cookie>();
 
         exchange.getRequestCookies().forEach((name, cookie) -> {
@@ -124,7 +124,7 @@ public class UndertowClientRequest implements ClientRequest {
      *
      * @return the optional body content as a byte array.
      */
-    public byte[] getBody() {
+    @Override public byte[] getBody() {
         if (content == null) {
             content = new AtomicReference<>();
 
@@ -135,7 +135,7 @@ public class UndertowClientRequest implements ClientRequest {
     }
 
     @Override public Map<String, Deque<String>> getBodyParameters() {
-        final  var body = getBody();
+        final var body = getBody();
         return body != null ? parseQueryString(new String(body, UTF_8), UTF_8.displayName()) : emptyMap();
     }
 

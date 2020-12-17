@@ -25,11 +25,27 @@ public interface UnderlyingServer {
      */
     String NOT_FOUND_BODY = "404: Not Found";
 
+    /**
+     * Used to start the server, if not already started.
+     */
     void start();
 
+    /**
+     * Used to stop the server, if it has been started.
+     */
     void stop();
 
+    /**
+     * Used to retrieve the actual applied HTTP port for the server.
+     *
+     * @return the HTTP port
+     */
     int getActualHttpPort();
 
+    /**
+     * Used to retrieve the actual applied HTTPS port for the server.
+     *
+     * @return the HTTPS port
+     */
     int getActualHttpsPort();
 }

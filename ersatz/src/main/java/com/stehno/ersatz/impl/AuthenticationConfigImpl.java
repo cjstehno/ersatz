@@ -18,6 +18,9 @@ package com.stehno.ersatz.impl;
 import com.stehno.ersatz.cfg.Authentication;
 import com.stehno.ersatz.cfg.AuthenticationConfig;
 
+/**
+ * Default implementation of the <code>AuthenticationConfig</code> interface.
+ */
 public class AuthenticationConfigImpl implements AuthenticationConfig {
 
     private String username = DEFAULT_USERNAME;
@@ -44,14 +47,29 @@ public class AuthenticationConfigImpl implements AuthenticationConfig {
         spec(Authentication.DIGEST, username, password);
     }
 
+    /**
+     * Used to retrieve the configured username (defaults to "admin").
+     *
+     * @return the configured username
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Used to retrieve the configured password (defaults to "$3cr3t").
+     *
+     * @return the configured password
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Used to retrieve the authentication type.
+     *
+     * @return the configured authentication type
+     */
     public Authentication getType() {
         return type;
     }

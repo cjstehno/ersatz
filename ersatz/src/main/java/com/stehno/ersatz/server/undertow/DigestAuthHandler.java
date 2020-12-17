@@ -30,21 +30,17 @@ import static io.undertow.security.api.AuthenticationMode.PRO_ACTIVE;
 /**
  * Server handler factory for DIGEST authentication. See <code>ServerConfig</code> for authentication configuration details.
  */
-public class DigestAuthHandler {
+class DigestAuthHandler {
 
     private static final String REALM = "DigestTesting";
     private final IdentityManager identityManager;
 
-    public DigestAuthHandler(final IdentityManager identityManager){
+    DigestAuthHandler(final IdentityManager identityManager) {
         this.identityManager = identityManager;
     }
 
-    public IdentityManager getIdentityManager() {
-        return identityManager;
-    }
-
-    public HttpHandler apply(final HttpHandler handler) {
-       return  new SecurityInitialHandler(
+    HttpHandler apply(final HttpHandler handler) {
+        return new SecurityInitialHandler(
             PRO_ACTIVE,
             identityManager,
             new AuthenticationMechanismsHandler(

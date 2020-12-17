@@ -19,6 +19,9 @@ import com.stehno.ersatz.cfg.ChunkingConfig;
 
 import static java.lang.String.format;
 
+/**
+ * Default implementation of the <code>ChunkingConfig</code> interface.
+ */
 public class ChunkingConfigImpl implements ChunkingConfig {
 
     private int chunks = 2;
@@ -46,10 +49,20 @@ public class ChunkingConfigImpl implements ChunkingConfig {
         return this;
     }
 
+    /**
+     * Used to retrieve the number of chunks (defaults to 2).
+     *
+     * @return the number of chunks
+     */
     public int getChunks() {
         return chunks;
     }
 
+    /**
+     * Used to retrieve the chunk delay.
+     *
+     * @return the chunk delay.
+     */
     public int getDelay() {
         return delay;
     }
