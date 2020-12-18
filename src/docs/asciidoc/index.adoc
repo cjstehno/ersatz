@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno <chris@stehno.com>
-v2.0.0, January 2020
+v3.0.0, January 2021
 :toc: left
 :toclevels: 4
 
@@ -24,6 +24,27 @@ allows two main forms, a Java-style chained builder, and a Groovy DSL, both of w
 
 Ersatz is developed with testing in mind. It does not favor any specific testing framework, but it does work well with both the JUnit and Spock
 frameworks.
+
+== What's New in 3.0
+
+* Not directly backward compatible with the 2.x codebase (see migration notes below).
+* Requires Java 15+
+* Removed support for legacy JUnit (< v5).
+* Added new option to enable response content rendering (disabled by default).
+* Removed Web Sockets support - this may be re-implemented later with a more stable API if there is interest.
+* Removed the `ErsatzProxy` component - this may be re-implemented later if there is interest.
+* Removed built-in support for JSON encoding/decoding so that no specific implementation library was required. Documentation has been provided to show implementations using some common JSON support libraries.
+* Extracted the Groovy API into a separate library (ersatz-groovy) so that the main library could be implemented in Java without Groovy dependencies.
+* Added more pre-defined `ContentType` constants.
+* Added more encoders and decoders for common scenarios.
+* Updated the dependencies and fixed some isolation issues.
+
+=== Migrating to 3.0
+
+* If you use the proxy or web sockets testing support, there is no upgrade path. Please create an [Issue](https://github.com/cjstehno/ersatz/issues) to show that you are interested in one or both of these features.
+* If develop with Groovy, you will need to change your dependency references from using the `ersatz` library to use the new `ersatz-groovy` library. The same change applies if you are using the `safe` version of the library.
+* If you are using the legacy JUnit support helper, you will either need to implement the support class yourself (optionally using the source from the 2.x codebase), or you can submit an [Issue](https://github.com/cjstehno/ersatz/issues) and if there is enough interest a solution could be added back into the library.
+* If you are using the built-in JSON encoder or decoder, you will need to replace them with your own implementation (documentation and sample code are provided in the Decoders and Encoders sections).
 
 == What's New in 2.0
 
@@ -390,7 +411,7 @@ The various configuration levels have the same method signature:
 ServerConfig decoder(final String contentType, final BiFunction<byte[], DecodingContext, Object> decoder)
 ----
 
-As an example, the default JSON decoder (provided in `com.stehno.ersatz.Decoders`) looks like the following code:
+As an example, a JSON decoder based on the Groovy JSON parser could look like the following code:
 
 [source,groovy]
 ----
@@ -411,6 +432,28 @@ def server = new ErsatzServer({
 ----
 
 The two approaches are functionally the same.
+
+===== JSON Decoders
+
+As of 3.0.0 the built-in JSON Decoder was removed (to avoid dependency lock-in). Below are provided some simple/common implementations of them for use in your code:
+
+*Groovy.* A decoder (parser) implemented with the Groovy `JsonSlurper` could be implemented as:
+
+[source,groovy]
+----
+decoder(ContentType.APPLICATION_JSON){ content, context ->
+    new JsonSlurper().parse(content ?: '{}'.bytes)
+}
+----
+
+*Jackson.* A decoder (parser) implemented using the Jackson JSON library could be implemented as:
+
+[source,java]
+----
+decoder(ContentType.APPLICATION_JSON, (content, context) -> {
+    return new ObjectMapper().readValue(content, Map.class);
+});
+----
 
 ==== Encoders
 
@@ -446,6 +489,30 @@ def server = new ErsatzServer({
 ----
 
 The two approaches are functionally equivalent.
+
+===== JSON Encoders
+
+As of 3.0.0 the built-in JSON Encoder was removed (to avoid dependency lock-in). Below are provided some simple/common implementations of them for use in your code:
+
+*Groovy.* An encoder (serializer) implemented with the Groovy `JsonObject` could be implemented as:
+
+public static final Function<Object, byte[]> json = obj -> (obj != null ? toJson(obj) : "{}").getBytes(UTF_8);
+
+[source,groovy]
+----
+encoder(ContentType.APPLICATION_JSON, MyType){ obj ->
+    JsonObject.toJson(obj).getBytes(UTF_8)
+}
+----
+
+*Jackson.* A decoder (parser) implemented using the Jackson JSON library could be implemented as:
+
+[source,java]
+----
+encoder(ContentType.APPLICATION_JSON, MyType.class, obj -> {
+    return new ObjectMapper().writeValueAsBytes(obj);
+});
+----
 
 === Expectations
 
