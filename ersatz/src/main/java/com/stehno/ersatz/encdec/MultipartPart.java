@@ -24,12 +24,21 @@ import static java.lang.String.format;
  */
 public class MultipartPart {
 
-    private String fieldName;
-    private String fileName;
-    private String contentType;
-    private String transferEncoding;
-    private Object value;
+    private final String fieldName;
+    private final String fileName;
+    private final String contentType;
+    private final String transferEncoding;
+    private final Object value;
 
+    /**
+     * Creates a new multipart part with the provided parameters.
+     *
+     * @param fieldName the field name
+     * @param fileName the file name
+     * @param contentType the content type of the part
+     * @param transferEncoding the transfer encoding
+     * @param value the part value
+     */
     public MultipartPart(String fieldName, String fileName, String contentType, String transferEncoding, Object value) {
         this.fieldName = fieldName;
         this.fileName = fileName;
@@ -38,22 +47,47 @@ public class MultipartPart {
         this.value = value;
     }
 
+    /**
+     * Used to retrive the field name.
+     *
+     * @return the field name
+     */
     public String getFieldName() {
         return fieldName;
     }
 
+    /**
+     * Used to retreive the file name.
+     *
+     * @return the file name
+     */
     public String getFileName() {
         return fileName;
     }
 
+    /**
+     * Used to retrieve the content-type.
+     *
+     * @return the content-type
+     */
     public String getContentType() {
         return contentType;
     }
 
+    /**
+     * Used to retrieve the transfer-encoding.
+     *
+     * @return the transfer-encoding
+     */
     public String getTransferEncoding() {
         return transferEncoding;
     }
 
+    /**
+     * Used to retrieve the part value.
+     *
+     * @return the part value
+     */
     public Object getValue() {
         return value;
     }

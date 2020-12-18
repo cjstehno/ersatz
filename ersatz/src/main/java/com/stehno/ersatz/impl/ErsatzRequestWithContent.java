@@ -40,7 +40,7 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
     private final DecoderChain decoderChain = new DecoderChain(localDecoders);
 
     /**
-     * Creates a request with the specified method and path.
+     * Creates a request with the specified method and path, along with encoders and decoders.
      *
      * @param method      the request method
      * @param pathMatcher the request path matcher
@@ -55,6 +55,12 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
         }
     }
 
+    /**
+     * Creates a request with the specified method and path.
+     *
+     * @param method      the request method
+     * @param pathMatcher the request path matcher
+     */
     public ErsatzRequestWithContent(final HttpMethod method, final Matcher<String> pathMatcher) {
         this(method, pathMatcher, null, null);
     }

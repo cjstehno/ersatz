@@ -19,5 +19,14 @@ package com.stehno.ersatz.cfg;
  * Enumerates the supported authentication types.
  */
 public enum Authentication {
-    BASIC, DIGEST;
+
+    /**
+     * Flag for BASIC HTTP authentication.
+     */
+    BASIC,
+
+    /**
+     * Flag for DIGEST HTTP authentication.
+     */
+    DIGEST;
 }

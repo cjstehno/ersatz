@@ -25,6 +25,14 @@ public class DecodingContext {
     private final String characterEncoding;
     private final DecoderChain decoderChain;
 
+    /**
+     * Creates a new decoding context with the provided parameters.
+     *
+     * @param contentLength the content-length
+     * @param contentType the content-type
+     * @param characterEncoding the character-encoding
+     * @param decoderChain the available decoder chain
+     */
     public DecodingContext(long contentLength, String contentType, String characterEncoding, DecoderChain decoderChain) {
         this.contentLength = contentLength;
         this.contentType = contentType;
@@ -32,18 +40,38 @@ public class DecodingContext {
         this.decoderChain = decoderChain;
     }
 
+    /**
+     * Used to retrieve the content-length.
+     *
+     * @return the content-length
+     */
     public long getContentLength() {
         return contentLength;
     }
 
+    /**
+     * Used to retrieve the content-type.
+     *
+     * @return the content-type
+     */
     public String getContentType() {
         return contentType;
     }
 
+    /**
+     * Used to retrieve the character-encoding.
+     *
+     * @return the character-encoding
+     */
     public String getCharacterEncoding() {
         return characterEncoding;
     }
 
+    /**
+     * Used to retrieve the available decoder chain.
+     *
+     * @return the available decoder chain
+     */
     public DecoderChain getDecoderChain() {
         return decoderChain;
     }

@@ -71,6 +71,11 @@ public enum HttpMethod {
         this.value = value;
     }
 
+    /**
+     * Retrieve the text value for the method.
+     *
+     * @return the method label.
+     */
     public String getValue() {
         return value;
     }

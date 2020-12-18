@@ -33,6 +33,12 @@ public class ResponseEncoders {
 
     private final List<EncoderMapping> encoders = new LinkedList<>();
 
+    /**
+     * Creates a response encoder container configured by the provided consumer.
+     *
+     * @param consumer the configuration consumer
+     * @return the configured response encoders
+     */
     public static ResponseEncoders encoders(final Consumer<ResponseEncoders> consumer) {
         final var encoders = new ResponseEncoders();
         consumer.accept(encoders);

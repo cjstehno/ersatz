@@ -123,11 +123,19 @@ public abstract class MultipartResponseContent {
      * @param fieldName        the field name
      * @param contentType      the response part content-type
      * @param value            the field value
-     * @param transferEncoding the content-transfer-encoding value (defaults to none)
+     * @param transferEncoding the content-transfer-encoding value
      * @return a reference to this MultipartResponseContent instance
      */
     public abstract MultipartResponseContent part(final String fieldName, final ContentType contentType, final Object value, final String transferEncoding);
 
+    /**
+     * Used to add a "field" part to the response.
+     *
+     * @param fieldName        the field name
+     * @param contentType      the response part content-type
+     * @param value            the field value
+     * @return a reference to this MultipartResponseContent instance
+     */
     public abstract MultipartResponseContent part(final String fieldName, final ContentType contentType, final Object value);
 
     /**
@@ -137,11 +145,20 @@ public abstract class MultipartResponseContent {
      * @param fileName         the file name
      * @param contentType      the response part content-type
      * @param value            the field value
-     * @param transferEncoding the content-transfer-encoding value (defaults to none)
+     * @param transferEncoding the content-transfer-encoding value
      * @return a reference to this MultipartResponseContent instance
      */
     public abstract MultipartResponseContent part(String fieldName, String fileName, String contentType, Object value, String transferEncoding);
 
+    /**
+     * Used to add a "file" part to the response.
+     *
+     * @param fieldName        the field name
+     * @param fileName         the file name
+     * @param contentType      the response part content-type
+     * @param value            the field value
+     * @return a reference to this MultipartResponseContent instance
+     */
     public abstract MultipartResponseContent part(String fieldName, String fileName, String contentType, Object value);
 
     /**
@@ -151,11 +168,20 @@ public abstract class MultipartResponseContent {
      * @param fileName         the file name
      * @param contentType      the response part content-type
      * @param value            the field value
-     * @param transferEncoding the content-transfer-encoding value (defaults to none)
+     * @param transferEncoding the content-transfer-encoding value
      * @return a reference to this MultipartResponseContent instance
      */
     public abstract MultipartResponseContent part(String fieldName, String fileName, ContentType contentType, Object value, String transferEncoding);
 
+    /**
+     * Used to add a "file" part to the response.
+     *
+     * @param fieldName        the field name
+     * @param fileName         the file name
+     * @param contentType      the response part content-type
+     * @param value            the field value
+     * @return a reference to this MultipartResponseContent instance
+     */
     public abstract MultipartResponseContent part(String fieldName, String fileName, ContentType contentType, Object value);
 }
 

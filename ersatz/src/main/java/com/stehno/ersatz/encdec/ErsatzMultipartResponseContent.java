@@ -117,6 +117,14 @@ public class ErsatzMultipartResponseContent extends MultipartResponseContent {
         return Collections.unmodifiableList(parts);
     }
 
+    /**
+     * Resolves the encoder function for the specified content-type and object-type being encoded.
+     *
+     * @param contentType the content-type being encoded
+     * @param objectType the type of object being encoded
+     * @return the encoder function for the criteria
+     * @throws IllegalArgumentException if no encoder is found for the content-type and object-type
+     */
     public Function<Object, byte[]> encoder(final String contentType, final Class objectType) {
         final var encoder = encoderChain.resolve(contentType, objectType);
         if (encoder != null) {

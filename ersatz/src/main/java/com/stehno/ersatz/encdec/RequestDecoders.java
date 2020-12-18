@@ -33,6 +33,12 @@ public class RequestDecoders {
 
     private final List<DecoderMapping> decoders = new LinkedList<>();
 
+    /**
+     * Creates a new request decoder container based on the configuration consumer.
+     *
+     * @param consumer the decoder configuration consumer
+     * @return the configured decoders
+     */
     public static RequestDecoders decoders(final Consumer<RequestDecoders> consumer) {
         final var decoders = new RequestDecoders();
         consumer.accept(decoders);

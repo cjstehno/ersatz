@@ -34,10 +34,25 @@ public class Cookie {
     private Integer maxAge;
     private boolean secure;
 
+    /**
+     * Creates an empty cookie.
+     */
     public Cookie() {
         this(null, null, null, null, 0, false, 0, false);
     }
 
+    /**
+     * Creates a cookie with the specified parameters.
+     *
+     * @param value the cookie value
+     * @param comment the comment for the cookie
+     * @param domain the cookie domain
+     * @param path the cookie path
+     * @param version the cookie version
+     * @param httpOnly whether or not the cookie is http-only
+     * @param maxAge the max age allowed for the cookie
+     * @param secure whether or not the cookie is secure
+     */
     public Cookie(String value, String comment, String domain, String path, int version, boolean httpOnly, Integer maxAge, boolean secure) {
         this.value = value;
         this.comment = comment;
@@ -149,34 +164,74 @@ public class Cookie {
         return this;
     }
 
+    /**
+     * Use to retrieve the value of the cookie.
+     *
+     * @return the cookie value
+     */
     public String getValue() {
         return value;
     }
 
+    /**
+     * Use to retrieve the comment for the cookie.
+     *
+     * @return the cookie comment
+     */
     public String getComment() {
         return comment;
     }
 
+    /**
+     * Use to retrieve the domain of the cookie.
+     *
+     * @return the cookie domain
+     */
     public String getDomain() {
         return domain;
     }
 
+    /**
+     * Use to retrieve the path of the cookie.
+     *
+     * @return the cookie path
+     */
     public String getPath() {
         return path;
     }
 
+    /**
+     * Use to retrieve the version of the cookie format.
+     *
+     * @return the cookie format version
+     */
     public int getVersion() {
         return version;
     }
 
+    /**
+     * Use to retrieve whether or not the cookie is http-only.
+     *
+     * @return true, if the cookie is http-only
+     */
     public boolean isHttpOnly() {
         return httpOnly;
     }
 
+    /**
+     * Use to retrieve the max age allowed for the cookie.
+     *
+     * @return the cookie max age value
+     */
     public Integer getMaxAge() {
         return maxAge;
     }
 
+    /**
+     * Use to retrieve whether or not the cookie is secure.
+     *
+     * @return true, if the cookie is secure
+     */
     public boolean isSecure() {
         return secure;
     }

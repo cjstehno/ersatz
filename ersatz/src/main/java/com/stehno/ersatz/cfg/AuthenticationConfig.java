@@ -25,7 +25,14 @@ package com.stehno.ersatz.cfg;
  */
 public interface AuthenticationConfig {
 
+    /**
+     * The default username (admin).
+     */
     String DEFAULT_USERNAME = "admin";
+
+    /**
+     * The default password ($3cr3t).
+     */
     String DEFAULT_PASSWORD = "$3cr3t";
 
     /**
@@ -36,10 +43,18 @@ public interface AuthenticationConfig {
      */
     void basic(final String username, final String password);
 
+    /**
+     * Configures BASIC authentication support (with default password).
+     *
+     * @param username the username or null to use the default
+     */
     default void basic(final String username) {
         basic(username, DEFAULT_PASSWORD);
     }
 
+    /**
+     * Configures BASIC authentication support (with default username and password).
+     */
     default void basic() {
         basic(DEFAULT_USERNAME, DEFAULT_PASSWORD);
     }
@@ -52,10 +67,18 @@ public interface AuthenticationConfig {
      */
     void digest(final String username, final String password);
 
+    /**
+     * Configures DIGEST authentication support (with default password).
+     *
+     * @param username the username or null to use the default
+     */
     default void digest(final String username) {
         digest(username, DEFAULT_USERNAME);
     }
 
+    /**
+     * Configures DIGEST authentication support (with default username and password).
+     */
     default void digest() {
         digest(DEFAULT_USERNAME, DEFAULT_PASSWORD);
     }

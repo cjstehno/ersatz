@@ -24,10 +24,18 @@ import java.util.function.Function;
  */
 public class EncoderChain extends FunctionChain<ResponseEncoders> {
 
+    /**
+     * Creates a new encoder chain with no encoders.
+     */
     public EncoderChain() {
         this(null);
     }
 
+    /**
+     * Creates a new encoder chain with the provided encoders.
+     *
+     * @param firstItem the initial encoders in the chain
+     */
     public EncoderChain(final ResponseEncoders firstItem) {
         super(firstItem);
     }

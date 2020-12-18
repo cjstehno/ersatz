@@ -243,22 +243,34 @@ public class ErsatzServer implements Closeable {
      * Used to verify that all of the expected request interactions were called the appropriate number of times. This method should be called after
      * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back
      * from the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
-     * <p>
-     * If there are web socket expectations configured, this method will be blocking against the expected operations. Expectations involving web
-     * sockets should consider using the timeout parameters - the default is 1s.
      *
-     * @param timeout the timeout value (defaults to 1)
-     * @param unit    the timeout unit (defaults to SECONDS)
-     * @return <code> true</code> if all call criteria were met during test execution.
+     * @param timeout the timeout value
+     * @param unit    the timeout unit
+     * @return <code>true</code> if all call criteria were met during test execution.
      */
     public boolean verify(final long timeout, final TimeUnit unit) {
         return serverConfig.getExpectations().verify(timeout, unit);
     }
 
+    /**
+     * Used to verify that all of the expected request interactions were called the appropriate number of times. This method should be called after
+     * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back
+     * from the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
+     *
+     * @param timeout the timeout value (in seconds)
+     * @return <code>true</code> if all call criteria were met during test execution.
+     */
     public boolean verify(final long timeout) {
         return verify(timeout, SECONDS);
     }
 
+    /**
+     * Used to verify that all of the expected request interactions were called the appropriate number of times. This method should be called after
+     * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back
+     * from the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
+     *
+     * @return <code>true</code> if all call criteria were met during test execution.
+     */
     public boolean verify() {
         return verify(1, SECONDS);
     }
