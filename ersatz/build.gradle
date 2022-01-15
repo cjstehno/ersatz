@@ -1,9 +1,7 @@
 plugins {
     id 'java-library'
     id "com.github.hierynomus.license" version '0.15.0'
-    id 'maven'
     id 'maven-publish'
-    id 'com.jfrog.bintray' version '1.8.5'
     id 'com.github.ben-manes.versions' version '0.36.0'
     id "com.github.johnrengelman.shadow" version '6.1.0'
 }
@@ -11,11 +9,11 @@ plugins {
 group = rootProject.group
 version = rootProject.version
 
-sourceCompatibility = 15
-targetCompatibility = 15
+sourceCompatibility = 17
+targetCompatibility = 17
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -110,40 +108,6 @@ license {
     ext.year = Calendar.instance.get(Calendar.YEAR)
 
     excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks', '**/*.jpg'])
-}
-
-bintray {
-    if (project.hasProperty('user') && project.hasProperty('key')) {
-        user = project.property('user')
-        key = project.property('key')
-
-        publications = ['ersatzPublication']
-
-        pkg {
-            repo = 'stehno'
-            name = 'ersatz'
-            desc = 'Mock server library for testing HTTP clients.'
-            licenses = ['Apache-2.0']
-            labels = ['groovy', 'java', 'mocking']
-            websiteUrl = 'http://stehno.com/ersatz'
-            issueTrackerUrl = 'https://github.com/cjstehno/ersatz/issues'
-            vcsUrl = 'https://github.com/cjstehno/ersatz'
-            publicDownloadNumbers = true
-
-            version {
-                name = project.version
-                vcsTag = "v${project.version}"
-                gpg {
-                    sign = true
-                }
-                mavenCentralSync {
-                    sync = true
-                    user = project.property('sonotypeUser')
-                    password = project.property('sonotypePass')
-                }
-            }
-        }
-    }
 }
 
 shadowJar {

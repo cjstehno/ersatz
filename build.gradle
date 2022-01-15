@@ -1,80 +1,9 @@
 plugins {
-    id "com.stehno.gradle.webpreview" version '0.3.0'
-    id 'org.asciidoctor.convert' version '2.4.0'
     id 'com.github.kt3k.coveralls' version '2.8.4'
 }
 
 group = 'com.stehno.ersatz'
 version = '3.0.0'
-
-asciidoctor {
-    options doctype: 'book'
-
-    backends = ['html5']
-
-    attributes 'source-highlighter': 'coderay',
-        'coderay-linenums-mode': 'table',
-        icon: 'font',
-        linkattrs: true,
-        encoding: 'utf-8'
-}
-
-webPreview {
-    resourceDir = file('build/site')
-}
-
-task site(dependsOn: [
-    'build',
-    'ersatz:javadoc', 'ersatz-groovy:javadoc',
-    'asciidoctor'
-]) {
-    doLast {
-        def vars = [
-            project_version: project.version,
-            year           : Calendar.instance.get(Calendar.YEAR)
-        ]
-
-        mkdir 'build/site'
-
-        copy {
-            from 'src/site'
-            into 'build/site'
-            include '**/*.html'
-            expand vars
-        }
-
-        copy {
-            from 'src/site'
-            into 'build/site'
-            include '**/css/**'
-            include '**/js/**'
-            include '**/img/**'
-        }
-
-        copy {
-            from 'ersatz/build/docs'
-            include '**/**'
-            into 'build/site/docs/ersatz'
-        }
-
-        copy {
-            from 'ersatz-groovy/build/docs'
-            include '**/**'
-            into 'build/site/docs/ersatz-groovy'
-        }
-
-        copy {
-            from 'build/asciidoc/html5'
-            include '**/**'
-            into 'build/site/guide'
-        }
-    }
-}
-
-task publishSite(type: GradleBuild, group: 'Publishing', description: 'Publishes the documentation web site.', dependsOn: ['site']) {
-    buildFile = 'publish.gradle'
-    tasks = ['gitPublishPush']
-}
 
 coveralls {
     saveAsFile = true
