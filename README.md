@@ -1,6 +1,10 @@
 # Ersatz Server
             
-[![Download](https://api.bintray.com/packages/cjstehno/stehno/ersatz/images/download.svg)](https://bintray.com/cjstehno/stehno/ersatz/_latestVersion) [![Build Status](https://travis-ci.org/cjstehno/ersatz.svg?branch=master)](https://travis-ci.org/cjstehno/ersatz) [![Coverage Status](https://coveralls.io/repos/github/cjstehno/ersatz/badge.svg?branch=master)](https://coveralls.io/github/cjstehno/ersatz?branch=master) [![Twitter Follow](https://img.shields.io/twitter/follow/ersatz.svg?style=social&label=Follow)]()
+[![Build Status](https://travis-ci.org/cjstehno/ersatz.svg?branch=master)](https://travis-ci.org/cjstehno/ersatz) [![Coverage Status](https://coveralls.io/repos/github/cjstehno/ersatz/badge.svg?branch=master)](https://coveralls.io/github/cjstehno/ersatz?branch=master) [![Twitter Follow](https://img.shields.io/twitter/follow/ersatz.svg?style=social&label=Follow)]()
+
+> If you use this project and would like to help keep it running, please consider making a donation.
+> 
+> [☕ Buy me a coffee?](https://www.paypal.com/donate/?hosted_button_id=JA246LUCNUDHC)
 
 ## Quick Links
 
