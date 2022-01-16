@@ -19,7 +19,6 @@ import com.stehno.ersatz.ErsatzServer;
 import com.stehno.ersatz.impl.ServerConfigImpl;
 import com.stehno.ersatz.server.UnderlyingServer;
 import io.undertow.Undertow;
-import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.BlockingHandler;
 import io.undertow.server.handlers.HttpTraceHandler;
 import io.undertow.server.handlers.encoding.ContentEncodingRepository;
@@ -73,10 +72,8 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
             }
 
             final var blockingHandler = new BlockingHandler(new EncodingHandler(
-                applyAuthentication(
-                    new HttpTraceHandler(
-                        new ErsatzHttpHandler(serverConfig.getExpectations(), serverConfig.isMismatchToConsole(), serverConfig.isLogResponseContent())
-                    )
+                new HttpTraceHandler(
+                    new ErsatzHttpHandler(serverConfig.getExpectations(), serverConfig.isMismatchToConsole(), serverConfig.isLogResponseContent())
                 ),
                 new ContentEncodingRepository()
                     .addEncodingHandler("gzip", new GzipEncodingProvider(), 50)
@@ -125,32 +122,6 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
 
     @Override public int getActualHttpsPort() {
         return actualHttpsPort;
-    }
-
-    private HttpHandler applyAuthentication(final HttpHandler handler) {
-        HttpHandler result = handler;
-
-        // FIXME: support BASIC and DIGEST at the same time
-        // fIXME: support path-based auth along with whole server
-
-        final var authConfig = serverConfig.getAuthenticationConfig();
-        if (authConfig != null) {
-            final var identityManager = new SimpleIdentityManager(authConfig.getUsername(), authConfig.getPassword());
-            switch (authConfig.getType()) {
-                case BASIC:
-                    result = new BasicAuthHandler(identityManager).apply(result);
-                    break;
-                case DIGEST:
-                    result = new DigestAuthHandler(identityManager).apply(result);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid authentication configuration.");
-            }
-
-            log.debug("Applied {} authentication (username:{}, password:{}).", authConfig.getType(), authConfig.getUsername(), authConfig.getPassword());
-        }
-
-        return result;
     }
 
     private void applyPorts() {

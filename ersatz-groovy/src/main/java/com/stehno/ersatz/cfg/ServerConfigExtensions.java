@@ -40,17 +40,4 @@ public class ServerConfigExtensions {
     ) {
         return self.expectations(ConsumerWithDelegate.create(closure));
     }
-
-    /**
-     * Registers authentication configuration as a Groovy Closure.
-     *
-     * @param closure the configuration closure
-     * @return a reference to this server configuration
-     */
-    public static ServerConfig authentication(
-        final ServerConfig self,
-        @DelegatesTo(value = AuthenticationConfig.class, strategy = DELEGATE_FIRST) final Closure closure
-    ) {
-        return self.authentication(ConsumerWithDelegate.create(closure));
-    }
 }

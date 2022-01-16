@@ -26,6 +26,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.io.IOException;
 
 import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static com.stehno.ersatz.util.BasicAuth.AUTHORIZATION_HEADER;
+import static com.stehno.ersatz.util.BasicAuth.header;
+import static com.stehno.ersatz.util.HttpClientExtension.Client.basicAuth;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -64,9 +67,9 @@ public class ErsatzServerGetExpectationsTest {
 
     @Test @DisplayName("GET with path only")
     void withPath() throws IOException {
-        server.expectations(cfg -> {
-            cfg.GET("/something").secure(false).called(1).responds().body(INSECURE_TEXT, TEXT_PLAIN);
-            cfg.GET("/something").secure().called(1).responds().body(SECURE_TEXT, TEXT_PLAIN);
+        server.expectations(expect -> {
+            expect.GET("/something").secure(false).called(1).responds().body(INSECURE_TEXT, TEXT_PLAIN);
+            expect.GET("/something").secure().called(1).responds().body(SECURE_TEXT, TEXT_PLAIN);
         });
 
         assertOkWithString(INSECURE_TEXT, client.get("/something"));
@@ -76,13 +79,13 @@ public class ErsatzServerGetExpectationsTest {
 
     @Test @DisplayName("GET with path and consumer")
     void withPathAndConsumer() throws IOException {
-        server.expectations(cfg -> {
-            cfg.GET("/something", req -> {
+        server.expectations(expect -> {
+            expect.GET("/something", req -> {
                 req.secure(false);
                 req.called(1);
                 req.responder(res -> res.body(INSECURE_TEXT, TEXT_PLAIN));
             });
-            cfg.GET("/something", req -> {
+            expect.GET("/something", req -> {
                 req.secure();
                 req.called(1);
                 req.responder(res -> res.body(SECURE_TEXT, TEXT_PLAIN));
@@ -96,9 +99,9 @@ public class ErsatzServerGetExpectationsTest {
 
     @Test @DisplayName("GET with path matcher only")
     void withPathMatcher() throws IOException {
-        server.expectations(cfg -> {
-            cfg.GET(startsWith("/loader/")).secure(false).called(1).responds().body(INSECURE_TEXT, TEXT_PLAIN);
-            cfg.GET(startsWith("/loader/")).secure().called(1).responds().body(SECURE_TEXT, TEXT_PLAIN);
+        server.expectations(expect -> {
+            expect.GET(startsWith("/loader/")).secure(false).called(1).responds().body(INSECURE_TEXT, TEXT_PLAIN);
+            expect.GET(startsWith("/loader/")).secure().called(1).responds().body(SECURE_TEXT, TEXT_PLAIN);
         });
 
         assertOkWithString(INSECURE_TEXT, client.get("/loader/insecure"));
@@ -108,13 +111,13 @@ public class ErsatzServerGetExpectationsTest {
 
     @Test @DisplayName("GET with path matcher and consumer")
     void withPathMatcherAndConsumer() throws IOException {
-        server.expectations(cfg -> {
-            cfg.GET(startsWith("/loader/"), req -> {
+        server.expectations(expect -> {
+            expect.GET(startsWith("/loader/"), req -> {
                 req.secure(false);
                 req.called(1);
                 req.responder(res -> res.body(INSECURE_TEXT, TEXT_PLAIN));
             });
-            cfg.GET(startsWith("/loader/"), req -> {
+            expect.GET(startsWith("/loader/"), req -> {
                 req.secure();
                 req.called(1);
                 req.responder(res -> res.body(SECURE_TEXT, TEXT_PLAIN));
@@ -126,26 +129,27 @@ public class ErsatzServerGetExpectationsTest {
         verify();
     }
 
-//    @Test @DisplayName("GET with authentication")
-//    void withAuthentication() throws IOException {
-//        // FIXME: not working yet
-//        server.expectations(cfg -> {
-//            cfg.GET("/safe", req -> {
-//                req.secure(false);
-//                req.called(1);
-//                req.responder(res -> res.body(INSECURE_TEXT, TEXT_PLAIN));
-//            });
-//            cfg.GET("/safe", req -> {
-//                req.secure();
-//                req.called(1);
-//                req.responder(res -> res.body(SECURE_TEXT, TEXT_PLAIN));
-//            });
-//        });
-//
-//        assertOkWithString(INSECURE_TEXT, client.get("/loader/insecure"));
-//        assertOkWithString(SECURE_TEXT, client.gets("/loader/secure"));
-//        verify();
-//    }
+    @Test @DisplayName("GET with BASIC authentication")
+    void withBASICAuthentication() throws IOException {
+        server.expectations(cfg -> {
+            cfg.GET("/safe1", req -> {
+                req.header(AUTHORIZATION_HEADER, header("basicuser", "ba$icp@$$"));
+                req.secure(false);
+                req.called(1);
+                req.responder(res -> res.body(INSECURE_TEXT, TEXT_PLAIN));
+            });
+            cfg.GET("/safe2", req -> {
+                req.header(AUTHORIZATION_HEADER, header("basicuser", "anotherPa$$"));
+                req.secure();
+                req.called(1);
+                req.responder(res -> res.body(SECURE_TEXT, TEXT_PLAIN));
+            });
+        });
+
+        assertOkWithString(INSECURE_TEXT, client.get("/safe1", builder -> basicAuth(builder, "basicuser", "ba$icp@$$")));
+        assertOkWithString(SECURE_TEXT, client.gets("/safe2", builder -> basicAuth(builder, "basicuser", "anotherPa$$")));
+        verify();
+    }
 
     private void verify() {
         assertTrue(server.verify());

@@ -36,6 +36,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.function.Consumer;
 
+import static com.stehno.ersatz.util.BasicAuth.AUTHORIZATION_HEADER;
+import static com.stehno.ersatz.util.BasicAuth.header;
 import static java.util.Arrays.stream;
 
 // FIXME: document
@@ -88,6 +90,10 @@ public class HttpClientExtension implements BeforeEachCallback {
 
         public Response get(final String path) throws IOException {
             return get(path, null);
+        }
+
+        public static Request.Builder basicAuth(final Request.Builder builder, final String user, final String pass){
+            return builder.header(AUTHORIZATION_HEADER, header(user, pass));
         }
 
         public Response gets(final String path, final Consumer<Request.Builder> config) throws IOException {

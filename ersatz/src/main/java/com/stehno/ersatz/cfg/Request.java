@@ -31,7 +31,7 @@ public interface Request {
      * Specifies that the request is secure (HTTPS).
      * @return a reference to this request
      */
-    default Request secure(){
+    default Request secure() {
         return secure(true);
     }
 
@@ -43,9 +43,10 @@ public interface Request {
     Request secure(final boolean enabled);
 
     /**
-     * Specifies a request header to be configured in the expected request. The value specified must match one of the request header values mapped to
-     * the expected header name. Multiple header specification may be added to the expectations; each specified header must exist in the request. If
-     * an OR-style match is desired a Hamcrest Matcher should be specified (see the <code>header(String, Matcher&lt;Iterable&lt;String&gt;&gt;)</code> method).
+     * Specifies a request header to be configured in the expected request. The value specified must match one of the
+     * request header values mapped to the expected header name. Multiple header specification may be added to the
+     * expectations; each specified header must exist in the request. If an OR-style match is desired a Hamcrest Matcher
+     * should be specified (see the <code>header(String, Matcher&lt;Iterable&lt;String&gt;&gt;)</code> method).
      *
      * @param name  the header name
      * @param value the header value

@@ -15,7 +15,6 @@
  */
 package com.stehno.ersatz.impl;
 
-import com.stehno.ersatz.cfg.AuthenticationConfig;
 import com.stehno.ersatz.cfg.ContentType;
 import com.stehno.ersatz.cfg.Expectations;
 import com.stehno.ersatz.cfg.ServerConfig;
@@ -43,7 +42,6 @@ public class ServerConfigImpl implements ServerConfig {
     private boolean mismatchToConsole;
     private URL keystoreLocation;
     private String keystorePass = "ersatz";
-    private AuthenticationConfigImpl authenticationConfig;
     private int desiredHttpPort = EPHEMERAL_PORT;
     private int desiredHttpsPort = EPHEMERAL_PORT;
     private final RequestDecoders globalDecoders = new RequestDecoders();
@@ -127,15 +125,6 @@ public class ServerConfigImpl implements ServerConfig {
      */
     public String getKeystorePass() {
         return keystorePass;
-    }
-
-    /**
-     * Retrieves the <code>AuthenticationConfig</code> defined in this server config instance.
-     *
-     * @return the authentication configuration
-     */
-    public AuthenticationConfigImpl getAuthenticationConfig() {
-        return authenticationConfig;
     }
 
     /**
@@ -286,19 +275,6 @@ public class ServerConfigImpl implements ServerConfig {
 
     @Override public ServerConfig encoder(String contentType, Class objectType, Function<Object, byte[]> encoder) {
         globalEncoders.register(contentType, objectType, encoder);
-        return this;
-    }
-
-    /**
-     * Registers authentication configuration as a <code>Consumer&lt;AuthenticationConfig&gt;</code>.
-     *
-     * @param config the configuration Consumer
-     * @return a reference to this server configuration
-     */
-    @Override
-    public ServerConfig authentication(final Consumer<AuthenticationConfig> config) {
-        authenticationConfig = new AuthenticationConfigImpl();
-        config.accept(authenticationConfig);
         return this;
     }
 
