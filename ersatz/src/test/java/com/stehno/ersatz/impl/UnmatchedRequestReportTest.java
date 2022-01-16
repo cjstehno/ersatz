@@ -64,7 +64,7 @@ class UnmatchedRequestReportTest {
 
         final var actualLines = new UnmatchedRequestReport(request, List.of(
             new ErsatzRequest(POST, equalTo("/alpha/foo"), new ResponseEncoders()),
-            (ErsatzRequest) new ErsatzRequest(PUT, startsWith("/alpha/bar"), new ResponseEncoders()).protocol("HTTPS")
+            (ErsatzRequest) new ErsatzRequest(PUT, startsWith("/alpha/bar"), new ResponseEncoders()).secure()
         )).render().split("\n");
 
         final var stream = UnmatchedRequestReportTest.class.getResourceAsStream("/report-template.txt");

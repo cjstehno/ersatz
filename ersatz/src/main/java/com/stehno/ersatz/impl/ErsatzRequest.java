@@ -58,10 +58,10 @@ public class ErsatzRequest implements Request {
     /**
      * Creates a new request with the specified method, path matcher and optional empty response flag (defaults to false).
      *
-     * @param meth        the request method
-     * @param pathMatcher the path matcher
+     * @param meth           the request method
+     * @param pathMatcher    the path matcher
      * @param globalEncoders the shared global encoders
-     * @param noResponse  whether or not this is a request with an empty response (defaults to false)
+     * @param noResponse     whether or not this is a request with an empty response (defaults to false)
      */
     public ErsatzRequest(final HttpMethod meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse) {
         matchers.add(RequestMatcher.method(meth == ANY ? isOneOf(GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, TRACE) : equalTo(meth)));
@@ -74,8 +74,8 @@ public class ErsatzRequest implements Request {
     /**
      * Creates a new request with the specified method, path matcher.
      *
-     * @param meth        the request method
-     * @param pathMatcher the path matcher
+     * @param meth           the request method
+     * @param pathMatcher    the path matcher
      * @param globalEncoders the shared global encoders
      */
     public ErsatzRequest(final HttpMethod meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders) {
@@ -83,8 +83,8 @@ public class ErsatzRequest implements Request {
     }
 
     @Override
-    public Request protocol(final String proto) {
-        matchers.add(RequestMatcher.protocol(equalToIgnoringCase(proto)));
+    public Request secure(final boolean value) {
+        matchers.add(RequestMatcher.protocol(equalToIgnoringCase(value ? "HTTPS" : "HTTP")));
         return this;
     }
 
@@ -224,7 +224,7 @@ public class ErsatzRequest implements Request {
      * This method will block until the call count condition is met or the timeout is exceeded.
      *
      * @param timeout the timeout duration
-     * @param unit the timeout duration units
+     * @param unit    the timeout duration units
      * @return true if the call count matches the expected verification criteria
      */
     public boolean verify(final long timeout, final TimeUnit unit) {

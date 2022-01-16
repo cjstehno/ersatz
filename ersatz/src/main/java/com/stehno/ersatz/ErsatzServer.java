@@ -93,6 +93,10 @@ public class ErsatzServer implements Closeable {
         return underlyingServer.getActualHttpsPort();
     }
 
+    public boolean isHttpsEnabled(){
+        return serverConfig.isHttpsEnabled();
+    }
+
     /**
      * Used to retrieve the full URL of the HTTP server.
      *

@@ -28,12 +28,19 @@ import java.util.function.Consumer;
 public interface Request {
 
     /**
-     * Specifies that the request protocol be equal to (case-insensitive) the specified value.
-     *
-     * @param proto the request protocol
-     * @return this request
+     * Specifies that the request is secure (HTTPS).
+     * @return a reference to this request
      */
-    Request protocol(final String proto);
+    default Request secure(){
+        return secure(true);
+    }
+
+    /**
+     * Specifies whether the request is secure (HTTPS vs HTTP) or not.
+     * @param enabled true if the request is secure (HTTPS)
+     * @return a reference to this request
+     */
+    Request secure(final boolean enabled);
 
     /**
      * Specifies a request header to be configured in the expected request. The value specified must match one of the request header values mapped to

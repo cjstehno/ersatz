@@ -39,7 +39,7 @@ class HttpsTest {
 
     @Test @DisplayName("Https server") void httpsServer() throws IOException {
         server.expectations(e -> {
-            e.GET("/hello").protocol("https").responds().body("This is HTTPS!");
+            e.GET("/hello").secure().responds().body("This is HTTPS!");
         });
 
         final var response = http.get(server.httpsUrl("/hello"));

@@ -16,6 +16,7 @@
 package com.stehno.ersatz.junit;
 
 import com.stehno.ersatz.ErsatzServer;
+import lombok.val;
 
 import java.lang.reflect.Field;
 import java.util.function.Supplier;
@@ -53,9 +54,9 @@ class TestingHarness {
         }
     }
 
-    private static ErsatzServer findInstance(final Object testInstance, final boolean create) throws Exception {
+    public static ErsatzServer findInstance(final Object testInstance, final boolean create) throws Exception {
         try {
-            final Field field = findField(testInstance);
+            val field = findField(testInstance);
             Object instance = field.get(testInstance);
 
             if (instance == null && create) {
@@ -71,7 +72,7 @@ class TestingHarness {
     }
 
     private static Field findField(final Object testInstance) throws Exception {
-        final Field field = stream(testInstance.getClass().getDeclaredFields())
+        val field = stream(testInstance.getClass().getDeclaredFields())
             .filter(f -> f.getType().getSimpleName().endsWith("ErsatzServer"))
             .findFirst()
             .orElseThrow((Supplier<Exception>) () -> new IllegalArgumentException("An ErsatzServer field must be specified."));

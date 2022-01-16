@@ -130,6 +130,9 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
     private HttpHandler applyAuthentication(final HttpHandler handler) {
         HttpHandler result = handler;
 
+        // FIXME: support BASIC and DIGEST at the same time
+        // fIXME: support path-based auth along with whole server
+
         final var authConfig = serverConfig.getAuthenticationConfig();
         if (authConfig != null) {
             final var identityManager = new SimpleIdentityManager(authConfig.getUsername(), authConfig.getPassword());
