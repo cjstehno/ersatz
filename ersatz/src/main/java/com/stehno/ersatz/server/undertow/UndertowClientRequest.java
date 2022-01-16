@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2020 Christopher J. Stehno
+ * Copyright (C) 2022 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,7 +103,9 @@ class UndertowClientRequest implements ClientRequest {
     @Override public Map<String, Cookie> getCookies() {
         final var cookies = new LinkedHashMap<String, Cookie>();
 
-        exchange.getRequestCookies().forEach((name, cookie) -> {
+        exchange.getRequestCookies().entrySet().forEach(entry -> {
+            final String name = entry.getKey();
+            final io.undertow.server.handlers.Cookie cookie = entry.getValue();
             cookies.put(name, new Cookie(
                 cookie.getValue(),
                 cookie.getComment(),
