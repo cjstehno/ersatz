@@ -18,6 +18,11 @@ repositories {
 
 dependencies {
     // production
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
     api 'io.undertow:undertow-core:2.2.14.Final'
     api 'javax.servlet:javax.servlet-api:4.0.1'
