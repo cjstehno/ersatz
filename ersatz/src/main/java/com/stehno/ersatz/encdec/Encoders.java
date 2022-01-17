@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2022 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 package com.stehno.ersatz.encdec;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -26,7 +23,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,16 +35,16 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Reusable response content encoders. An encoder is simply a <code>Function&lt;Object,String&gt;</code> which is used to convert the configured response
- * content object into the String of response output.
+ * content object into the response output bytes.
  */
-public class Encoders {
+public interface Encoders {
 
-    private static final Logger log = LoggerFactory.getLogger(Encoders.class);
+    // FIXME: these and the decoders need to be unit tested
 
     /**
      * Encodes the object as a String of text (UTF-8).
      */
-    public static final Function<Object, byte[]> text = text(UTF_8);
+    Function<Object, byte[]> text = text(UTF_8);
 
     /**
      * Encodes the object as a String of text with the specified charset.
@@ -56,7 +52,7 @@ public class Encoders {
      * @param charset the charset name
      * @return the encoded object as a String
      */
-    public static Function<Object, byte[]> text(final String charset) {
+    static Function<Object, byte[]> text(final String charset) {
         return text(Charset.forName(charset));
     }
 
@@ -66,23 +62,24 @@ public class Encoders {
      * @param charset the charset object
      * @return the encoded object as a String
      */
-    public static Function<Object, byte[]> text(final Charset charset) {
+    static Function<Object, byte[]> text(final Charset charset) {
         return obj -> (obj != null ? obj.toString() : "").getBytes(charset);
     }
 
     /**
      * Encodes a byte array, InputStream or other object with a "getBytes()" method into a base-64 string.
      */
-    public static final Function<Object, byte[]> binaryBase64 = obj -> obj == null ? "".getBytes(UTF_8) : Base64.getEncoder().encode(toBytes(obj));
+    Function<Object, byte[]> binaryBase64 = obj -> obj == null ? "".getBytes(UTF_8) : Base64.getEncoder().encode(toBytes(obj));
 
     /**
      * Encodes the bytes read from an InputStream.
      */
-    public static final Function<Object, byte[]> inputStream = o -> {
+    Function<Object, byte[]> inputStream = o -> {
         try {
             return ((InputStream) o).readAllBytes();
         } catch (IOException e) {
-            log.warn("Unable to fully read bytes: {}", e.getMessage());
+            // TODO: something better here?
+            e.printStackTrace();
             return new byte[0];
         }
     };
@@ -92,7 +89,7 @@ public class Encoders {
      * specified by any of the following: String, Path, File, URI, URL, where the String instance is a resource path on
      * the classpath.
      */
-    public static final Function<Object, byte[]> content = obj -> {
+    Function<Object, byte[]> content = obj -> {
         final Path path;
 
         if (obj instanceof Path) {
@@ -134,7 +131,7 @@ public class Encoders {
      * message implementing the minimal multipart content specification - you may want to find a more robust implementation if you require a more
      * detailed multipart API.
      */
-    public static final Function<Object, byte[]> multipart = obj -> {
+    Function<Object, byte[]> multipart = obj -> {
         if (!(obj instanceof MultipartResponseContent)) {
             throw new IllegalArgumentException(obj.getClass() + " found, MultipartRequestContent is required.");
         }

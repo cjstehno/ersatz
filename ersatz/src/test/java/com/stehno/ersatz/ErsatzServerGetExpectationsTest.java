@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2022 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,23 +15,27 @@
  */
 package com.stehno.ersatz;
 
-import com.stehno.ersatz.cfg.ServerConfig;
+import com.stehno.ersatz.encdec.Encoders;
 import com.stehno.ersatz.junit.ErsatzServerExtension;
 import com.stehno.ersatz.util.HttpClientExtension;
+import lombok.val;
 import okhttp3.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
+import static com.stehno.ersatz.cfg.ContentType.IMAGE_JPG;
 import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static com.stehno.ersatz.util.BasicAuth.AUTHORIZATION_HEADER;
 import static com.stehno.ersatz.util.BasicAuth.header;
 import static com.stehno.ersatz.util.HttpClientExtension.Client.basicAuth;
 import static org.hamcrest.Matchers.startsWith;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
 public class ErsatzServerGetExpectationsTest {
@@ -57,12 +61,13 @@ public class ErsatzServerGetExpectationsTest {
         different content types (encoders/decoders)
      */
 
-    // FIXME: authentication, chunking, contenttypes (on path consumer version)
-
     private static final String INSECURE_TEXT = "not secure!";
     private static final String SECURE_TEXT = "secure!!";
 
-    private final ErsatzServer server = new ErsatzServer(ServerConfig::https);
+    private final ErsatzServer server = new ErsatzServer(cfg -> {
+        cfg.https();
+        cfg.encoder(IMAGE_JPG, String.class, Encoders.content);
+    });
     @SuppressWarnings("unused") private HttpClientExtension.Client client;
 
     @Test @DisplayName("GET with path only")
@@ -148,6 +153,46 @@ public class ErsatzServerGetExpectationsTest {
 
         assertOkWithString(INSECURE_TEXT, client.get("/safe1", builder -> basicAuth(builder, "basicuser", "ba$icp@$$")));
         assertOkWithString(SECURE_TEXT, client.gets("/safe2", builder -> basicAuth(builder, "basicuser", "anotherPa$$")));
+        verify();
+    }
+
+    @Test @DisplayName("GET chunked response")
+    void withChunkedResponse() throws IOException, URISyntaxException {
+        server.expectations(expect -> {
+            expect.GET("/chunkyA", req -> {
+                req.secure(false);
+                req.called(1);
+                req.responder(res -> {
+                    res.chunked(chunk -> {
+                        chunk.chunks(2);
+                        chunk.delay(100);
+                    });
+                    res.body("/test-image.jpg", IMAGE_JPG);
+                });
+            });
+            expect.GET("/chunkyB", req -> {
+                req.secure();
+                req.called(1);
+                req.responder(res -> {
+                    res.chunked(chunk -> {
+                        chunk.chunks(2);
+                        chunk.delay(100);
+                    });
+                    res.body("/test-image.jpg", IMAGE_JPG);
+                });
+            });
+        });
+
+        val imageBytes = Files.readAllBytes(Paths.get(ErsatzServerGetExpectationsTest.class.getResource("/test-image.jpg").toURI()));
+
+        val responseA = client.get("/chunkyA");
+        assertEquals(200, responseA.code());
+        assertArrayEquals(imageBytes, responseA.body().bytes());
+
+        val responseB = client.gets("/chunkyB");
+        assertEquals(200, responseB.code());
+        assertArrayEquals(imageBytes, responseB.body().bytes());
+
         verify();
     }
 
