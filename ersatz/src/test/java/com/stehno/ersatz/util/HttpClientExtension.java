@@ -54,7 +54,7 @@ public class HttpClientExtension implements BeforeEachCallback {
         findField(testInstance, "Client").set(testInstance, client);
     }
 
-    static ErsatzServer findInstance(final Object testInstance) throws Exception {
+    private static ErsatzServer findInstance(final Object testInstance) throws Exception {
         return (ErsatzServer) findField(testInstance, "ErsatzServer").get(testInstance);
     }
 
@@ -85,7 +85,10 @@ public class HttpClientExtension implements BeforeEachCallback {
         }
 
         public Response get(final String path, final Consumer<Request.Builder> config, final boolean https) throws IOException {
-            return doGet((https ? httpsUrl : httpUrl) + path, config);
+            val request = new Request.Builder().url((https ? httpsUrl : httpUrl) + path).get();
+            if (config != null) config.accept(request);
+
+            return client.newCall(request.build()).execute();
         }
 
         public Response get(final String path, final Consumer<Request.Builder> config) throws IOException {
@@ -100,15 +103,46 @@ public class HttpClientExtension implements BeforeEachCallback {
             return get(path, null, false);
         }
 
-        public static Request.Builder basicAuthHeader(final Request.Builder builder, final String user, final String pass) {
-            return builder.header(AUTHORIZATION_HEADER, header(user, pass));
-        }
-
-        private Response doGet(final String url, final Consumer<Request.Builder> config) throws IOException {
-            val request = new Request.Builder().url(url).get();
+        public Response head(final String path, final Consumer<Request.Builder> config, final boolean https) throws IOException {
+            val request = new Request.Builder().url((https ? httpsUrl : httpUrl) + path).head();
             if (config != null) config.accept(request);
 
             return client.newCall(request.build()).execute();
+        }
+
+        public Response head(final String path, final Consumer<Request.Builder> config) throws IOException {
+            return head(path, config, false);
+        }
+
+        public Response head(final String path, final boolean https) throws IOException {
+            return head(path, null, https);
+        }
+
+        public Response head(final String path) throws IOException {
+            return head(path, null, false);
+        }
+
+        public Response delete(final String path, final Consumer<Request.Builder> config, final boolean https) throws IOException {
+            val request = new Request.Builder().url((https ? httpsUrl : httpUrl) + path).delete();
+            if (config != null) config.accept(request);
+
+            return client.newCall(request.build()).execute();
+        }
+
+        public Response delete(final String path, final Consumer<Request.Builder> config) throws IOException {
+            return delete(path, config, false);
+        }
+
+        public Response delete(final String path, final boolean https) throws IOException {
+            return delete(path, null, https);
+        }
+
+        public Response delete(final String path) throws IOException {
+            return delete(path, null, false);
+        }
+
+        public static Request.Builder basicAuthHeader(final Request.Builder builder, final String user, final String pass) {
+            return builder.header(AUTHORIZATION_HEADER, header(user, pass));
         }
 
         private static OkHttpClient.Builder configureHttps(final OkHttpClient.Builder builder, final boolean enabled) throws KeyManagementException, NoSuchAlgorithmException {
