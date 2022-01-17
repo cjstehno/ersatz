@@ -229,38 +229,4 @@ class ErsatzServerTest {
         assertEquals(200, response.code());
         assertEquals("Bravo", response.body().string());
     }
-
-    @Test @DisplayName("variable-case headers")
-    void variableCaseHeaders() throws IOException {
-        ersatzServer.expectations(e -> e.POST("*", req -> {
-            req.body(CoreMatchers.anything(), APPLICATION_URLENCODED);
-            req.header("Something-Headery", "a-value");
-            req.responds().body("OK");
-        }));
-
-        var response = http.post(
-            Map.of("something-headery", "a-value"),
-            ersatzServer.httpUrl("/postit"),
-            create(parse(APPLICATION_URLENCODED.getValue()), "Posted")
-        );
-
-        assertEquals("OK", response.body().string());
-    }
-
-    @Test @DisplayName("post params")
-    void postParams() throws IOException {
-        ersatzServer.expectations(e -> {
-            e.POST("/updates", req -> {
-                req.param("foo", "bar");
-                req.responds().code(201);
-            });
-        });
-
-        var response = http.post(
-            ersatzServer.httpUrl("/updates"),
-            create(parse(APPLICATION_URLENCODED.getValue()), "foo=bar")
-        );
-
-        assertEquals(201, response.code());
-    }
 }

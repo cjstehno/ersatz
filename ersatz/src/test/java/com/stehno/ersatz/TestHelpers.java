@@ -15,11 +15,32 @@
  */
 package com.stehno.ersatz;
 
+import lombok.val;
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 public interface TestHelpers {
 
-     static InputStream resourceStream(final String path) {
+    static InputStream resourceStream(final String path) {
         return TestHelpers.class.getResourceAsStream(path);
+    }
+
+    static String resourceString(final String path) throws IOException {
+        return resourceString(path, null);
+    }
+
+    static String resourceString(final String path, final Map<String, Object> replacements) throws IOException {
+        var string = IOUtils.toString(resourceStream(path));
+
+        if (replacements != null) {
+            for (val ent : replacements.entrySet()) {
+                string = string.replaceAll(ent.getKey(), ent.getValue().toString());
+            }
+        }
+
+        return string;
     }
 }

@@ -20,6 +20,7 @@ import com.stehno.ersatz.InMemoryCookieJar;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -139,6 +140,39 @@ public class HttpClientExtension implements BeforeEachCallback {
 
         public Response delete(final String path) throws IOException {
             return delete(path, null, false);
+        }
+
+        public Response trace(final String path, final Consumer<Request.Builder> config, final boolean https) throws IOException {
+            val request = new Request.Builder().url((https ? httpsUrl : httpUrl) + path).method("TRACE", null);
+            if (config != null) config.accept(request);
+
+            return client.newCall(request.build()).execute();
+        }
+
+        public Response options(final String path, final Consumer<Request.Builder> config, final boolean https) throws IOException {
+            val request = new Request.Builder().url((https ? httpsUrl : httpUrl) + path).method("OPTIONS", null);
+            if (config != null) config.accept(request);
+
+            return client.newCall(request.build()).execute();
+        }
+
+        public Response post(final String path, final Consumer<Request.Builder> config, final RequestBody body, final boolean https) throws IOException {
+            val request = new Request.Builder().url((https ? httpsUrl : httpUrl) + path).post(body);
+            if (config != null) config.accept(request);
+
+            return client.newCall(request.build()).execute();
+        }
+
+        public Response post(final String path, final Consumer<Request.Builder> config, final RequestBody body) throws IOException {
+            return post(path, config, body, false);
+        }
+
+        public Response post(final String path, final RequestBody body, final boolean https) throws IOException {
+            return post(path, null, body, https);
+        }
+
+        public Response post(final String path, final RequestBody body) throws IOException {
+            return post(path, null, body, false);
         }
 
         public static Request.Builder basicAuthHeader(final Request.Builder builder, final String user, final String pass) {

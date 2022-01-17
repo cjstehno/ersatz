@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz;
+package com.stehno.ersatz.expectations;
 
+import com.stehno.ersatz.ErsatzServer;
 import com.stehno.ersatz.cfg.ServerConfig;
 import com.stehno.ersatz.junit.ErsatzServerExtension;
 import com.stehno.ersatz.util.HttpClientExtension;
@@ -33,26 +34,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
-public class ErsatzServerDeleteExpectationsTest {
-
-            /*
-        FIXME: write tests for:
-        - DeleteExpectations
-        - Trace?
-        - OptionsExpectations
-        - PatchExpectations
-        - AnyExpectations
-        - PostExpectations
-        - PutExpectations
-
-        with
-            authentication
-            chunking
-            https
-            multipart
-
-            different content types (encoders/decoders)
-     */
+public class ErsatzServerHeadExpectationsTest {
 
     private final ErsatzServer server = new ErsatzServer(ServerConfig::https);
     @SuppressWarnings("unused") private HttpClientExtension.Client client;
@@ -61,31 +43,31 @@ public class ErsatzServerDeleteExpectationsTest {
     @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttps")
     void withPath(final boolean https) throws IOException {
         server.expectations(expect -> {
-            expect.DELETE("/something").secure(https).called(1).responds().code(200);
+            expect.HEAD("/something").secure(https).called(1).responds().code(200);
         });
 
-        assertEquals(200, client.delete("/something", https).code());
+        assertEquals(200, client.head("/something", https).code());
         verify(server);
     }
 
     @ParameterizedTest(name = "[{index}] path and consumer: https({0}) -> {1}")
     @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttpsWithContent")
     void withPathAndConsumer(final boolean https) throws IOException {
-        server.expects().DELETE("/something", req -> {
+        server.expects().HEAD("/something", req -> {
             req.secure(https).called(1);
             req.responds().code(200);
         });
 
-        assertEquals(200, client.delete("/something", https).code());
+        assertEquals(200, client.head("/something", https).code());
         verify(server);
     }
 
     @ParameterizedTest(name = "[{index}] path matcher: https({0}) -> {1}")
     @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttpsWithContent")
     void withPathMatcher(final boolean https, final String responseText) throws IOException {
-        server.expects().DELETE(startsWith("/loader/")).secure(https).called(1).responds().code(200);
+        server.expects().HEAD(startsWith("/loader/")).secure(https).called(1).responds().code(200);
 
-        assertEquals(200, client.delete("/loader/something", https).code());
+        assertEquals(200, client.head("/loader/something", https).code());
         verify(server);
     }
 
@@ -93,14 +75,14 @@ public class ErsatzServerDeleteExpectationsTest {
     @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttpsWithContent")
     void withPathMatcherAndConsumer(final boolean https, final String responseText) throws IOException {
         server.expectations(expect -> {
-            expect.DELETE(startsWith("/loader/"), req -> {
+            expect.HEAD(startsWith("/loader/"), req -> {
                 req.secure(https);
                 req.called(1);
                 req.responder(res -> res.code(200));
             });
         });
 
-        assertEquals(200, client.delete("/loader/something", https).code());
+        assertEquals(200, client.head("/loader/something", https).code());
         verify(server);
     }
 
@@ -108,7 +90,7 @@ public class ErsatzServerDeleteExpectationsTest {
     @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttps")
     void withPathAndConsumerWithResponseHeaders(final boolean https) throws IOException {
         server.expectations(expect -> {
-            expect.DELETE("/something", req -> {
+            expect.HEAD("/something", req -> {
                 req.secure(https);
                 req.called(1);
                 req.responder(res -> {
@@ -119,7 +101,7 @@ public class ErsatzServerDeleteExpectationsTest {
             });
         });
 
-        val response = client.delete("/something", https);
+        val response = client.head("/something", https);
         assertEquals(200, response.code());
         assertEquals("Header-A", response.header("Alpha"));
         assertEquals(List.of("Header-B1", "Header-B2"), response.headers("Bravo"));
@@ -131,7 +113,7 @@ public class ErsatzServerDeleteExpectationsTest {
     @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttps")
     void withBASICAuthentication(final boolean https) throws IOException {
         server.expectations(cfg -> {
-            cfg.DELETE("/safe", req -> {
+            cfg.HEAD("/safe", req -> {
                 basicAuth(req, "basicuser", "ba$icp@$$");
                 req.secure(https);
                 req.called(1);
@@ -139,7 +121,7 @@ public class ErsatzServerDeleteExpectationsTest {
             });
         });
 
-        assertEquals(200, client.delete("/safe", builder -> basicAuthHeader(builder, "basicuser", "ba$icp@$$"), https).code());
+        assertEquals(200, client.head("/safe", builder -> basicAuthHeader(builder, "basicuser", "ba$icp@$$"), https).code());
         verify(server);
     }
 }

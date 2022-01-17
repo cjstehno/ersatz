@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.ersatz;
+package com.stehno.ersatz.expectations;
 
+import com.stehno.ersatz.ErsatzServer;
+import com.stehno.ersatz.InMemoryCookieJar;
 import com.stehno.ersatz.encdec.Encoders;
 import com.stehno.ersatz.encdec.ErsatzMultipartResponseContent;
 import com.stehno.ersatz.junit.ErsatzServerExtension;
@@ -254,7 +256,7 @@ public class ErsatzServerGetExpectationsTest {
         assertEquals("test-image.jpg", items.get(1).getName());
         assertEquals("image/jpeg", items.get(1).getContentType());
 
-        final var stream = AnotherErsatzServerTest.class.getResourceAsStream("/test-image.jpg");
+        final var stream = resourceStream("/test-image.jpg");
         final var imageBytes = IOUtils.toByteArray(stream);
         assertEquals(imageBytes.length, items.get(1).getSize());
         assertArrayEquals(imageBytes, items.get(1).get());
