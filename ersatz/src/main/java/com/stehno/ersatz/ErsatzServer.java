@@ -93,6 +93,11 @@ public class ErsatzServer implements Closeable {
         return underlyingServer.getActualHttpsPort();
     }
 
+    /**
+     * Used to retrieve whether HTTPS is enabled or not.
+     *
+     * @return true if HTTPS is enabled
+     */
     public boolean isHttpsEnabled(){
         return serverConfig.isHttpsEnabled();
     }

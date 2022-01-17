@@ -84,24 +84,24 @@ public class HttpClientExtension implements BeforeEachCallback {
             ).build();
         }
 
+        public Response get(final String path, final Consumer<Request.Builder> config, final boolean https) throws IOException {
+            return doGet((https ? httpsUrl : httpUrl) + path, config);
+        }
+
         public Response get(final String path, final Consumer<Request.Builder> config) throws IOException {
-            return doGet(httpUrl + path, config);
+            return get(path, config, false);
+        }
+
+        public Response get(final String path, final boolean https) throws IOException {
+            return get(path, null, https);
         }
 
         public Response get(final String path) throws IOException {
-            return get(path, null);
+            return get(path, null, false);
         }
 
-        public static Request.Builder basicAuth(final Request.Builder builder, final String user, final String pass){
+        public static Request.Builder basicAuthHeader(final Request.Builder builder, final String user, final String pass) {
             return builder.header(AUTHORIZATION_HEADER, header(user, pass));
-        }
-
-        public Response gets(final String path, final Consumer<Request.Builder> config) throws IOException {
-            return doGet(httpsUrl + path, config);
-        }
-
-        public Response gets(final String path) throws IOException {
-            return doGet(httpsUrl + path, null);
         }
 
         private Response doGet(final String url, final Consumer<Request.Builder> config) throws IOException {

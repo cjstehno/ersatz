@@ -15,22 +15,44 @@
  */
 package com.stehno.ersatz.util;
 
-import lombok.val;
-
-import java.util.Base64;
+import com.stehno.ersatz.cfg.Request;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Base64.getEncoder;
 
+/**
+ * Helper utility for configuring BASIC request authentication.
+ */
 public interface BasicAuth {
 
+    /**
+     * The authorization header name.
+     */
     String AUTHORIZATION_HEADER = "Authorization";
 
+    /**
+     * Used to generate the Authorization header value for the given username and password.
+     *
+     * @param username the username (cannot contain a colon)
+     * @param password the password (cannot contain a colon)
+     * @return the generated header value
+     */
     static String header(final String username, final String password) {
         check(username, password);
-        val userColonPass = username + ":" + password;
-        val bytes = userColonPass.getBytes(UTF_8);
-        val encoded = Base64.getEncoder().encodeToString(bytes);
-        return "Basic " + encoded;
+        return "Basic " + getEncoder().encodeToString((username + ":" + password).getBytes(UTF_8));
+    }
+
+    /**
+     * Shortcut method for configuring BASIC authentication on a request expectation with the provided username and
+     * password.
+     *
+     * @param request  the request expectation
+     * @param userame  the username (cannot contain a colon)
+     * @param password the password (cannot contain a colon)
+     * @return the request passed in (to allow chaining)
+     */
+    static Request basicAuth(final Request request, final String userame, final String password) {
+        return request.header(AUTHORIZATION_HEADER, header(userame, password));
     }
 
     private static void check(final String... values) {

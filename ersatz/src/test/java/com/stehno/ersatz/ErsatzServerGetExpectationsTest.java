@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2022 Christopher J. Stehno
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,24 +16,49 @@
 package com.stehno.ersatz;
 
 import com.stehno.ersatz.encdec.Encoders;
+import com.stehno.ersatz.encdec.ErsatzMultipartResponseContent;
 import com.stehno.ersatz.junit.ErsatzServerExtension;
+import com.stehno.ersatz.match.ErsatzMatchers;
 import com.stehno.ersatz.util.HttpClientExtension;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUpload;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.UploadContext;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
-import static com.stehno.ersatz.cfg.ContentType.IMAGE_JPG;
-import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
-import static com.stehno.ersatz.util.BasicAuth.AUTHORIZATION_HEADER;
-import static com.stehno.ersatz.util.BasicAuth.header;
-import static com.stehno.ersatz.util.HttpClientExtension.Client.basicAuth;
+import static com.stehno.ersatz.cfg.ContentType.*;
+import static com.stehno.ersatz.encdec.MultipartResponseContent.multipartResponse;
+import static com.stehno.ersatz.util.BasicAuth.basicAuth;
+import static com.stehno.ersatz.util.HttpClientExtension.Client.basicAuthHeader;
+import static java.lang.System.currentTimeMillis;
+import static java.net.Proxy.Type.HTTP;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -61,117 +86,86 @@ public class ErsatzServerGetExpectationsTest {
         different content types (encoders/decoders)
      */
 
-    private static final String INSECURE_TEXT = "not secure!";
-    private static final String SECURE_TEXT = "secure!!";
-
     private final ErsatzServer server = new ErsatzServer(cfg -> {
         cfg.https();
         cfg.encoder(IMAGE_JPG, String.class, Encoders.content);
     });
     @SuppressWarnings("unused") private HttpClientExtension.Client client;
 
-    @Test @DisplayName("GET with path only")
-    void withPath() throws IOException {
+    @ParameterizedTest(name = "[{index}] path only: https({0}) -> {1}")
+    @MethodSource("httpAndHttpsWithContent")
+    void withPath(final boolean https, final String responseText) throws IOException {
         server.expectations(expect -> {
-            expect.GET("/something").secure(false).called(1).responds().body(INSECURE_TEXT, TEXT_PLAIN);
-            expect.GET("/something").secure().called(1).responds().body(SECURE_TEXT, TEXT_PLAIN);
+            expect.GET("/something").secure(https).called(1).responds().body(responseText, TEXT_PLAIN);
         });
 
-        assertOkWithString(INSECURE_TEXT, client.get("/something"));
-        assertOkWithString(SECURE_TEXT, client.gets("/something"));
+        assertOkWithString(responseText, client.get("/something", https));
         verify();
     }
 
-    @Test @DisplayName("GET with path and consumer")
-    void withPathAndConsumer() throws IOException {
+    @ParameterizedTest(name = "[{index}] path and consumer: https({0}) -> {1}")
+    @MethodSource("httpAndHttpsWithContent")
+    void withPathAndConsumer(final boolean https, final String responseText) throws IOException {
         server.expectations(expect -> {
             expect.GET("/something", req -> {
-                req.secure(false);
+                req.secure(https);
                 req.called(1);
-                req.responder(res -> res.body(INSECURE_TEXT, TEXT_PLAIN));
-            });
-            expect.GET("/something", req -> {
-                req.secure();
-                req.called(1);
-                req.responder(res -> res.body(SECURE_TEXT, TEXT_PLAIN));
+                req.responder(res -> res.body(responseText, TEXT_PLAIN));
             });
         });
 
-        assertOkWithString(INSECURE_TEXT, client.get("/something"));
-        assertOkWithString(SECURE_TEXT, client.gets("/something"));
+        assertOkWithString(responseText, client.get("/something", https));
         verify();
     }
 
-    @Test @DisplayName("GET with path matcher only")
-    void withPathMatcher() throws IOException {
+    @ParameterizedTest(name = "[{index}] path matcher: https({0}) -> {1}")
+    @MethodSource("httpAndHttpsWithContent")
+    void withPathMatcher(final boolean https, final String responseText) throws IOException {
         server.expectations(expect -> {
-            expect.GET(startsWith("/loader/")).secure(false).called(1).responds().body(INSECURE_TEXT, TEXT_PLAIN);
-            expect.GET(startsWith("/loader/")).secure().called(1).responds().body(SECURE_TEXT, TEXT_PLAIN);
+            expect.GET(startsWith("/loader/")).secure(https).called(1).responds().body(responseText, TEXT_PLAIN);
         });
 
-        assertOkWithString(INSECURE_TEXT, client.get("/loader/insecure"));
-        assertOkWithString(SECURE_TEXT, client.gets("/loader/secure"));
+        assertOkWithString(responseText, client.get("/loader/insecure", https));
         verify();
     }
 
-    @Test @DisplayName("GET with path matcher and consumer")
-    void withPathMatcherAndConsumer() throws IOException {
+    @ParameterizedTest(name = "[{index}] path matcher and consumer: https({0}) -> {1}")
+    @MethodSource("httpAndHttpsWithContent")
+    void withPathMatcherAndConsumer(final boolean https, final String responseText) throws IOException {
         server.expectations(expect -> {
             expect.GET(startsWith("/loader/"), req -> {
-                req.secure(false);
+                req.secure(https);
                 req.called(1);
-                req.responder(res -> res.body(INSECURE_TEXT, TEXT_PLAIN));
-            });
-            expect.GET(startsWith("/loader/"), req -> {
-                req.secure();
-                req.called(1);
-                req.responder(res -> res.body(SECURE_TEXT, TEXT_PLAIN));
+                req.responder(res -> res.body(responseText, TEXT_PLAIN));
             });
         });
 
-        assertOkWithString(INSECURE_TEXT, client.get("/loader/insecure"));
-        assertOkWithString(SECURE_TEXT, client.gets("/loader/secure"));
+        assertOkWithString(responseText, client.get("/loader/something", https));
         verify();
     }
 
-    @Test @DisplayName("GET with BASIC authentication")
-    void withBASICAuthentication() throws IOException {
+    @ParameterizedTest(name = "[{index}] BASIC authentication: https({0}) -> {1}")
+    @MethodSource("httpAndHttpsWithContent")
+    void withBASICAuthentication(final boolean https, final String responseText) throws IOException {
         server.expectations(cfg -> {
-            cfg.GET("/safe1", req -> {
-                req.header(AUTHORIZATION_HEADER, header("basicuser", "ba$icp@$$"));
-                req.secure(false);
+            cfg.GET("/safe", req -> {
+                basicAuth(req, "basicuser", "ba$icp@$$");
+                req.secure(https);
                 req.called(1);
-                req.responder(res -> res.body(INSECURE_TEXT, TEXT_PLAIN));
-            });
-            cfg.GET("/safe2", req -> {
-                req.header(AUTHORIZATION_HEADER, header("basicuser", "anotherPa$$"));
-                req.secure();
-                req.called(1);
-                req.responder(res -> res.body(SECURE_TEXT, TEXT_PLAIN));
+                req.responder(res -> res.body(responseText, TEXT_PLAIN));
             });
         });
 
-        assertOkWithString(INSECURE_TEXT, client.get("/safe1", builder -> basicAuth(builder, "basicuser", "ba$icp@$$")));
-        assertOkWithString(SECURE_TEXT, client.gets("/safe2", builder -> basicAuth(builder, "basicuser", "anotherPa$$")));
+        assertOkWithString(responseText, client.get("/safe", builder -> basicAuthHeader(builder, "basicuser", "ba$icp@$$"), https));
         verify();
     }
 
-    @Test @DisplayName("GET chunked response")
-    void withChunkedResponse() throws IOException, URISyntaxException {
+    @ParameterizedTest(name = "[{index}] chunked image: https({0})")
+    @MethodSource("httpAndHttps")
+    void withChunkedResponse(final boolean https) throws IOException, URISyntaxException {
         server.expectations(expect -> {
-            expect.GET("/chunkyA", req -> {
-                req.secure(false);
-                req.called(1);
-                req.responder(res -> {
-                    res.chunked(chunk -> {
-                        chunk.chunks(2);
-                        chunk.delay(100);
-                    });
-                    res.body("/test-image.jpg", IMAGE_JPG);
-                });
-            });
-            expect.GET("/chunkyB", req -> {
-                req.secure();
+            expect.GET("/chunky", req -> {
+                req.secure(https);
                 req.called(1);
                 req.responder(res -> {
                     res.chunked(chunk -> {
@@ -183,17 +177,282 @@ public class ErsatzServerGetExpectationsTest {
             });
         });
 
-        val imageBytes = Files.readAllBytes(Paths.get(ErsatzServerGetExpectationsTest.class.getResource("/test-image.jpg").toURI()));
+        val responseA = client.get("/chunky", https);
 
-        val responseA = client.get("/chunkyA");
         assertEquals(200, responseA.code());
-        assertArrayEquals(imageBytes, responseA.body().bytes());
-
-        val responseB = client.gets("/chunkyB");
-        assertEquals(200, responseB.code());
-        assertArrayEquals(imageBytes, responseB.body().bytes());
+        assertArrayEquals(resourceStream("/test-image.jpg").readAllBytes(), responseA.body().bytes());
 
         verify();
+    }
+
+    @ParameterizedTest(name = "[{index}] Multipart text: https({0})")
+    @MethodSource("httpAndHttps")
+    void multipartText(final boolean https) throws IOException {
+        server.expectations(expect -> {
+            expect.GET("/text", req -> {
+                req.secure(https);
+                req.called(1);
+                req.responder(res -> {
+                    res.encoder(MULTIPART_MIXED, ErsatzMultipartResponseContent.class, Encoders.multipart);
+                    res.body(multipartResponse(mrc -> {
+                        mrc.boundary("t8xOJjySKePdRgBHYD");
+                        mrc.encoder(TEXT_PLAIN.getValue(), CharSequence.class, (o) -> o.toString().getBytes());
+                        mrc.field("alpha", "bravo");
+                        mrc.part("file", "data.txt", TEXT_PLAIN, "This is some file data");
+                    }));
+                });
+            });
+        });
+
+        val expectedLines = IOUtils.readLines(resourceStream("/multipart-text.txt"));
+        val actualLines = client.get("/text", https).body().string().trim().lines().collect(toList());
+
+        assertLinesMatch(expectedLines, actualLines);
+
+        verify();
+    }
+
+    @ParameterizedTest(name = "[{index}] Multipart binary: https({0})")
+    @MethodSource("httpAndHttps")
+    void multipartBinary(final boolean https, @TempDir final File dir) throws IOException, FileUploadException {
+        server.expectations(expect -> {
+            expect.GET("/data", req -> {
+                req.secure(https);
+                req.called(1);
+                req.responder(res -> {
+                    res.encoder(MULTIPART_MIXED, ErsatzMultipartResponseContent.class, Encoders.multipart);
+                    res.body(multipartResponse(mrc -> {
+                        mrc.boundary("WyAJDTEVlYgGjdI13o");
+                        mrc.encoder(TEXT_PLAIN, CharSequence.class, Encoders.text);
+                        mrc.encoder("image/jpeg", InputStream.class, Encoders.inputStream);
+                        mrc.part("file", "data.txt", TEXT_PLAIN, "This is some file data");
+                        mrc.part("image", "test-image.jpg", "image/jpeg", resourceStream("/test-image.jpg"), "base64");
+                    }));
+                });
+            });
+        });
+
+        val response = client.get("/data", https);
+
+        val down = new ResponseDownloadContent(response.body());
+        FileUpload fu = new FileUpload(new DiskFileItemFactory(100000, dir));
+        List<FileItem> items = fu.parseRequest(down);
+
+        assertEquals(2, items.size());
+
+        assertEquals("file", items.get(0).getFieldName());
+        assertEquals("data.txt", items.get(0).getName());
+        assertEquals("text/plain", items.get(0).getContentType());
+        assertEquals(22, items.get(0).get().length);
+
+        assertEquals("image", items.get(1).getFieldName());
+        assertEquals("test-image.jpg", items.get(1).getName());
+        assertEquals("image/jpeg", items.get(1).getContentType());
+
+        final var stream = AnotherErsatzServerTest.class.getResourceAsStream("/test-image.jpg");
+        final var imageBytes = IOUtils.toByteArray(stream);
+        assertEquals(imageBytes.length, items.get(1).getSize());
+        assertArrayEquals(imageBytes, items.get(1).get());
+
+        verify();
+    }
+
+    @ParameterizedTest(name = "[{index}] Multipart binary (simpler): https({0})")
+    @MethodSource("httpAndHttps")
+    void multipartBinarySimpler(final boolean https, @TempDir final File dir) throws FileUploadException, IOException {
+        server.expectations(expect -> {
+            expect.GET("/stuff", req -> {
+                req.secure(https);
+                req.called(1);
+                req.responder(res -> {
+                    res.encoder(MULTIPART_MIXED, ErsatzMultipartResponseContent.class, Encoders.multipart);
+                    res.body(multipartResponse(mrc -> {
+                        mrc.boundary("WyAJDTEVlYgGjdI13o");
+                        mrc.encoder(IMAGE_JPG, InputStream.class, Encoders.inputStream);
+                        mrc.part("image", "test-image.jpg", IMAGE_JPG, resourceStream("/test-image.jpg"), "base64");
+                    }));
+                });
+            });
+        });
+
+        val response = client.get("/stuff", https);
+
+        val down = new ResponseDownloadContent(response.body());
+        FileUpload fu = new FileUpload(new DiskFileItemFactory(100000, dir));
+        List<FileItem> items = fu.parseRequest(down);
+
+        assertEquals(1, items.size());
+
+        assertEquals("image", items.get(0).getFieldName());
+        assertEquals("test-image.jpg", items.get(0).getName());
+        assertEquals("image/jpeg", items.get(0).getContentType());
+
+        val bytes = resourceStream("/test-image.jpg").readAllBytes();
+        assertEquals(bytes.length, items.get(0).getSize());
+        assertArrayEquals(bytes, items.get(0).get());
+
+        verify();
+    }
+
+    @ParameterizedTest(name = "[{index}] Multiple header matching: https({0})")
+    @MethodSource("httpAndHttps")
+    void multipleHeaderMatching(final boolean https) throws IOException {
+        server.expectations(expect -> {
+            expect.GET("/api/hello", req -> {
+                req.secure(https);
+                req.called(1);
+                req.header("Accept", "application/json");
+                req.header("Accept", "application/vnd.company+json");
+                req.responder(res -> {
+                    res.code(200);
+                    res.body(Map.of("msg", "World"), "application/vnd.company+json");
+                });
+            });
+        });
+
+        val response = client.get(
+            "/api/hello",
+            builder -> {
+                builder.addHeader("Accept", "application/json");
+                builder.addHeader("Accept", "application/vnd.company+json");
+            },
+            https
+        );
+
+        assertEquals(200, response.code());
+        assertEquals("{msg=World}", response.body().string());
+
+        verify();
+    }
+
+    @ParameterizedTest(name = "[{index}] Multiple header matching (matcher): https({0})")
+    @CsvSource({
+        "false,application/vnd.company+json",
+        "false,application/json",
+        "true,application/vnd.company+json",
+        "true,application/json"
+    })
+    void multipleHeaderMatchingWithMatcher(final boolean https, final String headerValue) throws IOException {
+        final var headerMatcher = ErsatzMatchers.functionMatcher((Function<Iterable<? super String>, Boolean>) objects -> {
+            for (final var it : (Iterable<? super String>) objects) {
+                if (it.equals("application/vnd.company+json") || it.equals("application/json")) {
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        server.expectations(expect -> {
+            expect.GET("/api/hello", req -> {
+                req.secure(https);
+                req.called(1);
+                req.header("Accept", headerMatcher);
+                req.responder(res -> {
+                    res.code(200);
+                    res.body(Map.of("msg", "World"), "application/vnd.company+json");
+                });
+            });
+        });
+
+        val response = client.get(
+            "/api/hello",
+            builder -> builder.header("Accept", headerValue),
+            https
+        );
+
+        assertEquals(200, response.code());
+        assertEquals("{msg=World}", response.body().string());
+
+        verify();
+    }
+
+    @ParameterizedTest(name = "[{index}] Multiple header matching (expecting two headers and had one): https({0})")
+    @MethodSource("httpAndHttps")
+    void multipleHeaderExpecting2Had1(final boolean https) throws IOException {
+        server.expectations(expect -> {
+            expect.GET("/api/hello", req -> {
+                req.secure(https);
+                req.called(0);
+                req.header("Accept", "application/json");
+                req.header("Accept", "application/vnd.company+json");
+                req.responder(res -> {
+                    res.code(200);
+                    res.body(Map.of("msg", "World"), "application/vnd.company+json");
+                });
+            });
+        });
+
+        val response = client.get(
+            "/api/hello",
+            builder -> builder.header("Accept", "application/json"),
+            https
+        );
+
+        assertEquals(404, response.code());
+
+        verify();
+    }
+
+    @ParameterizedTest(name = "[{index}] Delayed response: https({0})")
+    @MethodSource("httpAndHttps")
+    void delayedResponse(final boolean https) throws IOException {
+        server.expectations(e -> {
+            e.GET("/slow").secure(https).called(1).responds().delay("PT1S").body("Done").code(200);
+        });
+
+        val started = currentTimeMillis();
+        val response = client.get("/slow", https);
+        val elapsed = currentTimeMillis() - started;
+
+        assertOkWithString("Done", response);
+        assertTrue(elapsed >= 900); // there is some wiggle room
+
+        verify();
+    }
+
+    @Test @DisplayName("proxied request should return proxy not original")
+    void proxiedShouldReturnProxy() throws IOException {
+        val proxyServer = new ErsatzServer(c -> c.expectations(e -> e.GET("/proxied").called(1).responds().body("forwarded").code(200)));
+        try {
+
+            server.expectations(e -> {
+                e.GET("/proxied").called(0).responds().body("original").code(200);
+            });
+
+            val proxiedClient = new OkHttpClient.Builder()
+                .proxy(new Proxy(HTTP, new InetSocketAddress("localhost", proxyServer.getHttpPort())))
+                .cookieJar(new InMemoryCookieJar())
+                .build();
+
+            val response = proxiedClient.newCall(new Request.Builder().get().url(server.httpUrl("/proxied")).build()).execute();
+
+            assertEquals(200, response.code());
+            assertArrayEquals("forwarded".getBytes(), response.body().bytes());
+
+            assertTrue(proxyServer.verify());
+            verify();
+
+        } finally {
+            proxyServer.close();
+        }
+    }
+
+    private static InputStream resourceStream(final String path) {
+        return ErsatzServerGetExpectationsTest.class.getResourceAsStream(path);
+    }
+
+    private static Stream<Arguments> httpAndHttpsWithContent() {
+        return Stream.of(
+            Arguments.of(false, "insecure content"),
+            Arguments.of(true, "secure content")
+        );
+    }
+
+    private static Stream<Arguments> httpAndHttps() {
+        return Stream.of(
+            Arguments.of(false),
+            Arguments.of(true)
+        );
     }
 
     private void verify() {
@@ -203,5 +462,31 @@ public class ErsatzServerGetExpectationsTest {
     private void assertOkWithString(final String content, final Response response) throws IOException {
         assertEquals(200, response.code());
         assertEquals(content, response.body().string());
+    }
+
+    @RequiredArgsConstructor
+    private static class ResponseDownloadContent implements UploadContext {
+
+        private final ResponseBody body;
+
+        @Override public long contentLength() {
+            return body.contentLength();
+        }
+
+        @Override public String getCharacterEncoding() {
+            return body.contentType().charset() != null ? body.contentType().charset().toString() : null;
+        }
+
+        @Override public String getContentType() {
+            return body.contentType().toString();
+        }
+
+        @Override public int getContentLength() {
+            return (int) body.contentLength();
+        }
+
+        @Override public InputStream getInputStream() throws IOException {
+            return body.byteStream();
+        }
     }
 }
