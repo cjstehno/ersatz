@@ -175,6 +175,44 @@ public class HttpClientExtension implements BeforeEachCallback {
             return post(path, null, body, false);
         }
 
+        public Response put(final String path, final Consumer<Request.Builder> config, final RequestBody body, final boolean https) throws IOException {
+            val request = new Request.Builder().url((https ? httpsUrl : httpUrl) + path).put(body);
+            if (config != null) config.accept(request);
+
+            return client.newCall(request.build()).execute();
+        }
+
+        public Response put(final String path, final Consumer<Request.Builder> config, final RequestBody body) throws IOException {
+            return put(path, config, body, false);
+        }
+
+        public Response put(final String path, final RequestBody body, final boolean https) throws IOException {
+            return put(path, null, body, https);
+        }
+
+        public Response put(final String path, final RequestBody body) throws IOException {
+            return put(path, null, body, false);
+        }
+
+        public Response patch(final String path, final Consumer<Request.Builder> config, final RequestBody body, final boolean https) throws IOException {
+            val request = new Request.Builder().url((https ? httpsUrl : httpUrl) + path).patch(body);
+            if (config != null) config.accept(request);
+
+            return client.newCall(request.build()).execute();
+        }
+
+        public Response patch(final String path, final Consumer<Request.Builder> config, final RequestBody body) throws IOException {
+            return patch(path, config, body, false);
+        }
+
+        public Response patch(final String path, final RequestBody body, final boolean https) throws IOException {
+            return patch(path, null, body, https);
+        }
+
+        public Response patch(final String path, final RequestBody body) throws IOException {
+            return patch(path, null, body, false);
+        }
+
         public static Request.Builder basicAuthHeader(final Request.Builder builder, final String user, final String pass) {
             return builder.header(AUTHORIZATION_HEADER, header(user, pass));
         }

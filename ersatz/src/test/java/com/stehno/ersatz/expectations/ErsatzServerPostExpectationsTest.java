@@ -20,7 +20,6 @@ import com.stehno.ersatz.encdec.Decoders;
 import com.stehno.ersatz.junit.ErsatzServerExtension;
 import com.stehno.ersatz.util.HttpClientExtension;
 import lombok.val;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -29,11 +28,14 @@ import java.io.IOException;
 
 import static com.stehno.ersatz.TestAssertions.assertOkWithString;
 import static com.stehno.ersatz.TestAssertions.verify;
+import static com.stehno.ersatz.cfg.ContentType.APPLICATION_URLENCODED;
 import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
+import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
 public class ErsatzServerPostExpectationsTest {
@@ -43,24 +45,9 @@ public class ErsatzServerPostExpectationsTest {
         cfg.logResponseContent();
         cfg.https();
         cfg.decoder(TEXT_PLAIN, Decoders.string(UTF_8));
+        cfg.decoder(APPLICATION_URLENCODED, Decoders.passthrough);
     });
     @SuppressWarnings("unused") private HttpClientExtension.Client client;
-
-                        /*
-        FIXME: write tests for:
-        - PostExpectations
-        - PutExpectations
-        - PatchExpectations
-        - AnyExpectations
-
-        with
-            authentication
-            chunking
-            https
-            multipart
-
-            different content types (encoders/decoders)
-     */
 
     @ParameterizedTest(name = "[{index}] path only: https({0}) -> {1}")
     @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttpsWithContent")
@@ -121,37 +108,60 @@ public class ErsatzServerPostExpectationsTest {
         verify(server);
     }
 
-//    @Test @DisplayName("variable-case headers")
-//    void variableCaseHeaders() throws IOException {
-//        ersatzServer.expectations(e -> e.POST("*", req -> {
-//            req.body(CoreMatchers.anything(), APPLICATION_URLENCODED);
-//            req.header("Something-Headery", "a-value");
-//            req.responds().body("OK");
-//        }));
-//
-//        var response = http.post(
-//            Map.of("something-headery", "a-value"),
-//            ersatzServer.httpUrl("/postit"),
-//            create(parse(APPLICATION_URLENCODED.getValue()), "Posted")
-//        );
-//
-//        assertEquals("OK", response.body().string());
-//    }
+    @ParameterizedTest(name = "[{index}] variable case headers: https({0}) -> {1}")
+    @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttpsWithContent")
+    void variableCaseHeaders(final boolean https, final String responseContent) throws IOException {
+        server.expectations(expect -> expect.POST("*", req -> {
+            req.secure(https);
+            req.called(3);
+            req.body(anything(), APPLICATION_URLENCODED);
+            req.header("Something-Headery", "a-value");
+            req.responds().body(responseContent);
+        }));
 
-//    @Test @DisplayName("post params")
-//    void postParams() throws IOException {
-//        ersatzServer.expectations(e -> {
-//            e.POST("/updates", req -> {
-//                req.param("foo", "bar");
-//                req.responds().code(201);
-//            });
-//        });
-//
-//        var response = http.post(
-//            ersatzServer.httpUrl("/updates"),
-//            create(parse(APPLICATION_URLENCODED.getValue()), "foo=bar")
-//        );
-//
-//        assertEquals(201, response.code());
-//    }
+        assertOkWithString(responseContent, client.post(
+            "/postit",
+            builder -> builder.header("something-headery", "a-value"),
+            create(TEXT_PAYLOAD, parse(APPLICATION_URLENCODED.getValue())),
+            https
+        ));
+
+        assertOkWithString(responseContent, client.post(
+            "/postit",
+            builder -> builder.header("SOMETHING-headery", "a-value"),
+            create(TEXT_PAYLOAD, parse(APPLICATION_URLENCODED.getValue())),
+            https
+        ));
+
+        assertOkWithString(responseContent, client.post(
+            "/postit",
+            builder -> builder.header("Something-Headery", "a-value"),
+            create(TEXT_PAYLOAD, parse(APPLICATION_URLENCODED.getValue())),
+            https
+        ));
+
+        verify(server);
+    }
+
+    @ParameterizedTest(name = "[{index}] post params: https({0}) -> {1}")
+    @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttps")
+    void postParams(final boolean https) throws IOException {
+        server.expectations(expect -> {
+            expect.POST("/updates", req -> {
+                req.secure(https);
+                req.called(1);
+                req.param("foo", "bar");
+                req.responds().code(201);
+            });
+        });
+
+        val response = client.post(
+            "/updates",
+            create("foo=bar", parse(APPLICATION_URLENCODED.getValue())),
+            https
+        );
+
+        assertEquals(201, response.code());
+        verify(server);
+    }
 }
