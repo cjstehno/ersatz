@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Some reusable Hamcrest matchers useful in Ersatz expectations.
  */
-public class ErsatzMatchers {
+public interface ErsatzMatchers {
 
     /**
      * Matcher that matches a request path. A wildcard (*) may be used to match any request path.
@@ -37,7 +37,7 @@ public class ErsatzMatchers {
      * @param path the path to be matched or * for wildcard
      * @return the matcher
      */
-    public static Matcher<String> pathMatcher(final String path) {
+    static Matcher<String> pathMatcher(final String path) {
         return path.equals("*") ? Matchers.any(String.class) : equalTo(path);
     }
 
@@ -48,7 +48,7 @@ public class ErsatzMatchers {
      * @param matchers the element matchers
      * @return the wrapping matcher
      */
-    public static Matcher<Iterable<? super String>> stringIterableMatcher(final Collection<Matcher<? super String>> matchers) {
+    static Matcher<Iterable<? super String>> stringIterableMatcher(final Collection<Matcher<? super String>> matchers) {
         return new StringIterableMatcher(matchers);
     }
 
@@ -58,7 +58,7 @@ public class ErsatzMatchers {
      * @param array the array
      * @return the resulting matcher
      */
-    public static Matcher<byte[]> byteArrayLike(final byte[] array) {
+    static Matcher<byte[]> byteArrayLike(final byte[] array) {
         return new ByteArrayMatcher(array);
     }
 
@@ -69,63 +69,63 @@ public class ErsatzMatchers {
      * @param <T> the type of object(s) being matched
      * @return the function wrapped in a matcher
      */
-    public static <T> Matcher<T> functionMatcher(final Function<T, Boolean> fun) {
+    static <T> Matcher<T> functionMatcher(final Function<T, Boolean> fun) {
         return new FunctionMatcher<>(fun);
     }
+}
 
-    private static class FunctionMatcher<T> extends BaseMatcher<T> {
+class FunctionMatcher<T> extends BaseMatcher<T> {
 
-        private final Function<T, Boolean> function;
+    private final Function<T, Boolean> function;
 
-        private FunctionMatcher(final Function<T, Boolean> function) {
-            this.function = function;
-        }
-
-        @Override public boolean matches(Object actual) {
-            return function.apply((T) actual);
-        }
-
-        @Override public void describeTo(Description description) {
-            description.appendText("A function that checks for matching.");
-        }
+    FunctionMatcher(final Function<T, Boolean> function) {
+        this.function = function;
     }
 
-    private static class StringIterableMatcher extends BaseMatcher<Iterable<? super String>> {
-
-        private final Collection<Matcher<? super String>> matchers;
-
-        StringIterableMatcher(final Collection<Matcher<? super String>> matchers) {
-            this.matchers = matchers;
-        }
-
-        @Override public boolean matches(final Object item) {
-            return IsIterableContainingInAnyOrder.containsInAnyOrder(matchers).matches(item);
-        }
-
-        @Override public void describeTo(final Description description) {
-            description.appendText("An Iterable<String> matching {");
-            matchers.forEach(description::appendDescriptionOf);
-            description.appendText("}");
-        }
+    @Override public boolean matches(Object actual) {
+        return function.apply((T) actual);
     }
 
-    private static class ByteArrayMatcher extends BaseMatcher<byte[]> {
+    @Override public void describeTo(Description description) {
+        description.appendText("A function that checks for matching.");
+    }
+}
 
-        private final byte[] array;
+class StringIterableMatcher extends BaseMatcher<Iterable<? super String>> {
 
-        ByteArrayMatcher(final byte[] array) {
-            this.array = array;
-        }
+    private final Collection<Matcher<? super String>> matchers;
 
-        @Override
-        public boolean matches(final Object item) {
-            final byte[] bytes = (byte[]) item;
-            return bytes.length == array.length && bytes[0] == array[0] && bytes[bytes.length - 1] == array[array.length - 1];
-        }
+    StringIterableMatcher(final Collection<Matcher<? super String>> matchers) {
+        this.matchers = matchers;
+    }
 
-        @Override
-        public void describeTo(Description description) {
-            description.appendText("A byte array of length " + array.length + " having " + array[0] + " as the first element and " + array[array.length - 1] + " as the last.");
-        }
+    @Override public boolean matches(final Object item) {
+        return IsIterableContainingInAnyOrder.containsInAnyOrder(matchers).matches(item);
+    }
+
+    @Override public void describeTo(final Description description) {
+        description.appendText("An Iterable<String> matching {");
+        matchers.forEach(description::appendDescriptionOf);
+        description.appendText("}");
+    }
+}
+
+class ByteArrayMatcher extends BaseMatcher<byte[]> {
+
+    private final byte[] array;
+
+    ByteArrayMatcher(final byte[] array) {
+        this.array = array;
+    }
+
+    @Override
+    public boolean matches(final Object item) {
+        final byte[] bytes = (byte[]) item;
+        return bytes.length == array.length && bytes[0] == array[0] && bytes[bytes.length - 1] == array[array.length - 1];
+    }
+
+    @Override
+    public void describeTo(Description description) {
+        description.appendText("A byte array of length " + array.length + " having " + array[0] + " as the first element and " + array[array.length - 1] + " as the last.");
     }
 }

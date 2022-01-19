@@ -205,7 +205,7 @@ public class ServerConfigImpl implements ServerConfig {
      * @return a reference to the server being configured
      */
     @Override public ServerConfig timeout(final int value, final TimeUnit units) {
-        this.timeout = MILLISECONDS.convert(value, units);
+        this.timeout = units.toMillis(value);
         return this;
     }
 

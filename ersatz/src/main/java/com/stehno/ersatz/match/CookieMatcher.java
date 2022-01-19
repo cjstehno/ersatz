@@ -16,11 +16,12 @@
 package com.stehno.ersatz.match;
 
 import com.stehno.ersatz.encdec.Cookie;
+import lombok.val;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-import java.util.LinkedHashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -31,7 +32,7 @@ import static org.hamcrest.Matchers.equalTo;
  */
 public class CookieMatcher extends BaseMatcher<Cookie> {
 
-    private final Map<String, Matcher> matchers = new LinkedHashMap<>();
+    private final Map<CookieField, Matcher> matchers = new EnumMap<>(CookieField.class);
 
     /**
      * Configures the cookie matcher with a consumer which is passed a <code>CookieMatcher</code> instance to configure.
@@ -62,7 +63,7 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
      * @return a reference to the matcher being configured
      */
     public CookieMatcher value(final Matcher<String> matcher) {
-        matchers.put("value", matcher);
+        matchers.put(CookieField.VALUE, matcher);
         return this;
     }
 
@@ -83,7 +84,7 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
      * @return a reference to the matcher being configured
      */
     public CookieMatcher comment(final Matcher<String> matcher) {
-        matchers.put("comment", matcher);
+        matchers.put(CookieField.COMMENT, matcher);
         return this;
     }
 
@@ -104,7 +105,7 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
      * @return a reference to the matcher being configured
      */
     public CookieMatcher domain(final Matcher<String> matcher) {
-        matchers.put("domain", matcher);
+        matchers.put(CookieField.DOMAIN, matcher);
         return this;
     }
 
@@ -125,7 +126,7 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
      * @return a reference to the matcher being configured
      */
     public CookieMatcher path(final Matcher<String> matcher) {
-        matchers.put("path", matcher);
+        matchers.put(CookieField.PATH, matcher);
         return this;
     }
 
@@ -146,7 +147,7 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
      * @return a reference to the matcher being configured
      */
     public CookieMatcher version(final Matcher<Integer> matcher) {
-        matchers.put("version", matcher);
+        matchers.put(CookieField.VERSION, matcher);
         return this;
     }
 
@@ -157,7 +158,7 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
      * @return a reference to the matcher being configured
      */
     public CookieMatcher httpOnly(final boolean httpOnly) {
-        matchers.put("httpOnly", equalTo(httpOnly));
+        matchers.put(CookieField.HTTP_ONLY, equalTo(httpOnly));
         return this;
     }
 
@@ -178,7 +179,7 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
      * @return a reference to the matcher being configured
      */
     public CookieMatcher maxAge(final Matcher<Integer> matcher) {
-        matchers.put("maxAge", matcher);
+        matchers.put(CookieField.MAX_AGE, matcher);
         return this;
     }
 
@@ -189,7 +190,7 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
      * @return a reference to the matcher being configured
      */
     public CookieMatcher secure(final boolean secure) {
-        matchers.put("secure", equalTo(secure));
+        matchers.put(CookieField.SECURE, equalTo(secure));
         return this;
     }
 
@@ -199,32 +200,21 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
             return false;
         }
 
-        final var cookie = (Cookie) item;
+        val cookie = (Cookie) item;
 
         return matchers.entrySet().stream().allMatch(entry -> {
-            final var field = entry.getKey();
-            final var matcher = entry.getValue();
+            val matcher = entry.getValue();
 
-            switch (field) {
-                case "value":
-                    return matcher.matches(cookie.getValue());
-                case "comment":
-                    return matcher.matches(cookie.getComment());
-                case "domain":
-                    return matcher.matches(cookie.getDomain());
-                case "path":
-                    return matcher.matches(cookie.getPath());
-                case "maxAge":
-                    return matcher.matches(cookie.getMaxAge());
-                case "httpOnly":
-                    return matcher.matches(cookie.isHttpOnly());
-                case "secure":
-                    return matcher.matches(cookie.isSecure());
-                case "version":
-                    return matcher.matches(cookie.getVersion());
-                default:
-                    return false;
-            }
+            return switch (entry.getKey()) {
+                case VALUE -> matcher.matches(cookie.getValue());
+                case COMMENT -> matcher.matches(cookie.getComment());
+                case DOMAIN -> matcher.matches(cookie.getDomain());
+                case PATH -> matcher.matches(cookie.getPath());
+                case MAX_AGE -> matcher.matches(cookie.getMaxAge());
+                case HTTP_ONLY -> matcher.matches(cookie.isHttpOnly());
+                case SECURE -> matcher.matches(cookie.isSecure());
+                case VERSION -> matcher.matches(cookie.getVersion());
+            };
         });
     }
 
@@ -237,6 +227,10 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
             matcher.describeTo(description);
             description.appendText(") ");
         });
+    }
+
+    private enum CookieField {
+        VALUE, COMMENT, DOMAIN, PATH, MAX_AGE, HTTP_ONLY, SECURE, VERSION;
     }
 }
 

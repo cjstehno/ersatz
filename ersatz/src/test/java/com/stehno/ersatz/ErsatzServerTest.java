@@ -15,29 +15,57 @@
  */
 package com.stehno.ersatz;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ErsatzServerTest {
 
-    private final ErsatzServer ersatzServer = new ErsatzServer(c -> c.logResponseContent(true));
-
-    @BeforeEach void beforeEach() {
-        ersatzServer.clearExpectations();
-    }
-
-    @AfterEach void afterEach() {
-        ersatzServer.close();
-    }
-
     @Test @DisplayName("not started should give useful error")
     void not_started() {
-        final var thrown = assertThrows(IllegalStateException.class, () -> ersatzServer.httpUrl("/nothing"));
-        assertEquals("The port (-1) is invalid: Has the server been started?", thrown.getMessage());
+        val server = new ErsatzServer();
+        try {
+
+            final var thrown = assertThrows(IllegalStateException.class, () -> server.httpUrl("/nothing"));
+            assertEquals("The port (-1) is invalid: Has the server been started?", thrown.getMessage());
+
+        } finally {
+            server.close();
+        }
+    }
+
+    @Test @DisplayName("auto-start disabled")
+    void autoStartDisabled() {
+        val server = new ErsatzServer(cfg -> cfg.autoStart(false));
+        try {
+
+            server.expectations(expect -> {
+                expect.GET("/foo").responds().code(200);
+            });
+
+            val thrown = assertThrows(Exception.class, server::getHttpUrl);
+            assertEquals("The port (-1) is invalid: Has the server been started?", thrown.getMessage());
+
+        } finally {
+            server.close();
+        }
+    }
+
+    @Test @DisplayName("auto-start enabled")
+    void autoStartEnabled() {
+        val server = new ErsatzServer(cfg -> cfg.autoStart(true));
+        try {
+
+            server.expectations(expect -> {
+                expect.GET("/foo").responds().code(200);
+            });
+
+            assertTrue(server.getHttpUrl().startsWith("http://localhost:"));
+
+        } finally {
+            server.close();
+        }
     }
 }

@@ -35,7 +35,7 @@ class ErsatzServerExtensionTest {
     @SuppressWarnings("unused") private ErsatzServer server;
 
     @Test @DisplayName("using provided server")
-    void using_server() throws IOException, InterruptedException {
+    void usingServer() throws IOException, InterruptedException {
         server.expectations(expects -> {
             expects.GET("/foo", request -> {
                 request.called(1);

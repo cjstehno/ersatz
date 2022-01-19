@@ -70,9 +70,6 @@ class ErsatzHttpHandler implements HttpHandler {
                     } catch (final Exception ex){
                         log.error("Error-Response: Internal Server Error (500): {}",ex.getMessage(), ex);
                         exchange.setStatusCode(500);
-
-//                        val sw = new StringWriter();
-//                        ex.printStackTrace(new PrintWriter(sw));
                         sendFullResponse(exchange, EMPTY_RESPONSE);
                     }
                 },

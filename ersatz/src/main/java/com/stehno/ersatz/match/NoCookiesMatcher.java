@@ -46,6 +46,6 @@ public class NoCookiesMatcher extends BaseMatcher<Map<String, Cookie>> {
 
     @Override
     public void describeTo(Description description) {
-        description.appendText("NoCookiesMatcher: ");
+        description.appendText("Has no cookies.");
     }
 }

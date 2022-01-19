@@ -1,0 +1,91 @@
+/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.stehno.ersatz.match;
+
+import lombok.val;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Description;
+import org.hamcrest.StringDescription;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
+import static com.stehno.ersatz.match.ErsatzMatchers.byteArrayLike;
+import static com.stehno.ersatz.match.ErsatzMatchers.pathMatcher;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+class ErsatzMatchersTest {
+
+    @ParameterizedTest(name = "[{index}] {0} matches {1} -> {2}")
+    @CsvSource({
+        "*,/alpha/bravo,true",
+        "*,/other,true",
+        "/foo,/foo,true",
+        "/foo,/bar,false",
+        "/foo,/foo/bar,false"
+    })
+    void matchingPaths(final String pattern, final String value, final boolean matches) {
+        assertEquals(matches, pathMatcher(pattern).matches(value));
+    }
+
+    @ParameterizedTest(name = "[{index}] {0} matches {1} -> {2}")
+    @CsvSource({
+        "some bytes,some bytes,true",
+        "some bytes,other bytes,false"
+    })
+    void alikeByteArray(final String pattern, final String value, final boolean matches){
+        assertEquals(matches, byteArrayLike(pattern.getBytes(UTF_8)).matches(value.getBytes(UTF_8)));
+    }
+
+    @Test @DisplayName("byte array matcher description")
+    void byteArrayMatcherDescription(){
+        val matcher = byteArrayLike("stuff".getBytes(UTF_8));
+
+        val desc = new StringDescription();
+        matcher.describeTo(desc);
+        assertEquals("A byte array of length 5 having 115 as the first element and 102 as the last.", desc.toString());
+    }
+
+    @Test @DisplayName("function matcher")
+    void functionMatcher(){
+        val matcher = ErsatzMatchers.functionMatcher(x -> x instanceof String);
+
+        assertTrue(matcher.matches("a string"));
+        assertFalse(matcher.matches(new Object()));
+
+        val desc = new StringDescription();
+        matcher.describeTo(desc);
+        assertEquals("A function that checks for matching.", desc.toString());
+    }
+
+    @Test @DisplayName("string iterable matcher")
+    void stringIterableMatcher(){
+        val matcher = ErsatzMatchers.stringIterableMatcher(List.of(
+            startsWith("prefix-"),
+            equalTo("foobar"),
+            endsWith("-suffix")
+        ));
+
+        assertTrue(matcher.matches(List.of("prefix-alpha", "foobar", "bravo-suffix")));
+        assertFalse(matcher.matches(List.of("prefix-alpha", "other", "bravo-suffix")));
+    }
+}

@@ -15,9 +15,16 @@
  */
 package com.stehno.ersatz.junit;
 
+import com.stehno.ersatz.ErsatzServer;
+import lombok.val;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+
+import java.lang.reflect.Field;
+import java.util.function.Supplier;
+
+import static java.util.Arrays.stream;
 
 /**
  * JUnit 5 Extension used to provide a simple means of managing an ErsatzServer instance during testing.
@@ -32,13 +39,42 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  */
 public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallback {
 
-    private final TestingHarness harness = new TestingHarness();
-
     @Override public void beforeEach(final ExtensionContext context) throws Exception {
-        harness.before(context.getRequiredTestInstance());
+        findInstance(context.getRequiredTestInstance(), true).start();
     }
 
     @Override public void afterEach(final ExtensionContext context) throws Exception {
-        harness.after(context.getRequiredTestInstance());
+        val ersatzInstance = findInstance(context.getRequiredTestInstance(), false);
+        if (ersatzInstance != null) {
+            ersatzInstance.close();
+            ersatzInstance.clearExpectations();
+        }
+    }
+
+    private static ErsatzServer findInstance(final Object testInstance, final boolean create) throws Exception {
+        try {
+            val field = findField(testInstance);
+            Object instance = field.get(testInstance);
+
+            if (instance == null && create) {
+                instance = field.getType().getDeclaredConstructor().newInstance();
+                field.set(testInstance, instance);
+            }
+
+            return (ErsatzServer) instance;
+
+        } catch (Exception throwable) {
+            throw new Exception(throwable);
+        }
+    }
+
+    private static Field findField(final Object testInstance) throws Exception {
+        val field = stream(testInstance.getClass().getDeclaredFields())
+            .filter(f -> f.getType().getSimpleName().endsWith("ErsatzServer"))
+            .findFirst()
+            .orElseThrow((Supplier<Exception>) () -> new IllegalArgumentException("An ErsatzServer field must be specified."));
+
+        field.setAccessible(true);
+        return field;
     }
 }

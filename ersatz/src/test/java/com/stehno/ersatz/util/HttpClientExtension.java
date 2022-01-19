@@ -69,7 +69,7 @@ public class HttpClientExtension implements BeforeEachCallback {
         return field;
     }
 
-    public class Client {
+    public static class Client {
 
         private final String httpUrl;
         private final String httpsUrl;
