@@ -4,6 +4,7 @@ plugins {
     id 'maven-publish'
     id 'com.github.ben-manes.versions' version '0.41.0'
     id "com.github.johnrengelman.shadow" version '7.1.2'
+    id 'jacoco'
 }
 
 group = rootProject.group
@@ -61,6 +62,10 @@ task javadocJar(type: Jar) {
 test {
     useJUnitPlatform()
     maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
+}
+
+jacocoTestReport {
+    dependsOn test
 }
 
 artifacts {

@@ -15,6 +15,9 @@
  */
 package com.stehno.ersatz.encdec;
 
+import lombok.Getter;
+import lombok.ToString;
+
 import java.util.Objects;
 
 import static java.lang.String.format;
@@ -22,6 +25,7 @@ import static java.lang.String.format;
 /**
  * Representation of a multipart part for requests and responses.
  */
+@Getter @ToString
 public class MultipartPart {
 
     private final String fieldName;
@@ -40,56 +44,12 @@ public class MultipartPart {
      * @param value the part value
      */
     public MultipartPart(String fieldName, String fileName, String contentType, String transferEncoding, Object value) {
+        // TODO: what is the value usually?
         this.fieldName = fieldName;
         this.fileName = fileName;
         this.contentType = contentType;
         this.transferEncoding = transferEncoding;
         this.value = value;
-    }
-
-    /**
-     * Used to retrive the field name.
-     *
-     * @return the field name
-     */
-    public String getFieldName() {
-        return fieldName;
-    }
-
-    /**
-     * Used to retreive the file name.
-     *
-     * @return the file name
-     */
-    public String getFileName() {
-        return fileName;
-    }
-
-    /**
-     * Used to retrieve the content-type.
-     *
-     * @return the content-type
-     */
-    public String getContentType() {
-        return contentType;
-    }
-
-    /**
-     * Used to retrieve the transfer-encoding.
-     *
-     * @return the transfer-encoding
-     */
-    public String getTransferEncoding() {
-        return transferEncoding;
-    }
-
-    /**
-     * Used to retrieve the part value.
-     *
-     * @return the part value
-     */
-    public Object getValue() {
-        return value;
     }
 
     @Override public boolean equals(Object o) {
@@ -105,12 +65,5 @@ public class MultipartPart {
 
     @Override public int hashCode() {
         return Objects.hash(fieldName, fileName, contentType, transferEncoding, value);
-    }
-
-    @Override public String toString() {
-        return format(
-            "MultipartPart{fieldName='%s', fileName='%s', contentType='%s', transferEncoding='%s', value=%s}",
-            fieldName, fileName, contentType, transferEncoding, value
-        );
     }
 }

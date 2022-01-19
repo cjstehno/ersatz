@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2022 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,15 +15,12 @@
  */
 package com.stehno.ersatz.encdec;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
@@ -32,14 +29,13 @@ import java.util.function.Function;
 
 import static com.stehno.ersatz.util.ByteArrays.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.readAllBytes;
 
 /**
  * Reusable response content encoders. An encoder is simply a <code>Function&lt;Object,String&gt;</code> which is used to convert the configured response
  * content object into the response output bytes.
  */
 public interface Encoders {
-
-    // FIXME: these and the decoders need to be unit tested
 
     /**
      * Encodes the object as a String of text (UTF-8).
@@ -72,59 +68,52 @@ public interface Encoders {
     Function<Object, byte[]> binaryBase64 = obj -> obj == null ? "".getBytes(UTF_8) : Base64.getEncoder().encode(toBytes(obj));
 
     /**
-     * Encodes the bytes read from an InputStream.
-     */
-    Function<Object, byte[]> inputStream = o -> {
-        try {
-            return ((InputStream) o).readAllBytes();
-        } catch (IOException e) {
-            // TODO: something better here?
-            e.printStackTrace();
-            return new byte[0];
-        }
-    };
-
-    /**
      * Loads the content at the specified destination and returns it as a byte array. The content destination may be
-     * specified by any of the following: String, Path, File, URI, URL, where the String instance is a resource path on
-     * the classpath.
+     * specified by any of the following:
+     * <p>
+     * InputStream - will load the contents of the stream
+     * String - will load the contents of the path from the classloader.
+     * Path - will load the contents of the path as a file on the filesystem
+     * File - will load the contents of the path as a file on the filesystem
+     * URI - will load the contents of the URI
+     * URL - will load the contents of the URL
      */
     Function<Object, byte[]> content = obj -> {
-        final Path path;
-
-        if (obj instanceof Path) {
-            path = (Path) obj;
-
-        } else if (obj instanceof File) {
-            path = ((File) obj).toPath();
-
-        } else if (obj instanceof URI) {
-            path = Paths.get((URI) obj);
-
-        } else if (obj instanceof URL) {
-            try {
-                path = Paths.get(((URL) obj).toURI());
-            } catch (URISyntaxException e) {
-                throw new IllegalArgumentException("URL (" + obj + ") is not a value URI.");
-            }
-
-        } else if (obj instanceof CharSequence) {
-            try {
-                path = Paths.get(Encoders.class.getResource(obj.toString()).toURI());
-            } catch (URISyntaxException e) {
-                throw new IllegalArgumentException("Resource path (" + obj + ") is not a value URI.");
-            }
-
-        } else {
-            throw new IllegalArgumentException("Content must be specified as a String, Path, File, URI, or URL instance.");
-        }
-
         try {
-            return Files.readAllBytes(path);
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to read content from path (" + path + "): " + e.getMessage(), e);
+            if (obj instanceof InputStream) {
+                return readStream((InputStream) obj);
+
+            } else if (obj instanceof Path) {
+                return readAllBytes((Path) obj);
+
+            } else if (obj instanceof File) {
+                return readAllBytes(((File) obj).toPath());
+
+            } else if (obj instanceof URI) {
+                return readStream(((URI) obj).toURL().openStream());
+
+            } else if (obj instanceof URL) {
+                return readStream(((URL) obj).openStream());
+
+            } else if (obj instanceof CharSequence) {
+                return readAllBytes(Paths.get(Encoders.class.getResource(obj.toString()).toURI()));
+
+            } else {
+                throw new IllegalArgumentException("Content must be specified as an InputSteam, String, Path, File, URI, or URL instance.");
+            }
+
+        } catch (final RuntimeException re) {
+            throw re;
+        } catch (final Exception ex) {
+            throw new IllegalArgumentException("Unable to resolve content due to error: " + ex.getMessage());
         }
     };
+
+    private static byte[] readStream(final InputStream stream) throws IOException {
+        try (stream) {
+            return stream.readAllBytes();
+        }
+    }
 
     /**
      * Encodes a <code>MultipartResponseContent</code> object to its multipart string representation. The generated multipart content is a simple
@@ -133,7 +122,7 @@ public interface Encoders {
      */
     Function<Object, byte[]> multipart = obj -> {
         if (!(obj instanceof MultipartResponseContent)) {
-            throw new IllegalArgumentException(obj.getClass() + " found, MultipartRequestContent is required.");
+            throw new IllegalArgumentException(obj.getClass().getName() + " found, MultipartRequestContent is required.");
         }
 
         final ErsatzMultipartResponseContent mrc = (ErsatzMultipartResponseContent) obj;
@@ -169,8 +158,12 @@ public interface Encoders {
     private static byte[] toBytes(final Object obj) {
         if (obj instanceof byte[]) {
             return (byte[]) obj;
-        } else if (obj instanceof ByteArrayInputStream) {
-            return ((ByteArrayInputStream) obj).readAllBytes();
+        } else if (obj instanceof InputStream) {
+            try {
+                return readStream((InputStream) obj);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Unable to read InputStream: " + e.getMessage());
+            }
         } else {
             return obj.toString().getBytes(UTF_8);
         }

@@ -98,7 +98,7 @@ public class ErsatzServer implements Closeable {
      *
      * @return true if HTTPS is enabled
      */
-    public boolean isHttpsEnabled(){
+    public boolean isHttpsEnabled() {
         return serverConfig.isHttpsEnabled();
     }
 
@@ -109,15 +109,6 @@ public class ErsatzServer implements Closeable {
      */
     public String getHttpUrl() {
         return getUrl("http", getHttpPort());
-    }
-
-    /**
-     * Used to retrieve the Web Socket URL.
-     *
-     * @return the web socket URL
-     */
-    public String getWsUrl() {
-        return getUrl("ws", getHttpPort());
     }
 
     /**

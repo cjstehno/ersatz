@@ -18,8 +18,13 @@ package com.stehno.ersatz;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.Map;
 
 public interface TestHelpers {
@@ -42,5 +47,21 @@ public interface TestHelpers {
         }
 
         return string;
+    }
+
+    static URL resourceUrl(final String path) {
+        return TestHelpers.class.getResource(path);
+    }
+
+    static URI resourceUri(final String path) throws URISyntaxException {
+        return resourceUrl(path).toURI();
+    }
+
+    static Path resourcePath(final String path) throws URISyntaxException {
+        return Path.of(resourceUri(path));
+    }
+
+    static File resourceFile(final String path) throws URISyntaxException {
+        return new File(resourceUri(path));
     }
 }

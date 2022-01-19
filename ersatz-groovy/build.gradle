@@ -3,6 +3,7 @@ plugins {
     id 'groovy'
     id "com.github.hierynomus.license" version '0.16.1'
     id "com.github.johnrengelman.shadow" version '7.1.2'
+    id 'jacoco'
 }
 
 group = rootProject.group
@@ -30,6 +31,9 @@ test {
     maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
 }
 
+jacocoTestReport {
+    dependsOn test
+}
 
 license {
     header = file('../config/license_header.txt')

@@ -16,20 +16,23 @@
 package com.stehno.ersatz.expectations;
 
 import com.stehno.ersatz.ErsatzServer;
+import com.stehno.ersatz.cfg.RequestWithContent;
 import com.stehno.ersatz.encdec.Decoders;
+import com.stehno.ersatz.encdec.Encoders;
 import com.stehno.ersatz.junit.ErsatzServerExtension;
 import com.stehno.ersatz.util.HttpClientExtension;
 import lombok.val;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.util.Date;
 
-import static com.stehno.ersatz.TestAssertions.assertOkWithString;
-import static com.stehno.ersatz.TestAssertions.verify;
-import static com.stehno.ersatz.cfg.ContentType.APPLICATION_URLENCODED;
-import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static com.stehno.ersatz.TestAssertions.*;
+import static com.stehno.ersatz.cfg.ContentType.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
@@ -163,5 +166,23 @@ public class ErsatzServerPostExpectationsTest {
 
         assertEquals(201, response.code());
         verify(server);
+    }
+
+    @Test @DisplayName("handling exception in encoder")
+    void encoderErrorHandling() throws IOException {
+        server.expectations(expect -> {
+            expect.POST("/foo", req -> {
+                req.body(TEXT_PAYLOAD, TEXT_PLAIN);
+                req.responder(res -> {
+                    // we configure the encoder improperly - it causes an exception when used
+                    res.encoder(IMAGE_JPG, Date.class, Encoders.content);
+                    res.body(new Date(), IMAGE_JPG);
+                });
+            });
+        });
+
+        // the logs will have more detailed error messages
+        val response = client.post("/foo", create(TEXT_PAYLOAD, parse("text/plain")));
+        assertStatusWithString(500, "", response);
     }
 }

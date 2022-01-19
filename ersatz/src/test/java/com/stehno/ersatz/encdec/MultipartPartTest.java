@@ -18,17 +18,34 @@ package com.stehno.ersatz.encdec;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.stehno.ersatz.TestAssertions.verifyEqualityAndHashCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MultipartPartTest {
 
-    @Test @DisplayName("properties") void properties() {
-        final var part = new MultipartPart("file", "file.txt", "text/plain", "binary", "some file");
+    private MultipartPart multipartPart() {
+        return new MultipartPart("file", "file.txt", "text/plain", "binary", "some file");
+    }
 
+    @Test @DisplayName("properties") void properties() {
+        final var part = multipartPart();
         assertEquals("file", part.getFieldName());
         assertEquals("file.txt", part.getFileName());
         assertEquals("text/plain", part.getContentType());
         assertEquals("binary", part.getTransferEncoding());
         assertEquals("some file", part.getValue());
+    }
+
+    @Test @DisplayName("equals and hashCode")
+    void equalsAndHash() {
+        verifyEqualityAndHashCode(multipartPart(), multipartPart());
+    }
+
+    @Test @DisplayName("string")
+    void string() {
+        assertEquals(
+            "MultipartPart(fieldName=file, fileName=file.txt, contentType=text/plain, transferEncoding=binary, value=some file)",
+            multipartPart().toString()
+        );
     }
 }

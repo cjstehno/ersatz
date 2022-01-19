@@ -231,7 +231,7 @@ public class ErsatzServerGetExpectationsTest {
                     res.body(multipartResponse(mrc -> {
                         mrc.boundary("WyAJDTEVlYgGjdI13o");
                         mrc.encoder(TEXT_PLAIN, CharSequence.class, Encoders.text);
-                        mrc.encoder("image/jpeg", InputStream.class, Encoders.inputStream);
+                        mrc.encoder("image/jpeg", InputStream.class, Encoders.content);
                         mrc.part("file", "data.txt", TEXT_PLAIN, "This is some file data");
                         mrc.part("image", "test-image.jpg", "image/jpeg", resourceStream("/test-image.jpg"), "base64");
                     }));
@@ -275,7 +275,7 @@ public class ErsatzServerGetExpectationsTest {
                     res.encoder(MULTIPART_MIXED, ErsatzMultipartResponseContent.class, Encoders.multipart);
                     res.body(multipartResponse(mrc -> {
                         mrc.boundary("WyAJDTEVlYgGjdI13o");
-                        mrc.encoder(IMAGE_JPG, InputStream.class, Encoders.inputStream);
+                        mrc.encoder(IMAGE_JPG, InputStream.class, Encoders.content);
                         mrc.part("image", "test-image.jpg", IMAGE_JPG, resourceStream("/test-image.jpg"), "base64");
                     }));
                 });
@@ -574,6 +574,87 @@ public class ErsatzServerGetExpectationsTest {
             https
         ));
 
+        verify(server);
+    }
+
+    // FIXME: write a test for the listener functionality in here
+    // FIXME: add a test of verify with timeout (long running request?)
+
+    @ParameterizedTest(name = "[{index}] Request matches but no response: https({0})")
+    @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttps")
+    void noResponseConfigured(final boolean https) throws IOException {
+        server.expects().GET("/missing").secure(https).called(1);
+
+        assertStatusWithString(204, "", client.get("/missing", https));
+        verify(server);
+    }
+
+    @ParameterizedTest(name = "[{index}] Request matches but null response: https({0})")
+    @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttps")
+    void respondsWithNull(final boolean https) throws IOException {
+        server.expects().GET("/missing").secure(https).called(1).responds().code(200).body(null);
+
+        assertStatusWithString(200, "", client.get("/missing", https));
+        verify(server);
+    }
+
+    @ParameterizedTest(name = "[{index}] Gzip compression supported: https({0}) -> {1}")
+    @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttpsWithContent")
+    void gzipSupported(final boolean https, final String responseText) throws IOException {
+        server.expectations(expect -> {
+            expect.GET("/gzip").secure(https).called(1).header("Accept-Encoding", "gzip")
+                .responds().body(responseText, TEXT_PLAIN);
+        });
+
+        val response = client.get("/gzip", https);
+
+        assertEquals(200, response.code());
+        assertTrue(response.networkResponse().headers("Content-Encoding").contains("gzip"));
+        assertEquals(responseText, response.body().string());
+        verify(server);
+    }
+
+    @ParameterizedTest(name = "[{index}] Non-compression supported: https({0}) -> {1}")
+    @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttpsWithContent")
+    void nonCompressionSupported(final boolean https, final String responseText) throws IOException {
+        server.expectations(expect -> {
+            expect.GET("/gzip").secure(https).called(1).header("Accept-Encoding", "")
+                .responds().body(responseText, TEXT_PLAIN);
+        });
+
+        val response = client.get(
+            "/gzip",
+            builder -> {
+                builder.header("Accept-Encoding", "");
+            },
+            https
+        );
+
+        assertEquals(200, response.code());
+        assertFalse(response.networkResponse().headers("Content-Encoding").contains("gzip"));
+        assertEquals(responseText, response.body().string());
+        verify(server);
+    }
+
+    @ParameterizedTest(name = "[{index}] Deflate supported: https({0}) -> {1}")
+    @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttpsWithContent")
+    void deflateSupported(final boolean https, final String responseText) throws IOException {
+        server.expectations(expect -> {
+            expect.GET("/gzip").secure(https).called(1).header("Accept-Encoding", "deflate")
+                .responds().body(responseText, TEXT_PLAIN);
+        });
+
+        val response = client.get(
+            "/gzip",
+            builder -> {
+                builder.header("Accept-Encoding", "deflate");
+            },
+            https
+        );
+
+        assertEquals(200, response.code());
+        assertTrue(response.networkResponse().headers("Content-Encoding").contains("deflate"));
+        assertNotEquals(responseText, response.body().string()); // TODO: verify that this is correct behavior
         verify(server);
     }
 

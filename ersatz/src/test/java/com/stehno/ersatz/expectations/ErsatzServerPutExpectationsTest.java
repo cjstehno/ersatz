@@ -19,6 +19,7 @@ import com.stehno.ersatz.ErsatzServer;
 import com.stehno.ersatz.encdec.Decoders;
 import com.stehno.ersatz.junit.ErsatzServerExtension;
 import com.stehno.ersatz.util.HttpClientExtension;
+import lombok.val;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -27,6 +28,7 @@ import java.io.IOException;
 
 import static com.stehno.ersatz.TestAssertions.verify;
 import static com.stehno.ersatz.cfg.ContentType.IMAGE_GIF;
+import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
@@ -122,6 +124,44 @@ public class ErsatzServerPutExpectationsTest {
                 https
             ).code()
         );
+        verify(server);
+    }
+
+    @ParameterizedTest(name = "[{index}] Multiple responses: https({0}) -> {1}")
+    @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttps")
+    void multipleResponsesForPut(final boolean https) throws IOException {
+        server.expectations(expect -> {
+            expect.PUT("/aclue", req -> {
+                req.secure(https);
+                req.called(3);
+                req.header("Info", "value");
+                req.responder(res -> res.code(200));
+                req.responder(res -> res.code(201));
+            });
+        });
+
+        val payload = create("payload", parse(TEXT_PLAIN.getValue()));
+        assertEquals(200, client.put(
+            "/aclue",
+            builder -> builder.header("Info", "value"),
+            payload,
+            https
+        ).code());
+
+        assertEquals(201, client.put(
+            "/aclue",
+            builder -> builder.header("Info", "value"),
+            payload,
+            https
+        ).code());
+
+        assertEquals(201, client.put(
+            "/aclue",
+            builder -> builder.header("Info", "value"),
+            payload,
+            https
+        ).code());
+
         verify(server);
     }
 }

@@ -16,9 +16,13 @@
 package com.stehno.ersatz;
 
 import okhttp3.Response;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,11 +33,26 @@ public interface TestAssertions {
     }
 
     static void assertOkWithString(final String content, final Response response) throws IOException {
-        assertEquals(200, response.code());
+        assertStatusWithString(200, content, response);
+    }
+
+    static void assertStatusWithString(final int status, final String content, final Response response) throws IOException {
+        assertEquals(status, response.code());
         assertEquals(content, response.body().string());
     }
 
     static void assertNotFound(final Response response) {
         assertEquals(404, response.code());
+    }
+
+    static void verifyEqualityAndHashCode(final Object instanceA, final Object instanceB) {
+        assertThat(instanceA, equalTo(instanceA));
+        assertThat(instanceB, equalTo(instanceB));
+        assertThat(instanceA, equalTo(instanceB));
+        assertThat(instanceB, equalTo(instanceA));
+        assertThat(instanceA.hashCode(), equalTo(instanceA.hashCode()));
+        assertThat(instanceB.hashCode(), equalTo(instanceB.hashCode()));
+        assertThat(instanceA.hashCode(), equalTo(instanceB.hashCode()));
+        assertThat(instanceB.hashCode(), equalTo(instanceA.hashCode()));
     }
 }

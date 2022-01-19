@@ -21,7 +21,7 @@ import javax.activation.MimeTypeParseException;
 /**
  * Helpers for working with <code>MimeType</code> objects.
  */
-public class MimeTypes {
+public interface MimeTypes {
 
     /**
      * Creates a <code>MimeType</code> object from the specified string designator. If a parsing exception is thrown, it
@@ -34,7 +34,7 @@ public class MimeTypes {
         try {
             return new MimeType(value);
         } catch (MimeTypeParseException e) {
-            throw new IllegalArgumentException(e);
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 }

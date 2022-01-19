@@ -1,5 +1,6 @@
 plugins {
     id 'groovy'
+    id 'jacoco'
 }
 
 sourceCompatibility = 17
@@ -26,4 +27,8 @@ dependencies {
 test {
     useJUnitPlatform()
     maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
+}
+
+jacocoTestReport {
+    dependsOn test
 }

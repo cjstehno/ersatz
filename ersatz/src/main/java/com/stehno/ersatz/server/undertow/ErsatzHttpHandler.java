@@ -22,9 +22,12 @@ import com.stehno.ersatz.server.UnderlyingServer;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.CookieImpl;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 
 import static com.stehno.ersatz.server.undertow.ResponseChunker.prepareChunks;
@@ -59,9 +62,19 @@ class ErsatzHttpHandler implements HttpHandler {
         expectations.findMatch(clientRequest)
             .ifPresentOrElse(
                 req -> {
-                    final var ereq = (ErsatzRequest) req;
-                    send(exchange, ereq.getCurrentResponse());
-                    ereq.mark(clientRequest);
+                    try {
+                        final var ereq = (ErsatzRequest) req;
+                        send(exchange, ereq.getCurrentResponse());
+                        ereq.mark(clientRequest);
+
+                    } catch (final Exception ex){
+                        log.error("Error-Response: Internal Server Error (500): {}",ex.getMessage(), ex);
+                        exchange.setStatusCode(500);
+
+//                        val sw = new StringWriter();
+//                        ex.printStackTrace(new PrintWriter(sw));
+                        sendFullResponse(exchange, EMPTY_RESPONSE);
+                    }
                 },
                 () -> {
                     final var report = new UnmatchedRequestReport(clientRequest, expectations.getRequests().stream().map(r -> (ErsatzRequest) r).collect(toList()));
