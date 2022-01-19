@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2022 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 package com.stehno.ersatz.encdec;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -23,6 +28,7 @@ import static java.lang.String.format;
 /**
  * Ersatz abstraction of a request or response cookie. See also the <code>CookieMatcher</code>.
  */
+@AllArgsConstructor @Getter @EqualsAndHashCode @ToString
 public class Cookie {
 
     private String value;
@@ -39,29 +45,6 @@ public class Cookie {
      */
     public Cookie() {
         this(null, null, null, null, 0, false, 0, false);
-    }
-
-    /**
-     * Creates a cookie with the specified parameters.
-     *
-     * @param value the cookie value
-     * @param comment the comment for the cookie
-     * @param domain the cookie domain
-     * @param path the cookie path
-     * @param version the cookie version
-     * @param httpOnly whether or not the cookie is http-only
-     * @param maxAge the max age allowed for the cookie
-     * @param secure whether or not the cookie is secure
-     */
-    public Cookie(String value, String comment, String domain, String path, int version, boolean httpOnly, Integer maxAge, boolean secure) {
-        this.value = value;
-        this.comment = comment;
-        this.domain = domain;
-        this.path = path;
-        this.version = version;
-        this.httpOnly = httpOnly;
-        this.maxAge = maxAge;
-        this.secure = secure;
     }
 
     /**
@@ -162,102 +145,5 @@ public class Cookie {
     public Cookie secure(final boolean secure) {
         this.secure = secure;
         return this;
-    }
-
-    /**
-     * Use to retrieve the value of the cookie.
-     *
-     * @return the cookie value
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * Use to retrieve the comment for the cookie.
-     *
-     * @return the cookie comment
-     */
-    public String getComment() {
-        return comment;
-    }
-
-    /**
-     * Use to retrieve the domain of the cookie.
-     *
-     * @return the cookie domain
-     */
-    public String getDomain() {
-        return domain;
-    }
-
-    /**
-     * Use to retrieve the path of the cookie.
-     *
-     * @return the cookie path
-     */
-    public String getPath() {
-        return path;
-    }
-
-    /**
-     * Use to retrieve the version of the cookie format.
-     *
-     * @return the cookie format version
-     */
-    public int getVersion() {
-        return version;
-    }
-
-    /**
-     * Use to retrieve whether or not the cookie is http-only.
-     *
-     * @return true, if the cookie is http-only
-     */
-    public boolean isHttpOnly() {
-        return httpOnly;
-    }
-
-    /**
-     * Use to retrieve the max age allowed for the cookie.
-     *
-     * @return the cookie max age value
-     */
-    public Integer getMaxAge() {
-        return maxAge;
-    }
-
-    /**
-     * Use to retrieve whether or not the cookie is secure.
-     *
-     * @return true, if the cookie is secure
-     */
-    public boolean isSecure() {
-        return secure;
-    }
-
-    @Override public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final Cookie cookie = (Cookie) o;
-        return version == cookie.version &&
-            httpOnly == cookie.httpOnly &&
-            secure == cookie.secure &&
-            Objects.equals(value, cookie.value) &&
-            Objects.equals(comment, cookie.comment) &&
-            Objects.equals(domain, cookie.domain) &&
-            Objects.equals(path, cookie.path) &&
-            Objects.equals(maxAge, cookie.maxAge);
-    }
-
-    @Override public int hashCode() {
-        return Objects.hash(value, comment, domain, path, version, httpOnly, maxAge, secure);
-    }
-
-    @Override public String toString() {
-        return format(
-            "Cookie{value='%s', comment='%s', domain='%s', path='%s', version=%d, httpOnly=%s, maxAge=%d, secure=%s}",
-            value, comment, domain, path, version, httpOnly, maxAge, secure
-        );
     }
 }

@@ -43,9 +43,6 @@ import static org.mockito.Mockito.when;
 
 class EncodersTest {
 
-    private static final Function<Object, byte[]> ENCODER_A = o -> new byte[0];
-    private static final Function<Object, byte[]> ENCODER_B = o -> new byte[0];
-
     @ParameterizedTest @DisplayName("text data") @MethodSource("textProvider")
     void textData(final Object data, final String text) {
         assertArrayEquals(text.getBytes(), Encoders.text.apply(data));
@@ -88,17 +85,6 @@ class EncodersTest {
         // Note: if this test fails, make sure the url is still valid before digging too deep.
         val bytes = Encoders.content.apply(new URL("http://cjstehno.github.io/index.html"));
         assertTrue(bytes.length > 1000);
-    }
-
-    @Test @DisplayName("encoders") void encoders() {
-        final var encoders = ResponseEncoders.encoders(e -> {
-            e.register("text/plain", String.class, ENCODER_A);
-            e.register(IMAGE_GIF, InputStream.class, ENCODER_B);
-        });
-
-        assertEquals(ENCODER_A, encoders.findEncoder(TEXT_PLAIN, String.class));
-        assertEquals(ENCODER_A, encoders.findEncoder("text/plain", String.class));
-        assertNull(encoders.findEncoder("text/plain", File.class));
     }
 
     @Test @DisplayName("inputStream error")

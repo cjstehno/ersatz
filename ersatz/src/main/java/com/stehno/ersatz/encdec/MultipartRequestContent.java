@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2022 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,10 +16,10 @@
 package com.stehno.ersatz.encdec;
 
 import com.stehno.ersatz.cfg.ContentType;
+import lombok.EqualsAndHashCode;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
@@ -31,6 +31,7 @@ import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
  * If partial or more flexible content matching is preferred, the <code>MultipartRequestMatcher</code> class provides a Hamcrest matcher for matching
  * multipart content, based on the model presented by this class.
  */
+@EqualsAndHashCode
 public class MultipartRequestContent {
 
     private final Map<String, MultipartPart> parts = new LinkedHashMap<>();
@@ -121,15 +122,5 @@ public class MultipartRequestContent {
      */
     public MultipartPart getAt(final String fieldName) {
         return parts.get(fieldName);
-    }
-
-    @Override public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        return Objects.equals(parts, ((MultipartRequestContent) o).parts);
-    }
-
-    @Override public int hashCode() {
-        return Objects.hash(parts);
     }
 }

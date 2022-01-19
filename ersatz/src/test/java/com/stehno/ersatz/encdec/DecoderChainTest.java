@@ -15,11 +15,13 @@
  */
 package com.stehno.ersatz.encdec;
 
+import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.stehno.ersatz.cfg.ContentType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 class DecoderChainTest {
 
@@ -58,5 +60,21 @@ class DecoderChainTest {
         assertEquals("alpha-shared", chain.resolve(TEXT_PLAIN).apply(null, null));
 
         assertEquals("foxtrot-global", chain.resolve(APPLICATION_XML).apply(null, null));
+    }
+
+    @Test @DisplayName("other chain")
+    void otherChain(){
+        val decoders = RequestDecoders.decoders(d -> {
+            d.register("text/alternate", (b, ctx) -> "bravo-local");
+            d.register("application/date", (b, ctx) -> "echo-local");
+        });
+
+        val chain = new DecoderChain(null);
+
+        // add a second before we have a first (should become first)
+        chain.second(decoders);
+
+        assertEquals(1, chain.size());
+        assertSame(decoders, chain.getAt(0));
     }
 }

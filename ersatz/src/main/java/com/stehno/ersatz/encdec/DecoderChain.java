@@ -25,13 +25,6 @@ import java.util.function.BiFunction;
 public class DecoderChain extends FunctionChain<RequestDecoders> {
 
     /**
-     * Creates an empty chain of decoders.
-     */
-    public DecoderChain() {
-        this(null);
-    }
-
-    /**
      * Creates a chain of decoders with the given initial item.
      *
      * @param firstItem the first decoders in the chain

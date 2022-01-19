@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2022 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,9 +18,8 @@ package com.stehno.ersatz.encdec;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Arrays;
 import java.util.Objects;
-
-import static java.lang.String.format;
 
 /**
  * Representation of a multipart part for requests and responses.
@@ -37,14 +36,13 @@ public class MultipartPart {
     /**
      * Creates a new multipart part with the provided parameters.
      *
-     * @param fieldName the field name
-     * @param fileName the file name
-     * @param contentType the content type of the part
+     * @param fieldName        the field name
+     * @param fileName         the file name
+     * @param contentType      the content type of the part
      * @param transferEncoding the transfer encoding
-     * @param value the part value
+     * @param value            the part value
      */
     public MultipartPart(String fieldName, String fileName, String contentType, String transferEncoding, Object value) {
-        // TODO: what is the value usually?
         this.fieldName = fieldName;
         this.fileName = fileName;
         this.contentType = contentType;
@@ -60,10 +58,17 @@ public class MultipartPart {
             Objects.equals(fileName, that.fileName) &&
             Objects.equals(contentType, that.contentType) &&
             Objects.equals(transferEncoding, that.transferEncoding) &&
-            Objects.deepEquals(value, that.value);
+            (
+                value.getClass().isArray() ?
+                    Arrays.equals((byte[]) value, (byte[]) that.value) :
+                    Objects.deepEquals(value, that.value)
+            );
     }
 
     @Override public int hashCode() {
-        return Objects.hash(fieldName, fileName, contentType, transferEncoding, value);
+        return Objects.hash(
+            fieldName, fileName, contentType, transferEncoding,
+            value.getClass().isArray() ? Arrays.hashCode((byte[]) value) : value
+        );
     }
 }

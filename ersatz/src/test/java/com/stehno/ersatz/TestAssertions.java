@@ -22,9 +22,9 @@ import org.hamcrest.MatcherAssert;
 import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public interface TestAssertions {
 
@@ -50,6 +50,8 @@ public interface TestAssertions {
         assertThat(instanceB, equalTo(instanceB));
         assertThat(instanceA, equalTo(instanceB));
         assertThat(instanceB, equalTo(instanceA));
+        assertThat(instanceA, not(equalTo(null)));
+        assertThat(instanceB, not(equalTo(null)));
         assertThat(instanceA.hashCode(), equalTo(instanceA.hashCode()));
         assertThat(instanceB.hashCode(), equalTo(instanceB.hashCode()));
         assertThat(instanceA.hashCode(), equalTo(instanceB.hashCode()));

@@ -15,10 +15,12 @@
  */
 package com.stehno.ersatz.encdec;
 
+import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.stehno.ersatz.TestAssertions.verifyEqualityAndHashCode;
+import static com.stehno.ersatz.cfg.ContentType.IMAGE_PNG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MultipartPartTest {
@@ -46,6 +48,14 @@ class MultipartPartTest {
         assertEquals(
             "MultipartPart(fieldName=file, fileName=file.txt, contentType=text/plain, transferEncoding=binary, value=some file)",
             multipartPart().toString()
+        );
+    }
+
+    @Test @DisplayName("equalsAndHash with bytes")
+    void equalsAndHashWithBytes(){
+        verifyEqualityAndHashCode(
+            new MultipartPart("charlie", null, IMAGE_PNG.getValue(), null, new byte[]{8, 6, 7, 5, 3, 0, 9}),
+            new MultipartPart("charlie", null, IMAGE_PNG.getValue(), null, new byte[]{8, 6, 7, 5, 3, 0, 9})
         );
     }
 }
