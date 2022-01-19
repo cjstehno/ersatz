@@ -16,24 +16,23 @@
 package com.stehno.ersatz.impl;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stehno.ersatz.ErsatzServer;
 import com.stehno.ersatz.cfg.ContentType;
 import com.stehno.ersatz.encdec.Decoders;
 import com.stehno.ersatz.encdec.DecodingContext;
 import com.stehno.ersatz.junit.ErsatzServerExtension;
 import com.stehno.ersatz.server.MockClientRequest;
-import com.stehno.ersatz.util.HttpClient;
+import com.stehno.ersatz.util.HttpClientExtension;
+import lombok.val;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -43,25 +42,25 @@ import static com.stehno.ersatz.encdec.MultipartRequestContent.multipartRequest;
 import static com.stehno.ersatz.match.MultipartRequestMatcher.multipartMatcher;
 import static com.stehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static okhttp3.RequestBody.create;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(ErsatzServerExtension.class)
+@ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
 class ErsatzRequestWithContentTest {
 
     private static final String BODY_CONTENT = "{\"label\":\"Body Content\", \"text\":\"This is some body content.\"}";
     private ErsatzRequestWithContent request;
-    private HttpClient client;
+    private HttpClientExtension.Client client;
     private ErsatzServer server;
 
     @BeforeEach void beforeEach() {
         request = new ErsatzRequestWithContent(POST, equalTo("/posting"));
-        client = new HttpClient();
     }
 
-    @Test @DisplayName("boty with content-type")
+    @Test @DisplayName("body with content-type")
     void bodyWithContentType() {
         request.body(BODY_CONTENT, TEXT_PLAIN).decoder(TEXT_PLAIN, Decoders.utf8String);
 
@@ -91,10 +90,10 @@ class ErsatzRequestWithContentTest {
             });
         });
 
-        var response = client.post(server.httpUrl("/posting"), RequestBody.create(BODY_CONTENT, MediaType.get("text/plain")));
+        var response = client.post("/posting", create(BODY_CONTENT, MediaType.get("text/plain")));
         assertEquals("accepted", response.body().string());
 
-        response = client.post(server.httpUrl("/posting"), RequestBody.create("", MediaType.get("text/plain")));
+        response = client.post("/posting", create("", MediaType.get("text/plain")));
         assertEquals(NOT_FOUND_BODY, response.body().string());
     }
 
@@ -108,16 +107,25 @@ class ErsatzRequestWithContentTest {
             });
         });
 
-        var response = client.post(server.httpUrl("/posting"), RequestBody.create(BODY_CONTENT, MediaType.get("text/plain; charset=utf-8")));
+        var response = client.post("/posting", create(BODY_CONTENT, MediaType.get("text/plain; charset=utf-8")));
         assertEquals("accepted", response.body().string());
 
-        response = client.post(server.httpUrl("/posting"), RequestBody.create(BODY_CONTENT, MediaType.get("text/html")));
+        response = client.post("/posting", create(BODY_CONTENT, MediaType.get("text/html")));
         assertEquals(NOT_FOUND_BODY, response.body().string());
     }
 
-    // TODO: replace
-/*    @Test @DisplayName("matching body with converter (builder)")
+    @Test @DisplayName("matching body with converter (builder)")
     void matchingBodyWithConverter() throws IOException {
+        // this is also an example of how you can implement a JSON decoder
+        final BiFunction<byte[], DecodingContext, Object> parseJson = (content, ctx) -> {
+            try {
+                return new ObjectMapper().readValue(content != null ? content : "{}".getBytes(UTF_8), Map.class);
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e.getMessage());
+            }
+        };
+
+        val contentType = "some/json; charset=utf-8";
         server.expectations(e -> {
             e.POST("/posting", req -> {
                 req.body(
@@ -125,21 +133,19 @@ class ErsatzRequestWithContentTest {
                         "label", "Body Content",
                         "text", "This is some body content."
                     ),
-                    "some/json; charset=utf-8"
+                    contentType
                 );
-                req.decoder(new ContentType("some/json; charset=utf-8"), parseJson);
+                req.decoder(new ContentType(contentType), parseJson);
                 req.responds().body("accepted");
             });
         });
 
-        var response = client.post(server.httpUrl("/posting"), RequestBody.create(BODY_CONTENT, MediaType.get("some/json; charset=utf-8")));
+        var response = client.post("/posting", create(BODY_CONTENT, MediaType.get(contentType)));
         assertEquals("accepted", response.body().string());
 
-        response = client.post(server.httpUrl("/posting"), RequestBody.create(BODY_CONTENT, MediaType.get("text/html")));
+        response = client.post("/posting", create(BODY_CONTENT, MediaType.get("text/html")));
         assertEquals(NOT_FOUND_BODY, response.body().string());
-    }*/
-
-//    private static final BiFunction<byte[], DecodingContext, Object> parseJson = (content, ctx) -> new JsonSlurper().parse(content != null ? content : "{}".getBytes(UTF_8));
+    }
 
     @Test @DisplayName("application/x-www-form-urlencoded")
     void applicationFormEncoded() throws IOException {
@@ -158,7 +164,7 @@ class ErsatzRequestWithContentTest {
             });
         });
 
-        var response = client.post(server.httpUrl("/form"), RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"), "alpha=some+data&bravo=42&charlie=last"));
+        var response = client.post("/form", create(MediaType.parse("application/x-www-form-urlencoded"), "alpha=some+data&bravo=42&charlie=last"));
         assertEquals("ok", response.body().string());
     }
 
@@ -180,14 +186,17 @@ class ErsatzRequestWithContentTest {
 
         final var bodyBuilder = new MultipartBody.Builder()
             .addFormDataPart("something", "interesting")
-            .addFormDataPart("infoFile", "info.txt", RequestBody.create(MediaType.parse("text/plain"), "This is some interesting file content."))
-            .addFormDataPart("dataFile", "data.bin", RequestBody.create(MediaType.parse("image/png"), new byte[]{8, 6, 7, 5, 3, 0, 9}));
+            .addFormDataPart("infoFile", "info.txt", create(MediaType.parse("text/plain"), "This is some interesting file content."))
+            .addFormDataPart("dataFile", "data.bin", create(MediaType.parse("image/png"), new byte[]{8, 6, 7, 5, 3, 0, 9}));
 
-        final var response = client.post(Map.of("Content-Type", "multipart/form-data"), server.httpUrl("/upload"), bodyBuilder.build());
+        val response = client.post(
+            "/upload",
+            builder -> builder.header("Content-Type", "multipart/form-data"),
+            bodyBuilder.build()
+        );
         assertEquals("ok", response.body().string());
     }
 
-    @Disabled("FIXME: seems to be an issue with the multipart matcher")
     @Test @DisplayName("multipart/form-data using matcher object")
     void multipartUsingMatcher() throws IOException {
         server.expectations(e -> {
@@ -206,10 +215,14 @@ class ErsatzRequestWithContentTest {
 
         final var bodyBuilder = new MultipartBody.Builder()
             .addFormDataPart("something", "interesting")
-            .addFormDataPart("infoFile", "info.txt", RequestBody.create(MediaType.parse("text/plain"), "This is some interesting file content."))
-            .addFormDataPart("dataFile", "data.bin", RequestBody.create(MediaType.parse("image/png"), new byte[]{8, 6, 7, 5, 3, 0, 9}));
+            .addFormDataPart("infoFile", "info.txt", create(MediaType.parse("text/plain"), "This is some interesting file content."))
+            .addFormDataPart("dataFile", "data.bin", create(MediaType.parse("image/png"), new byte[]{8, 6, 7, 5, 3, 0, 9}));
 
-        final var response = client.post(Map.of("Content-Type", "multipart/form-data"), server.httpUrl("/upload"), bodyBuilder.build());
+        val response = client.post(
+            "/upload",
+            builder -> builder.header("Content-Type", "multipart/form-data"),
+            bodyBuilder.build()
+        );
         assertEquals("ok", response.body().string());
     }
 }

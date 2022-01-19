@@ -21,8 +21,11 @@ import com.stehno.ersatz.encdec.ResponseEncoders;
 import com.stehno.ersatz.junit.ErsatzServerExtension;
 import com.stehno.ersatz.server.ClientRequest;
 import com.stehno.ersatz.server.MockClientRequest;
-import com.stehno.ersatz.util.HttpClient;
-import org.junit.jupiter.api.*;
+import com.stehno.ersatz.util.HttpClientExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -45,16 +48,15 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@ExtendWith(ErsatzServerExtension.class)
+@ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
 class ErsatzRequestTest {
 
     private static final String STRING_CONTENT = "Some content";
     private ErsatzServer server;
-    private HttpClient http;
+    private HttpClientExtension.Client client;
     private ErsatzRequest request;
 
     @BeforeEach void beforeEach() {
-        http = new HttpClient();
         request = new ErsatzRequest(POST, equalTo("/testing"), new ResponseEncoders());
     }
 
@@ -326,7 +328,7 @@ class ErsatzRequestTest {
             e.GET("/blah").responds().body(new Object());
         });
 
-        final var response = http.get(server.httpUrl("/test"));
+        final var response = client.get("/test");
         assertEquals(NOT_FOUND_BODY, response.body().string());
     }
 
@@ -336,10 +338,10 @@ class ErsatzRequestTest {
             e.GET("/test").header("one", "blah").responds().body(STRING_CONTENT);
         });
 
-        var response = http.get(Map.of("one", "blah"), server.httpUrl("/test"));
+        var response = client.get("/test", builder -> builder.header("one", "blah"));
         assertEquals(STRING_CONTENT, response.body().string());
 
-        response = http.get(server.httpUrl("/test"));
+        response = client.get("/test");
 
         assertEquals(NOT_FOUND_BODY, response.body().string());
     }
@@ -356,21 +358,19 @@ class ErsatzRequestTest {
             });
         });
 
-        var response = http.get(
-            Map.of(
-                "alpha", "one",
-                "bravo", "two"
-            ),
-            server.httpUrl("/test")
+        var response = client.get(
+            "/test",
+            builder -> {
+                builder.header("alpha", "one");
+                builder.header("bravo", "two");
+            }
         );
 
         assertEquals(STRING_CONTENT, response.body().string());
 
-        response = http.get(
-            Map.of(
-                "alpha", "one"
-            ),
-            server.httpUrl("/test")
+        response = client.get(
+            "/test",
+            builder -> builder.header("alpha", "one")
         );
 
         assertEquals(NOT_FOUND_BODY, response.body().string());
@@ -382,10 +382,10 @@ class ErsatzRequestTest {
             e.GET("/testing").query("alpha", "blah").responds().body(STRING_CONTENT);
         });
 
-        var response = http.get(server.httpUrl("/testing?alpha=blah"));
+        var response = client.get("/testing?alpha=blah");
         assertEquals(STRING_CONTENT, response.body().string());
 
-        response = http.get(server.httpUrl("/testing"));
+        response = client.get("/testing");
         assertEquals(NOT_FOUND_BODY, response.body().string());
     }
 
@@ -401,10 +401,10 @@ class ErsatzRequestTest {
             });
         });
 
-        var response = http.get(server.httpUrl("/testing?alpha=one&bravo=two&bravo=three"));
+        var response = client.get("/testing?alpha=one&bravo=two&bravo=three");
         assertEquals(STRING_CONTENT, response.body().string());
 
-        response = http.get(server.httpUrl("/testing"));
+        response = client.get("/testing");
         assertEquals(NOT_FOUND_BODY, response.body().string());
     }
 
@@ -417,13 +417,13 @@ class ErsatzRequestTest {
             });
         });
 
-        var response = http.get(
-            Map.of("Cookie", "flavor=chocolate-chip"),
-            server.httpUrl("/test")
+        var response = client.get(
+            "/test",
+            builder -> builder.header("Cookie", "flavor=chocolate-chip")
         );
         assertEquals(STRING_CONTENT, response.body().string());
 
-        response = http.get(server.httpUrl("/test"));
+        response = client.get("/test");
         assertEquals(NOT_FOUND_BODY, response.body().string());
     }
 
@@ -438,13 +438,13 @@ class ErsatzRequestTest {
             });
         });
 
-        var response = http.get(
-            Map.of("Cookie", "flavor=chocolate-chip"),
-            server.httpUrl("/test")
+        var response = client.get(
+            "/test",
+            builder -> builder.header("Cookie", "flavor=chocolate-chip")
         );
         assertEquals(STRING_CONTENT, response.body().string());
 
-        response = http.get(server.httpUrl("/test"));
+        response = client.get("/test");
         assertEquals(NOT_FOUND_BODY, response.body().string());
     }
 
@@ -461,10 +461,10 @@ class ErsatzRequestTest {
             });
         });
 
-        var response = http.get(server.httpUrl("/testing?alpha=123"));
+        var response = client.get("/testing?alpha=123");
         assertEquals(STRING_CONTENT, response.body().string());
 
-        response = http.get(server.httpUrl("/testing"));
+        response = client.get("/testing");
         assertEquals(NOT_FOUND_BODY, response.body().string());
     }
 

@@ -26,6 +26,4 @@ class BasicAuthTest {
         val header = BasicAuth.header("Aladdin", "open sesame");
         assertEquals("Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==", header);
     }
-
-    // FIXME: test digest
 }

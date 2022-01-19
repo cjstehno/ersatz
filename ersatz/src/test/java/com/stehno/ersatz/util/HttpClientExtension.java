@@ -35,11 +35,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static com.stehno.ersatz.util.BasicAuth.AUTHORIZATION_HEADER;
 import static com.stehno.ersatz.util.BasicAuth.header;
 import static java.util.Arrays.stream;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 // FIXME: document
 // FIXME: consider making this a separate library (?)
@@ -102,6 +104,20 @@ public class HttpClientExtension implements BeforeEachCallback {
 
         public Response get(final String path) throws IOException {
             return get(path, null, false);
+        }
+
+        public CompletableFuture<Response> aget(final String path, final Consumer<Request.Builder> config, final boolean https) {
+            return supplyAsync(() -> {
+                try {
+                    return get(path, config, https);
+                } catch (IOException io) {
+                    throw new IllegalArgumentException(io.getMessage());
+                }
+            });
+        }
+
+        public CompletableFuture<Response> aget(final String path) {
+            return aget(path, null, false);
         }
 
         public Response head(final String path, final Consumer<Request.Builder> config, final boolean https) throws IOException {

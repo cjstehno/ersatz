@@ -1,28 +1,22 @@
 package com.stehno.ersatz
 
-
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
+import com.stehno.ersatz.junit.ErsatzServerExtension
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
 import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
 import static com.stehno.ersatz.match.ErsatzMatchers.stringIterableMatcher
 import static org.hamcrest.CoreMatchers.containsStringIgnoringCase
 
-//@ExtendWith(ErsatzServerExtension) FIXME: issues with reflection
+@ExtendWith(ErsatzServerExtension)
 class GroovyTest {
+
+    // FIXME: test the whole DSL
 
     private GroovyErsatzServer server
 
-    @BeforeEach void beforeEach() {
-        server = new GroovyErsatzServer()
-    }
-
-    @AfterEach void afterEach() {
-        server.close()
-    }
-
-    @Test void testing() {
+    @Test
+    void testing() {
         server.expectations {
             GET('/foo') {
                 query 'name', stringIterableMatcher([containsStringIgnoringCase('groovy')])

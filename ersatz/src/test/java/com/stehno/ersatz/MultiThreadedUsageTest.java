@@ -15,11 +15,11 @@
  */
 package com.stehno.ersatz;
 
-import com.stehno.ersatz.util.HttpClient;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import com.stehno.ersatz.junit.ErsatzServerExtension;
+import com.stehno.ersatz.util.HttpClientExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,19 +28,11 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
 class MultiThreadedUsageTest {
 
     private final ErsatzServer server = new ErsatzServer();
-    private HttpClient client;
-
-    @BeforeEach void beforeEach() {
-        server.clearExpectations();
-        client = new HttpClient();
-    }
-
-    @AfterEach void afterEach() {
-        server.close();
-    }
+    @SuppressWarnings("unused") private HttpClientExtension.Client client;
 
     @Test @DisplayName("Multiple concurrent calls") void multipleConcurrent() {
         final int requestCount = 8;
@@ -51,7 +43,7 @@ class MultiThreadedUsageTest {
         final var responses = new CopyOnWriteArrayList<Integer>();
 
         for (int r = 0; r < requestCount; r++) {
-            client.getAsync(server.httpUrl("/something"))
+            client.aget("/something")
                 .thenAccept(res -> responses.add(res.code()));
         }
 
@@ -77,7 +69,7 @@ class MultiThreadedUsageTest {
         final var responses = new CopyOnWriteArrayList<Integer>();
 
         for (int r = 0; r < requestCount; r++) {
-            client.getAsync(server.httpUrl("/something"))
+            client.aget("/something")
                 .thenAccept(res -> responses.add(res.code()));
         }
 

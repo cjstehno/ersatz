@@ -16,7 +16,7 @@
 package com.stehno.ersatz;
 
 import com.stehno.ersatz.junit.ErsatzServerExtension;
-import com.stehno.ersatz.util.HttpClient;
+import com.stehno.ersatz.util.HttpClientExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,15 +28,13 @@ import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(ErsatzServerExtension.class)
+@ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
 class ReusedServerTest {
 
-    private ErsatzServer ersatzServer;
-    private HttpClient client;
+    @SuppressWarnings("unused") private ErsatzServer ersatzServer;
+    @SuppressWarnings("unused") private HttpClientExtension.Client client;
 
     @BeforeEach void beforeEach() {
-        client = new HttpClient();
-
         ersatzServer.expectations(e -> {
             e.GET("/alpha").called(1).responds().body("alpha-response", TEXT_PLAIN);
             e.GET("/bravo").called(2).responds().body("bravo-response", TEXT_PLAIN);
@@ -85,6 +83,6 @@ class ReusedServerTest {
     }
 
     private String request(final String path) throws IOException {
-        return client.get(ersatzServer.httpUrl(path)).body().string();
+        return client.get(path).body().string();
     }
 }

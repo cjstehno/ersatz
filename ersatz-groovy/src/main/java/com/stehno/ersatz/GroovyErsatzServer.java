@@ -23,9 +23,14 @@ import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
-// FIXME: note - really only provides the constructor (any way around)?
+/**
+ * A Groovy extension to the core ErsatzServer library, providing a more Groovy-friendly DSL interface.
+ */
 public class GroovyErsatzServer extends ErsatzServer {
 
+    /**
+     * Creates a new Groovy Ersatz server with no specific configuration.
+     */
     public GroovyErsatzServer() {
         super();
     }

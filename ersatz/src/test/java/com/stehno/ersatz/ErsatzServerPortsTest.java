@@ -16,8 +16,7 @@
 package com.stehno.ersatz;
 
 import com.stehno.ersatz.junit.ErsatzServerExtension;
-import com.stehno.ersatz.util.HttpClient;
-import org.junit.jupiter.api.BeforeEach;
+import com.stehno.ersatz.util.HttpClientExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,26 +26,22 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ExtendWith(ErsatzServerExtension.class)
+@ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
 class ErsatzServerPortsTest {
 
     // NOTE: if this test starts failing for odd reasons, add some logic to ensure port is available
 
-    private HttpClient http;
     private ErsatzServer ersatz = new ErsatzServer(c -> {
         c.httpPort(8675);
         c.expectations(e -> e.GET("/hi").responds().code(200));
     });
-
-    @BeforeEach void beforeEach() {
-        http = new HttpClient();
-    }
+    @SuppressWarnings("unused") private HttpClientExtension.Client client;
 
     @Test @DisplayName("running with explicit port")
     void explicitPort() throws IOException {
         assertNotNull(ersatz.start());
 
-        assertEquals(200, http.get(ersatz.httpUrl("/hi")).code());
+        assertEquals(200, client.get("/hi").code());
         assertEquals(8675, ersatz.getHttpPort());
     }
 }
