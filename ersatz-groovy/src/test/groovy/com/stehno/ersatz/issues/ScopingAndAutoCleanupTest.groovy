@@ -17,15 +17,19 @@ package com.stehno.ersatz.issues
 
 import com.stehno.ersatz.GroovyErsatzServer
 import com.stehno.ersatz.junit.ErsatzServerExtension
-import com.stehno.ersatz.test.Http
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+
 import static com.stehno.ersatz.cfg.ContentType.TEXT_PLAIN
 import static com.stehno.ersatz.encdec.Decoders.utf8String
-import static java.net.http.HttpRequest.BodyPublishers.ofString
+import static java.net.http.HttpRequest.newBuilder
+import static java.net.http.HttpResponse.BodyHandlers.ofString
 import static java.nio.charset.StandardCharsets.UTF_8
 import static org.junit.jupiter.api.Assertions.assertEquals
 import static org.junit.jupiter.api.Assertions.assertTrue
@@ -43,13 +47,15 @@ class ScopingAndAutoCleanupTest {
     private static final String INPUT_CONTENT = 'input'
     private static final String OUTPUT_CONTENT = 'output'
     private GroovyErsatzServer server
-    private Http http
+    private HttpClient http
 
-    @BeforeEach void beforeEach() {
-        http = new Http(server)
+    @BeforeEach
+    void beforeEach() {
+        http = HttpClient.newHttpClient()
     }
 
-    @Test @DisplayName('Posting One')
+    @Test
+    @DisplayName('Posting One')
     void postingOne() {
         server.expectations {
             POST('/posting') {
@@ -62,13 +68,14 @@ class ScopingAndAutoCleanupTest {
             }
         }
 
-        def response = http.POST('Content-Type': TEXT_PLAIN.value, '/posting', ofString(INPUT_CONTENT, UTF_8))
+        def response = doPost('Content-Type': TEXT_PLAIN.value, '/posting', HttpRequest.BodyPublishers.ofString(INPUT_CONTENT, UTF_8))
 
         assertEquals OUTPUT_CONTENT, response.body()
         assertTrue server.verify()
     }
 
-    @Test @DisplayName('Posting Two')
+    @Test
+    @DisplayName('Posting Two')
     void postingTwo() {
         String inputContent = INPUT_CONTENT
         String outputContent = OUTPUT_CONTENT
@@ -84,22 +91,35 @@ class ScopingAndAutoCleanupTest {
             }
         }
 
-        def response = http.POST('Content-Type': TEXT_PLAIN.value, '/posting', ofString(INPUT_CONTENT, UTF_8))
+        def response = doPost('Content-Type': TEXT_PLAIN.value, '/posting', HttpRequest.BodyPublishers.ofString(INPUT_CONTENT, UTF_8))
 
         assertEquals OUTPUT_CONTENT, response.body()
         assertTrue server.verify()
     }
 
-    @Test @DisplayName('Posting Three')
+    @Test
+    @DisplayName('Posting Three')
     void postingThree() {
         server.expectations {
             POST('/posting').body(INPUT_CONTENT, TEXT_PLAIN).decoder(TEXT_PLAIN, utf8String).called(1)
-                .responds().body(OUTPUT_CONTENT, TEXT_PLAIN)
+                    .responds().body(OUTPUT_CONTENT, TEXT_PLAIN)
         }
 
-        def response = http.POST('Content-Type': TEXT_PLAIN.value, '/posting', ofString(INPUT_CONTENT, UTF_8))
+        def response = doPost('Content-Type': TEXT_PLAIN.value, '/posting', HttpRequest.BodyPublishers.ofString(INPUT_CONTENT, UTF_8))
 
         assertEquals OUTPUT_CONTENT, response.body()
         assertTrue server.verify()
+    }
+
+    private <T> HttpResponse<T> doPost(final Map<String, String> headers = [:], final String path, final HttpRequest.BodyPublisher requestBody) {
+        def request = newBuilder().POST(requestBody).uri(new URI(server.httpUrl(path)))
+        return http.send(applyHeaders(request, headers).build(), ofString()) as HttpResponse<T>
+    }
+
+    private static HttpRequest.Builder applyHeaders(final HttpRequest.Builder request, final Map<String, String> headers) {
+        headers?.forEach { n, v ->
+            request.header(n, v)
+        }
+        request
     }
 }

@@ -43,8 +43,10 @@ import static com.stehno.ersatz.util.BasicAuth.header;
 import static java.util.Arrays.stream;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
-// FIXME: document
-// FIXME: consider making this a separate library (?)
+/**
+ * JUnit 5 Extension which provides a reusable HTTP client wrapper around a configured OkHttp client. This extension
+ * requires the ErsatzServerExtension configured to provide the server link.
+ */
 public class HttpClientExtension implements BeforeEachCallback {
 
     @Override public void beforeEach(final ExtensionContext context) throws Exception {
@@ -71,6 +73,9 @@ public class HttpClientExtension implements BeforeEachCallback {
         return field;
     }
 
+    /**
+     * The HTTP client wrapper used by the HttpClientExtension. It may be used outside the extension.
+     */
     public static class Client {
 
         private final String httpUrl;

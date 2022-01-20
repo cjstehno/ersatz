@@ -17,6 +17,7 @@ package com.stehno.ersatz.expectations;
 
 import com.stehno.ersatz.ErsatzServer;
 import com.stehno.ersatz.InMemoryCookieJar;
+import com.stehno.ersatz.cfg.HttpMethod;
 import com.stehno.ersatz.encdec.Encoders;
 import com.stehno.ersatz.encdec.ErsatzMultipartResponseContent;
 import com.stehno.ersatz.junit.ErsatzServerExtension;
@@ -49,6 +50,7 @@ import java.net.Proxy;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import static com.stehno.ersatz.TestAssertions.*;
@@ -577,8 +579,31 @@ public class ErsatzServerGetExpectationsTest {
         verify(server);
     }
 
-    // FIXME: write a test for the listener functionality in here
-    // FIXME: add a test of verify with timeout (long running request?)
+    @ParameterizedTest(name = "[{index}] Request matches but no response: https({0})")
+    @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttpsWithContent")
+    void withListener(final boolean https, final String responseContent) throws IOException {
+        val counter = new AtomicInteger(0);
+
+        server.expectations(expect -> {
+            expect.GET("/ears", req -> {
+                req.secure(https);
+                req.called(1);
+                req.listener(cr -> {
+                    assertEquals("/ears", cr.getPath());
+                    assertEquals(HttpMethod.GET, cr.getMethod());
+                    counter.incrementAndGet();
+                });
+                req.responds().body(responseContent, TEXT_PLAIN);
+            });
+        });
+
+        val response = client.get("/ears", https);
+        assertOkWithString(responseContent, response);
+
+        assertEquals(1, counter.get());
+
+        verify(server);
+    }
 
     @ParameterizedTest(name = "[{index}] Request matches but no response: https({0})")
     @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttps")
