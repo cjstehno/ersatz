@@ -26,7 +26,7 @@ ServerConfig encoder(String contentType, Class objectType, Function<Object, byte
 The `contentType` is the response content type to be encoded and the `objectType` is the type of configuration object to be encoded - this allows for
 the same content-type to have different encoders for different configuration object types.
 
-A simple example of an encoder would be the default JSON encoder (provided in the `com.stehno.ersatz.encdec.Encoders` class):
+A simple example of an encoder would be the default JSON encoder (provided in the `io.github.cjstehno.ersatz.encdec.Encoders` class):
 
 [source,groovy]
 ----
@@ -456,7 +456,7 @@ This allows for additional flexibility in configuring expectations.
 
 ==== Matching Cookies
 
-There are four methods for matching cookies associated with a request (found in the `com.stehno.ersatz.cfg.Request` interface):
+There are four methods for matching cookies associated with a request (found in the `io.github.cjstehno.ersatz.cfg.Request` interface):
 
 ===== By Name and Matcher
 
@@ -475,7 +475,7 @@ server.expectations {
 }
 ----
 
-The Hamcrest matcher used may be a custom `Matcher` implementation, or the provided `com.stehno.ersatz.match.CookieMatcher`.
+The Hamcrest matcher used may be a custom `Matcher` implementation, or the provided `io.github.cjstehno.ersatz.match.CookieMatcher`.
 
 ===== By Name and Value
 
@@ -527,8 +527,8 @@ server.expectations {
 
 ==== Overall Matcher
 
-The `cookies(Matcher<Map<String,Cookie>)` method is used to specify a `Matcher` for the map of cookie names to `com.stehno.ersatz.cfg.Cookie` objects. The
-matcher may be any custom matcher, or the `com.stehno.ersatz.match.NoCookiesMatcher` may be used to match for the case where no cookies should be defined
+The `cookies(Matcher<Map<String,Cookie>)` method is used to specify a `Matcher` for the map of cookie names to `io.github.cjstehno.ersatz.cfg.Cookie` objects. The
+matcher may be any custom matcher, or the `io.github.cjstehno.ersatz.match.NoCookiesMatcher` may be used to match for the case where no cookies should be defined
 in the request:
 
 [source,groovy]
@@ -688,7 +688,7 @@ the unit tests).
 
 == Proxy Server
 
-Starting in v1.6.1 a standalone proxy server was available. The `com.stehno.ersatz.ErsatzProxy` is useful for testing proxied HTTP connections.
+Starting in v1.6.1 a standalone proxy server was available. The `io.github.cjstehno.ersatz.ErsatzProxy` is useful for testing proxied HTTP connections.
 The proxy server has a similar configuration to the `ErsatzServer` and allows limited expectation configuration; it is expected that more detailed
 expectation configuration will be done on a standard `ErsatzServer` instance at the other end of the proxy.
 
@@ -746,12 +746,12 @@ The embedded version of Undertow used by Ersatz has caused issues with some serv
 If you run into errors using the standard jar distribution, please try using the `safe` distribution, which is a shadowed jar which includes the
 Undertow library and its JBoss dependencies repackaged in the jar. You can use this version with the following coordinates:
 
-    testCompile 'com.stehno.ersatz:ersatz:2.0.0:safe@jar'
+    testCompile 'io.github.cjstehno.ersatz:ersatz:2.0.0:safe@jar'
 
 For a Maven `pom.xml` entry, this would be:
 
     <dependency>
-        <groupId>com.stehno.ersatz</groupId>
+        <groupId>io.github.cjstehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
         <version>2.0.0</version>
         <type>jar</type>
@@ -795,9 +795,9 @@ You can setup an expectation for a file upload POST using the `multipart` suppor
 
 [source,groovy]
 ----
-import com.stehno.erstaz.ErsatzServer
-import com.stehno.ersatz.MultipartRequestContent
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import io.github.cjstehno.erstaz.ErsatzServer
+import io.github.cjstehno.ersatz.MultipartRequestContent
+import static io.github.cjstehno.ersatz.ContentType.TEXT_PLAIN
 
 def ersatz = new ErsatzServer({
     encoder TEXT_PLAIN, File, Encoders.text
@@ -830,8 +830,8 @@ Setting up an expectation for a GET request to respond with a file to download c
 
 [source,groovy]
 ----
-import com.stehno.erstaz.ErsatzServer
-import static com.stehno.ersatz.ContentType.TEXT_PLAIN
+import io.github.cjstehno.erstaz.ErsatzServer
+import static io.github.cjstehno.ersatz.ContentType.TEXT_PLAIN
 
 def ersatz = new ErsatzServer({
     encoder TEXT_PLAIN, File, Encoders.text
@@ -879,8 +879,8 @@ a summary is provided below:
 
 [source,groovy]
 ----
-import com.stehno.ersatz.encdec.DecodingContext
-import com.stehno.ersatz.ErsatzServer
+import io.github.cjstehno.ersatz.encdec.DecodingContext
+import io.github.cjstehno.ersatz.ErsatzServer
 import okhttp3.MediaType
 import okhttp3.Response
 import spock.lang.AutoCleanup
@@ -888,9 +888,9 @@ import spock.lang.Specification
 
 import javax.xml.parsers.DocumentBuilderFactory
 
-import static com.stehno.ersatz.encdec.ContentType.TEXT_XML
-import static com.stehno.ersatz.encdec.Decoders.utf8String
-import static com.stehno.ersatz.encdec.Encoders.text
+import static io.github.cjstehno.ersatz.encdec.ContentType.TEXT_XML
+import static io.github.cjstehno.ersatz.encdec.Decoders.utf8String
+import static io.github.cjstehno.ersatz.encdec.Encoders.text
 import static okhttp3.RequestBody.create
 import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.xml.HasXPath.hasXPath
