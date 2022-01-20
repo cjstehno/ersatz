@@ -29,12 +29,12 @@ responses and/or error conditions without having to write a lot of boiler-plate 
 
 Ersatz is built using Gradle:
 
-    ./gradlew clean build
+    ./gradlew clean build shadowJar
     
 ## License
 
 ```
-Copyright (C) 2020 Christopher J. Stehno
+Copyright (C) 2022 Christopher J. Stehno
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
