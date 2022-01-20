@@ -79,7 +79,7 @@ class ErsatzHttpHandler implements HttpHandler {
                     log.warn(report.render());
 
                     if (reportToConsole) {
-                        System.out.println(report);
+                        System.out.println(report.render());
                     }
 
                     exchange.setStatusCode(404).getResponseSender().send(UnderlyingServer.NOT_FOUND_BODY);

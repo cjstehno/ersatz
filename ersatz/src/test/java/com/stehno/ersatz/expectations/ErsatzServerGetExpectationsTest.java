@@ -661,28 +661,6 @@ public class ErsatzServerGetExpectationsTest {
         verify(server);
     }
 
-    @ParameterizedTest(name = "[{index}] Deflate supported: https({0}) -> {1}")
-    @MethodSource("com.stehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void deflateSupported(final boolean https, final String responseText) throws IOException {
-        server.expectations(expect -> {
-            expect.GET("/gzip").secure(https).called(1).header("Accept-Encoding", "deflate")
-                .responds().body(responseText, TEXT_PLAIN);
-        });
-
-        val response = client.get(
-            "/gzip",
-            builder -> {
-                builder.header("Accept-Encoding", "deflate");
-            },
-            https
-        );
-
-        assertEquals(200, response.code());
-        assertTrue(response.networkResponse().headers("Content-Encoding").contains("deflate"));
-        assertNotEquals(responseText, response.body().string()); // TODO: verify that this is correct behavior
-        verify(server);
-    }
-
     @RequiredArgsConstructor
     private static class ResponseDownloadContent implements UploadContext {
 

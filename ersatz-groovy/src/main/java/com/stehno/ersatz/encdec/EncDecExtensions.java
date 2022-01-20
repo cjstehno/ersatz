@@ -21,9 +21,10 @@ import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
+/**
+ * Groovy extensions for the encoder and decoder functionality.
+ */
 public class EncDecExtensions {
-
-    // FIXME: test these
 
     /**
      * Used to configure a request cookie with a configuration closure.
@@ -38,6 +39,12 @@ public class EncDecExtensions {
         return Cookie.cookie(ConsumerWithDelegate.create(closure));
     }
 
+    /**
+     * Creates a response encoder container configured by the provided closure.
+     *
+     * @param closure the configuration closure
+     * @return the configured response encoders
+     */
     public static ResponseEncoders encoders(
         final ResponseEncoders type,
         @DelegatesTo(value = ResponseEncoders.class, strategy = DELEGATE_FIRST) Closure closure
@@ -45,6 +52,12 @@ public class EncDecExtensions {
         return ResponseEncoders.encoders(ConsumerWithDelegate.create(closure));
     }
 
+    /**
+     * Creates a request decoder container configured by the provided closure.
+     *
+     * @param closure the configuration closure
+     * @return the configured request decoders
+     */
     public static RequestDecoders decoders(
         final RequestDecoders type,
         @DelegatesTo(value = RequestDecoders.class, strategy = DELEGATE_FIRST) Closure closure

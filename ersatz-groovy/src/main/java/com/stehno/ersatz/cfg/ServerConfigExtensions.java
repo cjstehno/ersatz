@@ -21,9 +21,10 @@ import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
+/**
+ * Groovy extensions to the Ersatz server configuration providing Groovy DSL behavior.
+ */
 public class ServerConfigExtensions {
-
-    // FIXME: test these
 
     /**
      * Used to configure HTTP expectations on the server; the provided Groovy <code>Closure</code> will delegate to an <code>Expectations</code>

@@ -11,8 +11,6 @@ import static org.hamcrest.CoreMatchers.containsStringIgnoringCase
 @ExtendWith(ErsatzServerExtension)
 class GroovyTest {
 
-    // FIXME: test the whole DSL
-
     private GroovyErsatzServer server
 
     @Test

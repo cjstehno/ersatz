@@ -21,6 +21,9 @@ import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
+/**
+ * Groovy extensions to the ersatz Hamcrest matchers providing Groovy DSL features.
+ */
 public class MatchExtensions {
 
     /**

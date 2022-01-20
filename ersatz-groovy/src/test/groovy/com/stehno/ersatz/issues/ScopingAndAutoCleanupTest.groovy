@@ -17,6 +17,7 @@ package com.stehno.ersatz.issues
 
 import com.stehno.ersatz.GroovyErsatzServer
 import com.stehno.ersatz.junit.ErsatzServerExtension
+import com.stehno.ersatz.test.Http
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -47,11 +48,11 @@ class ScopingAndAutoCleanupTest {
     private static final String INPUT_CONTENT = 'input'
     private static final String OUTPUT_CONTENT = 'output'
     private GroovyErsatzServer server
-    private HttpClient http
+    private Http http
 
     @BeforeEach
     void beforeEach() {
-        http = HttpClient.newHttpClient()
+        http = new Http(server.getHttpUrl())
     }
 
     @Test
@@ -68,7 +69,7 @@ class ScopingAndAutoCleanupTest {
             }
         }
 
-        def response = doPost('Content-Type': TEXT_PLAIN.value, '/posting', HttpRequest.BodyPublishers.ofString(INPUT_CONTENT, UTF_8))
+        def response = http.post('Content-Type': TEXT_PLAIN.value, '/posting', HttpRequest.BodyPublishers.ofString(INPUT_CONTENT, UTF_8))
 
         assertEquals OUTPUT_CONTENT, response.body()
         assertTrue server.verify()
@@ -91,7 +92,7 @@ class ScopingAndAutoCleanupTest {
             }
         }
 
-        def response = doPost('Content-Type': TEXT_PLAIN.value, '/posting', HttpRequest.BodyPublishers.ofString(INPUT_CONTENT, UTF_8))
+        def response = http.post('Content-Type': TEXT_PLAIN.value, '/posting', HttpRequest.BodyPublishers.ofString(INPUT_CONTENT, UTF_8))
 
         assertEquals OUTPUT_CONTENT, response.body()
         assertTrue server.verify()
@@ -105,21 +106,9 @@ class ScopingAndAutoCleanupTest {
                     .responds().body(OUTPUT_CONTENT, TEXT_PLAIN)
         }
 
-        def response = doPost('Content-Type': TEXT_PLAIN.value, '/posting', HttpRequest.BodyPublishers.ofString(INPUT_CONTENT, UTF_8))
+        def response = http.post('Content-Type': TEXT_PLAIN.value, '/posting', HttpRequest.BodyPublishers.ofString(INPUT_CONTENT, UTF_8))
 
         assertEquals OUTPUT_CONTENT, response.body()
         assertTrue server.verify()
-    }
-
-    private <T> HttpResponse<T> doPost(final Map<String, String> headers = [:], final String path, final HttpRequest.BodyPublisher requestBody) {
-        def request = newBuilder().POST(requestBody).uri(new URI(server.httpUrl(path)))
-        return http.send(applyHeaders(request, headers).build(), ofString()) as HttpResponse<T>
-    }
-
-    private static HttpRequest.Builder applyHeaders(final HttpRequest.Builder request, final Map<String, String> headers) {
-        headers?.forEach { n, v ->
-            request.header(n, v)
-        }
-        request
     }
 }

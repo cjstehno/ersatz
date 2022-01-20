@@ -22,7 +22,6 @@ import io.undertow.Undertow;
 import io.undertow.server.handlers.BlockingHandler;
 import io.undertow.server.handlers.HttpTraceHandler;
 import io.undertow.server.handlers.encoding.ContentEncodingRepository;
-import io.undertow.server.handlers.encoding.DeflateEncodingProvider;
 import io.undertow.server.handlers.encoding.EncodingHandler;
 import io.undertow.server.handlers.encoding.GzipEncodingProvider;
 import org.slf4j.Logger;
@@ -75,9 +74,7 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
                 new HttpTraceHandler(
                     new ErsatzHttpHandler(serverConfig.getExpectations(), serverConfig.isMismatchToConsole(), serverConfig.isLogResponseContent())
                 ),
-                new ContentEncodingRepository()
-                    .addEncodingHandler("gzip", new GzipEncodingProvider(), 50)
-                    .addEncodingHandler("deflate", new DeflateEncodingProvider(), 50)
+                new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), 50)
             ));
 
             server = builder.setHandler(blockingHandler).build();

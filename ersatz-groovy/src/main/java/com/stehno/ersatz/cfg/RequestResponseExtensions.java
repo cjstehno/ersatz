@@ -25,8 +25,6 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
 
 public class RequestResponseExtensions {
 
-    // FIXME: test these
-
     /**
      * Allows for configuration of a <code>Response</code> by the given Groovy <code>Closure</code>, which will delegate to a <code>Response</code>
      * instance passed into it for configuration using the Groovy DSL.
@@ -72,7 +70,8 @@ public class RequestResponseExtensions {
      */
     public static Request ANY(
         final AnyExpectations self,
-        Matcher<String> matcher, @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        Matcher<String> matcher,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.ANY(matcher, ConsumerWithDelegate.create(closure));
     }
