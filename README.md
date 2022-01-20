@@ -6,10 +6,10 @@
 
 ## Quick Links
 
-* Site: http://stehno.com/ersatz
+* Site: https://cjstehno.github.io/ersatz
 * Project: https://github.com/cjstehno/ersatz
-* User Guide: http://stehno.com/ersatz/guide/
-* Java Docs: http://stehno.com/ersatz/javadoc/
+* User Guide: https://cjstehno.github.io/ersatz/guide/
+* Java Docs: https://cjstehno.github.io/ersatz/javadoc/
 * Twitter: [@ErsatzServer](https://twitter.com/ersatzserver)
 
 ## Introduction
@@ -19,11 +19,11 @@ flexible manner. The expectations will respond in a configured manner to request
 responses and/or error conditions without having to write a lot of boiler-plate code.
 
 > **Warning:** v2.1 has removed some unused features of the library and extracted the Groovy support into it's own 
-> extension library. See the [What's New in 2.1](http://stehno.com/ersatz/guide/#_whats_new_in_2.1) section of the User 
+> extension library. See the [What's New in 2.1](http://cjstehno.github.io/ersatz/guide/#_whats_new_in_2.1) section of the User 
 > Guide for details.
 
 > **Warning:** v2.0 is **NOT** directly backwards compatible with the 1.x codebase. See the 
-> [Migrating to 2.0](http://stehno.com/ersatz/guide/#_migrating_to_2.0) section of the User Guide for details.
+> [Migrating to 2.0](http://cjstehno.github.io/ersatz/guide/#_migrating_to_2.0) section of the User Guide for details.
 
 ## Build Instructions
 

@@ -45,7 +45,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  *     <li>Stop the server.</li>
  * </ol>
  * <p>
- * See the <a href="http://stehno.com/ersatz/asciidoc/html5/" target="_blank">User Guide</a> for more detailed information.
+ * See the <a href="http://cjstehno.github.io/ersatz/asciidoc/html5/" target="_blank">User Guide</a> for more detailed information.
  */
 public class ErsatzServer implements Closeable {
 

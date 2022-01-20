@@ -20,5 +20,5 @@ For Maven:
     </dependency>
     
 Alternately, there is a `safe` (shadowed) version of the library available, which is useful in cases where you already 
-have a version of Undertow in use (to avoid version collisions). See the [Shadow Jar](http://stehno.com/ersatz/guide/#_shadow_jar) 
+have a version of Undertow in use (to avoid version collisions). See the [Shadow Jar](http://cjstehno.github.io/ersatz/guide/#_shadow_jar) 
 section of the User Guide for more information.
