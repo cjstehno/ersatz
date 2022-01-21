@@ -8,74 +8,16 @@ v3.0.0, January 2022
 
 == Configuration
 
-=== Content Translation
-
-
-==== Encoders
-
-The Encoders are used to convert response configuration data types into the outbound request content string. They are implemented as a
-`Function<Object,byte[]>` with the input `Object` being the configuration object being converted, and the `byte[]` is the return type.
-
-The various configuration levels have the same method signature:
-
-[source,groovy]
-----
-ServerConfig encoder(String contentType, Class objectType, Function<Object, byte[]> encoder)
-----
-
-The `contentType` is the response content type to be encoded and the `objectType` is the type of configuration object to be encoded - this allows for
-the same content-type to have different encoders for different configuration object types.
-
-A simple example of an encoder would be the default JSON encoder (provided in the `io.github.cjstehno.ersatz.encdec.Encoders` class):
-
-[source,groovy]
-----
-static final Function<Object, byte[]> json = { obj -> (obj != null ? toJson(obj) : '{}').bytes }
-----
-
-You may also configure encoders as a Groovy `Closure` with the same parameters:
-
-[source,groovy]
-----
-def server = new ErsatzServer({
-    encoder('application/json',Map){ obj->
-        (bj != null ? toJson(obj) : '{}').bytes
-    }
-})
-----
-
-The two approaches are functionally equivalent.
-
-===== JSON Encoders
-
-As of 3.0.0 the built-in JSON Encoder was removed (to avoid dependency lock-in). Below are provided some simple/common implementations of them for use in your code:
-
-*Groovy.* An encoder (serializer) implemented with the Groovy `JsonObject` could be implemented as:
-
-public static final Function<Object, byte[]> json = obj -> (obj != null ? toJson(obj) : "{}").getBytes(UTF_8);
-
-[source,groovy]
-----
-encoder(ContentType.APPLICATION_JSON, MyType){ obj ->
-    JsonObject.toJson(obj).getBytes(UTF_8)
-}
-----
-
-*Jackson.* A decoder (parser) implemented using the Jackson JSON library could be implemented as:
-
-[source,java]
-----
-encoder(ContentType.APPLICATION_JSON, MyType.class, obj -> {
-    return new ObjectMapper().writeValueAsBytes(obj);
-});
-----
-
 === Expectations
 
 Request expectations are the core of the Ersatz server functionality; conceptually, they are HTTP server request routes which are used to match an
 incoming HTTP request with a request handler or to respond with a status of 404, if no matching request was configured. The expectations are
 configured on an instance of the `Expectations` interface, which provides multiple configuration methods for each of the supported HTTP request
-methods (GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, and TRACE), with the method name corresponding to the HTTP request method name. The four
+methods (GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, and TRACE), with the method name corresponding to the HTTP request method name.
+
+---
+
+The four
 general types of methods are:
 
 * One taking a `String path` returning an instance of the `Request` interface
@@ -686,59 +628,7 @@ Content-Type: image/jpeg
 which could be decoded in the same manner a multipart _request_ content (an example using the Apache File Upload multipart parser can be found in
 the unit tests).
 
-== Proxy Server
 
-Starting in v1.6.1 a standalone proxy server was available. The `io.github.cjstehno.ersatz.ErsatzProxy` is useful for testing proxied HTTP connections.
-The proxy server has a similar configuration to the `ErsatzServer` and allows limited expectation configuration; it is expected that more detailed
-expectation configuration will be done on a standard `ErsatzServer` instance at the other end of the proxy.
-
-[source,groovy]
-----
-ErsatzServer ersatzServer = new ErsatzServer({
-    expectations {
-        GET('/').called(1).responds().code(200).body('Hello', TEXT_PLAIN)
-        GET('/foo').called(1).responds().code(200).body('Foo!', TEXT_PLAIN)
-    }
-})
-
-ErsatzProxy ersatzProxy = new ErsatzProxy({
-    target ersatzServer.httpUrl
-    expectations {
-        GET('/')
-        GET('/foo')
-    }
-})
-
-String text = "${ersatzProxy.url}".toURL().text
-assert text == 'Hello'
-
-text = "${ersatzProxy.url}/foo".toURL().text
-assert text == 'Foo!'
-
-assert ersatzServer.verify()
-assert ersatzProxy.verify()
-
-ersatzProxy.stop()
-ersatzServer.stop()
-----
-
-Notice that the `ErsatzProxy` has the same lifecycle as the `ErsatzServer`: you should call the `verify()` method to ensure that the expected requests
-were proxied, and the `stop()` method must be closed once the server is no longer needed.
-
-The requests made to the proxy server are passed through to the `targetUri` and the response from that server is returned as the response from the
-proxy server.
-
-The proxy server is usable from both Java and Groovy based on the use of Groovy `Closure`s or Java `Consumer`s for configuration.
-
-Currently, the proxy server only supports HTTP endpoints (HTTPS will be supported in a future release once a bug is fixed in the underlying server).
-
-== Sightings
-
-Here are some external references and discussions about developing with Ersatz:
-
-* http://guides.grails.org/grails-mock-http-server/guide/index.html[Consume and test a third-party REST API] _(Sergio del Amo)_ - Use Ersatz, a "mock" HTTP library, for testing code dealing with HTTP requests
-* http://coffeaelectronica.com/blog/2017/rest-httpbuilder-ersatz.html[Taking a REST with HttpBulder-NG and Ersatz] _(Christopher J Stehno)_ - Building and testing a REST interface with HttpBuilder-NG and Ersatz (https://github.com/cjstehno/rest-dev[implementations] in Groovy, Java and Kotlin).
-* The https://http-builder-ng.github.io/http-builder-ng/[HttpBuilder-NG] project has extensive examples of testing with Ersatz.
 
 == Shadow Jar
 

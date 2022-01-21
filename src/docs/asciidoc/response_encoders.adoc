@@ -1,0 +1,60 @@
+== Response Encoders
+
+> MORE HERE
+
+The Encoders are used to convert response configuration data types into the outbound request content string. They are implemented as a
+`Function<Object,byte[]>` with the input `Object` being the configuration object being converted, and the `byte[]` is the return type.
+
+The various configuration levels have the same method signature:
+
+[source,groovy]
+----
+ServerConfig encoder(String contentType, Class objectType, Function<Object, byte[]> encoder)
+----
+
+The `contentType` is the response content type to be encoded and the `objectType` is the type of configuration object to be encoded - this allows for
+the same content-type to have different encoders for different configuration object types.
+
+A simple example of an encoder would be the default JSON encoder (provided in the `io.github.cjstehno.ersatz.encdec.Encoders` class):
+
+[source,groovy]
+----
+static final Function<Object, byte[]> json = { obj -> (obj != null ? toJson(obj) : '{}').bytes }
+----
+
+You may also configure encoders as a Groovy `Closure` with the same parameters:
+
+[source,groovy]
+----
+def server = new ErsatzServer({
+    encoder('application/json',Map){ obj->
+        (bj != null ? toJson(obj) : '{}').bytes
+    }
+})
+----
+
+The two approaches are functionally equivalent.
+
+===== JSON Encoders
+
+As of 3.0.0 the built-in JSON Encoder was removed (to avoid dependency lock-in). Below are provided some simple/common implementations of them for use in your code:
+
+*Groovy.* An encoder (serializer) implemented with the Groovy `JsonObject` could be implemented as:
+
+public static final Function<Object, byte[]> json = obj -> (obj != null ? toJson(obj) : "{}").getBytes(UTF_8);
+
+[source,groovy]
+----
+encoder(ContentType.APPLICATION_JSON, MyType){ obj ->
+    JsonObject.toJson(obj).getBytes(UTF_8)
+}
+----
+
+*Jackson.* A decoder (parser) implemented using the Jackson JSON library could be implemented as:
+
+[source,java]
+----
+encoder(ContentType.APPLICATION_JSON, MyType.class, obj -> {
+    return new ObjectMapper().writeValueAsBytes(obj);
+});
+----

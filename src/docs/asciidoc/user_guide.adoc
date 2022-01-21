@@ -1,0 +1,73 @@
+= Ersatz Server User Guide
+Christopher J. Stehno
+v3.0.0, January 2022
+:toc: left
+:toclevels: 4
+
+== Introduction
+
+The Ersatz Server is an HTTP client testing tool, which allows for request and response expectations to be configured in a flexible manner. The expectations will respond to each request in a configured manner allowing tests with different responses and/or error conditions without having to write a lot of boilerplate code.
+
+The "mock" server is not really a mock at all, it is an embedded Undertow HTTP server which registers the configured expectations as routes and then responds according to the configured expectation behavior. This approach may seem overly heavy; however, testing an HTTP client can involve a lot of internal state and interactions that the developer is generally unaware of (and should be) - trying to mock those interactions with a pure mocking framework will get out of hand very quickly, and Undertow starts up very quickly.
+
+Ersatz provides a balance of mock-like expectation behavior with a real HTTP interface and all of the underlying interactions in place. This allows for rich unit testing, which is what you were trying to do in the first place.
+
+Ersatz is written in Java 15 due to its use of the modern functional libraries; however, there is an extension library (ersatz-groovy) which provides a Groovy DSL and extensions to the base library.
+
+Lastly, Ersatz is developed with testing in mind. It does not favor any specific testing framework, but it does work well with both the JUnit and Spock frameworks.
+
+include::whats_new.adoc[]
+
+include::getting_started.adoc[]
+
+include::lifecycle.adoc[]
+
+include::configuration.adoc[]
+
+include::request_decoders.adoc[]
+
+include::response_encoders.adoc[]
+
+include::expectations.adoc[]
+
+== Appendices
+
+=== A. Development Philosophy
+
+As this project starts its sixth year (started in December 2016) it's doing well, but I now have less time to devote to it. I figured it would be a good time to outline my general development philosophy/strategy for the project as it moves forward.
+
+The primary goal of the 3.0 release was increased simplicity and ease of development. This is why I removed some of the more niche features in favor of keeping it more maintainable. I also removed some automated development tools (e.g. Coveralls and Travis). There is some maintenance effort involved in keeping them current, and I am a one-developer team - the information provided by these tools can easily be discovered by building the project (and will be published with the releases).
+
+Being that this is a project used in writing unit tests, I don't generally feel the need for strict backwards compatability as long as there is a simple upgrade path. That being said, if some change causes a major problem, I am not against cutting a new release with changes that make the transition easier.
+
+The audience for this project is very small and there are very few bugs and feature requests, so if that continues, I will plan on putting out a new release once a year to keep up with current JDK and dependency versions.
+
+=== B. Sightings
+
+Here are some external references and discussions about developing with Ersatz:
+
+* http://guides.grails.org/grails-mock-http-server/guide/index.html[Consume and test a third-party REST API] _(Sergio del Amo)_ - Use Ersatz, a "mock" HTTP library, for testing code dealing with HTTP requests
+* https://github.com/cjstehno/coffeaelectronica/blob/master/src/jbake/content/blog/2017/rest-httpbuilder-ersatz.adoc[Taking a REST with HttpBulder-NG and Ersatz] _(Christopher J Stehno)_ - Building and testing a REST interface with HttpBuilder-NG and Ersatz (https://github.com/cjstehno/rest-dev[implementations] in Groovy, Java and Kotlin). This is an old post from my now-dead blog, but the content is still available.
+* The https://http-builder-ng.github.io/http-builder-ng/[HttpBuilder-NG] project has extensive examples of testing with Ersatz, though it is now a dead project (and uses an old version of Ersatz).
+
+NOTE: If you see Ersatz in the wild, feel free to let me know where it is and I will add it to this list.
+
+=== C. License
+
+This project is licensed under the https://www.apache.org/licenses/LICENSE-2.0[Apache 2.0 License].
+
+----
+Copyright (C) 2022 Christopher J. Stehno
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+----

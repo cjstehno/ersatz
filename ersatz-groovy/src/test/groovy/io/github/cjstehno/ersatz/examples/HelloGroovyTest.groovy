@@ -15,7 +15,6 @@
  */
 package io.github.cjstehno.ersatz.examples
 
-
 import io.github.cjstehno.ersatz.GroovyErsatzServer
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension
 import org.junit.jupiter.api.Test

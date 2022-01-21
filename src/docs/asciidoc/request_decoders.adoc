@@ -1,0 +1,19 @@
+== Request Decoders
+
+> MORE HERE
+
+The decoders are used to convert request content bytes into a specified object type for matching in the expectations. They are implemented as a BiFunction<byte[], DecodingContext, Object>, where byte[] is the request content and the Object is the result of transforming the content. The DecodingContext is used to provide additional information about the request being decoded (e.g. content-length, content-type, character-encoding), along with a reference to the decoder chain.
+Decoders are defined at the various levels with the same method signature:
+ServerConfig decoder(String contentType, BiFunction<byte[], DecodingContext, Object> decoder)
+See the API docs for more details.
+
+JSON Decoders
+As of v3.0.0 the built-in JSON decoder was removed to avoid dependency lock-in. Below are some simple/common implementations that could be used.
+Groovy. A decoder (deserializer) implemented with the Groovy JsonSlurper would look like the following (in Groovy):
+decoder(ContentType.APPLICATION_JSON){ content, context ->
+new JsonSlurper().parse(content ?: '{}'.bytes)
+}
+Jackson. A decoder (deserializer) implemented with the Jackson ObjectMapper would be implemented as (in Java):
+decoder(ContentType.APPLICATION_JSON, (content, context) -> {
+return new ObjectMapper().readValue(content, Map.class);
+});

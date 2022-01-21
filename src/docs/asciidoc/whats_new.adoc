@@ -1,0 +1,65 @@
+== What's New
+
+=== In 3.0
+
+* Not directly backward compatible with the 2.x codebase (see migration notes below).
+* Requires Java 17+
+* Removed support for legacy JUnit -- now only 5+ is directly supported.
+* Added new option, `ServerConfig::logResponseContent()`, to enable response content rendering (disabled by default).
+* Removed Web Sockets support –- this may be re-implemented later with a more stable API if there is any interest.
+* Removed the `ErsatzProxy` component – this may be re-implemented later if there is any interest.
+* Removed built-in support for JSON encoding/decoding to remove the external dependency. See the Encoding and Decoding sections for example source for implementing your own.
+* Extracted the Groovy API into a separate library (`ersatz-groovy`) so that the main library could be implemented in Java without Groovy dependencies.
+* Added more predefined ContentType constants.
+* Added more encoders and decoders for common scenarios.
+* Updated the dependencies and fixed some exposed dependency isolation issues.
+* No longer published in Bintray (since it's dead) - now only Maven Central (thanks JFrog)
+* Removed build-in authentication support -- there is helper to implement BASIC, if needed.
+* There are more unit tests and they are organized in a more sane manner
+* Repackaged the project from `com.stehno.` -> `io.github.cjstehno.`
+* Replaced `protocol(String)` request matcher with `secure(boolean)`
+
+==== Migrating to 3.0
+
+* You will need to update your dependencies to reflect the new group name, as well as the version.
+* You will need to change the package for Ersatz classes to the new `io.github.cjstehno.` root package (replacing `com.stehno.` with `io.github.cjstehno.` should do the trick).
+* If you use the proxy or web sockets testing support, there is no upgrade path. Please create an https://github.com/cjstehno/ersatz/issues[Issue] or start a https://github.com/cjstehno/ersatz/discussions[Discussion] to show that you are interested in one or both of these features.
+* If you use Groovy for development, you will need to change your dependency references from using the `ersatz` library to use the new `ersatz-groovy` library. The same change applies if you are using the safe version of the library. You will also want to change your `ErsatzServer` uses to the `GroovyErsatzServer` to use the full Groovy DSL.
+* If you are using the legacy JUnit support helper, you will either need to implement the support class yourself (optionally using the source from the 2.x codebase), or you can submit an https://github.com/cjstehno/ersatz/issues[Issue] or start a https://github.com/cjstehno/ersatz/discussions[Discussion] to show that you are interested in one or both of these features.
+* If you are using the built-in JSON encoder or decoder, you will need to replace them with your own implementation (documentation and sample code are provided in the Decoders and Encoders sections).
+* If you are using the `protocol(String)` request matcher (with 'HTTP' or 'HTTPS') you can simply change it to the new `secure(boolean)` matcher, where 'HTTPS' is `true` and 'HTTP' is `false`.
+
+=== In 2.0
+
+* Not directly backward compatible with 1.x codebase (see migration notes below).
+* Requires Java 11+.
+* Refactored code and packaging as well as code-conversion from Groovy to Java (no loss of support for using with Groovy).
+* Removed deprecated methods.
+* Refactored the HTTP method names to be uppercase.
+* Added optional timeout for standard request verify calls.
+* Converted the underlying response content from String to byte[] (also changed response encoder API)
+* Refactored the underlying server into a more abstract integration so that it may be swapped out in the future.
+* Pulled external Closure helper API code into codebase (to avoid breaking maven-central support)
+* Refactored the JUnit support (4 and 5)
+
+==== Migrating to 2.0
+
+* Change all HTTP method names to uppercase (e.g. if you have a head('/foo') call, change it to HEAD('/foo')).
+* Replace any deprecated method usages with appropriate replacements.
+* If you use the ErsatzProxy or JUnit helper classes, you will need to change the package information.
+* Most of the DSL classes were repackaged and will require updates to the package names imported.
+
+=== In 1.9
+
+* Corrections to the closure variable scoping.
+* Support for configuring the server port - though, in general, this is not recommended.
+* Some added usage documentation
+
+=== In 1.8
+
+* Variable scope changes – the configuration Groovy DSL closures had incorrect (or inadequate) resolution strategies specified which caused variables to be resolved incorrectly in some situations. All of the closures now use DELEGATE_FIRST; however, beware this may cause some issues with existing code.
+* Deprecation of the Response::content(...) methods in favor of the new body(...) methods.
+* ANSI color codes were added to the match failure reports to make them a bit more readable.
+* A couple of helper methods were added to ErsatzServer to facilitate simple URL string building – see httpUrl(String) and httpsUrl(String).
+* A JUnit 5 Extension was added to make server management simple with JUnit 5, similar to what already existed for JUnit 4.
+* Support for "chunked" responses with fixed or random delays between chunks has been added.

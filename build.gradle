@@ -1,2 +1,79 @@
+plugins {
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'org.asciidoctor.jvm.gems' version '3.3.2'
+    id 'com.stehno.gradle.webpreview' version '0.3.0'
+}
+
 group = 'io.github.cjstehno.ersatz'
 version = '3.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+asciidoctor {
+    options doctype: 'book'
+    attributes(
+        'source-highlighter': 'rouge',
+        'coderay-linenums-mode': 'table',
+        icon: 'font',
+        linkattrs: true,
+        encoding: 'utf-8'
+    )
+}
+
+webPreview {
+    resourceDir = file('build/site')
+}
+
+task site(dependsOn: ['build', 'ersatz:javadoc', 'ersatz:jacocoTestReport', 'ersatz-groovy:javadoc', 'ersatz-groovy:jacocoTestReport',  'asciidoctor']) {
+    doLast {
+        def vars = [
+            project_version: project.version,
+            year           : Calendar.instance.get(Calendar.YEAR)
+        ]
+
+        mkdir 'build/site'
+
+        copy {
+            from 'src/site'
+            into 'build/site'
+            include '**/*.html'
+            expand vars
+        }
+
+        copy {
+            from 'src/site'
+            into 'build/site'
+            include '**/css/**'
+            include '**/js/**'
+            include '**/img/**'
+        }
+
+        // FIXME: copy over the javadoc, test-reports, coverage-reports for BOTH projects
+        // --> ./site/reports/[ersatz | ersatz-groovy]/[javadoc | jacoco | tests]
+//        copy {
+//            from 'build/reports'
+//            include '**/**'
+//            into 'build/site/reports'
+//        }
+
+        // FIXME: copy the generated userguide -> site/docs/guide/index.html
+        copy {
+            from 'build/docs'
+            include '**/**'
+            into 'build/site/docs'
+        }
+
+        copy {
+            from 'build/asciidoc/html5'
+            include '**/**'
+            into 'build/site/guide'
+        }
+    }
+}
+
+//task publishSite(type: GradleBuild, group: 'Publishing', description: 'Publishes the documentation web site.', dependsOn: ['site']) {
+//    buildFile = 'publish.gradle'
+//    tasks = ['gitPublishPush']
+//}
