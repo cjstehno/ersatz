@@ -30,6 +30,7 @@ public class EncDecExtensions {
     /**
      * Used to configure a request cookie with a configuration closure.
      *
+     * @param type the type of object being extended
      * @param closure the configuration closure
      * @return the configured cookie
      */
@@ -43,6 +44,7 @@ public class EncDecExtensions {
     /**
      * Creates a response encoder container configured by the provided closure.
      *
+     * @param type the type of object being extended
      * @param closure the configuration closure
      * @return the configured response encoders
      */
@@ -56,6 +58,7 @@ public class EncDecExtensions {
     /**
      * Creates a request decoder container configured by the provided closure.
      *
+     * @param type the type of object being extended
      * @param closure the configuration closure
      * @return the configured request decoders
      */
@@ -69,6 +72,7 @@ public class EncDecExtensions {
     /**
      * Creates and configures a multipart request object using the Groovy DSL closure (delegated to an instance of MultipartRequestContent).
      *
+     * @param type the type of object being extended
      * @param closure the configuration closure
      * @return a configured instance of MultipartRequestContent
      */
@@ -82,6 +86,7 @@ public class EncDecExtensions {
     /**
      * Creates a new multipart response content object with the optional boundary (random default) and a Closure used to configure the parts.
      *
+     * @param type the type of object being extended
      * @param closure the configuration closure (Delegates to MultipartContent instance)
      * @return a reference to this MultipartResponseContent instance
      */

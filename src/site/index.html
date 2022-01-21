@@ -36,14 +36,6 @@
             <small>View project on</small>
             GitHub</a>
     </div>
-    <div class="inner" style="margin-top: 12px;">
-        <a href='https://bintray.com/cjstehno/stehno/ersatz/_latestVersion'><img
-            src='https://api.bintray.com/packages/cjstehno/stehno/ersatz/images/download.svg'></a>
-        <a href="https://travis-ci.org/cjstehno/ersatz"><img src="https://travis-ci.org/cjstehno/ersatz.svg?branch=master" alt="Build Status"></a>
-        <a href="https://coveralls.io/github/cjstehno/ersatz?branch=master"><img
-            src="https://coveralls.io/repos/github/cjstehno/ersatz/badge.svg?branch=master" alt="Coverage Status"></a>
-
-    </div>
 </header>
 
 <div id="content-wrapper">
@@ -68,7 +60,7 @@
                 <li>Works with Java 11+</li>
                 <li>Provides an extension (see ersatz-groovy) with a Groovy configuration DSL</li>
                 <li>Works well with Kotlin</li>
-                <li>Compatible with the <a href="http://junit.org/">JUnit (4 or 5)</a> and <a href="http://spockframework.org/">Spock</a> testing
+                <li>Compatible with the <a href="http://junit.org/">JUnit 5</a> and <a href="http://spockframework.org/">Spock</a> testing
                     frameworks (and probably others).
                 </li>
                 <li>Allows configuration of expectations for requests and expected responses</li>
@@ -76,8 +68,6 @@
                 <li>Call verification to ensure that expected requests are actually called (including specific call counts).</li>
                 <li>Support for both multipart request <em>and</em> response body content.</li>
                 <li>Support for mocking HTTPS requests.</li>
-                <li>Support for BASIC and DIGEST authentication.</li>
-                <li>Request/Response compression (gzip) supported.</li>
                 <li>Support for GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, and TRACE request methods.</li>
                 <li>Ability to delay the response from the server to simulate slow connections.</li>
                 <li>Alternate distribution as a shadowed jar with many of the dependencies repackaged to avoid collisions.</li>
@@ -87,8 +77,9 @@
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Getting Started</h2>
 
-            <p>The Ersatz <a href="guide" target="_blank">User Guide</a> and <a href="docs/ersatz/javadoc" target="_blank">Java Docs</a> provide
-            detailed documentation of the features and configuration; however, a simple example of the expectation configuration would be (using
+            <p>The Ersatz <a href="docs/user_guide.html" target="_blank">User Guide</a>, <a href="ersatz/javadoc" target="_blank">Ersatz Java Docs</a>
+                and <a href="ersatz-groovy/javadoc" target="_blank">Ersatz Groovy Docs</a> provide detailed documentation
+                of the features and configuration; however, a simple example of the expectation configuration would be (using
                 Groovy):</p>
 
             <pre><code>def ersatz = new GroovyErsatzServer()
@@ -121,7 +112,7 @@ ersatz.stop()</code></pre>
 
             <p>Standard Java 11+ may also be used; the "expectations" block in the example above would look very similar in Java:</p>
 
-            <pre><code>ErsatzServer ersatz = new ErsatzServer();
+            <pre><code>var ersatz = new ErsatzServer();
 
 server.expectations(expectations -> {
     expectations.GET("/say/hello", req -> {
@@ -136,13 +127,13 @@ server.expectations(expectations -> {
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Artifacts</h2>
 
-            The Ersatz Server library is available on Bintray (JCenter) and Maven Central; it may be added to a project via Gradle dependency:
+            The Ersatz Server library is available on Maven Central; it may be added to a project via Gradle dependency:
 
-            <pre><code>testCompile 'io.github.cjstehno.ersatz:ersatz:${project_version}'</code></pre>
+            <pre><code>testImplementation 'io.github.cjstehno.ersatz:ersatz:${project_version}'</code></pre>
 
             for Java, and
 
-            <pre><code>testCompile 'io.github.cjstehno.ersatz:ersatz-groovy:${project_version}'</code></pre>
+            <pre><code>testImplementation 'io.github.cjstehno.ersatz:ersatz-groovy:${project_version}'</code></pre>
 
             for Groovy (and Java). Or, if you are using Maven:
 
@@ -164,13 +155,13 @@ server.expectations(expectations -> {
 
             There is also a "safe" (shadow jar) artifact available for situations where the Undertow server is already being used (e.g. Grails or
             Spring-Boot using Undertow as the embedded server) - see the
-            <a href="/guide/#_shadow_jar">Shadow Jar</a> section of the User Guide for more information.
+            <a href="docs/user_guide.html#_shadow_jar">Shadow Jar</a> section of the User Guide for more information.
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Documentation</h2>
 
-            <p>The best place to learn how to use the Ersatz Server is in the <a href="guide" target="_blank">User Guide</a> (especially the <a
-                href="guide/#_getting_started" target="_blank">Getting Started</a> section) or the
-                <a href="docs/ersatz/javadoc" target="_blank">Java Docs</a> and <a href="docs/ersatz-groovy/javadoc" target="_blank">Groovy Extension Docs</a>.
+            <p>The best place to learn how to use the Ersatz Server is in the <a href="docs/user_guide.html" target="_blank">User Guide</a> (especially the <a
+                href="docs/user_guide.html#_getting_started" target="_blank">Getting Started</a> section) or the
+                <a href="ersatz/javadoc" target="_blank">Java Docs</a> and <a href="ersatz-groovy/javadoc" target="_blank">Groovy Extension Docs</a>.
                 The <a href="https://github.com/cjstehno/ersatz" target="_blank">GitHub Project</a> also has useful information.
             </p>
 
@@ -189,9 +180,17 @@ server.expectations(expectations -> {
             <a href="https://github.com/cjstehno/ersatz/zipball/master" class="button"><small>Download</small> .zip file</a>
             <a href="https://github.com/cjstehno/ersatz/tarball/master" class="button"><small>Download</small> .tar.gz file</a>
 
-            <p><strong>References:</strong><br/><a href="guide" target="_blank">User Guide</a> &bull;
-                <a href="docs/ersatz/javadoc" target="_blank">Java</a> &bull;
-            <a href="docs/ersatz-groovy/javadoc" target="_blank">Groovy</a></p>
+            <p><strong>References:</strong><br/><a href="docs/user_guide.html" target="_blank">User Guide</a> &bull;
+                <a href="ersatz/javadoc" target="_blank">Java API</a> &bull;
+            <a href="ersatz-groovy/javadoc" target="_blank">Groovy API</a></p>
+
+            <p><strong>Test Reports:</strong><br/>
+                <a href="ersatz/tests" target="_blank">Java</a> &bull;
+                <a href="ersatz-groovy/tests" target="_blank">Groovy</a></p>
+
+            <p><strong>Coverage Reports:</strong><br/>
+                <a href="ersatz/jacoco" target="_blank">Java</a> &bull;
+                <a href="ersatz-groovy/jacoco" target="_blank">Groovy</a></p>
 
             <p class="repo-owner"><a href="https://github.com/cjstehno/ersatz"></a> Maintained & Developed by<br/><a
                 href="https://github.com/cjstehno">Christopher J. Stehno</a>.</p>

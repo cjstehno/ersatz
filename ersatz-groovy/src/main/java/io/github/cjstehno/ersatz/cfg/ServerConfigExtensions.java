@@ -34,6 +34,7 @@ public class ServerConfigExtensions {
      * <p>
      * If auto-start is enabled (default) the server will be started after the expectations are applied.
      *
+     * @param self the type of object being extended
      * @param closure the Groovy <code>Closure</code> which will provide expectation configuration via DSL
      * @return a reference to this server
      */

@@ -12,6 +12,7 @@ repositories {
 }
 
 asciidoctor {
+    baseDir file('src/docs/asciidoc')
     options doctype: 'book'
     attributes(
         'source-highlighter': 'rouge',
@@ -50,6 +51,58 @@ task site(dependsOn: ['build', 'ersatz:javadoc', 'ersatz:jacocoTestReport', 'ers
             include '**/img/**'
         }
 
+        /*
+            FIXME: need the following
+            ersatz/build/reports/ --> /docs/ersatz/javadoc/...
+            ersatz/build/reports/jacoco/... --> /docs/ersatz/jacoco/...
+            ersatz/build/reports/tests/... --> /docs/ersatz/tests/...
+            /docs/ersatz-groovy/javadoc/...
+            /docs/ersatz-groovy/jacoco/...
+            /docs/ersatz-groovy/tests/...
+         */
+
+        // Copy the ersatz coverage reports
+        copy {
+            from 'ersatz/build/reports/jacoco/test/html'
+            include '**/**'
+            into 'build/site/ersatz/jacoco'
+        }
+
+        // Copy the ersatz test reports
+        copy {
+            from 'ersatz/build/reports/tests/test'
+            include '**/**'
+            into 'build/site/ersatz/tests'
+        }
+
+        // Copy the ersatz javadocs
+        copy {
+            from 'ersatz/build/docs/javadoc'
+            include '**/**'
+            into 'build/site/ersatz/javadoc'
+        }
+
+        // Copy the ersatz-groovy coverage reports
+        copy {
+            from 'ersatz-groovy/build/reports/jacoco/test/html'
+            include '**/**'
+            into 'build/site/ersatz-groovy/jacoco'
+        }
+
+        // Copy the ersatz-groovy test reports
+        copy {
+            from 'ersatz-groovy/build/reports/tests/test'
+            include '**/**'
+            into 'build/site/ersatz-groovy/tests'
+        }
+
+        // Copy the ersatz-groovy javadocs
+        copy {
+            from 'ersatz-groovy/build/docs/javadoc'
+            include '**/**'
+            into 'build/site/ersatz-groovy/javadoc'
+        }
+
         // FIXME: copy over the javadoc, test-reports, coverage-reports for BOTH projects
         // --> ./site/reports/[ersatz | ersatz-groovy]/[javadoc | jacoco | tests]
 //        copy {
@@ -58,17 +111,11 @@ task site(dependsOn: ['build', 'ersatz:javadoc', 'ersatz:jacocoTestReport', 'ers
 //            into 'build/site/reports'
 //        }
 
-        // FIXME: copy the generated userguide -> site/docs/guide/index.html
+        // copy the generated user-guide
         copy {
-            from 'build/docs'
-            include '**/**'
+            from 'build/docs/asciidoc'
+            include 'user_guide.html'
             into 'build/site/docs'
-        }
-
-        copy {
-            from 'build/asciidoc/html5'
-            include '**/**'
-            into 'build/site/guide'
         }
     }
 }

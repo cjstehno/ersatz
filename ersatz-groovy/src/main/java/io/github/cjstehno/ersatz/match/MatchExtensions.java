@@ -31,6 +31,7 @@ public class MatchExtensions {
     /**
      * Configures the cookie matcher with a closure delegating to a <code>CookieMatcher</code> instance.
      *
+     * @param type the type of object being extended
      * @param closure the configuration closure
      * @return the configured matcher
      */
@@ -44,6 +45,7 @@ public class MatchExtensions {
     /**
      * Creates a new multipart matcher with a Groovy DSL closure (delegating to <code>MultipartRequestMatcher</code>).
      *
+     * @param type the type of object being extended
      * @param closure the configuration closure
      * @return a configured matcher instance
      */

@@ -24,13 +24,17 @@ import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
 import static groovy.lang.Closure.DELEGATE_FIRST;
 
+/**
+ * Groovy extensions of the RequestResponse class to provide Groovy DSL enhancements.
+ */
 public class RequestResponseExtensions {
 
     /**
      * Allows for configuration of a <code>Response</code> by the given Groovy <code>Closure</code>, which will delegate to a <code>Response</code>
      * instance passed into it for configuration using the Groovy DSL.
      *
-     * @param closure the <code>Consumer&lt;Response&gt;</code> to provide configuration of the response
+     * @param self the type of object being extended
+     * @param closure the <code>Closure&lt;Response&gt;</code> to provide configuration of the response
      * @return a reference to this request
      */
     public static Request responder(
@@ -40,6 +44,14 @@ public class RequestResponseExtensions {
         return self.responder(ConsumerWithDelegate.create(closure));
     }
 
+    /**
+     * Allows for configuration of a chunked response using a Groovy <code>Closure</code>, which will delegate to a
+     * <code>ChunkingConfig</code> instance passed into it for configuration using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param closure the <code>Closure</code> to provide configuration
+     * @return a reference to the configured response
+     */
     public static Response chunked(
         final Response self,
         @DelegatesTo(value = ChunkingConfig.class, strategy = DELEGATE_FIRST) Closure closure
@@ -50,6 +62,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a request expectation matching any request method using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param path    the expected request path.
      * @param closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
@@ -65,6 +78,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a request expectation matching any request method using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param matcher the path matcher
      * @param closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
@@ -80,6 +94,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a GET request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param path    the expected request path.
      * @param closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
@@ -95,6 +110,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a GET request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param matcher the path matcher
      * @param closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
@@ -110,6 +126,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a HEAD request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param path    the expected request path
      * @param closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
@@ -125,6 +142,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a HEAD request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param matcher the path matcher
      * @param closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
@@ -140,6 +158,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a DELETE request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param path    the expected request path
      * @param closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
@@ -155,6 +174,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a DELETE request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param matcher the path matcher
      * @param closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
@@ -170,6 +190,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a OPTIONS request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param path    the expected request path
      * @param closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
@@ -185,6 +206,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a OPTIONS request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param matcher the path matcher
      * @param closure the Groovy closure containing the configuration
      * @return a <code>Request</code> configuration object
@@ -200,6 +222,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a PATCH request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param path    the expected request path
      * @param closure the Groovy closure containing the configuration
      * @return a <code>RequestWithContent</code> configuration object
@@ -215,6 +238,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a PATCH request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param matcher the path matcher
      * @param closure the Groovy closure containing the configuration
      * @return a <code>RequestWithContent</code> configuration object
@@ -229,6 +253,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a POST request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param path    the expected request path
      * @param closure the Groovy closure containing the configuration
      * @return a <code>RequestWithContent</code> configuration object
@@ -244,6 +269,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a POST request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param matcher the path matcher
      * @param closure the Groovy closure containing the configuration
      * @return a <code>RequestWithContent</code> configuration object
@@ -259,6 +285,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a PUT request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param path    the expected request path
      * @param closure the Groovy closure containing the configuration
      * @return a <code>RequestWithContent</code> configuration object
@@ -274,6 +301,7 @@ public class RequestResponseExtensions {
     /**
      * Allows configuration of a PUT request expectation using the Groovy DSL.
      *
+     * @param self the type of object being extended
      * @param matcher the path matcher
      * @param closure the Groovy closure containing the configuration
      * @return a <code>RequestWithContent</code> configuration object
