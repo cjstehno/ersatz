@@ -27,12 +27,12 @@ dependencies {
 
     api 'io.undertow:undertow-core:2.2.14.Final'
     api 'javax.servlet:javax.servlet-api:4.0.1'
-    api 'org.hamcrest:hamcrest-library:2.2'
-    api 'org.awaitility:awaitility:4.1.1'
+    api 'org.hamcrest:hamcrest-library:2.2' // FIXME: replace
+    api 'org.awaitility:awaitility:4.1.1'   // FIXME: replace
 
     implementation 'javax.activation:activation:1.1.1'
     implementation 'org.slf4j:slf4j-api:1.7.32'
-    implementation 'commons-fileupload:commons-fileupload:1.4'
+    implementation 'commons-fileupload:commons-fileupload:1.4'  // FIXME: replace or move out
 
     compileOnly "org.junit.jupiter:junit-jupiter-api:$junitVersion"
 
@@ -57,10 +57,19 @@ jacocoTestReport {
     dependsOn test
 }
 
+license {
+    header = file('../config/license_header.txt')
+
+    ignoreFailures false
+
+    ext.year = Calendar.instance.get(Calendar.YEAR)
+
+    excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks', '**/*.jpg'])
+}
+
 task sourcesJar(type: Jar) {
     description = 'Creates sources jar.'
     archiveClassifier.set('sources')
-//    from project.sourceSets.main.allSource
     from sourceSets.main.allSource
 }
 
@@ -70,6 +79,27 @@ task javadocJar(type: Jar) {
     from javadoc
 }
 
+shadowJar {
+    archiveClassifier.set('safe')
+    dependencies {
+        exclude(dependency('javax.activation:activation:.*'))
+        exclude(dependency('org.slf4j:slf4j-api:.*'))
+        exclude(dependency('org.hamcrest::.*'))
+        exclude(dependency('org.wildfly.client::.*'))
+    }
+
+    mergeServiceFiles()
+
+    relocate 'io.undertow', 'ersatz.undertow'
+    relocate 'org.jboss', 'ersatz.jboss'
+    relocate 'org.xnio', 'ersatz.xnio'
+    relocate 'javax.servlet', 'ersatz.servlet'
+    relocate 'org.apache.commons.fileupload', 'ersatz.fileupload'
+    relocate 'org.apache.commons.io', 'ersatz.io'
+    relocate 'org.awaitility', 'ersatz.awaitility'
+    relocate 'org.wildfly.common', 'ersatz.wildfly.common'
+}
+
 artifacts {
     archives jar
     archives sourcesJar
@@ -77,15 +107,12 @@ artifacts {
     archives shadowJar
 }
 
-// https://docs.gradle.org/current/userguide/publishing_maven.html
-// https://madhead.me/posts/no-bullshit-maven-publish/
 publishing {
     publications {
-        ersatzPublication(MavenPublication) {
+        ersatz(MavenPublication) {
             from components.java
             artifact sourcesJar
             artifact javadocJar
-            artifact shadowJar
             groupId project.group
             artifactId 'ersatz'
             version project.version
@@ -118,40 +145,5 @@ publishing {
     }
 }
 
-model {
-    tasks.generatePomFileForErsatzPublicationPublication {
-        destination = file("$buildDir/generated-pom.xml")
-    }
-}
 
-license {
-    header = file('../config/license_header.txt')
-
-    ignoreFailures false
-
-    ext.year = Calendar.instance.get(Calendar.YEAR)
-
-    excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks', '**/*.jpg'])
-}
-
-shadowJar {
-    archiveClassifier.set('safe')
-    dependencies {
-        exclude(dependency('javax.activation:activation:.*'))
-        exclude(dependency('org.slf4j:slf4j-api:.*'))
-        exclude(dependency('org.hamcrest::.*'))
-        exclude(dependency('org.wildfly.client::.*'))
-    }
-
-    mergeServiceFiles()
-
-    relocate 'io.undertow', 'ersatz.undertow'
-    relocate 'org.jboss', 'ersatz.jboss'
-    relocate 'org.xnio', 'ersatz.xnio'
-    relocate 'javax.servlet', 'ersatz.servlet'
-    relocate 'org.apache.commons.fileupload', 'ersatz.fileupload'
-    relocate 'org.apache.commons.io', 'ersatz.io'
-    relocate 'org.awaitility', 'ersatz.awaitility'
-    relocate 'org.wildfly.common', 'ersatz.wildfly.common'
-}
 
