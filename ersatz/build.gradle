@@ -28,12 +28,12 @@ dependencies {
     api 'io.undertow:undertow-core:2.2.14.Final'
     api 'javax.servlet:javax.servlet-api:4.0.1'
     api 'org.hamcrest:hamcrest-library:2.2' // FIXME: replace
-    api 'org.awaitility:awaitility:4.1.1'   // FIXME: replace
 
     implementation 'javax.activation:activation:1.1.1'
-    implementation 'org.slf4j:slf4j-api:1.7.32'
+    implementation 'org.slf4j:slf4j-api:1.7.33'
     implementation 'commons-fileupload:commons-fileupload:1.4'  // FIXME: replace or move out
 
+    // this is required for the test extension
     compileOnly "org.junit.jupiter:junit-jupiter-api:$junitVersion"
 
     // testing
@@ -43,8 +43,8 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     testImplementation 'org.mockito:mockito-junit-jupiter:4.2.0'
 
+    testImplementation 'org.awaitility:awaitility:4.1.1'
     testImplementation 'com.squareup.okhttp3:okhttp:4.9.3'
-
     testImplementation  'com.fasterxml.jackson.core:jackson-databind:2.13.1'
 }
 
@@ -96,7 +96,6 @@ shadowJar {
     relocate 'javax.servlet', 'ersatz.servlet'
     relocate 'org.apache.commons.fileupload', 'ersatz.fileupload'
     relocate 'org.apache.commons.io', 'ersatz.io'
-    relocate 'org.awaitility', 'ersatz.awaitility'
     relocate 'org.wildfly.common', 'ersatz.wildfly.common'
 }
 

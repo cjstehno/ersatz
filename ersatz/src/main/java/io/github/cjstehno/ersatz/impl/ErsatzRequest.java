@@ -22,7 +22,6 @@ import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.match.CookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import org.awaitility.core.ConditionTimeoutException;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.hamcrest.core.IsIterableContaining;
@@ -31,15 +30,14 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
+import static io.github.cjstehno.ersatz.util.Timeout.isTrueBefore;
 import static java.util.Collections.unmodifiableList;
-import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.*;
 
 /**
@@ -218,8 +216,8 @@ public class ErsatzRequest implements Request {
     }
 
     /**
-     * Used to verify that the request has been called the expected number of times. By default there is no verification criteria, they must be
-     * configured using one of the <code>called()</code> methods.
+     * Used to verify that the request has been called the expected number of times. By default, there is no
+     * verification criteria, they must be configured using one of the <code>called()</code> methods.
      * <p>
      * This method will block until the call count condition is met or the timeout is exceeded.
      *
@@ -228,16 +226,15 @@ public class ErsatzRequest implements Request {
      * @return true if the call count matches the expected verification criteria
      */
     public boolean verify(final long timeout, final TimeUnit unit) {
-        try {
-            await().atMost(timeout, unit).until(new CallCountChecker(callVerifier, callCount));
-            return true;
-        } catch (ConditionTimeoutException cte) {
-            return false;
-        }
+        return isTrueBefore(
+            () -> callVerifier.matches(callCount.get()),
+            timeout,
+            unit
+        );
     }
 
     /**
-     * Used to determine whether or not the incoming client request matches this configured request. All configured matchers must return
+     * Used to determine whether the incoming client request matches this configured request. All configured matchers must return
      * <code>true</code> in order for the match to be successful. By default, all request have a matcher for request method and request path, the
      * others are optional.
      *
@@ -309,29 +306,5 @@ public class ErsatzRequest implements Request {
         });
 
         return str.toString();
-    }
-
-    private static class CallCountChecker implements Callable<Boolean> {
-
-        private final Matcher<?> callVerifier;
-        private final AtomicInteger callCount;
-
-        CallCountChecker(final Matcher<?> callVerifier, final AtomicInteger callCount) {
-            this.callVerifier = callVerifier;
-            this.callCount = callCount;
-        }
-
-        public Matcher<?> getCallVerifier() {
-            return callVerifier;
-        }
-
-        public AtomicInteger getCallCount() {
-            return callCount;
-        }
-
-        @Override
-        public Boolean call() throws Exception {
-            return callVerifier.matches(callCount.get());
-        }
     }
 }
