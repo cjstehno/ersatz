@@ -48,18 +48,6 @@ dependencies {
     testImplementation  'com.fasterxml.jackson.core:jackson-databind:2.13.1'
 }
 
-task sourcesJar(type: Jar) {
-    description = 'Creates sources jar.'
-    classifier = 'sources'
-    from project.sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar) {
-    description = 'Creates API documentation jar.'
-    classifier = 'javadoc'
-    from javadoc
-}
-
 test {
     useJUnitPlatform()
     maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
@@ -69,6 +57,19 @@ jacocoTestReport {
     dependsOn test
 }
 
+task sourcesJar(type: Jar) {
+    description = 'Creates sources jar.'
+    archiveClassifier.set('sources')
+//    from project.sourceSets.main.allSource
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    description = 'Creates API documentation jar.'
+    archiveClassifier.set('javadoc')
+    from javadoc
+}
+
 artifacts {
     archives jar
     archives sourcesJar
@@ -76,6 +77,8 @@ artifacts {
     archives shadowJar
 }
 
+// https://docs.gradle.org/current/userguide/publishing_maven.html
+// https://madhead.me/posts/no-bullshit-maven-publish/
 publishing {
     publications {
         ersatzPublication(MavenPublication) {
@@ -88,9 +91,13 @@ publishing {
             version project.version
             pom.withXml {
                 def root = asNode()
+
+                // remove test dependencies
+                root.dependencies.removeAll { dep -> dep.scope == 'test'}
+
                 root.appendNode('description', 'Mock server library for testing HTTP clients.')
                 root.appendNode('name', 'ersatz')
-                root.appendNode('url', 'http://cjstehno.github.io/ersatz')
+                root.appendNode('url', 'https://cjstehno.github.io/ersatz')
 
                 def licenseNode = root.appendNode('licenses').appendNode('license')
                 licenseNode.appendNode('name', 'The Apache Software License, Version 2.0')
@@ -111,6 +118,12 @@ publishing {
     }
 }
 
+model {
+    tasks.generatePomFileForErsatzPublicationPublication {
+        destination = file("$buildDir/generated-pom.xml")
+    }
+}
+
 license {
     header = file('../config/license_header.txt')
 
@@ -122,7 +135,7 @@ license {
 }
 
 shadowJar {
-    classifier = 'safe'
+    archiveClassifier.set('safe')
     dependencies {
         exclude(dependency('javax.activation:activation:.*'))
         exclude(dependency('org.slf4j:slf4j-api:.*'))
