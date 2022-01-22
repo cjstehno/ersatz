@@ -21,12 +21,47 @@ responses and/or error conditions without having to write a lot of boiler-plate 
 
 > **Warning:** v3.x is **NOT** directly backwards compatible with the 2.x releases. Some lesser-used features have been 
 > removed and the Groovy DSL has been extracted into its own extension library - see the 
-> [What's New in 3.0](http://cjstehno.github.io/ersatz/docs/user_guide.html/#_in_3.0) section of the User Guide for 
+> [What's New in 3.0](http://cjstehno.github.io/ersatz/docs/user_guide.html#_in_3.0) section of the User Guide for 
 > details and a migration guide.
 
 > **Warning:** v2.x has removed some unused features of the library and extracted the Groovy support into it's own 
-> extension library. See the [What's New in 2.0](http://cjstehno.github.io/ersatz/docs/user_guide.html/#_in_2.0) section 
+> extension library. See the [What's New in 2.0](http://cjstehno.github.io/ersatz/docs/user_guide.html#_in_2.0) section 
 > of the User Guide for details and a migration guide.
+
+## Getting Started
+
+Project artifacts are available via the Maven Central repository. Below are the dependency coordinates for Gradle and 
+Maven, more details are provided in the 
+[Getting Started](http://cjstehno.github.io/ersatz/docs/user_guide.html#_getting_started) section of the User Guide.
+
+### Gradle
+
+    testImplementation 'io.github.cjstehno.ersatz:ersatz:3.0.0'
+
+    // or, for the Groovy DSL extensions
+    testImplementation 'io.github.cjstehno.ersatz:ersatz-groovy:3.0.0'
+
+### Maven
+
+    <dependency>
+        <groupId>io.github.cjstehno.ersatz</groupId>
+        <artifactId>ersatz</artifactId>
+        <version>3.0.0</version>
+        <scope>test</scope>
+    </dependency>
+    
+    <!-- or, for the Groovy DSL extensions -->
+    <dependency>
+        <groupId>io.github.cjstehno.ersatz</groupId>
+        <artifactId>ersatz-groovy</artifactId>
+        <version>3.0.0</version>
+        <scope>test</scope>
+    </dependency>
+
+### Shadowed
+
+There is a `safe` (shadowed) version of each library available, which is useful in cases where you already  have a version of Undertow in use (to avoid version collisions). See the [Shadow Jar](http://cjstehno.github.io/ersatz/docs/user_guide.html#_shadow_jar)
+section of the User Guide for more information.
 
 ## Build Instructions
 
