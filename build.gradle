@@ -51,16 +51,6 @@ task site(dependsOn: ['build', 'ersatz:javadoc', 'ersatz:jacocoTestReport', 'ers
             include '**/img/**'
         }
 
-        /*
-            FIXME: need the following
-            ersatz/build/reports/ --> /docs/ersatz/javadoc/...
-            ersatz/build/reports/jacoco/... --> /docs/ersatz/jacoco/...
-            ersatz/build/reports/tests/... --> /docs/ersatz/tests/...
-            /docs/ersatz-groovy/javadoc/...
-            /docs/ersatz-groovy/jacoco/...
-            /docs/ersatz-groovy/tests/...
-         */
-
         // Copy the ersatz coverage reports
         copy {
             from 'ersatz/build/reports/jacoco/test/html'
@@ -102,14 +92,6 @@ task site(dependsOn: ['build', 'ersatz:javadoc', 'ersatz:jacocoTestReport', 'ers
             include '**/**'
             into 'build/site/ersatz-groovy/javadoc'
         }
-
-        // FIXME: copy over the javadoc, test-reports, coverage-reports for BOTH projects
-        // --> ./site/reports/[ersatz | ersatz-groovy]/[javadoc | jacoco | tests]
-//        copy {
-//            from 'build/reports'
-//            include '**/**'
-//            into 'build/site/reports'
-//        }
 
         // copy the generated user-guide
         copy {
