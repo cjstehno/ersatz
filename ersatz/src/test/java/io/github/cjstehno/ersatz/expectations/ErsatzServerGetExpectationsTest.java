@@ -64,6 +64,8 @@ import static io.github.cjstehno.ersatz.util.HttpClientExtension.Client.basicAut
 import static java.lang.System.currentTimeMillis;
 import static java.net.Proxy.Type.HTTP;
 import static java.util.stream.Collectors.toList;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -600,7 +602,7 @@ public class ErsatzServerGetExpectationsTest {
         val response = client.get("/ears", https);
         assertOkWithString(responseContent, response);
 
-        assertEquals(1, counter.get());
+        assertEquals(1, await().untilAtomic(counter, equalTo(1)));
 
         verify(server);
     }

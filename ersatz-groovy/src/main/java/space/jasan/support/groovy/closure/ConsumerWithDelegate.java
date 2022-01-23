@@ -25,6 +25,7 @@ import java.util.function.Consumer;
     and it does not publish to Maven Central (which I understand), but I cannot remove support for my library simply
     because they don't want to publish to the most-used (and most annoying) public repository.
  */
+@SuppressWarnings("javadoc")
 public class ConsumerWithDelegate<T> implements Consumer<T> {
 
     public static <T> Consumer<T> create(Closure c, Object owner, int strategy) {

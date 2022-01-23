@@ -33,6 +33,7 @@ import java.util.Map;
 /**
  * Makes Java API Groovy Closure friendly.
  */
+@SuppressWarnings("javadoc")
 public class GroovyClosure {
 
     private static final int DELEGATE_FIRST = 1;
@@ -159,14 +160,17 @@ public class GroovyClosure {
         return object;
     }
 
+    @SuppressWarnings("javadoc")
     public static <T> Closure<T> cloneWithTopLevelOwner(Closure<T> closure) {
         return cloneWithTopLevelOwner(closure, closure.getDelegate());
     }
 
+    @SuppressWarnings("javadoc")
     public static <T> Closure<T> cloneWithTopLevelOwner(Closure<T> closure, Object delegate) {
         return cloneWithTopLevelOwner(closure, delegate, Closure.DELEGATE_FIRST);
     }
 
+    @SuppressWarnings("javadoc")
     public static <T> Closure<T> cloneWithTopLevelOwner(Closure<T> closure, Object delegate, int strategy) {
         Closure<T> clone = closure.rehydrate(delegate, getPropagatedOwner(closure.getOwner()), closure.getThisObject());
         clone.setResolveStrategy(strategy);
