@@ -84,6 +84,21 @@ In order to build specific reports, run the appropriate one of the following:
     ./gradlew jacocoTestReport
     ./gradlew test
     
+## Publishing
+
+### To Local Maven Repo
+
+You can publish the all the source, javadoc, "safe" and regular jars to your local maven repository (`~/.m2/repository` directory) using the following command:
+
+    ./gradlew publishToMavenLocal
+    
+    // or, if you have not built recently
+    ./gradlew clean build publishToMavenLocal
+
+### To Maven Central
+
+> TBD...
+
 ## License
 
 ```
