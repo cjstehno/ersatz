@@ -5,6 +5,7 @@ plugins {
     id "com.github.hierynomus.license" version '0.16.1'
     id "com.github.johnrengelman.shadow" version '7.1.2'
     id 'jacoco'
+    id 'signing'
 }
 
 group = rootProject.group
@@ -124,3 +125,9 @@ publishing {
         }
     }
 }
+
+signing {
+    useGpgCmd()
+    sign publishing.publications.ersatzGroovy
+}
+
