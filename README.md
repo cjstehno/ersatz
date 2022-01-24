@@ -90,14 +90,36 @@ In order to build specific reports, run the appropriate one of the following:
 
 You can publish the all the source, javadoc, "safe" and regular jars to your local maven repository (`~/.m2/repository` directory) using the following command:
 
-    ./gradlew publishToMavenLocal
+    ./gradlew publishToMavenLocal -x sign
     
     // or, if you have not built recently
-    ./gradlew clean build publishToMavenLocal
+    ./gradlew clean build publishToMavenLocal -x sign
+
+The `-x sign` skips the signing step, which requires signing information. See the section on "signing" below if you need 
+to have the locally published artifacts signed.
 
 ### To Maven Central
 
 > TBD...
+
+    ./gradlew clean build publishTo -Psigning.gnupg.keyName=<last-8-of-key> -Psigning.gnupg.passphrase=<key-password>
+
+The additional "signing." properties are required to sign the artifacts, see the Signing section below for more details.
+
+#### Signing
+
+When publishing the artifacts to the Maven Central Repository, they need to be signed. In order to keep the signing 
+information secret, the properties are added only when the publishing task is executed, on the command line.
+
+When you want to sign the published artifacts, add the following parameters to the command line:
+
+    -Psigning.gnupg.keyName=<last-8-of-key> -Psigning.gnupg.passphrase=<key-password>
+
+where `<last-8-of-key>` is the last 8 characters of the key, and `<key-password>` is the password for the key.
+
+You can list the available keys using:
+
+    gpg2 -k
 
 ## License
 
