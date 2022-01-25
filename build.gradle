@@ -102,7 +102,7 @@ task site(dependsOn: ['build', 'ersatz:javadoc', 'ersatz:jacocoTestReport', 'ers
     }
 }
 
-//task publishSite(type: GradleBuild, group: 'Publishing', description: 'Publishes the documentation web site.', dependsOn: ['site']) {
-//    buildFile = 'publish.gradle'
-//    tasks = ['gitPublishPush']
-//}
+task publishSite(type: GradleBuild, group: 'Publishing', description: 'Publishes the documentation web site.', dependsOn: ['site']) {
+    buildFile = 'publish.gradle'
+    tasks = ['gitPublishPush']
+}

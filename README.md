@@ -110,8 +110,10 @@ Then, to publish the artifacts to the Maven Central Repository, run
 
 The additional "signing." properties are required to sign the artifacts, see the Signing section below for more details.
 
-Once the artifacts have been published, sign into https://oss.sonatype.org/ and navigate to the "Staging Repositories" 
-and "release" the published artifacts - this may take some time to appear.
+Once the artifacts have been published, sign into https://s01.oss.sonatype.org and navigate to the "Staging Repositories" 
+and "Close" the published artifacts - this may take some time to appear. If there are errors, you can "Drop" it, fix them and publish again.
+
+After you have successfully "closed" the staging repository, you can release it by pressing the "Release" button.
 
 #### Signing
 
