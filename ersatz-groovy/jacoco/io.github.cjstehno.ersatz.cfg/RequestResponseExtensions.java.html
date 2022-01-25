@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RequestResponseExtensions.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz-groovy</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.cfg</a> &gt; <span class="el_source">RequestResponseExtensions.java</span></div><h1>RequestResponseExtensions.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.cfg;
+
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
+import io.github.cjstehno.ersatz.cfg.*;
+import org.hamcrest.Matcher;
+import space.jasan.support.groovy.closure.ConsumerWithDelegate;
+
+import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
+import static groovy.lang.Closure.DELEGATE_FIRST;
+
+/**
+ * Groovy extensions of the RequestResponse class to provide Groovy DSL enhancements.
+ */
+<span class="nc" id="L30">public class RequestResponseExtensions {</span>
+
+    /**
+     * Allows for configuration of a &lt;code&gt;Response&lt;/code&gt; by the given Groovy &lt;code&gt;Closure&lt;/code&gt;, which will delegate to a &lt;code&gt;Response&lt;/code&gt;
+     * instance passed into it for configuration using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param closure the &lt;code&gt;Closure&amp;lt;Response&amp;gt;&lt;/code&gt; to provide configuration of the response
+     * @return a reference to this request
+     */
+    public static Request responder(
+        final Request self,
+        @DelegatesTo(value = Response.class, strategy = DELEGATE_FIRST) final Closure closure
+    ) {
+<span class="fc" id="L44">        return self.responder(ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows for configuration of a chunked response using a Groovy &lt;code&gt;Closure&lt;/code&gt;, which will delegate to a
+     * &lt;code&gt;ChunkingConfig&lt;/code&gt; instance passed into it for configuration using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param closure the &lt;code&gt;Closure&lt;/code&gt; to provide configuration
+     * @return a reference to the configured response
+     */
+    public static Response chunked(
+        final Response self,
+        @DelegatesTo(value = ChunkingConfig.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L59">        return self.chunked(ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a request expectation matching any request method using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param path    the expected request path.
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    public static Request ANY(
+        final AnyExpectations self,
+        String path,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L75">        return self.ANY(pathMatcher(path), ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a request expectation matching any request method using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param matcher the path matcher
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    public static Request ANY(
+        final AnyExpectations self,
+        Matcher&lt;String&gt; matcher,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="nc" id="L91">        return self.ANY(matcher, ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a GET request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param path    the expected request path.
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    public static Request GET(
+        final GetExpectations self,
+        String path,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L107">        return self.GET(pathMatcher(path), ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a GET request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param matcher the path matcher
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    public static Request GET(
+        final GetExpectations self,
+        Matcher&lt;String&gt; matcher,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L123">        return self.GET(matcher, ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a HEAD request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param path    the expected request path
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    public static Request HEAD(
+        final HeadExpectations self,
+        String path,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L139">        return self.HEAD(pathMatcher(path), ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a HEAD request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param matcher the path matcher
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    public static Request HEAD(
+        final HeadExpectations self,
+        Matcher&lt;String&gt; matcher,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L155">        return self.HEAD(matcher, ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param path    the expected request path
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    public static Request DELETE(
+        final DeleteExpectations self,
+        String path,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L171">        return self.DELETE(pathMatcher(path), ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param matcher the path matcher
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    public static Request DELETE(
+        final DeleteExpectations self,
+        Matcher&lt;String&gt; matcher,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L187">        return self.DELETE(matcher, ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a OPTIONS request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param path    the expected request path
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    public static Request OPTIONS(
+        final OptionsExpectations self,
+        String path,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L203">        return self.OPTIONS(pathMatcher(path), ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a OPTIONS request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param matcher the path matcher
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    public static Request OPTIONS(
+        final OptionsExpectations self,
+        Matcher&lt;String&gt; matcher,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L219">        return self.OPTIONS(matcher, ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a PATCH request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param path    the expected request path
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     */
+    public static RequestWithContent PATCH(
+        final PatchExpectations self,
+        String path,
+        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L235">        return self.PATCH(pathMatcher(path), ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a PATCH request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param matcher the path matcher
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     */
+    public static RequestWithContent PATCH(
+        final PatchExpectations self,
+        Matcher&lt;String&gt; matcher, @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L250">        return self.PATCH(matcher, ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a POST request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param path    the expected request path
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     */
+    public static RequestWithContent POST(
+        final PostExpectations self,
+        String path,
+        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L266">        return self.POST(pathMatcher(path), ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a POST request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param matcher the path matcher
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     */
+    public static RequestWithContent POST(
+        final PostExpectations self,
+        Matcher&lt;String&gt; matcher,
+        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L282">        return self.POST(matcher, ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a PUT request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param path    the expected request path
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     */
+    public static RequestWithContent PUT(
+        final PutExpectations self,
+        String path,
+        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L298">        return self.PUT(pathMatcher(path), ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Allows configuration of a PUT request expectation using the Groovy DSL.
+     *
+     * @param self the type of object being extended
+     * @param matcher the path matcher
+     * @param closure the Groovy closure containing the configuration
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     */
+    public static RequestWithContent PUT(
+        final PutExpectations self,
+        Matcher&lt;String&gt; matcher,
+        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+    ) {
+<span class="fc" id="L314">        return self.PUT(matcher, ConsumerWithDelegate.create(closure));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

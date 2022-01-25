@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzServerExtension.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.junit</a> &gt; <span class="el_source">ErsatzServerExtension.java</span></div><h1>ErsatzServerExtension.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.junit;
+
+import io.github.cjstehno.ersatz.ErsatzServer;
+import lombok.val;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+
+import java.lang.reflect.Field;
+import java.util.function.Supplier;
+
+import static java.util.Arrays.stream;
+
+/**
+ * JUnit 5 Extension used to provide a simple means of managing an ErsatzServer instance during testing.
+ * &lt;p&gt;
+ * A field of type &lt;code&gt;ErsatzServer&lt;/code&gt; must be specified in the test class.
+ * &lt;p&gt;
+ * BeforeEach test - the expectations will be cleared.
+ * AfterEach test - the server will be stopped.
+ *
+ * Note: the &lt;code&gt;verify()&lt;/code&gt; method is intentionally NOT called by this extension so that it may be called
+ * only when needed.
+ */
+<span class="fc" id="L40">public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallback {</span>
+
+    @Override public void beforeEach(final ExtensionContext context) throws Exception {
+<span class="fc" id="L43">        findInstance(context.getRequiredTestInstance(), true).start();</span>
+<span class="fc" id="L44">    }</span>
+
+    @Override public void afterEach(final ExtensionContext context) throws Exception {
+<span class="fc" id="L47">        val ersatzInstance = findInstance(context.getRequiredTestInstance(), false);</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if (ersatzInstance != null) {</span>
+<span class="fc" id="L49">            ersatzInstance.close();</span>
+<span class="fc" id="L50">            ersatzInstance.clearExpectations();</span>
+        }
+<span class="fc" id="L52">    }</span>
+
+    private static ErsatzServer findInstance(final Object testInstance, final boolean create) throws Exception {
+        try {
+<span class="fc" id="L56">            val field = findField(testInstance);</span>
+<span class="fc" id="L57">            Object instance = field.get(testInstance);</span>
+
+<span class="pc bpc" id="L59" title="1 of 4 branches missed.">            if (instance == null &amp;&amp; create) {</span>
+<span class="fc" id="L60">                instance = field.getType().getDeclaredConstructor().newInstance();</span>
+<span class="fc" id="L61">                field.set(testInstance, instance);</span>
+            }
+
+<span class="fc" id="L64">            return (ErsatzServer) instance;</span>
+
+<span class="nc" id="L66">        } catch (Exception throwable) {</span>
+<span class="nc" id="L67">            throw new Exception(throwable);</span>
+        }
+    }
+
+    private static Field findField(final Object testInstance) throws Exception {
+<span class="fc" id="L72">        val field = stream(testInstance.getClass().getDeclaredFields())</span>
+<span class="fc" id="L73">            .filter(f -&gt; f.getType().getSimpleName().endsWith(&quot;ErsatzServer&quot;))</span>
+<span class="fc" id="L74">            .findFirst()</span>
+<span class="pc" id="L75">            .orElseThrow((Supplier&lt;Exception&gt;) () -&gt; new IllegalArgumentException(&quot;An ErsatzServer field must be specified.&quot;));</span>
+
+<span class="fc" id="L77">        field.setAccessible(true);</span>
+<span class="fc" id="L78">        return field;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

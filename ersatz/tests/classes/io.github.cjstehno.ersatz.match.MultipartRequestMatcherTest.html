@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - MultipartRequestMatcherTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>MultipartRequestMatcherTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/io.github.cjstehno.ersatz.match.html">io.github.cjstehno.ersatz.match</a> &gt; MultipartRequestMatcherTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">34</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.399s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Method name</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">configured</td>
+<td class="success">configuredWithClosure()</td>
+<td class="success">0.011s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">matching description</td>
+<td class="success">matchingDescription()</td>
+<td class="success">0.060s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">matching wrong type</td>
+<td class="success">matchingWrongType()</td>
+<td class="success">0.035s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[1] alpha, a string starting with &quot;text/plain&quot;, &quot;one&quot;, true</td>
+<td class="success">partFieldContentMatcher(String, Matcher, Matcher, boolean)[1]</td>
+<td class="success">0.024s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[2] alpha, a string starting with &quot;image/png&quot;, &quot;one&quot;, false</td>
+<td class="success">partFieldContentMatcher(String, Matcher, Matcher, boolean)[2]</td>
+<td class="success">0.014s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[3] bravo, &quot;application/json&quot;, not null, true</td>
+<td class="success">partFieldContentMatcher(String, Matcher, Matcher, boolean)[3]</td>
+<td class="success">0.021s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[10] MultipartRequestMatcher: fileName(&quot;bravo.dat&quot;) contentType(a string starting with &quot;application/json&quot;) value(&quot;{\&quot;label\&quot;:\&quot;This is content!\&quot;}&quot;) , true</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[10]</td>
+<td class="success">0.005s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[11] MultipartRequestMatcher: fileName(&quot;bravo.dat&quot;) contentType(a string starting with &quot;application/json&quot;) value(&quot;something else&quot;) , false</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[11]</td>
+<td class="success">0.006s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[12] MultipartRequestMatcher: fileName(&quot;bravo.dat&quot;) contentType(a string starting with &quot;text/plain&quot;) value(&quot;{\&quot;label\&quot;:\&quot;This is content!\&quot;}&quot;) , false</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[12]</td>
+<td class="success">0.004s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[13] MultipartRequestMatcher: contentType(a string starting with &quot;text/plain&quot;) value(&quot;one&quot;) , true</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[13]</td>
+<td class="success">0.004s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[14] MultipartRequestMatcher: contentType(a string starting with &quot;image/png&quot;) value(&quot;one&quot;) , false</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[14]</td>
+<td class="success">0.002s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[15] MultipartRequestMatcher: contentType(a string starting with &quot;application/json&quot;) value(not null) , true</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[15]</td>
+<td class="success">0.008s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[16] MultipartRequestMatcher: contentType(a string starting with &quot;text/plain&quot;) value(&quot;one&quot;) , true</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[16]</td>
+<td class="success">0.014s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[17] MultipartRequestMatcher: contentType(a string starting with &quot;image/png&quot;) value(&quot;one&quot;) , false</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[17]</td>
+<td class="success">0.010s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[18] MultipartRequestMatcher: contentType(a string starting with &quot;application/json&quot;) value(not null) , true</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[18]</td>
+<td class="success">0.007s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[1] MultipartRequestMatcher: fileName((null or a blank string)) contentType(a string starting with &quot;text/plain&quot;) value(&quot;one&quot;) , true</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[1]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[2] MultipartRequestMatcher: fileName((null or a blank string)) contentType(a string starting with &quot;text/plain&quot;) value(&quot;two&quot;) , false</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[2]</td>
+<td class="success">0.003s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[3] MultipartRequestMatcher: fileName(&quot;bravo.dat&quot;) contentType(a string starting with &quot;application/json&quot;) value(&quot;{\&quot;label\&quot;:\&quot;This is content!\&quot;}&quot;) , true</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[3]</td>
+<td class="success">0.009s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[4] MultipartRequestMatcher: fileName(&quot;bravo.dat&quot;) contentType(a string starting with &quot;application/json&quot;) value(&quot;something else&quot;) , false</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[4]</td>
+<td class="success">0.006s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[5] MultipartRequestMatcher: fileName(&quot;bravo.dat&quot;) contentType(a string starting with &quot;text/plain&quot;) value(&quot;{\&quot;label\&quot;:\&quot;This is content!\&quot;}&quot;) , false</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[5]</td>
+<td class="success">0.002s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[6] MultipartRequestMatcher: fileName(a string ending with &quot;.json&quot;) contentType(a string starting with &quot;application/json&quot;) value(&quot;{\&quot;label\&quot;:\&quot;This is content!\&quot;}&quot;) , false</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[6]</td>
+<td class="success">0.021s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[7] MultipartRequestMatcher: fileName(&quot;bravo.dat&quot;) contentType(a string starting with &quot;application/json&quot;) value(&quot;{\&quot;label\&quot;:\&quot;This is content!\&quot;}&quot;) , true</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[7]</td>
+<td class="success">0.005s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[8] MultipartRequestMatcher: fileName(&quot;bravo.dat&quot;) contentType(a string starting with &quot;application/json&quot;) value(&quot;something else&quot;) , false</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[8]</td>
+<td class="success">0.004s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[9] MultipartRequestMatcher: fileName(&quot;bravo.dat&quot;) contentType(a string starting with &quot;text/plain&quot;) value(&quot;{\&quot;label\&quot;:\&quot;This is content!\&quot;}&quot;) , false</td>
+<td class="success">partFieldFileContentMatcher(Matcher, boolean)[9]</td>
+<td class="success">0.017s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[1] alpha, &quot;one&quot;, true</td>
+<td class="success">partFieldMatcher(String, Matcher, boolean)[1]</td>
+<td class="success">0.026s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[2] alpha, &quot;two&quot;, false</td>
+<td class="success">partFieldMatcher(String, Matcher, boolean)[2]</td>
+<td class="success">0.021s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[3] alpha, a string starting with &quot;on&quot;, true</td>
+<td class="success">partFieldMatcher(String, Matcher, boolean)[3]</td>
+<td class="success">0.004s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[4] alpha, a string starting with &quot;z&quot;, false</td>
+<td class="success">partFieldMatcher(String, Matcher, boolean)[4]</td>
+<td class="success">0.006s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[5] bravo, a string containing &quot;is con&quot;, true</td>
+<td class="success">partFieldMatcher(String, Matcher, boolean)[5]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[1] alpha, one, true</td>
+<td class="success">partFieldString(String, String, boolean)[1]</td>
+<td class="success">0.023s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[2] alpha, two, false</td>
+<td class="success">partFieldString(String, String, boolean)[2]</td>
+<td class="success">0.017s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[1] alpha, true</td>
+<td class="success">partWithFieldName(String, boolean)[1]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[2] zzz, false</td>
+<td class="success">partWithFieldName(String, boolean)[2]</td>
+<td class="success">0.006s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[3] bravo, true</td>
+<td class="success">partWithFieldName(String, boolean)[3]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 7.2</a> at Jan 25, 2022, 12:26:57 PM</p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConsumerWithDelegate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz-groovy</a> &gt; <a href="index.source.html" class="el_package">space.jasan.support.groovy.closure</a> &gt; <span class="el_source">ConsumerWithDelegate.java</span></div><h1>ConsumerWithDelegate.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package space.jasan.support.groovy.closure;
+
+import groovy.lang.Closure;
+
+import java.util.function.Consumer;
+
+/*
+    I hate to do this, but I only use a couple classes from this library
+    (https://github.com/jasanspace/groovy-closure-support/blob/master/src/main/java/space/jasan/support/groovy/closure/ConsumerWithDelegate.java)
+    and it does not publish to Maven Central (which I understand), but I cannot remove support for my library simply
+    because they don't want to publish to the most-used (and most annoying) public repository.
+ */
+@SuppressWarnings(&quot;javadoc&quot;)
+public class ConsumerWithDelegate&lt;T&gt; implements Consumer&lt;T&gt; {
+
+    public static &lt;T&gt; Consumer&lt;T&gt; create(Closure c, Object owner, int strategy) {
+<span class="fc" id="L32">        return new ConsumerWithDelegate&lt;&gt;(c, strategy, owner);</span>
+    }
+
+    public static &lt;T&gt; Consumer&lt;T&gt; create(Closure c, Object owner) {
+<span class="fc" id="L36">        return create(c, owner, Closure.DELEGATE_FIRST);</span>
+    }
+
+    public static &lt;T&gt; Consumer&lt;T&gt; create(Closure c, int strategy) {
+<span class="fc" id="L40">        return create(c, GroovyClosure.getPropagatedOwner(c.getOwner()), strategy);</span>
+    }
+
+    public static &lt;T&gt; Consumer&lt;T&gt; create(Closure c) {
+<span class="fc" id="L44">        return create(c, Closure.DELEGATE_FIRST);</span>
+    }
+
+    private final int strategy;
+    private final Object owner;
+    private final Closure closure;
+
+<span class="fc" id="L51">    private ConsumerWithDelegate(Closure closure, int strategy, Object owner) {</span>
+<span class="fc" id="L52">        this.strategy = strategy;</span>
+<span class="fc" id="L53">        this.owner = owner;</span>
+<span class="fc" id="L54">        this.closure = closure;</span>
+<span class="fc" id="L55">    }</span>
+
+    @Override
+    public void accept(T t) {
+<span class="fc" id="L59">        Closure closure = this.closure.rehydrate(t, owner, this.closure.getThisObject());</span>
+<span class="fc" id="L60">        closure.setResolveStrategy(strategy);</span>
+<span class="fc" id="L61">        closure.call(t);</span>
+<span class="fc" id="L62">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

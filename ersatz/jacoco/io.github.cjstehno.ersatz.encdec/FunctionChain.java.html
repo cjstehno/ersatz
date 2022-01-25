@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FunctionChain.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.encdec</a> &gt; <span class="el_source">FunctionChain.java</span></div><h1>FunctionChain.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.encdec;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
+import static java.util.Collections.unmodifiableList;
+
+/**
+ * Abstraction for an object chain which will have method calls applied from &quot;first&quot; to &quot;last&quot; until a non-null result is returned.
+ */
+public abstract class FunctionChain&lt;T&gt; {
+
+<span class="fc" id="L29">    private final List&lt;T&gt; items = new ArrayList&lt;&gt;();</span>
+
+    /**
+     * Creates a new chain with the provided (optional) first item. If the item is null, it will not be added.
+     *
+     * @param firstItem the optional first item (may be null)
+     */
+<span class="fc" id="L36">    protected FunctionChain(final T firstItem) {</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (firstItem != null) {</span>
+<span class="fc" id="L38">            first(firstItem);</span>
+        }
+<span class="fc" id="L40">    }</span>
+
+    /**
+     * Adds the given item as the first in the chain (first to be checked). If there is already and item in the chain, it will be pushed back down
+     * the resolution chain.
+     *
+     * @param item the first item
+     */
+    public final void first(final T item) {
+<span class="fc" id="L49">        items.add(0, item);</span>
+<span class="fc" id="L50">    }</span>
+
+    /**
+     * Adds the given item as the second in the chain (second to be checked). If there are more than one items already in the chain, the items beyond
+     * the first will be pushed down the resolution chain; however, if there are no items in the chain, this will be the first.
+     *
+     * @param item the second item
+     */
+    public void second(final T item) {
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        items.add(items.size() &gt; 0 ? 1 : 0, item);</span>
+<span class="fc" id="L60">    }</span>
+
+    /**
+     * Adds the given item as the last in the chain (last to be checked).
+     *
+     * @param item the first item
+     */
+    public void last(final T item) {
+<span class="fc" id="L68">        items.add(item);</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * Used by extension classes to perform the result resolution based on the closure. The closure will be passed each item and must return a value
+     * or null - null will cause the next item in the chain to be tested.
+     *
+     * @param &lt;F&gt; the contained type being resolved
+     * @param resolver the resolution closure
+     * @return the resolved result or null
+     */
+    protected &lt;F&gt; F resolveWith(final Function&lt;T, F&gt; resolver) {
+<span class="fc" id="L80">        return items.stream()</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            .filter(i -&gt; resolver.apply(i) != null)</span>
+<span class="fc" id="L82">            .findFirst()</span>
+<span class="fc" id="L83">            .map(resolver::apply)</span>
+<span class="fc" id="L84">            .orElse(null);</span>
+    }
+
+    /**
+     * Used to retrieve the item at the specified index.
+     *
+     * @param index the index
+     * @return the item stored at the index (or null)
+     */
+    public T getAt(int index) {
+<span class="fc" id="L94">        return ((T) (items.get(index)));</span>
+    }
+
+    /**
+     * Provides an immutable iterator over the items (in order).
+     *
+     * @return iterator over the items
+     */
+    public Iterable&lt;T&gt; items() {
+<span class="fc" id="L103">        return unmodifiableList(items);</span>
+    }
+
+    /**
+     * Retrieves the number of items in the chain.
+     *
+     * @return the size of the chain
+     */
+    public int size() {
+<span class="fc" id="L112">        return items.size();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

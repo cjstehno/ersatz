@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MultipartPart.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.encdec</a> &gt; <span class="el_source">MultipartPart.java</span></div><h1>MultipartPart.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.encdec;
+
+import lombok.Getter;
+import lombok.ToString;
+
+import java.util.Arrays;
+import java.util.Objects;
+
+/**
+ * Representation of a multipart part for requests and responses.
+ */
+<span class="fc" id="L27">@Getter @ToString</span>
+public class MultipartPart {
+
+<span class="fc" id="L30">    private final String fieldName;</span>
+<span class="fc" id="L31">    private final String fileName;</span>
+<span class="fc" id="L32">    private final String contentType;</span>
+<span class="fc" id="L33">    private final String transferEncoding;</span>
+<span class="fc" id="L34">    private final Object value;</span>
+
+    /**
+     * Creates a new multipart part with the provided parameters.
+     *
+     * @param fieldName        the field name
+     * @param fileName         the file name
+     * @param contentType      the content type of the part
+     * @param transferEncoding the transfer encoding
+     * @param value            the part value
+     */
+<span class="fc" id="L45">    public MultipartPart(String fieldName, String fileName, String contentType, String transferEncoding, Object value) {</span>
+<span class="fc" id="L46">        this.fieldName = fieldName;</span>
+<span class="fc" id="L47">        this.fileName = fileName;</span>
+<span class="fc" id="L48">        this.contentType = contentType;</span>
+<span class="fc" id="L49">        this.transferEncoding = transferEncoding;</span>
+<span class="fc" id="L50">        this.value = value;</span>
+<span class="fc" id="L51">    }</span>
+
+    @Override public boolean equals(Object o) {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (this == o) return true;</span>
+<span class="pc bpc" id="L55" title="1 of 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="fc" id="L56">        MultipartPart that = (MultipartPart) o;</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        return Objects.equals(fieldName, that.fieldName) &amp;&amp;</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">            Objects.equals(fileName, that.fileName) &amp;&amp;</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">            Objects.equals(contentType, that.contentType) &amp;&amp;</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">            Objects.equals(transferEncoding, that.transferEncoding) &amp;&amp;</span>
+            (
+<span class="fc bfc" id="L62" title="All 2 branches covered.">                value.getClass().isArray() ?</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">                    Arrays.equals((byte[]) value, (byte[]) that.value) :</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">                    Objects.deepEquals(value, that.value)</span>
+            );
+    }
+
+    @Override public int hashCode() {
+<span class="fc" id="L69">        return Objects.hash(</span>
+            fieldName, fileName, contentType, transferEncoding,
+<span class="fc bfc" id="L71" title="All 2 branches covered.">            value.getClass().isArray() ? Arrays.hashCode((byte[]) value) : value</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MultipartRequestContent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.encdec</a> &gt; <span class="el_source">MultipartRequestContent.java</span></div><h1>MultipartRequestContent.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.encdec;
+
+import io.github.cjstehno.ersatz.cfg.ContentType;
+import lombok.EqualsAndHashCode;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+
+/**
+ * Defines the request body content for a multipart request. An instance of this class may be created directly or by using the Groovy DSL closure or
+ * Consumer configuration methods to build up the expected multipart request parts.
+ * &lt;p&gt;
+ * If partial or more flexible content matching is preferred, the &lt;code&gt;MultipartRequestMatcher&lt;/code&gt; class provides a Hamcrest matcher for matching
+ * multipart content, based on the model presented by this class.
+ */
+<span class="pc bpc" id="L34" title="6 of 14 branches missed.">@EqualsAndHashCode</span>
+<span class="fc" id="L35">public class MultipartRequestContent {</span>
+
+<span class="fc" id="L37">    private final Map&lt;String, MultipartPart&gt; parts = new LinkedHashMap&lt;&gt;();</span>
+
+    /**
+     * Creates and configures a multipart request object using the provided consumer, which will be given an instance of the MultipartRequestContent
+     * to configure. This instance will then be returned from the method.
+     *
+     * @param config the configuration consumer
+     * @return a configured instance of MultipartRequestContent
+     */
+    public static MultipartRequestContent multipartRequest(final Consumer&lt;MultipartRequestContent&gt; config) {
+<span class="fc" id="L47">        MultipartRequestContent request = new MultipartRequestContent();</span>
+<span class="fc" id="L48">        config.accept(request);</span>
+<span class="fc" id="L49">        return request;</span>
+    }
+
+    /**
+     * Configures a field part with the given field name and value (as text/plain).
+     *
+     * @param fieldName the field name
+     * @param value     the value
+     * @return a reference to this multipart request instance
+     */
+    public MultipartRequestContent part(final String fieldName, final String value) {
+<span class="fc" id="L60">        return part(fieldName, TEXT_PLAIN, value);</span>
+    }
+
+    /**
+     * Configures a part with the given field name and value as the specified content type.
+     *
+     * @param fieldName   the field name
+     * @param contentType the content type
+     * @param value       the value
+     * @return a reference to this multipart request instance
+     */
+    public MultipartRequestContent part(final String fieldName, final String contentType, final Object value) {
+<span class="fc" id="L72">        parts.put(fieldName, new MultipartPart(fieldName, null, contentType, null, value));</span>
+<span class="fc" id="L73">        return this;</span>
+    }
+
+    /**
+     * Configures a part with the given field name and value as the specified content type.
+     *
+     * @param fieldName   the field name
+     * @param contentType the content type
+     * @param value       the value
+     * @return a reference to this multipart request instance
+     */
+    public MultipartRequestContent part(final String fieldName, final ContentType contentType, final Object value) {
+<span class="fc" id="L85">        parts.put(fieldName, new MultipartPart(fieldName, null, contentType.getValue(), null, value));</span>
+<span class="fc" id="L86">        return this;</span>
+    }
+
+    /**
+     * Configures a part with the given field name, file name and value as the specified content type.
+     *
+     * @param fieldName   the field name
+     * @param fileName    the file name
+     * @param contentType the content type
+     * @param value       the value
+     * @return a reference to this multipart request instance
+     */
+    public MultipartRequestContent part(String fieldName, String fileName, String contentType, Object value) {
+<span class="fc" id="L99">        parts.put(fieldName, new MultipartPart(fieldName, fileName, contentType, null, value));</span>
+<span class="fc" id="L100">        return this;</span>
+    }
+
+    /**
+     * Configures a part with the given field name, file name and value as the specified content type.
+     *
+     * @param fieldName   the field name
+     * @param fileName    the file name
+     * @param contentType the content type
+     * @param value       the value
+     * @return a reference to this multipart request instance
+     */
+    public MultipartRequestContent part(String fieldName, String fileName, ContentType contentType, Object value) {
+<span class="fc" id="L113">        parts.put(fieldName, new MultipartPart(fieldName, fileName, contentType.getValue(), null, value));</span>
+<span class="fc" id="L114">        return this;</span>
+    }
+
+    /**
+     * Retrieves the part with the specified field name.
+     *
+     * @param fieldName the field name
+     * @return the part or null if none is configured
+     */
+    public MultipartPart getAt(final String fieldName) {
+<span class="fc" id="L124">        return parts.get(fieldName);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

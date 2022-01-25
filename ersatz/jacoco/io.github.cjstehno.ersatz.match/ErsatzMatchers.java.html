@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzMatchers.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.match</a> &gt; <span class="el_source">ErsatzMatchers.java</span></div><h1>ErsatzMatchers.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.match;
+
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+import org.hamcrest.collection.IsIterableContainingInAnyOrder;
+
+import java.util.Collection;
+import java.util.function.Function;
+
+import static org.hamcrest.Matchers.equalTo;
+
+/**
+ * Some reusable Hamcrest matchers useful in Ersatz expectations.
+ */
+public interface ErsatzMatchers {
+
+    /**
+     * Matcher that matches a request path. A wildcard (*) may be used to match any request path.
+     *
+     * @param path the path to be matched or * for wildcard
+     * @return the matcher
+     */
+    static Matcher&lt;String&gt; pathMatcher(final String path) {
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        return path.equals(&quot;*&quot;) ? Matchers.any(String.class) : equalTo(path);</span>
+    }
+
+    /**
+     * Matcher that matches if the object is an Iterable of Strings whose elements match (in any order) the provided
+     * matchers.
+     *
+     * @param matchers the element matchers
+     * @return the wrapping matcher
+     */
+    static Matcher&lt;Iterable&lt;? super String&gt;&gt; stringIterableMatcher(final Collection&lt;Matcher&lt;? super String&gt;&gt; matchers) {
+<span class="fc" id="L52">        return new StringIterableMatcher(matchers);</span>
+    }
+
+    /**
+     * The provided value must be a byte array with the same length and same first and last element values.
+     *
+     * @param array the array
+     * @return the resulting matcher
+     */
+    static Matcher&lt;byte[]&gt; byteArrayLike(final byte[] array) {
+<span class="fc" id="L62">        return new ByteArrayMatcher(array);</span>
+    }
+
+    /**
+     * The provided function is used to verify the match, wrapped in a Matcher.
+     *
+     * @param fun the function being wrapped (a true response implies a match)
+     * @param &lt;T&gt; the type of object(s) being matched
+     * @return the function wrapped in a matcher
+     */
+    static &lt;T&gt; Matcher&lt;T&gt; functionMatcher(final Function&lt;T, Boolean&gt; fun) {
+<span class="fc" id="L73">        return new FunctionMatcher&lt;&gt;(fun);</span>
+    }
+}
+
+class FunctionMatcher&lt;T&gt; extends BaseMatcher&lt;T&gt; {
+
+    private final Function&lt;T, Boolean&gt; function;
+
+<span class="fc" id="L81">    FunctionMatcher(final Function&lt;T, Boolean&gt; function) {</span>
+<span class="fc" id="L82">        this.function = function;</span>
+<span class="fc" id="L83">    }</span>
+
+    @Override public boolean matches(Object actual) {
+<span class="fc" id="L86">        return function.apply((T) actual);</span>
+    }
+
+    @Override public void describeTo(Description description) {
+<span class="fc" id="L90">        description.appendText(&quot;A function that checks for matching.&quot;);</span>
+<span class="fc" id="L91">    }</span>
+}
+
+class StringIterableMatcher extends BaseMatcher&lt;Iterable&lt;? super String&gt;&gt; {
+
+    private final Collection&lt;Matcher&lt;? super String&gt;&gt; matchers;
+
+<span class="fc" id="L98">    StringIterableMatcher(final Collection&lt;Matcher&lt;? super String&gt;&gt; matchers) {</span>
+<span class="fc" id="L99">        this.matchers = matchers;</span>
+<span class="fc" id="L100">    }</span>
+
+    @Override public boolean matches(final Object item) {
+<span class="fc" id="L103">        return IsIterableContainingInAnyOrder.containsInAnyOrder(matchers).matches(item);</span>
+    }
+
+    @Override public void describeTo(final Description description) {
+<span class="fc" id="L107">        description.appendText(&quot;An Iterable&lt;String&gt; matching {&quot;);</span>
+<span class="fc" id="L108">        matchers.forEach(description::appendDescriptionOf);</span>
+<span class="fc" id="L109">        description.appendText(&quot;}&quot;);</span>
+<span class="fc" id="L110">    }</span>
+}
+
+class ByteArrayMatcher extends BaseMatcher&lt;byte[]&gt; {
+
+    private final byte[] array;
+
+<span class="fc" id="L117">    ByteArrayMatcher(final byte[] array) {</span>
+<span class="fc" id="L118">        this.array = array;</span>
+<span class="fc" id="L119">    }</span>
+
+    @Override
+    public boolean matches(final Object item) {
+<span class="fc" id="L123">        final byte[] bytes = (byte[]) item;</span>
+<span class="pc bpc" id="L124" title="2 of 6 branches missed.">        return bytes.length == array.length &amp;&amp; bytes[0] == array[0] &amp;&amp; bytes[bytes.length - 1] == array[array.length - 1];</span>
+    }
+
+    @Override
+    public void describeTo(Description description) {
+<span class="fc" id="L129">        description.appendText(&quot;A byte array of length &quot; + array.length + &quot; having &quot; + array[0] + &quot; as the first element and &quot; + array[array.length - 1] + &quot; as the last.&quot;);</span>
+<span class="fc" id="L130">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

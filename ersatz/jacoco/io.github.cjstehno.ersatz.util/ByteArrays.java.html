@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ByteArrays.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.util</a> &gt; <span class="el_source">ByteArrays.java</span></div><h1>ByteArrays.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.util;
+
+import java.nio.ByteBuffer;
+import java.util.List;
+
+import static java.lang.System.arraycopy;
+
+/**
+ * Utilities for working with arrays of &lt;code&gt;byte&lt;/code&gt;s.
+ */
+<span class="nc" id="L26">public class ByteArrays {</span>
+
+    /**
+     * Joins all of the byte arrays in the list, in order.
+     *
+     * @param arrays the list of byte arrays
+     * @return a joined list of byte arrays
+     */
+    public static byte[] join(final List&lt;byte[]&gt; arrays) {
+<span class="fc" id="L35">        byte[] current = new byte[0];</span>
+
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        for (final byte[] array : arrays) {</span>
+<span class="fc" id="L38">            current = join(current, array);</span>
+<span class="fc" id="L39">        }</span>
+
+<span class="fc" id="L41">        return current;</span>
+    }
+
+    /**
+     * Joins the two byte arrays into a single byte array, as first, then second.
+     *
+     * @param first the first byte array
+     * @param second the second byte array
+     * @return a merged byte array of the two in order
+     */
+    public static byte[] join(final byte[] first, final byte[] second) {
+<span class="fc" id="L52">        byte[] combined = new byte[first.length + second.length];</span>
+<span class="fc" id="L53">        arraycopy(first, 0, combined, 0, first.length);</span>
+<span class="fc" id="L54">        arraycopy(second, 0, combined, first.length, second.length);</span>
+<span class="fc" id="L55">        return combined;</span>
+    }
+
+    /**
+     * Used to join the array of &lt;code&gt;ByteBuffer&lt;/code&gt;s into a single array of bytes.
+     *
+     * @param buffers the ByteBuffers to be joined
+     * @return a byte array container the merged bytes from the buffers
+     */
+    public static byte[] join(final ByteBuffer[] buffers) {
+<span class="fc" id="L65">        byte[] incoming = new byte[0];</span>
+
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        for (final ByteBuffer b : buffers) {</span>
+<span class="fc" id="L68">            final byte[] data = new byte[b.remaining()];</span>
+<span class="fc" id="L69">            b.get(data);</span>
+<span class="fc" id="L70">            incoming = join(incoming, data);</span>
+        }
+
+<span class="fc" id="L73">        return incoming;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

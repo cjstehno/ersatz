@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RequestMatcher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.impl</a> &gt; <span class="el_source">RequestMatcher.java</span></div><h1>RequestMatcher.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.impl;
+
+import io.github.cjstehno.ersatz.cfg.HttpMethod;
+import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.encdec.DecoderChain;
+import io.github.cjstehno.ersatz.encdec.DecodingContext;
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.core.IsIterableContaining;
+
+import java.util.ArrayDeque;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Function;
+
+import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
+import static java.util.Arrays.asList;
+
+/**
+ * Request-specific wrapper around hamcrest matchers to provide property-based matching based on request attributes.
+ */
+public class RequestMatcher extends BaseMatcher&lt;ClientRequest&gt; {
+
+    private final Matcher&lt;?&gt; matcher;
+    private final Function&lt;ClientRequest, Object&gt; getter;
+    private final String description;
+
+<span class="fc" id="L45">    private RequestMatcher(Matcher&lt;?&gt; matcher, Function&lt;ClientRequest, Object&gt; getter, String description) {</span>
+<span class="fc" id="L46">        this.matcher = matcher;</span>
+<span class="fc" id="L47">        this.getter = getter;</span>
+<span class="fc" id="L48">        this.description = description;</span>
+<span class="fc" id="L49">    }</span>
+
+    Matcher&lt;?&gt; getMatcher() {
+<span class="fc" id="L52">        return matcher;</span>
+    }
+
+    /**
+     * Creates a request matcher for the protocol property value.
+     *
+     * @param m the hamcrest matcher for the protocol property
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher protocol(final Matcher&lt;String&gt; m) {
+<span class="fc" id="L62">        return new RequestMatcher(m, ClientRequest::getProtocol, &quot;Protocol matches &quot;);</span>
+    }
+
+    /**
+     * Creates a request matcher for the method property.
+     *
+     * @param m the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher method(final Matcher&lt;HttpMethod&gt; m) {
+<span class="fc" id="L72">        return new RequestMatcher(m, ClientRequest::getMethod, &quot;HTTP method matches &quot;);</span>
+    }
+
+    /**
+     * Creates a request matcher for the path property.
+     *
+     * @param m the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher path(final Matcher&lt;String&gt; m) {
+<span class="fc" id="L82">        return new RequestMatcher(m, ClientRequest::getPath, &quot;Path matches &quot;);</span>
+    }
+
+    /**
+     * Creates a request matcher for a request header.
+     *
+     * @param name the header name
+     * @param m    the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher header(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; m) {
+<span class="fc" id="L93">        return new RequestMatcher(</span>
+            m,
+<span class="fc" id="L95">            cr -&gt; cr.getHeaders().entrySet().stream()</span>
+<span class="fc" id="L96">                .filter(h -&gt; h.getKey().equalsIgnoreCase(name))</span>
+<span class="fc" id="L97">                .findFirst()</span>
+<span class="fc" id="L98">                .map(Map.Entry::getValue)</span>
+<span class="fc" id="L99">                .orElse(null),</span>
+            &quot;Header &quot; + name + &quot; matches &quot;
+        );
+    }
+
+    /**
+     * Creates a request matcher for a query parameter.
+     *
+     * @param name the query parameter name
+     * @param m    the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher query(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; m) {
+<span class="fc" id="L112">        return new RequestMatcher(</span>
+            m,
+            cr -&gt; {
+<span class="fc" id="L115">                final var qs = cr.getQueryParams().get(name);</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">                if (qs != null) {</span>
+<span class="fc" id="L117">                    return new ArrayDeque&lt;&gt;(asList(qs.toArray(new String[0])));</span>
+                } else {
+<span class="fc" id="L119">                    return null;</span>
+                }
+            },
+            &quot;Query string &quot; + name + &quot; matches &quot;
+        );
+    }
+
+    /**
+     * Creates a request matcher for parameters specified within the request body.
+     *
+     * @param name the name of the parameter
+     * @param m    the matchers
+     * @return the configured RequestMatcher
+     */
+    static RequestMatcher param(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; m) {
+<span class="fc" id="L134">        return new RequestMatcher(</span>
+            m,
+<span class="fc" id="L136">            cr -&gt; cr.getBodyParameters().getOrDefault(name, new ArrayDeque&lt;&gt;()),</span>
+            &quot;Parameter string &quot; + name + &quot; matches&quot;
+        );
+    }
+
+    /**
+     * Creates a request matcher for a cookie.
+     *
+     * @param name the cookie name
+     * @param m    the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher cookie(final String name, final Matcher&lt;Cookie&gt; m) {
+<span class="fc" id="L149">        return new RequestMatcher(</span>
+            m,
+<span class="fc" id="L151">            cr -&gt; cr.getCookies().get(name),</span>
+            &quot;Cookie &quot; + name + &quot; matches &quot;
+        );
+    }
+
+    static RequestMatcher cookies(final Matcher&lt;Map&lt;String, Cookie&gt;&gt; matcher) {
+<span class="fc" id="L157">        return new RequestMatcher(</span>
+            matcher,
+            cr -&gt; {
+<span class="fc" id="L160">                final var map = new LinkedHashMap&lt;String, Cookie&gt;();</span>
+<span class="fc" id="L161">                cr.getCookies().forEach(map::put);</span>
+<span class="fc" id="L162">                return map;</span>
+            },
+            &quot;Cookies match &quot;
+        );
+    }
+
+    /**
+     * Creates a request matcher for request body content.
+     *
+     * @param decoderChain the available request decoders
+     * @param contentType  the request content-type
+     * @param m            the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher body(final DecoderChain decoderChain, final String contentType, final Matcher&lt;Object&gt; m) {
+<span class="fc" id="L177">        return new RequestMatcher(</span>
+            m,
+            cr -&gt; {
+<span class="fc" id="L180">                final var decoder = decoderChain.resolve(contentType);</span>
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">                if (decoder != null) {</span>
+<span class="fc" id="L182">                    return decoder.apply(cr.getBody(), new DecodingContext(cr.getContentLength(), cr.getContentType(), cr.getCharacterEncoding(), decoderChain));</span>
+                } else {
+<span class="nc" id="L184">                    return null;</span>
+                }
+            },
+            &quot;Body (&quot; + contentType + &quot;) matches &quot;
+        );
+    }
+
+    /**
+     * Creates a request matcher for the request content-type property.
+     *
+     * @param m the hamcrest matcher to be wrapped
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher contentType(final Matcher&lt;String&gt; m) {
+<span class="fc" id="L198">        return header(CONTENT_TYPE_HEADER, IsIterableContaining.hasItem(m));</span>
+    }
+
+    /**
+     * Creates a matcher based on the &lt;code&gt;ClientRequest&lt;/code&gt; object.
+     *
+     * @param crm the matcher
+     * @return a configured RequestMatcher
+     */
+    static RequestMatcher matcher(final Matcher&lt;ClientRequest&gt; crm) {
+<span class="fc" id="L208">        return new RequestMatcher(crm, cr -&gt; cr, &quot;Request matches &quot; + crm);</span>
+    }
+
+    /**
+     * Performs the hamcrest matching using the wrapped matcher and property extractor.
+     *
+     * @param item the client request
+     * @return true if the matcher is successful
+     */
+    @Override
+    public boolean matches(final Object item) {
+<span class="fc" id="L219">        return matcher.matches(getter.apply((ClientRequest) item));</span>
+    }
+
+    @Override
+    public void describeTo(final Description description) {
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">        if (this.description != null) {</span>
+<span class="fc" id="L225">            description.appendText(this.description);</span>
+        }
+<span class="fc" id="L227">        matcher.describeTo(description);</span>
+<span class="fc" id="L228">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
