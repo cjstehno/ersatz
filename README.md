@@ -100,11 +100,18 @@ to have the locally published artifacts signed.
 
 ### To Maven Central
 
-> TBD...
+Before you publish a release, be sure to generate a release build (see signing section for details):
 
-    ./gradlew clean build publishTo -Psigning.gnupg.keyName=<last-8-of-key> -Psigning.gnupg.passphrase=<key-password>
+    ./gradlew clean build shadowJar signErsatzGroovyPublication signErsatzPublication -Psigning.gnupg.keyName=<key-id> -Psigning.gnupg.passphrase=<key-pass>
+
+Then, to publish the artifacts to the Maven Central Repository, run
+
+    ./gradlew publish -PossrhUser=<jira-user> -PossrhPass=<jira-pass> -Psigning.gnupg.keyName=<key-id> -Psigning.gnupg.passphrase=<key-pass>
 
 The additional "signing." properties are required to sign the artifacts, see the Signing section below for more details.
+
+Once the artifacts have been published, sign into https://oss.sonatype.org/ and navigate to the "Staging Repositories" 
+and "release" the published artifacts - this may take some time to appear.
 
 #### Signing
 
