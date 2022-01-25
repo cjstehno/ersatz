@@ -36,17 +36,34 @@ include::expectations.adoc[]
 
 The embedded version of Undertow used by Ersatz has caused issues with some server frameworks which also use Undertow (e.g. Grails, and Spring-boot).
 
-If you run into errors using the standard jar distribution, please try using the `safe` distribution, which is a shadowed jar which includes the Undertow library and many of the other dependencies repackaged in the jar. You can use this version in the manner described below for your build system.
+If you run into errors using the standard jar distribution, please try using the `safe` distribution, which is a shadowed jar that includes the Undertow library and many of the other dependencies repackaged in the jar. You can use this version in the manner described below for your build system.
+
+NOTE: There are examples of various usage configurations in the [Ersatz Usage Tests](https://github.com/cjstehno/ersatz-usage-tests) project.
 
 === Gradle
 
+A Gradle `gradle.build` file would have the following defined in the `dependencies` block:
+
 [source,groovy]
 ----
-testImplementation 'io.github.cjstehno.ersatz:ersatz:3.0.0:safe@jar'
+testImplementation('io.github.cjstehno.ersatz:ersatz:3.0.0:safe'){
+    exclude group:'io.undertow', module:'undertow-core'
+    exclude group:'javax.servlet', module:'javax.servlet-api'
+    exclude group:'commons-fileupload', module:'commons-fileupload'
+}
 
 // or for the Groovy DSL
-testImplementation 'io.github.cjstehno.ersatz:ersatz-groovy:3.0.0:safe@jar'
+testImplementation('io.github.cjstehno.ersatz:ersatz-groovy:3.0.0:safe'){
+    exclude group:'io.undertow', module:'undertow-core'
+    exclude group:'javax.servlet', module:'javax.servlet-api'
+    exclude group:'commons-fileupload', module:'commons-fileupload'
+}
+testImplementation 'org.codehaus.groovy:groovy:3.0.9'
+testImplementation 'javax.activation:activation:1.1.1'
+testImplementation 'org.hamcrest:hamcrest-library:2.2'
 ----
+
+The inclusions and exclusions are required to truly isolate and configure the artifact, due to some odd maven publishing requirements.
 
 === Maven
 
@@ -57,26 +74,71 @@ For a Maven `pom.xml` entry, this would be:
 <dependency>
     <groupId>io.github.cjstehno.ersatz</groupId>
     <artifactId>ersatz</artifactId>
-    <version>3.0.0</version>
-    <type>jar</type>
-    <scope>test</scope>
     <classifier>safe</classifier>
+    <version>3.0.0</version>
+    <scope>test</scope>
+    <exclusions>
+        <exclusion>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-core</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </exclusion>
+    </exclusions>
 </dependency>
 
 <!-- or, for the Groovy DSL -->
 <dependency>
     <groupId>io.github.cjstehno.ersatz</groupId>
     <artifactId>ersatz-groovy</artifactId>
+    <classifier>safe</classifier>
     <version>3.0.0</version>
     <type>jar</type>
     <scope>test</scope>
-    <classifier>safe</classifier>
+    <exclusions>
+        <exclusion>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-core</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+<dependency>
+    <groupId>org.codehaus.groovy</groupId>
+    <artifactId>groovy</artifactId>
+    <version>3.0.9</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>javax.activation</groupId>
+    <artifactId>activation</artifactId>
+    <version>1.1.1</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.hamcrest</groupId>
+    <artifactId>hamcrest-library</artifactId>
+    <version>2.2</version>
+    <scope>test</scope>
 </dependency>
 ----
 
-Notice the `safe` classifier in both examples.
+The inclusions and exclusions are required to truly isolate and configure the artifact, due to some odd maven publishing requirements.
 
-NOTE: This version of the library will NOT bring ALL of its other dependencies with it, so you will need to ensure that you have Hamcrest and JUnit defined, if they are needed by your project.
+NOTE: The Groovy
 
 == Common Usage Examples
 
