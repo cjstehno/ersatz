@@ -1,0 +1,140 @@
+== Getting Started
+
+The ersatz libraries are available via the Maven Central Repository; you can add them to your project using one of the following methods:
+
+=== Gradle
+
+For Gradle, add the following to your `build.gradle` file `dependencies` block:
+
+[source,groovy]
+----
+testImplementation 'io.github.cjstehno.ersatz:ersatz:3.0.0'
+
+// or, for the Groovy extensions
+testImplementation 'io.github.cjstehno.ersatz:ersatz-groovy:3.0.0'
+----
+
+=== Maven
+
+For Maven, add the code below to your `pom.xml` file `<dependencies>` section:
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.github.cjstehno.ersatz</groupId>
+    <artifactId>ersatz</artifactId>
+    <version>3.0.0</version>
+    <scope>test</scope>
+</dependency>
+
+<!-- or, for the Groovy extensions -->
+<dependency>
+    <groupId>io.github.cjstehno.ersatz</groupId>
+    <artifactId>ersatz-groovy</artifactId>
+    <version>3.0.0</version>
+    <scope>test</scope>
+</dependency>
+----
+
+NOTE: If you are using Groovy, you need only add the `ersatz-groovy` dependency, as it will pull in the core `ersatz` library as a dependency of itself.
+
+=== Writing a Test
+
+Once you have configured the library dependency, you can use it in a JUnit 5 test as follows:
+
+[source,java]
+----
+import io.github.cjstehno.ersatz.ErsatzServer;
+import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.net.URI;
+import java.net.http.HttpRequest;
+
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static java.net.http.HttpClient.newHttpClient;
+import static java.net.http.HttpResponse.BodyHandlers.ofString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@ExtendWith(ErsatzServerExtension.class)
+class HelloTest {
+
+    private ErsatzServer server;
+
+    @Test void sayHello() throws Exception {
+        server.expectations(expect -> {
+            expect.GET("/say/hello", req -> {
+                req.called(1);
+                req.query("name", "Ersatz");
+                req.responder(res -> {
+                    res.body("Hello, Ersatz", TEXT_PLAIN);
+                });
+            });
+        });
+
+        final var request = HttpRequest
+            .newBuilder(new URI(server.httpUrl("/say/hello?name=Ersatz")))
+            .GET()
+            .build();
+
+        final var response = newHttpClient().send(request, ofString());
+
+        assertEquals(200, response.statusCode());
+        assertEquals("Hello, Ersatz", response.body());
+        assertTrue(server.verify());
+    }
+}
+----
+
+The server is configured to expect a single `GET /say/hello` request with `name=Ersatz` on the query string. When it receives that request, the server will respond with status code 200 (by default), and a response with `content-type "text/plain"` and `"Hello, Ersatz"` as the body content. If the server does not receive the expected request, the `verify()` call will fail, likewise, the expected response content would not be returned.
+
+The test above could be written similarly in Groovy, using the Groovy extensions (i.e. `ersatz-groovy` library):
+
+[source,groovy]
+----
+import io.github.cjstehno.ersatz.GroovyErsatzServer
+import io.github.cjstehno.ersatz.junit.ErsatzServerExtension
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+
+import java.net.http.HttpRequest
+
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN
+import static java.net.http.HttpClient.newHttpClient
+import static java.net.http.HttpResponse.BodyHandlers.ofString
+import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertTrue
+
+@ExtendWith(ErsatzServerExtension)
+class HelloGroovyTest {
+
+    private GroovyErsatzServer server
+
+    @Test void 'say hello'() {
+        server.expectations {
+            GET('/say/hello') {
+                called 1
+                query 'name', 'Ersatz'
+                responder {
+                    body 'Hello, Ersatz', TEXT_PLAIN
+                }
+            }
+        }
+
+        final var request = HttpRequest
+                .newBuilder(new URI(server.httpUrl('/say/hello?name=Ersatz')))
+                .GET()
+                .build()
+
+        final var response = newHttpClient().send(request, ofString())
+
+        assertEquals 200, response.statusCode()
+        assertEquals 'Hello, Ersatz', response.body()
+        assertTrue server.verify()
+    }
+}
+----
+
+Note that the configuration is almost identical between the two, though with Groovy it's just a bit cleaner. Also note that for the Groovy version, the `GroovyErsatzServer` is used instead of the `ErsatzServer` -- this provides additional Groovy DSL support.

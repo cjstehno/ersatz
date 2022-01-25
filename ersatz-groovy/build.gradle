@@ -1,0 +1,143 @@
+plugins {
+    id 'java-library'
+    id 'groovy'
+    id 'maven-publish'
+    id "com.github.hierynomus.license" version '0.16.1'
+    id "com.github.johnrengelman.shadow" version '7.1.2'
+    id 'jacoco'
+    id 'signing'
+}
+
+group = rootProject.group
+version = rootProject.version
+
+sourceCompatibility = 17
+targetCompatibility = 17
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':ersatz')
+    implementation 'org.codehaus.groovy:groovy:3.0.9'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+}
+
+test {
+    useJUnitPlatform()
+    maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
+}
+
+jacocoTestReport {
+    dependsOn test
+}
+
+license {
+    header = file('../config/license_header.txt')
+
+    ignoreFailures false
+
+    ext.year = Calendar.instance.get(Calendar.YEAR)
+
+    excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks', '**/*.jpg'])
+}
+
+task sourcesJar(type: Jar) {
+    description = 'Creates sources jar.'
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    description = 'Creates API documentation jar.'
+    archiveClassifier.set('javadoc')
+    from javadoc
+}
+
+shadowJar {
+    archiveClassifier.set('safe')
+    dependencies {
+        exclude(dependency('javax.activation:activation:.*'))
+        exclude(dependency('org.slf4j:slf4j-api:.*'))
+        exclude(dependency('org.hamcrest::.*'))
+        exclude(dependency('org.wildfly.client::.*'))
+        exclude(dependency('org.codehaus.groovy::.*'))
+    }
+
+    mergeServiceFiles()
+
+    relocate 'io.undertow', 'ersatz.undertow'
+    relocate 'org.jboss', 'ersatz.jboss'
+    relocate 'org.xnio', 'ersatz.xnio'
+    relocate 'javax.servlet', 'ersatz.servlet'
+    relocate 'org.apache.commons.fileupload', 'ersatz.fileupload'
+    relocate 'org.apache.commons.io', 'ersatz.io'
+    relocate 'space.jasan.support.groovy', 'ersatz.groovy'
+    relocate 'org.wildfly.common', 'ersatz.wildfly.common'
+}
+
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+    archives shadowJar
+}
+
+publishing {
+    publications {
+        ersatzGroovy(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId project.group
+            artifactId 'ersatz-groovy'
+            version project.version
+            pom.withXml {
+                def root = asNode()
+
+                // remove test dependencies
+                root.dependencies.removeAll { dep -> dep.scope == 'test'}
+
+                root.appendNode('description', 'Mock server library for testing HTTP clients.')
+                root.appendNode('name', 'ersatz-groovy')
+                root.appendNode('url', 'https://cjstehno.github.io/ersatz')
+
+                def licenseNode = root.appendNode('licenses').appendNode('license')
+                licenseNode.appendNode('name', 'The Apache Software License, Version 2.0')
+                licenseNode.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                licenseNode.appendNode('distribution', 'repo')
+
+                def developersNode = root.appendNode('developers').appendNode('developer')
+                developersNode.appendNode('id', 'cjstehno')
+                developersNode.appendNode('name', 'Christopher J Stehno')
+                developersNode.appendNode('email', 'chris.stehno@gmail.com')
+
+                def scmNode = root.appendNode('scm')
+                scmNode.appendNode('connection', 'scm:git:git@github.com:cjstehno/ersatz.git')
+                scmNode.appendNode('developerConnection', 'scm:git:git@github.com:cjstehno/ersatz.git')
+                scmNode.appendNode('url', 'https://github.com/cjstehno/ersatz')
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = 'OSSRH'
+            setUrl('https://s01.oss.sonatype.org/service/local/staging/deploy/maven2')
+            credentials {
+                username = findProperty('ossrhUser') ?: ''
+                password = findProperty('ossrhPass') ?: ''
+            }
+        }
+    }
+}
+
+signing {
+    useGpgCmd()
+    sign publishing.publications.ersatzGroovy
+}
+

@@ -1,0 +1,32 @@
+--abc123
+Content-Disposition: form-data; name="foo"
+Content-Type: text/plain
+
+bar
+--abc123
+Content-Disposition: form-data; name="alpha"
+Content-Type: text/plain
+
+This is some text
+--abc123
+Content-Disposition: form-data; name="bravo"
+Content-Type: application/json
+
+{"answer":42}
+--abc123
+Content-Disposition: form-data; name="charlie"; filename="charlie.txt"
+Content-Type: text/plain
+
+This is a text file
+--abc123
+Content-Disposition: form-data; name="charlie-2"; filename="charlie-2.txt"
+Content-Type: text/plain
+
+This is another text file
+--abc123
+Content-Disposition: form-data; name="delta"; filename="delta.jpg"
+Content-Transfer-Encoding: base64
+Content-Type: image/jpeg
+
+ZmFrZSBpbWFnZSBjb250ZW50IGZvciB0ZXN0aW5n
+--abc123--

@@ -1,0 +1,43 @@
+== Server Lifecycle
+
+The core component of the Ersatz Server framework is the `ErsatzServer` class. It is used to manage the server lifecycle as well as providing the configuration interface.
+
+The lifecycle of the server can be broken down into four states: Configuration, Matching, Verification, and Cleanup. Each is detailed in the following sections.
+
+=== Configuration
+
+The first lifecycle state is "configuration", where the server is instantiated, request expectations are configured and the server is started.
+
+An Ersatz server is created as an instance of either `ErsatzServer` or `GroovyErsatzServer` with optional configuration performed by providing a `Consumer<ServerConfig>` or a `Closure` respectively. Both will have an instance of `ServerConfig` passed into them for the configuration to be applied.
+
+Global decoders and encoders may also be configured with the server, as such they will be used as defaults across all configured expectations.
+
+At this point, there is no HTTP server running, and it is ready for further configuration, as well specifying the request expectations (using the `expectations(...)` and `expects()` methods).
+
+Once the request expectations are configured, if auto-start is enabled (the default), the server will automatically start. If auto-start is disabled (using `autoStart(false)`), the server will need to be started using the `start()` method. If the server is not started, you will receive connection errors during testing.
+
+The server is now ready for "matching".
+
+=== Matching
+
+The second state of the server, is "matching", where request/response interactions are made against the server.
+
+Any HTTP client can be used to make requests against an Ersatz server. The `ErsatzServer` instance has some helpful methods for use by the client, in order to get the URLs, ports as exposed by the server.
+
+=== Verification
+
+Once the testing has been performed, it may be desirable to verify whether the expected requests were matched the expected number of times (using the `Request::called(...)` methods) rather than just that they were called at all.
+
+To execute verification, one the `ErsatzServer::verify(...)` must be called, which will return a boolean value of true if the verification passed.
+
+Verification is optional and may simply be skipped if you have no need for counting the executed requests.
+
+=== Cleanup
+
+After matching and verification, when all test interactions have completed, the server must be stopped in order to free up resources and close connections. This is done by calling the `ErsatzServer::stop()` method or its alias `close()`. This is an important step, as odd test failures have been noticed during multi-test runs if the server is not properly stopped.
+
+If you use JUnit 5, you can use the `ErsatzServerExtension` to perform server instantiation and cleanup for you.
+
+For Spock, you can use the `@AutoCleanup` annotation on the `ErsatzServer` (or `GroovyErsatzServer`) to perform the cleanup automatically.
+
+NOTE: A stopped server may be restarted, though if you want to clean out expectations, you may want to call the `ErsatzServer::clearExpectations()` method before starting it again.

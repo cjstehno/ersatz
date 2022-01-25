@@ -1,0 +1,153 @@
+== Server Configuration
+
+The `ServerConfig` interface provides the configuration methods for the server and requests, at the global level.
+
+=== Ports
+
+It is recommended to let the server find the best available port for your run -- it starts on an ephemeral port by default. There are some cases when you need to explicitly specify the HTTP or HTTPS server port and you can do so in the following manner:
+
+[source,java]
+----
+final var server = new ErsatzServer(cfg -> {
+    cfg.httpPort(1111);
+    cfg.httpsPort(2222);
+));
+----
+
+WARNING: The danger of doing this is that with a fixed port you run the risk of having port collisions with other services or even other running instances of your tests. This should only be used in extremely rare cases.
+
+=== Auto-Start
+
+The auto-start flag is enabled by default to allow the server to start automatically once the expectations have been applied (e.g. after the `expectations(...)` method has been called. This removes the need to explicitly call the `start()` method in your tests.
+
+If you want to disable the auto-start feature, you can do the following:
+
+[source,java]
+----
+final var server = new ErsatzServer(cfg -> {
+    cfg.autoStart(false);
+));
+----
+
+=== HTTPS
+
+The server supports HTTPS requests when the `https(...)` feature flag is enabled. When enabled, the server will set up both an HTTP and HTTPS listener which will have access to all configured expectations.
+
+[source,java]
+----
+final var server = new ErsatzServer(cfg -> {
+    cfg.https();
+));
+----
+
+In order to limit a specific request expectation to HTTP or HTTPS, apply the `secure(boolean)` request matcher with a value of `true` for HTTPS and `false` for HTTP, similar to the following:
+
+[source,java]
+----
+server.expectations(expect -> {
+    expect.GET("/something").secure(true).responding("stuff");
+});
+----
+
+The code above will match an HTTPS request to `GET /something` and send a response with "stuff" as its body; however, it will not match an HTTP request to the same method and path.
+
+WARNING: The HTTPS support is rudimentary and meant to test HTTPS endpoints, not any explicit features of HTTPS itself. Also, your client will need to be able to ignore any self-signed certificate issues in one way or another.
+
+==== Keystore
+
+A default keystore is provided with the Ersatz library, and it should suffice for most test cases; however, you may need/wish to provide your own custom keystore for whatever reason. A supported keystore file may be created using the following command:
+
+----
+./keytool -genkey -alias <NAME> -keyalg RSA -keystore <FILE_LOCATION>
+----
+
+where `<NAME>` is the key name and `<FILE_LOCATION>` is the location where the keystore file is to be created. You will be asked a few questions about the key being created. The default keystore name is `ersatz` and it has the following properties.
+
+----
+CN=Ersatz, OU=Ersatz, O=Ersatz, L=Nowhere, ST=Nowhere, C=US
+----
+
+Obviously, it is only for testing purposes.
+
+The keystore then needs to be provided during the server configuration, as follows:
+
+[source,java]
+----
+final var server = new ErsatzServer(cfg -> {
+    cfg.https();
+    cfg.keystore(KEYSTORE_URL, KEYSTORE_PASS);
+));
+----
+
+where `KEYSTORE_URL` is the URL to your custom keystore file, and `KEYSTORE_PASS` is the password (maybe omitted if you used "ersatz" as the password).
+
+=== Request Timeout
+
+The server request timeout configuration may be specified using the `timeout(...)` configuration methods.
+
+[source,java]
+----
+final var server = new ErsatzServer(cfg -> {
+    cfg.timeout(15, TimeUnit.SECONDS);
+));
+----
+
+This will allow some wiggle room in tests with high volumes of data or having complex matching logic to be resolved.
+
+NOTE: This timeout is a bit of a shotgun approach, as it sets a handful of timeout options on the server to the specified value. See the API docs for more details, if required.
+
+=== Report-to-Console
+
+If the report-to-console flag is enabled (disabled by default), additional details will be written to the console when request matching fails (in addition to writing it in the logs, as it always does).
+
+[source,java]
+----
+final var server = new ErsatzServer(cfg -> {
+    cfg.reportToConsole();
+));
+----
+
+The rendered report would be written to the console similar to following:
+
+----
+# Expectations
+
+Expectation 0 (3 matchers):
++ HTTP method matches <GET>
++ Path matches "/say/hello"
+X Query string name matches a collection containing "Ersatz"
+(3 matchers: 2 matched, 1 failed)
+----
+
+=== Logging Response Content
+
+By default, the content of a response is only logged as its length (in bytes). If the log-response-content feature flag is enabled, the entire content of the response will be written to the logs. This is helpful when debugging issues with tests.
+
+[source,java]
+----
+final var server = new ErsatzServer(cfg -> {
+    cfg.logResponseContent();
+));
+----
+
+=== Content Transformation
+
+The transformation of request/response body content is performed using:
+
+* **Request Decoders** to convert incoming request body content into a desired type for comparison.
+* **Response Encoders** to convert outgoing response objects into HTTP response byte[] data.
+
+These decoders and encoders are configured in a layered manner so that they may be configured and shared across multiple request/response interactions while still allowing them to be overridden as needed.
+
+* Decoders/Encoders configured on the `ServerConfig` instance are considered "global" and will be used if no overriding transformers are configured elsewhere.
+* Decoders/Encoders configured in the request/response expectations are considered "local" and will override any other matching transformers for the same content.
+
+Refer to the <<Request Decoders>> and <<Response Encoders>> sections for more details on the configuration and usage of decoders and encoders.
+
+=== Expectations
+
+Request expectations are the core of the Ersatz server functionality; conceptually, they are HTTP server request routes which are used to match an incoming HTTP request with a request handler or to respond with a status of 404, if no matching request was configured.
+
+The expectations are configured on an instance of the `Expectations` interface, which provides multiple configuration methods for each of the supported HTTP request methods (`GET`, `HEAD`, `POST`, `PUT`, `DELETE`, `PATCH`, `OPTIONS`, and `TRACE`), with the method name corresponding to the HTTP request method name.
+
+Refer to the <<Request Expectations>> section for a more detailed discussion of the configuration and usage of the expectations framework.

@@ -1,0 +1,50 @@
+== Request Decoders
+
+The decoders are used to convert request content bytes into a specified object type for matching in the expectations. They are implemented as a `BiFunction<byte[], DecodingContext, Object>`, where `byte[]` is the request content and the `Object` is the result of transforming the content. The `DecodingContext` is used to provide additional information about the request being decoded (e.g. content-length, content-type, character-encoding), along with a reference to the decoder chain.
+
+Decoders are defined at the various levels with the same method signature:
+
+[source,java]
+----
+ServerConfig decoder(String contentType, BiFunction<byte[], DecodingContext, Object> decoder)
+----
+
+See the API docs for more details.
+
+TIP: As a design decision, no decoders are defined and registered on the server by default. If you need one, you need to register it.
+
+=== Provided Decoders
+
+The API provides a handful of commonly used decoders. These are defined in the `io.github.cjstehno.ersatz.encdec.Decoders` class, and described below:
+
+* **Pass-through.** A decoder that simply passes the content byte array through as an array of bytes.
+* **Strings.** A few decoders that convert the request content bytes into a `String` object, with optional `Charset` specification.
+* **URL-Encoded.** Decoder that converts request content bytes in a url-encoded format into a map of name/value pairs.
+* **Multipart.** Decoder that converts request content bytes into a `MultipartRequestContent` object populated with the multipart request content.
+
+=== JSON Decoders
+
+As of v3.0.0 the built-in JSON decoder was removed to avoid dependency lock-in. Below are some simple/common implementations that could be used.
+
+==== Groovy
+
+A decoder (deserializer) implemented with the Groovy `JsonSlurper` would look like the following (in Groovy):
+
+[source,groovy]
+----
+decoder(ContentType.APPLICATION_JSON){ content, context ->
+    new JsonSlurper().parse(content ?: '{}'.bytes)
+}
+----
+
+==== Jackson
+
+A decoder (deserializer) implemented with the Jackson `ObjectMapper` would be implemented as (in Java):
+
+[source,java]
+----
+decoder(ContentType.APPLICATION_JSON, (content, context) -> {
+    return new ObjectMapper().readValue(content, Map.class);
+});
+----
+
