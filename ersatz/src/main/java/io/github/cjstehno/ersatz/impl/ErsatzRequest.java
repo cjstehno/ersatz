@@ -20,6 +20,7 @@ import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+import io.github.cjstehno.ersatz.impl.matchers.RequestPathMatcher;
 import io.github.cjstehno.ersatz.impl.matchers.RequestQueryMatcher;
 import io.github.cjstehno.ersatz.match.CookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
@@ -64,7 +65,7 @@ public class ErsatzRequest implements Request {
      */
     public ErsatzRequest(final HttpMethod meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse) {
         matchers.add(RequestMatcher.method(meth == ANY ? isOneOf(GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, TRACE) : equalTo(meth)));
-        matchers.add(RequestMatcher.path(pathMatcher));
+        matchers.add(new RequestPathMatcher(pathMatcher));
 
         this.globalEncoders = globalEncoders;
         this.emptyResponse = noResponse;

@@ -20,6 +20,7 @@ import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.encdec.DecoderChain;
 import io.github.cjstehno.ersatz.encdec.Decoders;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
+import io.github.cjstehno.ersatz.impl.matchers.RequestPathMatcher;
 import io.github.cjstehno.ersatz.impl.matchers.RequestQueryMatcher;
 import io.github.cjstehno.ersatz.match.CookieMatcher;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
@@ -65,7 +66,7 @@ class RequestMatcherTest {
         "/some,false"
     })
     void path(final String path, final boolean result) {
-        assertEquals(result, RequestMatcher.path(equalTo("/something")).matches(new MockClientRequest(GET, path)));
+        assertEquals(result, new RequestPathMatcher(equalTo("/something")).matches(new MockClientRequest(GET, path)));
     }
 
     @ParameterizedTest @DisplayName("content-type") @MethodSource("contentTypeProvider")
@@ -129,7 +130,7 @@ class RequestMatcherTest {
             result,
             RequestMatcher.param(
                 "email",
-               stringIterableMatcher(List.of(containsString("@goomail.com")))
+                stringIterableMatcher(List.of(containsString("@goomail.com")))
             ).matches(request)
         );
     }

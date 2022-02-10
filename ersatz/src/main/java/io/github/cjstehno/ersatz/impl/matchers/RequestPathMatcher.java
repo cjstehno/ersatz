@@ -17,35 +17,23 @@ package io.github.cjstehno.ersatz.impl.matchers;
 
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-import java.util.ArrayDeque;
-
-import static java.util.Arrays.asList;
-
 @RequiredArgsConstructor
-public class RequestQueryMatcher extends BaseMatcher<ClientRequest> {
+public class RequestPathMatcher extends BaseMatcher<ClientRequest> {
 
     // FIXME: test
-    private final String name;
-    private final Matcher<Iterable<? super String>> matcher;
+
+    private final Matcher<String> matcher;
 
     @Override public boolean matches(final Object actual) {
-        val clientRequest = (ClientRequest) actual;
-        val queryParams = clientRequest.getQueryParams();
-
-        if (queryParams.containsKey(name)) {
-            return matcher.matches(new ArrayDeque<>(asList(queryParams.get(name).toArray(new String[0]))));
-        } else {
-            return false;
-        }
+        return matcher.matches(((ClientRequest) actual).getPath());
     }
 
     @Override public void describeTo(final Description description) {
-        description.appendText("a query string (" + name + ") matches ");
+        description.appendText("Path matches ");
         matcher.describeTo(description);
     }
 }

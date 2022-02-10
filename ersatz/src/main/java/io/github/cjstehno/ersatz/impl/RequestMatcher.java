@@ -37,6 +37,7 @@ import static java.util.Arrays.asList;
  * Request-specific wrapper around hamcrest matchers to provide property-based matching based on request attributes.
  */
 public class RequestMatcher extends BaseMatcher<ClientRequest> {
+    // FIXME: this needs to be broken apart into separate matchers to allow more flexibility
 
     private final Matcher<?> matcher;
     private final Function<ClientRequest, Object> getter;
@@ -70,16 +71,6 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      */
     static RequestMatcher method(final Matcher<HttpMethod> m) {
         return new RequestMatcher(m, ClientRequest::getMethod, "HTTP method matches ");
-    }
-
-    /**
-     * Creates a request matcher for the path property.
-     *
-     * @param m the hamcrest matcher to be wrapped
-     * @return a configured RequestMatcher
-     */
-    static RequestMatcher path(final Matcher<String> m) {
-        return new RequestMatcher(m, ClientRequest::getPath, "Path matches ");
     }
 
     /**
