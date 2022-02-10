@@ -45,11 +45,11 @@ class UndertowClientRequest implements ClientRequest {
     }
 
     /**
-     * Used to retrieve the request protocol, generally HTTP or HTTPS.
+     * Used to retrieve the request scheme, generally HTTP or HTTPS.
      *
-     * @return the request protocol
+     * @return the request scheme
      */
-    @Override public String getProtocol() {
+    @Override public String getScheme() {
         return exchange.getRequestScheme();
     }
 

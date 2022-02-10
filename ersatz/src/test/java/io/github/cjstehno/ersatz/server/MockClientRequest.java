@@ -68,7 +68,7 @@ public class MockClientRequest implements ClientRequest {
         return method;
     }
 
-    @Override public String getProtocol() {
+    @Override public String getScheme() {
         return protocol;
     }
 

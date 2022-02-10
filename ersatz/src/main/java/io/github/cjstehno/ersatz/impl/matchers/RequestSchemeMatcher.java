@@ -17,35 +17,20 @@ package io.github.cjstehno.ersatz.impl.matchers;
 
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-
-import java.util.ArrayDeque;
-
-import static java.util.Arrays.asList;
 
 @RequiredArgsConstructor
-public class RequestQueryMatcher extends BaseMatcher<ClientRequest> {
+public class RequestSchemeMatcher extends BaseMatcher<ClientRequest> {
 
     // FIXME: test
-    private final String name;
-    private final Matcher<Iterable<? super String>> matcher;
+    private final boolean secure;
 
     @Override public boolean matches(final Object actual) {
-        val clientRequest = (ClientRequest) actual;
-        val queryParams = clientRequest.getQueryParams();
-
-        if (queryParams.containsKey(name)) {
-            return matcher.matches(new ArrayDeque<>(asList(queryParams.get(name).toArray(new String[0]))));
-        } else {
-            return false;
-        }
+        return ((ClientRequest) actual).getScheme().equalsIgnoreCase(secure ? "HTTPS" : "HTTP");
     }
 
-    @Override public void describeTo(final Description description) {
-        description.appendText("a query string (" + name + ") matches ");
-        matcher.describeTo(description);
+    @Override public void describeTo(Description description) {
+        description.appendText("Scheme is " + (secure ? "HTTPS" : "HTTP"));
     }
 }

@@ -21,8 +21,8 @@ import io.github.cjstehno.ersatz.encdec.DecoderChain;
 import io.github.cjstehno.ersatz.encdec.Decoders;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.impl.matchers.RequestPathMatcher;
-import io.github.cjstehno.ersatz.impl.matchers.RequestQueryMatcher;
 import io.github.cjstehno.ersatz.match.CookieMatcher;
+import io.github.cjstehno.ersatz.match.QueryParamMatcher;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -109,7 +109,7 @@ class RequestMatcherTest {
     void query(final MockClientRequest request, final boolean result) {
         assertEquals(
             result,
-            new RequestQueryMatcher(
+            QueryParamMatcher.queryMatching(
                 "name",
                 stringIterableMatcher(List.of(equalTo("alpha"), equalTo("blah")))
             ).matches(request)

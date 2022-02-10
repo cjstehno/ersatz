@@ -54,7 +54,7 @@ public class UnmatchedRequestReport implements Report {
             out.append("# Unmatched Request\n\n");
 
             final String query = request.getQueryParams().entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue()).collect(joining(", "));
-            out.append(request.getProtocol()).append(" ").append(request.getMethod()).append(" ").append(request.getPath()).append(" ? ").append(query).append("\n");
+            out.append(request.getScheme()).append(" ").append(request.getMethod()).append(" ").append(request.getPath()).append(" ? ").append(query).append("\n");
 
             if (request.getHeaders() != null) {
                 out.append("Headers:\n");

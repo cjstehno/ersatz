@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
-import static java.util.Arrays.asList;
 
 /**
  * Request-specific wrapper around hamcrest matchers to provide property-based matching based on request attributes.
@@ -47,20 +46,6 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
         this.matcher = matcher;
         this.getter = getter;
         this.description = description;
-    }
-
-    Matcher<?> getMatcher() {
-        return matcher;
-    }
-
-    /**
-     * Creates a request matcher for the protocol property value.
-     *
-     * @param m the hamcrest matcher for the protocol property
-     * @return a configured RequestMatcher
-     */
-    static RequestMatcher protocol(final Matcher<String> m) {
-        return new RequestMatcher(m, ClientRequest::getProtocol, "Protocol matches ");
     }
 
     /**
