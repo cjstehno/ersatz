@@ -255,7 +255,7 @@ public class ErsatzResponse implements Response {
             return cachedContent.get();
         }
 
-        log.debug("No response content - returning empty array.");
+        log.trace("No response content - returning empty array.");
 
         return new byte[0];
     }

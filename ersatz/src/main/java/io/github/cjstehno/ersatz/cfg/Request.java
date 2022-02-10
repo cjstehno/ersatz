@@ -92,7 +92,9 @@ public interface Request {
      * @param name  the parameter name
      * @return this request
      */
-    Request query(final String name);
+    default Request query(final String name) {
+        return query(name, (String) null);
+    }
 
     /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be

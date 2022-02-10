@@ -126,14 +126,14 @@ class ErsatzRequestTest {
         );
     }
 
-    @Disabled("FIXME: this may be a bug")
-    @ParameterizedTest(name = "{index} query({0},{1}) -> {3})") @DisplayName("query with no value")
+    @Disabled("FIXME: this may be a bug - #151")
+    @ParameterizedTest(name = "{index} query({0},{1}) -> {2})")
     @CsvSource({
         "enabled,,true",
-        "enabled,yes,false",
+        "enabled,yes,true",
         "disabled,,false"
     })
-    void queryWithNoValue(final String name, final String value, final boolean result) {
+    void queryExists(final String name, final String value, final boolean result) {
         request.query("enabled");
 
         assertEquals(result, request.matches(clientRequest().query(name, value)));

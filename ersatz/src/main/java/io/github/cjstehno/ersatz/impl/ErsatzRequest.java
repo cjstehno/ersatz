@@ -115,12 +115,6 @@ public class ErsatzRequest implements Request {
     }
 
     @Override
-    public Request query(final String name) {
-        return query(name, (String) null);
-    }
-
-
-    @Override
     public Request query(final String name, final Iterable<? super String> value) {
         final var queryMatchers = new LinkedList<Matcher<? super String>>();
         value.forEach(v -> queryMatchers.add(equalTo(v)));
