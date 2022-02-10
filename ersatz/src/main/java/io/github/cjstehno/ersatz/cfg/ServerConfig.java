@@ -216,4 +216,24 @@ public interface ServerConfig {
     default ServerConfig logResponseContent() {
         return logResponseContent(true);
     }
+
+    /**
+     * Allows the configuration of the number of IO and Worker threads to be used by the underlying server.
+     *
+     * @param io the number of IO threads (should be fewer than workers; default is 2)
+     * @param worker the number of worker threads (should be more than io; default is 16)
+     * @return a reference to this server configuration
+     */
+    ServerConfig serverThreads(final int io, final int worker);
+
+    /**
+     * Allows the configuration of the number of IO threads to be used by the underlying server. The worker threads will
+     * be configured to 8 times the configured io number.
+     *
+     * @param io the number of IO threads (should be a small number; default is 2)
+     * @return a reference to this server configuration
+     */
+    default ServerConfig serverThreads(final int io){
+        return serverThreads(io, io * 8);
+    }
 }

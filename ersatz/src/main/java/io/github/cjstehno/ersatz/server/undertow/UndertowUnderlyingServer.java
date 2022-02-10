@@ -24,6 +24,7 @@ import io.undertow.server.handlers.HttpTraceHandler;
 import io.undertow.server.handlers.encoding.ContentEncodingRepository;
 import io.undertow.server.handlers.encoding.EncodingHandler;
 import io.undertow.server.handlers.encoding.GzipEncodingProvider;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xnio.Options;
@@ -62,7 +63,11 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
 
     @Override public void start() {
         if (server == null) {
-            final Undertow.Builder builder = Undertow.builder().addHttpListener(serverConfig.getDesiredHttpPort(), LOCALHOST);
+            val builder = Undertow.builder()
+                .addHttpListener(serverConfig.getDesiredHttpPort(), LOCALHOST)
+                .setIoThreads(serverConfig.getIoThreads())
+                .setWorkerThreads(serverConfig.getWorkerThreads());
+
             applyTimeout(builder, serverConfig.getTimeout());
 
             if (serverConfig.isHttpsEnabled()) {

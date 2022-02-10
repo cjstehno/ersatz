@@ -49,6 +49,8 @@ public class ServerConfigImpl implements ServerConfig {
     private Runnable starter;
     private long timeout;
     private boolean logResponseContent;
+    private int ioThreads = 2;
+    private int workerThreads = 16;
 
     /**
      * Creates a new empty configuration instance.
@@ -179,6 +181,24 @@ public class ServerConfigImpl implements ServerConfig {
     }
 
     /**
+     * Retrieves the IO threads configuration setting. Defaults to 2.
+     *
+     * @return the number of IO threads
+     */
+    public int getIoThreads() {
+        return ioThreads;
+    }
+
+    /**
+     * Retrieves the number of Worker threads configured. Defaults to 8.
+     *
+     * @return the number of worker threads
+     */
+    public int getWorkerThreads() {
+        return workerThreads;
+    }
+
+    /**
      * Used to enable/disable the auto-start feature, which will start the server after any call to either of the <code>expectations</code>
      * configuration methods. With this setting enabled, any other calls to the <code>start()</code> method are ignored. Further configuration is
      * allowed.
@@ -291,6 +311,12 @@ public class ServerConfigImpl implements ServerConfig {
 
     @Override public ServerConfig logResponseContent(boolean value) {
         logResponseContent = value;
+        return this;
+    }
+
+    @Override public ServerConfig serverThreads(int io, int worker) {
+        ioThreads = io;
+        workerThreads = worker;
         return this;
     }
 }
