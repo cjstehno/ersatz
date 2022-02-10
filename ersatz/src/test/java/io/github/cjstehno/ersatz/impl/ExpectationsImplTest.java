@@ -358,7 +358,7 @@ class ExpectationsImplTest {
             expectations.verify();
         });
 
-        assertEquals("Expectations for Expectations (ErsatzRequestWithContent): <POST>, \"/alpha\",  were not met.", thrown.getMessage());
+        assertEquals("Expectations for Expectations (ErsatzRequestWithContent): HTTP method matches <POST>, Path matches \"/alpha\",  were not met.", thrown.getMessage());
     }
 
     @Test @DisplayName("POST(String)")

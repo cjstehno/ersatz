@@ -52,6 +52,10 @@ public interface ErsatzMatchers {
         return new StringIterableMatcher(matchers);
     }
 
+    static Matcher<Iterable<? super String>> anyStringIterableMatcher(){
+        return new AnyStringIterableMatcher();
+    }
+
     /**
      * The provided value must be a byte array with the same length and same first and last element values.
      *
@@ -107,6 +111,17 @@ class StringIterableMatcher extends BaseMatcher<Iterable<? super String>> {
         description.appendText("An Iterable<String> matching {");
         matchers.forEach(description::appendDescriptionOf);
         description.appendText("}");
+    }
+}
+
+class AnyStringIterableMatcher extends BaseMatcher<Iterable<? super String>> {
+
+    @Override public boolean matches(final Object item) {
+        return true;
+    }
+
+    @Override public void describeTo(final Description description) {
+        description.appendText("an Iterable<String> matching anything");
     }
 }
 

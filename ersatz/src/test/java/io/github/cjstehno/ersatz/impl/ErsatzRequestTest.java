@@ -62,7 +62,7 @@ class ErsatzRequestTest {
 
     @Test @DisplayName("to string")
     void string() {
-        assertEquals("Expectations (ErsatzRequest): <POST>, \"/testing\", ", request.toString());
+        assertEquals("Expectations (ErsatzRequest): HTTP method matches <POST>, Path matches \"/testing\", ", request.toString());
     }
 
     @Test @DisplayName("method and path")
@@ -126,7 +126,6 @@ class ErsatzRequestTest {
         );
     }
 
-    @Disabled("FIXME: this may be a bug - #151")
     @ParameterizedTest(name = "{index} query({0},{1}) -> {2})")
     @CsvSource({
         "enabled,,true",

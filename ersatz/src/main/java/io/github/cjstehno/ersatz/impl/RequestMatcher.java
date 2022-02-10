@@ -42,7 +42,7 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
     private final Function<ClientRequest, Object> getter;
     private final String description;
 
-    private RequestMatcher(Matcher<?> matcher, Function<ClientRequest, Object> getter, String description) {
+    protected RequestMatcher(Matcher<?> matcher, Function<ClientRequest, Object> getter, String description) {
         this.matcher = matcher;
         this.getter = getter;
         this.description = description;
@@ -98,28 +98,6 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
                 .map(Map.Entry::getValue)
                 .orElse(null),
             "Header " + name + " matches "
-        );
-    }
-
-    /**
-     * Creates a request matcher for a query parameter.
-     *
-     * @param name the query parameter name
-     * @param m    the hamcrest matcher to be wrapped
-     * @return a configured RequestMatcher
-     */
-    static RequestMatcher query(final String name, final Matcher<Iterable<? super String>> m) {
-        return new RequestMatcher(
-            m,
-            cr -> {
-                final var qs = cr.getQueryParams().get(name);
-                if (qs != null) {
-                    return new ArrayDeque<>(asList(qs.toArray(new String[0])));
-                } else {
-                    return null;
-                }
-            },
-            "Query string " + name + " matches "
         );
     }
 

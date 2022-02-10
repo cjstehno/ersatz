@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static io.github.cjstehno.ersatz.TestAssertions.*;
 import static io.github.cjstehno.ersatz.TestHelpers.resourceStream;
@@ -63,6 +64,7 @@ import static io.github.cjstehno.ersatz.util.BasicAuth.basicAuth;
 import static io.github.cjstehno.ersatz.util.HttpClientExtension.Client.basicAuthHeader;
 import static java.lang.System.currentTimeMillis;
 import static java.net.Proxy.Type.HTTP;
+import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.toList;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
@@ -660,6 +662,40 @@ public class ErsatzServerGetExpectationsTest {
         assertEquals(200, response.code());
         assertFalse(response.networkResponse().headers("Content-Encoding").contains("gzip"));
         assertEquals(responseText, response.body().string());
+        verify(server);
+    }
+
+    // FIXME: work in progress
+    @Test void workInProgress() throws IOException {
+        server.expectations(expect -> {
+            expect.GET(
+                path -> path.toLowerCase(ROOT).startsWith("/foo"),
+                req -> {
+                    req.responder(res -> res.code(200));
+                }
+            );
+        });
+
+        val response = client.get("/FOOTBALL");
+
+        assertEquals(200, response.code());
+        verify(server);
+    }
+
+    @Test void workInProgress2() throws IOException {
+        server.expectations(expect -> {
+            expect.GET(
+                "a string starting with /foo (ignoring case)",
+                path -> path.toLowerCase(ROOT).startsWith("/foo"),
+                req -> {
+                    req.responder(res -> res.code(200));
+                }
+            );
+        });
+
+        val response = client.get("/FOOTBALL");
+
+        assertEquals(200, response.code());
         verify(server);
     }
 

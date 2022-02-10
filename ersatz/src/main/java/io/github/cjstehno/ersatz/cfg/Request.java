@@ -16,8 +16,12 @@
 package io.github.cjstehno.ersatz.cfg;
 
 import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.match.ErsatzMatchers;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+import org.hamcrest.collection.IsIterableWithSize;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -93,7 +97,7 @@ public interface Request {
      * @return this request
      */
     default Request query(final String name) {
-        return query(name, (String) null);
+        return query(name, ErsatzMatchers.anyStringIterableMatcher());
     }
 
     /**

@@ -15,9 +15,12 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
 
@@ -46,14 +49,13 @@ public interface GetExpectations {
         return GET(matcher, (Consumer<Request>) null);
     }
 
-
     /**
      * Allows configuration of a GET request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The <code>Consumer&lt;Request&gt;</code> will
      * have an instance of <code>Request</code> passed into it for configuration.
      *
-     * @param path the expected request path
-     * @return a <code>Request</code> configuration object
+     * @param path   the expected request path
      * @param config the configuration consumer
+     * @return a <code>Request</code> configuration object
      */
     default Request GET(String path, Consumer<Request> config) {
         return GET(pathMatcher(path), config);
@@ -64,8 +66,41 @@ public interface GetExpectations {
      * have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param matcher the path matcher
+     * @param config  the configuration consumer
      * @return a <code>Request</code> configuration object
-     * @param config the configuration consumer
      */
-    Request GET(Matcher<String> matcher, Consumer<Request> config);
+    Request GET(final Matcher<String> matcher, final Consumer<Request> config);
+
+    // FIXME: this is WIP
+    default Request GET(final Predicate<String> predicate, final Consumer<Request> config) {
+        return GET(new PredicateMatcher<>(predicate), config);
+    }
+
+    default Request GET(final String description, final Predicate<String> predicate, final Consumer<Request> config) {
+        return GET(new PredicateMatcher<>(predicate, description), config);
+    }
+}
+
+class PredicateMatcher<T> extends BaseMatcher<T> {
+    // FIXME: move out and test
+
+    private final Predicate<T> predicate;
+    private final String description;
+
+    public PredicateMatcher(final Predicate<T> predicate) {
+        this(predicate, "a configured predicate");
+    }
+
+    public PredicateMatcher(final Predicate<T> predicate, final String description) {
+        this.predicate = predicate;
+        this.description = description;
+    }
+
+    @Override public boolean matches(final Object actual) {
+        return predicate.test((T) actual);
+    }
+
+    @Override public void describeTo(final Description desc) {
+        desc.appendText(description);
+    }
 }

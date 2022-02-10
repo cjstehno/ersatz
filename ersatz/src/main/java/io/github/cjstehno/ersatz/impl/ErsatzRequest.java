@@ -20,6 +20,7 @@ import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+import io.github.cjstehno.ersatz.impl.matchers.RequestQueryMatcher;
 import io.github.cjstehno.ersatz.match.CookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import org.hamcrest.Matcher;
@@ -45,7 +46,7 @@ import static org.hamcrest.Matchers.*;
  */
 public class ErsatzRequest implements Request {
 
-    private final List<RequestMatcher> matchers = new LinkedList<>();
+    private final List<Matcher<ClientRequest>> matchers = new LinkedList<>();
     private final List<Consumer<ClientRequest>> listeners = new LinkedList<>();
     private final List<Response> responses = new LinkedList<>();
     private final ResponseEncoders globalEncoders;
@@ -124,7 +125,7 @@ public class ErsatzRequest implements Request {
 
     @Override
     public Request query(final String name, final Matcher<Iterable<? super String>> matcher) {
-        matchers.add(RequestMatcher.query(name, matcher));
+        matchers.add(new RequestQueryMatcher(name, matcher));
         return this;
     }
 
@@ -244,7 +245,7 @@ public class ErsatzRequest implements Request {
      *
      * @return an immutable list of the configured matchers.
      */
-    public List<RequestMatcher> getRequestMatchers() {
+    public List<Matcher<ClientRequest>> getRequestMatchers() {
         return unmodifiableList(matchers);
     }
 
@@ -295,7 +296,7 @@ public class ErsatzRequest implements Request {
 
         matchers.forEach(m -> {
             final var desc = new StringDescription();
-            m.getMatcher().describeTo(desc);
+            m.describeTo(desc);
             str.append(desc).append(", ");
         });
 
