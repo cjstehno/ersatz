@@ -16,10 +16,12 @@
 package io.github.cjstehno.ersatz.cfg;
 
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
+import io.github.cjstehno.ersatz.match.BodyMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.BiFunction;
 
+import static io.github.cjstehno.ersatz.match.BodyMatcher.bodyMatching;
 import static org.hamcrest.Matchers.equalTo;
 
 /**
@@ -45,7 +47,9 @@ public interface RequestWithContent extends Request {
      * @param contentType the body content type
      * @return a reference to this request
      */
-    RequestWithContent body(final Matcher<Object> body, String contentType);
+    default RequestWithContent body(final Matcher<Object> body, String contentType) {
+        return body(bodyMatching(body, contentType));
+    }
 
     /**
      * Configures the expected body content of the request with the specified content type.
@@ -54,7 +58,7 @@ public interface RequestWithContent extends Request {
      * @param contentType the body content type
      * @return a reference to this request
      */
-    default RequestWithContent body(final Object body, ContentType contentType) {
+    default RequestWithContent body(final Object body, final ContentType contentType) {
         return body(body, contentType.getValue());
     }
 
@@ -65,9 +69,17 @@ public interface RequestWithContent extends Request {
      * @param contentType the body content type
      * @return a reference to this request
      */
-    default RequestWithContent body(final Matcher<Object> body, ContentType contentType) {
+    default RequestWithContent body(final Matcher<Object> body, final ContentType contentType) {
         return body(body, contentType.getValue());
     }
+
+    /**
+     * Configures the expected body content of the request.
+     *
+     * @param bodyMatcher the body matcher
+     * @return a reference to this request
+     */
+    RequestWithContent body(final BodyMatcher bodyMatcher);
 
     /**
      * Specifies a custom body content converter function. The function will have the client request body content as a byte array and it will be

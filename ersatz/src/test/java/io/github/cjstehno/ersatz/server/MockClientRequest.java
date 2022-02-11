@@ -55,6 +55,11 @@ public class MockClientRequest implements ClientRequest {
         setBody(content);
     }
 
+    public MockClientRequest(final byte[] content, final String contentType) {
+        setBody(content);
+        setContentType(contentType);
+    }
+
     public void setCookies(Map<String, Cookie> cookies) {
         this.cookies = cookies;
     }

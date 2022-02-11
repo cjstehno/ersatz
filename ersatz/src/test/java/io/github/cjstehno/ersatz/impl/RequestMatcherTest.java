@@ -17,9 +17,6 @@ package io.github.cjstehno.ersatz.impl;
 
 
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
-import io.github.cjstehno.ersatz.encdec.DecoderChain;
-import io.github.cjstehno.ersatz.encdec.Decoders;
-import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.match.QueryParamMatcher;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +32,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.HEAD;
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
@@ -116,33 +112,6 @@ class RequestMatcherTest {
             arguments(factory.apply(Map.of(
                 "spam", new ArrayDeque<>(List.of("n"))
             )), false)
-        );
-    }
-
-    @ParameterizedTest @DisplayName("body") @MethodSource("bodyProvider")
-    void body(final MockClientRequest request, final boolean result) {
-        RequestDecoders decoders = RequestDecoders.decoders(d -> {
-            d.register(TEXT_PLAIN, Decoders.utf8String);
-        });
-
-        assertEquals(result, RequestMatcher.body(new DecoderChain(decoders), TEXT_PLAIN.getValue(), equalTo("text content")).matches(request));
-    }
-
-    private static Stream<Arguments> bodyProvider() {
-        return Stream.of(
-            arguments(new MockClientRequest(), false),
-            arguments(new MockClientRequest("text content".getBytes()), true),
-            arguments(new MockClientRequest("text other content".getBytes()), false)
-        );
-    }
-
-    private static Stream<Arguments> matcherProvider() {
-        final var secondClient = new MockClientRequest(GET);
-        secondClient.setContentLength(100);
-
-        return Stream.of(
-            arguments(new MockClientRequest(), false),
-            arguments(secondClient, true)
         );
     }
 }

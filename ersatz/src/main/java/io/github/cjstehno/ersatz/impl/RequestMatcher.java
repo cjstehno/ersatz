@@ -16,8 +16,6 @@
 package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
-import io.github.cjstehno.ersatz.encdec.DecoderChain;
-import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
@@ -62,29 +60,6 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
             m,
             cr -> cr.getBodyParameters().getOrDefault(name, new ArrayDeque<>()),
             "Parameter string " + name + " matches"
-        );
-    }
-
-    /**
-     * Creates a request matcher for request body content.
-     *
-     * @param decoderChain the available request decoders
-     * @param contentType  the request content-type
-     * @param m            the hamcrest matcher to be wrapped
-     * @return a configured RequestMatcher
-     */
-    static RequestMatcher body(final DecoderChain decoderChain, final String contentType, final Matcher<Object> m) {
-        return new RequestMatcher(
-            m,
-            cr -> {
-                final var decoder = decoderChain.resolve(contentType);
-                if (decoder != null) {
-                    return decoder.apply(cr.getBody(), new DecodingContext(cr.getContentLength(), cr.getContentType(), cr.getCharacterEncoding(), decoderChain));
-                } else {
-                    return null;
-                }
-            },
-            "Body (" + contentType + ") matches "
         );
     }
 
