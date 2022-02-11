@@ -16,7 +16,6 @@
 package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
-import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.DecoderChain;
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.server.ClientRequest;
@@ -26,8 +25,6 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
 import java.util.ArrayDeque;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -65,33 +62,6 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
             m,
             cr -> cr.getBodyParameters().getOrDefault(name, new ArrayDeque<>()),
             "Parameter string " + name + " matches"
-        );
-    }
-
-    /**
-     * Creates a request matcher for a cookie.
-     *
-     * @param name the cookie name
-     * @param m    the hamcrest matcher to be wrapped
-     * @return a configured RequestMatcher
-     */
-    static RequestMatcher cookie(final String name, final Matcher<Cookie> m) {
-        return new RequestMatcher(
-            m,
-            cr -> cr.getCookies().get(name),
-            "Cookie " + name + " matches "
-        );
-    }
-
-    static RequestMatcher cookies(final Matcher<Map<String, Cookie>> matcher) {
-        return new RequestMatcher(
-            matcher,
-            cr -> {
-                final var map = new LinkedHashMap<String, Cookie>();
-                cr.getCookies().forEach(map::put);
-                return map;
-            },
-            "Cookies match "
         );
     }
 

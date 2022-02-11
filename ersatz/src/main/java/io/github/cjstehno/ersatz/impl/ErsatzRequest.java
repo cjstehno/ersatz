@@ -18,20 +18,18 @@ package io.github.cjstehno.ersatz.impl;
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.cfg.Response;
-import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.impl.matchers.RequestSchemeMatcher;
-import io.github.cjstehno.ersatz.match.CookieMatcher;
 import io.github.cjstehno.ersatz.match.HeaderMatcher;
 import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.match.QueryParamMatcher;
+import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -97,32 +95,8 @@ public class ErsatzRequest implements Request {
         return this;
     }
 
-    @Override
-    public Request cookie(final String name, final String value) {
-        return cookie(name, new CookieMatcher().value(value));
-    }
-
-    @Override
-    public Request cookie(final String name, final Matcher<Cookie> value) {
-        matchers.add(RequestMatcher.cookie(name, value));
-        return this;
-    }
-
-    @Override
-    public Request cookies(Matcher<Map<String, Cookie>> matcher) {
-        matchers.add(RequestMatcher.cookies(matcher));
-        return this;
-    }
-
-    @Override
-    public Request cookies(Map<String, Object> cookies) {
-        cookies.forEach((k, v) -> {
-            if (v instanceof Matcher) {
-                cookie(k, (Matcher<Cookie>) v);
-            } else {
-                cookie(k, v.toString());
-            }
-        });
+    @Override public Request cookie(RequestCookieMatcher cookieMatcher) {
+        matchers.add(cookieMatcher);
         return this;
     }
 

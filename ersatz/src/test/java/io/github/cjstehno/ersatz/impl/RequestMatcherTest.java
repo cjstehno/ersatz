@@ -20,8 +20,6 @@ import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.encdec.DecoderChain;
 import io.github.cjstehno.ersatz.encdec.Decoders;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
-import io.github.cjstehno.ersatz.match.CookieMatcher;
-import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.match.QueryParamMatcher;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -43,7 +41,6 @@ import static io.github.cjstehno.ersatz.cfg.HttpMethod.HEAD;
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
@@ -118,19 +115,6 @@ class RequestMatcherTest {
             arguments(factory.apply(Map.of(
                 "spam", new ArrayDeque<>(List.of("n"))
             )), false)
-        );
-    }
-
-    @ParameterizedTest @DisplayName("cookie") @MethodSource("cookieProvider")
-    void cookie(final MockClientRequest request, final boolean result) {
-        assertEquals(result, RequestMatcher.cookie("id", new CookieMatcher().value(equalTo("asdf89s7g"))).matches(request));
-    }
-
-    private static Stream<Arguments> cookieProvider() {
-        return Stream.of(
-            arguments(new MockClientRequest().cookie("id", "asdf89s7g"), true),
-            arguments(new MockClientRequest().cookie("id", "assdfsdf"), false),
-            arguments(new MockClientRequest(), false)
         );
     }
 

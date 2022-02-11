@@ -41,7 +41,6 @@ import java.util.stream.Stream;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
 import static io.github.cjstehno.ersatz.encdec.Cookie.cookie;
 import static io.github.cjstehno.ersatz.match.CookieMatcher.cookieMatcher;
-import static io.github.cjstehno.ersatz.match.NoCookiesMatcher.noCookies;
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -151,43 +150,6 @@ class ErsatzRequestTest {
         assertEquals(result, request.matches(clientRequest().query(name, value)));
     }
 
-    @ParameterizedTest @DisplayName("cookies") @MethodSource("cookiesProvider")
-    void cookies(final ClientRequest cr, final boolean result) {
-        request.cookies(
-            Map.of(
-                "chocolate", "yes",
-                "amount", "dozen"
-            )
-        ).cookie("sugar", "no");
-
-        assertEquals(result, request.matches(cr));
-    }
-
-    private static Stream<Arguments> cookiesProvider() {
-        return Stream.of(
-            arguments(clientRequest().cookie("amount", "dozen").cookie("sugar", "no"), false),
-            arguments(clientRequest().cookie("chocolate", "yes").cookie("amount", "dozen").cookie("sugar", "no"), true),
-            arguments(clientRequest().cookie("chocolate", "yes").cookie("amount", "dozen").cookie("sugar", "no").cookie("more", "fun"), true)
-        );
-    }
-
-    @ParameterizedTest @DisplayName("ensure matcher cookies") @MethodSource("matcherCookiesProvider")
-    void ensureMatcherCookies(final ClientRequest cr, final boolean result) {
-        request.cookies(Map.of(
-            "foo", cookieMatcher(m -> m.value("one")),
-            "bar", cookieMatcher(m -> m.value(equalTo("two")))
-        ));
-
-        assertEquals(result, request.matches(cr));
-    }
-
-    private static Stream<Arguments> matcherCookiesProvider() {
-        return Stream.of(
-            arguments(clientRequest().cookie("foo", "one").cookie("bar", "two"), true),
-            arguments(clientRequest().cookie("foo", "one").cookie("bar", "blah"), false)
-        );
-    }
-
     @ParameterizedTest @DisplayName("cookie equals matching")
     @CsvSource({
         "bar,boo-boo,false",
@@ -197,37 +159,6 @@ class ErsatzRequestTest {
         request.cookie("bar", equalTo(cookie(c -> c.value("blah-blah"))));
 
         assertEquals(result, request.matches(clientRequest().cookie(name, value)));
-    }
-
-    @ParameterizedTest @DisplayName("match one cookie present and one not") @MethodSource("cookieOrNotCookieProvider")
-    void cookieOrNotCookie(final ClientRequest cr, final boolean result) {
-        request.cookies(Map.of(
-            "foo", nullValue(),
-            "bar", cookieMatcher(m -> m.value(equalTo("two")))
-        ));
-
-        assertEquals(result, request.matches(cr));
-    }
-
-    private static Stream<Arguments> cookieOrNotCookieProvider() {
-        return Stream.of(
-            arguments(clientRequest().cookie("foo", "one").cookie("bar", "two"), false),
-            arguments(clientRequest().cookie("bar", "two"), true)
-        );
-    }
-
-    @ParameterizedTest @DisplayName("match with no cookies") @MethodSource("noCookiesProvider")
-    void matchWithNoCookies(final ClientRequest cr, final boolean result) {
-        request.cookies(noCookies());
-
-        assertEquals(result, request.matches(cr));
-    }
-
-    private static Stream<Arguments> noCookiesProvider() {
-        return Stream.of(
-            arguments(clientRequest(), true),
-            arguments(clientRequest().cookie("alpha", "bravo"), false)
-        );
     }
 
     @ParameterizedTest @DisplayName("deep cookie properties") @MethodSource("deepCookieProvider")
@@ -414,27 +345,6 @@ class ErsatzRequestTest {
         server.expectations(e -> {
             e.GET("/test", r -> {
                 r.cookie("flavor", "chocolate-chip");
-                r.responds().body(STRING_CONTENT);
-            });
-        });
-
-        var response = client.get(
-            "/test",
-            builder -> builder.header("Cookie", "flavor=chocolate-chip")
-        );
-        assertEquals(STRING_CONTENT, response.body().string());
-
-        response = client.get("/test");
-        assertEquals(NOT_FOUND_BODY, response.body().string());
-    }
-
-    @Test @DisplayName("matching: cookies")
-    void matchingCookies() throws IOException {
-        server.expectations(e -> {
-            e.GET("/test", r -> {
-                r.cookies(Map.of(
-                    "flavor", "chocolate-chip"
-                ));
                 r.responds().body(STRING_CONTENT);
             });
         });

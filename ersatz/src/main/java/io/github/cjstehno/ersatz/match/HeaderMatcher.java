@@ -17,7 +17,6 @@ package io.github.cjstehno.ersatz.match;
 
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -27,60 +26,106 @@ import java.util.ArrayDeque;
 import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
 import static java.util.Arrays.asList;
 import static lombok.AccessLevel.PRIVATE;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
 
-// FIXME: document
-// FIXME: test
+/**
+ * Matcher used to match a request header.
+ */
 public abstract class HeaderMatcher extends BaseMatcher<ClientRequest> {
 
-    // FIXME: test with multiple specified heacer values
-
     /**
-     * FIXME: document
+     * Creates a matcher for a request header that matches the given name matcher and value matcher.
      *
-     * @param nameMatcher
-     * @param valueMatcher
-     * @return
+     * @param nameMatcher  the name matcher
+     * @param valueMatcher the value matcher
+     * @return the header matcher
      */
     public static HeaderMatcher headerMatching(final Matcher<String> nameMatcher, final Matcher<Iterable<? super String>> valueMatcher) {
         return new HeaderMatches(nameMatcher, valueMatcher);
     }
 
-    // FIXME: document
+    /**
+     * Creates a matcher for a request header that matches the given name and provided value matcher.
+     *
+     * @param name         the name
+     * @param valueMatcher the value matcher
+     * @return the header matcher
+     */
     public static HeaderMatcher headerMatching(final String name, final Matcher<Iterable<? super String>> valueMatcher) {
-        return new HeaderMatches(equalToIgnoringCase(name), valueMatcher);
+        return headerMatching(equalToIgnoringCase(name), valueMatcher);
     }
 
-    // FIXME: document
+    /**
+     * Creates a matcher for a request header that matches the given name and value.
+     *
+     * @param name  the name
+     * @param value the value
+     * @return the header matcher
+     */
     public static HeaderMatcher headerMatching(final String name, final String value) {
         return headerMatching(name, hasItem(value));
     }
 
-    // FIXME: document
+    /**
+     * Creates a matcher that matches when a header exists with the given name.
+     *
+     * @param name the name
+     * @return the header matcher
+     */
     public static HeaderMatcher headerExists(final String name) {
         return headerExists(equalToIgnoringCase(name));
     }
 
-    // FIXME: document
+    /**
+     * Creates a matcher that matches when a header exists matching the given name matcher.
+     *
+     * @param nameMatcher the name matcher
+     * @return the header matcher
+     */
     public static HeaderMatcher headerExists(final Matcher<String> nameMatcher) {
         return new HasHeaderMatching(nameMatcher, false);
     }
 
-    // FIXME: document
+    /**
+     * Creates a matcher that matches when a header does not exist with the given name.
+     *
+     * @param name the name
+     * @return the header matcher
+     */
     public static HeaderMatcher headerDoesNotExist(final String name) {
         return headerDoesNotExist(equalToIgnoringCase(name));
     }
 
-    // FIXME: document
+    /**
+     * Creates a matcher that matches when a header does not exist matching the given name matcher.
+     *
+     * @param nameMatcher the name matcher
+     * @return the header matcher
+     */
     public static HeaderMatcher headerDoesNotExist(final Matcher<String> nameMatcher) {
         return new HasHeaderMatching(nameMatcher, true);
     }
 
-    // FIXME: document
+    /**
+     * Creates a matcher that matches a Content-Type header with the specified value.
+     *
+     * @param contentType the content type value
+     * @return the header matcher
+     */
     public static HeaderMatcher contentTypeHeader(final String contentType) {
-        return headerMatching(CONTENT_TYPE_HEADER, hasItem(startsWith(contentType)));
+        return contentTypeHeader(equalTo(contentType));
+    }
+
+    /**
+     * Creates a matcher that matches a Content-Type header matching the provided matcher.
+     *
+     * @param contentTypeMatcher the content type value matcher
+     * @return the header matcher
+     */
+    public static HeaderMatcher contentTypeHeader(final Matcher<String> contentTypeMatcher) {
+        return headerMatching(CONTENT_TYPE_HEADER, hasItem(contentTypeMatcher));
     }
 
     // FIXME: these are almost identical to the ones for QueryPAram... share and remove duplication
@@ -91,14 +136,10 @@ public abstract class HeaderMatcher extends BaseMatcher<ClientRequest> {
         private final Matcher<Iterable<? super String>> valueMatcher;
 
         @Override public boolean matches(final Object actual) {
-            val clientRequest = (ClientRequest) actual;
-            val headers = clientRequest.getHeaders();
-
-            return headers.keySet().stream()
-                .filter(nameMatcher::matches)
-                .findAny()
-                .filter(key -> valueMatcher.matches(new ArrayDeque<>(asList(headers.get(key).toArray(new String[0])))))
-                .isPresent();
+            // FIXME: use this version (it checks all matching keys for matching values
+            return ((ClientRequest) actual).getHeaders().entrySet().stream()
+                .filter(ent -> nameMatcher.matches(ent.getKey()))
+                .anyMatch(ent -> valueMatcher.matches(new ArrayDeque<>(asList(ent.getValue().toArray(new String[0])))));
         }
 
         @Override public void describeTo(Description description) {

@@ -18,6 +18,7 @@ package io.github.cjstehno.ersatz.cfg;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.match.HeaderMatcher;
 import io.github.cjstehno.ersatz.match.QueryParamMatcher;
+import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.val;
 import org.hamcrest.Matcher;
@@ -31,6 +32,7 @@ import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatch
 import static io.github.cjstehno.ersatz.match.HeaderMatcher.headerMatching;
 import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryExists;
 import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryMatching;
+import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.cookieMatching;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
@@ -62,8 +64,8 @@ public interface Request {
      * @param value the header value
      * @return this request
      */
-    default Request header(final String name, final String value){
-       return header(headerMatching(name, value));
+    default Request header(final String name, final String value) {
+        return header(headerMatching(name, value));
     }
 
     /**
@@ -74,7 +76,7 @@ public interface Request {
      * @param matcher the header value matcher
      * @return this request
      */
-    default Request header(final String name, final Matcher<Iterable<? super String>> matcher){
+    default Request header(final String name, final Matcher<Iterable<? super String>> matcher) {
         return header(headerMatching(name, matcher));
     }
 
@@ -94,7 +96,7 @@ public interface Request {
      * @param heads the map of headers
      * @return this request
      */
-    default Request headers(final Map<String, Object> heads){
+    default Request headers(final Map<String, Object> heads) {
         heads.forEach((k, v) -> {
             if (v instanceof Matcher) {
                 header(k, (Matcher<Iterable<? super String>>) v);
@@ -188,7 +190,9 @@ public interface Request {
      * @param value the cookie value
      * @return this request
      */
-    Request cookie(final String name, final String value);
+    default Request cookie(final String name, final String value) {
+        return cookie(cookieMatching(name, value));
+    }
 
     /**
      * Specifies a request cookie to be configured with the given name and matcher.
@@ -197,24 +201,17 @@ public interface Request {
      * @param matcher the cookie matcher
      * @return this request
      */
-    Request cookie(final String name, final Matcher<Cookie> matcher);
+    default Request cookie(final String name, final Matcher<Cookie> matcher) {
+        return cookie(cookieMatching(name, matcher));
+    }
 
     /**
-     * Specifies a matcher for matching all cookies. This is useful with the <code>NoCookiesMatcher</code>.
+     * Specifies a request cookie to be configured with the given matcher.
      *
-     * @param matcher the matcher to be used
+     * @param cookieMatcher the request cookie matcher
      * @return this request
      */
-    Request cookies(final Matcher<Map<String, Cookie>> matcher);
-
-    /**
-     * Used to configure a map of cookies on the request. The map values may be Strings or Matchers. All of the configured matchers must be successful
-     * in order for the request to be matched.
-     *
-     * @param cookies the map of cookies
-     * @return this request
-     */
-    Request cookies(final Map<String, Object> cookies);
+    Request cookie(final RequestCookieMatcher cookieMatcher); // FIXME: all through here
 
     /**
      * Specifies a listener which will be called with the active request whenever this request is matched at test-time.
