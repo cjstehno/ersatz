@@ -128,7 +128,6 @@ public abstract class HeaderMatcher extends BaseMatcher<ClientRequest> {
         return headerMatching(CONTENT_TYPE_HEADER, hasItem(contentTypeMatcher));
     }
 
-    // FIXME: these are almost identical to the ones for QueryPAram... share and remove duplication
     @RequiredArgsConstructor(access = PRIVATE)
     private static class HeaderMatches extends HeaderMatcher {
 
@@ -136,7 +135,6 @@ public abstract class HeaderMatcher extends BaseMatcher<ClientRequest> {
         private final Matcher<Iterable<? super String>> valueMatcher;
 
         @Override public boolean matches(final Object actual) {
-            // FIXME: use this version (it checks all matching keys for matching values
             return ((ClientRequest) actual).getHeaders().entrySet().stream()
                 .filter(ent -> nameMatcher.matches(ent.getKey()))
                 .anyMatch(ent -> valueMatcher.matches(new ArrayDeque<>(asList(ent.getValue().toArray(new String[0])))));

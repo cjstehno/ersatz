@@ -115,7 +115,6 @@ public abstract class RequestCookieMatcher extends BaseMatcher<ClientRequest> {
         return new HasNoCookies();
     }
 
-    /// FIXME: remove duplication
     @RequiredArgsConstructor(access = PRIVATE)
     private static class CookieMatches extends RequestCookieMatcher {
 
@@ -123,14 +122,9 @@ public abstract class RequestCookieMatcher extends BaseMatcher<ClientRequest> {
         private final Matcher<Cookie> cookieMatcher;
 
         @Override public boolean matches(final Object actual) {
-            val clientRequest = (ClientRequest) actual;
-            val cookies = clientRequest.getCookies();
-
-            return cookies.keySet().stream()
-                .filter(nameMatcher::matches)
-                .findAny()
-                .filter(key -> cookieMatcher.matches(cookies.get(key)))
-                .isPresent();
+            return ((ClientRequest) actual).getCookies().entrySet().stream()
+                .filter(ent -> nameMatcher.matches(ent.getKey()))
+                .anyMatch(ent -> cookieMatcher.matches(ent.getValue()));
         }
 
         @Override public void describeTo(Description description) {

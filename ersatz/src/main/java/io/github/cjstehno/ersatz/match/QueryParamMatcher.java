@@ -17,7 +17,6 @@ package io.github.cjstehno.ersatz.match;
 
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -33,8 +32,6 @@ import static org.hamcrest.core.IsIterableContaining.hasItem;
  * Matcher used to match request query parameters.
  */
 public abstract class QueryParamMatcher extends BaseMatcher<ClientRequest> {
-
-    // FIXME: refactor the exists and not exists to be like the header matcher version
 
     /**
      * Configures a matcher that matches when the provided name and value matcher match the param name and value
@@ -79,7 +76,17 @@ public abstract class QueryParamMatcher extends BaseMatcher<ClientRequest> {
      * @return the query param matcher
      */
     public static QueryParamMatcher queryExists(final String name) {
-        return new QueryHasParamMatching(equalTo(name), false);
+        return queryExists(equalTo(name));
+    }
+
+    /**
+     * Configures a matcher that matches when a query param with the provided name exists in the request.
+     *
+     * @param nameMatcher the param name matcher
+     * @return the query param matcher
+     */
+    public static QueryParamMatcher queryExists(final Matcher<String> nameMatcher) {
+        return new QueryHasParamMatching(nameMatcher, false);
     }
 
     /**
@@ -89,7 +96,17 @@ public abstract class QueryParamMatcher extends BaseMatcher<ClientRequest> {
      * @return the query param matcher
      */
     public static QueryParamMatcher queryDoesNotExist(final String name) {
-        return new QueryHasParamMatching(equalTo(name), true);
+        return queryDoesNotExist(equalTo(name));
+    }
+
+    /**
+     * Configures a matcher that matches when a query param with the provided name does not exist in the request.
+     *
+     * @param nameMatcher the param name matcher
+     * @return the query param matcher
+     */
+    public static QueryParamMatcher queryDoesNotExist(final Matcher<String> nameMatcher) {
+        return new QueryHasParamMatching(nameMatcher, true);
     }
 
     /**
@@ -110,14 +127,9 @@ public abstract class QueryParamMatcher extends BaseMatcher<ClientRequest> {
         private final Matcher<Iterable<? super String>> valueMatcher;
 
         @Override public boolean matches(final Object actual) {
-            val clientRequest = (ClientRequest) actual;
-            val queryParams = clientRequest.getQueryParams();
-
-            return queryParams.keySet().stream()
-                .filter(nameMatcher::matches)
-                .findAny()
-                .filter(key -> valueMatcher.matches(new ArrayDeque<>(asList(queryParams.get(key).toArray(new String[0])))))
-                .isPresent();
+            return ((ClientRequest) actual).getQueryParams().entrySet().stream()
+                .filter(ent -> nameMatcher.matches(ent.getKey()))
+                .anyMatch(ent -> valueMatcher.matches(new ArrayDeque<>(asList(ent.getValue().toArray(new String[0])))));
         }
 
         @Override public void describeTo(final Description description) {

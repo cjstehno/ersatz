@@ -665,7 +665,7 @@ public class ErsatzServerGetExpectationsTest {
         verify(server);
     }
 
-    // FIXME: work in progress
+    // FIXME: work in progress (put predicate versions in cookie, query, header, path
     @Test void workInProgress() throws IOException {
         server.expectations(expect -> {
             expect.GET(
