@@ -102,7 +102,6 @@ public interface RequestWithContent extends Request {
      * @return a reference to this request
      */
     RequestWithContent param(final String name, final String value);
-    // FIXME: do I use these and are they tested?
 
     /**
      * Configures an expectation matching parameters contained in the request body. The specified values must exist in the list

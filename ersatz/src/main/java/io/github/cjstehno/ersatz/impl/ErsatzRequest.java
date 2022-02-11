@@ -128,13 +128,8 @@ public class ErsatzRequest implements Request {
     }
 
     @Override
-    public Request called(final int count) {
-        return called(equalTo(count));
-    }
-
-    @Override
     public Request matcher(final Matcher<ClientRequest> matcher) {
-        matchers.add(RequestMatcher.matcher(matcher));
+        matchers.add(matcher);
         return this;
     }
 

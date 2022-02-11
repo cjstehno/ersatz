@@ -211,7 +211,7 @@ public interface Request {
      * @param cookieMatcher the request cookie matcher
      * @return this request
      */
-    Request cookie(final RequestCookieMatcher cookieMatcher); // FIXME: all through here
+    Request cookie(final RequestCookieMatcher cookieMatcher);
 
     /**
      * Specifies a listener which will be called with the active request whenever this request is matched at test-time.
@@ -236,7 +236,9 @@ public interface Request {
      * @param count the expected call count
      * @return a reference to this request
      */
-    Request called(final int count);
+    default Request called(final int count) {
+        return called(equalTo(count));
+    }
 
     /**
      * Configures a matcher for the <code>ClientRequest</code>, which allows ad-hoc matching based on the request. This does <i>not</i> disallow

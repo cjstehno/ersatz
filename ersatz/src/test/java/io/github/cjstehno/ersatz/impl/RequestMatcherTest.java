@@ -40,7 +40,8 @@ import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.HEAD;
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
@@ -133,18 +134,6 @@ class RequestMatcherTest {
             arguments(new MockClientRequest("text content".getBytes()), true),
             arguments(new MockClientRequest("text other content".getBytes()), false)
         );
-    }
-
-    @ParameterizedTest @DisplayName("matcher") @MethodSource("matcherProvider")
-    void matcher(final MockClientRequest request, final boolean result) {
-        RequestMatcher matcher = RequestMatcher.matcher(
-            allOf(
-                hasProperty("method", equalTo(GET)),
-                hasProperty("contentLength", greaterThan(10L))
-            )
-        );
-
-        assertEquals(result, matcher.matches(request));
     }
 
     private static Stream<Arguments> matcherProvider() {
