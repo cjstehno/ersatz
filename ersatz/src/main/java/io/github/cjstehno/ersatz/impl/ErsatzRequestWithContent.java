@@ -29,8 +29,8 @@ import java.util.LinkedList;
 import java.util.function.BiFunction;
 
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
+import static io.github.cjstehno.ersatz.match.HeaderMatcher.contentTypeHeader;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.startsWith;
 
 /**
  * Ersatz implementation of a <code>Request</code> with request body content.
@@ -68,7 +68,7 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
 
     @Override
     public RequestWithContent body(final Matcher<Object> bodyMatcher, final String contentType) {
-        addMatcher(RequestMatcher.contentType(startsWith(contentType)));
+        addMatcher(contentTypeHeader(contentType));
         addMatcher(RequestMatcher.body(decoderChain, contentType, bodyMatcher));
         return this;
     }

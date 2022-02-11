@@ -20,19 +20,16 @@ import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.DecoderChain;
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.core.IsIterableContaining;
 
 import java.util.ArrayDeque;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
 import static lombok.AccessLevel.PROTECTED;
 
 /**
@@ -54,25 +51,6 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
      */
     static RequestMatcher method(final Matcher<HttpMethod> m) {
         return new RequestMatcher(m, ClientRequest::getMethod, "HTTP method matches ");
-    }
-
-    /**
-     * Creates a request matcher for a request header.
-     *
-     * @param name the header name
-     * @param m    the hamcrest matcher to be wrapped
-     * @return a configured RequestMatcher
-     */
-    static RequestMatcher header(final String name, final Matcher<Iterable<? super String>> m) {
-        return new RequestMatcher(
-            m,
-            cr -> cr.getHeaders().entrySet().stream()
-                .filter(h -> h.getKey().equalsIgnoreCase(name))
-                .findFirst()
-                .map(Map.Entry::getValue)
-                .orElse(null),
-            "Header " + name + " matches "
-        );
     }
 
     /**
@@ -138,16 +116,6 @@ public class RequestMatcher extends BaseMatcher<ClientRequest> {
             },
             "Body (" + contentType + ") matches "
         );
-    }
-
-    /**
-     * Creates a request matcher for the request content-type property.
-     *
-     * @param m the hamcrest matcher to be wrapped
-     * @return a configured RequestMatcher
-     */
-    static RequestMatcher contentType(final Matcher<String> m) {
-        return header(CONTENT_TYPE_HEADER, IsIterableContaining.hasItem(m));
     }
 
     /**

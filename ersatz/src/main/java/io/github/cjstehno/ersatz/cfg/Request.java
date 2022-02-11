@@ -16,6 +16,7 @@
 package io.github.cjstehno.ersatz.cfg;
 
 import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.match.HeaderMatcher;
 import io.github.cjstehno.ersatz.match.QueryParamMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.val;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
+import static io.github.cjstehno.ersatz.match.HeaderMatcher.headerMatching;
 import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryExists;
 import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryMatching;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -54,24 +56,36 @@ public interface Request {
     /**
      * Specifies a request header to be configured in the expected request. The value specified must match one of the
      * request header values mapped to the expected header name. Multiple header specification may be added to the
-     * expectations; each specified header must exist in the request. If an OR-style match is desired a Hamcrest Matcher
-     * should be specified (see the <code>header(String, Matcher&lt;Iterable&lt;String&gt;&gt;)</code> method).
+     * expectations; each specified header must exist in the request.
      *
      * @param name  the header name
      * @param value the header value
      * @return this request
      */
-    Request header(final String name, final String value);
+    default Request header(final String name, final String value){
+       return header(headerMatching(name, value));
+    }
 
     /**
-     * Specifies a request header matcher to be configured in the expected request. If multiple matchers are defined with this method, each must
-     * match successfully for the request to be matched.
+     * Specifies a request header matcher to be configured in the expected request. If multiple matchers are defined
+     * with this method, each must match successfully for the request to be matched.
      *
      * @param name    the header name
      * @param matcher the header value matcher
      * @return this request
      */
-    Request header(final String name, final Matcher<Iterable<? super String>> matcher);
+    default Request header(final String name, final Matcher<Iterable<? super String>> matcher){
+        return header(headerMatching(name, matcher));
+    }
+
+    /**
+     * Specifies a request header matcher to be configured in the expected request. If multiple matchers are defined
+     * with this method, each must match successfully for the request to be matched.
+     *
+     * @param headerMatcher the header matcher
+     * @return this request
+     */
+    Request header(final HeaderMatcher headerMatcher);
 
     /**
      * Specifies request headers as a Map of names to values to be configured in the expected request. The map values may be <code>String</code> or
@@ -80,7 +94,16 @@ public interface Request {
      * @param heads the map of headers
      * @return this request
      */
-    Request headers(final Map<String, Object> heads);
+    default Request headers(final Map<String, Object> heads){
+        heads.forEach((k, v) -> {
+            if (v instanceof Matcher) {
+                header(k, (Matcher<Iterable<? super String>>) v);
+            } else {
+                header(k, v.toString());
+            }
+        });
+        return this;
+    }
 
     /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be

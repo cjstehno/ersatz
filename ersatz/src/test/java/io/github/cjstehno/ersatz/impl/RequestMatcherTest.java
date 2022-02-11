@@ -70,42 +70,6 @@ class RequestMatcherTest {
         assertEquals(result, pathMatching("/something").matches(new MockClientRequest(GET, path)));
     }
 
-    @ParameterizedTest @DisplayName("content-type") @MethodSource("contentTypeProvider")
-    void contentType(final MockClientRequest request, final boolean result) {
-        assertEquals(result, RequestMatcher.contentType(startsWith("application/")).matches(request));
-    }
-
-    private static Stream<Arguments> contentTypeProvider() {
-        final var factory = new Function<String, MockClientRequest>() {
-            @Override public MockClientRequest apply(String ctype) {
-                final var mcr = new MockClientRequest();
-                mcr.setContentType(ctype);
-                return mcr;
-            }
-        };
-
-        return Stream.of(
-            arguments(factory.apply("application/json"), true),
-            arguments(factory.apply("application/"), true),
-            arguments(new MockClientRequest(), false)
-        );
-    }
-
-    @ParameterizedTest @DisplayName("header") @MethodSource("headerProvider")
-    void header(final MockClientRequest request, final boolean result) {
-        assertEquals(result, RequestMatcher.header("foo", hasItem("bar")).matches(request));
-    }
-
-    private static Stream<Arguments> headerProvider() {
-        return Stream.of(
-            arguments(new MockClientRequest().header("foo", "bar"), true),
-            arguments(new MockClientRequest().header("one", "two"), false),
-            arguments(new MockClientRequest().header("Foo", "bar"), true),
-            arguments(new MockClientRequest().header("Foo", "Bar"), false),
-            arguments(new MockClientRequest(), false)
-        );
-    }
-
     @ParameterizedTest @DisplayName("query") @MethodSource("queryProvider")
     void query(final MockClientRequest request, final boolean result) {
         assertEquals(

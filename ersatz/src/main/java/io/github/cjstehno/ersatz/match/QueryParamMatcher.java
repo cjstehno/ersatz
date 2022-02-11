@@ -34,6 +34,8 @@ import static org.hamcrest.core.IsIterableContaining.hasItem;
  */
 public abstract class QueryParamMatcher extends BaseMatcher<ClientRequest> {
 
+    // FIXME: refactor the exists and not exists to be like the header matcher version
+
     /**
      * Configures a matcher that matches when the provided name and value matcher match the param name and value
      * respectively.

@@ -20,14 +20,14 @@ import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.impl.matchers.RequestSchemeMatcher;
 import io.github.cjstehno.ersatz.match.CookieMatcher;
+import io.github.cjstehno.ersatz.match.HeaderMatcher;
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.match.QueryParamMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
-import org.hamcrest.core.IsIterableContaining;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -87,26 +87,8 @@ public class ErsatzRequest implements Request {
         return this;
     }
 
-    @Override
-    public Request headers(final Map<String, Object> heads) {
-        heads.forEach((k, v) -> {
-            if (v instanceof Matcher) {
-                header(k, (Matcher<Iterable<? super String>>) v);
-            } else {
-                header(k, v.toString());
-            }
-        });
-        return this;
-    }
-
-    @Override
-    public Request header(final String name, final String value) {
-        return header(name, IsIterableContaining.hasItem(value));
-    }
-
-    @Override
-    public Request header(final String name, final Matcher<Iterable<? super String>> value) {
-        matchers.add(RequestMatcher.header(name, value));
+    @Override public Request header(final HeaderMatcher headerMatcher) {
+        matchers.add(headerMatcher);
         return this;
     }
 
@@ -226,7 +208,7 @@ public class ErsatzRequest implements Request {
      *
      * @param matcher the matcher to be added
      */
-    protected void addMatcher(final RequestMatcher matcher) {
+    protected void addMatcher(final Matcher<ClientRequest> matcher) {
         matchers.add(matcher);
     }
 
