@@ -20,6 +20,8 @@ import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.DecoderChain;
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -31,22 +33,18 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
+import static lombok.AccessLevel.PROTECTED;
 
 /**
  * Request-specific wrapper around hamcrest matchers to provide property-based matching based on request attributes.
  */
+@RequiredArgsConstructor(access = PROTECTED)
 public class RequestMatcher extends BaseMatcher<ClientRequest> {
     // FIXME: this needs to be broken apart into separate matchers to allow more flexibility
 
     private final Matcher<?> matcher;
     private final Function<ClientRequest, Object> getter;
     private final String description;
-
-    protected RequestMatcher(Matcher<?> matcher, Function<ClientRequest, Object> getter, String description) {
-        this.matcher = matcher;
-        this.getter = getter;
-        this.description = description;
-    }
 
     /**
      * Creates a request matcher for the method property.

@@ -28,18 +28,22 @@ import java.util.function.Consumer;
 @SuppressWarnings("javadoc")
 public class ConsumerWithDelegate<T> implements Consumer<T> {
 
+    @SuppressWarnings("javadoc")
     public static <T> Consumer<T> create(Closure c, Object owner, int strategy) {
         return new ConsumerWithDelegate<>(c, strategy, owner);
     }
 
+    @SuppressWarnings("javadoc")
     public static <T> Consumer<T> create(Closure c, Object owner) {
         return create(c, owner, Closure.DELEGATE_FIRST);
     }
 
+    @SuppressWarnings("javadoc")
     public static <T> Consumer<T> create(Closure c, int strategy) {
         return create(c, GroovyClosure.getPropagatedOwner(c.getOwner()), strategy);
     }
 
+    @SuppressWarnings("javadoc")
     public static <T> Consumer<T> create(Closure c) {
         return create(c, Closure.DELEGATE_FIRST);
     }

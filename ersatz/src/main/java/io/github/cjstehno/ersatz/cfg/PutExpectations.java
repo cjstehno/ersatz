@@ -15,11 +15,10 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
-
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
 
 /**
  * Defines the available PUT request expectations.
@@ -32,8 +31,8 @@ public interface PutExpectations {
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
      */
-    default RequestWithContent PUT(String path) {
-        return PUT(pathMatcher(path));
+    default RequestWithContent PUT(final String path) {
+        return PUT(PathMatcher.pathMatching(path));
     }
 
     /**
@@ -42,8 +41,8 @@ public interface PutExpectations {
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
      */
-    default RequestWithContent PUT(Matcher<String> matcher) {
-        return PUT(matcher, (Consumer<RequestWithContent>) null);
+    default RequestWithContent PUT(final Matcher<String> matcher) {
+        return PUT(PathMatcher.pathMatching(matcher));
     }
 
     /**
@@ -54,8 +53,8 @@ public interface PutExpectations {
      * @return a <code>RequestWithContent</code> configuration object
      * @param config the configuration consumer
      */
-    default RequestWithContent PUT(String path, Consumer<RequestWithContent> config) {
-        return PUT(pathMatcher(path), config);
+    default RequestWithContent PUT(final String path, final Consumer<RequestWithContent> config) {
+        return PUT(PathMatcher.pathMatching(path), config);
     }
 
     /**
@@ -63,8 +62,29 @@ public interface PutExpectations {
      * <code>Consumer&lt;RequestWithContent&gt;</code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param matcher the path matcher
-     * @return a <code>RequestWithContent</code> configuration object
      * @param config the configuration consumer
+     * @return a <code>RequestWithContent</code> configuration object
      */
-    RequestWithContent PUT(Matcher<String> matcher, Consumer<RequestWithContent> config);
+    default RequestWithContent PUT(final Matcher<String> matcher, final Consumer<RequestWithContent> config) {
+        return PUT(PathMatcher.pathMatching(matcher), config);
+    }
+
+    /**
+     * Allows configuration of a PUT request expectation.
+     *
+     * @param pathMatcher the patch matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     */
+    default RequestWithContent PUT(final PathMatcher pathMatcher) {
+        return PUT(pathMatcher, null);
+    }
+
+    /**
+     * Allows configuration of a PUT request expectation with the provided <code>Consumer</code>.
+     *
+     * @param pathMatcher the patch matcher
+     * @param config the configuration consumer
+     * @return a <code>RequestWithContent</code> configuration object
+     */
+    RequestWithContent PUT(final PathMatcher pathMatcher, final Consumer<RequestWithContent> config);
 }

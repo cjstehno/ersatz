@@ -15,25 +15,28 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * Defines the available generic request (ANY) expectations.
  */
 public interface AnyExpectations {
 
+    // FIXME: update guide
+
     /**
      * Allows configuration of a request expectation matching any request method.
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
      */
-    default Request ANY(String path) {
-        return ANY(pathMatcher(path));
+    default Request ANY(final String path) {
+        return ANY(pathMatching(path));
     }
 
     /**
@@ -42,8 +45,8 @@ public interface AnyExpectations {
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
      */
-    default Request ANY(Matcher<String> matcher) {
-        return ANY(matcher, (Consumer<Request>) null);
+    default Request ANY(final Matcher<String> matcher) {
+        return ANY(pathMatching(matcher));
     }
 
     /**
@@ -54,8 +57,8 @@ public interface AnyExpectations {
      * @param consumer the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    default Request ANY(String path, Consumer<Request> consumer) {
-        return ANY(pathMatcher(path), consumer);
+    default Request ANY(final String path, Consumer<Request> consumer) {
+        return ANY(pathMatching(path), consumer);
     }
 
     /**
@@ -66,5 +69,28 @@ public interface AnyExpectations {
      * @param consumer the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    Request ANY(Matcher<String> matcher, Consumer<Request> consumer);
+    default Request ANY(final Matcher<String> matcher, final Consumer<Request> consumer) {
+        return ANY(pathMatching(matcher), consumer);
+    }
+
+    /**
+     * Allows configuration of request expectation matching any request method with a path matching the provided
+     * matcher.
+     *
+     * @param pathMatcher the patch matcher
+     * @return a <code>Request</code> configuration object
+     */
+    default Request ANY(final PathMatcher pathMatcher) {
+        return ANY(pathMatcher, null);
+    }
+
+    /**
+     * Allows configuration of request expectation matching any request method with a path matching the provided
+     * matcher. The consumer will be used to provide addition expectations on the request.
+     *
+     * @param pathMatcher the patch matcher
+     * @param consumer the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    Request ANY(final PathMatcher pathMatcher, Consumer<Request> consumer);
 }

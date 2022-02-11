@@ -18,28 +18,15 @@ package io.github.cjstehno.ersatz.match;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 
 import java.util.Collection;
 import java.util.function.Function;
 
-import static org.hamcrest.Matchers.equalTo;
-
 /**
  * Some reusable Hamcrest matchers useful in Ersatz expectations.
  */
 public interface ErsatzMatchers {
-
-    /**
-     * Matcher that matches a request path. A wildcard (*) may be used to match any request path.
-     *
-     * @param path the path to be matched or * for wildcard
-     * @return the matcher
-     */
-    static Matcher<String> pathMatcher(final String path) {
-        return path.equals("*") ? Matchers.any(String.class) : equalTo(path);
-    }
 
     /**
      * Matcher that matches if the object is an Iterable of Strings whose elements match (in any order) the provided
@@ -50,10 +37,6 @@ public interface ErsatzMatchers {
      */
     static Matcher<Iterable<? super String>> stringIterableMatcher(final Collection<Matcher<? super String>> matchers) {
         return new StringIterableMatcher(matchers);
-    }
-
-    static Matcher<Iterable<? super String>> anyStringIterableMatcher(){
-        return new AnyStringIterableMatcher();
     }
 
     /**
@@ -111,17 +94,6 @@ class StringIterableMatcher extends BaseMatcher<Iterable<? super String>> {
         description.appendText("An Iterable<String> matching {");
         matchers.forEach(description::appendDescriptionOf);
         description.appendText("}");
-    }
-}
-
-class AnyStringIterableMatcher extends BaseMatcher<Iterable<? super String>> {
-
-    @Override public boolean matches(final Object item) {
-        return true;
-    }
-
-    @Override public void describeTo(final Description description) {
-        description.appendText("an Iterable<String> matching anything");
     }
 }
 

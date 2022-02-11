@@ -40,6 +40,7 @@ import static io.github.cjstehno.ersatz.cfg.ContentType.*;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
 import static io.github.cjstehno.ersatz.encdec.MultipartRequestContent.multipartRequest;
 import static io.github.cjstehno.ersatz.match.MultipartRequestMatcher.multipartMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static okhttp3.RequestBody.create;
@@ -57,7 +58,7 @@ class ErsatzRequestWithContentTest {
     private ErsatzServer server;
 
     @BeforeEach void beforeEach() {
-        request = new ErsatzRequestWithContent(POST, equalTo("/posting"));
+        request = new ErsatzRequestWithContent(POST, pathMatching("/posting"));
     }
 
     @Test @DisplayName("body with content-type")

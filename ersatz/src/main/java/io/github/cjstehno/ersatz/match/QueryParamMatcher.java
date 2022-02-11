@@ -28,30 +28,68 @@ import static java.util.Arrays.asList;
 import static lombok.AccessLevel.PRIVATE;
 import static org.hamcrest.CoreMatchers.equalTo;
 
-// FIXME: document
-// FIXME: add to user guiide
+/**
+ * Matcher used to match request query parameters.
+ */
 public abstract class QueryParamMatcher extends BaseMatcher<ClientRequest> {
 
+    // FIXME: document
+    // FIXME: add to user guiide
     // FIXME: test
 
+    /**
+     * Configures a matcher that matches when the provided name and value matcher match the param name and value
+     * respectively.
+     *
+     * @param nameMatcher the param name matcher
+     * @param valueMatcher the param value matcher
+     * @return the query param matcher
+     */
     public static QueryParamMatcher queryMatching(final Matcher<String> nameMatcher, final Matcher<Iterable<? super String>> valueMatcher) {
         return new QueryParamMatches(nameMatcher, valueMatcher);
     }
 
+    /**
+     * Configures a matcher that matches when there is a request query param with the given name that also matches the
+     * provided value matcher.
+     *
+     * @param name the param name matcher
+     * @param valueMatcher the param value matcher
+     * @return the query param matcher
+     */
     public static QueryParamMatcher queryMatching(final String name, final Matcher<Iterable<? super String>> valueMatcher) {
         return queryMatching(equalTo(name), valueMatcher);
     }
 
+    /**
+     * Configures a matcher that matches when a query param with the provided name exists in the request.
+     *
+     * @param name the param name
+     * @return the query param matcher
+     */
     public static QueryParamMatcher queryExists(final String name) {
         return new QueryHasParamMatching(equalTo(name), false);
     }
 
+    /**
+     * Configures a matcher that matches when a query param with the provided name does not exist in the request.
+     *
+     * @param name the param name
+     * @return the query param matcher
+     */
     public static QueryParamMatcher queryDoesNotExist(final String name) {
         return new QueryHasParamMatching(equalTo(name), true);
     }
 
-    public static QueryParamMatcher queryHasParamMatching(final Matcher<String> matcher) {
-        return new QueryHasParamMatching(matcher, false);
+    /**
+     * Configures a matcher that matches when a query param in the request has a name that is matched by the provided
+     * matcher.
+     *
+     * @param nameMatcher the name matcher
+     * @return the query param matcher
+     */
+    public static QueryParamMatcher queryHasParamMatching(final Matcher<String> nameMatcher) {
+        return new QueryHasParamMatching(nameMatcher, false);
     }
 
     @RequiredArgsConstructor(access = PRIVATE)

@@ -52,7 +52,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import static io.github.cjstehno.ersatz.TestAssertions.*;
 import static io.github.cjstehno.ersatz.TestHelpers.resourceStream;
@@ -60,6 +59,7 @@ import static io.github.cjstehno.ersatz.cfg.ContentType.*;
 import static io.github.cjstehno.ersatz.encdec.Cookie.cookie;
 import static io.github.cjstehno.ersatz.encdec.MultipartResponseContent.multipartResponse;
 import static io.github.cjstehno.ersatz.match.CookieMatcher.cookieMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static io.github.cjstehno.ersatz.util.BasicAuth.basicAuth;
 import static io.github.cjstehno.ersatz.util.HttpClientExtension.Client.basicAuthHeader;
 import static java.lang.System.currentTimeMillis;
@@ -669,7 +669,7 @@ public class ErsatzServerGetExpectationsTest {
     @Test void workInProgress() throws IOException {
         server.expectations(expect -> {
             expect.GET(
-                path -> path.toLowerCase(ROOT).startsWith("/foo"),
+                pathMatching(path -> path.toLowerCase(ROOT).startsWith("/foo")),
                 req -> {
                     req.responder(res -> res.code(200));
                 }
@@ -685,8 +685,10 @@ public class ErsatzServerGetExpectationsTest {
     @Test void workInProgress2() throws IOException {
         server.expectations(expect -> {
             expect.GET(
-                "a string starting with /foo (ignoring case)",
-                path -> path.toLowerCase(ROOT).startsWith("/foo"),
+                pathMatching(
+                    "a string starting with /foo (ignoring case)",
+                    path -> path.toLowerCase(ROOT).startsWith("/foo")
+                ),
                 req -> {
                     req.responder(res -> res.code(200));
                 }

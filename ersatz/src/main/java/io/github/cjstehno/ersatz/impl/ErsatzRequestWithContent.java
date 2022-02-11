@@ -17,10 +17,11 @@ package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.RequestWithContent;
+import io.github.cjstehno.ersatz.encdec.DecoderChain;
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-import io.github.cjstehno.ersatz.encdec.DecoderChain;
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.IsIterableContaining;
 
@@ -47,7 +48,7 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
      * @param globalDecoders the shared global decoders
      * @param globalEncoders the shared global encoders
      */
-    public ErsatzRequestWithContent(final HttpMethod method, final Matcher<String> pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
+    public ErsatzRequestWithContent(final HttpMethod method, final PathMatcher pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
         super(method, pathMatcher, globalEncoders);
 
         if (globalDecoders != null) {
@@ -61,7 +62,7 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
      * @param method      the request method
      * @param pathMatcher the request path matcher
      */
-    public ErsatzRequestWithContent(final HttpMethod method, final Matcher<String> pathMatcher) {
+    public ErsatzRequestWithContent(final HttpMethod method, final PathMatcher pathMatcher) {
         this(method, pathMatcher, null, null);
     }
 

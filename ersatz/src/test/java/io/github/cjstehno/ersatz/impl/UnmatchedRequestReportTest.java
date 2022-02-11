@@ -30,7 +30,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
-import static org.hamcrest.Matchers.equalTo;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -64,8 +64,8 @@ class UnmatchedRequestReportTest {
         ));
 
         final var actualLines = new UnmatchedRequestReport(request, List.of(
-            new ErsatzRequest(POST, equalTo("/alpha/foo"), new ResponseEncoders()),
-            (ErsatzRequest) new ErsatzRequest(PUT, startsWith("/alpha/bar"), new ResponseEncoders()).secure()
+            new ErsatzRequest(POST, pathMatching("/alpha/foo"), new ResponseEncoders()),
+            (ErsatzRequest) new ErsatzRequest(PUT, pathMatching(startsWith("/alpha/bar")), new ResponseEncoders()).secure()
         )).render().split("\n");
 
         final var stream = UnmatchedRequestReportTest.class.getResourceAsStream("/report-template.txt");

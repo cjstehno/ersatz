@@ -42,6 +42,7 @@ import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
 import static io.github.cjstehno.ersatz.encdec.Cookie.cookie;
 import static io.github.cjstehno.ersatz.match.CookieMatcher.cookieMatcher;
 import static io.github.cjstehno.ersatz.match.NoCookiesMatcher.noCookies;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.Matchers.*;
@@ -57,7 +58,7 @@ class ErsatzRequestTest {
     private ErsatzRequest request;
 
     @BeforeEach void beforeEach() {
-        request = new ErsatzRequest(POST, equalTo("/testing"), new ResponseEncoders());
+        request = new ErsatzRequest(POST, pathMatching("/testing"), new ResponseEncoders());
     }
 
     @Test @DisplayName("to string")

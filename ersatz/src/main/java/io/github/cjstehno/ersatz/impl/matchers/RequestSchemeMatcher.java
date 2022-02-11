@@ -20,8 +20,12 @@ import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
+/**
+ * Matcher used to match the request scheme to determine whether it is secure (HTTPS) or not (HTTP).
+ */
 @RequiredArgsConstructor
 public class RequestSchemeMatcher extends BaseMatcher<ClientRequest> {
+    // TODO: this one can stay internal since there is no external use for it
 
     // FIXME: test
     private final boolean secure;

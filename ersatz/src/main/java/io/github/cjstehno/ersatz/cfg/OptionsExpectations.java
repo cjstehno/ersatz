@@ -15,11 +15,12 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * Defines the available OPTIONS request expectations.
@@ -32,8 +33,8 @@ public interface OptionsExpectations {
      * @param path the expected request path.
      * @return a <code>Request</code> configuration object
      */
-    default Request OPTIONS(String path) {
-        return OPTIONS(pathMatcher(path));
+    default Request OPTIONS(final String path) {
+        return OPTIONS(pathMatching(path));
     }
 
     /**
@@ -42,8 +43,8 @@ public interface OptionsExpectations {
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
      */
-    default Request OPTIONS(Matcher<String> matcher) {
-        return OPTIONS(matcher, (Consumer<Request>) null);
+    default Request OPTIONS(final Matcher<String> matcher) {
+        return OPTIONS(pathMatching(matcher));
     }
 
     /**
@@ -54,8 +55,8 @@ public interface OptionsExpectations {
      * @param config the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    default Request OPTIONS(String path, Consumer<Request> config) {
-        return OPTIONS(pathMatcher(path), config);
+    default Request OPTIONS(final String path, final Consumer<Request> config) {
+        return OPTIONS(pathMatching(path), config);
     }
 
     /**
@@ -66,5 +67,26 @@ public interface OptionsExpectations {
      * @param config  the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    Request OPTIONS(Matcher<String> matcher, Consumer<Request> config);
+    default Request OPTIONS(final Matcher<String> matcher, final Consumer<Request> config) {
+        return OPTIONS(pathMatching(matcher), config);
+    }
+
+    /**
+     * Allows configuration of an OPTIONS request expectation.
+     *
+     * @param pathMatcher the path matcher
+     * @return a <code>Request</code> configuration object
+     */
+    default Request OPTIONS(final PathMatcher pathMatcher) {
+        return OPTIONS(pathMatcher, null);
+    }
+
+    /**
+     * Allows configuration of an OPTIONS request expectation using the provided <code>Consumer</code>.
+     *
+     * @param pathMatcher the path matcher
+     * @param config  the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    Request OPTIONS(final PathMatcher pathMatcher, final Consumer<Request> config);
 }

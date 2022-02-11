@@ -15,14 +15,12 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * Defines the available GET request expectations.
@@ -36,7 +34,7 @@ public interface GetExpectations {
      * @return a <code>Request</code> configuration object
      */
     default Request GET(String path) {
-        return GET(pathMatcher(path));
+        return GET(pathMatching(path));
     }
 
     /**
@@ -45,8 +43,8 @@ public interface GetExpectations {
      * @param matcher the path matcher.
      * @return a <code>Request</code> configuration object
      */
-    default Request GET(Matcher<String> matcher) {
-        return GET(matcher, (Consumer<Request>) null);
+    default Request GET(final Matcher<String> matcher) {
+        return GET(pathMatching(matcher));
     }
 
     /**
@@ -58,7 +56,7 @@ public interface GetExpectations {
      * @return a <code>Request</code> configuration object
      */
     default Request GET(String path, Consumer<Request> config) {
-        return GET(pathMatcher(path), config);
+        return GET(pathMatching(path), config);
     }
 
     /**
@@ -69,38 +67,28 @@ public interface GetExpectations {
      * @param config  the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    Request GET(final Matcher<String> matcher, final Consumer<Request> config);
-
-    // FIXME: this is WIP
-    default Request GET(final Predicate<String> predicate, final Consumer<Request> config) {
-        return GET(new PredicateMatcher<>(predicate), config);
+    default Request GET(final Matcher<String> matcher, final Consumer<Request> config) {
+        return GET(pathMatching(matcher), config);
     }
 
-    default Request GET(final String description, final Predicate<String> predicate, final Consumer<Request> config) {
-        return GET(new PredicateMatcher<>(predicate, description), config);
+    /**
+     * Allows configuration of a GET request expectation.
+     *
+     * @param pathMatcher the patch matcher
+     * @return a <code>Request</code> configuration object
+     */
+    default Request GET(final PathMatcher pathMatcher) {
+        return GET(pathMatcher, (Consumer<Request>) null);
     }
+
+    /**
+     * Allows configuration of a GET request expectation with the provided <code>Consumer</code>.
+     *
+     * @param pathMatcher the patch matcher
+     * @param config the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    Request GET(final PathMatcher pathMatcher, final Consumer<Request> config);
 }
 
-class PredicateMatcher<T> extends BaseMatcher<T> {
-    // FIXME: move out and test
 
-    private final Predicate<T> predicate;
-    private final String description;
-
-    public PredicateMatcher(final Predicate<T> predicate) {
-        this(predicate, "a configured predicate");
-    }
-
-    public PredicateMatcher(final Predicate<T> predicate, final String description) {
-        this.predicate = predicate;
-        this.description = description;
-    }
-
-    @Override public boolean matches(final Object actual) {
-        return predicate.test((T) actual);
-    }
-
-    @Override public void describeTo(final Description desc) {
-        desc.appendText(description);
-    }
-}

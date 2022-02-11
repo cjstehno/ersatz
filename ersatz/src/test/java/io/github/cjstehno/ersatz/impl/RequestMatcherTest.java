@@ -20,8 +20,8 @@ import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.encdec.DecoderChain;
 import io.github.cjstehno.ersatz.encdec.Decoders;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
-import io.github.cjstehno.ersatz.impl.matchers.RequestPathMatcher;
 import io.github.cjstehno.ersatz.match.CookieMatcher;
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.match.QueryParamMatcher;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -41,6 +41,7 @@ import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.HEAD;
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,7 +67,7 @@ class RequestMatcherTest {
         "/some,false"
     })
     void path(final String path, final boolean result) {
-        assertEquals(result, new RequestPathMatcher(equalTo("/something")).matches(new MockClientRequest(GET, path)));
+        assertEquals(result, pathMatching("/something").matches(new MockClientRequest(GET, path)));
     }
 
     @ParameterizedTest @DisplayName("content-type") @MethodSource("contentTypeProvider")

@@ -20,7 +20,7 @@ import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-import io.github.cjstehno.ersatz.impl.matchers.RequestPathMatcher;
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.impl.matchers.RequestSchemeMatcher;
 import io.github.cjstehno.ersatz.match.CookieMatcher;
 import io.github.cjstehno.ersatz.match.QueryParamMatcher;
@@ -62,9 +62,9 @@ public class ErsatzRequest implements Request {
      * @param globalEncoders the shared global encoders
      * @param noResponse     whether or not this is a request with an empty response (defaults to false)
      */
-    public ErsatzRequest(final HttpMethod meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse) {
+    public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse) {
         matchers.add(RequestMatcher.method(meth == ANY ? isOneOf(GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, TRACE) : equalTo(meth)));
-        matchers.add(new RequestPathMatcher(pathMatcher));
+        matchers.add(pathMatcher);
 
         this.globalEncoders = globalEncoders;
         this.emptyResponse = noResponse;
@@ -77,7 +77,7 @@ public class ErsatzRequest implements Request {
      * @param pathMatcher    the path matcher
      * @param globalEncoders the shared global encoders
      */
-    public ErsatzRequest(final HttpMethod meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders) {
+    public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders) {
         this(meth, pathMatcher, globalEncoders, false);
     }
 
