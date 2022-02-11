@@ -51,7 +51,7 @@ class UnmatchedRequestReportTest {
         headers.put("charlie", new ArrayDeque<>(List.of("delta")));
 
         final var request = new MockClientRequest(GET, "/alpha/foo");
-        request.setProtocol("HTTP");
+        request.setScheme("HTTP");
         request.setHeaders(headers);
         request.setContentLength(12345);
         request.setContentType(contentType);

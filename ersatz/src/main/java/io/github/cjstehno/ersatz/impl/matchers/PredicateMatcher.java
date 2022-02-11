@@ -15,24 +15,30 @@
  */
 package io.github.cjstehno.ersatz.impl.matchers;
 
-import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
+import java.util.function.Predicate;
+
 /**
- * Matcher used to match the request scheme to determine whether it is secure (HTTPS) or not (HTTP).
+ * Matcher used to match based on the result of a Predicate.
  */
 @RequiredArgsConstructor
-public class RequestSchemeMatcher extends BaseMatcher<ClientRequest> {
+public class PredicateMatcher<T> extends BaseMatcher<T> {
 
-    private final boolean secure;
+    private final Predicate<T> predicate;
+    private final String description;
 
-    @Override public boolean matches(final Object actual) {
-        return ((ClientRequest) actual).getScheme().equalsIgnoreCase(secure ? "HTTPS" : "HTTP");
+    public PredicateMatcher(final Predicate<T> predicate) {
+        this(predicate, "a configured predicate");
     }
 
-    @Override public void describeTo(Description description) {
-        description.appendText("Scheme is " + (secure ? "HTTPS" : "HTTP"));
+    @Override public boolean matches(final Object actual) {
+        return predicate.test((T) actual);
+    }
+
+    @Override public void describeTo(final Description desc) {
+        desc.appendText(description);
     }
 }

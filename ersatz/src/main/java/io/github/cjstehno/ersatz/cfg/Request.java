@@ -20,7 +20,6 @@ import io.github.cjstehno.ersatz.match.QueryParamMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.val;
 import org.hamcrest.Matcher;
-import org.hamcrest.core.IsIterableContaining;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -92,8 +91,7 @@ public interface Request {
      * @return this request
      */
     default Request query(final String name, final String value) {
-        // FIXME: see if I can make the iterable matcher cleaner
-        return query(queryMatching(name, value != null ? IsIterableContaining.hasItem(value) : IsIterableContaining.hasItem("")));
+        return query(queryMatching(name, value));
     }
 
     /**
@@ -147,7 +145,7 @@ public interface Request {
      * @param map the map of query parameters
      * @return this request
      */
-    default Request queries(final Map<String, Object> map){
+    default Request queries(final Map<String, Object> map) {
         map.forEach((k, v) -> {
             if (v instanceof Matcher) {
                 query(k, (Matcher<Iterable<? super String>>) v);

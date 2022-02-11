@@ -113,8 +113,8 @@ class ErsatzRequestTest {
     }
 
     @ParameterizedTest @DisplayName("query with null value") @MethodSource("queriesWithNullProvider")
-    void queryWithNullValue(final ClientRequest cr, final boolean result) {
-        request.query("enabled", (String) null);
+    void queryExists(final ClientRequest cr, final boolean result) {
+        request.query("enabled");
 
         assertEquals(result, request.matches(cr));
     }
@@ -122,8 +122,9 @@ class ErsatzRequestTest {
     private static Stream<Arguments> queriesWithNullProvider() {
         return Stream.of(
             arguments(clientRequest().query("enabled", ""), true),
-            arguments(clientRequest().query("enabled", "yes"), false),
-            arguments(clientRequest().query("disabled", ""), false)
+            arguments(clientRequest().query("enabled", "yes"), true),
+            arguments(clientRequest().query("disabled", ""), false),
+            arguments(clientRequest().query("enabled", (String) null), true)
         );
     }
 

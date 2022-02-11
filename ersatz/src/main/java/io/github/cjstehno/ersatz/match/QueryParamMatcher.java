@@ -27,21 +27,18 @@ import java.util.ArrayDeque;
 import static java.util.Arrays.asList;
 import static lombok.AccessLevel.PRIVATE;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.IsIterableContaining.hasItem;
 
 /**
  * Matcher used to match request query parameters.
  */
 public abstract class QueryParamMatcher extends BaseMatcher<ClientRequest> {
 
-    // FIXME: document
-    // FIXME: add to user guiide
-    // FIXME: test
-
     /**
      * Configures a matcher that matches when the provided name and value matcher match the param name and value
      * respectively.
      *
-     * @param nameMatcher the param name matcher
+     * @param nameMatcher  the param name matcher
      * @param valueMatcher the param value matcher
      * @return the query param matcher
      */
@@ -53,12 +50,24 @@ public abstract class QueryParamMatcher extends BaseMatcher<ClientRequest> {
      * Configures a matcher that matches when there is a request query param with the given name that also matches the
      * provided value matcher.
      *
-     * @param name the param name matcher
+     * @param name         the param name matcher
      * @param valueMatcher the param value matcher
      * @return the query param matcher
      */
     public static QueryParamMatcher queryMatching(final String name, final Matcher<Iterable<? super String>> valueMatcher) {
         return queryMatching(equalTo(name), valueMatcher);
+    }
+
+    /**
+     * Configures a matcher that matches when there is a request query param with the given name that also has the
+     * specified value (as at least one of its values).
+     *
+     * @param name  the query param name (must not be null)
+     * @param value the query param value (must not be null)
+     * @return the query param matcher
+     */
+    public static QueryParamMatcher queryMatching(final String name, final String value) {
+        return queryMatching(name, hasItem(value));
     }
 
     /**

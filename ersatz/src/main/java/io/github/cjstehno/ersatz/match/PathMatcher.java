@@ -15,6 +15,7 @@
  */
 package io.github.cjstehno.ersatz.match;
 
+import io.github.cjstehno.ersatz.impl.matchers.PredicateMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
@@ -75,30 +76,5 @@ public class PathMatcher extends BaseMatcher<ClientRequest> {
     @Override public void describeTo(final Description description) {
         description.appendText("Path matches ");
         matcher.describeTo(description);
-    }
-}
-
-// FIXME: this is still WIP - look at putting similar predicate support in other matchers
-class PredicateMatcher<T> extends BaseMatcher<T> {
-    // FIXME: move out and test
-
-    private final Predicate<T> predicate;
-    private final String description;
-
-    public PredicateMatcher(final Predicate<T> predicate) {
-        this(predicate, "a configured predicate");
-    }
-
-    public PredicateMatcher(final Predicate<T> predicate, final String description) {
-        this.predicate = predicate;
-        this.description = description;
-    }
-
-    @Override public boolean matches(final Object actual) {
-        return predicate.test((T) actual);
-    }
-
-    @Override public void describeTo(final Description desc) {
-        desc.appendText(description);
     }
 }

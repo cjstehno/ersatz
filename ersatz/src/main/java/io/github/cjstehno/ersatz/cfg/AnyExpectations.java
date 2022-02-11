@@ -27,8 +27,6 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
  */
 public interface AnyExpectations {
 
-    // FIXME: update guide
-
     /**
      * Allows configuration of a request expectation matching any request method.
      *
