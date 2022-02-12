@@ -147,6 +147,7 @@ public interface RequestWithContent extends Request {
      * Configures an expectation matching request body parameters.
      *
      * @param bodyParamMatcher the request body parameter matcher
+     * @return a reference to this request
      */
     RequestWithContent param(final BodyParamMatcher bodyParamMatcher);
 }

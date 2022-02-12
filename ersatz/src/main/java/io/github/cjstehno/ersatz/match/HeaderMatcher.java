@@ -15,17 +15,14 @@
  */
 package io.github.cjstehno.ersatz.match;
 
+import io.github.cjstehno.ersatz.impl.matchers.MapKeyMatcher;
+import io.github.cjstehno.ersatz.impl.matchers.MappedValuesMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-import java.util.ArrayDeque;
-
 import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
-import static java.util.Arrays.asList;
-import static lombok.AccessLevel.PRIVATE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
@@ -128,39 +125,39 @@ public abstract class HeaderMatcher extends BaseMatcher<ClientRequest> {
         return headerMatching(CONTENT_TYPE_HEADER, hasItem(contentTypeMatcher));
     }
 
-    @RequiredArgsConstructor(access = PRIVATE)
     private static class HeaderMatches extends HeaderMatcher {
 
-        private final Matcher<String> nameMatcher;
-        private final Matcher<Iterable<? super String>> valueMatcher;
+        private final MappedValuesMatcher matcherDelegate;
 
-        @Override public boolean matches(final Object actual) {
-            return ((ClientRequest) actual).getHeaders().entrySet().stream()
-                .filter(ent -> nameMatcher.matches(ent.getKey()))
-                .anyMatch(ent -> valueMatcher.matches(new ArrayDeque<>(asList(ent.getValue().toArray(new String[0])))));
+        private HeaderMatches(final Matcher<String> nameMatcher, final Matcher<Iterable<? super String>> valueMatcher) {
+            matcherDelegate = new MappedValuesMatcher(
+                "Request header", nameMatcher, valueMatcher, ClientRequest::getHeaders
+            );
         }
 
-        @Override public void describeTo(Description description) {
-            description.appendText("Header name is ");
-            nameMatcher.describeTo(description);
-            description.appendText(" and value is ");
-            valueMatcher.describeTo(description);
+        @Override public boolean matches(final Object actual) {
+            return matcherDelegate.matches(actual);
+        }
+
+        @Override public void describeTo(final Description description) {
+            matcherDelegate.describeTo(description);
         }
     }
 
-    @RequiredArgsConstructor(access = PRIVATE)
     private static class HasHeaderMatching extends HeaderMatcher {
 
-        private final Matcher<String> nameMatcher;
-        private final boolean negated;
+        private final MapKeyMatcher matcherDelegate;
 
-        @Override public boolean matches(final Object actual) {
-            return negated != ((ClientRequest) actual).getHeaders().keySet().stream().anyMatch(nameMatcher::matches);
+        private HasHeaderMatching(final Matcher<String> nameMatcher, final boolean negated) {
+            matcherDelegate = new MapKeyMatcher("Header", nameMatcher, negated, ClientRequest::getHeaders);
         }
 
-        @Override public void describeTo(Description description) {
-            description.appendText("Header name is ");
-            nameMatcher.describeTo(description);
+        @Override public boolean matches(final Object actual) {
+            return matcherDelegate.matches(actual);
+        }
+
+        @Override public void describeTo(final Description description) {
+            matcherDelegate.describeTo(description);
         }
     }
 }

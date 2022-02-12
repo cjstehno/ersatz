@@ -15,11 +15,8 @@
  */
 package io.github.cjstehno.ersatz.match;
 
-import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
 import lombok.val;
-import org.hamcrest.collection.IsIterableWithSize;
-import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,7 +28,6 @@ import java.util.stream.Stream;
 
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
 import static io.github.cjstehno.ersatz.match.HeaderMatcher.*;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.junit.jupiter.api.Assertions.*;
@@ -75,7 +71,7 @@ class HeaderMatcherTest {
         );
     }
 
-    @Test void matchingWithMatcherMatcher(){
+    @Test void matchingWithMatcherMatcher() {
         val request = new MockClientRequest(GET, "/testing")
             .header("Header-A", "one")
             .header("Header-B", "two");
@@ -85,7 +81,7 @@ class HeaderMatcherTest {
         assertFalse(headerMatching(startsWith("Header-"), hasItem("three")).matches(request));
     }
 
-    @Test void existence(){
+    @Test void existence() {
         val request = new MockClientRequest(GET, "/testing")
             .header("Header-A", "one")
             .header("Header-B", "two");
@@ -96,7 +92,7 @@ class HeaderMatcherTest {
         assertFalse(headerExists(startsWith("Foo")).matches(request));
     }
 
-    @Test void nonExistence(){
+    @Test void nonExistence() {
         val request = new MockClientRequest(GET, "/testing")
             .header("Header-A", "one")
             .header("Header-B", "two");

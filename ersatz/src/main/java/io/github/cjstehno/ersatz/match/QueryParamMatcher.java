@@ -15,16 +15,13 @@
  */
 package io.github.cjstehno.ersatz.match;
 
+import io.github.cjstehno.ersatz.impl.matchers.MapKeyMatcher;
+import io.github.cjstehno.ersatz.impl.matchers.MappedValuesMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-import java.util.ArrayDeque;
-
-import static java.util.Arrays.asList;
-import static lombok.AccessLevel.PRIVATE;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
 
@@ -120,39 +117,39 @@ public abstract class QueryParamMatcher extends BaseMatcher<ClientRequest> {
         return new QueryHasParamMatching(nameMatcher, false);
     }
 
-    @RequiredArgsConstructor(access = PRIVATE)
     private static class QueryParamMatches extends QueryParamMatcher {
 
-        private final Matcher<String> nameMatcher;
-        private final Matcher<Iterable<? super String>> valueMatcher;
+        private final MappedValuesMatcher matcherDelegate;
+
+        private QueryParamMatches(final Matcher<String> nameMatcher, final Matcher<Iterable<? super String>> valueMatcher) {
+            matcherDelegate = new MappedValuesMatcher(
+                "Query param", nameMatcher, valueMatcher, ClientRequest::getQueryParams
+            );
+        }
 
         @Override public boolean matches(final Object actual) {
-            return ((ClientRequest) actual).getQueryParams().entrySet().stream()
-                .filter(ent -> nameMatcher.matches(ent.getKey()))
-                .anyMatch(ent -> valueMatcher.matches(new ArrayDeque<>(asList(ent.getValue().toArray(new String[0])))));
+            return matcherDelegate.matches(actual);
         }
 
         @Override public void describeTo(final Description description) {
-            description.appendText("Query param key is ");
-            nameMatcher.describeTo(description);
-            description.appendText(" and value is ");
-            valueMatcher.describeTo(description);
+            matcherDelegate.describeTo(description);
         }
     }
 
-    @RequiredArgsConstructor(access = PRIVATE)
     private static class QueryHasParamMatching extends QueryParamMatcher {
 
-        private final Matcher<String> nameMatcher;
-        private final boolean negated;
+        private final MapKeyMatcher matcherDelegate;
 
-        @Override public boolean matches(final Object actual) {
-            return negated != ((ClientRequest) actual).getQueryParams().keySet().stream().anyMatch(nameMatcher::matches);
+        private QueryHasParamMatching(final Matcher<String> nameMatcher, final boolean negated) {
+            matcherDelegate = new MapKeyMatcher("Query param", nameMatcher, negated, ClientRequest::getQueryParams);
         }
 
-        @Override public void describeTo(Description description) {
-            description.appendText("Query param key is ");
-            nameMatcher.describeTo(description);
+        @Override public boolean matches(final Object actual) {
+            return matcherDelegate.matches(actual);
+        }
+
+        @Override public void describeTo(final Description description) {
+            matcherDelegate.describeTo(description);
         }
     }
 }
