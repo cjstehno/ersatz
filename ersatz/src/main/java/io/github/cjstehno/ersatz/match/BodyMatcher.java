@@ -29,13 +29,23 @@ import static io.github.cjstehno.ersatz.match.HeaderMatcher.contentTypeHeader;
 import static lombok.AccessLevel.PRIVATE;
 import static org.hamcrest.CoreMatchers.startsWith;
 
-
-// fIXME: document
-// fIXME: test
+/**
+ * Matcher for matching request body content.
+ */
 public abstract class BodyMatcher extends BaseMatcher<ClientRequest> {
 
+    /**
+     * The decoder chain to be used when decoding the request body.
+     */
     @Setter public DecoderChain decoderChain;
 
+    /**
+     * Creates a matcher which will match based on the body content matcher and the specified content type.
+     *
+     * @param matcher the body content matcher
+     * @param contentType the expected content type
+     * @return the body matcher
+     */
     public static BodyMatcher bodyMatching(final Matcher<Object> matcher, final String contentType) {
         return new BodyMatches(contentType, matcher);
     }

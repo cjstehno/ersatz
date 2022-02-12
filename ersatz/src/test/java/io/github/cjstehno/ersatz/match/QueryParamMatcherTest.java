@@ -20,13 +20,21 @@ import io.github.cjstehno.ersatz.server.MockClientRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
+import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
 import static io.github.cjstehno.ersatz.match.QueryParamMatcher.*;
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class QueryParamMatcherTest {
 
@@ -87,5 +95,24 @@ class QueryParamMatcherTest {
         assertTrue(queryMatching("bravo", "three").matches(request));
         assertFalse(queryMatching("charlie", (String) null).matches(request));
         assertFalse(queryMatching("delta", "two").matches(request));
+    }
+
+    @ParameterizedTest @DisplayName("query") @MethodSource("queryProvider")
+    void query(final MockClientRequest request, final boolean result) {
+        assertEquals(
+            result,
+            QueryParamMatcher.queryMatching(
+                "name",
+                stringIterableMatcher(List.of(equalTo("alpha"), equalTo("blah")))
+            ).matches(request)
+        );
+    }
+
+    private static Stream<Arguments> queryProvider() {
+        return Stream.of(
+            arguments(new MockClientRequest().query("name", "alpha", "blah"), true),
+            arguments(new MockClientRequest().query("name", "alpha"), false),
+            arguments(new MockClientRequest(), false)
+        );
     }
 }

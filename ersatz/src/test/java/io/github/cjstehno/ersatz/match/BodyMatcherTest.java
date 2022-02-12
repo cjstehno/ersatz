@@ -33,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class BodyMatcherTest {
-    // fIXME: there is another class with this name?? - move content in here?
 
     @ParameterizedTest @DisplayName("body") @MethodSource("bodyProvider")
     void body(final MockClientRequest request, final boolean result) {

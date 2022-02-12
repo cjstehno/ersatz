@@ -22,15 +22,10 @@ import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.match.BodyMatcher;
+import io.github.cjstehno.ersatz.match.BodyParamMatcher;
 import io.github.cjstehno.ersatz.match.PathMatcher;
-import org.hamcrest.Matcher;
-import org.hamcrest.core.IsIterableContaining;
 
-import java.util.LinkedList;
 import java.util.function.BiFunction;
-
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
-import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Ersatz implementation of a <code>Request</code> with request body content.
@@ -67,7 +62,6 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
     }
 
     @Override public RequestWithContent body(final BodyMatcher bodyMatcher) {
-        // FIXME: should I make an enriched copy instead?
         bodyMatcher.setDecoderChain(decoderChain);
         addMatcher(bodyMatcher);
         return this;
@@ -79,22 +73,8 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
         return this;
     }
 
-    @Override
-    public RequestWithContent param(String name, String value) {
-        return param(name, value != null ? IsIterableContaining.hasItem(value) : IsIterableContaining.hasItem(""));
-    }
-
-    @Override
-    public RequestWithContent param(String name, Iterable<? super String> values) {
-        final var matchers = new LinkedList<Matcher<? super String>>();
-        values.forEach(v -> matchers.add(equalTo(v)));
-
-        return param(name, stringIterableMatcher(matchers));
-    }
-
-    @Override
-    public RequestWithContent param(String name, Matcher<Iterable<? super String>> matchers) {
-        addMatcher(RequestMatcher.param(name, matchers));
+    @Override public RequestWithContent param(final BodyParamMatcher bodyParamMatcher) {
+        addMatcher(bodyParamMatcher);
         return this;
     }
 }
