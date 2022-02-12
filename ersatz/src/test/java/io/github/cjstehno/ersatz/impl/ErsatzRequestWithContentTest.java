@@ -75,11 +75,11 @@ class ErsatzRequestWithContentTest {
         );
     }
 
-    @Test @DisplayName("to string") @Disabled("FIXME: needs work")
+    @Test @DisplayName("to string")
     void string() {
         request.body("Some body", TEXT_PLAIN);
 
-        assertEquals("Expectations (ErsatzRequestWithContent): HTTP method matches <POST>, Path matches \"/posting\", Header Content-Type matches a collection containing a string starting with \"text/plain\", Body (text/plain) matches \"Some body\", ", request.toString());
+        assertEquals("Expectations (ErsatzRequestWithContent): HTTP method is POST, Path matches \"/posting\", Body is \"Some body\" and content-type is a string starting with text/plain, ", request.toString());
     }
 
     @Test @DisplayName("matching body")

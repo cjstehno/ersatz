@@ -25,25 +25,56 @@ import java.util.function.Consumer;
     and it does not publish to Maven Central (which I understand), but I cannot remove support for my library simply
     because they don't want to publish to the most-used (and most annoying) public repository.
  */
-@SuppressWarnings("javadoc")
+
+/**
+ * Utility for converting closure to consumer.
+ */
 public class ConsumerWithDelegate<T> implements Consumer<T> {
 
-    @SuppressWarnings("javadoc")
+    /**
+     * Create a consumer from a closure.
+     *
+     * @param c the closure
+     * @param owner the owner
+     * @param strategy the strategy
+     * @param <T> the parameter
+     * @return the consumer
+     */
     public static <T> Consumer<T> create(Closure c, Object owner, int strategy) {
         return new ConsumerWithDelegate<>(c, strategy, owner);
     }
 
-    @SuppressWarnings("javadoc")
+    /**
+     * Create a consumer from a closure.
+     *
+     * @param c the closure
+     * @param owner the owner
+     * @param <T> the parameter
+     * @return the consumer
+     */
     public static <T> Consumer<T> create(Closure c, Object owner) {
         return create(c, owner, Closure.DELEGATE_FIRST);
     }
 
-    @SuppressWarnings("javadoc")
+    /**
+     * Create a consumer from a closure.
+     *
+     * @param c the closure
+     * @param strategy the strategy
+     * @param <T> the parameter
+     * @return the consumer
+     */
     public static <T> Consumer<T> create(Closure c, int strategy) {
         return create(c, GroovyClosure.getPropagatedOwner(c.getOwner()), strategy);
     }
 
-    @SuppressWarnings("javadoc")
+    /**
+     * Create a consumer from a closure.
+     *
+     * @param c the closure
+     * @param <T> the parameter
+     * @return the consumer
+     */
     public static <T> Consumer<T> create(Closure c) {
         return create(c, Closure.DELEGATE_FIRST);
     }

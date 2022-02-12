@@ -36,8 +36,6 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class BodyParamMatcherTest {
 
-    // FIXME: test
-
     @ParameterizedTest @DisplayName("param matching") @MethodSource("paramProvider")
     void params(final MockClientRequest request, final boolean result) {
         assertEquals(

@@ -33,7 +33,6 @@ import java.util.Map;
 /**
  * Makes Java API Groovy Closure friendly.
  */
-@SuppressWarnings("javadoc")
 public class GroovyClosure {
 
     private static final int DELEGATE_FIRST = 1;
@@ -160,21 +159,41 @@ public class GroovyClosure {
         return object;
     }
 
-    @SuppressWarnings("javadoc")
+    /**
+     * Clone with top level owner.
+     *
+     * @param closure the closure
+     * @param <T> the closure type
+     * @return the returned closure
+     */
     public static <T> Closure<T> cloneWithTopLevelOwner(Closure<T> closure) {
         return cloneWithTopLevelOwner(closure, closure.getDelegate());
     }
 
-    @SuppressWarnings("javadoc")
+    /**
+     * Clone with top level owner.
+     *
+     * @param closure the closure
+     * @param delegate the delegate
+     * @param <T> the closure type
+     * @return the returned closure
+     */
     public static <T> Closure<T> cloneWithTopLevelOwner(Closure<T> closure, Object delegate) {
         return cloneWithTopLevelOwner(closure, delegate, Closure.DELEGATE_FIRST);
     }
 
-    @SuppressWarnings("javadoc")
+    /**
+     * Clone with top level owner.
+     *
+     * @param closure the closure
+     * @param delegate the delegate
+     * @param strategy the strategy
+     * @param <T> the closure type
+     * @return the returned closure
+     */
     public static <T> Closure<T> cloneWithTopLevelOwner(Closure<T> closure, Object delegate, int strategy) {
         Closure<T> clone = closure.rehydrate(delegate, getPropagatedOwner(closure.getOwner()), closure.getThisObject());
         clone.setResolveStrategy(strategy);
         return clone;
     }
-
 }

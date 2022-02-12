@@ -23,7 +23,6 @@ import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,9 +59,9 @@ class ErsatzRequestTest {
         request = new ErsatzRequest(POST, pathMatching("/testing"), new ResponseEncoders());
     }
 
-    @Test @DisplayName("to string") @Disabled("FIXME: come back to this")
+    @Test @DisplayName("to string")
     void string() {
-        assertEquals("Expectations (ErsatzRequest): HTTP method matches <POST>, Path matches \"/testing\", ", request.toString());
+        assertEquals("Expectations (ErsatzRequest): HTTP method is POST, Path matches \"/testing\", ", request.toString());
     }
 
     @Test @DisplayName("method and path")
@@ -359,12 +358,12 @@ class ErsatzRequestTest {
         assertEquals(NOT_FOUND_BODY, response.body().string());
     }
 
-    @Test @DisplayName("generic matcher") @Disabled("FIXME: just for nwo")
+    @Test @DisplayName("generic matcher")
     void genericMatcher() throws IOException {
         server.expectations(e -> {
             e.GET("/testing", r -> {
                 r.matcher(allOf(
-                    hasProperty("protocol", equalTo("http")),
+                    hasProperty("scheme", equalTo("http")),
                     hasProperty("path", equalTo("/testing")),
                     hasProperty("queryParams", not(anEmptyMap()))
                 ));
