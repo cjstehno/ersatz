@@ -28,8 +28,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 /**
  * Default implementation of the <code>ServerConfig</code> interface.
  */
@@ -228,10 +226,6 @@ public class ServerConfigImpl implements ServerConfig {
         return this;
     }
 
-    @Override public ServerConfig timeout(final int value) {
-        return timeout(value, SECONDS);
-    }
-
     /**
      * Used to toggle the console output of mismatched request reports. By default they are only rendered in the logging. A value of <code>true</code>
      * will cause the report to be output on the console as well.
@@ -243,10 +237,6 @@ public class ServerConfigImpl implements ServerConfig {
     public ServerConfig reportToConsole(boolean toConsole) {
         mismatchToConsole = toConsole;
         return this;
-    }
-
-    @Override public ServerConfig reportToConsole() {
-        return reportToConsole(true);
     }
 
     /**

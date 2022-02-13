@@ -22,6 +22,7 @@ import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
+import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -283,7 +284,7 @@ class ErsatzRequestTest {
             e.GET("/test", r -> {
                 r.headers(Map.of(
                     "alpha", "one",
-                    "bravo", "two"
+                    "bravo", IsIterableContaining.hasItem("two")
                 ));
                 r.responds().body(STRING_CONTENT);
             });
@@ -326,13 +327,14 @@ class ErsatzRequestTest {
             e.GET("/testing", r -> {
                 r.queries(Map.of(
                     "alpha", List.of("one"),
-                    "bravo", List.of("two", "three")
+                    "bravo", IsIterableContaining.hasItems("two", "three"),
+                    "charlie", "four"
                 ));
                 r.responds().body(STRING_CONTENT);
             });
         });
 
-        var response = client.get("/testing?alpha=one&bravo=two&bravo=three");
+        var response = client.get("/testing?alpha=one&bravo=two&bravo=three&charlie=four");
         assertEquals(STRING_CONTENT, response.body().string());
 
         response = client.get("/testing");

@@ -23,6 +23,8 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 /**
  * Configuration interface for an Ersatz server instance.
  */
@@ -70,14 +72,18 @@ public interface ServerConfig {
      * @param value the timeout value
      * @return a reference to the server being configured
      */
-    ServerConfig timeout(int value);
+    default ServerConfig timeout(int value){
+        return timeout(value, SECONDS);
+    }
 
     /**
      * Causes the mismatched request reports to be generated as console output, rather than only in the logging.
      *
      * @return a reference to the server being configured
      */
-    ServerConfig reportToConsole();
+    default ServerConfig reportToConsole(){
+        return reportToConsole(true);
+    }
 
     /**
      * Used to toggle the console output of mismatched request reports. By default they are only rendered in the logging. A value of <code>true</code>

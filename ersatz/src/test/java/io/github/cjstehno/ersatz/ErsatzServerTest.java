@@ -15,14 +15,35 @@
  */
 package io.github.cjstehno.ersatz;
 
-import io.github.cjstehno.ersatz.ErsatzServer;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ErsatzServerTest {
+
+    @Test @DisplayName("verify url information")
+    void urlInformation() {
+        val server = new ErsatzServer(cfg -> {
+            cfg.reportToConsole();
+            cfg.https();
+            cfg.httpPort(8182);
+            cfg.httpsPort(8584);
+            cfg.serverThreads(1);
+            cfg.timeout(5);
+        }).start();
+
+        assertEquals("http://localhost:8182", server.getHttpUrl());
+        assertEquals("http://localhost:8182/stuff", server.httpUrl("/stuff"));
+
+        assertEquals("https://localhost:8584", server.getHttpsUrl());
+        assertEquals("https://localhost:8584/stuff", server.httpsUrl("/stuff"));
+    }
 
     @Test @DisplayName("not started should give useful error")
     void not_started() {

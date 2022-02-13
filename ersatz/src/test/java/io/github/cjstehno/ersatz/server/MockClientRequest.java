@@ -17,11 +17,9 @@ package io.github.cjstehno.ersatz.server;
 
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.encdec.Cookie;
+import lombok.val;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
 
@@ -104,6 +102,12 @@ public class MockClientRequest implements ClientRequest {
     public void setBodyParameters(final Map<String, Deque<String>> params) {
         bodyParameters.clear();
         bodyParameters.putAll(params);
+    }
+
+    public MockClientRequest param(final String name, final String... values) {
+        val param = bodyParameters.computeIfAbsent(name, key -> new LinkedList<>());
+        param.addAll(Arrays.asList(values));
+        return this;
     }
 
     @Override public long getContentLength() {

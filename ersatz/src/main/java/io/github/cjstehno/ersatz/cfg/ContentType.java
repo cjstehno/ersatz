@@ -15,6 +15,8 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import lombok.EqualsAndHashCode;
+
 import java.nio.charset.Charset;
 
 import static java.util.Objects.hash;
@@ -23,6 +25,7 @@ import static java.util.Objects.hash;
  * A content-type representation. Some of the standard content-types are provided as static constants for use elsewhere,
  * others may be created as instances of this class as needed.
  */
+@EqualsAndHashCode
 public class ContentType {
 
     /**
@@ -193,16 +196,6 @@ public class ContentType {
      */
     public ContentType withCharset(final Charset charset){
         return new ContentType(value, charset.name().toLowerCase());
-    }
-
-    @Override public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        return value.equals(((ContentType) o).value);
-    }
-
-    @Override public int hashCode() {
-        return hash(value);
     }
 
     /**

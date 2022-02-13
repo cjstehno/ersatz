@@ -136,23 +136,6 @@ public abstract class RequestCookieMatcher extends BaseMatcher<ClientRequest> {
     }
 
     @RequiredArgsConstructor(access = PRIVATE)
-    private static class CookiesMatch extends RequestCookieMatcher {
-
-        final Matcher<Map<String, Cookie>> matcher;
-
-        @Override public boolean matches(final Object actual) {
-            val clientRequest = (ClientRequest) actual;
-            val cookies = clientRequest.getCookies();
-            return matcher.matches(cookies);
-        }
-
-        @Override public void describeTo(final Description description) {
-            description.appendText("Cookies are ");
-            matcher.describeTo(description);
-        }
-    }
-
-    @RequiredArgsConstructor(access = PRIVATE)
     private static class HasCookieMatching extends RequestCookieMatcher {
 
         private final Matcher<String> nameMatcher;

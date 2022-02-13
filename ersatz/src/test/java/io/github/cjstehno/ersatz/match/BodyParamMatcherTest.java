@@ -16,7 +16,9 @@
 package io.github.cjstehno.ersatz.match;
 
 import io.github.cjstehno.ersatz.server.MockClientRequest;
+import lombok.val;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -28,10 +30,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static io.github.cjstehno.ersatz.match.BodyParamMatcher.bodyParamMatching;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
+import static io.github.cjstehno.ersatz.match.BodyParamMatcher.*;
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class BodyParamMatcherTest {
@@ -66,5 +69,35 @@ class BodyParamMatcherTest {
                 "spam", new ArrayDeque<>(List.of("n"))
             )), false)
         );
+    }
+
+    @Test @DisplayName("body param exists")
+    void bodyParamExisting() {
+        val request = new MockClientRequest(POST, "/testing")
+            .param("alpha", "one")
+            .param("bravo", "two", "three");
+
+        assertTrue(bodyParamExists("alpha").matches(request));
+        assertTrue(bodyParamExists("bravo").matches(request));
+        assertFalse(bodyParamExists("charlie").matches(request));
+
+        assertTrue(bodyParamExists(startsWith("alp")).matches(request));
+        assertTrue(bodyParamExists(endsWith("avo")).matches(request));
+        assertFalse(bodyParamExists(startsWith("char")).matches(request));
+    }
+
+    @Test @DisplayName("body param does not exist")
+    void bodyParamNotExisting() {
+        val request = new MockClientRequest(POST, "/testing")
+            .param("alpha", "one")
+            .param("bravo", "two", "three");
+
+        assertFalse(bodyParamDoesNotExist("alpha").matches(request));
+        assertFalse(bodyParamDoesNotExist("bravo").matches(request));
+        assertTrue(bodyParamDoesNotExist("charlie").matches(request));
+
+        assertFalse(bodyParamDoesNotExist(startsWith("alp")).matches(request));
+        assertFalse(bodyParamDoesNotExist(endsWith("avo")).matches(request));
+        assertTrue(bodyParamDoesNotExist(startsWith("char")).matches(request));
     }
 }

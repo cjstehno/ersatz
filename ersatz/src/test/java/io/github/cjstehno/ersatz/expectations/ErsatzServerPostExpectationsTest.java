@@ -21,6 +21,7 @@ import io.github.cjstehno.ersatz.encdec.Encoders;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import lombok.val;
+import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import static io.github.cjstehno.ersatz.TestAssertions.*;
 import static io.github.cjstehno.ersatz.cfg.ContentType.*;
@@ -37,6 +39,7 @@ import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
 import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
@@ -152,7 +155,12 @@ public class ErsatzServerPostExpectationsTest {
             expect.POST("/updates", req -> {
                 req.secure(https);
                 req.called(1);
+
+                // testing all three versions here - redundant, but ok for testing
                 req.param("foo", "bar");
+                req.param("foo", List.of("bar"));
+                req.param("foo", hasItem("bar"));
+
                 req.responds().code(201);
             });
         });

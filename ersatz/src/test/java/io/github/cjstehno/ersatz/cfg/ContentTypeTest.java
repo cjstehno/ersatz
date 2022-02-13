@@ -15,9 +15,9 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import io.github.cjstehno.ersatz.cfg.ContentType;
 import org.junit.jupiter.api.Test;
 
+import static io.github.cjstehno.ersatz.TestAssertions.verifyEqualityAndHashCode;
 import static io.github.cjstehno.ersatz.cfg.ContentType.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,5 +38,9 @@ class ContentTypeTest {
     @Test void string() {
         assertEquals("text/javascript", TEXT_JAVASCRIPT.toString());
         assertEquals("text/javascript; charset=us-ascii", TEXT_JAVASCRIPT.withCharset("us-ascii").toString());
+    }
+
+    @Test void equalsAndHash() {
+        verifyEqualityAndHashCode(APPLICATION_JSON, APPLICATION_JSON);
     }
 }
