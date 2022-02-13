@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2022 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,6 +60,7 @@ import static io.github.cjstehno.ersatz.encdec.Cookie.cookie;
 import static io.github.cjstehno.ersatz.encdec.MultipartResponseContent.multipartResponse;
 import static io.github.cjstehno.ersatz.match.CookieMatcher.cookieMatcher;
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
+import static io.github.cjstehno.ersatz.match.PredicateMatcher.predicatedBy;
 import static io.github.cjstehno.ersatz.util.BasicAuth.basicAuth;
 import static io.github.cjstehno.ersatz.util.HttpClientExtension.Client.basicAuthHeader;
 import static java.lang.System.currentTimeMillis;
@@ -665,11 +666,12 @@ public class ErsatzServerGetExpectationsTest {
         verify(server);
     }
 
-    // FIXME: work in progress (put predicate versions in cookie, query, header, path
-    @Test void workInProgress() throws IOException {
+    @Test void pathMatchingWithPredicate() throws IOException {
         server.expectations(expect -> {
             expect.GET(
-                pathMatching(path -> path.toLowerCase(ROOT).startsWith("/foo")),
+                pathMatching(predicatedBy(
+                    path -> path.toLowerCase(ROOT).startsWith("/foo")
+                )),
                 req -> {
                     req.responder(res -> res.code(200));
                 }
@@ -682,13 +684,13 @@ public class ErsatzServerGetExpectationsTest {
         verify(server);
     }
 
-    @Test void workInProgress2() throws IOException {
+    @Test void patchMatchingWithPredicateAndDescription() throws IOException {
         server.expectations(expect -> {
             expect.GET(
-                pathMatching(
+                pathMatching(predicatedBy(
                     "a string starting with /foo (ignoring case)",
                     path -> path.toLowerCase(ROOT).startsWith("/foo")
-                ),
+                )),
                 req -> {
                     req.responder(res -> res.code(200));
                 }
@@ -701,7 +703,7 @@ public class ErsatzServerGetExpectationsTest {
         verify(server);
     }
 
-    @RequiredArgsConstructor
+    @RequiredArgsConstructor @SuppressWarnings("ClassCanBeRecord")
     private static class ResponseDownloadContent implements UploadContext {
 
         private final ResponseBody body;
