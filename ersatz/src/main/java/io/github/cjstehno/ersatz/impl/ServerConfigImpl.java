@@ -17,10 +17,12 @@ package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.cfg.Expectations;
+import io.github.cjstehno.ersatz.cfg.Requirements;
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+import lombok.Getter;
 
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +45,8 @@ public class ServerConfigImpl implements ServerConfig {
     private int desiredHttpsPort = EPHEMERAL_PORT;
     private final RequestDecoders globalDecoders = new RequestDecoders();
     private final ResponseEncoders globalEncoders = new ResponseEncoders();
-    private final ExpectationsImpl expectations;
+    @Getter private final ExpectationsImpl expectations;
+    @Getter private final RequirementsImpl requirements;
     private Runnable starter;
     private long timeout;
     private boolean logResponseContent;
@@ -55,6 +58,7 @@ public class ServerConfigImpl implements ServerConfig {
      */
     public ServerConfigImpl() {
         this.expectations = new ExpectationsImpl(globalEncoders, globalDecoders);
+        this.requirements = new RequirementsImpl();
     }
 
     /**
@@ -145,15 +149,6 @@ public class ServerConfigImpl implements ServerConfig {
     }
 
     /**
-     * Retrieves the configuration request expectations.
-     *
-     * @return the expectations
-     */
-    public ExpectationsImpl getExpectations() {
-        return expectations;
-    }
-
-    /**
      * Retrieves the configured timeout value for server requests.
      *
      * @return the server timeout value
@@ -163,10 +158,11 @@ public class ServerConfigImpl implements ServerConfig {
     }
 
     /**
-     * Used to clear out the configured expectations.
+     * Used to clear out the configured expectations and requirements.
      */
     public void clearExpectations() {
         expectations.clear();
+        requirements.clear();
     }
 
     /**
@@ -307,6 +303,11 @@ public class ServerConfigImpl implements ServerConfig {
     @Override public ServerConfig serverThreads(int io, int worker) {
         ioThreads = io;
         workerThreads = worker;
+        return this;
+    }
+
+    @Override public ServerConfig requirements(final Consumer<Requirements> requires) {
+        requires.accept(requirements);
         return this;
     }
 }

@@ -18,6 +18,7 @@ package io.github.cjstehno.ersatz.impl;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,7 +30,9 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
+import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -44,11 +47,11 @@ class UnmatchedRequestReportTest {
     @ParameterizedTest @DisplayName("unmatched report with type #contentType should print #content")
     @MethodSource("contentProvider")
     void unmatched(final String contentType, final String content) throws IOException {
-        final var headers = new LinkedHashMap<String, Deque<String>>();
+        val headers = new LinkedHashMap<String, Deque<String>>();
         headers.put("alpha", new ArrayDeque<>(List.of("bravo-1", "bravo-2")));
         headers.put("charlie", new ArrayDeque<>(List.of("delta")));
 
-        final var request = new MockClientRequest(GET, "/alpha/foo");
+        val request = new MockClientRequest(GET, "/alpha/foo");
         request.setScheme("HTTP");
         request.setHeaders(headers);
         request.setContentLength(12345);
@@ -61,13 +64,21 @@ class UnmatchedRequestReportTest {
             "ident", new Cookie("asdfasdfasdf", null, null, null, 0, false, 0, false)
         ));
 
-        final var actualLines = new UnmatchedRequestReport(request, List.of(
-            new ErsatzRequest(POST, pathMatching("/alpha/foo"), new ResponseEncoders()),
-            (ErsatzRequest) new ErsatzRequest(PUT, pathMatching(startsWith("/alpha/bar")), new ResponseEncoders()).secure()
-        )).render().split("\n");
+        val actualLines = new UnmatchedRequestReport(
+            request,
+            List.of(
+                new ErsatzRequest(POST, pathMatching("/alpha/foo"), new ResponseEncoders()),
+                (ErsatzRequest) new ErsatzRequest(PUT, pathMatching(startsWith("/alpha/bar")), new ResponseEncoders()).secure()
+            ),
+            List.of(
+                (ErsatzRequestRequirement) new ErsatzRequestRequirement(methodMatching(DELETE), pathMatching("/delete")).header("some", "header"),
+                (ErsatzRequestRequirement) new ErsatzRequestRequirement(methodMatching(GET), pathMatching(startsWith("/alpha"))).query("id", "1002"),
+                (ErsatzRequestRequirement) new ErsatzRequestRequirement(methodMatching(GET), pathMatching(startsWith("/alpha"))).query("id", "555")
+            )
+        ).render().split("\n");
 
-        final var stream = UnmatchedRequestReportTest.class.getResourceAsStream("/report-template.txt");
-        final var expectedLines = IOUtils.toString(stream)
+        val stream = UnmatchedRequestReportTest.class.getResourceAsStream("/report-template.txt");
+        val expectedLines = IOUtils.toString(stream, UTF_8)
             .replaceAll("\\$\\{contentType}", contentType)
             .replaceAll("\\$\\{content}", content)
             .replaceAll("\\$\\{RED}", RED)
@@ -78,8 +89,8 @@ class UnmatchedRequestReportTest {
         assertEquals(expectedLines.length, actualLines.length);
 
         for (int line = 0; line < expectedLines.length; line++) {
-            final var expectedLine = expectedLines[line].trim();
-            final var actualLine = actualLines[line].trim();
+            val expectedLine = expectedLines[line].trim();
+            val actualLine = actualLines[line].trim();
             assertEquals(expectedLine, actualLine);
         }
     }

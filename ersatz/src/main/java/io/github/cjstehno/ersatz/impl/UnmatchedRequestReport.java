@@ -16,6 +16,10 @@
 package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -28,28 +32,19 @@ import static java.util.stream.Collectors.joining;
 /**
  * Helper object used to build and render a report of the unmatched request and the configured expectations.
  */
+@RequiredArgsConstructor
 public class UnmatchedRequestReport implements Report {
 
     private static final List<String> TEXT_CONTENT_HINTS = List.of("text/", "/json", "application/x-www-form-urlencoded");
 
+    private final AtomicReference<String> cache = new AtomicReference<>();
     private final ClientRequest request;
     private final List<ErsatzRequest> expectations;
-    private final AtomicReference<String> cache = new AtomicReference<>();
-
-    /**
-     * Creates a request report for the given request and expectations.
-     *
-     * @param request the request being matched
-     * @param expectations the configured expectations
-     */
-    public UnmatchedRequestReport(final ClientRequest request, final List<ErsatzRequest> expectations) {
-        this.request = request;
-        this.expectations = expectations;
-    }
+    private final List<ErsatzRequestRequirement> requirements;
 
     @Override public String render() {
         if (cache.get() == null) {
-            final StringBuilder out = new StringBuilder();
+            val out = new StringBuilder();
 
             out.append("# Unmatched Request\n\n");
 
@@ -91,33 +86,77 @@ public class UnmatchedRequestReport implements Report {
                 }
             }
 
-            out.append("\n# Expectations\n\n");
+            // Write out the requirements
+            renderRequirements(out);
 
-            for (int index = 0; index < expectations.size(); index++) {
-                final var req = expectations.get(index);
-
-                int count = req.getRequestMatchers().size();
-
-                out.append("Expectation ").append(index).append(" (").append(count).append(" matchers):\n");
-
-                final var failed = new AtomicInteger(0);
-                req.getRequestMatchers().forEach(matcher -> {
-                    boolean matches = matcher.matches(request);
-                    if (matches) {
-                        out.append("  ").append(GREEN).append(CHECKMARK).append(RESET).append(" ").append(matcher).append("\n");
-                    } else {
-                        out.append("  ").append(RED).append("X ").append(matcher).append(RESET).append("\n");
-                        failed.incrementAndGet();
-                    }
-                });
-
-                final int matched = count - failed.get();
-                out.append("  (").append(count).append(" matchers: ").append(matched).append(" matched, ").append(failed.get() > 0 ? RED : "").append(failed.get()).append(" failed").append(failed.get() > 0 ? RESET : "").append(")\n\n");
-            }
+            // Write out the expectations
+            renderExpectations(out);
 
             cache.set(out.toString());
         }
 
         return cache.get();
+    }
+
+    private void renderRequirements(StringBuilder out) {
+        out.append("\n# Requirements\n\n");
+
+        for (int r = 0; r < requirements.size(); r++) {
+            val requirement = requirements.get(r);
+
+            out.append("Requirement %d (%s):\n".formatted(r, requirement.getDescription()));
+
+            if (requirement.matches(request)) {
+                requirement.getMatchers().forEach(m -> {
+                    val met = m.matches(request);
+                    if (met) {
+                        out.append("  %s%s%s %s\n".formatted(GREEN, CHECKMARK, RESET, describe(m)));
+
+                    } else {
+                        out.append("  %sX %s%s\n".formatted(RED, describe(m), RESET));
+                    }
+                });
+
+            } else {
+                // not applicable (write out for informational)
+                requirement.getMatchers().forEach(m -> {
+                    out.append("  - %s\n".formatted(describe(m)));
+                });
+            }
+
+            out.append('\n');
+        }
+    }
+
+    private void renderExpectations(StringBuilder out) {
+        out.append("# Expectations\n\n");
+
+        for (int index = 0; index < expectations.size(); index++) {
+            val req = expectations.get(index);
+            val count = req.getRequestMatchers().size();
+
+            out.append("Expectation %d (%d matchers):\n".formatted(index, count));
+
+            val failed = new AtomicInteger(0);
+            req.getRequestMatchers().forEach(matcher -> {
+                boolean matches = matcher.matches(request);
+                if (matches) {
+                    out.append("  ").append(GREEN).append(CHECKMARK).append(RESET).append(" ").append(matcher).append("\n");
+                } else {
+                    out.append("  ").append(RED).append("X ").append(matcher).append(RESET).append("\n");
+                    failed.incrementAndGet();
+                }
+            });
+
+            val matched = count - failed.get();
+            val failures = failed.get() > 0;
+            out.append("  (%d matchers: %d matched, %s%d failed%s)\n\n".formatted(count, matched, failures ? RED : "", failed.get(), failures ? RESET : ""));
+        }
+    }
+
+    private static String describe(final Matcher<?> matcher) {
+        val desc = new StringDescription();
+        matcher.describeTo(desc);
+        return desc.toString();
     }
 }

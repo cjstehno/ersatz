@@ -77,7 +77,12 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
 
             final var blockingHandler = new BlockingHandler(new EncodingHandler(
                 new HttpTraceHandler(
-                    new ErsatzHttpHandler(serverConfig.getExpectations(), serverConfig.isMismatchToConsole(), serverConfig.isLogResponseContent())
+                    new ErsatzHttpHandler(
+                        serverConfig.getRequirements(),
+                        serverConfig.getExpectations(),
+                        serverConfig.isMismatchToConsole(),
+                        serverConfig.isLogResponseContent()
+                    )
                 ),
                 new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), 50)
             ));

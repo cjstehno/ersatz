@@ -19,7 +19,6 @@ import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-import io.github.cjstehno.ersatz.impl.matchers.HttpMethodMatcher;
 import io.github.cjstehno.ersatz.impl.matchers.RequestSchemeMatcher;
 import io.github.cjstehno.ersatz.match.HeaderMatcher;
 import io.github.cjstehno.ersatz.match.PathMatcher;
@@ -35,10 +34,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
+import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
 import static io.github.cjstehno.ersatz.util.Timeout.isTrueBefore;
 import static java.util.Collections.unmodifiableList;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.anything;
 
 /**
  * <code>Request</code> implementation representing requests without body content.
@@ -59,10 +58,10 @@ public class ErsatzRequest implements Request {
      * @param meth           the request method
      * @param pathMatcher    the path matcher
      * @param globalEncoders the shared global encoders
-     * @param noResponse     whether or not this is a request with an empty response (defaults to false)
+     * @param noResponse     whether this is a request with an empty response (defaults to false)
      */
     public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse) {
-        matchers.add(new HttpMethodMatcher(meth));
+        matchers.add(methodMatching(meth));
         matchers.add(pathMatcher);
 
         this.globalEncoders = globalEncoders;

@@ -72,7 +72,7 @@ public interface ServerConfig {
      * @param value the timeout value
      * @return a reference to the server being configured
      */
-    default ServerConfig timeout(int value){
+    default ServerConfig timeout(int value) {
         return timeout(value, SECONDS);
     }
 
@@ -81,7 +81,7 @@ public interface ServerConfig {
      *
      * @return a reference to the server being configured
      */
-    default ServerConfig reportToConsole(){
+    default ServerConfig reportToConsole() {
         return reportToConsole(true);
     }
 
@@ -239,7 +239,15 @@ public interface ServerConfig {
      * @param io the number of IO threads (should be a small number; default is 2)
      * @return a reference to this server configuration
      */
-    default ServerConfig serverThreads(final int io){
+    default ServerConfig serverThreads(final int io) {
         return serverThreads(io, io * 8);
     }
+
+    /**
+     * Allows the configuration of any global request requirements.
+     *
+     * @param requirements the requirements configuration consumer
+     * @return a reference to this server configuration
+     */
+    ServerConfig requirements(final Consumer<Requirements> requirements);
 }
