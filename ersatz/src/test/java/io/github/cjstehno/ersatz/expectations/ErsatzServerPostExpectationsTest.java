@@ -21,7 +21,6 @@ import io.github.cjstehno.ersatz.encdec.Encoders;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import lombok.val;
-import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,17 +50,62 @@ public class ErsatzServerPostExpectationsTest {
         cfg.https();
         cfg.decoder(TEXT_PLAIN, Decoders.string(UTF_8));
         cfg.decoder(APPLICATION_URLENCODED, Decoders.passthrough);
+        cfg.encoder(TEXT_PLAIN, String.class, Encoders.text(UTF_8));
     });
     @SuppressWarnings("unused") private HttpClientExtension.Client client;
+
+    @ParameterizedTest(name = "[{index}] layered encoders/decoders: https({0})")
+    @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
+    void layeredEncodingDecoding(final boolean https) throws IOException {
+        server.expectations(expect -> {
+            expect.POST("/posting", req -> {
+                req.secure(https);
+                req.called(1);
+                // this decoder overrides the one defined at the server level
+                req.decoder(
+                    TEXT_PLAIN,
+                    (bytes, context) -> "Double-decoded: " + Decoders.string(UTF_8).apply(bytes, context)
+//                    (bytes, context) -> "Double-decoded: " + context.getDecoderChain().resolve(TEXT_PLAIN).apply(bytes, context)
+                );
+                req.body("Double-decoded: " + TEXT_PAYLOAD, TEXT_PLAIN);
+                req.responder(res -> {
+                    // this encoder overrides the one defined at the server level
+                    res.encoder(
+                        TEXT_PLAIN,
+                        String.class,
+                        o -> ("Double-encoded: " + o.toString()).getBytes(UTF_8)
+                    );
+                    res.code(200);
+                    res.body("Some Content", TEXT_PLAIN);
+                });
+            });
+        });
+
+        val response = client.post("/posting", create(TEXT_PAYLOAD, parse("text/plain; charset=utf-8")), https);
+        assertOkWithString("Double-encoded: Some Content", response);
+        verify(server);
+    }
+
+    /*
+        FIXME: rework the encoders and decoders framework
+        - the multilevel approach is overly complex since there are only two levels (global and request)
+        - try to maintain current interface (document any changes)
+        - will still need a means of resolving them from the request/response defaulting to the server config
+
+        new feature
+        - consider providing a static means of configuring truely global defaults (at static class level) so that
+            all ErsatzServers in the current class-space all have the same default enc/dec
+     */
 
     @ParameterizedTest(name = "[{index}] path only: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
     void withPath(final boolean https, final String responseText) throws IOException {
         server.expects().POST("/something").body(TEXT_PAYLOAD, TEXT_PLAIN.withCharset("utf-8")).secure(https).called(1).responds().body(responseText, TEXT_PLAIN);
 
-        val mediaType = parse("text/plain; charset=utf-8");
-        val requestBody = create(TEXT_PAYLOAD, mediaType);
-        assertOkWithString(responseText, client.post("/something", requestBody, https));
+        assertOkWithString(
+            responseText,
+            client.post("/something", create(TEXT_PAYLOAD, parse("text/plain; charset=utf-8")), https)
+        );
         verify(server);
     }
 

@@ -20,6 +20,7 @@ import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.*;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -236,7 +237,7 @@ public class ErsatzResponse implements Response {
     public byte[] getContent() {
         if (content != null) {
             if (cachedContent.get() == null) {
-                final var encoder = encoderChain.resolve(getContentType(), content.getClass());
+                val encoder = encoderChain.resolve(getContentType(), content.getClass());
                 if (encoder != null) {
                     log.debug("Found encoder ({}) for content ({}).", encoder, content.getClass().getSimpleName());
                     cachedContent.set(encoder.apply(content));
@@ -249,7 +250,6 @@ public class ErsatzResponse implements Response {
                     log.debug("No encoder configured for content ({}) - returning string bytes.", content.getClass().getSimpleName());
                     cachedContent.set(content.toString().getBytes(UTF_8));
                 }
-
             }
 
             return cachedContent.get();
