@@ -15,7 +15,7 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -32,9 +32,10 @@ class ResponseEncodersTest {
 
     private static final Function<Object, byte[]> ENCODER_A = o -> new byte[0];
     private static final Function<Object, byte[]> ENCODER_B = o -> new byte[0];
+    private static final Function<Object, byte[]> ENCODER_C = o -> new byte[0];
 
     @Test @DisplayName("encoders") void encoders() {
-        final var encoders = ResponseEncoders.encoders(e -> {
+        val encoders = ResponseEncoders.encoders(e -> {
             e.register("text/plain", String.class, ENCODER_A);
             e.register(IMAGE_GIF, InputStream.class, ENCODER_B);
         });
@@ -42,5 +43,20 @@ class ResponseEncodersTest {
         assertEquals(ENCODER_A, encoders.findEncoder(TEXT_PLAIN, String.class));
         assertEquals(ENCODER_A, encoders.findEncoder("text/plain", String.class));
         assertNull(encoders.findEncoder("text/plain", File.class));
+    }
+
+    @Test void mergingEncoders() {
+        val encoders = ResponseEncoders.encoders(e -> {
+            e.register("text/plain", String.class, ENCODER_A);
+        });
+
+        encoders.merge(ResponseEncoders.encoders(e -> {
+            e.register("text/plain", String.class, ENCODER_B);
+            e.register(IMAGE_GIF, InputStream.class, ENCODER_C);
+        }));
+
+        assertEquals(ENCODER_B, encoders.findEncoder(TEXT_PLAIN, String.class));
+        assertEquals(ENCODER_C, encoders.findEncoder(IMAGE_GIF, InputStream.class));
+        assertNull(encoders.findEncoder(IMAGE_GIF, byte[].class));
     }
 }

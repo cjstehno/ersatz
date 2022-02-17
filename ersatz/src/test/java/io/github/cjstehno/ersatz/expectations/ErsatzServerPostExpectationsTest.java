@@ -86,17 +86,6 @@ public class ErsatzServerPostExpectationsTest {
         verify(server);
     }
 
-    /*
-        FIXME: rework the encoders and decoders framework
-        - the multilevel approach is overly complex since there are only two levels (global and request)
-        - try to maintain current interface (document any changes)
-        - will still need a means of resolving them from the request/response defaulting to the server config
-
-        new feature
-        - consider providing a static means of configuring truely global defaults (at static class level) so that
-            all ErsatzServers in the current class-space all have the same default enc/dec
-     */
-
     @ParameterizedTest(name = "[{index}] path only: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
     void withPath(final boolean https, final String responseText) throws IOException {

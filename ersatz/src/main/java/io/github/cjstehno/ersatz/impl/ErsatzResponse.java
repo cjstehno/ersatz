@@ -47,7 +47,7 @@ public class ErsatzResponse implements Response {
     private static final String ALLOW_HEADER = "Allow";
     private final boolean empty;
     private final ResponseEncoders localEncoders = new ResponseEncoders();
-    private final EncoderChain encoderChain = new EncoderChain(localEncoders);
+    private final EncoderChain encoderChain;
 
     private final Map<String, List<String>> headers = new LinkedHashMap<>();
     private final Map<String, Object> cookies = new LinkedHashMap<>();
@@ -65,10 +65,7 @@ public class ErsatzResponse implements Response {
      */
     public ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders) {
         this.empty = empty;
-
-        if (globalEncoders != null) {
-            encoderChain.last(globalEncoders);
-        }
+        this.encoderChain = new EncoderChain(globalEncoders, localEncoders);
     }
 
     /**
@@ -279,7 +276,7 @@ public class ErsatzResponse implements Response {
 
     @Override
     public Response encoders(final ResponseEncoders encoders) {
-        encoderChain.second(encoders);
+        localEncoders.merge(encoders);
         return this;
     }
 }

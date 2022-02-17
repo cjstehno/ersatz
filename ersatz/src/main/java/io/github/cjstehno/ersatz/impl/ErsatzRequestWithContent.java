@@ -33,7 +33,7 @@ import java.util.function.BiFunction;
 public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
     private final RequestDecoders localDecoders = new RequestDecoders();
-    private final DecoderChain decoderChain = new DecoderChain(localDecoders);
+    private final DecoderChain decoderChain;
 
     /**
      * Creates a request with the specified method and path, along with encoders and decoders.
@@ -45,10 +45,7 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
      */
     public ErsatzRequestWithContent(final HttpMethod method, final PathMatcher pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
         super(method, pathMatcher, globalEncoders);
-
-        if (globalDecoders != null) {
-            decoderChain.last(globalDecoders);
-        }
+        this.decoderChain = new DecoderChain(globalDecoders, localDecoders);
     }
 
     /**

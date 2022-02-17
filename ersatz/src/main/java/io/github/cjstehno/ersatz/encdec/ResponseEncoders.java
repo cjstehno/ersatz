@@ -16,6 +16,8 @@
 package io.github.cjstehno.ersatz.encdec;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import javax.activation.MimeType;
 import java.util.LinkedList;
@@ -98,18 +100,42 @@ public class ResponseEncoders {
     }
 
     /**
+     * Merges the given encoders into the existing encoder set. Any incoming encoders that match the conten
+     * type and object type will be overwritten.
+     *
+     * @param otherEncoders the incoming encoders
+     */
+    public void merge(final ResponseEncoders otherEncoders) {
+        for (val encoder : otherEncoders.encoders) {
+            val existingIndex = indexOfEncoder(encoder.contentType, encoder.objectType);
+            if (existingIndex != -1) {
+                // replace the existing one
+                encoders.set(existingIndex, encoder);
+            } else {
+                // add the new one
+                encoders.add(encoder);
+            }
+        }
+    }
+
+    private int indexOfEncoder(final MimeType mimeType, final Class objectType) {
+        for (int i = 0; i < encoders.size(); i++) {
+            val mapping = encoders.get(i);
+            if (mapping.contentType.match(mimeType) && mapping.objectType.isAssignableFrom(objectType)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Immutable mapping of a content-type and object type to an encoder.
      */
+    @RequiredArgsConstructor
     private static class EncoderMapping {
 
-        final MimeType contentType;
-        final Class objectType;
-        final Function<Object, byte[]> encoder;
-
-        public EncoderMapping(MimeType contentType, Class objectType, Function<Object, byte[]> encoder) {
-            this.contentType = contentType;
-            this.objectType = objectType;
-            this.encoder = encoder;
-        }
+        private final MimeType contentType;
+        private final Class objectType;
+        private final Function<Object, byte[]> encoder;
     }
 }

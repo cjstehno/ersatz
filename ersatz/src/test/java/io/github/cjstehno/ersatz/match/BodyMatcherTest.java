@@ -41,7 +41,7 @@ class BodyMatcherTest {
         });
 
         val bodyMatcher = BodyMatcher.bodyMatching(equalTo("text content"), TEXT_PLAIN.getValue());
-        bodyMatcher.setDecoderChain(new DecoderChain(decoders));
+        bodyMatcher.setDecoderChain(new DecoderChain(decoders, null));
 
         assertEquals(result, bodyMatcher.matches(request));
     }
