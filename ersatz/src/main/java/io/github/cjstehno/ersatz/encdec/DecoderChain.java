@@ -25,8 +25,6 @@ import java.util.function.BiFunction;
 @SuppressWarnings("ClassCanBeRecord")
 public class DecoderChain {
 
-    // FIXME: update tests
-
     private final RequestDecoders serverLevel;
     private final RequestDecoders requestLevel;
 
