@@ -1,0 +1,54 @@
+== Request Requirements
+
+Global request requirements allow for common configuration of expectation matching requirements in the `ServerConfig` rather than in the individual expectations.
+
+Requirements have no response mechanism, they only serve to provide a common interface for shared request matching logic. Consider the case where every request to a server must have some security token configured as a header (say "Security-Token") and that all requests must use HTTPS. We could accomplish this with expectations with something like:
+
+[source,java]
+----
+var server = new ErsatzServer(cfg -> cfg.https());
+server.expectations(expect -> {
+    expect.GET("/retrieve", req -> {
+        req.secure();
+        req.header("Security-Token", expectedToken);
+        req.responder(res -> {
+            res.body(aResponse, APPLICATION_JSON);
+        });
+    });
+});
+----
+
+In this instance, it's not all that bad, but consider now the case where you have multiple endpoints and you want to do some thorough testing against them... you will be writing a lot of expectations and repeating a lot of that boiler-plate code simply to provide the request matcher.
+
+The requirements framework allows this to be simplified. For the same scenario above, with requirements, we will have:
+
+[source,java]
+----
+var server = new ErsatzServer(cfg -> {
+    cfg.requirements(require -> {
+        require.that(ANY, anyPath(), and -> {
+            and.secure();
+            and.header("Security-Token", expectedToken);
+        });
+    });
+});
+----
+
+This code defines a requirement that any request made using any request method or request path must use HTTPS and have the configured security token header. Any request that does not meet these requirements will be rejected just as if the configuration had been done in the expectations.
+
+Now, you can write your expectations without the boilerplate code. The earlier code becomes:
+
+[source,java]
+----
+server.expectations(expect -> {
+    expect.GET("/retrieve", req -> {
+        req.responder(res -> {
+            res.body(aResponse, APPLICATION_JSON);
+        });
+    });
+});
+----
+
+Requirements provide a similar interface to the expectations, but provide no means of configuring a response.
+
+The configured requirements are matched using the configured method and path matchers. If a request comes in matching the method and path matchers for a requirement, that request must then also match the configured request parameter requirements.

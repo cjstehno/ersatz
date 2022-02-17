@@ -1,5 +1,13 @@
 == What's New
 
+=== In 3.1
+
+* Reduced the number of IO and Worker threads configured in Undertow by default.
+* Provided a means of configuring the IO/Worker threads in the underlying server (see `ServerConfig::serverThreads(int,int)`).
+* Big refactoring of how the internal matchers were used and configured as well as provided a more robust matcher framework for the API itself.
+* Added support for `Predicate`-based matchers.
+* Added global <<Request Requirements>> - now you can configure request attributes at the global level
+
 === In 3.0
 
 * Not directly backward compatible with the 2.x codebase (see migration notes below).
