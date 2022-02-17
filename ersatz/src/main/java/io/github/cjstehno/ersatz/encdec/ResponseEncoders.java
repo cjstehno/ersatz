@@ -131,7 +131,7 @@ public class ResponseEncoders {
     /**
      * Immutable mapping of a content-type and object type to an encoder.
      */
-    @RequiredArgsConstructor
+    @RequiredArgsConstructor @SuppressWarnings("ClassCanBeRecord")
     private static class EncoderMapping {
 
         private final MimeType contentType;

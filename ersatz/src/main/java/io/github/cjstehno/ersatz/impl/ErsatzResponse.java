@@ -60,7 +60,7 @@ public class ErsatzResponse implements Response {
     /**
      * Creates a new response implementation with the provided parameters.
      *
-     * @param empty whether or not the body is empty
+     * @param empty whether the body is empty
      * @param globalEncoders the configured global encoders
      */
     public ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders) {
@@ -71,7 +71,7 @@ public class ErsatzResponse implements Response {
     /**
      * Creates a new response implementation with the provided parameters, and no global encoders.
      *
-     * @param empty whether or not the body is empty
+     * @param empty whether the body is empty
      */
     public ErsatzResponse(final boolean empty) {
         this(empty, null);

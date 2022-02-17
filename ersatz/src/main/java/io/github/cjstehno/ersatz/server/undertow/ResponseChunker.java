@@ -18,24 +18,23 @@ package io.github.cjstehno.ersatz.server.undertow;
 import io.undertow.io.IoCallback;
 import io.undertow.io.Sender;
 import io.undertow.server.HttpServerExchange;
+import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
+import static lombok.AccessLevel.PACKAGE;
+
 /**
  * Undertow server callback used to provide the delayed chunked content.
  */
+@RequiredArgsConstructor(access = PACKAGE) @SuppressWarnings("ClassCanBeRecord")
 class ResponseChunker implements IoCallback {
 
     private final List<byte[]> chunks;
     public final int delay;
-
-    ResponseChunker(final List<byte[]> chunks, final int delay) {
-        this.chunks = chunks;
-        this.delay = delay;
-    }
 
     @Override
     public void onComplete(final HttpServerExchange exchange, final Sender sender) {

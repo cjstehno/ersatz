@@ -24,9 +24,8 @@ import java.util.function.Function;
 /**
  * A function chain for response encoders.
  */
+@SuppressWarnings("ClassCanBeRecord")
 public class EncoderChain {
-
-    // FIXME: update tests
 
     private final ResponseEncoders serverLevel;
     private final ResponseEncoders responseLevel;

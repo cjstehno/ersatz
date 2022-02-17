@@ -22,6 +22,7 @@ import java.util.function.BiFunction;
 /**
  * A function chain for request decoders.
  */
+@SuppressWarnings("ClassCanBeRecord")
 public class DecoderChain {
 
     // FIXME: update tests

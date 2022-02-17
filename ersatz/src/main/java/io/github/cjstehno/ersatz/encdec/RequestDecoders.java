@@ -16,16 +16,13 @@
 package io.github.cjstehno.ersatz.encdec;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 
 import javax.activation.MimeType;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
 import static lombok.AccessLevel.PACKAGE;
@@ -112,7 +109,7 @@ public class RequestDecoders {
         }
     }
 
-    @RequiredArgsConstructor(access = PACKAGE)
+    @RequiredArgsConstructor(access = PACKAGE) @SuppressWarnings("ClassCanBeRecord")
     private static class DecoderMapping {
 
         private final MimeType mimeType;

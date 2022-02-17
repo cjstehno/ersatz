@@ -38,8 +38,8 @@ import static java.util.Collections.unmodifiableList;
 public class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = new LinkedList<>();
-    private RequestDecoders globalDecoders;
-    private ResponseEncoders globalEncoders;
+    private final RequestDecoders globalDecoders;
+    private final ResponseEncoders globalEncoders;
 
     /**
      * Creates a new expectations container with the given encoders and decoders.

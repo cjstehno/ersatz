@@ -24,7 +24,7 @@ import java.util.Objects;
 /**
  * Representation of a multipart part for requests and responses.
  */
-@Getter @ToString
+@Getter @ToString @SuppressWarnings("ClassCanBeRecord")
 public class MultipartPart {
 
     private final String fieldName;

@@ -79,7 +79,7 @@ public interface Decoders {
     }
 
     /**
-     * Decoder that converts request content bytes in a url-encoded format into a map of name/value pairs.
+     * Decoder that converts request content bytes in an url-encoded format into a map of name/value pairs.
      */
     BiFunction<byte[], DecodingContext, Object> urlEncoded = (content, ctx) -> {
         val map = new HashMap<String, String>();

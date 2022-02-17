@@ -32,7 +32,6 @@ import static io.github.cjstehno.ersatz.server.undertow.ResponseChunker.prepareC
 import static io.undertow.util.HttpString.tryFromString;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.stream.Collectors.toList;
 
 @Slf4j @RequiredArgsConstructor @SuppressWarnings("ClassCanBeRecord")
 class ErsatzHttpHandler implements HttpHandler {

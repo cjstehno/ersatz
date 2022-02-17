@@ -22,8 +22,6 @@ import lombok.ToString;
 
 import java.util.function.Consumer;
 
-import static java.lang.String.format;
-
 /**
  * Ersatz abstraction of a request or response cookie. See also the <code>CookieMatcher</code>.
  */

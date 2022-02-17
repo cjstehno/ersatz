@@ -78,7 +78,7 @@ public interface GetExpectations {
      * @return a <code>Request</code> configuration object
      */
     default Request GET(final PathMatcher pathMatcher) {
-        return GET(pathMatcher, (Consumer<Request>) null);
+        return GET(pathMatcher, null);
     }
 
     /**

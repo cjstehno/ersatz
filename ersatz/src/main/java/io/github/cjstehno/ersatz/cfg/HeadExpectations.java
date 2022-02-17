@@ -76,7 +76,7 @@ public interface HeadExpectations {
      * @return a <code>Request</code> configuration object
      */
     default Request HEAD(final PathMatcher pathMatcher) {
-        return HEAD(pathMatcher, (Consumer<Request>) null);
+        return HEAD(pathMatcher, null);
     }
 
     /**

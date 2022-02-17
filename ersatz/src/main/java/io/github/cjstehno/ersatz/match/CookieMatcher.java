@@ -133,11 +133,11 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
     /**
      * Applies a matcher for the specified cookie version value. This is equivalent to calling <code>version(Matchers.equalTo(1))</code>.
      *
-     * @param vers the version string
+     * @param version the version string
      * @return a reference to the matcher being configured
      */
-    public CookieMatcher version(final int vers) {
-        return version(equalTo(vers));
+    public CookieMatcher version(final int version) {
+        return version(equalTo(version));
     }
 
     /**
@@ -230,7 +230,7 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
     }
 
     private enum CookieField {
-        VALUE, COMMENT, DOMAIN, PATH, MAX_AGE, HTTP_ONLY, SECURE, VERSION;
+        VALUE, COMMENT, DOMAIN, PATH, MAX_AGE, HTTP_ONLY, SECURE, VERSION
     }
 }
 
