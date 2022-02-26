@@ -228,7 +228,7 @@ public class ErsatzServerGetExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] Multipart binary: https({0})")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
-    void multipartBinary(final boolean https, @TempDir final File dir) throws IOException, FileUploadException {
+    void multipartBinary(final boolean https, @TempDir final File dir) throws Exception {
         server.expectations(expect -> {
             expect.GET("/data", req -> {
                 req.secure(https);

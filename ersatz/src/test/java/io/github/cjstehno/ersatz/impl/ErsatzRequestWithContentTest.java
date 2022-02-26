@@ -28,7 +28,6 @@ import lombok.val;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +43,7 @@ import static io.github.cjstehno.ersatz.match.MultipartRequestMatcher.multipartM
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -166,7 +166,7 @@ class ErsatzRequestWithContentTest {
             });
         });
 
-        var response = client.post("/form", create(MediaType.parse("application/x-www-form-urlencoded"), "alpha=some+data&bravo=42&charlie=last"));
+        var response = client.post("/form", create("alpha=some+data&bravo=42&charlie=last", parse("application/x-www-form-urlencoded")));
         assertEquals("ok", response.body().string());
     }
 
@@ -186,10 +186,10 @@ class ErsatzRequestWithContentTest {
             });
         });
 
-        final var bodyBuilder = new MultipartBody.Builder()
+        val bodyBuilder = new MultipartBody.Builder()
             .addFormDataPart("something", "interesting")
-            .addFormDataPart("infoFile", "info.txt", create(MediaType.parse("text/plain"), "This is some interesting file content."))
-            .addFormDataPart("dataFile", "data.bin", create(MediaType.parse("image/png"), new byte[]{8, 6, 7, 5, 3, 0, 9}));
+            .addFormDataPart("infoFile", "info.txt", create("This is some interesting file content.", parse("text/plain")))
+            .addFormDataPart("dataFile", "data.bin", create(new byte[]{8, 6, 7, 5, 3, 0, 9}, parse("image/png")));
 
         val response = client.post(
             "/upload",
@@ -217,8 +217,8 @@ class ErsatzRequestWithContentTest {
 
         final var bodyBuilder = new MultipartBody.Builder()
             .addFormDataPart("something", "interesting")
-            .addFormDataPart("infoFile", "info.txt", create(MediaType.parse("text/plain"), "This is some interesting file content."))
-            .addFormDataPart("dataFile", "data.bin", create(MediaType.parse("image/png"), new byte[]{8, 6, 7, 5, 3, 0, 9}));
+            .addFormDataPart("infoFile", "info.txt", create(parse("text/plain"), "This is some interesting file content."))
+            .addFormDataPart("dataFile", "data.bin", create(parse("image/png"), new byte[]{8, 6, 7, 5, 3, 0, 9}));
 
         val response = client.post(
             "/upload",
