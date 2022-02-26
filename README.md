@@ -73,7 +73,7 @@ Or, if the "shadow" artifact is desired:
 
     ./gradlew clean build shadowJar
 
-If you are interested in building the web site, with all documentation and reports, you can run the following:
+If you are interested in building the website, with all documentation and reports, you can run the following:
 
     ./gradlew site
 
@@ -110,7 +110,7 @@ Then, to publish the artifacts to the Maven Central Repository, run
 
 The additional "signing." properties are required to sign the artifacts, see the Signing section below for more details.
 
-Once the artifacts have been published, sign into https://s01.oss.sonatype.org and navigate to the "Staging Repositories" 
+Once the artifacts have been published, sign-in to https://s01.oss.sonatype.org and navigate to the "Staging Repositories" 
 and "Close" the published artifacts - this may take some time to appear. If there are errors, you can "Drop" it, fix them and publish again.
 
 After you have successfully "closed" the staging repository, you can release it by pressing the "Release" button.
@@ -129,6 +129,27 @@ where `<last-8-of-key>` is the last 8 characters of the key, and `<key-password>
 You can list the available keys using:
 
     gpg2 -k
+
+## Documentation Site
+
+### Building
+
+You can build the documentation website using the following:
+
+    ./gradlew site
+
+Which will build all Javadocs, User Guide, build reports and the website itself.
+
+### Publishing
+
+Publishing the website is a bit of an odd process:
+
+1. Create a separate clone of the ersatz project repo with a different name (e.g. `ersatz-site`).
+2. In the `ersatz-site` repo checkout the `gh-pages` branch - you should see only website content in that repo now.
+3. Publish the updated site content **from the main project** by running: `rsync -r build/site/* ../ersatz-site/`
+4. In the `ersatz-site` project add, commit and push the changes into the `gh-pages` branch.
+
+At this point the website will be published but it may take some time for GitHub to reload the changes.
 
 ## License
 
