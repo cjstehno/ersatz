@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BodyParamMatcher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.match</a> &gt; <span class="el_source">BodyParamMatcher.java</span></div><h1>BodyParamMatcher.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.match;
+
+import io.github.cjstehno.ersatz.impl.matchers.MapKeyMatcher;
+import io.github.cjstehno.ersatz.impl.matchers.MappedValuesMatcher;
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.val;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+
+import java.util.LinkedList;
+
+import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.IsIterableContaining.hasItem;
+
+/**
+ * Matcher used to match request body parameters (e.g. form posts).
+ */
+<span class="fc" id="L35">public abstract class BodyParamMatcher extends BaseMatcher&lt;ClientRequest&gt; {</span>
+
+    /**
+     * Creates a matcher to match a request body parameter with the given name and value.
+     *
+     * @param name  the parameter name
+     * @param value the parameter value
+     * @return the body param matcher
+     */
+    public static BodyParamMatcher bodyParamMatching(final String name, final String value) {
+<span class="fc" id="L45">        return bodyParamMatching(equalTo(name), hasItem(value));</span>
+    }
+
+    /**
+     * Creates a matcher to match a request body parameter with the given name and values.
+     *
+     * @param name   the parameter name
+     * @param values the parameter values
+     * @return the body param matcher
+     */
+    public static BodyParamMatcher bodyParamMatching(final String name, final Iterable&lt;? super String&gt; values) {
+<span class="fc" id="L56">        val matchers = new LinkedList&lt;Matcher&lt;? super String&gt;&gt;();</span>
+<span class="fc" id="L57">        values.forEach(v -&gt; matchers.add(equalTo(v)));</span>
+
+<span class="fc" id="L59">        return bodyParamMatching(name, stringIterableMatcher(matchers));</span>
+    }
+
+    /**
+     * Creates a matcher to match a request body parameter with the given name and value matcher.
+     *
+     * @param name         the parameter name
+     * @param valueMatcher the parameter value matcher
+     * @return the body param matcher
+     */
+    public static BodyParamMatcher bodyParamMatching(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; valueMatcher) {
+<span class="fc" id="L70">        return bodyParamMatching(equalTo(name), valueMatcher);</span>
+    }
+
+    /**
+     * Creates a matcher to match a request body parameter with the given name and value matchers.
+     *
+     * @param nameMatcher  the parameter name matcher
+     * @param valueMatcher the parameter value matcher
+     * @return the body param matcher
+     */
+    public static BodyParamMatcher bodyParamMatching(final Matcher&lt;String&gt; nameMatcher, final Matcher&lt;Iterable&lt;? super String&gt;&gt; valueMatcher) {
+<span class="fc" id="L81">        return new BodyParamMatches(nameMatcher, valueMatcher);</span>
+    }
+
+    /**
+     * Creates a matcher to match when a request body param exists with the given name.
+     *
+     * @param name the request body param name
+     * @return the body param matcher
+     */
+    public static BodyParamMatcher bodyParamExists(final String name) {
+<span class="fc" id="L91">        return bodyParamExists(equalTo(name));</span>
+    }
+
+    /**
+     * Creates a matcher to match when a request body param exists with the given name matcher.
+     *
+     * @param nameMatcher the request body param name
+     * @return the body param matcher
+     */
+    public static BodyParamMatcher bodyParamExists(final Matcher&lt;String&gt; nameMatcher) {
+<span class="fc" id="L101">        return new HasBodyParamMatching(nameMatcher, false);</span>
+    }
+
+    /**
+     * Creates a matcher to match when a request body param does not exist with the given name.
+     *
+     * @param name the request body param name
+     * @return the body param matcher
+     */
+    public static BodyParamMatcher bodyParamDoesNotExist(final String name) {
+<span class="fc" id="L111">        return bodyParamDoesNotExist(equalTo(name));</span>
+    }
+
+    /**
+     * Creates a matcher to match when a request body param does not exist with the given name matcher.
+     *
+     * @param nameMatcher the request body param name
+     * @return the body param matcher
+     */
+    public static BodyParamMatcher bodyParamDoesNotExist(final Matcher&lt;String&gt; nameMatcher) {
+<span class="fc" id="L121">        return new HasBodyParamMatching(nameMatcher, true);</span>
+    }
+
+    private static class BodyParamMatches extends BodyParamMatcher {
+
+        private final MappedValuesMatcher matcherDelegate;
+
+<span class="fc" id="L128">        private BodyParamMatches(final Matcher&lt;String&gt; nameMatcher, final Matcher&lt;Iterable&lt;? super String&gt;&gt; valueMatcher) {</span>
+<span class="fc" id="L129">            matcherDelegate = new MappedValuesMatcher(</span>
+                &quot;Request body param&quot;, nameMatcher, valueMatcher, ClientRequest::getBodyParameters
+            );
+<span class="fc" id="L132">        }</span>
+
+        @Override public boolean matches(final Object actual) {
+<span class="fc" id="L135">            return matcherDelegate.matches(actual);</span>
+        }
+
+        @Override public void describeTo(final Description description) {
+<span class="nc" id="L139">            matcherDelegate.describeTo(description);</span>
+<span class="nc" id="L140">        }</span>
+    }
+
+    private static class HasBodyParamMatching extends BodyParamMatcher {
+
+        private final MapKeyMatcher matcherDelegate;
+
+<span class="fc" id="L147">        private HasBodyParamMatching(final Matcher&lt;String&gt; nameMatcher, final boolean negated) {</span>
+<span class="fc" id="L148">            matcherDelegate = new MapKeyMatcher(&quot;Body param&quot;, nameMatcher, negated, ClientRequest::getBodyParameters);</span>
+<span class="fc" id="L149">        }</span>
+
+        @Override public boolean matches(final Object actual) {
+<span class="fc" id="L152">            return matcherDelegate.matches(actual);</span>
+        }
+
+        @Override public void describeTo(final Description description) {
+<span class="nc" id="L156">            matcherDelegate.describeTo(description);</span>
+<span class="nc" id="L157">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

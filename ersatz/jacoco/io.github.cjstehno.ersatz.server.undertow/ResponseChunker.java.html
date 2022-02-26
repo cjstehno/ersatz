@@ -18,47 +18,46 @@ package io.github.cjstehno.ersatz.server.undertow;
 import io.undertow.io.IoCallback;
 import io.undertow.io.Sender;
 import io.undertow.server.HttpServerExchange;
+import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
+import static lombok.AccessLevel.PACKAGE;
+
 /**
  * Undertow server callback used to provide the delayed chunked content.
  */
+<span class="fc" id="L33">@RequiredArgsConstructor(access = PACKAGE) @SuppressWarnings(&quot;ClassCanBeRecord&quot;)</span>
 class ResponseChunker implements IoCallback {
 
     private final List&lt;byte[]&gt; chunks;
     public final int delay;
 
-<span class="fc" id="L35">    ResponseChunker(final List&lt;byte[]&gt; chunks, final int delay) {</span>
-<span class="fc" id="L36">        this.chunks = chunks;</span>
-<span class="fc" id="L37">        this.delay = delay;</span>
-<span class="fc" id="L38">    }</span>
-
     @Override
     public void onComplete(final HttpServerExchange exchange, final Sender sender) {
-<span class="pc bpc" id="L42" title="1 of 4 branches missed.">        if (chunks != null &amp;&amp; !chunks.isEmpty()) {</span>
-<span class="fc" id="L43">            rest();</span>
-<span class="fc" id="L44">            sender.send(ByteBuffer.wrap(chunks.remove(0)), this);</span>
+<span class="pc bpc" id="L41" title="1 of 4 branches missed.">        if (chunks != null &amp;&amp; !chunks.isEmpty()) {</span>
+<span class="fc" id="L42">            rest();</span>
+<span class="fc" id="L43">            sender.send(ByteBuffer.wrap(chunks.remove(0)), this);</span>
         }
-<span class="fc" id="L46">    }</span>
+<span class="fc" id="L45">    }</span>
 
     private void rest() {
-<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        if (delay &gt; 0) {</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if (delay &gt; 0) {</span>
             try {
-<span class="fc" id="L51">                Thread.sleep(delay);</span>
-<span class="nc" id="L52">            } catch (InterruptedException e) {</span>
+<span class="fc" id="L50">                Thread.sleep(delay);</span>
+<span class="nc" id="L51">            } catch (InterruptedException e) {</span>
                 // ignore
-<span class="fc" id="L54">            }</span>
+<span class="fc" id="L53">            }</span>
         }
-<span class="fc" id="L56">    }</span>
+<span class="fc" id="L55">    }</span>
 
     @Override
     public void onException(HttpServerExchange exchange, Sender sender, IOException exception) {
-<span class="nc" id="L60">        exception.printStackTrace();</span>
-<span class="nc" id="L61">    }</span>
+<span class="nc" id="L59">        exception.printStackTrace();</span>
+<span class="nc" id="L60">    }</span>
 
     /**
      * Splits the provided string of content into the specified number of chunks. Any remaining characters will be spread out over the chunks to
@@ -69,30 +68,30 @@ class ResponseChunker implements IoCallback {
      * @return a List&amp;lt;String&amp;gt; containing the chunk data
      */
     public static List&lt;byte[]&gt; prepareChunks(final byte[] content, final int chunks) {
-<span class="fc" id="L72">        int chunklen = content.length / chunks;</span>
-<span class="fc" id="L73">        int remainder = content.length % chunks;</span>
+<span class="fc" id="L71">        int chunklen = content.length / chunks;</span>
+<span class="fc" id="L72">        int remainder = content.length % chunks;</span>
 
-<span class="fc" id="L75">        final List&lt;byte[]&gt; chunked = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L74">        final List&lt;byte[]&gt; chunked = new LinkedList&lt;&gt;();</span>
 
-<span class="fc" id="L77">        int index = 0;</span>
+<span class="fc" id="L76">        int index = 0;</span>
 
-<span class="fc bfc" id="L79" title="All 2 branches covered.">        for (int n = 0; n &lt; chunks; n++) {</span>
-<span class="fc" id="L80">            int extra = 0;</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">            if (remainder &gt; 0) {</span>
-<span class="fc" id="L82">                extra = 1;</span>
-<span class="fc" id="L83">                --remainder;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        for (int n = 0; n &lt; chunks; n++) {</span>
+<span class="fc" id="L79">            int extra = 0;</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">            if (remainder &gt; 0) {</span>
+<span class="fc" id="L81">                extra = 1;</span>
+<span class="fc" id="L82">                --remainder;</span>
             }
 
-<span class="fc" id="L86">            int len = chunklen + extra;</span>
+<span class="fc" id="L85">            int len = chunklen + extra;</span>
 
-<span class="fc" id="L88">            final byte[] chunk = new byte[len];</span>
-<span class="fc" id="L89">            System.arraycopy(content, index, chunk, 0, len);</span>
-<span class="fc" id="L90">            chunked.add(chunk);</span>
+<span class="fc" id="L87">            final byte[] chunk = new byte[len];</span>
+<span class="fc" id="L88">            System.arraycopy(content, index, chunk, 0, len);</span>
+<span class="fc" id="L89">            chunked.add(chunk);</span>
 
-<span class="fc" id="L92">            index += len;</span>
+<span class="fc" id="L91">            index += len;</span>
         }
 
-<span class="fc" id="L95">        return chunked;</span>
+<span class="fc" id="L94">        return chunked;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -18,40 +18,39 @@ package io.github.cjstehno.ersatz.impl;
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.cfg.Response;
-import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-import io.github.cjstehno.ersatz.match.CookieMatcher;
+import io.github.cjstehno.ersatz.impl.matchers.RequestSchemeMatcher;
+import io.github.cjstehno.ersatz.match.HeaderMatcher;
+import io.github.cjstehno.ersatz.match.PathMatcher;
+import io.github.cjstehno.ersatz.match.QueryParamMatcher;
+import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
-import org.hamcrest.core.IsIterableContaining;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
+import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
 import static io.github.cjstehno.ersatz.util.Timeout.isTrueBefore;
 import static java.util.Collections.unmodifiableList;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.anything;
 
 /**
  * &lt;code&gt;Request&lt;/code&gt; implementation representing requests without body content.
  */
 public class ErsatzRequest implements Request {
 
-<span class="fc" id="L48">    private final List&lt;RequestMatcher&gt; matchers = new LinkedList&lt;&gt;();</span>
-<span class="fc" id="L49">    private final List&lt;Consumer&lt;ClientRequest&gt;&gt; listeners = new LinkedList&lt;&gt;();</span>
-<span class="fc" id="L50">    private final List&lt;Response&gt; responses = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L47">    private final List&lt;Matcher&lt;ClientRequest&gt;&gt; matchers = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L48">    private final List&lt;Consumer&lt;ClientRequest&gt;&gt; listeners = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L49">    private final List&lt;Response&gt; responses = new LinkedList&lt;&gt;();</span>
     private final ResponseEncoders globalEncoders;
     private final boolean emptyResponse;
-<span class="fc" id="L53">    private Matcher&lt;?&gt; callVerifier = anything();</span>
-<span class="fc" id="L54">    private final AtomicInteger callCount = new AtomicInteger(0);</span>
+<span class="fc" id="L52">    private Matcher&lt;?&gt; callVerifier = anything();</span>
+<span class="fc" id="L53">    private final AtomicInteger callCount = new AtomicInteger(0);</span>
 
     /**
      * Creates a new request with the specified method, path matcher and optional empty response flag (defaults to false).
@@ -59,15 +58,15 @@ public class ErsatzRequest implements Request {
      * @param meth           the request method
      * @param pathMatcher    the path matcher
      * @param globalEncoders the shared global encoders
-     * @param noResponse     whether or not this is a request with an empty response (defaults to false)
+     * @param noResponse     whether this is a request with an empty response (defaults to false)
      */
-<span class="fc" id="L64">    public ErsatzRequest(final HttpMethod meth, final Matcher&lt;String&gt; pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse) {</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">        matchers.add(RequestMatcher.method(meth == ANY ? isOneOf(GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, TRACE) : equalTo(meth)));</span>
-<span class="fc" id="L66">        matchers.add(RequestMatcher.path(pathMatcher));</span>
+<span class="fc" id="L63">    public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse) {</span>
+<span class="fc" id="L64">        matchers.add(methodMatching(meth));</span>
+<span class="fc" id="L65">        matchers.add(pathMatcher);</span>
 
-<span class="fc" id="L68">        this.globalEncoders = globalEncoders;</span>
-<span class="fc" id="L69">        this.emptyResponse = noResponse;</span>
-<span class="fc" id="L70">    }</span>
+<span class="fc" id="L67">        this.globalEncoders = globalEncoders;</span>
+<span class="fc" id="L68">        this.emptyResponse = noResponse;</span>
+<span class="fc" id="L69">    }</span>
 
     /**
      * Creates a new request with the specified method, path matcher.
@@ -76,143 +75,62 @@ public class ErsatzRequest implements Request {
      * @param pathMatcher    the path matcher
      * @param globalEncoders the shared global encoders
      */
-    public ErsatzRequest(final HttpMethod meth, final Matcher&lt;String&gt; pathMatcher, final ResponseEncoders globalEncoders) {
-<span class="fc" id="L80">        this(meth, pathMatcher, globalEncoders, false);</span>
-<span class="fc" id="L81">    }</span>
+    public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders) {
+<span class="fc" id="L79">        this(meth, pathMatcher, globalEncoders, false);</span>
+<span class="fc" id="L80">    }</span>
 
     @Override
     public Request secure(final boolean value) {
-<span class="fc bfc" id="L85" title="All 2 branches covered.">        matchers.add(RequestMatcher.protocol(equalToIgnoringCase(value ? &quot;HTTPS&quot; : &quot;HTTP&quot;)));</span>
-<span class="fc" id="L86">        return this;</span>
+<span class="fc" id="L84">        matchers.add(new RequestSchemeMatcher(value));</span>
+<span class="fc" id="L85">        return this;</span>
     }
 
-    @Override
-    public Request headers(final Map&lt;String, Object&gt; heads) {
-<span class="fc" id="L91">        heads.forEach((k, v) -&gt; {</span>
-<span class="pc bpc" id="L92" title="1 of 2 branches missed.">            if (v instanceof Matcher) {</span>
-<span class="nc" id="L93">                header(k, (Matcher&lt;Iterable&lt;? super String&gt;&gt;) v);</span>
-            } else {
-<span class="fc" id="L95">                header(k, v.toString());</span>
-            }
-<span class="fc" id="L97">        });</span>
-<span class="fc" id="L98">        return this;</span>
+    @Override public Request header(final HeaderMatcher headerMatcher) {
+<span class="fc" id="L89">        matchers.add(headerMatcher);</span>
+<span class="fc" id="L90">        return this;</span>
     }
 
-    @Override
-    public Request header(final String name, final String value) {
-<span class="fc" id="L103">        return header(name, IsIterableContaining.hasItem(value));</span>
+    @Override public Request query(final QueryParamMatcher queryMatcher) {
+<span class="fc" id="L94">        matchers.add(queryMatcher);</span>
+<span class="fc" id="L95">        return this;</span>
     }
 
-    @Override
-    public Request header(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; value) {
-<span class="fc" id="L108">        matchers.add(RequestMatcher.header(name, value));</span>
-<span class="fc" id="L109">        return this;</span>
-    }
-
-    @Override
-    public Request query(final String name, final String value) {
-<span class="fc bfc" id="L114" title="All 2 branches covered.">        return query(name, value != null ? IsIterableContaining.hasItem(value) : IsIterableContaining.hasItem(&quot;&quot;));</span>
-    }
-
-    @Override
-    public Request query(final String name) {
-<span class="fc" id="L119">        return query(name, (String) null);</span>
-    }
-
-
-    @Override
-    public Request query(final String name, final Iterable&lt;? super String&gt; value) {
-<span class="fc" id="L125">        final var queryMatchers = new LinkedList&lt;Matcher&lt;? super String&gt;&gt;();</span>
-<span class="fc" id="L126">        value.forEach(v -&gt; queryMatchers.add(equalTo(v)));</span>
-
-<span class="fc" id="L128">        return query(name, stringIterableMatcher(queryMatchers));</span>
-    }
-
-    @Override
-    public Request query(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; matcher) {
-<span class="fc" id="L133">        matchers.add(RequestMatcher.query(name, matcher));</span>
-<span class="fc" id="L134">        return this;</span>
-    }
-
-    @Override
-    public Request queries(final Map&lt;String, Object&gt; map) {
-<span class="fc" id="L139">        map.forEach((k, v) -&gt; {</span>
-<span class="pc bpc" id="L140" title="1 of 2 branches missed.">            if (v instanceof Matcher) {</span>
-<span class="nc" id="L141">                query(k, (Matcher&lt;Iterable&lt;? super String&gt;&gt;) v);</span>
-<span class="pc bpc" id="L142" title="1 of 2 branches missed.">            } else if (v instanceof Collection) {</span>
-<span class="fc" id="L143">                query(k, (Collection&lt;? super String&gt;) v);</span>
-            } else {
-<span class="nc" id="L145">                query(k, v.toString());</span>
-            }
-<span class="fc" id="L147">        });</span>
-<span class="fc" id="L148">        return this;</span>
-    }
-
-    @Override
-    public Request cookie(final String name, final String value) {
-<span class="fc" id="L153">        return cookie(name, new CookieMatcher().value(value));</span>
-    }
-
-    @Override
-    public Request cookie(final String name, final Matcher&lt;Cookie&gt; value) {
-<span class="fc" id="L158">        matchers.add(RequestMatcher.cookie(name, value));</span>
-<span class="fc" id="L159">        return this;</span>
-    }
-
-    @Override
-    public Request cookies(Matcher&lt;Map&lt;String, Cookie&gt;&gt; matcher) {
-<span class="fc" id="L164">        matchers.add(RequestMatcher.cookies(matcher));</span>
-<span class="fc" id="L165">        return this;</span>
-    }
-
-    @Override
-    public Request cookies(Map&lt;String, Object&gt; cookies) {
-<span class="fc" id="L170">        cookies.forEach((k, v) -&gt; {</span>
-<span class="fc bfc" id="L171" title="All 2 branches covered.">            if (v instanceof Matcher) {</span>
-<span class="fc" id="L172">                cookie(k, (Matcher&lt;Cookie&gt;) v);</span>
-            } else {
-<span class="fc" id="L174">                cookie(k, v.toString());</span>
-            }
-<span class="fc" id="L176">        });</span>
-<span class="fc" id="L177">        return this;</span>
+    @Override public Request cookie(RequestCookieMatcher cookieMatcher) {
+<span class="fc" id="L99">        matchers.add(cookieMatcher);</span>
+<span class="fc" id="L100">        return this;</span>
     }
 
     @Override
     public Request listener(final Consumer&lt;ClientRequest&gt; listener) {
-<span class="fc" id="L182">        listeners.add(listener);</span>
-<span class="fc" id="L183">        return this;</span>
+<span class="fc" id="L105">        listeners.add(listener);</span>
+<span class="fc" id="L106">        return this;</span>
     }
 
     @Override
     public Response responds() {
-<span class="fc" id="L188">        final Response response = newResponse();</span>
-<span class="fc" id="L189">        responses.add(response);</span>
-<span class="fc" id="L190">        return response;</span>
+<span class="fc" id="L111">        final Response response = newResponse();</span>
+<span class="fc" id="L112">        responses.add(response);</span>
+<span class="fc" id="L113">        return response;</span>
     }
 
     @Override
     public Request responder(final Consumer&lt;Response&gt; responder) {
-<span class="fc" id="L195">        final Response response = newResponse();</span>
-<span class="fc" id="L196">        responder.accept(response);</span>
-<span class="fc" id="L197">        responses.add(response);</span>
-<span class="fc" id="L198">        return this;</span>
+<span class="fc" id="L118">        final Response response = newResponse();</span>
+<span class="fc" id="L119">        responder.accept(response);</span>
+<span class="fc" id="L120">        responses.add(response);</span>
+<span class="fc" id="L121">        return this;</span>
     }
 
     @Override
     public Request called(final Matcher&lt;Integer&gt; callVerifier) {
-<span class="fc" id="L203">        this.callVerifier = callVerifier;</span>
-<span class="fc" id="L204">        return this;</span>
-    }
-
-    @Override
-    public Request called(final int count) {
-<span class="fc" id="L209">        return called(equalTo(count));</span>
+<span class="fc" id="L126">        this.callVerifier = callVerifier;</span>
+<span class="fc" id="L127">        return this;</span>
     }
 
     @Override
     public Request matcher(final Matcher&lt;ClientRequest&gt; matcher) {
-<span class="fc" id="L214">        matchers.add(RequestMatcher.matcher(matcher));</span>
-<span class="fc" id="L215">        return this;</span>
+<span class="fc" id="L132">        matchers.add(matcher);</span>
+<span class="fc" id="L133">        return this;</span>
     }
 
     /**
@@ -226,8 +144,8 @@ public class ErsatzRequest implements Request {
      * @return true if the call count matches the expected verification criteria
      */
     public boolean verify(final long timeout, final TimeUnit unit) {
-<span class="fc" id="L229">        return isTrueBefore(</span>
-<span class="fc" id="L230">            () -&gt; callVerifier.matches(callCount.get()),</span>
+<span class="fc" id="L147">        return isTrueBefore(</span>
+<span class="fc" id="L148">            () -&gt; callVerifier.matches(callCount.get()),</span>
             timeout,
             unit
         );
@@ -242,7 +160,7 @@ public class ErsatzRequest implements Request {
      * @return true if the incoming request matches the configured request
      */
     public boolean matches(final ClientRequest clientRequest) {
-<span class="fc" id="L245">        return matchers.stream().allMatch(m -&gt; m.matches(clientRequest));</span>
+<span class="fc" id="L163">        return matchers.stream().allMatch(m -&gt; m.matches(clientRequest));</span>
     }
 
     /**
@@ -250,8 +168,8 @@ public class ErsatzRequest implements Request {
      *
      * @return an immutable list of the configured matchers.
      */
-    public List&lt;RequestMatcher&gt; getRequestMatchers() {
-<span class="fc" id="L254">        return unmodifiableList(matchers);</span>
+    public List&lt;Matcher&lt;ClientRequest&gt;&gt; getRequestMatchers() {
+<span class="fc" id="L172">        return unmodifiableList(matchers);</span>
     }
 
     /**
@@ -259,9 +177,9 @@ public class ErsatzRequest implements Request {
      *
      * @param matcher the matcher to be added
      */
-    protected void addMatcher(final RequestMatcher matcher) {
-<span class="fc" id="L263">        matchers.add(matcher);</span>
-<span class="fc" id="L264">    }</span>
+    protected void addMatcher(final Matcher&lt;ClientRequest&gt; matcher) {
+<span class="fc" id="L181">        matchers.add(matcher);</span>
+<span class="fc" id="L182">    }</span>
 
     /**
      * Creates a new response container for this request.
@@ -269,7 +187,7 @@ public class ErsatzRequest implements Request {
      * @return a new response container
      */
     protected Response newResponse() {
-<span class="fc" id="L272">        return new ErsatzResponse(emptyResponse, globalEncoders);</span>
+<span class="fc" id="L190">        return new ErsatzResponse(emptyResponse, globalEncoders);</span>
     }
 
     /**
@@ -279,9 +197,9 @@ public class ErsatzRequest implements Request {
      * @return the current response
      */
     public ErsatzResponse getCurrentResponse() {
-<span class="fc" id="L282">        final int currentCount = callCount.get();</span>
-<span class="fc bfc" id="L283" title="All 2 branches covered.">        final int index = currentCount &gt;= responses.size() ? responses.size() - 1 : currentCount;</span>
-<span class="fc bfc" id="L284" title="All 2 branches covered.">        return index &gt;= 0 ? (ErsatzResponse) responses.get(index) : null;</span>
+<span class="fc" id="L200">        final int currentCount = callCount.get();</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">        final int index = currentCount &gt;= responses.size() ? responses.size() - 1 : currentCount;</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        return index &gt;= 0 ? (ErsatzResponse) responses.get(index) : null;</span>
     }
 
     /**
@@ -290,22 +208,22 @@ public class ErsatzRequest implements Request {
      * @param cr the client request to be marked
      */
     public void mark(final ClientRequest cr) {
-<span class="fc" id="L293">        callCount.incrementAndGet();</span>
+<span class="fc" id="L211">        callCount.incrementAndGet();</span>
 
-<span class="fc" id="L295">        listeners.forEach(listener -&gt; listener.accept(cr));</span>
-<span class="fc" id="L296">    }</span>
+<span class="fc" id="L213">        listeners.forEach(listener -&gt; listener.accept(cr));</span>
+<span class="fc" id="L214">    }</span>
 
     @Override public String toString() {
-<span class="fc" id="L299">        final var str = new StringBuilder();</span>
-<span class="fc" id="L300">        str.append(&quot;Expectations (&quot;).append(getClass().getSimpleName()).append(&quot;): &quot;);</span>
+<span class="fc" id="L217">        final var str = new StringBuilder();</span>
+<span class="fc" id="L218">        str.append(&quot;Expectations (&quot;).append(getClass().getSimpleName()).append(&quot;): &quot;);</span>
 
-<span class="fc" id="L302">        matchers.forEach(m -&gt; {</span>
-<span class="fc" id="L303">            final var desc = new StringDescription();</span>
-<span class="fc" id="L304">            m.getMatcher().describeTo(desc);</span>
-<span class="fc" id="L305">            str.append(desc).append(&quot;, &quot;);</span>
-<span class="fc" id="L306">        });</span>
+<span class="fc" id="L220">        matchers.forEach(m -&gt; {</span>
+<span class="fc" id="L221">            final var desc = new StringDescription();</span>
+<span class="fc" id="L222">            m.describeTo(desc);</span>
+<span class="fc" id="L223">            str.append(desc).append(&quot;, &quot;);</span>
+<span class="fc" id="L224">        });</span>
 
-<span class="fc" id="L308">        return str.toString();</span>
+<span class="fc" id="L226">        return str.toString();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

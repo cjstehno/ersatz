@@ -62,8 +62,8 @@ import java.util.function.Function;
     }
 
     /**
-     * Used to specify the set of shared (parent) encoders used - this encoder collection will be called when no encoder is specified in the current
-     * response configuration.
+     * Used to add the configured encoders to the response-level encoders already configured. Any matching encoders (at
+     * the response level) will be overridden.
      *
      * @param responseEncoders the parent set of shared encoders
      * @return a reference to this MultipartResponseContent instance

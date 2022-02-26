@@ -19,6 +19,7 @@ import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.undertow.server.HttpServerExchange;
+import lombok.val;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -40,17 +41,17 @@ class UndertowClientRequest implements ClientRequest {
     private final HttpServerExchange exchange;
     private AtomicReference&lt;byte[]&gt; content;
 
-<span class="fc" id="L43">    UndertowClientRequest(final HttpServerExchange exchange) {</span>
-<span class="fc" id="L44">        this.exchange = exchange;</span>
-<span class="fc" id="L45">    }</span>
+<span class="fc" id="L44">    UndertowClientRequest(final HttpServerExchange exchange) {</span>
+<span class="fc" id="L45">        this.exchange = exchange;</span>
+<span class="fc" id="L46">    }</span>
 
     /**
-     * Used to retrieve the request protocol, generally HTTP or HTTPS.
+     * Used to retrieve the request scheme, generally HTTP or HTTPS.
      *
-     * @return the request protocol
+     * @return the request scheme
      */
-    @Override public String getProtocol() {
-<span class="fc" id="L53">        return exchange.getRequestScheme();</span>
+    @Override public String getScheme() {
+<span class="fc" id="L54">        return exchange.getRequestScheme();</span>
     }
 
     /**
@@ -59,7 +60,7 @@ class UndertowClientRequest implements ClientRequest {
      * @return the HTTP method for the request
      */
     @Override public HttpMethod getMethod() {
-<span class="fc" id="L62">        return HttpMethod.valueOf(exchange.getRequestMethod().toString());</span>
+<span class="fc" id="L63">        return HttpMethod.valueOf(exchange.getRequestMethod().toString());</span>
     }
 
     /**
@@ -68,7 +69,7 @@ class UndertowClientRequest implements ClientRequest {
      * @return the request path
      */
     @Override public String getPath() {
-<span class="fc" id="L71">        return exchange.getRequestPath();</span>
+<span class="fc" id="L72">        return exchange.getRequestPath();</span>
     }
 
     /**
@@ -77,7 +78,7 @@ class UndertowClientRequest implements ClientRequest {
      * @return the query string parameters
      */
     @Override public Map&lt;String, Deque&lt;String&gt;&gt; getQueryParams() {
-<span class="fc" id="L80">        return exchange.getQueryParameters();</span>
+<span class="fc" id="L81">        return exchange.getQueryParameters();</span>
     }
 
     /**
@@ -86,13 +87,13 @@ class UndertowClientRequest implements ClientRequest {
      * @return the request headers
      */
     @Override public Map&lt;String, Deque&lt;String&gt;&gt; getHeaders() {
-<span class="fc" id="L89">        final var map = new LinkedHashMap&lt;String, Deque&lt;String&gt;&gt;();</span>
+<span class="fc" id="L90">        final var map = new LinkedHashMap&lt;String, Deque&lt;String&gt;&gt;();</span>
 
-<span class="fc" id="L91">        exchange.getRequestHeaders().forEach(header -&gt; {</span>
-<span class="fc" id="L92">            map.computeIfAbsent(header.getHeaderName().toString(), s -&gt; new ArrayDeque&lt;&gt;()).addAll(header);</span>
-<span class="fc" id="L93">        });</span>
+<span class="fc" id="L92">        exchange.getRequestHeaders().forEach(header -&gt; {</span>
+<span class="fc" id="L93">            map.computeIfAbsent(header.getHeaderName().toString(), s -&gt; new ArrayDeque&lt;&gt;()).addAll(header);</span>
+<span class="fc" id="L94">        });</span>
 
-<span class="fc" id="L95">        return map;</span>
+<span class="fc" id="L96">        return map;</span>
     }
 
     /**
@@ -101,24 +102,25 @@ class UndertowClientRequest implements ClientRequest {
      * @return the request cookies
      */
     @Override public Map&lt;String, Cookie&gt; getCookies() {
-<span class="fc" id="L104">        final var cookies = new LinkedHashMap&lt;String, Cookie&gt;();</span>
+<span class="fc" id="L105">        val cookies = new LinkedHashMap&lt;String, Cookie&gt;();</span>
 
-<span class="fc" id="L106">        exchange.getRequestCookies().entrySet().forEach(entry -&gt; {</span>
-<span class="fc" id="L107">            final String name = entry.getKey();</span>
-<span class="fc" id="L108">            final io.undertow.server.handlers.Cookie cookie = entry.getValue();</span>
-<span class="fc" id="L109">            cookies.put(name, new Cookie(</span>
-<span class="fc" id="L110">                cookie.getValue(),</span>
-<span class="fc" id="L111">                cookie.getComment(),</span>
-<span class="fc" id="L112">                cookie.getDomain(),</span>
-<span class="fc" id="L113">                cookie.getPath(),</span>
-<span class="fc" id="L114">                cookie.getVersion(),</span>
-<span class="fc" id="L115">                cookie.isHttpOnly(),</span>
-<span class="fc" id="L116">                cookie.getMaxAge(),</span>
-<span class="fc" id="L117">                cookie.isSecure()</span>
-            ));
-<span class="fc" id="L119">        });</span>
+<span class="fc" id="L107">        exchange.requestCookies().forEach(c -&gt; {</span>
+<span class="fc" id="L108">            cookies.put(</span>
+<span class="fc" id="L109">                c.getName(),</span>
+                new Cookie(
+<span class="fc" id="L111">                    c.getValue(),</span>
+<span class="fc" id="L112">                    c.getComment(),</span>
+<span class="fc" id="L113">                    c.getDomain(),</span>
+<span class="fc" id="L114">                    c.getPath(),</span>
+<span class="fc" id="L115">                    c.getVersion(),</span>
+<span class="fc" id="L116">                    c.isHttpOnly(),</span>
+<span class="fc" id="L117">                    c.getMaxAge(),</span>
+<span class="fc" id="L118">                    c.isSecure()</span>
+                )
+            );
+<span class="fc" id="L121">        });</span>
 
-<span class="fc" id="L121">        return cookies;</span>
+<span class="fc" id="L123">        return cookies;</span>
     }
 
     /**
@@ -127,32 +129,32 @@ class UndertowClientRequest implements ClientRequest {
      * @return the optional body content as a byte array.
      */
     @Override public byte[] getBody() {
-<span class="fc bfc" id="L130" title="All 2 branches covered.">        if (content == null) {</span>
-<span class="fc" id="L131">            content = new AtomicReference&lt;&gt;();</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        if (content == null) {</span>
+<span class="fc" id="L133">            content = new AtomicReference&lt;&gt;();</span>
 
-<span class="fc" id="L133">            exchange.getRequestReceiver().receiveFullBytes((exch, message) -&gt; content.set(message));</span>
+<span class="fc" id="L135">            exchange.getRequestReceiver().receiveFullBytes((exch, message) -&gt; content.set(message));</span>
         }
 
-<span class="fc" id="L136">        return content.get();</span>
+<span class="fc" id="L138">        return content.get();</span>
     }
 
     @Override public Map&lt;String, Deque&lt;String&gt;&gt; getBodyParameters() {
-<span class="fc" id="L140">        final var body = getBody();</span>
-<span class="pc bpc" id="L141" title="1 of 2 branches missed.">        return body != null ? parseQueryString(new String(body, UTF_8), UTF_8.displayName()) : emptyMap();</span>
+<span class="fc" id="L142">        final var body = getBody();</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        return body != null ? parseQueryString(new String(body, UTF_8), UTF_8.displayName()) : emptyMap();</span>
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L146">        String contentString = &quot;&lt;empty&gt;&quot;;</span>
+<span class="fc" id="L148">        String contentString = &quot;&lt;empty&gt;&quot;;</span>
 
-<span class="fc" id="L148">        final var body = getBody();</span>
-<span class="pc bpc" id="L149" title="1 of 6 branches missed.">        if (body != null &amp;&amp; getContentType() != null &amp;&amp; getContentType().startsWith(&quot;text/&quot;)) {</span>
-<span class="fc" id="L150">            contentString = new String(body, UTF_8);</span>
-<span class="pc bpc" id="L151" title="1 of 2 branches missed.">        } else if (body != null) {</span>
-<span class="fc" id="L152">            contentString = format(&quot;&lt;%d of %s content&gt;&quot;, getContentLength(), getContentType());</span>
+<span class="fc" id="L150">        final var body = getBody();</span>
+<span class="pc bpc" id="L151" title="1 of 6 branches missed.">        if (body != null &amp;&amp; getContentType() != null &amp;&amp; getContentType().startsWith(&quot;text/&quot;)) {</span>
+<span class="fc" id="L152">            contentString = new String(body, UTF_8);</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        } else if (body != null) {</span>
+<span class="fc" id="L154">            contentString = format(&quot;&lt;%d of %s content&gt;&quot;, getContentLength(), getContentType());</span>
         }
 
-<span class="fc" id="L155">        return format(&quot;{ %s %s(query=%s, headers=%s, cookies=%s): %s }&quot;, getMethod(), getPath(), getQueryParams(), getHeaders(), getCookies(), contentString);</span>
+<span class="fc" id="L157">        return format(&quot;{ %s %s(query=%s, headers=%s, cookies=%s): %s }&quot;, getMethod(), getPath(), getQueryParams(), getHeaders(), getCookies(), contentString);</span>
     }
 
     /**
@@ -162,7 +164,7 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Override
     public long getContentLength() {
-<span class="fc" id="L165">        return exchange.getRequestContentLength();</span>
+<span class="fc" id="L167">        return exchange.getRequestContentLength();</span>
     }
 
     /**
@@ -172,7 +174,7 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Override
     public String getCharacterEncoding() {
-<span class="fc" id="L175">        return exchange.getRequestCharset();</span>
+<span class="fc" id="L177">        return exchange.getRequestCharset();</span>
     }
 
     /**
@@ -182,8 +184,8 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Override
     public String getContentType() {
-<span class="fc" id="L185">        final var header = exchange.getRequestHeaders().get(CONTENT_TYPE_HEADER);</span>
-<span class="fc bfc" id="L186" title="All 2 branches covered.">        return header != null ? header.getFirst() : null;</span>
+<span class="fc" id="L187">        final var header = exchange.getRequestHeaders().get(CONTENT_TYPE_HEADER);</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">        return header != null ? header.getFirst() : null;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

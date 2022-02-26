@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.240s</div>
+<div class="counter">0.403s</div>
 <p>duration</p>
 </div>
 </td>
@@ -81,13 +81,13 @@
 <tr>
 <td class="success">[1] tracing: https(false) -&gt; {1}</td>
 <td class="success">traceSendsBackRequest(boolean)[1]</td>
-<td class="success">0.093s</td>
+<td class="success">0.214s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[2] tracing: https(true) -&gt; {1}</td>
 <td class="success">traceSendsBackRequest(boolean)[2]</td>
-<td class="success">0.147s</td>
+<td class="success">0.189s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -95,40 +95,28 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>12:26:49.175 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-12:26:49.176 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-12:26:49.184 [XNIO-13 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-1', selector sun.nio.ch.EPollSelectorImpl@105c5b5
-12:26:49.190 [XNIO-13 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-2', selector sun.nio.ch.EPollSelectorImpl@4efababc
-12:26:49.190 [XNIO-13 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-3', selector sun.nio.ch.EPollSelectorImpl@332658e9
-12:26:49.191 [XNIO-13 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-5', selector sun.nio.ch.EPollSelectorImpl@78d966a1
-12:26:49.191 [XNIO-13 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-4', selector sun.nio.ch.EPollSelectorImpl@62146e47
-12:26:49.197 [XNIO-13 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-6', selector sun.nio.ch.EPollSelectorImpl@3b51f775
-12:26:49.204 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-12:26:49.205 [XNIO-13 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-7', selector sun.nio.ch.EPollSelectorImpl@326dc22b
-12:26:49.205 [XNIO-13 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 Accept', selector sun.nio.ch.EPollSelectorImpl@40b06d3a
-12:26:49.205 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-12:26:49.206 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:34435, https:40687).
-12:26:49.206 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-12:26:49.209 [XNIO-13 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-8', selector sun.nio.ch.EPollSelectorImpl@36767387
-12:26:49.255 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-12:26:49.265 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
-12:26:49.292 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-12:26:49.295 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-12:26:49.301 [XNIO-14 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-1', selector sun.nio.ch.EPollSelectorImpl@4e350cf5
-12:26:49.314 [XNIO-14 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-2', selector sun.nio.ch.EPollSelectorImpl@a81dad6
-12:26:49.322 [XNIO-14 I/O-4] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-4', selector sun.nio.ch.EPollSelectorImpl@5aa4d2cb
-12:26:49.327 [XNIO-14 I/O-5] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-5', selector sun.nio.ch.EPollSelectorImpl@56e72fe1
-12:26:49.331 [XNIO-14 I/O-6] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-6', selector sun.nio.ch.EPollSelectorImpl@17eeefda
-12:26:49.322 [XNIO-14 I/O-3] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-3', selector sun.nio.ch.EPollSelectorImpl@bb88579
-12:26:49.355 [XNIO-14 I/O-7] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-7', selector sun.nio.ch.EPollSelectorImpl@66b1d496
-12:26:49.359 [XNIO-14 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 Accept', selector sun.nio.ch.EPollSelectorImpl@2bfd223c
-12:26:49.360 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-12:26:49.361 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-12:26:49.361 [XNIO-14 I/O-8] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-8', selector sun.nio.ch.EPollSelectorImpl@42dbd50d
-12:26:49.362 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:35475, https:38129).
-12:26:49.362 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-12:26:49.411 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-12:26:49.413 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
+<pre>09:25:05.123 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
+09:25:05.124 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
+09:25:05.133 [XNIO-13 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-1', selector sun.nio.ch.EPollSelectorImpl@dc3c5ec
+09:25:05.165 [XNIO-13 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 I/O-2', selector sun.nio.ch.EPollSelectorImpl@4d47c845
+09:25:05.168 [XNIO-13 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-13 Accept', selector sun.nio.ch.EPollSelectorImpl@5b496166
+09:25:05.168 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+09:25:05.170 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
+09:25:05.171 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:32871, https:44997).
+09:25:05.171 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
+09:25:05.326 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
+09:25:05.328 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
+09:25:05.352 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
+09:25:05.353 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
+09:25:05.365 [XNIO-14 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-1', selector sun.nio.ch.EPollSelectorImpl@76206989
+09:25:05.413 [XNIO-14 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 I/O-2', selector sun.nio.ch.EPollSelectorImpl@b640c4f
+09:25:05.420 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+09:25:05.422 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
+09:25:05.423 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:42587, https:43919).
+09:25:05.423 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
+09:25:05.425 [XNIO-14 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-14 Accept', selector sun.nio.ch.EPollSelectorImpl@1234c0a1
+09:25:05.524 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
+09:25:05.527 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
 </pre>
 </span>
 </div>
@@ -140,7 +128,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 7.2</a> at Jan 25, 2022, 12:26:57 PM</p>
+<a href="http://www.gradle.org">Gradle 7.2</a> at Feb 26, 2022, 9:25:12 AM</p>
 </div>
 </div>
 </body>

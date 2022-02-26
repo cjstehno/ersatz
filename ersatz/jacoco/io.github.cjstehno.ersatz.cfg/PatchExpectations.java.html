@@ -15,11 +15,12 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * Defines the available PATCH request expectations.
@@ -32,8 +33,8 @@ public interface PatchExpectations {
      * @param path the expected request path
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
-    default RequestWithContent PATCH(String path) {
-<span class="fc" id="L36">        return PATCH(pathMatcher(path));</span>
+    default RequestWithContent PATCH(final String path) {
+<span class="fc" id="L37">        return PATCH(pathMatching(path));</span>
     }
 
     /**
@@ -42,20 +43,20 @@ public interface PatchExpectations {
      * @param matcher the path matcher
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
-    default RequestWithContent PATCH(Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L46">        return PATCH(matcher, (Consumer&lt;RequestWithContent&gt;) null);</span>
+    default RequestWithContent PATCH(final Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L47">        return PATCH(pathMatching(matcher));</span>
     }
 
     /**
      * Allows configuration of a PATCH request expectation using the provided &lt;code&gt;Consumer&amp;lt;RequestWithContent&amp;gt;&lt;/code&gt;. The
      * &lt;code&gt;Consumer&amp;lt;RequestWithContent&amp;gt;&lt;/code&gt; will have an instance of &lt;code&gt;RequestWithContent&lt;/code&gt; passed into it for configuration.
      *
-     * @param path the expected request path
-     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     * @param path   the expected request path
      * @param config the configuration consumer
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
-    default RequestWithContent PATCH(String path, Consumer&lt;RequestWithContent&gt; config) {
-<span class="fc" id="L58">        return PATCH(pathMatcher(path), config);</span>
+    default RequestWithContent PATCH(final String path, final Consumer&lt;RequestWithContent&gt; config) {
+<span class="fc" id="L59">        return PATCH(pathMatching(path), config);</span>
     }
 
     /**
@@ -63,9 +64,30 @@ public interface PatchExpectations {
      * &lt;code&gt;Consumer&amp;lt;RequestWithContent&amp;gt;&lt;/code&gt; will have an instance of &lt;code&gt;RequestWithContent&lt;/code&gt; passed into it for configuration.
      *
      * @param matcher the path matcher
+     * @param config  the configuration consumer
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
-     * @param config the configuration consumer
      */
-    RequestWithContent PATCH(Matcher&lt;String&gt; matcher, Consumer&lt;RequestWithContent&gt; config);
+    default RequestWithContent PATCH(final Matcher&lt;String&gt; matcher, final Consumer&lt;RequestWithContent&gt; config) {
+<span class="fc" id="L71">        return PATCH(pathMatching(matcher), config);</span>
+    }
+
+    /**
+     * Allows configuration of a PATCH request expectation.
+     *
+     * @param pathMatcher the path matcher
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     */
+    default RequestWithContent PATCH(final PathMatcher pathMatcher) {
+<span class="fc" id="L81">        return PATCH(pathMatcher, null);</span>
+    }
+
+    /**
+     * Allows configuration of a PATCH request expectation with the provided &lt;code&gt;Consumer&lt;/code&gt;.
+     *
+     * @param pathMatcher the path matcher
+     * @param config  the configuration consumer
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     */
+    RequestWithContent PATCH(final PathMatcher pathMatcher, final Consumer&lt;RequestWithContent&gt; config);
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

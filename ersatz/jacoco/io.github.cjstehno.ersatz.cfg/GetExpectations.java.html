@@ -15,11 +15,12 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * Defines the available GET request expectations.
@@ -33,7 +34,7 @@ public interface GetExpectations {
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request GET(String path) {
-<span class="fc" id="L36">        return GET(pathMatcher(path));</span>
+<span class="fc" id="L37">        return GET(pathMatching(path));</span>
     }
 
     /**
@@ -42,21 +43,20 @@ public interface GetExpectations {
      * @param matcher the path matcher.
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
-    default Request GET(Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L46">        return GET(matcher, (Consumer&lt;Request&gt;) null);</span>
+    default Request GET(final Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L47">        return GET(pathMatching(matcher));</span>
     }
-
 
     /**
      * Allows configuration of a GET request expectation using the provided &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt;. The &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt; will
      * have an instance of &lt;code&gt;Request&lt;/code&gt; passed into it for configuration.
      *
-     * @param path the expected request path
-     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     * @param path   the expected request path
      * @param config the configuration consumer
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request GET(String path, Consumer&lt;Request&gt; config) {
-<span class="fc" id="L59">        return GET(pathMatcher(path), config);</span>
+<span class="fc" id="L59">        return GET(pathMatching(path), config);</span>
     }
 
     /**
@@ -64,9 +64,32 @@ public interface GetExpectations {
      * have an instance of &lt;code&gt;Request&lt;/code&gt; passed into it for configuration.
      *
      * @param matcher the path matcher
+     * @param config  the configuration consumer
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
-     * @param config the configuration consumer
      */
-    Request GET(Matcher&lt;String&gt; matcher, Consumer&lt;Request&gt; config);
+    default Request GET(final Matcher&lt;String&gt; matcher, final Consumer&lt;Request&gt; config) {
+<span class="fc" id="L71">        return GET(pathMatching(matcher), config);</span>
+    }
+
+    /**
+     * Allows configuration of a GET request expectation.
+     *
+     * @param pathMatcher the patch matcher
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    default Request GET(final PathMatcher pathMatcher) {
+<span class="fc" id="L81">        return GET(pathMatcher, null);</span>
+    }
+
+    /**
+     * Allows configuration of a GET request expectation with the provided &lt;code&gt;Consumer&lt;/code&gt;.
+     *
+     * @param pathMatcher the patch matcher
+     * @param config the configuration consumer
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    Request GET(final PathMatcher pathMatcher, final Consumer&lt;Request&gt; config);
 }
+
+
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - BodyMatcherIssueTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>BodyMatcherIssueTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/io.github.cjstehno.ersatz.issues.html">io.github.cjstehno.ersatz.issues</a> &gt; BodyMatcherIssueTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">2</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">3.904s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Method name</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">matching all of body content</td>
+<td class="success">matchingAllBodyContent()</td>
+<td class="success">3.748s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">matching partial body content</td>
+<td class="success">matchingPartialContent()</td>
+<td class="success">0.156s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>09:24:57.996 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
+09:24:58.019 [XNIO-2 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-1', selector sun.nio.ch.EPollSelectorImpl@43f5a4e2
+09:24:58.049 [XNIO-2 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-2', selector sun.nio.ch.EPollSelectorImpl@32bea3df
+09:24:58.065 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+09:24:58.066 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:33491, https:-1).
+09:24:58.066 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
+09:24:58.085 [XNIO-2 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 Accept', selector sun.nio.ch.EPollSelectorImpl@8e80101
+09:25:01.517 [XNIO-2 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { POST /posting(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/xml; charset=utf-8], Content-Length=[36], User-Agent=[okhttp/4.9.3], Host=[localhost:33491]}, cookies={}): &lt;request&gt;&lt;node foo=&quot;bar&quot;/&gt;&lt;/request&gt; }
+09:25:01.550 [XNIO-2 task-1] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse - Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$596/0x0000000800e37650@4651ed2e) for content (String).
+09:25:01.550 [XNIO-2 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; http://localhost:33491/posting; {Content-Type=[text/xml]}): &lt;23 bytes of text/xml content&gt;
+09:25:01.725 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
+09:25:01.740 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
+09:25:01.742 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
+09:25:01.771 [XNIO-3 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-1', selector sun.nio.ch.EPollSelectorImpl@5de96b57
+09:25:01.799 [XNIO-3 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-2', selector sun.nio.ch.EPollSelectorImpl@1413cb87
+09:25:01.804 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
+09:25:01.805 [XNIO-3 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 Accept', selector sun.nio.ch.EPollSelectorImpl@1de924f0
+09:25:01.805 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:38551, https:-1).
+09:25:01.805 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
+09:25:01.846 [XNIO-3 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { POST /posting(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[23], User-Agent=[okhttp/4.9.3], Host=[localhost:38551]}, cookies={}): Show me something good! }
+09:25:01.847 [XNIO-3 task-1] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse - No encoder configured for content (String) - returning string bytes.
+09:25:01.847 [XNIO-3 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; http://localhost:38551/posting; {Content-Type=[text/plain]}): &lt;13 bytes of text/plain content&gt;
+09:25:01.861 [XNIO-3 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { POST /posting(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[24], User-Agent=[okhttp/4.9.3], Host=[localhost:38551]}, cookies={}): You have nothing for me! }
+09:25:01.891 [XNIO-3 task-2] WARN io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - # Unmatched Request
+
+http POST /posting ? 
+Headers:
+ - Connection: [Keep-Alive]
+ - Accept-Encoding: [gzip]
+ - Content-Type: [text/plain; charset=utf-8]
+ - Content-Length: [24]
+ - User-Agent: [okhttp/4.9.3]
+ - Host: [localhost:38551]
+Cookies:
+Character-Encoding: utf-8
+Content-type: text/plain; charset=utf-8
+Content-Length: 24
+Content:
+  You have nothing for me!
+
+# Requirements
+
+# Expectations
+
+Expectation 0 (3 matchers):
+  ?[32m+?[0m HTTP method is (&lt;POST&gt;)
+  ?[32m+?[0m Path matches &quot;/posting&quot;
+  ?[31mX Body is a string containing &quot;something good&quot; and content-type is a string starting with text/plain?[0m
+  (3 matchers: 2 matched, ?[31m1 failed?[0m)
+
+
+09:25:01.896 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
+09:25:01.897 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 7.2</a> at Feb 26, 2022, 9:25:12 AM</p>
+</div>
+</div>
+</body>
+</html>

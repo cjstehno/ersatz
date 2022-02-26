@@ -15,11 +15,10 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
-
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
 
 /**
  * Defines the available POST request expectations.
@@ -32,8 +31,8 @@ public interface PostExpectations {
      * @param path the request path.
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
-    default RequestWithContent POST(String path) {
-<span class="fc" id="L36">        return POST(pathMatcher(path));</span>
+    default RequestWithContent POST(final String path) {
+<span class="fc" id="L35">        return POST(PathMatcher.pathMatching(path));</span>
     }
 
     /**
@@ -42,20 +41,20 @@ public interface PostExpectations {
      * @param matcher the path matcher
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
-    default RequestWithContent POST(Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L46">        return POST(matcher, (Consumer&lt;RequestWithContent&gt;) null);</span>
+    default RequestWithContent POST(final Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L45">        return POST(PathMatcher.pathMatching(matcher));</span>
     }
 
     /**
      * Allows configuration of a POST request expectation using the provided &lt;code&gt;Consumer&amp;lt;RequestWithContent&amp;gt;&lt;/code&gt;. The
      * &lt;code&gt;Consumer&amp;lt;RequestWithContent&amp;gt;&lt;/code&gt; will have an instance of &lt;code&gt;RequestWithContent&lt;/code&gt; passed into it for configuration.
      *
-     * @param path the expected request path
-     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     * @param path   the expected request path
      * @param config the configuration consumer
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
-    default RequestWithContent POST(String path, Consumer&lt;RequestWithContent&gt; config) {
-<span class="fc" id="L58">        return POST(pathMatcher(path), config);</span>
+    default RequestWithContent POST(final String path, final Consumer&lt;RequestWithContent&gt; config) {
+<span class="fc" id="L57">        return POST(PathMatcher.pathMatching(path), config);</span>
     }
 
     /**
@@ -63,9 +62,30 @@ public interface PostExpectations {
      * &lt;code&gt;Consumer&amp;lt;RequestWithContent&amp;gt;&lt;/code&gt;will have an instance of &lt;code&gt;RequestWithContent&lt;/code&gt; passed into it for configuration.
      *
      * @param matcher the path matcher
+     * @param config  the configuration consumer
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
-     * @param config the configuration consumer
      */
-    RequestWithContent POST(Matcher&lt;String&gt; matcher, Consumer&lt;RequestWithContent&gt; config);
+    default RequestWithContent POST(final Matcher&lt;String&gt; matcher, final Consumer&lt;RequestWithContent&gt; config) {
+<span class="fc" id="L69">        return POST(PathMatcher.pathMatching(matcher), config);</span>
+    }
+
+    /**
+     * Allows configuration of a POST request expectation.
+     *
+     * @param pathMatcher the path matcher
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     */
+    default RequestWithContent POST(final PathMatcher pathMatcher) {
+<span class="fc" id="L79">        return POST(pathMatcher, null);</span>
+    }
+
+    /**
+     * Allows configuration of a POST request expectation with the provided &lt;code&gt;Consumer&lt;/code&gt;.
+     *
+     * @param pathMatcher the path matcher
+     * @param config  the configuration consumer
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     */
+    RequestWithContent POST(final PathMatcher pathMatcher, final Consumer&lt;RequestWithContent&gt; config);
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -15,11 +15,12 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * Defines the available generic request (ANY) expectations.
@@ -32,8 +33,8 @@ public interface AnyExpectations {
      * @param path the expected request path
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
-    default Request ANY(String path) {
-<span class="fc" id="L36">        return ANY(pathMatcher(path));</span>
+    default Request ANY(final String path) {
+<span class="fc" id="L37">        return ANY(pathMatching(path));</span>
     }
 
     /**
@@ -42,8 +43,8 @@ public interface AnyExpectations {
      * @param matcher the path matcher
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
-    default Request ANY(Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L46">        return ANY(matcher, (Consumer&lt;Request&gt;) null);</span>
+    default Request ANY(final Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L47">        return ANY(pathMatching(matcher));</span>
     }
 
     /**
@@ -54,8 +55,8 @@ public interface AnyExpectations {
      * @param consumer the configuration consumer
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
-    default Request ANY(String path, Consumer&lt;Request&gt; consumer) {
-<span class="fc" id="L58">        return ANY(pathMatcher(path), consumer);</span>
+    default Request ANY(final String path, Consumer&lt;Request&gt; consumer) {
+<span class="fc" id="L59">        return ANY(pathMatching(path), consumer);</span>
     }
 
     /**
@@ -66,6 +67,29 @@ public interface AnyExpectations {
      * @param consumer the configuration consumer
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
-    Request ANY(Matcher&lt;String&gt; matcher, Consumer&lt;Request&gt; consumer);
+    default Request ANY(final Matcher&lt;String&gt; matcher, final Consumer&lt;Request&gt; consumer) {
+<span class="fc" id="L71">        return ANY(pathMatching(matcher), consumer);</span>
+    }
+
+    /**
+     * Allows configuration of request expectation matching any request method with a path matching the provided
+     * matcher.
+     *
+     * @param pathMatcher the patch matcher
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    default Request ANY(final PathMatcher pathMatcher) {
+<span class="fc" id="L82">        return ANY(pathMatcher, null);</span>
+    }
+
+    /**
+     * Allows configuration of request expectation matching any request method with a path matching the provided
+     * matcher. The consumer will be used to provide addition expectations on the request.
+     *
+     * @param pathMatcher the patch matcher
+     * @param consumer the configuration consumer
+     * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
+     */
+    Request ANY(final PathMatcher pathMatcher, Consumer&lt;Request&gt; consumer);
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

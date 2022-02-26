@@ -22,29 +22,27 @@ import lombok.ToString;
 
 import java.util.function.Consumer;
 
-import static java.lang.String.format;
-
 /**
  * Ersatz abstraction of a request or response cookie. See also the &lt;code&gt;CookieMatcher&lt;/code&gt;.
  */
-<span class="pc bpc" id="L30" title="24 of 56 branches missed.">@AllArgsConstructor @Getter @EqualsAndHashCode @ToString</span>
+<span class="pc bpc" id="L28" title="24 of 56 branches missed.">@AllArgsConstructor @Getter @EqualsAndHashCode @ToString</span>
 public class Cookie {
 
-<span class="fc" id="L33">    private String value;</span>
-<span class="fc" id="L34">    private String comment;</span>
-<span class="fc" id="L35">    private String domain;</span>
-<span class="fc" id="L36">    private String path;</span>
-<span class="fc" id="L37">    private int version;</span>
-<span class="fc" id="L38">    private boolean httpOnly;</span>
-<span class="fc" id="L39">    private Integer maxAge;</span>
-<span class="fc" id="L40">    private boolean secure;</span>
+<span class="fc" id="L31">    private String value;</span>
+<span class="fc" id="L32">    private String comment;</span>
+<span class="fc" id="L33">    private String domain;</span>
+<span class="fc" id="L34">    private String path;</span>
+<span class="fc" id="L35">    private int version;</span>
+<span class="fc" id="L36">    private boolean httpOnly;</span>
+<span class="fc" id="L37">    private Integer maxAge;</span>
+<span class="fc" id="L38">    private boolean secure;</span>
 
     /**
      * Creates an empty cookie.
      */
     public Cookie() {
-<span class="fc" id="L46">        this(null, null, null, null, 0, false, 0, false);</span>
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L44">        this(null, null, null, null, 0, false, 0, false);</span>
+<span class="fc" id="L45">    }</span>
 
     /**
      * Used to configure a request cookie with a configuration consumer.
@@ -53,9 +51,9 @@ public class Cookie {
      * @return the configured cookie
      */
     public static Cookie cookie(final Consumer&lt;Cookie&gt; consumer) {
-<span class="fc" id="L56">        Cookie cookie = new Cookie();</span>
-<span class="fc" id="L57">        consumer.accept(cookie);</span>
-<span class="fc" id="L58">        return cookie;</span>
+<span class="fc" id="L54">        Cookie cookie = new Cookie();</span>
+<span class="fc" id="L55">        consumer.accept(cookie);</span>
+<span class="fc" id="L56">        return cookie;</span>
     }
 
     /**
@@ -65,8 +63,8 @@ public class Cookie {
      * @return this cookie
      */
     public Cookie value(String value) {
-<span class="fc" id="L68">        this.value = value;</span>
-<span class="fc" id="L69">        return this;</span>
+<span class="fc" id="L66">        this.value = value;</span>
+<span class="fc" id="L67">        return this;</span>
     }
 
     /**
@@ -76,8 +74,8 @@ public class Cookie {
      * @return this cookie
      */
     public Cookie comment(final String comment) {
-<span class="fc" id="L79">        this.comment = comment;</span>
-<span class="fc" id="L80">        return this;</span>
+<span class="fc" id="L77">        this.comment = comment;</span>
+<span class="fc" id="L78">        return this;</span>
     }
 
     /**
@@ -87,8 +85,8 @@ public class Cookie {
      * @return this cookie
      */
     public Cookie domain(final String domain) {
-<span class="fc" id="L90">        this.domain = domain;</span>
-<span class="fc" id="L91">        return this;</span>
+<span class="fc" id="L88">        this.domain = domain;</span>
+<span class="fc" id="L89">        return this;</span>
     }
 
     /**
@@ -98,8 +96,8 @@ public class Cookie {
      * @return this cookie
      */
     public Cookie path(final String path) {
-<span class="fc" id="L101">        this.path = path;</span>
-<span class="fc" id="L102">        return this;</span>
+<span class="fc" id="L99">        this.path = path;</span>
+<span class="fc" id="L100">        return this;</span>
     }
 
     /**
@@ -109,8 +107,8 @@ public class Cookie {
      * @return this cookie
      */
     public Cookie version(final int version) {
-<span class="fc" id="L112">        this.version = version;</span>
-<span class="fc" id="L113">        return this;</span>
+<span class="fc" id="L110">        this.version = version;</span>
+<span class="fc" id="L111">        return this;</span>
     }
 
     /**
@@ -120,8 +118,8 @@ public class Cookie {
      * @return this cookie
      */
     public Cookie httpOnly(final boolean httpOnly) {
-<span class="fc" id="L123">        this.httpOnly = httpOnly;</span>
-<span class="fc" id="L124">        return this;</span>
+<span class="fc" id="L121">        this.httpOnly = httpOnly;</span>
+<span class="fc" id="L122">        return this;</span>
     }
 
     /**
@@ -131,8 +129,8 @@ public class Cookie {
      * @return this cookie
      */
     public Cookie maxAge(final Integer maxAge) {
-<span class="fc" id="L134">        this.maxAge = maxAge;</span>
-<span class="fc" id="L135">        return this;</span>
+<span class="fc" id="L132">        this.maxAge = maxAge;</span>
+<span class="fc" id="L133">        return this;</span>
     }
 
     /**
@@ -142,8 +140,8 @@ public class Cookie {
      * @return this cookie
      */
     public Cookie secure(final boolean secure) {
-<span class="fc" id="L145">        this.secure = secure;</span>
-<span class="fc" id="L146">        return this;</span>
+<span class="fc" id="L143">        this.secure = secure;</span>
+<span class="fc" id="L144">        return this;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

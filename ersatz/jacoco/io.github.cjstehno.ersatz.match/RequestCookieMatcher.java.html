@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RequestCookieMatcher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.match</a> &gt; <span class="el_source">RequestCookieMatcher.java</span></div><h1>RequestCookieMatcher.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.match;
+
+import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.RequiredArgsConstructor;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+
+import static lombok.AccessLevel.PRIVATE;
+import static org.hamcrest.CoreMatchers.equalTo;
+
+/**
+ * Matcher used to match request cookie information.
+ */
+<span class="fc" id="L31">public abstract class RequestCookieMatcher extends BaseMatcher&lt;ClientRequest&gt; {</span>
+
+    /**
+     * Creates a request cookie matcher for matching the given name and value.
+     *
+     * @param name  the cookie name
+     * @param value the cookie value
+     * @return the request cookie matcher
+     */
+    public static RequestCookieMatcher cookieMatching(final String name, final String value) {
+<span class="fc" id="L41">        return cookieMatching(name, new CookieMatcher().value(value));</span>
+    }
+
+    /**
+     * Creates a request cookie matcher for matching the given name and cookie matcher.
+     *
+     * @param name          the cookie name
+     * @param cookieMatcher the cookie matcher
+     * @return the request cookie matcher
+     */
+    public static RequestCookieMatcher cookieMatching(final String name, final Matcher&lt;Cookie&gt; cookieMatcher) {
+<span class="fc" id="L52">        return cookieMatching(equalTo(name), cookieMatcher);</span>
+    }
+
+    /**
+     * Creates a request cookie matcher for matching the given name matcher and cookie matcher.
+     *
+     * @param nameMatcher   the cookie name matcher
+     * @param cookieMatcher the cookie matcher
+     * @return the request cookie matcher
+     */
+    public static RequestCookieMatcher cookieMatching(final Matcher&lt;String&gt; nameMatcher, final Matcher&lt;Cookie&gt; cookieMatcher) {
+<span class="fc" id="L63">        return new CookieMatches(nameMatcher, cookieMatcher);</span>
+    }
+
+    /**
+     * Creates a request cookie matcher that matches when a cookie exists with the given name.
+     *
+     * @param name the cookie name
+     * @return the request cookie matcher
+     */
+    public static RequestCookieMatcher cookieExists(final String name) {
+<span class="fc" id="L73">        return cookieExists(equalTo(name));</span>
+    }
+
+    /**
+     * Creates a request cookie matcher that matches when a cookie exists matching the given name matcher.
+     *
+     * @param nameMatcher the cookie name
+     * @return the request cookie matcher
+     */
+    public static RequestCookieMatcher cookieExists(final Matcher&lt;String&gt; nameMatcher) {
+<span class="fc" id="L83">        return new HasCookieMatching(nameMatcher, false);</span>
+    }
+
+    /**
+     * Creates a request cookie matcher that matches when a cookie does not exist with the given name.
+     *
+     * @param name the cookie name
+     * @return the request cookie matcher
+     */
+    public static RequestCookieMatcher cookieDoesNotExist(final String name) {
+<span class="fc" id="L93">        return cookieDoesNotExist(equalTo(name));</span>
+    }
+
+    /**
+     * Creates a request cookie matcher that matches when a cookie does not exist matching the given name matcher.
+     *
+     * @param nameMatcher the cookie name
+     * @return the request cookie matcher
+     */
+    public static RequestCookieMatcher cookieDoesNotExist(final Matcher&lt;String&gt; nameMatcher) {
+<span class="fc" id="L103">        return new HasCookieMatching(nameMatcher, true);</span>
+    }
+
+    /**
+     * Creates a request cookie matcher that matches when the request contains no cookies.
+     *
+     * @return the request cookie matcher
+     */
+    public static RequestCookieMatcher hasNoCookies() {
+<span class="fc" id="L112">        return new HasNoCookies();</span>
+    }
+
+<span class="fc" id="L115">    @RequiredArgsConstructor(access = PRIVATE)</span>
+    private static class CookieMatches extends RequestCookieMatcher {
+
+        private final Matcher&lt;String&gt; nameMatcher;
+        private final Matcher&lt;Cookie&gt; cookieMatcher;
+
+        @Override public boolean matches(final Object actual) {
+<span class="fc" id="L122">            return ((ClientRequest) actual).getCookies().entrySet().stream()</span>
+<span class="fc" id="L123">                .filter(ent -&gt; nameMatcher.matches(ent.getKey()))</span>
+<span class="fc" id="L124">                .anyMatch(ent -&gt; cookieMatcher.matches(ent.getValue()));</span>
+        }
+
+        @Override public void describeTo(Description description) {
+<span class="fc" id="L128">            description.appendText(&quot;Cookie name is &quot;);</span>
+<span class="fc" id="L129">            nameMatcher.describeTo(description);</span>
+<span class="fc" id="L130">            description.appendText(&quot; and is &quot;);</span>
+<span class="fc" id="L131">            cookieMatcher.describeTo(description);</span>
+<span class="fc" id="L132">        }</span>
+    }
+
+<span class="fc" id="L135">    @RequiredArgsConstructor(access = PRIVATE)</span>
+    private static class HasCookieMatching extends RequestCookieMatcher {
+
+        private final Matcher&lt;String&gt; nameMatcher;
+        private final boolean negated;
+
+        @Override public boolean matches(final Object actual) {
+<span class="fc bfc" id="L142" title="All 2 branches covered.">            return negated != ((ClientRequest) actual).getCookies().keySet().stream().anyMatch(nameMatcher::matches);</span>
+        }
+
+        @Override public void describeTo(Description description) {
+<span class="nc" id="L146">            description.appendText(&quot;Cookie name is &quot;);</span>
+<span class="nc" id="L147">            nameMatcher.describeTo(description);</span>
+<span class="nc" id="L148">        }</span>
+    }
+
+    @RequiredArgsConstructor(access = PRIVATE)
+    private static class HasNoCookies extends RequestCookieMatcher {
+
+        @Override public boolean matches(final Object actual) {
+<span class="fc" id="L155">            return ((ClientRequest) actual).getCookies().isEmpty();</span>
+        }
+
+        @Override public void describeTo(final Description description) {
+<span class="nc" id="L159">            description.appendText(&quot;Has no cookies.&quot;);</span>
+<span class="nc" id="L160">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

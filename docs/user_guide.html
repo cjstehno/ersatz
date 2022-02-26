@@ -442,8 +442,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>Ersatz Server User Guide</h1>
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
-<span id="revnumber">version 3.0.0,</span>
-<span id="revdate">January 2022</span>
+<span id="revnumber">version 3.1.0,</span>
+<span id="revdate">March 2022</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -451,6 +451,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_introduction">Introduction</a></li>
 <li><a href="#_whats_new">What&#8217;s New</a>
 <ul class="sectlevel2">
+<li><a href="#_in_3_1">In 3.1</a></li>
 <li><a href="#_in_3_0">In 3.0</a>
 <ul class="sectlevel3">
 <li><a href="#_migrating_to_3_0">Migrating to 3.0</a></li>
@@ -492,8 +493,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_request_timeout">Request Timeout</a></li>
 <li><a href="#_report_to_console">Report-to-Console</a></li>
 <li><a href="#_logging_response_content">Logging Response Content</a></li>
+<li><a href="#_server_threads">Server Threads</a></li>
 <li><a href="#_content_transformation">Content Transformation</a></li>
 <li><a href="#_expectations">Expectations</a></li>
+<li><a href="#_requirements">Requirements</a></li>
 </ul>
 </li>
 <li><a href="#_request_decoders">Request Decoders</a>
@@ -518,6 +521,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </li>
+<li><a href="#_request_requirements">Request Requirements</a></li>
 <li><a href="#_request_expectations">Request Expectations</a>
 <ul class="sectlevel2">
 <li><a href="#_request_methods">Request Methods</a>
@@ -536,6 +540,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_request_matching">Request Matching</a>
 <ul class="sectlevel3">
 <li><a href="#_hamcrest_matchers">Hamcrest Matchers</a></li>
+</ul>
+</li>
+<li><a href="#_specialized_matchers">Specialized Matchers</a>
+<ul class="sectlevel3">
 <li><a href="#_matching_cookies">Matching Cookies</a>
 <ul class="sectlevel4">
 <li><a href="#_by_name_and_matcher">By Name and Matcher</a></li>
@@ -617,6 +625,28 @@ The code examples throughout this document are written with either Java or Groov
 <div class="sect1">
 <h2 id="_whats_new">What&#8217;s New</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_in_3_1">In 3.1</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Reduced the number of IO and Worker threads configured in Undertow by default.</p>
+</li>
+<li>
+<p>Provided a means of configuring the IO/Worker threads in the underlying server (see <code>ServerConfig::serverThreads(int,int)</code>).</p>
+</li>
+<li>
+<p>Big refactoring of how the internal matchers were used and configured as well as provided a more robust matcher framework for the API itself.</p>
+</li>
+<li>
+<p>Added support for <code>Predicate</code>-based matchers.</p>
+</li>
+<li>
+<p>Added global <a href="#_request_requirements">Request Requirements</a> - now you can configure request attributes at the global level</p>
+</li>
+</ul>
+</div>
+</div>
 <div class="sect2">
 <h3 id="_in_3_0">In 3.0</h3>
 <div class="ulist">
@@ -812,10 +842,10 @@ The code examples throughout this document are written with either Java or Groov
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz:3.0.0'</span>
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz:3.1.0'</span>
 
 <span class="c1">// or, for the Groovy extensions</span>
-<span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:3.0.0'</span></code></pre>
+<span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:3.1.0'</span></code></pre>
 </div>
 </div>
 </div>
@@ -829,7 +859,7 @@ The code examples throughout this document are written with either Java or Groov
 <pre class="rouge highlight"><code data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>3.0.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.1.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 
@@ -837,7 +867,7 @@ The code examples throughout this document are written with either Java or Groov
 <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz-groovy<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>3.0.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.1.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span></code></pre>
 </div>
@@ -1231,6 +1261,31 @@ X Query string name matches a collection containing "Ersatz"
 </div>
 </div>
 <div class="sect2">
+<h3 id="_server_threads">Server Threads</h3>
+<div class="paragraph">
+<p>By default (as of 3.1), the underlying server has 2 IO threads and 16 Worker threads configured (based on the recommended configuration for the underlying Undertow server). If you need to configure these values, you can use one of the <code>serverThreads</code> methods:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="kd">final</span> <span class="kt">var</span> <span class="n">server</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ErsatzServer</span><span class="o">(</span><span class="n">cfg</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="na">serverThreads</span><span class="o">(</span><span class="mi">3</span><span class="o">);</span>
+<span class="o">});</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+With the standard use case being a server setup to handle only a minimal number of requests, and most likely not asynchronous, the underlying Undertow server does not need to use as many threads as a production instance would require.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_content_transformation">Content Transformation</h3>
 <div class="paragraph">
 <p>The transformation of request/response body content is performed using:</p>
@@ -1272,6 +1327,18 @@ X Query string name matches a collection containing "Ersatz"
 </div>
 <div class="paragraph">
 <p>Refer to the <a href="#_request_expectations">Request Expectations</a> section for a more detailed discussion of the configuration and usage of the expectations framework.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_requirements">Requirements</h3>
+<div class="paragraph">
+<p>Request requirements allow for expectation-like request verification at the global level so that common expectation matching code does not need to be duplicated in multiple expectations. Similar to expectations, the requirements determine whether there is a matching requirement configured (by request method and path), if so, the configured requirement must be matched or the request will be rejected.</p>
+</div>
+<div class="paragraph">
+<p>Requirements serve only to allow quick-rejection of bad requests, and provide no responders.</p>
+</div>
+<div class="paragraph">
+<p>Refer to the <a href="#_request_requirements">Request Requirements</a> section for a more detailed discussion of the configuration and useage of the requirements framework.</p>
 </div>
 </div>
 </div>
@@ -1474,6 +1541,72 @@ As a design decision, no encoders are defined and registered on the server by de
 </div>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_request_requirements">Request Requirements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Global request requirements allow for common configuration of expectation matching requirements in the <code>ServerConfig</code> rather than in the individual expectations.</p>
+</div>
+<div class="paragraph">
+<p>Requirements have no response mechanism, they only serve to provide a common interface for shared request matching logic. Consider the case where every request to a server must have some security token configured as a header (say "Security-Token") and that all requests must use HTTPS. We could accomplish this with expectations with something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="kt">var</span> <span class="n">server</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ErsatzServer</span><span class="o">(</span><span class="n">cfg</span> <span class="o">-&gt;</span> <span class="n">cfg</span><span class="o">.</span><span class="na">https</span><span class="o">());</span>
+<span class="n">server</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expect</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">expect</span><span class="o">.</span><span class="na">GET</span><span class="o">(</span><span class="s">"/retrieve"</span><span class="o">,</span> <span class="n">req</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">secure</span><span class="o">();</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">"Security-Token"</span><span class="o">,</span> <span class="n">expectedToken</span><span class="o">);</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">responder</span><span class="o">(</span><span class="n">res</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="n">res</span><span class="o">.</span><span class="na">body</span><span class="o">(</span><span class="n">aResponse</span><span class="o">,</span> <span class="no">APPLICATION_JSON</span><span class="o">);</span>
+        <span class="o">});</span>
+    <span class="o">});</span>
+<span class="o">});</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this instance, it&#8217;s not all that bad, but consider now the case where you have multiple endpoints and you want to do some thorough testing against them&#8230;&#8203; you will be writing a lot of expectations and repeating a lot of that boiler-plate code simply to provide the request matcher.</p>
+</div>
+<div class="paragraph">
+<p>The requirements framework allows this to be simplified. For the same scenario above, with requirements, we will have:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="kt">var</span> <span class="n">server</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ErsatzServer</span><span class="o">(</span><span class="n">cfg</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="na">requirements</span><span class="o">(</span><span class="n">require</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">require</span><span class="o">.</span><span class="na">that</span><span class="o">(</span><span class="no">ANY</span><span class="o">,</span> <span class="n">anyPath</span><span class="o">(),</span> <span class="n">and</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="n">and</span><span class="o">.</span><span class="na">secure</span><span class="o">();</span>
+            <span class="n">and</span><span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">"Security-Token"</span><span class="o">,</span> <span class="n">expectedToken</span><span class="o">);</span>
+        <span class="o">});</span>
+    <span class="o">});</span>
+<span class="o">});</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This code defines a requirement that any request made using any request method or request path must use HTTPS and have the configured security token header. Any request that does not meet these requirements will be rejected just as if the configuration had been done in the expectations.</p>
+</div>
+<div class="paragraph">
+<p>Now, you can write your expectations without the boilerplate code. The earlier code becomes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="n">server</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expect</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">expect</span><span class="o">.</span><span class="na">GET</span><span class="o">(</span><span class="s">"/retrieve"</span><span class="o">,</span> <span class="n">req</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">responder</span><span class="o">(</span><span class="n">res</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="n">res</span><span class="o">.</span><span class="na">body</span><span class="o">(</span><span class="n">aResponse</span><span class="o">,</span> <span class="no">APPLICATION_JSON</span><span class="o">);</span>
+        <span class="o">});</span>
+    <span class="o">});</span>
+<span class="o">});</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Requirements provide a similar interface to the expectations, but provide no means of configuring a response.</p>
+</div>
+<div class="paragraph">
+<p>The configured requirements are matched using the configured method and path matchers. If a request comes in matching the method and path matchers for a requirement, that request must then also match the configured request parameter requirements.</p>
 </div>
 </div>
 </div>
@@ -1932,6 +2065,18 @@ Expectation 1 (3 matchers):
 <div class="paragraph">
 <p>Alternately, you may specify the <code>reportToConsole true</code> configuration in the server config. This will cause the report to be written to the standard output console as well as into the log output. This is useful for cases when you might have logging turned off.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Be aware that any <a href="#_request_requirements">Request Requirements</a> are tested before expectation request matchers.
+</td>
+</tr>
+</table>
+</div>
 <div class="sect3">
 <h4 id="_hamcrest_matchers">Hamcrest Matchers</h4>
 <div class="paragraph">
@@ -1975,6 +2120,37 @@ Expectation 1 (3 matchers):
 <div class="paragraph">
 <p>This allows for additional flexibility in configuring expectations.</p>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_specialized_matchers">Specialized Matchers</h3>
+<div class="paragraph">
+<p>There are a handful of specialized Hamcrest matchers defined and used in the API. They are used as the underlying internal matchers, but are also useful in your code - these may be found in the <code>io.github.cjstehno.ersatz.match</code> package:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>BodyMatcher</code> - provides various matching methods for body content.</p>
+</li>
+<li>
+<p><code>BodyParamMatcher</code> - provides matching methods for request body paramters.</p>
+</li>
+<li>
+<p><code>PathMatcher</code> - provides matching methods for request paths.</p>
+</li>
+<li>
+<p><code>QueryParamMatcher</code> - provides matching methods for request query string parameters.</p>
+</li>
+<li>
+<p><code>HeaderMatcher</code> - provides matching methods for request header values.</p>
+</li>
+<li>
+<p><code>RequestCookieMatcher</code> - provides matching methods for request cookie data.</p>
+</li>
+<li>
+<p><code>PredicateMatcher</code> - provides an adapter for wrapping simple <code>Predicate</code> functions as matchers.</p>
+</li>
+</ul>
 </div>
 <div class="sect3">
 <h4 id="_matching_cookies">Matching Cookies</h4>
@@ -2265,7 +2441,7 @@ Content-Type: image/jpeg
 <div class="title">Note</div>
 </td>
 <td class="content">
-There are examples of various usage configurations in the [Ersatz Usage Tests](<a href="https://github.com/cjstehno/ersatz-usage-tests" class="bare">https://github.com/cjstehno/ersatz-usage-tests</a>) project.
+There are examples of various usage configurations in the <a href="https://github.com/cjstehno/ersatz-usage-tests">Ersatz Usage Tests</a> project.
 </td>
 </tr>
 </table>
@@ -2277,14 +2453,14 @@ There are examples of various usage configurations in the [Ersatz Usage Tests](<
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz:3.0.0:safe'</span><span class="o">){</span>
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz:3.1.0:safe'</span><span class="o">){</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'io.undertow'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'undertow-core'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'javax.servlet'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'javax.servlet-api'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'commons-fileupload'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'commons-fileupload'</span>
 <span class="o">}</span>
 
 <span class="c1">// or for the Groovy DSL</span>
-<span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:3.0.0:safe'</span><span class="o">){</span>
+<span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:3.1.0:safe'</span><span class="o">){</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'io.undertow'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'undertow-core'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'javax.servlet'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'javax.servlet-api'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'commons-fileupload'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'commons-fileupload'</span>
@@ -2309,7 +2485,7 @@ There are examples of various usage configurations in the [Ersatz Usage Tests](<
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz<span class="nt">&lt;/artifactId&gt;</span>
     <span class="nt">&lt;classifier&gt;</span>safe<span class="nt">&lt;/classifier&gt;</span>
-    <span class="nt">&lt;version&gt;</span>3.0.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.1.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
     <span class="nt">&lt;exclusions&gt;</span>
         <span class="nt">&lt;exclusion&gt;</span>
@@ -2332,7 +2508,7 @@ There are examples of various usage configurations in the [Ersatz Usage Tests](<
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz-groovy<span class="nt">&lt;/artifactId&gt;</span>
     <span class="nt">&lt;classifier&gt;</span>safe<span class="nt">&lt;/classifier&gt;</span>
-    <span class="nt">&lt;version&gt;</span>3.0.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.1.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;type&gt;</span>jar<span class="nt">&lt;/type&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
     <span class="nt">&lt;exclusions&gt;</span>
@@ -2666,8 +2842,8 @@ limitations under the License.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 3.0.0<br>
-Last updated 2022-01-25 12:25:41 -0600
+Version 3.1.0<br>
+Last updated 2022-02-26 09:23:51 -0600
 </div>
 </div>
 <style>

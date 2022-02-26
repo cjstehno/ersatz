@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * Request-specific contextual information used by request content decoders.
  */
-<span class="fc" id="L24">@RequiredArgsConstructor @Getter</span>
+<span class="fc" id="L24">@RequiredArgsConstructor @Getter @SuppressWarnings(&quot;ClassCanBeRecord&quot;)</span>
 public class DecodingContext {
 
 <span class="fc" id="L27">    private final long contentLength;</span>

@@ -133,11 +133,11 @@ import static org.hamcrest.Matchers.equalTo;
     /**
      * Applies a matcher for the specified cookie version value. This is equivalent to calling &lt;code&gt;version(Matchers.equalTo(1))&lt;/code&gt;.
      *
-     * @param vers the version string
+     * @param version the version string
      * @return a reference to the matcher being configured
      */
-    public CookieMatcher version(final int vers) {
-<span class="fc" id="L140">        return version(equalTo(vers));</span>
+    public CookieMatcher version(final int version) {
+<span class="fc" id="L140">        return version(equalTo(version));</span>
     }
 
     /**
@@ -196,8 +196,8 @@ import static org.hamcrest.Matchers.equalTo;
 
     @Override
     public boolean matches(final Object item) {
-<span class="fc bfc" id="L199" title="All 2 branches covered.">        if (!(item instanceof Cookie)) {</span>
-<span class="fc" id="L200">            return false;</span>
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">        if (!(item instanceof Cookie)) {</span>
+<span class="nc" id="L200">            return false;</span>
         }
 
 <span class="fc" id="L203">        val cookie = (Cookie) item;</span>
@@ -230,7 +230,7 @@ import static org.hamcrest.Matchers.equalTo;
 <span class="fc" id="L230">    }</span>
 
 <span class="fc" id="L232">    private enum CookieField {</span>
-<span class="fc" id="L233">        VALUE, COMMENT, DOMAIN, PATH, MAX_AGE, HTTP_ONLY, SECURE, VERSION;</span>
+<span class="fc" id="L233">        VALUE, COMMENT, DOMAIN, PATH, MAX_AGE, HTTP_ONLY, SECURE, VERSION</span>
     }
 }
 

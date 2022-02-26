@@ -22,16 +22,22 @@ import java.util.function.BiFunction;
 /**
  * A function chain for request decoders.
  */
-public class DecoderChain extends FunctionChain&lt;RequestDecoders&gt; {
+@SuppressWarnings(&quot;ClassCanBeRecord&quot;)
+public class DecoderChain {
+
+    private final RequestDecoders serverLevel;
+    private final RequestDecoders requestLevel;
 
     /**
-     * Creates a chain of decoders with the given initial item.
+     * Creates a chain of decoders with the specified decoders.
      *
-     * @param firstItem the first decoders in the chain
+     * @param serverLevel  the server-defined request decoders
+     * @param requestLevel the request-defined request decoders
      */
-    public DecoderChain(final RequestDecoders firstItem) {
-<span class="fc" id="L33">        super(firstItem);</span>
-<span class="fc" id="L34">    }</span>
+<span class="fc" id="L37">    public DecoderChain(final RequestDecoders serverLevel, final RequestDecoders requestLevel) {</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        this.serverLevel = serverLevel != null ? serverLevel : new RequestDecoders();</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        this.requestLevel = requestLevel != null ? requestLevel : new RequestDecoders();</span>
+<span class="fc" id="L40">    }</span>
 
     /**
      * Resolves the decoder for the specified request content-type.
@@ -40,7 +46,11 @@ public class DecoderChain extends FunctionChain&lt;RequestDecoders&gt; {
      * @return the decoder function
      */
     public BiFunction&lt;byte[], DecodingContext, Object&gt; resolve(final String contentType) {
-<span class="fc" id="L43">        return resolveWith(d -&gt; d.findDecoder(contentType));</span>
+<span class="fc" id="L49">        var found = requestLevel.findDecoder(contentType);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (found == null) {</span>
+<span class="fc" id="L51">            found = serverLevel.findDecoder(contentType);</span>
+        }
+<span class="fc" id="L53">        return found;</span>
     }
 
     /**
@@ -50,7 +60,27 @@ public class DecoderChain extends FunctionChain&lt;RequestDecoders&gt; {
      * @return the decoder function
      */
     public BiFunction&lt;byte[], DecodingContext, Object&gt; resolve(final ContentType contentType) {
-<span class="fc" id="L53">        return resolve(contentType.getValue());</span>
+<span class="fc" id="L63">        return resolve(contentType.getValue());</span>
+    }
+
+    /**
+     * Resolves the decoder for the specified request content-type from the &quot;server level&quot; decoders.
+     *
+     * @param contentType the request content type
+     * @return the decoder function
+     */
+    public BiFunction&lt;byte[], DecodingContext, Object&gt; resolveServerLevel(final String contentType) {
+<span class="nc" id="L73">        return serverLevel.findDecoder(contentType);</span>
+    }
+
+    /**
+     * Resolves the decoder for the specified request content-type from the &quot;server level&quot; decoders.
+     *
+     * @param contentType the request content type
+     * @return the decoder function
+     */
+    public BiFunction&lt;byte[], DecodingContext, Object&gt; resolveServerLevel(final ContentType contentType) {
+<span class="fc" id="L83">        return serverLevel.findDecoder(contentType);</span>
     }
 }
 

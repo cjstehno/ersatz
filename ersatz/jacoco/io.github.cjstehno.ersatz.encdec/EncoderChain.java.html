@@ -17,21 +17,29 @@ package io.github.cjstehno.ersatz.encdec;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 /**
  * A function chain for response encoders.
  */
-public class EncoderChain extends FunctionChain&lt;ResponseEncoders&gt; {
+@SuppressWarnings(&quot;ClassCanBeRecord&quot;)
+public class EncoderChain {
+
+    private final ResponseEncoders serverLevel;
+    private final ResponseEncoders responseLevel;
 
     /**
      * Creates a new encoder chain with the provided encoders.
      *
-     * @param firstItem the initial encoders in the chain
+     * @param serverLevel   the server configured response encoders
+     * @param responseLevel the response configured response encoders
      */
-    public EncoderChain(final ResponseEncoders firstItem) {
-<span class="fc" id="L33">        super(firstItem);</span>
-<span class="fc" id="L34">    }</span>
+<span class="fc" id="L39">    public EncoderChain(final ResponseEncoders serverLevel, final ResponseEncoders responseLevel) {</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        this.serverLevel = serverLevel != null ? serverLevel : new ResponseEncoders();</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">        this.responseLevel = responseLevel != null ? responseLevel : new ResponseEncoders();</span>
+<span class="fc" id="L42">    }</span>
 
     /**
      * Resolves the encoder for the specified response content-type and object type.
@@ -41,7 +49,11 @@ public class EncoderChain extends FunctionChain&lt;ResponseEncoders&gt; {
      * @return the encoder
      */
     public Function&lt;Object, byte[]&gt; resolve(final String contentType, final Class objectType) {
-<span class="fc" id="L44">        return resolveWith(e -&gt; e.findEncoder(contentType, objectType));</span>
+<span class="fc" id="L52">        var found = responseLevel.findEncoder(contentType, objectType);</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if (found == null) {</span>
+<span class="fc" id="L54">            found = serverLevel.findEncoder(contentType, objectType);</span>
+        }
+<span class="fc" id="L56">        return found;</span>
     }
 
     /**
@@ -52,7 +64,38 @@ public class EncoderChain extends FunctionChain&lt;ResponseEncoders&gt; {
      * @return the encoder
      */
     public Function&lt;Object, byte[]&gt; resolve(final ContentType contentType, final Class objectType) {
-<span class="fc" id="L55">        return resolve(contentType.getValue(), objectType);</span>
+<span class="fc" id="L67">        return resolve(contentType.getValue(), objectType);</span>
+    }
+
+    /**
+     * Resolves the encoder for the specified response content-type and object type from the server level encoders.
+     *
+     * @param contentType the response content-type
+     * @param objectType  the response object type
+     * @return the encoder
+     */
+    public Function&lt;Object, byte[]&gt; resolveServerLevel(final String contentType, final Class objectType) {
+<span class="nc" id="L78">        return serverLevel.findEncoder(contentType, objectType);</span>
+    }
+
+    /**
+     * Resolves the encoder for the specified response content-type and object type from the server level encoders.
+     *
+     * @param contentType the response content-type
+     * @param objectType  the response object type
+     * @return the encoder
+     */
+    public Function&lt;Object, byte[]&gt; resolveServerLevel(final ContentType contentType, final Class objectType) {
+<span class="fc" id="L89">        return serverLevel.findEncoder(contentType, objectType);</span>
+    }
+
+    /**
+     * Retrieves an ordered collection containing the server-level and response-level encoders.
+     *
+     * @return a list of the encoder configurations
+     */
+    public Collection&lt;ResponseEncoders&gt; items() {
+<span class="fc" id="L98">        return List.of(serverLevel, responseLevel);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

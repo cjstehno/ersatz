@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>QueryParamMatcher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.match</a> &gt; <span class="el_source">QueryParamMatcher.java</span></div><h1>QueryParamMatcher.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.match;
+
+import io.github.cjstehno.ersatz.impl.matchers.MapKeyMatcher;
+import io.github.cjstehno.ersatz.impl.matchers.MappedValuesMatcher;
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.IsIterableContaining.hasItem;
+
+/**
+ * Matcher used to match request query parameters.
+ */
+<span class="fc" id="L31">public abstract class QueryParamMatcher extends BaseMatcher&lt;ClientRequest&gt; {</span>
+
+    /**
+     * Configures a matcher that matches when the provided name and value matcher match the param name and value
+     * respectively.
+     *
+     * @param nameMatcher  the param name matcher
+     * @param valueMatcher the param value matcher
+     * @return the query param matcher
+     */
+    public static QueryParamMatcher queryMatching(final Matcher&lt;String&gt; nameMatcher, final Matcher&lt;Iterable&lt;? super String&gt;&gt; valueMatcher) {
+<span class="fc" id="L42">        return new QueryParamMatches(nameMatcher, valueMatcher);</span>
+    }
+
+    /**
+     * Configures a matcher that matches when there is a request query param with the given name that also matches the
+     * provided value matcher.
+     *
+     * @param name         the param name matcher
+     * @param valueMatcher the param value matcher
+     * @return the query param matcher
+     */
+    public static QueryParamMatcher queryMatching(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; valueMatcher) {
+<span class="fc" id="L54">        return queryMatching(equalTo(name), valueMatcher);</span>
+    }
+
+    /**
+     * Configures a matcher that matches when there is a request query param with the given name that also has the
+     * specified value (as at least one of its values).
+     *
+     * @param name  the query param name (must not be null)
+     * @param value the query param value (must not be null)
+     * @return the query param matcher
+     */
+    public static QueryParamMatcher queryMatching(final String name, final String value) {
+<span class="fc" id="L66">        return queryMatching(name, hasItem(value));</span>
+    }
+
+    /**
+     * Configures a matcher that matches when a query param with the provided name exists in the request.
+     *
+     * @param name the param name
+     * @return the query param matcher
+     */
+    public static QueryParamMatcher queryExists(final String name) {
+<span class="fc" id="L76">        return queryExists(equalTo(name));</span>
+    }
+
+    /**
+     * Configures a matcher that matches when a query param with the provided name exists in the request.
+     *
+     * @param nameMatcher the param name matcher
+     * @return the query param matcher
+     */
+    public static QueryParamMatcher queryExists(final Matcher&lt;String&gt; nameMatcher) {
+<span class="fc" id="L86">        return new QueryHasParamMatching(nameMatcher, false);</span>
+    }
+
+    /**
+     * Configures a matcher that matches when a query param with the provided name does not exist in the request.
+     *
+     * @param name the param name
+     * @return the query param matcher
+     */
+    public static QueryParamMatcher queryDoesNotExist(final String name) {
+<span class="fc" id="L96">        return queryDoesNotExist(equalTo(name));</span>
+    }
+
+    /**
+     * Configures a matcher that matches when a query param with the provided name does not exist in the request.
+     *
+     * @param nameMatcher the param name matcher
+     * @return the query param matcher
+     */
+    public static QueryParamMatcher queryDoesNotExist(final Matcher&lt;String&gt; nameMatcher) {
+<span class="fc" id="L106">        return new QueryHasParamMatching(nameMatcher, true);</span>
+    }
+
+    /**
+     * Configures a matcher that matches when a query param in the request has a name that is matched by the provided
+     * matcher.
+     *
+     * @param nameMatcher the name matcher
+     * @return the query param matcher
+     */
+    public static QueryParamMatcher queryHasParamMatching(final Matcher&lt;String&gt; nameMatcher) {
+<span class="fc" id="L117">        return new QueryHasParamMatching(nameMatcher, false);</span>
+    }
+
+    private static class QueryParamMatches extends QueryParamMatcher {
+
+        private final MappedValuesMatcher matcherDelegate;
+
+<span class="fc" id="L124">        private QueryParamMatches(final Matcher&lt;String&gt; nameMatcher, final Matcher&lt;Iterable&lt;? super String&gt;&gt; valueMatcher) {</span>
+<span class="fc" id="L125">            matcherDelegate = new MappedValuesMatcher(</span>
+                &quot;Query param&quot;, nameMatcher, valueMatcher, ClientRequest::getQueryParams
+            );
+<span class="fc" id="L128">        }</span>
+
+        @Override public boolean matches(final Object actual) {
+<span class="fc" id="L131">            return matcherDelegate.matches(actual);</span>
+        }
+
+        @Override public void describeTo(final Description description) {
+<span class="fc" id="L135">            matcherDelegate.describeTo(description);</span>
+<span class="fc" id="L136">        }</span>
+    }
+
+    private static class QueryHasParamMatching extends QueryParamMatcher {
+
+        private final MapKeyMatcher matcherDelegate;
+
+<span class="fc" id="L143">        private QueryHasParamMatching(final Matcher&lt;String&gt; nameMatcher, final boolean negated) {</span>
+<span class="fc" id="L144">            matcherDelegate = new MapKeyMatcher(&quot;Query param&quot;, nameMatcher, negated, ClientRequest::getQueryParams);</span>
+<span class="fc" id="L145">        }</span>
+
+        @Override public boolean matches(final Object actual) {
+<span class="fc" id="L148">            return matcherDelegate.matches(actual);</span>
+        }
+
+        @Override public void describeTo(final Description description) {
+<span class="nc" id="L152">            matcherDelegate.describeTo(description);</span>
+<span class="nc" id="L153">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

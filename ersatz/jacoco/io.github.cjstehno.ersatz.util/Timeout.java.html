@@ -64,8 +64,9 @@ public interface Timeout {
         }
     }
 
+    @SuppressWarnings(&quot;BooleanMethodIsAlwaysInverted&quot;)
     private static boolean timedOut(final long started, final long timeoutMs) {
-<span class="fc bfc" id="L68" title="All 2 branches covered.">        return currentTimeMillis() - started &gt;= timeoutMs;</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        return currentTimeMillis() - started &gt;= timeoutMs;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -16,11 +16,24 @@
 package io.github.cjstehno.ersatz.cfg;
 
 import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.match.HeaderMatcher;
+import io.github.cjstehno.ersatz.match.QueryParamMatcher;
+import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.val;
 import org.hamcrest.Matcher;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
+import static io.github.cjstehno.ersatz.match.HeaderMatcher.headerMatching;
+import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryExists;
+import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryMatching;
+import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.cookieMatching;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * Configuration interface for HTTP request expectations.
@@ -32,7 +45,7 @@ public interface Request {
      * @return a reference to this request
      */
     default Request secure() {
-<span class="fc" id="L35">        return secure(true);</span>
+<span class="fc" id="L48">        return secure(true);</span>
     }
 
     /**
@@ -45,24 +58,36 @@ public interface Request {
     /**
      * Specifies a request header to be configured in the expected request. The value specified must match one of the
      * request header values mapped to the expected header name. Multiple header specification may be added to the
-     * expectations; each specified header must exist in the request. If an OR-style match is desired a Hamcrest Matcher
-     * should be specified (see the &lt;code&gt;header(String, Matcher&amp;lt;Iterable&amp;lt;String&amp;gt;&amp;gt;)&lt;/code&gt; method).
+     * expectations; each specified header must exist in the request.
      *
      * @param name  the header name
      * @param value the header value
      * @return this request
      */
-    Request header(final String name, final String value);
+    default Request header(final String name, final String value) {
+<span class="fc" id="L68">        return header(headerMatching(name, value));</span>
+    }
 
     /**
-     * Specifies a request header matcher to be configured in the expected request. If multiple matchers are defined with this method, each must
-     * match successfully for the request to be matched.
+     * Specifies a request header matcher to be configured in the expected request. If multiple matchers are defined
+     * with this method, each must match successfully for the request to be matched.
      *
      * @param name    the header name
      * @param matcher the header value matcher
      * @return this request
      */
-    Request header(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; matcher);
+    default Request header(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; matcher) {
+<span class="fc" id="L80">        return header(headerMatching(name, matcher));</span>
+    }
+
+    /**
+     * Specifies a request header matcher to be configured in the expected request. If multiple matchers are defined
+     * with this method, each must match successfully for the request to be matched.
+     *
+     * @param headerMatcher the header matcher
+     * @return this request
+     */
+    Request header(final HeaderMatcher headerMatcher);
 
     /**
      * Specifies request headers as a Map of names to values to be configured in the expected request. The map values may be &lt;code&gt;String&lt;/code&gt; or
@@ -71,7 +96,16 @@ public interface Request {
      * @param heads the map of headers
      * @return this request
      */
-    Request headers(final Map&lt;String, Object&gt; heads);
+    default Request headers(final Map&lt;String, Object&gt; heads) {
+<span class="fc" id="L100">        heads.forEach((k, v) -&gt; {</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            if (v instanceof Matcher) {</span>
+<span class="fc" id="L102">                header(k, (Matcher&lt;Iterable&lt;? super String&gt;&gt;) v);</span>
+            } else {
+<span class="fc" id="L104">                header(k, v.toString());</span>
+            }
+<span class="fc" id="L106">        });</span>
+<span class="fc" id="L107">        return this;</span>
+    }
 
     /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
@@ -81,18 +115,27 @@ public interface Request {
      * @param value the parameter value
      * @return this request
      */
-    Request query(final String name, final String value);
+    default Request query(final String name, final String value) {
+<span class="fc" id="L119">        return query(queryMatching(name, value));</span>
+    }
 
     /**
-     * Used to specify a valueless request query parameter to be configured in the expected request. As per the HTTP spec, the query string
-     * parameters may be specified multiple times with different values to denote a parameter with multiple values.
-     * &lt;p&gt;
-     * This is equivalent to calling &lt;code&gt;query(name, null)&lt;/code&gt;.
+     * Used to specify that the request has the given query string, with no care about its value.
      *
      * @param name  the parameter name
      * @return this request
      */
-    Request query(final String name);
+    default Request query(final String name) {
+<span class="fc" id="L129">        return query(queryExists(name));</span>
+    }
+
+    /**
+     * Used to specify that the request must have a query parameter matching the provided matcher.
+     *
+     * @param queryMatcher the query param matcher
+     * @return this request
+     */
+    Request query(final QueryParamMatcher queryMatcher);
 
     /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
@@ -102,7 +145,12 @@ public interface Request {
      * @param values the list of values
      * @return this request
      */
-    Request query(final String name, final Iterable&lt;? super String&gt; values);
+    default Request query(final String name, final Iterable&lt;? super String&gt; values) {
+<span class="fc" id="L149">        val queryMatchers = new LinkedList&lt;Matcher&lt;? super String&gt;&gt;();</span>
+<span class="fc" id="L150">        values.forEach(v -&gt; queryMatchers.add(equalTo(v)));</span>
+
+<span class="fc" id="L152">        return query(queryMatching(name, stringIterableMatcher(queryMatchers)));</span>
+    }
 
     /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
@@ -112,7 +160,9 @@ public interface Request {
      * @param matcher the query string matcher
      * @return this request
      */
-    Request query(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; matcher);
+    default Request query(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; matcher) {
+<span class="fc" id="L164">        return query(queryMatching(name, matcher));</span>
+    }
 
     /**
      * Used to specify a map of request query parameters for configuration on the expected request. The map values may be Strings or Matchers.
@@ -120,7 +170,18 @@ public interface Request {
      * @param map the map of query parameters
      * @return this request
      */
-    Request queries(final Map&lt;String, Object&gt; map);
+    default Request queries(final Map&lt;String, Object&gt; map) {
+<span class="fc" id="L174">        map.forEach((k, v) -&gt; {</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">            if (v instanceof Matcher) {</span>
+<span class="fc" id="L176">                query(k, (Matcher&lt;Iterable&lt;? super String&gt;&gt;) v);</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">            } else if (v instanceof Collection) {</span>
+<span class="fc" id="L178">                query(k, (Collection&lt;? super String&gt;) v);</span>
+            } else {
+<span class="fc" id="L180">                query(k, v.toString());</span>
+            }
+<span class="fc" id="L182">        });</span>
+<span class="fc" id="L183">        return this;</span>
+    }
 
     /**
      * Specifies a request cookie to be configured with the given name and value.
@@ -129,7 +190,9 @@ public interface Request {
      * @param value the cookie value
      * @return this request
      */
-    Request cookie(final String name, final String value);
+    default Request cookie(final String name, final String value) {
+<span class="fc" id="L194">        return cookie(cookieMatching(name, value));</span>
+    }
 
     /**
      * Specifies a request cookie to be configured with the given name and matcher.
@@ -138,24 +201,17 @@ public interface Request {
      * @param matcher the cookie matcher
      * @return this request
      */
-    Request cookie(final String name, final Matcher&lt;Cookie&gt; matcher);
+    default Request cookie(final String name, final Matcher&lt;Cookie&gt; matcher) {
+<span class="fc" id="L205">        return cookie(cookieMatching(name, matcher));</span>
+    }
 
     /**
-     * Specifies a matcher for matching all cookies. This is useful with the &lt;code&gt;NoCookiesMatcher&lt;/code&gt;.
+     * Specifies a request cookie to be configured with the given matcher.
      *
-     * @param matcher the matcher to be used
+     * @param cookieMatcher the request cookie matcher
      * @return this request
      */
-    Request cookies(final Matcher&lt;Map&lt;String, Cookie&gt;&gt; matcher);
-
-    /**
-     * Used to configure a map of cookies on the request. The map values may be Strings or Matchers. All of the configured matchers must be successful
-     * in order for the request to be matched.
-     *
-     * @param cookies the map of cookies
-     * @return this request
-     */
-    Request cookies(final Map&lt;String, Object&gt; cookies);
+    Request cookie(final RequestCookieMatcher cookieMatcher);
 
     /**
      * Specifies a listener which will be called with the active request whenever this request is matched at test-time.
@@ -180,7 +236,9 @@ public interface Request {
      * @param count the expected call count
      * @return a reference to this request
      */
-    Request called(final int count);
+    default Request called(final int count) {
+<span class="fc" id="L240">        return called(equalTo(count));</span>
+    }
 
     /**
      * Configures a matcher for the &lt;code&gt;ClientRequest&lt;/code&gt;, which allows ad-hoc matching based on the request. This does &lt;i&gt;not&lt;/i&gt; disallow

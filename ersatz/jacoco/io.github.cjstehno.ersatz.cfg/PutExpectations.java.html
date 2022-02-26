@@ -15,11 +15,10 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
-
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
 
 /**
  * Defines the available PUT request expectations.
@@ -32,8 +31,8 @@ public interface PutExpectations {
      * @param path the expected request path
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
-    default RequestWithContent PUT(String path) {
-<span class="fc" id="L36">        return PUT(pathMatcher(path));</span>
+    default RequestWithContent PUT(final String path) {
+<span class="fc" id="L35">        return PUT(PathMatcher.pathMatching(path));</span>
     }
 
     /**
@@ -42,8 +41,8 @@ public interface PutExpectations {
      * @param matcher the path matcher
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
-    default RequestWithContent PUT(Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L46">        return PUT(matcher, (Consumer&lt;RequestWithContent&gt;) null);</span>
+    default RequestWithContent PUT(final Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L45">        return PUT(PathMatcher.pathMatching(matcher));</span>
     }
 
     /**
@@ -54,8 +53,8 @@ public interface PutExpectations {
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      * @param config the configuration consumer
      */
-    default RequestWithContent PUT(String path, Consumer&lt;RequestWithContent&gt; config) {
-<span class="fc" id="L58">        return PUT(pathMatcher(path), config);</span>
+    default RequestWithContent PUT(final String path, final Consumer&lt;RequestWithContent&gt; config) {
+<span class="fc" id="L57">        return PUT(PathMatcher.pathMatching(path), config);</span>
     }
 
     /**
@@ -63,9 +62,30 @@ public interface PutExpectations {
      * &lt;code&gt;Consumer&amp;lt;RequestWithContent&amp;gt;&lt;/code&gt; will have an instance of &lt;code&gt;RequestWithContent&lt;/code&gt; passed into it for configuration.
      *
      * @param matcher the path matcher
-     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      * @param config the configuration consumer
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
-    RequestWithContent PUT(Matcher&lt;String&gt; matcher, Consumer&lt;RequestWithContent&gt; config);
+    default RequestWithContent PUT(final Matcher&lt;String&gt; matcher, final Consumer&lt;RequestWithContent&gt; config) {
+<span class="fc" id="L69">        return PUT(PathMatcher.pathMatching(matcher), config);</span>
+    }
+
+    /**
+     * Allows configuration of a PUT request expectation.
+     *
+     * @param pathMatcher the patch matcher
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     */
+    default RequestWithContent PUT(final PathMatcher pathMatcher) {
+<span class="fc" id="L79">        return PUT(pathMatcher, null);</span>
+    }
+
+    /**
+     * Allows configuration of a PUT request expectation with the provided &lt;code&gt;Consumer&lt;/code&gt;.
+     *
+     * @param pathMatcher the patch matcher
+     * @param config the configuration consumer
+     * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
+     */
+    RequestWithContent PUT(final PathMatcher pathMatcher, final Consumer&lt;RequestWithContent&gt; config);
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

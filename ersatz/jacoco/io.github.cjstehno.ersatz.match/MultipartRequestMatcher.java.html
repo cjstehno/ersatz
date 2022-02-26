@@ -17,6 +17,7 @@ package io.github.cjstehno.ersatz.match;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.encdec.MultipartRequestContent;
+import lombok.val;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -32,12 +33,12 @@ import static org.hamcrest.Matchers.*;
  * A Hamcrest matcher used to match &lt;code&gt;MultipartRequestContent&lt;/code&gt;. The matcher may be created directly or by using the closure or consumer
  * static configuration methods.
  */
-<span class="fc" id="L35">public class MultipartRequestMatcher extends BaseMatcher&lt;MultipartRequestContent&gt; {</span>
+<span class="fc" id="L36">public class MultipartRequestMatcher extends BaseMatcher&lt;MultipartRequestContent&gt; {</span>
 
     private static final String VALUE = &quot;value&quot;;
     private static final String CONTENT_TYPE = &quot;contentType&quot;;
     private static final String FILE_NAME = &quot;fileName&quot;;
-<span class="fc" id="L40">    private final Map&lt;String, Map&lt;String, Matcher&gt;&gt; matchers = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L41">    private final Map&lt;String, Map&lt;String, Matcher&gt;&gt; matchers = new LinkedHashMap&lt;&gt;();</span>
 
     /**
      * Creates a new multipart matcher with a consumer - it will have an instance of &lt;code&gt;MultipartRequestMatcher&lt;/code&gt; passed into it for
@@ -47,9 +48,9 @@ import static org.hamcrest.Matchers.*;
      * @return a configured matcher instance
      */
     public static MultipartRequestMatcher multipartMatcher(final Consumer&lt;MultipartRequestMatcher&gt; config) {
-<span class="fc" id="L50">        MultipartRequestMatcher matcher = new MultipartRequestMatcher();</span>
-<span class="fc" id="L51">        config.accept(matcher);</span>
-<span class="fc" id="L52">        return matcher;</span>
+<span class="fc" id="L51">        MultipartRequestMatcher matcher = new MultipartRequestMatcher();</span>
+<span class="fc" id="L52">        config.accept(matcher);</span>
+<span class="fc" id="L53">        return matcher;</span>
     }
 
     /**
@@ -59,7 +60,7 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName) {
-<span class="fc" id="L62">        return part(fieldName, notNullValue());</span>
+<span class="fc" id="L63">        return part(fieldName, notNullValue());</span>
     }
 
     /**
@@ -70,8 +71,8 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName, final Matcher&lt;Object&gt; value) {
-<span class="fc" id="L73">        matchers.put(fieldName, Map.of(VALUE, value));</span>
-<span class="fc" id="L74">        return this;</span>
+<span class="fc" id="L74">        matchers.put(fieldName, Map.of(VALUE, value));</span>
+<span class="fc" id="L75">        return this;</span>
     }
 
     /**
@@ -83,7 +84,7 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName, final String value) {
-<span class="fc" id="L86">        return part(fieldName, equalTo(value));</span>
+<span class="fc" id="L87">        return part(fieldName, equalTo(value));</span>
     }
 
     /**
@@ -95,8 +96,8 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName, final Matcher&lt;String&gt; contentType, final Matcher&lt;Object&gt; value) {
-<span class="fc" id="L98">        matchers.put(fieldName, Map.of(CONTENT_TYPE, contentType, VALUE, value));</span>
-<span class="fc" id="L99">        return this;</span>
+<span class="fc" id="L99">        matchers.put(fieldName, Map.of(CONTENT_TYPE, contentType, VALUE, value));</span>
+<span class="fc" id="L100">        return this;</span>
     }
 
     /**
@@ -109,7 +110,7 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName, final String contentType, final Matcher&lt;Object&gt; value) {
-<span class="fc" id="L112">        return part(fieldName, startsWith(contentType), value);</span>
+<span class="fc" id="L113">        return part(fieldName, startsWith(contentType), value);</span>
     }
 
     /**
@@ -122,7 +123,7 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName, final ContentType contentType, final Matcher&lt;Object&gt; value) {
-<span class="fc" id="L125">        return part(fieldName, contentType.getValue(), value);</span>
+<span class="fc" id="L126">        return part(fieldName, contentType.getValue(), value);</span>
     }
 
     /**
@@ -135,8 +136,8 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(String fieldName, Matcher&lt;String&gt; fileName, Matcher&lt;String&gt; contentType, Matcher&lt;Object&gt; value) {
-<span class="fc" id="L138">        matchers.put(fieldName, Map.of(&quot;fileName&quot;, fileName, &quot;contentType&quot;, contentType, VALUE, value));</span>
-<span class="fc" id="L139">        return this;</span>
+<span class="fc" id="L139">        matchers.put(fieldName, Map.of(&quot;fileName&quot;, fileName, &quot;contentType&quot;, contentType, VALUE, value));</span>
+<span class="fc" id="L140">        return this;</span>
     }
 
     /**
@@ -151,7 +152,7 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(String fieldName, String fileName, String contentType, Matcher&lt;Object&gt; value) {
-<span class="fc" id="L154">        return part(fieldName, equalTo(fileName), startsWith(contentType), value);</span>
+<span class="fc" id="L155">        return part(fieldName, equalTo(fileName), startsWith(contentType), value);</span>
     }
 
     /**
@@ -166,7 +167,7 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(String fieldName, String fileName, ContentType contentType, Matcher&lt;Object&gt; value) {
-<span class="fc" id="L169">        return part(fieldName, fileName, contentType.getValue(), value);</span>
+<span class="fc" id="L170">        return part(fieldName, fileName, contentType.getValue(), value);</span>
     }
 
     /**
@@ -177,13 +178,12 @@ import static org.hamcrest.Matchers.*;
      */
     @Override
     public boolean matches(final Object item) {
-<span class="fc bfc" id="L180" title="All 2 branches covered.">        if (!(item instanceof MultipartRequestContent)) {</span>
-<span class="fc" id="L181">            return false;</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        if (!(item instanceof MultipartRequestContent)) {</span>
+<span class="fc" id="L182">            return false;</span>
         }
 
-<span class="fc" id="L184">        final var results = new LinkedList&lt;Boolean&gt;();</span>
-
-<span class="fc" id="L186">        final MultipartRequestContent mrc = (MultipartRequestContent) item;</span>
+<span class="fc" id="L185">        val results = new LinkedList&lt;Boolean&gt;();</span>
+<span class="fc" id="L186">        val mrc = (MultipartRequestContent) item;</span>
 
 <span class="fc" id="L188">        matchers.forEach((fn, matcher) -&gt; {</span>
 <span class="fc" id="L189">            final var part = mrc.getAt(fn);</span>

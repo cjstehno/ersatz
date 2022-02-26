@@ -17,8 +17,6 @@ package io.github.cjstehno.ersatz.cfg;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import io.github.cjstehno.ersatz.cfg.Expectations;
-import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
@@ -26,7 +24,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
 /**
  * Groovy extensions to the Ersatz server configuration providing Groovy DSL behavior.
  */
-<span class="nc" id="L29">public class ServerConfigExtensions {</span>
+<span class="nc" id="L27">public class ServerConfigExtensions {</span>
 
     /**
      * Used to configure HTTP expectations on the server; the provided Groovy &lt;code&gt;Closure&lt;/code&gt; will delegate to an &lt;code&gt;Expectations&lt;/code&gt;
@@ -34,15 +32,29 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
      * &lt;p&gt;
      * If auto-start is enabled (default) the server will be started after the expectations are applied.
      *
-     * @param self the type of object being extended
+     * @param self    the type of object being extended
      * @param closure the Groovy &lt;code&gt;Closure&lt;/code&gt; which will provide expectation configuration via DSL
-     * @return a reference to this server
+     * @return a reference to this server config
      */
     public static ServerConfig expectations(
         final ServerConfig self,
         @DelegatesTo(value = Expectations.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="nc" id="L45">        return self.expectations(ConsumerWithDelegate.create(closure));</span>
+<span class="nc" id="L43">        return self.expectations(ConsumerWithDelegate.create(closure));</span>
+    }
+
+    /**
+     * Used to configure any global request requirements using the provided Groovy Closure.
+     *
+     * @param self    the type of object being extended.
+     * @param closure the Groovy Closure which will provide the configuration
+     * @return a reference to the server config
+     */
+    public static ServerConfig requirements(
+        final ServerConfig self,
+        @DelegatesTo(value = Requirements.class, strategy = DELEGATE_FIRST) final Closure closure
+    ) {
+<span class="nc" id="L57">        return self.requirements(ConsumerWithDelegate.create(closure));</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

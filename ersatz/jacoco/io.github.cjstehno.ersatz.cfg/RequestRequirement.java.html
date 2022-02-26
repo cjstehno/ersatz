@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RequestRequirement.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.cfg</a> &gt; <span class="el_source">RequestRequirement.java</span></div><h1>RequestRequirement.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.cfg;
+
+import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.match.HeaderMatcher;
+import io.github.cjstehno.ersatz.match.QueryParamMatcher;
+import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.val;
+import org.hamcrest.Matcher;
+
+import java.util.LinkedList;
+
+import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
+import static io.github.cjstehno.ersatz.match.HeaderMatcher.headerMatching;
+import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryExists;
+import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryMatching;
+import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.cookieMatching;
+import static org.hamcrest.CoreMatchers.equalTo;
+
+/**
+ * Defines a global request requirement.
+ */
+public interface RequestRequirement {
+
+    /**
+     * Specifies that the request is secure (HTTPS).
+     *
+     * @return a reference to this request requirement
+     */
+    default RequestRequirement secure() {
+<span class="fc" id="L46">        return secure(true);</span>
+    }
+
+    /**
+     * Specifies whether the request is secure (HTTPS vs HTTP) or not.
+     *
+     * @param enabled true if the request is secure (HTTPS)
+     * @return a reference to this request requirement
+     */
+    RequestRequirement secure(final boolean enabled);
+
+    /**
+     * Specifies a request header to be configured in the expected request. The value specified must match one of the
+     * request header values mapped to the expected header name. Multiple header specification may be added to the
+     * expectations; each specified header must exist in the request.
+     *
+     * @param name  the header name
+     * @param value the header value
+     * @return this request requirement
+     */
+    default RequestRequirement header(final String name, final String value) {
+<span class="fc" id="L67">        return header(headerMatching(name, value));</span>
+    }
+
+    /**
+     * Specifies a request header matcher to be configured in the expected request. If multiple matchers are defined
+     * with this method, each must match successfully for the request to be matched.
+     *
+     * @param name    the header name
+     * @param matcher the header value matcher
+     * @return this request requirement
+     */
+    default RequestRequirement header(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; matcher) {
+<span class="fc" id="L79">        return header(headerMatching(name, matcher));</span>
+    }
+
+    /**
+     * Specifies a request header matcher to be configured in the expected request. If multiple matchers are defined
+     * with this method, each must match successfully for the request to be matched.
+     *
+     * @param headerMatcher the header matcher
+     * @return this request requirement
+     */
+    RequestRequirement header(final HeaderMatcher headerMatcher);
+
+    /**
+     * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
+     * specified multiple times with different values to denote a parameter with multiple values.
+     *
+     * @param name  the parameter name
+     * @param value the parameter value
+     * @return this request requirement
+     */
+    default RequestRequirement query(final String name, final String value) {
+<span class="fc" id="L100">        return query(queryMatching(name, value));</span>
+    }
+
+    /**
+     * Used to specify that the request has the given query string, with no care about its value.
+     *
+     * @param name the parameter name
+     * @return this request requirement
+     */
+    default RequestRequirement query(final String name) {
+<span class="fc" id="L110">        return query(queryExists(name));</span>
+    }
+
+    /**
+     * Used to specify that the request must have a query parameter matching the provided matcher.
+     *
+     * @param queryMatcher the query param matcher
+     * @return this request requirement
+     */
+    RequestRequirement query(final QueryParamMatcher queryMatcher);
+
+    /**
+     * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
+     * specified multiple times with different values to denote a parameter with multiple values.
+     *
+     * @param name   the parameter name
+     * @param values the list of values
+     * @return this request requirement
+     */
+    default RequestRequirement query(final String name, final Iterable&lt;? super String&gt; values) {
+<span class="fc" id="L130">        val queryMatchers = new LinkedList&lt;Matcher&lt;? super String&gt;&gt;();</span>
+<span class="fc" id="L131">        values.forEach(v -&gt; queryMatchers.add(equalTo(v)));</span>
+
+<span class="fc" id="L133">        return query(queryMatching(name, stringIterableMatcher(queryMatchers)));</span>
+    }
+
+    /**
+     * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
+     * specified multiple times with different values to denote a parameter with multiple values.
+     *
+     * @param name    the parameter name
+     * @param matcher the query string matcher
+     * @return this request requirement
+     */
+    default RequestRequirement query(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; matcher) {
+<span class="fc" id="L145">        return query(queryMatching(name, matcher));</span>
+    }
+
+    /**
+     * Specifies a request cookie to be configured with the given name and value.
+     *
+     * @param name  the cookie name
+     * @param value the cookie value
+     * @return this request requirement
+     */
+    default RequestRequirement cookie(final String name, final String value) {
+<span class="fc" id="L156">        return cookie(cookieMatching(name, value));</span>
+    }
+
+    /**
+     * Specifies a request cookie to be configured with the given name and matcher.
+     *
+     * @param name    the cookie name
+     * @param matcher the cookie matcher
+     * @return this request requirement
+     */
+    default RequestRequirement cookie(final String name, final Matcher&lt;Cookie&gt; matcher) {
+<span class="fc" id="L167">        return cookie(cookieMatching(name, matcher));</span>
+    }
+
+    /**
+     * Specifies a request cookie to be configured with the given matcher.
+     *
+     * @param cookieMatcher the request cookie matcher
+     * @return this request requirement
+     */
+    RequestRequirement cookie(final RequestCookieMatcher cookieMatcher);
+
+    /**
+     * Configures a matcher for the &lt;code&gt;ClientRequest&lt;/code&gt;, which allows ad-hoc matching based on the request. This does &lt;i&gt;not&lt;/i&gt; disallow
+     * using other matcher methods, but be careful to consider any potential overlaps or unintended exclusions.
+     *
+     * @param matcher a matcher based on the &lt;code&gt;ClientRequest&lt;/code&gt; object
+     * @return a reference to this request requirement
+     */
+    RequestRequirement matcher(final Matcher&lt;ClientRequest&gt; matcher);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

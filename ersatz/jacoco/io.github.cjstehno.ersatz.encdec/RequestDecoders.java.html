@@ -16,22 +16,23 @@
 package io.github.cjstehno.ersatz.encdec;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
+import lombok.RequiredArgsConstructor;
 
 import javax.activation.MimeType;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
+import static lombok.AccessLevel.PACKAGE;
 
 /**
  * Configuration manager for a collection of request content decoders.
  */
-<span class="fc" id="L32">public class RequestDecoders {</span>
+<span class="fc" id="L33">public class RequestDecoders {</span>
 
-<span class="fc" id="L34">    private final List&lt;DecoderMapping&gt; decoders = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L35">    private final List&lt;DecoderMapping&gt; decoders = new LinkedList&lt;&gt;();</span>
 
     /**
      * Creates a new request decoder container based on the configuration consumer.
@@ -40,9 +41,9 @@ import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
      * @return the configured decoders
      */
     public static RequestDecoders decoders(final Consumer&lt;RequestDecoders&gt; consumer) {
-<span class="fc" id="L43">        final var decoders = new RequestDecoders();</span>
-<span class="fc" id="L44">        consumer.accept(decoders);</span>
-<span class="fc" id="L45">        return decoders;</span>
+<span class="fc" id="L44">        final var decoders = new RequestDecoders();</span>
+<span class="fc" id="L45">        consumer.accept(decoders);</span>
+<span class="fc" id="L46">        return decoders;</span>
     }
 
     /**
@@ -52,8 +53,8 @@ import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
      * @param decoder     the decoder function
      */
     public void register(final ContentType contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {
-<span class="fc" id="L55">        register(contentType.getValue(), decoder);</span>
-<span class="fc" id="L56">    }</span>
+<span class="fc" id="L56">        register(contentType.getValue(), decoder);</span>
+<span class="fc" id="L57">    }</span>
 
     /**
      * Registers the decoder function with the collection
@@ -62,13 +63,13 @@ import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
      * @param decoder     the decoder function
      */
     public void register(final String contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {
-<span class="fc" id="L65">        decoders.stream()</span>
-<span class="fc" id="L66">            .filter(m -&gt; m.mimeType.toString().equals(contentType))</span>
-<span class="fc" id="L67">            .findFirst()</span>
-<span class="fc" id="L68">            .ifPresent(decoders::remove);</span>
+<span class="fc" id="L66">        decoders.stream()</span>
+<span class="fc" id="L67">            .filter(m -&gt; m.mimeType.toString().equals(contentType))</span>
+<span class="fc" id="L68">            .findFirst()</span>
+<span class="fc" id="L69">            .ifPresent(decoders::remove);</span>
 
-<span class="fc" id="L70">        decoders.add(new DecoderMapping(createMimeType(contentType), decoder));</span>
-<span class="fc" id="L71">    }</span>
+<span class="fc" id="L71">        decoders.add(new DecoderMapping(createMimeType(contentType), decoder));</span>
+<span class="fc" id="L72">    }</span>
 
     /**
      * Finds a decoder for the specified content type.
@@ -77,7 +78,7 @@ import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
      * @return the decoder function
      */
     public BiFunction&lt;byte[], DecodingContext, Object&gt; findDecoder(final ContentType contentType) {
-<span class="fc" id="L80">        return findDecoder(contentType.getValue());</span>
+<span class="fc" id="L81">        return findDecoder(contentType.getValue());</span>
     }
 
     /**
@@ -87,36 +88,32 @@ import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
      * @return the decoder function
      */
     public BiFunction&lt;byte[], DecodingContext, Object&gt; findDecoder(final String contentType) {
-<span class="fc" id="L90">        final MimeType mimeType = createMimeType(contentType);</span>
+<span class="fc" id="L91">        final MimeType mimeType = createMimeType(contentType);</span>
 
-<span class="fc" id="L92">        final List&lt;DecoderMapping&gt; found = decoders.stream()</span>
-<span class="fc" id="L93">            .filter(c -&gt; c.mimeType.match(mimeType))</span>
-<span class="fc" id="L94">            .collect(Collectors.toList());</span>
+<span class="fc" id="L93">        final List&lt;DecoderMapping&gt; found = decoders.stream()</span>
+<span class="fc" id="L94">            .filter(c -&gt; c.mimeType.match(mimeType))</span>
+<span class="fc" id="L95">            .toList();</span>
 
-<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (found.isEmpty()) {</span>
-<span class="fc" id="L97">            return null;</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (found.isEmpty()) {</span>
+<span class="fc" id="L98">            return null;</span>
 
-<span class="fc bfc" id="L99" title="All 2 branches covered.">        } else if (found.size() &gt; 1) {</span>
-<span class="fc" id="L100">            return found.stream()</span>
-<span class="fc" id="L101">                .filter(f -&gt; f.mimeType.toString().equals(contentType))</span>
-<span class="fc" id="L102">                .findFirst()</span>
-<span class="fc" id="L103">                .map(m -&gt; m.decoder)</span>
-<span class="fc" id="L104">                .orElse(null);</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        } else if (found.size() &gt; 1) {</span>
+<span class="fc" id="L101">            return found.stream()</span>
+<span class="fc" id="L102">                .filter(f -&gt; f.mimeType.toString().equals(contentType))</span>
+<span class="fc" id="L103">                .findFirst()</span>
+<span class="fc" id="L104">                .map(m -&gt; m.decoder)</span>
+<span class="fc" id="L105">                .orElse(null);</span>
 
         } else {
-<span class="fc" id="L107">            return found.get(0).decoder;</span>
+<span class="fc" id="L108">            return found.get(0).decoder;</span>
         }
     }
 
+<span class="fc" id="L112">    @RequiredArgsConstructor(access = PACKAGE) @SuppressWarnings(&quot;ClassCanBeRecord&quot;)</span>
     private static class DecoderMapping {
 
-        final MimeType mimeType;
-        final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder;
-
-<span class="fc" id="L116">        DecoderMapping(MimeType mimeType, BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {</span>
-<span class="fc" id="L117">            this.mimeType = mimeType;</span>
-<span class="fc" id="L118">            this.decoder = decoder;</span>
-<span class="fc" id="L119">        }</span>
+        private final MimeType mimeType;
+        private final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder;
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

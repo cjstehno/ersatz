@@ -15,14 +15,15 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import lombok.EqualsAndHashCode;
+
 import java.nio.charset.Charset;
 
-import static java.util.Objects.hash;
-
 /**
- * A content-type representation. Some of the standard content-types are provided as static constants for use elsewhere,
+ * A content-type representation. Some standard content-types are provided as static constants for use elsewhere,
  * others may be created as instances of this class as needed.
  */
+<span class="pc bpc" id="L26" title="10 of 14 branches missed.">@EqualsAndHashCode</span>
 public class ContentType {
 
     /**
@@ -33,117 +34,117 @@ public class ContentType {
     /**
      * Constant content-type for application/javascript.
      */
-<span class="fc" id="L36">    public static final ContentType APPLICATION_JAVASCRIPT = new ContentType(&quot;application/javascript&quot;);</span>
+<span class="fc" id="L37">    public static final ContentType APPLICATION_JAVASCRIPT = new ContentType(&quot;application/javascript&quot;);</span>
 
     /**
      * Constant content-type for application/json.
      */
-<span class="fc" id="L41">    public static final ContentType APPLICATION_JSON = new ContentType(&quot;application/json&quot;);</span>
+<span class="fc" id="L42">    public static final ContentType APPLICATION_JSON = new ContentType(&quot;application/json&quot;);</span>
 
     /**
      * Constant content-type for application/x-www-form-urlencoded.
      */
-<span class="fc" id="L46">    public static final ContentType APPLICATION_URLENCODED = new ContentType(&quot;application/x-www-form-urlencoded&quot;);</span>
+<span class="fc" id="L47">    public static final ContentType APPLICATION_URLENCODED = new ContentType(&quot;application/x-www-form-urlencoded&quot;);</span>
 
     /**
      * Constant content-type for application/xml.
      */
-<span class="fc" id="L51">    public static final ContentType APPLICATION_XML = new ContentType(&quot;application/xml&quot;);</span>
+<span class="fc" id="L52">    public static final ContentType APPLICATION_XML = new ContentType(&quot;application/xml&quot;);</span>
 
     /**
      * Constant content-type for audio/mpeg.
      */
-<span class="fc" id="L56">    public static final ContentType AUDIO_MPEG = new ContentType(&quot;audio/mpeg&quot;);</span>
+<span class="fc" id="L57">    public static final ContentType AUDIO_MPEG = new ContentType(&quot;audio/mpeg&quot;);</span>
 
     /**
      * Constant content-type for audio/ogg.
      */
-<span class="fc" id="L61">    public static final ContentType AUDIO_OGG = new ContentType(&quot;audio/ogg&quot;);</span>
+<span class="fc" id="L62">    public static final ContentType AUDIO_OGG = new ContentType(&quot;audio/ogg&quot;);</span>
 
     /**
      * Constant content-type for audio/wav.
      */
-<span class="fc" id="L66">    public static final ContentType AUDIO_WAV = new ContentType(&quot;audio/wav&quot;);</span>
+<span class="fc" id="L67">    public static final ContentType AUDIO_WAV = new ContentType(&quot;audio/wav&quot;);</span>
 
     /**
      * Constant content-type for image/gif.
      */
-<span class="fc" id="L71">    public static final ContentType IMAGE_GIF = new ContentType(&quot;image/gif&quot;);</span>
+<span class="fc" id="L72">    public static final ContentType IMAGE_GIF = new ContentType(&quot;image/gif&quot;);</span>
 
     /**
      * Constant content-type for image/jpeg.
      */
-<span class="fc" id="L76">    public static final ContentType IMAGE_JPG = new ContentType(&quot;image/jpeg&quot;);</span>
+<span class="fc" id="L77">    public static final ContentType IMAGE_JPG = new ContentType(&quot;image/jpeg&quot;);</span>
 
     /**
      * Constant content-type for image/png.
      */
-<span class="fc" id="L81">    public static final ContentType IMAGE_PNG = new ContentType(&quot;image/png&quot;);</span>
+<span class="fc" id="L82">    public static final ContentType IMAGE_PNG = new ContentType(&quot;image/png&quot;);</span>
 
     /**
      * Constant content-type for image/svg+xml.
      */
-<span class="fc" id="L86">    public static final ContentType IMAGE_SVG_XML = new ContentType(&quot;image/svg+xml&quot;);</span>
+<span class="fc" id="L87">    public static final ContentType IMAGE_SVG_XML = new ContentType(&quot;image/svg+xml&quot;);</span>
 
     /**
      * Constant content-type for message/http.
      */
-<span class="fc" id="L91">    public static final ContentType MESSAGE_HTTP = new ContentType(&quot;message/http&quot;);</span>
+<span class="fc" id="L92">    public static final ContentType MESSAGE_HTTP = new ContentType(&quot;message/http&quot;);</span>
 
     /**
      * Constant content-type for multipart/form-data.
      */
-<span class="fc" id="L96">    public static final ContentType MULTIPART_FORMDATA = new ContentType(&quot;multipart/form-data&quot;);</span>
+<span class="fc" id="L97">    public static final ContentType MULTIPART_FORMDATA = new ContentType(&quot;multipart/form-data&quot;);</span>
 
     /**
      * Constant content-type for multipart/mixed.
      */
-<span class="fc" id="L101">    public static final ContentType MULTIPART_MIXED = new ContentType(&quot;multipart/mixed&quot;);</span>
+<span class="fc" id="L102">    public static final ContentType MULTIPART_MIXED = new ContentType(&quot;multipart/mixed&quot;);</span>
 
     /**
      * Constant content-type for text/css.
      */
-<span class="fc" id="L106">    public static final ContentType TEXT_CSS = new ContentType(&quot;text/css&quot;);</span>
+<span class="fc" id="L107">    public static final ContentType TEXT_CSS = new ContentType(&quot;text/css&quot;);</span>
 
     /**
      * Constant content-type for text/CSV.
      */
-<span class="fc" id="L111">    public static final ContentType TEXT_CSV = new ContentType(&quot;text/CSV&quot;);</span>
+<span class="fc" id="L112">    public static final ContentType TEXT_CSV = new ContentType(&quot;text/CSV&quot;);</span>
 
     /**
      * Constant content-type for text/html.
      */
-<span class="fc" id="L116">    public static final ContentType TEXT_HTML = new ContentType(&quot;text/html&quot;);</span>
+<span class="fc" id="L117">    public static final ContentType TEXT_HTML = new ContentType(&quot;text/html&quot;);</span>
 
     /**
      * Constant content-type for text/javascript.
      */
-<span class="fc" id="L121">    public static final ContentType TEXT_JAVASCRIPT = new ContentType(&quot;text/javascript&quot;);</span>
+<span class="fc" id="L122">    public static final ContentType TEXT_JAVASCRIPT = new ContentType(&quot;text/javascript&quot;);</span>
 
     /**
      * Constant content-type for text/json.
      */
-<span class="fc" id="L126">    public static final ContentType TEXT_JSON = new ContentType(&quot;text/json&quot;);</span>
+<span class="fc" id="L127">    public static final ContentType TEXT_JSON = new ContentType(&quot;text/json&quot;);</span>
 
     /**
      * Constant content-type for text/plain.
      */
-<span class="fc" id="L131">    public static final ContentType TEXT_PLAIN = new ContentType(&quot;text/plain&quot;);</span>
+<span class="fc" id="L132">    public static final ContentType TEXT_PLAIN = new ContentType(&quot;text/plain&quot;);</span>
 
     /**
      * Constant content-type for text/xml.
      */
-<span class="fc" id="L136">    public static final ContentType TEXT_XML = new ContentType(&quot;text/xml&quot;);</span>
+<span class="fc" id="L137">    public static final ContentType TEXT_XML = new ContentType(&quot;text/xml&quot;);</span>
 
     /**
      * Constant content-type for video/mpeg.
      */
-<span class="fc" id="L141">    public static final ContentType VIDEO_MPEG = new ContentType(&quot;video/mpeg&quot;);</span>
+<span class="fc" id="L142">    public static final ContentType VIDEO_MPEG = new ContentType(&quot;video/mpeg&quot;);</span>
 
     /**
      * Constant content-type for video/ogg.
      */
-<span class="fc" id="L146">    public static final ContentType VIDEO_OGG = new ContentType(&quot;video/ogg&quot;);</span>
+<span class="fc" id="L147">    public static final ContentType VIDEO_OGG = new ContentType(&quot;video/ogg&quot;);</span>
 
     private final String value;
 
@@ -152,9 +153,9 @@ public class ContentType {
      *
      * @param value the content-type value
      */
-<span class="fc" id="L155">    public ContentType(final String value) {</span>
-<span class="fc" id="L156">        this.value = value;</span>
-<span class="fc" id="L157">    }</span>
+<span class="fc" id="L156">    public ContentType(final String value) {</span>
+<span class="fc" id="L157">        this.value = value;</span>
+<span class="fc" id="L158">    }</span>
 
     /**
      * Creates a content-type with the specified value and charset (as &lt;code&gt;[content-type]; charset=[charset]&lt;/code&gt;).
@@ -162,9 +163,9 @@ public class ContentType {
      * @param value the content-type value
      * @param charset the content-type charset
      */
-<span class="fc" id="L165">    public ContentType(final String value, final String charset) {</span>
-<span class="fc" id="L166">        this.value = value + &quot;; charset=&quot; + charset;</span>
-<span class="fc" id="L167">    }</span>
+<span class="fc" id="L166">    public ContentType(final String value, final String charset) {</span>
+<span class="fc" id="L167">        this.value = value + &quot;; charset=&quot; + charset;</span>
+<span class="fc" id="L168">    }</span>
 
     /**
      * Used to retrieve the value of the content-type.
@@ -172,7 +173,7 @@ public class ContentType {
      * @return the String value of the content-type
      */
     public String getValue() {
-<span class="fc" id="L175">        return value;</span>
+<span class="fc" id="L176">        return value;</span>
     }
 
     /**
@@ -182,7 +183,7 @@ public class ContentType {
      * @return the content-type and charset wrapped in a ContentType object
      */
     public ContentType withCharset(final String charset) {
-<span class="fc" id="L185">        return new ContentType(value, charset);</span>
+<span class="fc" id="L186">        return new ContentType(value, charset);</span>
     }
 
     /**
@@ -191,18 +192,8 @@ public class ContentType {
      * @param charset the charset to be applied
      * @return the content-type and charset wrapped in a ContentType object
      */
-    public ContentType withCharset(final Charset charset){
-<span class="fc" id="L195">        return new ContentType(value, charset.name().toLowerCase());</span>
-    }
-
-    @Override public boolean equals(Object o) {
-<span class="nc bnc" id="L199" title="All 2 branches missed.">        if (this == o) return true;</span>
-<span class="nc bnc" id="L200" title="All 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
-<span class="nc" id="L201">        return value.equals(((ContentType) o).value);</span>
-    }
-
-    @Override public int hashCode() {
-<span class="nc" id="L205">        return hash(value);</span>
+    public ContentType withCharset(final Charset charset) {
+<span class="fc" id="L196">        return new ContentType(value, charset.name().toLowerCase());</span>
     }
 
     /**
@@ -211,7 +202,7 @@ public class ContentType {
      * @return a String representation of the content-type
      */
     @Override public String toString() {
-<span class="fc" id="L214">        return value;</span>
+<span class="fc" id="L205">        return value;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

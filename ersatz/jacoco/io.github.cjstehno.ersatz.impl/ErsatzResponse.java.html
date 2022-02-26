@@ -20,6 +20,7 @@ import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.*;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,42 +43,39 @@ import static java.util.stream.Collectors.toList;
  */
 public class ErsatzResponse implements Response {
 
-<span class="fc" id="L45">    private static final Logger log = LoggerFactory.getLogger(ErsatzResponse.class);</span>
+<span class="fc" id="L46">    private static final Logger log = LoggerFactory.getLogger(ErsatzResponse.class);</span>
     private static final String ALLOW_HEADER = &quot;Allow&quot;;
     private final boolean empty;
-<span class="fc" id="L48">    private final ResponseEncoders localEncoders = new ResponseEncoders();</span>
-<span class="fc" id="L49">    private final EncoderChain encoderChain = new EncoderChain(localEncoders);</span>
+<span class="fc" id="L49">    private final ResponseEncoders localEncoders = new ResponseEncoders();</span>
+    private final EncoderChain encoderChain;
 
-<span class="fc" id="L51">    private final Map&lt;String, List&lt;String&gt;&gt; headers = new LinkedHashMap&lt;&gt;();</span>
-<span class="fc" id="L52">    private final Map&lt;String, Object&gt; cookies = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L52">    private final Map&lt;String, List&lt;String&gt;&gt; headers = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L53">    private final Map&lt;String, Object&gt; cookies = new LinkedHashMap&lt;&gt;();</span>
     private ChunkingConfigImpl chunkingConfig;
-<span class="fc" id="L54">    private final AtomicReference&lt;byte[]&gt; cachedContent = new AtomicReference&lt;&gt;();</span>
+<span class="fc" id="L55">    private final AtomicReference&lt;byte[]&gt; cachedContent = new AtomicReference&lt;&gt;();</span>
     private Object content;
-<span class="fc" id="L56">    private Integer code = 200;</span>
+<span class="fc" id="L57">    private Integer code = 200;</span>
     private long delayTime;
 
     /**
      * Creates a new response implementation with the provided parameters.
      *
-     * @param empty whether or not the body is empty
+     * @param empty whether the body is empty
      * @param globalEncoders the configured global encoders
      */
-<span class="fc" id="L65">    public ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders) {</span>
-<span class="fc" id="L66">        this.empty = empty;</span>
-
-<span class="fc bfc" id="L68" title="All 2 branches covered.">        if (globalEncoders != null) {</span>
-<span class="fc" id="L69">            encoderChain.last(globalEncoders);</span>
-        }
-<span class="fc" id="L71">    }</span>
+<span class="fc" id="L66">    public ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders) {</span>
+<span class="fc" id="L67">        this.empty = empty;</span>
+<span class="fc" id="L68">        this.encoderChain = new EncoderChain(globalEncoders, localEncoders);</span>
+<span class="fc" id="L69">    }</span>
 
     /**
      * Creates a new response implementation with the provided parameters, and no global encoders.
      *
-     * @param empty whether or not the body is empty
+     * @param empty whether the body is empty
      */
     public ErsatzResponse(final boolean empty) {
-<span class="fc" id="L79">        this(empty, null);</span>
-<span class="fc" id="L80">    }</span>
+<span class="fc" id="L77">        this(empty, null);</span>
+<span class="fc" id="L78">    }</span>
 
     /**
      * Used to retrieve the chunking configuration, if any.
@@ -85,202 +83,201 @@ public class ErsatzResponse implements Response {
      * @return the chunking configuration
      */
     public ChunkingConfigImpl getChunkingConfig() {
-<span class="fc" id="L88">        return chunkingConfig;</span>
+<span class="fc" id="L86">        return chunkingConfig;</span>
     }
 
     @Override
     public Response body(Object content) {
-<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (empty) {</span>
-<span class="fc" id="L94">            throw new IllegalArgumentException(&quot;The response is configured as EMPTY and cannot have content.&quot;);</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (empty) {</span>
+<span class="fc" id="L92">            throw new IllegalArgumentException(&quot;The response is configured as EMPTY and cannot have content.&quot;);</span>
         }
 
-<span class="fc" id="L97">        this.content = content;</span>
+<span class="fc" id="L95">        this.content = content;</span>
 
-<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (content instanceof MultipartResponseContent) {</span>
-<span class="fc" id="L100">            final var multipartContent = (ErsatzMultipartResponseContent) content;</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (content instanceof MultipartResponseContent) {</span>
+<span class="fc" id="L98">            final var multipartContent = (ErsatzMultipartResponseContent) content;</span>
 
             // apply the configured encoders
-<span class="fc" id="L103">            encoderChain.items().forEach(multipartContent::encoders);</span>
+<span class="fc" id="L101">            encoderChain.items().forEach(multipartContent::encoders);</span>
 
             // apply the content type (with boundary)
-<span class="fc" id="L106">            contentType(multipartContent.getContentType());</span>
+<span class="fc" id="L104">            contentType(multipartContent.getContentType());</span>
         }
 
-<span class="fc" id="L109">        return this;</span>
+<span class="fc" id="L107">        return this;</span>
     }
 
     @Override
     public Response body(Object data, String contentType) {
-<span class="fc" id="L114">        body(data);</span>
-<span class="fc" id="L115">        return this.contentType(contentType);</span>
+<span class="fc" id="L112">        body(data);</span>
+<span class="fc" id="L113">        return this.contentType(contentType);</span>
     }
 
     @Override
     public Response body(Object data, ContentType contentType) {
-<span class="fc" id="L120">        return body(data, contentType.getValue());</span>
+<span class="fc" id="L118">        return body(data, contentType.getValue());</span>
     }
 
     @Override
     public Response header(final String name, final String... value) {
-<span class="fc" id="L125">        final List&lt;String&gt; list = headers.computeIfAbsent(name, s -&gt; new LinkedList&lt;&gt;());</span>
-<span class="fc" id="L126">        list.addAll(Arrays.asList(value));</span>
-<span class="fc" id="L127">        return this;</span>
+<span class="fc" id="L123">        final List&lt;String&gt; list = headers.computeIfAbsent(name, s -&gt; new LinkedList&lt;&gt;());</span>
+<span class="fc" id="L124">        list.addAll(Arrays.asList(value));</span>
+<span class="fc" id="L125">        return this;</span>
     }
 
     @Override
     public Response header(final String name, final List&lt;String&gt; values) {
-<span class="fc" id="L132">        final List&lt;String&gt; list = headers.computeIfAbsent(name, s -&gt; new LinkedList&lt;&gt;());</span>
-<span class="fc" id="L133">        list.addAll(values);</span>
-<span class="fc" id="L134">        return this;</span>
+<span class="fc" id="L130">        final List&lt;String&gt; list = headers.computeIfAbsent(name, s -&gt; new LinkedList&lt;&gt;());</span>
+<span class="fc" id="L131">        list.addAll(values);</span>
+<span class="fc" id="L132">        return this;</span>
     }
 
     @Override
     public Response headers(final Map&lt;String, Object&gt; headers) {
-<span class="fc" id="L139">        headers.forEach((k, v) -&gt; {</span>
-<span class="fc bfc" id="L140" title="All 2 branches covered.">            if (v instanceof List) {</span>
-<span class="fc" id="L141">                header(k, (List&lt;String&gt;) v);</span>
+<span class="fc" id="L137">        headers.forEach((k, v) -&gt; {</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">            if (v instanceof List) {</span>
+<span class="fc" id="L139">                header(k, (List&lt;String&gt;) v);</span>
             } else {
-<span class="fc" id="L143">                header(k, v.toString());</span>
+<span class="fc" id="L141">                header(k, v.toString());</span>
             }
-<span class="fc" id="L145">        });</span>
-<span class="fc" id="L146">        return this;</span>
+<span class="fc" id="L143">        });</span>
+<span class="fc" id="L144">        return this;</span>
     }
 
     @Override
     public Response allows(final HttpMethod... methods) {
-<span class="fc" id="L151">        header(ALLOW_HEADER, Arrays.stream(methods).map(HttpMethod::getValue).collect(toList()));</span>
-<span class="fc" id="L152">        return this;</span>
+<span class="fc" id="L149">        header(ALLOW_HEADER, Arrays.stream(methods).map(HttpMethod::getValue).collect(toList()));</span>
+<span class="fc" id="L150">        return this;</span>
     }
 
     @Override
     public Response cookies(final Map&lt;String, String&gt; cookies) {
-<span class="fc" id="L157">        this.cookies.putAll(cookies);</span>
-<span class="fc" id="L158">        return this;</span>
+<span class="fc" id="L155">        this.cookies.putAll(cookies);</span>
+<span class="fc" id="L156">        return this;</span>
     }
 
     @Override
     public Response cookie(final String name, final String value) {
-<span class="fc" id="L163">        cookies.put(name, value);</span>
-<span class="fc" id="L164">        return this;</span>
+<span class="fc" id="L161">        cookies.put(name, value);</span>
+<span class="fc" id="L162">        return this;</span>
     }
 
     @Override
     public Response cookie(final String name, final Cookie cookie) {
-<span class="fc" id="L169">        cookies.put(name, cookie);</span>
-<span class="fc" id="L170">        return this;</span>
+<span class="fc" id="L167">        cookies.put(name, cookie);</span>
+<span class="fc" id="L168">        return this;</span>
     }
 
     @Override
     public Response contentType(final String contentType) {
-<span class="fc" id="L175">        header(CONTENT_TYPE_HEADER, contentType);</span>
-<span class="fc" id="L176">        return this;</span>
+<span class="fc" id="L173">        header(CONTENT_TYPE_HEADER, contentType);</span>
+<span class="fc" id="L174">        return this;</span>
     }
 
     @Override
     public Response contentType(final ContentType contentType) {
-<span class="fc" id="L181">        header(CONTENT_TYPE_HEADER, contentType.getValue());</span>
-<span class="fc" id="L182">        return this;</span>
+<span class="fc" id="L179">        header(CONTENT_TYPE_HEADER, contentType.getValue());</span>
+<span class="fc" id="L180">        return this;</span>
     }
 
     @Override
     public String getContentType() {
-<span class="fc" id="L187">        final var type = headers.get(CONTENT_TYPE_HEADER);</span>
-<span class="fc bfc" id="L188" title="All 2 branches covered.">        return type != null ? String.join(&quot;,&quot;, type) : TEXT_PLAIN.getValue();</span>
+<span class="fc" id="L185">        final var type = headers.get(CONTENT_TYPE_HEADER);</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">        return type != null ? String.join(&quot;,&quot;, type) : TEXT_PLAIN.getValue();</span>
     }
 
     @Override public Response code(final int code) {
-<span class="fc" id="L192">        this.code = code;</span>
-<span class="fc" id="L193">        return this;</span>
+<span class="fc" id="L190">        this.code = code;</span>
+<span class="fc" id="L191">        return this;</span>
     }
 
     @Override
     public Response delay(final long time) {
-<span class="nc" id="L198">        return delay(time, MILLISECONDS);</span>
+<span class="nc" id="L196">        return delay(time, MILLISECONDS);</span>
     }
 
     @Override
     public Response delay(final long time, final TimeUnit unit) {
-<span class="nc" id="L203">        this.delayTime = MILLISECONDS.convert(time, unit);</span>
-<span class="nc" id="L204">        return this;</span>
+<span class="nc" id="L201">        this.delayTime = MILLISECONDS.convert(time, unit);</span>
+<span class="nc" id="L202">        return this;</span>
     }
 
     @Override
     public Response delay(final String time) {
-<span class="fc" id="L209">        this.delayTime = Duration.parse(time).toMillis();</span>
-<span class="fc" id="L210">        return this;</span>
+<span class="fc" id="L207">        this.delayTime = Duration.parse(time).toMillis();</span>
+<span class="fc" id="L208">        return this;</span>
     }
 
     @Override
     public long getDelay() {
-<span class="fc" id="L215">        return this.delayTime;</span>
+<span class="fc" id="L213">        return this.delayTime;</span>
     }
 
     @Override
     public Response chunked(Consumer&lt;ChunkingConfig&gt; config) {
-<span class="fc" id="L220">        chunkingConfig = new ChunkingConfigImpl();</span>
-<span class="fc" id="L221">        config.accept(chunkingConfig);</span>
-<span class="fc" id="L222">        return this;</span>
+<span class="fc" id="L218">        chunkingConfig = new ChunkingConfigImpl();</span>
+<span class="fc" id="L219">        config.accept(chunkingConfig);</span>
+<span class="fc" id="L220">        return this;</span>
     }
 
     @Override
     public Map&lt;String, List&lt;String&gt;&gt; getHeaders() {
-<span class="fc" id="L227">        return unmodifiableMap(headers);</span>
+<span class="fc" id="L225">        return unmodifiableMap(headers);</span>
     }
 
     @Override
     public Map&lt;String, Object&gt; getCookies() {
-<span class="fc" id="L232">        return unmodifiableMap(cookies);</span>
+<span class="fc" id="L230">        return unmodifiableMap(cookies);</span>
     }
 
     @Override
     public byte[] getContent() {
-<span class="fc bfc" id="L237" title="All 2 branches covered.">        if (content != null) {</span>
-<span class="fc bfc" id="L238" title="All 2 branches covered.">            if (cachedContent.get() == null) {</span>
-<span class="fc" id="L239">                final var encoder = encoderChain.resolve(getContentType(), content.getClass());</span>
-<span class="fc bfc" id="L240" title="All 2 branches covered.">                if (encoder != null) {</span>
-<span class="fc" id="L241">                    log.debug(&quot;Found encoder ({}) for content ({}).&quot;, encoder, content.getClass().getSimpleName());</span>
-<span class="fc" id="L242">                    cachedContent.set(encoder.apply(content));</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">        if (content != null) {</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">            if (cachedContent.get() == null) {</span>
+<span class="fc" id="L237">                val encoder = encoderChain.resolve(getContentType(), content.getClass());</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">                if (encoder != null) {</span>
+<span class="fc" id="L239">                    log.debug(&quot;Found encoder ({}) for content ({}).&quot;, encoder, content.getClass().getSimpleName());</span>
+<span class="fc" id="L240">                    cachedContent.set(encoder.apply(content));</span>
 
-<span class="fc bfc" id="L244" title="All 2 branches covered.">                } else if (content instanceof byte[]) {</span>
-<span class="fc" id="L245">                    log.debug(&quot;No encoder configured for byte[] - returning raw bytes.&quot;);</span>
-<span class="fc" id="L246">                    cachedContent.set((byte[]) content);</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">                } else if (content instanceof byte[]) {</span>
+<span class="fc" id="L243">                    log.debug(&quot;No encoder configured for byte[] - returning raw bytes.&quot;);</span>
+<span class="fc" id="L244">                    cachedContent.set((byte[]) content);</span>
 
                 } else {
-<span class="fc" id="L249">                    log.debug(&quot;No encoder configured for content ({}) - returning string bytes.&quot;, content.getClass().getSimpleName());</span>
-<span class="fc" id="L250">                    cachedContent.set(content.toString().getBytes(UTF_8));</span>
+<span class="fc" id="L247">                    log.debug(&quot;No encoder configured for content ({}) - returning string bytes.&quot;, content.getClass().getSimpleName());</span>
+<span class="fc" id="L248">                    cachedContent.set(content.toString().getBytes(UTF_8));</span>
                 }
-
             }
 
-<span class="fc" id="L255">            return cachedContent.get();</span>
+<span class="fc" id="L252">            return cachedContent.get();</span>
         }
 
-<span class="fc" id="L258">        log.debug(&quot;No response content - returning empty array.&quot;);</span>
+<span class="fc" id="L255">        log.trace(&quot;No response content - returning empty array.&quot;);</span>
 
-<span class="fc" id="L260">        return new byte[0];</span>
+<span class="fc" id="L257">        return new byte[0];</span>
     }
 
     @Override
     public Integer getCode() {
-<span class="fc" id="L265">        return code;</span>
+<span class="fc" id="L262">        return code;</span>
     }
 
     @Override
     public Response encoder(final String contentType, final Class objectType, final Function&lt;Object, byte[]&gt; encoder) {
-<span class="fc" id="L270">        localEncoders.register(contentType, objectType, encoder);</span>
-<span class="fc" id="L271">        return this;</span>
+<span class="fc" id="L267">        localEncoders.register(contentType, objectType, encoder);</span>
+<span class="fc" id="L268">        return this;</span>
     }
 
     @Override
     public Response encoder(final ContentType contentType, final Class objectType, final Function&lt;Object, byte[]&gt; encoder) {
-<span class="fc" id="L276">        localEncoders.register(contentType, objectType, encoder);</span>
-<span class="fc" id="L277">        return this;</span>
+<span class="fc" id="L273">        localEncoders.register(contentType, objectType, encoder);</span>
+<span class="fc" id="L274">        return this;</span>
     }
 
     @Override
     public Response encoders(final ResponseEncoders encoders) {
-<span class="fc" id="L282">        encoderChain.second(encoders);</span>
-<span class="fc" id="L283">        return this;</span>
+<span class="fc" id="L279">        localEncoders.merge(encoders);</span>
+<span class="fc" id="L280">        return this;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

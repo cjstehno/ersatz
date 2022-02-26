@@ -116,9 +116,9 @@ public interface Encoders {
     }
 
     /**
-     * Encodes a &lt;code&gt;MultipartResponseContent&lt;/code&gt; object to its multipart string representation. The generated multipart content is a simple
-     * message implementing the minimal multipart content specification - you may want to find a more robust implementation if you require a more
-     * detailed multipart API.
+     * Encodes a &lt;code&gt;MultipartResponseContent&lt;/code&gt; object to its multipart string representation. The generated
+     * multipart content is a simple message implementing the minimal multipart content specification - you may want to
+     * find a more robust implementation if you require a more detailed multipart API.
      */
 <span class="fc" id="L123">    Function&lt;Object, byte[]&gt; multipart = obj -&gt; {</span>
 <span class="fc bfc" id="L124" title="All 2 branches covered.">        if (!(obj instanceof MultipartResponseContent)) {</span>

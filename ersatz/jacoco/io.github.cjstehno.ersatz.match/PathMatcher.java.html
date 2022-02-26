@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PathMatcher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.match</a> &gt; <span class="el_source">PathMatcher.java</span></div><h1>PathMatcher.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2022 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.match;
+
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.RequiredArgsConstructor;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.any;
+
+/**
+ * Matcher used to match the request path.
+ */
+<span class="fc" id="L30">@RequiredArgsConstructor(staticName = &quot;pathMatching&quot;)</span>
+public class PathMatcher extends BaseMatcher&lt;ClientRequest&gt; {
+
+    private final Matcher&lt;String&gt; matcher;
+
+    /**
+     * Configures a matcher expecting a request path equal to the provided path. If &quot;*&quot; is used, it will match any
+     * String value.
+     *
+     * @param path the expected path
+     * @return the path matcher
+     */
+    public static PathMatcher pathMatching(final String path) {
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        return pathMatching(path.equals(&quot;*&quot;) ? any(String.class) : equalTo(path));</span>
+    }
+
+    /**
+     * Configures a matcher that will match any path.
+     *
+     * @return the path matcher
+     */
+    public static PathMatcher anyPath(){
+<span class="nc" id="L52">        return pathMatching(any(String.class));</span>
+    }
+
+    @Override public boolean matches(final Object actual) {
+<span class="fc" id="L56">        return matcher.matches(((ClientRequest) actual).getPath());</span>
+    }
+
+    @Override public void describeTo(final Description description) {
+<span class="fc" id="L60">        description.appendText(&quot;Path matches &quot;);</span>
+<span class="fc" id="L61">        matcher.describeTo(description);</span>
+<span class="fc" id="L62">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -17,27 +17,23 @@ package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.RequestWithContent;
+import io.github.cjstehno.ersatz.encdec.DecoderChain;
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-import io.github.cjstehno.ersatz.encdec.DecoderChain;
-import org.hamcrest.Matcher;
-import org.hamcrest.core.IsIterableContaining;
+import io.github.cjstehno.ersatz.match.BodyMatcher;
+import io.github.cjstehno.ersatz.match.BodyParamMatcher;
+import io.github.cjstehno.ersatz.match.PathMatcher;
 
-import java.util.LinkedList;
 import java.util.function.BiFunction;
-
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.startsWith;
 
 /**
  * Ersatz implementation of a &lt;code&gt;Request&lt;/code&gt; with request body content.
  */
 public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWithContent {
 
-<span class="fc" id="L39">    private final RequestDecoders localDecoders = new RequestDecoders();</span>
-<span class="fc" id="L40">    private final DecoderChain decoderChain = new DecoderChain(localDecoders);</span>
+<span class="fc" id="L35">    private final RequestDecoders localDecoders = new RequestDecoders();</span>
+    private final DecoderChain decoderChain;
 
     /**
      * Creates a request with the specified method and path, along with encoders and decoders.
@@ -47,13 +43,10 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
      * @param globalDecoders the shared global decoders
      * @param globalEncoders the shared global encoders
      */
-    public ErsatzRequestWithContent(final HttpMethod method, final Matcher&lt;String&gt; pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
-<span class="fc" id="L51">        super(method, pathMatcher, globalEncoders);</span>
-
-<span class="fc bfc" id="L53" title="All 2 branches covered.">        if (globalDecoders != null) {</span>
-<span class="fc" id="L54">            decoderChain.last(globalDecoders);</span>
-        }
-<span class="fc" id="L56">    }</span>
+    public ErsatzRequestWithContent(final HttpMethod method, final PathMatcher pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
+<span class="fc" id="L47">        super(method, pathMatcher, globalEncoders);</span>
+<span class="fc" id="L48">        this.decoderChain = new DecoderChain(globalDecoders, localDecoders);</span>
+<span class="fc" id="L49">    }</span>
 
     /**
      * Creates a request with the specified method and path.
@@ -61,40 +54,25 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
      * @param method      the request method
      * @param pathMatcher the request path matcher
      */
-    public ErsatzRequestWithContent(final HttpMethod method, final Matcher&lt;String&gt; pathMatcher) {
-<span class="fc" id="L65">        this(method, pathMatcher, null, null);</span>
-<span class="fc" id="L66">    }</span>
+    public ErsatzRequestWithContent(final HttpMethod method, final PathMatcher pathMatcher) {
+<span class="fc" id="L58">        this(method, pathMatcher, null, null);</span>
+<span class="fc" id="L59">    }</span>
 
-    @Override
-    public RequestWithContent body(final Matcher&lt;Object&gt; bodyMatcher, final String contentType) {
-<span class="fc" id="L70">        addMatcher(RequestMatcher.contentType(startsWith(contentType)));</span>
-<span class="fc" id="L71">        addMatcher(RequestMatcher.body(decoderChain, contentType, bodyMatcher));</span>
-<span class="fc" id="L72">        return this;</span>
+    @Override public RequestWithContent body(final BodyMatcher bodyMatcher) {
+<span class="fc" id="L62">        bodyMatcher.setDecoderChain(decoderChain);</span>
+<span class="fc" id="L63">        addMatcher(bodyMatcher);</span>
+<span class="fc" id="L64">        return this;</span>
     }
 
     @Override
     public RequestWithContent decoder(final String contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {
-<span class="fc" id="L77">        localDecoders.register(contentType, decoder);</span>
-<span class="fc" id="L78">        return this;</span>
+<span class="fc" id="L69">        localDecoders.register(contentType, decoder);</span>
+<span class="fc" id="L70">        return this;</span>
     }
 
-    @Override
-    public RequestWithContent param(String name, String value) {
-<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        return param(name, value != null ? IsIterableContaining.hasItem(value) : IsIterableContaining.hasItem(&quot;&quot;));</span>
-    }
-
-    @Override
-    public RequestWithContent param(String name, Iterable&lt;? super String&gt; values) {
-<span class="nc" id="L88">        final var matchers = new LinkedList&lt;Matcher&lt;? super String&gt;&gt;();</span>
-<span class="nc" id="L89">        values.forEach(v -&gt; matchers.add(equalTo(v)));</span>
-
-<span class="nc" id="L91">        return param(name, stringIterableMatcher(matchers));</span>
-    }
-
-    @Override
-    public RequestWithContent param(String name, Matcher&lt;Iterable&lt;? super String&gt;&gt; matchers) {
-<span class="fc" id="L96">        addMatcher(RequestMatcher.param(name, matchers));</span>
-<span class="fc" id="L97">        return this;</span>
+    @Override public RequestWithContent param(final BodyParamMatcher bodyParamMatcher) {
+<span class="fc" id="L74">        addMatcher(bodyParamMatcher);</span>
+<span class="fc" id="L75">        return this;</span>
     }
 }
 

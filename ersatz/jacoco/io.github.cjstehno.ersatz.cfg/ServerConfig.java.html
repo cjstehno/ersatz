@@ -23,6 +23,8 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 /**
  * Configuration interface for an Ersatz server instance.
  */
@@ -70,14 +72,18 @@ public interface ServerConfig {
      * @param value the timeout value
      * @return a reference to the server being configured
      */
-    ServerConfig timeout(int value);
+    default ServerConfig timeout(int value) {
+<span class="fc" id="L76">        return timeout(value, SECONDS);</span>
+    }
 
     /**
      * Causes the mismatched request reports to be generated as console output, rather than only in the logging.
      *
      * @return a reference to the server being configured
      */
-    ServerConfig reportToConsole();
+    default ServerConfig reportToConsole() {
+<span class="fc" id="L85">        return reportToConsole(true);</span>
+    }
 
     /**
      * Used to toggle the console output of mismatched request reports. By default they are only rendered in the logging. A value of &lt;code&gt;true&lt;/code&gt;
@@ -169,7 +175,7 @@ public interface ServerConfig {
      * @return a reference to this server configuration
      */
     default ServerConfig encoder(ContentType contentType, Class objectType, Function&lt;Object, byte[]&gt; encoder) {
-<span class="fc" id="L172">        return encoder(contentType.getValue(), objectType, encoder);</span>
+<span class="fc" id="L178">        return encoder(contentType.getValue(), objectType, encoder);</span>
     }
 
     /**
@@ -214,7 +220,35 @@ public interface ServerConfig {
      * @return a reference to this server configuration.
      */
     default ServerConfig logResponseContent() {
-<span class="fc" id="L217">        return logResponseContent(true);</span>
+<span class="fc" id="L223">        return logResponseContent(true);</span>
     }
+
+    /**
+     * Allows the configuration of the number of IO and Worker threads to be used by the underlying server.
+     *
+     * @param io the number of IO threads (should be fewer than workers; default is 2)
+     * @param worker the number of worker threads (should be more than io; default is 16)
+     * @return a reference to this server configuration
+     */
+    ServerConfig serverThreads(final int io, final int worker);
+
+    /**
+     * Allows the configuration of the number of IO threads to be used by the underlying server. The worker threads will
+     * be configured to 8 times the configured io number.
+     *
+     * @param io the number of IO threads (should be a small number; default is 2)
+     * @return a reference to this server configuration
+     */
+    default ServerConfig serverThreads(final int io) {
+<span class="fc" id="L243">        return serverThreads(io, io * 8);</span>
+    }
+
+    /**
+     * Allows the configuration of any global request requirements.
+     *
+     * @param requirements the requirements configuration consumer
+     * @return a reference to this server configuration
+     */
+    ServerConfig requirements(final Consumer&lt;Requirements&gt; requirements);
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

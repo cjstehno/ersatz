@@ -33,7 +33,7 @@ import static java.util.Arrays.stream;
  * &lt;p&gt;
  * BeforeEach test - the expectations will be cleared.
  * AfterEach test - the server will be stopped.
- *
+ * &lt;p&gt;
  * Note: the &lt;code&gt;verify()&lt;/code&gt; method is intentionally NOT called by this extension so that it may be called
  * only when needed.
  */
@@ -52,30 +52,25 @@ import static java.util.Arrays.stream;
 <span class="fc" id="L52">    }</span>
 
     private static ErsatzServer findInstance(final Object testInstance, final boolean create) throws Exception {
-        try {
-<span class="fc" id="L56">            val field = findField(testInstance);</span>
-<span class="fc" id="L57">            Object instance = field.get(testInstance);</span>
+<span class="fc" id="L55">        val field = findField(testInstance);</span>
+<span class="fc" id="L56">        Object instance = field.get(testInstance);</span>
 
-<span class="pc bpc" id="L59" title="1 of 4 branches missed.">            if (instance == null &amp;&amp; create) {</span>
-<span class="fc" id="L60">                instance = field.getType().getDeclaredConstructor().newInstance();</span>
-<span class="fc" id="L61">                field.set(testInstance, instance);</span>
-            }
-
-<span class="fc" id="L64">            return (ErsatzServer) instance;</span>
-
-<span class="nc" id="L66">        } catch (Exception throwable) {</span>
-<span class="nc" id="L67">            throw new Exception(throwable);</span>
+<span class="pc bpc" id="L58" title="1 of 4 branches missed.">        if (instance == null &amp;&amp; create) {</span>
+<span class="fc" id="L59">            instance = field.getType().getDeclaredConstructor().newInstance();</span>
+<span class="fc" id="L60">            field.set(testInstance, instance);</span>
         }
+
+<span class="fc" id="L63">        return (ErsatzServer) instance;</span>
     }
 
     private static Field findField(final Object testInstance) throws Exception {
-<span class="fc" id="L72">        val field = stream(testInstance.getClass().getDeclaredFields())</span>
-<span class="fc" id="L73">            .filter(f -&gt; f.getType().getSimpleName().endsWith(&quot;ErsatzServer&quot;))</span>
-<span class="fc" id="L74">            .findFirst()</span>
-<span class="pc" id="L75">            .orElseThrow((Supplier&lt;Exception&gt;) () -&gt; new IllegalArgumentException(&quot;An ErsatzServer field must be specified.&quot;));</span>
+<span class="fc" id="L67">        val field = stream(testInstance.getClass().getDeclaredFields())</span>
+<span class="fc" id="L68">            .filter(f -&gt; f.getType().getSimpleName().endsWith(&quot;ErsatzServer&quot;))</span>
+<span class="fc" id="L69">            .findFirst()</span>
+<span class="pc" id="L70">            .orElseThrow((Supplier&lt;Exception&gt;) () -&gt; new IllegalArgumentException(&quot;An ErsatzServer field must be specified.&quot;));</span>
 
-<span class="fc" id="L77">        field.setAccessible(true);</span>
-<span class="fc" id="L78">        return field;</span>
+<span class="fc" id="L72">        field.setAccessible(true);</span>
+<span class="fc" id="L73">        return field;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

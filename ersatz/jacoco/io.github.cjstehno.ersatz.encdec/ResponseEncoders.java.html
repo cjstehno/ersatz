@@ -16,6 +16,8 @@
 package io.github.cjstehno.ersatz.encdec;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import javax.activation.MimeType;
 import java.util.LinkedList;
@@ -29,9 +31,9 @@ import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
  * Provides management of response encoders. You may share an instance of this class to define response part encoders across multiple multipart
  * response configurations.
  */
-<span class="fc" id="L32">public class ResponseEncoders {</span>
+<span class="fc" id="L34">public class ResponseEncoders {</span>
 
-<span class="fc" id="L34">    private final List&lt;EncoderMapping&gt; encoders = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L36">    private final List&lt;EncoderMapping&gt; encoders = new LinkedList&lt;&gt;();</span>
 
     /**
      * Creates a response encoder container configured by the provided consumer.
@@ -40,9 +42,9 @@ import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
      * @return the configured response encoders
      */
     public static ResponseEncoders encoders(final Consumer&lt;ResponseEncoders&gt; consumer) {
-<span class="fc" id="L43">        final var encoders = new ResponseEncoders();</span>
-<span class="fc" id="L44">        consumer.accept(encoders);</span>
-<span class="fc" id="L45">        return encoders;</span>
+<span class="fc" id="L45">        final var encoders = new ResponseEncoders();</span>
+<span class="fc" id="L46">        consumer.accept(encoders);</span>
+<span class="fc" id="L47">        return encoders;</span>
     }
 
     /**
@@ -53,8 +55,8 @@ import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
      * @param encoder     the encoder function
      */
     public void register(final String contentType, final Class objectType, final Function&lt;Object, byte[]&gt; encoder) {
-<span class="fc" id="L56">        encoders.add(new EncoderMapping(createMimeType(contentType), objectType, encoder));</span>
-<span class="fc" id="L57">    }</span>
+<span class="fc" id="L58">        encoders.add(new EncoderMapping(createMimeType(contentType), objectType, encoder));</span>
+<span class="fc" id="L59">    }</span>
 
     /**
      * Used to register an encoder for a content-type, part object type.
@@ -64,8 +66,8 @@ import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
      * @param encoder     the encoder function
      */
     public void register(final ContentType contentType, final Class objectType, final Function&lt;Object, byte[]&gt; encoder) {
-<span class="fc" id="L67">        register(contentType.getValue(), objectType, encoder);</span>
-<span class="fc" id="L68">    }</span>
+<span class="fc" id="L69">        register(contentType.getValue(), objectType, encoder);</span>
+<span class="fc" id="L70">    }</span>
 
     /**
      * Used to find an encoder for the given content-type and object type.
@@ -75,13 +77,13 @@ import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
      * @return the encoder function if one exists or null
      */
     public Function&lt;Object, byte[]&gt; findEncoder(final String contentType, final Class objectType) {
-<span class="fc" id="L78">        final var mime = createMimeType(contentType);</span>
+<span class="fc" id="L80">        final var mime = createMimeType(contentType);</span>
 
-<span class="fc" id="L80">        return encoders.stream()</span>
-<span class="fc bfc" id="L81" title="All 4 branches covered.">            .filter(m -&gt; m.contentType.match(mime) &amp;&amp; m.objectType.isAssignableFrom(objectType))</span>
-<span class="fc" id="L82">            .findFirst()</span>
-<span class="fc" id="L83">            .map(m -&gt; m.encoder)</span>
-<span class="fc" id="L84">            .orElse(null);</span>
+<span class="fc" id="L82">        return encoders.stream()</span>
+<span class="fc bfc" id="L83" title="All 4 branches covered.">            .filter(m -&gt; m.contentType.match(mime) &amp;&amp; m.objectType.isAssignableFrom(objectType))</span>
+<span class="fc" id="L84">            .findFirst()</span>
+<span class="fc" id="L85">            .map(m -&gt; m.encoder)</span>
+<span class="fc" id="L86">            .orElse(null);</span>
     }
 
     /**
@@ -94,23 +96,47 @@ import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
      * @return the encoder function if one exists or null
      */
     public Function&lt;Object, byte[]&gt; findEncoder(final ContentType contentType, final Class objectType) {
-<span class="fc" id="L97">        return findEncoder(contentType.getValue(), objectType);</span>
+<span class="fc" id="L99">        return findEncoder(contentType.getValue(), objectType);</span>
+    }
+
+    /**
+     * Merges the given encoders into the existing encoder set. Any incoming encoders that match the conten
+     * type and object type will be overwritten.
+     *
+     * @param otherEncoders the incoming encoders
+     */
+    public void merge(final ResponseEncoders otherEncoders) {
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        for (val encoder : otherEncoders.encoders) {</span>
+<span class="fc" id="L110">            val existingIndex = indexOfEncoder(encoder.contentType, encoder.objectType);</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">            if (existingIndex != -1) {</span>
+                // replace the existing one
+<span class="fc" id="L113">                encoders.set(existingIndex, encoder);</span>
+            } else {
+                // add the new one
+<span class="fc" id="L116">                encoders.add(encoder);</span>
+            }
+<span class="fc" id="L118">        }</span>
+<span class="fc" id="L119">    }</span>
+
+    private int indexOfEncoder(final MimeType mimeType, final Class objectType) {
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        for (int i = 0; i &lt; encoders.size(); i++) {</span>
+<span class="fc" id="L123">            val mapping = encoders.get(i);</span>
+<span class="fc bfc" id="L124" title="All 4 branches covered.">            if (mapping.contentType.match(mimeType) &amp;&amp; mapping.objectType.isAssignableFrom(objectType)) {</span>
+<span class="fc" id="L125">                return i;</span>
+            }
+        }
+<span class="fc" id="L128">        return -1;</span>
     }
 
     /**
      * Immutable mapping of a content-type and object type to an encoder.
      */
+<span class="fc" id="L134">    @RequiredArgsConstructor @SuppressWarnings(&quot;ClassCanBeRecord&quot;)</span>
     private static class EncoderMapping {
 
-        final MimeType contentType;
-        final Class objectType;
-        final Function&lt;Object, byte[]&gt; encoder;
-
-<span class="fc" id="L109">        public EncoderMapping(MimeType contentType, Class objectType, Function&lt;Object, byte[]&gt; encoder) {</span>
-<span class="fc" id="L110">            this.contentType = contentType;</span>
-<span class="fc" id="L111">            this.objectType = objectType;</span>
-<span class="fc" id="L112">            this.encoder = encoder;</span>
-<span class="fc" id="L113">        }</span>
+        private final MimeType contentType;
+        private final Class objectType;
+        private final Function&lt;Object, byte[]&gt; encoder;
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
