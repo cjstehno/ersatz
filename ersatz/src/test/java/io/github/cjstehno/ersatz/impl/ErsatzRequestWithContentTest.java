@@ -40,8 +40,10 @@ import static io.github.cjstehno.ersatz.cfg.ContentType.*;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
 import static io.github.cjstehno.ersatz.encdec.MultipartRequestContent.multipartRequest;
 import static io.github.cjstehno.ersatz.match.MultipartRequestMatcher.multipartMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -57,7 +59,7 @@ class ErsatzRequestWithContentTest {
     private ErsatzServer server;
 
     @BeforeEach void beforeEach() {
-        request = new ErsatzRequestWithContent(POST, equalTo("/posting"));
+        request = new ErsatzRequestWithContent(POST, pathMatching("/posting"));
     }
 
     @Test @DisplayName("body with content-type")
@@ -77,7 +79,7 @@ class ErsatzRequestWithContentTest {
     void string() {
         request.body("Some body", TEXT_PLAIN);
 
-        assertEquals("Expectations (ErsatzRequestWithContent): <POST>, \"/posting\", a collection containing a string starting with \"text/plain\", \"Some body\", ", request.toString());
+        assertEquals("Expectations (ErsatzRequestWithContent): HTTP method is (<POST>), Path matches \"/posting\", Body is \"Some body\" and content-type is a string starting with text/plain, ", request.toString());
     }
 
     @Test @DisplayName("matching body")
@@ -164,7 +166,7 @@ class ErsatzRequestWithContentTest {
             });
         });
 
-        var response = client.post("/form", create(MediaType.parse("application/x-www-form-urlencoded"), "alpha=some+data&bravo=42&charlie=last"));
+        var response = client.post("/form", create("alpha=some+data&bravo=42&charlie=last", parse("application/x-www-form-urlencoded")));
         assertEquals("ok", response.body().string());
     }
 
@@ -184,10 +186,10 @@ class ErsatzRequestWithContentTest {
             });
         });
 
-        final var bodyBuilder = new MultipartBody.Builder()
+        val bodyBuilder = new MultipartBody.Builder()
             .addFormDataPart("something", "interesting")
-            .addFormDataPart("infoFile", "info.txt", create(MediaType.parse("text/plain"), "This is some interesting file content."))
-            .addFormDataPart("dataFile", "data.bin", create(MediaType.parse("image/png"), new byte[]{8, 6, 7, 5, 3, 0, 9}));
+            .addFormDataPart("infoFile", "info.txt", create("This is some interesting file content.", parse("text/plain")))
+            .addFormDataPart("dataFile", "data.bin", create(new byte[]{8, 6, 7, 5, 3, 0, 9}, parse("image/png")));
 
         val response = client.post(
             "/upload",
@@ -215,8 +217,8 @@ class ErsatzRequestWithContentTest {
 
         final var bodyBuilder = new MultipartBody.Builder()
             .addFormDataPart("something", "interesting")
-            .addFormDataPart("infoFile", "info.txt", create(MediaType.parse("text/plain"), "This is some interesting file content."))
-            .addFormDataPart("dataFile", "data.bin", create(MediaType.parse("image/png"), new byte[]{8, 6, 7, 5, 3, 0, 9}));
+            .addFormDataPart("infoFile", "info.txt", create(parse("text/plain"), "This is some interesting file content."))
+            .addFormDataPart("dataFile", "data.bin", create(parse("image/png"), new byte[]{8, 6, 7, 5, 3, 0, 9}));
 
         val response = client.post(
             "/upload",

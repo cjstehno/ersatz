@@ -15,11 +15,12 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * Defines the available GET request expectations.
@@ -33,7 +34,7 @@ public interface GetExpectations {
      * @return a <code>Request</code> configuration object
      */
     default Request GET(String path) {
-        return GET(pathMatcher(path));
+        return GET(pathMatching(path));
     }
 
     /**
@@ -42,21 +43,20 @@ public interface GetExpectations {
      * @param matcher the path matcher.
      * @return a <code>Request</code> configuration object
      */
-    default Request GET(Matcher<String> matcher) {
-        return GET(matcher, (Consumer<Request>) null);
+    default Request GET(final Matcher<String> matcher) {
+        return GET(pathMatching(matcher));
     }
-
 
     /**
      * Allows configuration of a GET request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The <code>Consumer&lt;Request&gt;</code> will
      * have an instance of <code>Request</code> passed into it for configuration.
      *
-     * @param path the expected request path
-     * @return a <code>Request</code> configuration object
+     * @param path   the expected request path
      * @param config the configuration consumer
+     * @return a <code>Request</code> configuration object
      */
     default Request GET(String path, Consumer<Request> config) {
-        return GET(pathMatcher(path), config);
+        return GET(pathMatching(path), config);
     }
 
     /**
@@ -64,8 +64,31 @@ public interface GetExpectations {
      * have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param matcher the path matcher
+     * @param config  the configuration consumer
      * @return a <code>Request</code> configuration object
-     * @param config the configuration consumer
      */
-    Request GET(Matcher<String> matcher, Consumer<Request> config);
+    default Request GET(final Matcher<String> matcher, final Consumer<Request> config) {
+        return GET(pathMatching(matcher), config);
+    }
+
+    /**
+     * Allows configuration of a GET request expectation.
+     *
+     * @param pathMatcher the patch matcher
+     * @return a <code>Request</code> configuration object
+     */
+    default Request GET(final PathMatcher pathMatcher) {
+        return GET(pathMatcher, null);
+    }
+
+    /**
+     * Allows configuration of a GET request expectation with the provided <code>Consumer</code>.
+     *
+     * @param pathMatcher the patch matcher
+     * @param config the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    Request GET(final PathMatcher pathMatcher, final Consumer<Request> config);
 }
+
+

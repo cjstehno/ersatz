@@ -15,11 +15,12 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * Defines the available DELETE request expectations.
@@ -32,8 +33,8 @@ public interface DeleteExpectations {
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
      */
-    default Request DELETE(String path) {
-        return DELETE(pathMatcher(path));
+    default Request DELETE(final String path) {
+        return DELETE(pathMatching(path));
     }
 
     /**
@@ -42,29 +43,54 @@ public interface DeleteExpectations {
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
      */
-    default Request DELETE(Matcher<String> matcher) {
-        return DELETE(matcher, (Consumer<Request>) null);
+    default Request DELETE(final Matcher<String> matcher) {
+        return DELETE(pathMatching(matcher));
     }
 
     /**
-     * Allows configuration of a DELETE request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The <code>Consumer&lt;Request&gt;</code> will
-     * have an instance of <code>Request</code> passed into it for configuration.
+     * Allows configuration of a DELETE request expectation using the provided <code>Consumer&lt;Request&gt;</code>.
+     * The <code>Consumer&lt;Request&gt;</code> will have an instance of <code>Request</code> passed into it for
+     * configuration.
      *
      * @param path the expected request path
      * @return a <code>Request</code> configuration object
      * @param config the configuration consumer
      */
-    default Request DELETE(String path, Consumer<Request> config) {
-        return DELETE(pathMatcher(path), config);
+    default Request DELETE(final String path, final Consumer<Request> config) {
+        return DELETE(pathMatching(path), config);
     }
 
     /**
-     * Allows configuration of a DELETE request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The <code>Consumer&lt;Request&gt;</code> will
-     * have an instance of <code>Request</code> passed into it for configuration.
+     * Allows configuration of a DELETE request expectation using the provided <code>Consumer&lt;Request&gt;</code>.
+     * The <code>Consumer&lt;Request&gt;</code> will have an instance of <code>Request</code> passed into it for
+     * configuration.
      *
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
      * @param config the configuration consumer
      */
-    Request DELETE(Matcher<String> matcher, Consumer<Request> config);
+    default Request DELETE(final Matcher<String> matcher, final Consumer<Request> config) {
+        return DELETE(pathMatching(matcher), config);
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation.
+     *
+     * @param pathMatcher the path matcher
+     * @return a <code>Request</code> configuration object
+     */
+    default Request DELETE(final PathMatcher pathMatcher) {
+        return DELETE(pathMatcher, null);
+    }
+
+    /**
+     * Allows configuration of a DELETE request expectation using the provided <code>Consumer&lt;Request&gt;</code>.
+     * The <code>Consumer&lt;Request&gt;</code> will have an instance of <code>Request</code> passed into it for
+     * configuration.
+     *
+     * @param pathMatcher the path matcher
+     * @return a <code>Request</code> configuration object
+     * @param config the configuration consumer
+     */
+    Request DELETE(final PathMatcher pathMatcher, final Consumer<Request> config);
 }

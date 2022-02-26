@@ -16,39 +16,33 @@
 package io.github.cjstehno.ersatz.server.undertow;
 
 import io.github.cjstehno.ersatz.encdec.Cookie;
-import io.github.cjstehno.ersatz.server.ClientRequest;
-import io.github.cjstehno.ersatz.server.UnderlyingServer;
 import io.github.cjstehno.ersatz.impl.*;
+import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.CookieImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.nio.ByteBuffer;
 
+import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
 import static io.github.cjstehno.ersatz.server.undertow.ResponseChunker.prepareChunks;
 import static io.undertow.util.HttpString.tryFromString;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.stream.Collectors.toList;
 
+@Slf4j @RequiredArgsConstructor @SuppressWarnings("ClassCanBeRecord")
 class ErsatzHttpHandler implements HttpHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(ErsatzHttpHandler.class);
     private static final String TRANSFER_ENCODING = "Transfer-encoding";
     private static final String NO_HEADERS = "<no-headers>";
-    private static final String EMPTY = "<empty>";
     private static final byte[] EMPTY_RESPONSE = new byte[0];
+    private final RequirementsImpl requirements;
     private final ExpectationsImpl expectations;
     private final boolean reportToConsole;
     private final boolean logResponseContent;
-
-    ErsatzHttpHandler(final ExpectationsImpl expectations, final boolean reportToConsole, final boolean logResponseContent) {
-        this.expectations = expectations;
-        this.reportToConsole = reportToConsole;
-        this.logResponseContent = logResponseContent;
-    }
 
     @Override
     public void handleRequest(final HttpServerExchange exchange) throws Exception {
@@ -56,6 +50,14 @@ class ErsatzHttpHandler implements HttpHandler {
 
         log.debug("Request({}): {}", exchange.getProtocol(), clientRequest);
 
+        // check the request against the global requirements
+        val requirementsMet = requirements.check(clientRequest);
+        if (!requirementsMet) {
+            handleMismatch(exchange, clientRequest);
+            return;
+        }
+
+        // check the request against the expectations
         expectations.findMatch(clientRequest)
             .ifPresentOrElse(
                 req -> {
@@ -64,24 +66,30 @@ class ErsatzHttpHandler implements HttpHandler {
                         send(exchange, ereq.getCurrentResponse());
                         ereq.mark(clientRequest);
 
-                    } catch (final Exception ex){
-                        log.error("Error-Response: Internal Server Error (500): {}",ex.getMessage(), ex);
+                    } catch (final Exception ex) {
+                        log.error("Error-Response: Internal Server Error (500): {}", ex.getMessage(), ex);
                         exchange.setStatusCode(500);
                         sendFullResponse(exchange, EMPTY_RESPONSE);
                     }
                 },
-                () -> {
-                    final var report = new UnmatchedRequestReport(clientRequest, expectations.getRequests().stream().map(r -> (ErsatzRequest) r).collect(toList()));
-
-                    log.warn(report.render());
-
-                    if (reportToConsole) {
-                        System.out.println(report.render());
-                    }
-
-                    exchange.setStatusCode(404).getResponseSender().send(UnderlyingServer.NOT_FOUND_BODY);
-                }
+                () -> handleMismatch(exchange, clientRequest)
             );
+    }
+
+    private void handleMismatch(final HttpServerExchange exchange, final ClientRequest clientRequest) {
+        val report = new UnmatchedRequestReport(
+            clientRequest,
+            expectations.getRequests().stream().map(r -> (ErsatzRequest) r).toList(),
+            requirements.getRequirements()
+        );
+
+        log.warn(report.render());
+
+        if (reportToConsole) {
+            System.out.println(report.render());
+        }
+
+        exchange.setStatusCode(404).getResponseSender().send(NOT_FOUND_BODY);
     }
 
     private void send(final HttpServerExchange exchange, final ErsatzResponse response) {
@@ -166,9 +174,8 @@ class ErsatzHttpHandler implements HttpHandler {
 
     private void applyResponseCookies(final HttpServerExchange exchange, final ErsatzResponse response) {
         response.getCookies().forEach((k, v) -> {
-            if (v instanceof Cookie) {
-                final Cookie ersatzCookie = (Cookie) v;
-                final var cookie = new CookieImpl(k, ersatzCookie.getValue());
+            if (v instanceof final Cookie ersatzCookie) {
+                val cookie = new CookieImpl(k, ersatzCookie.getValue());
                 cookie.setPath(ersatzCookie.getPath());
                 cookie.setDomain(ersatzCookie.getDomain());
                 cookie.setMaxAge(ersatzCookie.getMaxAge());
@@ -176,10 +183,9 @@ class ErsatzHttpHandler implements HttpHandler {
                 cookie.setVersion(ersatzCookie.getVersion());
                 cookie.setHttpOnly(ersatzCookie.isHttpOnly());
                 cookie.setComment(ersatzCookie.getComment());
-                exchange.getResponseCookies().put(k, cookie);
-
+                exchange.setResponseCookie(cookie);
             } else {
-                exchange.getResponseCookies().put(k, new CookieImpl(k, v.toString()));
+                exchange.setResponseCookie(new CookieImpl(k, v.toString()));
             }
         });
     }

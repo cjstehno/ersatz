@@ -23,6 +23,8 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 /**
  * Configuration interface for an Ersatz server instance.
  */
@@ -70,14 +72,18 @@ public interface ServerConfig {
      * @param value the timeout value
      * @return a reference to the server being configured
      */
-    ServerConfig timeout(int value);
+    default ServerConfig timeout(int value) {
+        return timeout(value, SECONDS);
+    }
 
     /**
      * Causes the mismatched request reports to be generated as console output, rather than only in the logging.
      *
      * @return a reference to the server being configured
      */
-    ServerConfig reportToConsole();
+    default ServerConfig reportToConsole() {
+        return reportToConsole(true);
+    }
 
     /**
      * Used to toggle the console output of mismatched request reports. By default they are only rendered in the logging. A value of <code>true</code>
@@ -216,4 +222,32 @@ public interface ServerConfig {
     default ServerConfig logResponseContent() {
         return logResponseContent(true);
     }
+
+    /**
+     * Allows the configuration of the number of IO and Worker threads to be used by the underlying server.
+     *
+     * @param io the number of IO threads (should be fewer than workers; default is 2)
+     * @param worker the number of worker threads (should be more than io; default is 16)
+     * @return a reference to this server configuration
+     */
+    ServerConfig serverThreads(final int io, final int worker);
+
+    /**
+     * Allows the configuration of the number of IO threads to be used by the underlying server. The worker threads will
+     * be configured to 8 times the configured io number.
+     *
+     * @param io the number of IO threads (should be a small number; default is 2)
+     * @return a reference to this server configuration
+     */
+    default ServerConfig serverThreads(final int io) {
+        return serverThreads(io, io * 8);
+    }
+
+    /**
+     * Allows the configuration of any global request requirements.
+     *
+     * @param requirements the requirements configuration consumer
+     * @return a reference to this server configuration
+     */
+    ServerConfig requirements(final Consumer<Requirements> requirements);
 }

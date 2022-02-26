@@ -20,6 +20,7 @@ import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.*;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class ErsatzResponse implements Response {
     private static final String ALLOW_HEADER = "Allow";
     private final boolean empty;
     private final ResponseEncoders localEncoders = new ResponseEncoders();
-    private final EncoderChain encoderChain = new EncoderChain(localEncoders);
+    private final EncoderChain encoderChain;
 
     private final Map<String, List<String>> headers = new LinkedHashMap<>();
     private final Map<String, Object> cookies = new LinkedHashMap<>();
@@ -59,21 +60,18 @@ public class ErsatzResponse implements Response {
     /**
      * Creates a new response implementation with the provided parameters.
      *
-     * @param empty whether or not the body is empty
+     * @param empty whether the body is empty
      * @param globalEncoders the configured global encoders
      */
     public ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders) {
         this.empty = empty;
-
-        if (globalEncoders != null) {
-            encoderChain.last(globalEncoders);
-        }
+        this.encoderChain = new EncoderChain(globalEncoders, localEncoders);
     }
 
     /**
      * Creates a new response implementation with the provided parameters, and no global encoders.
      *
-     * @param empty whether or not the body is empty
+     * @param empty whether the body is empty
      */
     public ErsatzResponse(final boolean empty) {
         this(empty, null);
@@ -236,7 +234,7 @@ public class ErsatzResponse implements Response {
     public byte[] getContent() {
         if (content != null) {
             if (cachedContent.get() == null) {
-                final var encoder = encoderChain.resolve(getContentType(), content.getClass());
+                val encoder = encoderChain.resolve(getContentType(), content.getClass());
                 if (encoder != null) {
                     log.debug("Found encoder ({}) for content ({}).", encoder, content.getClass().getSimpleName());
                     cachedContent.set(encoder.apply(content));
@@ -249,13 +247,12 @@ public class ErsatzResponse implements Response {
                     log.debug("No encoder configured for content ({}) - returning string bytes.", content.getClass().getSimpleName());
                     cachedContent.set(content.toString().getBytes(UTF_8));
                 }
-
             }
 
             return cachedContent.get();
         }
 
-        log.debug("No response content - returning empty array.");
+        log.trace("No response content - returning empty array.");
 
         return new byte[0];
     }
@@ -279,7 +276,7 @@ public class ErsatzResponse implements Response {
 
     @Override
     public Response encoders(final ResponseEncoders encoders) {
-        encoderChain.second(encoders);
+        localEncoders.merge(encoders);
         return this;
     }
 }

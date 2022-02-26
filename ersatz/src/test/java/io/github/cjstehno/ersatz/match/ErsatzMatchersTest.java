@@ -15,7 +15,6 @@
  */
 package io.github.cjstehno.ersatz.match;
 
-import io.github.cjstehno.ersatz.match.ErsatzMatchers;
 import lombok.val;
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +25,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import java.util.List;
 
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.byteArrayLike;
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,27 +33,15 @@ class ErsatzMatchersTest {
 
     @ParameterizedTest(name = "[{index}] {0} matches {1} -> {2}")
     @CsvSource({
-        "*,/alpha/bravo,true",
-        "*,/other,true",
-        "/foo,/foo,true",
-        "/foo,/bar,false",
-        "/foo,/foo/bar,false"
-    })
-    void matchingPaths(final String pattern, final String value, final boolean matches) {
-        assertEquals(matches, pathMatcher(pattern).matches(value));
-    }
-
-    @ParameterizedTest(name = "[{index}] {0} matches {1} -> {2}")
-    @CsvSource({
         "some bytes,some bytes,true",
         "some bytes,other bytes,false"
     })
-    void alikeByteArray(final String pattern, final String value, final boolean matches){
+    void alikeByteArray(final String pattern, final String value, final boolean matches) {
         assertEquals(matches, byteArrayLike(pattern.getBytes(UTF_8)).matches(value.getBytes(UTF_8)));
     }
 
     @Test @DisplayName("byte array matcher description")
-    void byteArrayMatcherDescription(){
+    void byteArrayMatcherDescription() {
         val matcher = byteArrayLike("stuff".getBytes(UTF_8));
 
         val desc = new StringDescription();
@@ -64,7 +50,7 @@ class ErsatzMatchersTest {
     }
 
     @Test @DisplayName("function matcher")
-    void functionMatcher(){
+    void functionMatcher() {
         val matcher = ErsatzMatchers.functionMatcher(x -> x instanceof String);
 
         assertTrue(matcher.matches("a string"));
@@ -76,7 +62,7 @@ class ErsatzMatchersTest {
     }
 
     @Test @DisplayName("string iterable matcher")
-    void stringIterableMatcher(){
+    void stringIterableMatcher() {
         val matcher = ErsatzMatchers.stringIterableMatcher(List.of(
             startsWith("prefix-"),
             equalTo("foobar"),

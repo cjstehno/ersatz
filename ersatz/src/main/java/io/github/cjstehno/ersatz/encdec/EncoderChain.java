@@ -17,20 +17,28 @@ package io.github.cjstehno.ersatz.encdec;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 /**
  * A function chain for response encoders.
  */
-public class EncoderChain extends FunctionChain<ResponseEncoders> {
+@SuppressWarnings("ClassCanBeRecord")
+public class EncoderChain {
+
+    private final ResponseEncoders serverLevel;
+    private final ResponseEncoders responseLevel;
 
     /**
      * Creates a new encoder chain with the provided encoders.
      *
-     * @param firstItem the initial encoders in the chain
+     * @param serverLevel   the server configured response encoders
+     * @param responseLevel the response configured response encoders
      */
-    public EncoderChain(final ResponseEncoders firstItem) {
-        super(firstItem);
+    public EncoderChain(final ResponseEncoders serverLevel, final ResponseEncoders responseLevel) {
+        this.serverLevel = serverLevel != null ? serverLevel : new ResponseEncoders();
+        this.responseLevel = responseLevel != null ? responseLevel : new ResponseEncoders();
     }
 
     /**
@@ -41,7 +49,11 @@ public class EncoderChain extends FunctionChain<ResponseEncoders> {
      * @return the encoder
      */
     public Function<Object, byte[]> resolve(final String contentType, final Class objectType) {
-        return resolveWith(e -> e.findEncoder(contentType, objectType));
+        var found = responseLevel.findEncoder(contentType, objectType);
+        if (found == null) {
+            found = serverLevel.findEncoder(contentType, objectType);
+        }
+        return found;
     }
 
     /**
@@ -53,5 +65,36 @@ public class EncoderChain extends FunctionChain<ResponseEncoders> {
      */
     public Function<Object, byte[]> resolve(final ContentType contentType, final Class objectType) {
         return resolve(contentType.getValue(), objectType);
+    }
+
+    /**
+     * Resolves the encoder for the specified response content-type and object type from the server level encoders.
+     *
+     * @param contentType the response content-type
+     * @param objectType  the response object type
+     * @return the encoder
+     */
+    public Function<Object, byte[]> resolveServerLevel(final String contentType, final Class objectType) {
+        return serverLevel.findEncoder(contentType, objectType);
+    }
+
+    /**
+     * Resolves the encoder for the specified response content-type and object type from the server level encoders.
+     *
+     * @param contentType the response content-type
+     * @param objectType  the response object type
+     * @return the encoder
+     */
+    public Function<Object, byte[]> resolveServerLevel(final ContentType contentType, final Class objectType) {
+        return serverLevel.findEncoder(contentType, objectType);
+    }
+
+    /**
+     * Retrieves an ordered collection containing the server-level and response-level encoders.
+     *
+     * @return a list of the encoder configurations
+     */
+    public Collection<ResponseEncoders> items() {
+        return List.of(serverLevel, responseLevel);
     }
 }

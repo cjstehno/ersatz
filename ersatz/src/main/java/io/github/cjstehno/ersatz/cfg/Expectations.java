@@ -26,6 +26,5 @@ package io.github.cjstehno.ersatz.cfg;
  * match.
  */
 public interface Expectations extends AnyExpectations, GetExpectations, HeadExpectations, PostExpectations, PutExpectations, DeleteExpectations, PatchExpectations, OptionsExpectations {
-
     // just the place they all come together.
 }

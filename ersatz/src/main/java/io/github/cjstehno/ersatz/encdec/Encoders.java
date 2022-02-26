@@ -116,9 +116,9 @@ public interface Encoders {
     }
 
     /**
-     * Encodes a <code>MultipartResponseContent</code> object to its multipart string representation. The generated multipart content is a simple
-     * message implementing the minimal multipart content specification - you may want to find a more robust implementation if you require a more
-     * detailed multipart API.
+     * Encodes a <code>MultipartResponseContent</code> object to its multipart string representation. The generated
+     * multipart content is a simple message implementing the minimal multipart content specification - you may want to
+     * find a more robust implementation if you require a more detailed multipart API.
      */
     Function<Object, byte[]> multipart = obj -> {
         if (!(obj instanceof MultipartResponseContent)) {

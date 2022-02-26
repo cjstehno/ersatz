@@ -64,6 +64,7 @@ public interface Timeout {
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean timedOut(final long started, final long timeoutMs) {
         return currentTimeMillis() - started >= timeoutMs;
     }

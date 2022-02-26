@@ -32,10 +32,17 @@ public class ErsatzMultipartResponseContent extends MultipartResponseContent {
     private final List<MultipartPart> parts = new LinkedList<>();
     private String boundaryTag = generateBoundary();
     private final ResponseEncoders localEncoders = new ResponseEncoders();
-    private final EncoderChain encoderChain = new EncoderChain(localEncoders);
+    private final EncoderChain encoderChain;
+
+    /**
+     * Creates a response object for multipart content.
+     */
+    public ErsatzMultipartResponseContent() {
+        this.encoderChain = new EncoderChain(null, localEncoders);
+    }
 
     public MultipartResponseContent encoders(final ResponseEncoders responseEncoders) {
-        encoderChain.second(responseEncoders);
+        localEncoders.merge(responseEncoders);
         return this;
     }
 

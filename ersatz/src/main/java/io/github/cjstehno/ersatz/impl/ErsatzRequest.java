@@ -18,34 +18,33 @@ package io.github.cjstehno.ersatz.impl;
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.cfg.Response;
-import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-import io.github.cjstehno.ersatz.match.CookieMatcher;
+import io.github.cjstehno.ersatz.impl.matchers.RequestSchemeMatcher;
+import io.github.cjstehno.ersatz.match.HeaderMatcher;
+import io.github.cjstehno.ersatz.match.PathMatcher;
+import io.github.cjstehno.ersatz.match.QueryParamMatcher;
+import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
-import org.hamcrest.core.IsIterableContaining;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
+import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
 import static io.github.cjstehno.ersatz.util.Timeout.isTrueBefore;
 import static java.util.Collections.unmodifiableList;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.anything;
 
 /**
  * <code>Request</code> implementation representing requests without body content.
  */
 public class ErsatzRequest implements Request {
 
-    private final List<RequestMatcher> matchers = new LinkedList<>();
+    private final List<Matcher<ClientRequest>> matchers = new LinkedList<>();
     private final List<Consumer<ClientRequest>> listeners = new LinkedList<>();
     private final List<Response> responses = new LinkedList<>();
     private final ResponseEncoders globalEncoders;
@@ -59,11 +58,11 @@ public class ErsatzRequest implements Request {
      * @param meth           the request method
      * @param pathMatcher    the path matcher
      * @param globalEncoders the shared global encoders
-     * @param noResponse     whether or not this is a request with an empty response (defaults to false)
+     * @param noResponse     whether this is a request with an empty response (defaults to false)
      */
-    public ErsatzRequest(final HttpMethod meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse) {
-        matchers.add(RequestMatcher.method(meth == ANY ? isOneOf(GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, TRACE) : equalTo(meth)));
-        matchers.add(RequestMatcher.path(pathMatcher));
+    public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse) {
+        matchers.add(methodMatching(meth));
+        matchers.add(pathMatcher);
 
         this.globalEncoders = globalEncoders;
         this.emptyResponse = noResponse;
@@ -76,104 +75,28 @@ public class ErsatzRequest implements Request {
      * @param pathMatcher    the path matcher
      * @param globalEncoders the shared global encoders
      */
-    public ErsatzRequest(final HttpMethod meth, final Matcher<String> pathMatcher, final ResponseEncoders globalEncoders) {
+    public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders) {
         this(meth, pathMatcher, globalEncoders, false);
     }
 
     @Override
     public Request secure(final boolean value) {
-        matchers.add(RequestMatcher.protocol(equalToIgnoringCase(value ? "HTTPS" : "HTTP")));
+        matchers.add(new RequestSchemeMatcher(value));
         return this;
     }
 
-    @Override
-    public Request headers(final Map<String, Object> heads) {
-        heads.forEach((k, v) -> {
-            if (v instanceof Matcher) {
-                header(k, (Matcher<Iterable<? super String>>) v);
-            } else {
-                header(k, v.toString());
-            }
-        });
+    @Override public Request header(final HeaderMatcher headerMatcher) {
+        matchers.add(headerMatcher);
         return this;
     }
 
-    @Override
-    public Request header(final String name, final String value) {
-        return header(name, IsIterableContaining.hasItem(value));
-    }
-
-    @Override
-    public Request header(final String name, final Matcher<Iterable<? super String>> value) {
-        matchers.add(RequestMatcher.header(name, value));
+    @Override public Request query(final QueryParamMatcher queryMatcher) {
+        matchers.add(queryMatcher);
         return this;
     }
 
-    @Override
-    public Request query(final String name, final String value) {
-        return query(name, value != null ? IsIterableContaining.hasItem(value) : IsIterableContaining.hasItem(""));
-    }
-
-    @Override
-    public Request query(final String name) {
-        return query(name, (String) null);
-    }
-
-
-    @Override
-    public Request query(final String name, final Iterable<? super String> value) {
-        final var queryMatchers = new LinkedList<Matcher<? super String>>();
-        value.forEach(v -> queryMatchers.add(equalTo(v)));
-
-        return query(name, stringIterableMatcher(queryMatchers));
-    }
-
-    @Override
-    public Request query(final String name, final Matcher<Iterable<? super String>> matcher) {
-        matchers.add(RequestMatcher.query(name, matcher));
-        return this;
-    }
-
-    @Override
-    public Request queries(final Map<String, Object> map) {
-        map.forEach((k, v) -> {
-            if (v instanceof Matcher) {
-                query(k, (Matcher<Iterable<? super String>>) v);
-            } else if (v instanceof Collection) {
-                query(k, (Collection<? super String>) v);
-            } else {
-                query(k, v.toString());
-            }
-        });
-        return this;
-    }
-
-    @Override
-    public Request cookie(final String name, final String value) {
-        return cookie(name, new CookieMatcher().value(value));
-    }
-
-    @Override
-    public Request cookie(final String name, final Matcher<Cookie> value) {
-        matchers.add(RequestMatcher.cookie(name, value));
-        return this;
-    }
-
-    @Override
-    public Request cookies(Matcher<Map<String, Cookie>> matcher) {
-        matchers.add(RequestMatcher.cookies(matcher));
-        return this;
-    }
-
-    @Override
-    public Request cookies(Map<String, Object> cookies) {
-        cookies.forEach((k, v) -> {
-            if (v instanceof Matcher) {
-                cookie(k, (Matcher<Cookie>) v);
-            } else {
-                cookie(k, v.toString());
-            }
-        });
+    @Override public Request cookie(RequestCookieMatcher cookieMatcher) {
+        matchers.add(cookieMatcher);
         return this;
     }
 
@@ -205,13 +128,8 @@ public class ErsatzRequest implements Request {
     }
 
     @Override
-    public Request called(final int count) {
-        return called(equalTo(count));
-    }
-
-    @Override
     public Request matcher(final Matcher<ClientRequest> matcher) {
-        matchers.add(RequestMatcher.matcher(matcher));
+        matchers.add(matcher);
         return this;
     }
 
@@ -250,7 +168,7 @@ public class ErsatzRequest implements Request {
      *
      * @return an immutable list of the configured matchers.
      */
-    public List<RequestMatcher> getRequestMatchers() {
+    public List<Matcher<ClientRequest>> getRequestMatchers() {
         return unmodifiableList(matchers);
     }
 
@@ -259,7 +177,7 @@ public class ErsatzRequest implements Request {
      *
      * @param matcher the matcher to be added
      */
-    protected void addMatcher(final RequestMatcher matcher) {
+    protected void addMatcher(final Matcher<ClientRequest> matcher) {
         matchers.add(matcher);
     }
 
@@ -301,7 +219,7 @@ public class ErsatzRequest implements Request {
 
         matchers.forEach(m -> {
             final var desc = new StringDescription();
-            m.getMatcher().describeTo(desc);
+            m.describeTo(desc);
             str.append(desc).append(", ");
         });
 

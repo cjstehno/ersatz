@@ -19,6 +19,7 @@ import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.undertow.server.HttpServerExchange;
+import lombok.val;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -45,11 +46,11 @@ class UndertowClientRequest implements ClientRequest {
     }
 
     /**
-     * Used to retrieve the request protocol, generally HTTP or HTTPS.
+     * Used to retrieve the request scheme, generally HTTP or HTTPS.
      *
-     * @return the request protocol
+     * @return the request scheme
      */
-    @Override public String getProtocol() {
+    @Override public String getScheme() {
         return exchange.getRequestScheme();
     }
 
@@ -101,21 +102,22 @@ class UndertowClientRequest implements ClientRequest {
      * @return the request cookies
      */
     @Override public Map<String, Cookie> getCookies() {
-        final var cookies = new LinkedHashMap<String, Cookie>();
+        val cookies = new LinkedHashMap<String, Cookie>();
 
-        exchange.getRequestCookies().entrySet().forEach(entry -> {
-            final String name = entry.getKey();
-            final io.undertow.server.handlers.Cookie cookie = entry.getValue();
-            cookies.put(name, new Cookie(
-                cookie.getValue(),
-                cookie.getComment(),
-                cookie.getDomain(),
-                cookie.getPath(),
-                cookie.getVersion(),
-                cookie.isHttpOnly(),
-                cookie.getMaxAge(),
-                cookie.isSecure()
-            ));
+        exchange.requestCookies().forEach(c -> {
+            cookies.put(
+                c.getName(),
+                new Cookie(
+                    c.getValue(),
+                    c.getComment(),
+                    c.getDomain(),
+                    c.getPath(),
+                    c.getVersion(),
+                    c.isHttpOnly(),
+                    c.getMaxAge(),
+                    c.isSecure()
+                )
+            );
         });
 
         return cookies;

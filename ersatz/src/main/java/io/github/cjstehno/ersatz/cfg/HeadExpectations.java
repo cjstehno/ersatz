@@ -15,11 +15,10 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
-
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
 
 /**
  * Defines the available HEAD request expectations.
@@ -32,8 +31,8 @@ public interface HeadExpectations {
      * @param path the expected request path.
      * @return a <code>Request</code> configuration object
      */
-    default Request HEAD(String path) {
-        return HEAD(pathMatcher(path));
+    default Request HEAD(final String path) {
+        return HEAD(PathMatcher.pathMatching(path));
     }
 
     /**
@@ -42,8 +41,8 @@ public interface HeadExpectations {
      * @param matcher the path matcher
      * @return a <code>Request</code> configuration object
      */
-    default Request HEAD(Matcher<String> matcher) {
-        return HEAD(matcher, (Consumer<Request>) null);
+    default Request HEAD(final Matcher<String> matcher) {
+        return HEAD(PathMatcher.pathMatching(matcher));
     }
 
     /**
@@ -54,8 +53,8 @@ public interface HeadExpectations {
      * @param config the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    default Request HEAD(String path, Consumer<Request> config) {
-        return HEAD(pathMatcher(path), config);
+    default Request HEAD(final String path, final Consumer<Request> config) {
+        return HEAD(PathMatcher.pathMatching(path), config);
     }
 
     /**
@@ -66,5 +65,26 @@ public interface HeadExpectations {
      * @param config  the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    Request HEAD(Matcher<String> matcher, Consumer<Request> config);
+    default Request HEAD(final Matcher<String> matcher, final Consumer<Request> config) {
+        return HEAD(PathMatcher.pathMatching(matcher), config);
+    }
+
+    /**
+     * Allows configuration of a HEAD request expectation.
+     *
+     * @param pathMatcher the path matcher
+     * @return a <code>Request</code> configuration object
+     */
+    default Request HEAD(final PathMatcher pathMatcher) {
+        return HEAD(pathMatcher, null);
+    }
+
+    /**
+     * Allows configuration of a HEAD request expectation with the provided <code>Consumer</code>.
+     *
+     * @param pathMatcher the path matcher
+     * @param config the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    Request HEAD(final PathMatcher pathMatcher, final Consumer<Request> config);
 }

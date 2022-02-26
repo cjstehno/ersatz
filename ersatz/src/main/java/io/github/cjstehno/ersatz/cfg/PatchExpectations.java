@@ -15,11 +15,12 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * Defines the available PATCH request expectations.
@@ -32,8 +33,8 @@ public interface PatchExpectations {
      * @param path the expected request path
      * @return a <code>RequestWithContent</code> configuration object
      */
-    default RequestWithContent PATCH(String path) {
-        return PATCH(pathMatcher(path));
+    default RequestWithContent PATCH(final String path) {
+        return PATCH(pathMatching(path));
     }
 
     /**
@@ -42,20 +43,20 @@ public interface PatchExpectations {
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
      */
-    default RequestWithContent PATCH(Matcher<String> matcher) {
-        return PATCH(matcher, (Consumer<RequestWithContent>) null);
+    default RequestWithContent PATCH(final Matcher<String> matcher) {
+        return PATCH(pathMatching(matcher));
     }
 
     /**
      * Allows configuration of a PATCH request expectation using the provided <code>Consumer&lt;RequestWithContent&gt;</code>. The
      * <code>Consumer&lt;RequestWithContent&gt;</code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
-     * @param path the expected request path
-     * @return a <code>RequestWithContent</code> configuration object
+     * @param path   the expected request path
      * @param config the configuration consumer
+     * @return a <code>RequestWithContent</code> configuration object
      */
-    default RequestWithContent PATCH(String path, Consumer<RequestWithContent> config) {
-        return PATCH(pathMatcher(path), config);
+    default RequestWithContent PATCH(final String path, final Consumer<RequestWithContent> config) {
+        return PATCH(pathMatching(path), config);
     }
 
     /**
@@ -63,8 +64,29 @@ public interface PatchExpectations {
      * <code>Consumer&lt;RequestWithContent&gt;</code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param matcher the path matcher
+     * @param config  the configuration consumer
      * @return a <code>RequestWithContent</code> configuration object
-     * @param config the configuration consumer
      */
-    RequestWithContent PATCH(Matcher<String> matcher, Consumer<RequestWithContent> config);
+    default RequestWithContent PATCH(final Matcher<String> matcher, final Consumer<RequestWithContent> config) {
+        return PATCH(pathMatching(matcher), config);
+    }
+
+    /**
+     * Allows configuration of a PATCH request expectation.
+     *
+     * @param pathMatcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     */
+    default RequestWithContent PATCH(final PathMatcher pathMatcher) {
+        return PATCH(pathMatcher, null);
+    }
+
+    /**
+     * Allows configuration of a PATCH request expectation with the provided <code>Consumer</code>.
+     *
+     * @param pathMatcher the path matcher
+     * @param config  the configuration consumer
+     * @return a <code>RequestWithContent</code> configuration object
+     */
+    RequestWithContent PATCH(final PathMatcher pathMatcher, final Consumer<RequestWithContent> config);
 }

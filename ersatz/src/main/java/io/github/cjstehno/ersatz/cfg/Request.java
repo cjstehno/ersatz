@@ -16,11 +16,24 @@
 package io.github.cjstehno.ersatz.cfg;
 
 import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.match.HeaderMatcher;
+import io.github.cjstehno.ersatz.match.QueryParamMatcher;
+import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.val;
 import org.hamcrest.Matcher;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
+import static io.github.cjstehno.ersatz.match.HeaderMatcher.headerMatching;
+import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryExists;
+import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryMatching;
+import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.cookieMatching;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * Configuration interface for HTTP request expectations.
@@ -45,24 +58,36 @@ public interface Request {
     /**
      * Specifies a request header to be configured in the expected request. The value specified must match one of the
      * request header values mapped to the expected header name. Multiple header specification may be added to the
-     * expectations; each specified header must exist in the request. If an OR-style match is desired a Hamcrest Matcher
-     * should be specified (see the <code>header(String, Matcher&lt;Iterable&lt;String&gt;&gt;)</code> method).
+     * expectations; each specified header must exist in the request.
      *
      * @param name  the header name
      * @param value the header value
      * @return this request
      */
-    Request header(final String name, final String value);
+    default Request header(final String name, final String value) {
+        return header(headerMatching(name, value));
+    }
 
     /**
-     * Specifies a request header matcher to be configured in the expected request. If multiple matchers are defined with this method, each must
-     * match successfully for the request to be matched.
+     * Specifies a request header matcher to be configured in the expected request. If multiple matchers are defined
+     * with this method, each must match successfully for the request to be matched.
      *
      * @param name    the header name
      * @param matcher the header value matcher
      * @return this request
      */
-    Request header(final String name, final Matcher<Iterable<? super String>> matcher);
+    default Request header(final String name, final Matcher<Iterable<? super String>> matcher) {
+        return header(headerMatching(name, matcher));
+    }
+
+    /**
+     * Specifies a request header matcher to be configured in the expected request. If multiple matchers are defined
+     * with this method, each must match successfully for the request to be matched.
+     *
+     * @param headerMatcher the header matcher
+     * @return this request
+     */
+    Request header(final HeaderMatcher headerMatcher);
 
     /**
      * Specifies request headers as a Map of names to values to be configured in the expected request. The map values may be <code>String</code> or
@@ -71,7 +96,16 @@ public interface Request {
      * @param heads the map of headers
      * @return this request
      */
-    Request headers(final Map<String, Object> heads);
+    default Request headers(final Map<String, Object> heads) {
+        heads.forEach((k, v) -> {
+            if (v instanceof Matcher) {
+                header(k, (Matcher<Iterable<? super String>>) v);
+            } else {
+                header(k, v.toString());
+            }
+        });
+        return this;
+    }
 
     /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
@@ -81,18 +115,27 @@ public interface Request {
      * @param value the parameter value
      * @return this request
      */
-    Request query(final String name, final String value);
+    default Request query(final String name, final String value) {
+        return query(queryMatching(name, value));
+    }
 
     /**
-     * Used to specify a valueless request query parameter to be configured in the expected request. As per the HTTP spec, the query string
-     * parameters may be specified multiple times with different values to denote a parameter with multiple values.
-     * <p>
-     * This is equivalent to calling <code>query(name, null)</code>.
+     * Used to specify that the request has the given query string, with no care about its value.
      *
      * @param name  the parameter name
      * @return this request
      */
-    Request query(final String name);
+    default Request query(final String name) {
+        return query(queryExists(name));
+    }
+
+    /**
+     * Used to specify that the request must have a query parameter matching the provided matcher.
+     *
+     * @param queryMatcher the query param matcher
+     * @return this request
+     */
+    Request query(final QueryParamMatcher queryMatcher);
 
     /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
@@ -102,7 +145,12 @@ public interface Request {
      * @param values the list of values
      * @return this request
      */
-    Request query(final String name, final Iterable<? super String> values);
+    default Request query(final String name, final Iterable<? super String> values) {
+        val queryMatchers = new LinkedList<Matcher<? super String>>();
+        values.forEach(v -> queryMatchers.add(equalTo(v)));
+
+        return query(queryMatching(name, stringIterableMatcher(queryMatchers)));
+    }
 
     /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
@@ -112,7 +160,9 @@ public interface Request {
      * @param matcher the query string matcher
      * @return this request
      */
-    Request query(final String name, final Matcher<Iterable<? super String>> matcher);
+    default Request query(final String name, final Matcher<Iterable<? super String>> matcher) {
+        return query(queryMatching(name, matcher));
+    }
 
     /**
      * Used to specify a map of request query parameters for configuration on the expected request. The map values may be Strings or Matchers.
@@ -120,7 +170,18 @@ public interface Request {
      * @param map the map of query parameters
      * @return this request
      */
-    Request queries(final Map<String, Object> map);
+    default Request queries(final Map<String, Object> map) {
+        map.forEach((k, v) -> {
+            if (v instanceof Matcher) {
+                query(k, (Matcher<Iterable<? super String>>) v);
+            } else if (v instanceof Collection) {
+                query(k, (Collection<? super String>) v);
+            } else {
+                query(k, v.toString());
+            }
+        });
+        return this;
+    }
 
     /**
      * Specifies a request cookie to be configured with the given name and value.
@@ -129,7 +190,9 @@ public interface Request {
      * @param value the cookie value
      * @return this request
      */
-    Request cookie(final String name, final String value);
+    default Request cookie(final String name, final String value) {
+        return cookie(cookieMatching(name, value));
+    }
 
     /**
      * Specifies a request cookie to be configured with the given name and matcher.
@@ -138,24 +201,17 @@ public interface Request {
      * @param matcher the cookie matcher
      * @return this request
      */
-    Request cookie(final String name, final Matcher<Cookie> matcher);
+    default Request cookie(final String name, final Matcher<Cookie> matcher) {
+        return cookie(cookieMatching(name, matcher));
+    }
 
     /**
-     * Specifies a matcher for matching all cookies. This is useful with the <code>NoCookiesMatcher</code>.
+     * Specifies a request cookie to be configured with the given matcher.
      *
-     * @param matcher the matcher to be used
+     * @param cookieMatcher the request cookie matcher
      * @return this request
      */
-    Request cookies(final Matcher<Map<String, Cookie>> matcher);
-
-    /**
-     * Used to configure a map of cookies on the request. The map values may be Strings or Matchers. All of the configured matchers must be successful
-     * in order for the request to be matched.
-     *
-     * @param cookies the map of cookies
-     * @return this request
-     */
-    Request cookies(final Map<String, Object> cookies);
+    Request cookie(final RequestCookieMatcher cookieMatcher);
 
     /**
      * Specifies a listener which will be called with the active request whenever this request is matched at test-time.
@@ -180,7 +236,9 @@ public interface Request {
      * @param count the expected call count
      * @return a reference to this request
      */
-    Request called(final int count);
+    default Request called(final int count) {
+        return called(equalTo(count));
+    }
 
     /**
      * Configures a matcher for the <code>ClientRequest</code>, which allows ad-hoc matching based on the request. This does <i>not</i> disallow

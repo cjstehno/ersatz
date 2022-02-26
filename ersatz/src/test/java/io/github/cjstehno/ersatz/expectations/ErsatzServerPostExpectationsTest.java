@@ -29,6 +29,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import static io.github.cjstehno.ersatz.TestAssertions.*;
 import static io.github.cjstehno.ersatz.cfg.ContentType.*;
@@ -37,6 +38,7 @@ import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
 import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
@@ -48,17 +50,51 @@ public class ErsatzServerPostExpectationsTest {
         cfg.https();
         cfg.decoder(TEXT_PLAIN, Decoders.string(UTF_8));
         cfg.decoder(APPLICATION_URLENCODED, Decoders.passthrough);
+        cfg.encoder(TEXT_PLAIN, String.class, Encoders.text(UTF_8));
     });
     @SuppressWarnings("unused") private HttpClientExtension.Client client;
+
+    @ParameterizedTest(name = "[{index}] layered encoders/decoders: https({0})")
+    @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
+    void layeredEncodingDecoding(final boolean https) throws IOException {
+        server.expectations(expect -> {
+            expect.POST("/posting", req -> {
+                req.secure(https);
+                req.called(1);
+                // this decoder overrides the one defined at the server level
+                req.decoder(
+                    TEXT_PLAIN,
+                    (bytes, context) -> "Double-decoded: " + Decoders.string(UTF_8).apply(bytes, context)
+//                    (bytes, context) -> "Double-decoded: " + context.getDecoderChain().resolve(TEXT_PLAIN).apply(bytes, context)
+                );
+                req.body("Double-decoded: " + TEXT_PAYLOAD, TEXT_PLAIN);
+                req.responder(res -> {
+                    // this encoder overrides the one defined at the server level
+                    res.encoder(
+                        TEXT_PLAIN,
+                        String.class,
+                        o -> ("Double-encoded: " + o.toString()).getBytes(UTF_8)
+                    );
+                    res.code(200);
+                    res.body("Some Content", TEXT_PLAIN);
+                });
+            });
+        });
+
+        val response = client.post("/posting", create(TEXT_PAYLOAD, parse("text/plain; charset=utf-8")), https);
+        assertOkWithString("Double-encoded: Some Content", response);
+        verify(server);
+    }
 
     @ParameterizedTest(name = "[{index}] path only: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
     void withPath(final boolean https, final String responseText) throws IOException {
         server.expects().POST("/something").body(TEXT_PAYLOAD, TEXT_PLAIN.withCharset("utf-8")).secure(https).called(1).responds().body(responseText, TEXT_PLAIN);
 
-        val mediaType = parse("text/plain; charset=utf-8");
-        val requestBody = create(TEXT_PAYLOAD, mediaType);
-        assertOkWithString(responseText, client.post("/something", requestBody, https));
+        assertOkWithString(
+            responseText,
+            client.post("/something", create(TEXT_PAYLOAD, parse("text/plain; charset=utf-8")), https)
+        );
         verify(server);
     }
 
@@ -152,7 +188,12 @@ public class ErsatzServerPostExpectationsTest {
             expect.POST("/updates", req -> {
                 req.secure(https);
                 req.called(1);
+
+                // testing all three versions here - redundant, but ok for testing
                 req.param("foo", "bar");
+                req.param("foo", List.of("bar"));
+                req.param("foo", hasItem("bar"));
+
                 req.responds().code(201);
             });
         });

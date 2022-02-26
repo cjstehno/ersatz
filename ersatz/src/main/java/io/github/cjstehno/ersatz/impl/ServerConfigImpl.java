@@ -17,18 +17,18 @@ package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.cfg.Expectations;
+import io.github.cjstehno.ersatz.cfg.Requirements;
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+import lombok.Getter;
 
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Default implementation of the <code>ServerConfig</code> interface.
@@ -45,16 +45,20 @@ public class ServerConfigImpl implements ServerConfig {
     private int desiredHttpsPort = EPHEMERAL_PORT;
     private final RequestDecoders globalDecoders = new RequestDecoders();
     private final ResponseEncoders globalEncoders = new ResponseEncoders();
-    private final ExpectationsImpl expectations;
+    @Getter private final ExpectationsImpl expectations;
+    @Getter private final RequirementsImpl requirements;
     private Runnable starter;
     private long timeout;
     private boolean logResponseContent;
+    private int ioThreads = 2;
+    private int workerThreads = 16;
 
     /**
      * Creates a new empty configuration instance.
      */
     public ServerConfigImpl() {
         this.expectations = new ExpectationsImpl(globalEncoders, globalDecoders);
+        this.requirements = new RequirementsImpl();
     }
 
     /**
@@ -145,15 +149,6 @@ public class ServerConfigImpl implements ServerConfig {
     }
 
     /**
-     * Retrieves the configuration request expectations.
-     *
-     * @return the expectations
-     */
-    public ExpectationsImpl getExpectations() {
-        return expectations;
-    }
-
-    /**
      * Retrieves the configured timeout value for server requests.
      *
      * @return the server timeout value
@@ -163,10 +158,11 @@ public class ServerConfigImpl implements ServerConfig {
     }
 
     /**
-     * Used to clear out the configured expectations.
+     * Used to clear out the configured expectations and requirements.
      */
     public void clearExpectations() {
         expectations.clear();
+        requirements.clear();
     }
 
     /**
@@ -176,6 +172,24 @@ public class ServerConfigImpl implements ServerConfig {
      */
     public boolean isLogResponseContent() {
         return logResponseContent;
+    }
+
+    /**
+     * Retrieves the IO threads configuration setting. Defaults to 2.
+     *
+     * @return the number of IO threads
+     */
+    public int getIoThreads() {
+        return ioThreads;
+    }
+
+    /**
+     * Retrieves the number of Worker threads configured. Defaults to 8.
+     *
+     * @return the number of worker threads
+     */
+    public int getWorkerThreads() {
+        return workerThreads;
     }
 
     /**
@@ -208,10 +222,6 @@ public class ServerConfigImpl implements ServerConfig {
         return this;
     }
 
-    @Override public ServerConfig timeout(final int value) {
-        return timeout(value, SECONDS);
-    }
-
     /**
      * Used to toggle the console output of mismatched request reports. By default they are only rendered in the logging. A value of <code>true</code>
      * will cause the report to be output on the console as well.
@@ -223,10 +233,6 @@ public class ServerConfigImpl implements ServerConfig {
     public ServerConfig reportToConsole(boolean toConsole) {
         mismatchToConsole = toConsole;
         return this;
-    }
-
-    @Override public ServerConfig reportToConsole() {
-        return reportToConsole(true);
     }
 
     /**
@@ -291,6 +297,17 @@ public class ServerConfigImpl implements ServerConfig {
 
     @Override public ServerConfig logResponseContent(boolean value) {
         logResponseContent = value;
+        return this;
+    }
+
+    @Override public ServerConfig serverThreads(int io, int worker) {
+        ioThreads = io;
+        workerThreads = worker;
+        return this;
+    }
+
+    @Override public ServerConfig requirements(final Consumer<Requirements> requires) {
+        requires.accept(requirements);
         return this;
     }
 }

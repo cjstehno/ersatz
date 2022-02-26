@@ -21,8 +21,8 @@ import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.cfg.RequestWithContent;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import org.hamcrest.Matcher;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -38,8 +38,8 @@ import static java.util.Collections.unmodifiableList;
 public class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = new LinkedList<>();
-    private RequestDecoders globalDecoders;
-    private ResponseEncoders globalEncoders;
+    private final RequestDecoders globalDecoders;
+    private final ResponseEncoders globalEncoders;
 
     /**
      * Creates a new expectations container with the given encoders and decoders.
@@ -60,43 +60,43 @@ public class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    public Request ANY(final Matcher<String> matcher, final Consumer<Request> consumer) {
-        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.ANY, matcher, globalDecoders, globalEncoders), consumer);
+    public Request ANY(final PathMatcher pathMatcher, final Consumer<Request> consumer) {
+        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.ANY, pathMatcher, globalDecoders, globalEncoders), consumer);
     }
 
     @Override
-    public Request GET(final Matcher<String> matcher, final Consumer<Request> consumer) {
-        return applyExpectation(new ErsatzRequest(HttpMethod.GET, matcher, globalEncoders), consumer);
+    public Request GET(final PathMatcher pathMatcher, final Consumer<Request> consumer) {
+        return applyExpectation(new ErsatzRequest(HttpMethod.GET, pathMatcher, globalEncoders), consumer);
     }
 
     @Override
-    public Request HEAD(final Matcher<String> matcher, final Consumer<Request> consumer) {
-        return applyExpectation(new ErsatzRequest(HttpMethod.HEAD, matcher, globalEncoders, true), consumer);
+    public Request HEAD(final PathMatcher pathMatcher, final Consumer<Request> consumer) {
+        return applyExpectation(new ErsatzRequest(HttpMethod.HEAD, pathMatcher, globalEncoders, true), consumer);
     }
 
     @Override
-    public RequestWithContent POST(Matcher<String> matcher, Consumer<RequestWithContent> consumer) {
-        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.POST, matcher, globalDecoders, globalEncoders), consumer);
+    public RequestWithContent POST(final PathMatcher pathMatcher, Consumer<RequestWithContent> consumer) {
+        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.POST, pathMatcher, globalDecoders, globalEncoders), consumer);
     }
 
     @Override
-    public RequestWithContent PUT(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.PUT, matcher, globalDecoders, globalEncoders), config);
+    public RequestWithContent PUT(final PathMatcher pathMatcher, Consumer<RequestWithContent> config) {
+        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.PUT, pathMatcher, globalDecoders, globalEncoders), config);
     }
 
     @Override
-    public Request DELETE(Matcher<String> matcher, Consumer<Request> config) {
-        return applyExpectation(new ErsatzRequest(HttpMethod.DELETE, matcher, globalEncoders), config);
+    public Request DELETE(final PathMatcher pathMatcher, Consumer<Request> config) {
+        return applyExpectation(new ErsatzRequest(HttpMethod.DELETE, pathMatcher, globalEncoders), config);
     }
 
     @Override
-    public RequestWithContent PATCH(Matcher<String> matcher, Consumer<RequestWithContent> config) {
-        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.PATCH, matcher, globalDecoders, globalEncoders), config);
+    public RequestWithContent PATCH(final PathMatcher pathMatcher, Consumer<RequestWithContent> config) {
+        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.PATCH, pathMatcher, globalDecoders, globalEncoders), config);
     }
 
     @Override
-    public Request OPTIONS(Matcher<String> matcher, Consumer<Request> config) {
-        return applyExpectation(new ErsatzRequest(HttpMethod.OPTIONS, matcher, globalEncoders), config);
+    public Request OPTIONS(final PathMatcher pathMatcher, Consumer<Request> config) {
+        return applyExpectation(new ErsatzRequest(HttpMethod.OPTIONS, pathMatcher, globalEncoders), config);
     }
 
     private <R extends Request> R applyExpectation(final R request, final Consumer<R> consumer) {
@@ -134,7 +134,7 @@ public class ExpectationsImpl implements Expectations {
      * This method will block until the call count expectations are met or the timeout expires.
      *
      * @param timeout the amount of time to wait in the specified units
-     * @param unit the timeout unit to be used
+     * @param unit    the timeout unit to be used
      * @return a value of true if all requests are verified
      */
     public boolean verify(final long timeout, final TimeUnit unit) {

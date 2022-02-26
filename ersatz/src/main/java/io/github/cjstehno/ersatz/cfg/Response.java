@@ -248,8 +248,9 @@ public interface Response {
     Response encoder(ContentType contentType, Class objectType, Function<Object, byte[]> encoder);
 
     /**
-     * Registers the collection of shared encoders. Encoders registered on the response itself, will override these, but the shared encoders will
-     * override any matching global encoders.
+     * Registers the collection of shared encoders on the response. Any server-level encoders will be overridden. This
+     * equivalent to configuring individual encoders on the response. Any existing encoder that matches the same
+     * content-type and object type will be replaced by the incoming encoder (at the response-level).
      *
      * @param encoders the shared encoders to be applied
      * @return a reference to this response configuration

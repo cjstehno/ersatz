@@ -17,8 +17,6 @@ package io.github.cjstehno.ersatz.cfg;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import io.github.cjstehno.ersatz.cfg.Expectations;
-import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
@@ -34,14 +32,28 @@ public class ServerConfigExtensions {
      * <p>
      * If auto-start is enabled (default) the server will be started after the expectations are applied.
      *
-     * @param self the type of object being extended
+     * @param self    the type of object being extended
      * @param closure the Groovy <code>Closure</code> which will provide expectation configuration via DSL
-     * @return a reference to this server
+     * @return a reference to this server config
      */
     public static ServerConfig expectations(
         final ServerConfig self,
         @DelegatesTo(value = Expectations.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return self.expectations(ConsumerWithDelegate.create(closure));
+    }
+
+    /**
+     * Used to configure any global request requirements using the provided Groovy Closure.
+     *
+     * @param self    the type of object being extended.
+     * @param closure the Groovy Closure which will provide the configuration
+     * @return a reference to the server config
+     */
+    public static ServerConfig requirements(
+        final ServerConfig self,
+        @DelegatesTo(value = Requirements.class, strategy = DELEGATE_FIRST) final Closure closure
+    ) {
+        return self.requirements(ConsumerWithDelegate.create(closure));
     }
 }

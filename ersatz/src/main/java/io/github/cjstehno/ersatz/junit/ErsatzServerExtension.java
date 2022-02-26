@@ -33,7 +33,7 @@ import static java.util.Arrays.stream;
  * <p>
  * BeforeEach test - the expectations will be cleared.
  * AfterEach test - the server will be stopped.
- *
+ * <p>
  * Note: the <code>verify()</code> method is intentionally NOT called by this extension so that it may be called
  * only when needed.
  */
@@ -52,20 +52,15 @@ public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallb
     }
 
     private static ErsatzServer findInstance(final Object testInstance, final boolean create) throws Exception {
-        try {
-            val field = findField(testInstance);
-            Object instance = field.get(testInstance);
+        val field = findField(testInstance);
+        Object instance = field.get(testInstance);
 
-            if (instance == null && create) {
-                instance = field.getType().getDeclaredConstructor().newInstance();
-                field.set(testInstance, instance);
-            }
-
-            return (ErsatzServer) instance;
-
-        } catch (Exception throwable) {
-            throw new Exception(throwable);
+        if (instance == null && create) {
+            instance = field.getType().getDeclaredConstructor().newInstance();
+            field.set(testInstance, instance);
         }
+
+        return (ErsatzServer) instance;
     }
 
     private static Field findField(final Object testInstance) throws Exception {

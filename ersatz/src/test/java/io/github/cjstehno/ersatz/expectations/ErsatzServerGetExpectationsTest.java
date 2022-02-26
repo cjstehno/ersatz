@@ -59,10 +59,13 @@ import static io.github.cjstehno.ersatz.cfg.ContentType.*;
 import static io.github.cjstehno.ersatz.encdec.Cookie.cookie;
 import static io.github.cjstehno.ersatz.encdec.MultipartResponseContent.multipartResponse;
 import static io.github.cjstehno.ersatz.match.CookieMatcher.cookieMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
+import static io.github.cjstehno.ersatz.match.PredicateMatcher.predicatedBy;
 import static io.github.cjstehno.ersatz.util.BasicAuth.basicAuth;
 import static io.github.cjstehno.ersatz.util.HttpClientExtension.Client.basicAuthHeader;
 import static java.lang.System.currentTimeMillis;
 import static java.net.Proxy.Type.HTTP;
+import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.toList;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
@@ -225,7 +228,7 @@ public class ErsatzServerGetExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] Multipart binary: https({0})")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
-    void multipartBinary(final boolean https, @TempDir final File dir) throws IOException, FileUploadException {
+    void multipartBinary(final boolean https, @TempDir final File dir) throws Exception {
         server.expectations(expect -> {
             expect.GET("/data", req -> {
                 req.secure(https);
@@ -663,7 +666,44 @@ public class ErsatzServerGetExpectationsTest {
         verify(server);
     }
 
-    @RequiredArgsConstructor
+    @Test void pathMatchingWithPredicate() throws IOException {
+        server.expectations(expect -> {
+            expect.GET(
+                pathMatching(predicatedBy(
+                    path -> path.toLowerCase(ROOT).startsWith("/foo")
+                )),
+                req -> {
+                    req.responder(res -> res.code(200));
+                }
+            );
+        });
+
+        val response = client.get("/FOOTBALL");
+
+        assertEquals(200, response.code());
+        verify(server);
+    }
+
+    @Test void patchMatchingWithPredicateAndDescription() throws IOException {
+        server.expectations(expect -> {
+            expect.GET(
+                pathMatching(predicatedBy(
+                    "a string starting with /foo (ignoring case)",
+                    path -> path.toLowerCase(ROOT).startsWith("/foo")
+                )),
+                req -> {
+                    req.responder(res -> res.code(200));
+                }
+            );
+        });
+
+        val response = client.get("/FOOTBALL");
+
+        assertEquals(200, response.code());
+        verify(server);
+    }
+
+    @RequiredArgsConstructor @SuppressWarnings("ClassCanBeRecord")
     private static class ResponseDownloadContent implements UploadContext {
 
         private final ResponseBody body;

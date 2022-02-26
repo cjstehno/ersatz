@@ -15,15 +15,14 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import io.github.cjstehno.ersatz.encdec.DecoderChain;
-import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.github.cjstehno.ersatz.cfg.ContentType.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class DecoderChainTest {
 
@@ -35,48 +34,41 @@ class DecoderChainTest {
             d.register(APPLICATION_XML, (b, ctx) -> "foxtrot-global");
         });
 
-        final var shared = RequestDecoders.decoders(d -> {
-            d.register(TEXT_PLAIN, (b, ctx) -> "alpha-shared");
-            d.register(APPLICATION_JSON, (b, ctx) -> "delta-shared");
-        });
-
         final var local = RequestDecoders.decoders(d -> {
             d.register("text/alternate", (b, ctx) -> "bravo-local");
             d.register("application/date", (b, ctx) -> "echo-local");
         });
 
-        DecoderChain chain = new DecoderChain(global);
-        chain.first(local);
-        chain.second(shared);
-
-        assertEquals(3, chain.size());
-
-        assertEquals(local, chain.getAt(0));
-        assertEquals(shared, chain.getAt(1));
-        assertEquals(global, chain.getAt(2));
+        val chain = new DecoderChain(global, local);
 
         assertEquals("bravo-local", chain.resolve("text/alternate").apply(null, null));
         assertEquals("echo-local", chain.resolve("application/date").apply(null, null));
 
-        assertEquals("delta-shared", chain.resolve(APPLICATION_JSON).apply(null, null));
-        assertEquals("alpha-shared", chain.resolve(TEXT_PLAIN).apply(null, null));
-
+        assertNull(chain.resolve(APPLICATION_JSON));
+        assertEquals("alpha-global", chain.resolve(TEXT_PLAIN).apply(null, null));
         assertEquals("foxtrot-global", chain.resolve(APPLICATION_XML).apply(null, null));
     }
 
-    @Test @DisplayName("other chain")
-    void otherChain(){
-        val decoders = RequestDecoders.decoders(d -> {
-            d.register("text/alternate", (b, ctx) -> "bravo-local");
-            d.register("application/date", (b, ctx) -> "echo-local");
+    @Test void decoderChainWithOverride() {
+        val global = RequestDecoders.decoders(d -> {
+            d.register(TEXT_PLAIN, Decoders.string());
         });
 
-        val chain = new DecoderChain(null);
+        val local = RequestDecoders.decoders(d -> {
+            d.register(
+                TEXT_PLAIN,
+                (bytes, context) -> "local: " + context.getDecoderChain().resolveServerLevel(TEXT_PLAIN).apply(bytes, context)
+            );
+        });
 
-        // add a second before we have a first (should become first)
-        chain.second(decoders);
+        val chain = new DecoderChain(global, local);
 
-        assertEquals(1, chain.size());
-        assertSame(decoders, chain.getAt(0));
+        val content = "some content".getBytes(UTF_8);
+        val decoded = chain.resolve(TEXT_PLAIN).apply(
+            content,
+            new DecodingContext(content.length, "text/plain", "UTF-8", chain)
+        );
+
+        assertEquals("local: some content", decoded);
     }
 }

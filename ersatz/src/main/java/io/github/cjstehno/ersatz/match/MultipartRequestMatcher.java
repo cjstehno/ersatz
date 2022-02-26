@@ -17,6 +17,7 @@ package io.github.cjstehno.ersatz.match;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.encdec.MultipartRequestContent;
+import lombok.val;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -181,9 +182,8 @@ public class MultipartRequestMatcher extends BaseMatcher<MultipartRequestContent
             return false;
         }
 
-        final var results = new LinkedList<Boolean>();
-
-        final MultipartRequestContent mrc = (MultipartRequestContent) item;
+        val results = new LinkedList<Boolean>();
+        val mrc = (MultipartRequestContent) item;
 
         matchers.forEach((fn, matcher) -> {
             final var part = mrc.getAt(fn);

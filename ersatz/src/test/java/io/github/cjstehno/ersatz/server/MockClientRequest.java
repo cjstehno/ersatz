@@ -15,20 +15,18 @@
  */
 package io.github.cjstehno.ersatz.server;
 
-import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
+import io.github.cjstehno.ersatz.encdec.Cookie;
+import lombok.val;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
 
 public class MockClientRequest implements ClientRequest {
 
     private HttpMethod method;
-    private String protocol;
+    private String scheme;
     private String path;
     private final Map<String, Deque<String>> queryParams = new LinkedHashMap<>();
     private final Map<String, Deque<String>> headers = new LinkedHashMap<>();
@@ -46,13 +44,18 @@ public class MockClientRequest implements ClientRequest {
         this.method = method;
     }
 
-    public MockClientRequest(final HttpMethod method, final String path){
+    public MockClientRequest(final HttpMethod method, final String path) {
         this(method);
         setPath(path);
     }
 
-    public MockClientRequest(final byte[] content){
+    public MockClientRequest(final byte[] content) {
         setBody(content);
+    }
+
+    public MockClientRequest(final byte[] content, final String contentType) {
+        setBody(content);
+        setContentType(contentType);
     }
 
     public void setCookies(Map<String, Cookie> cookies) {
@@ -68,8 +71,8 @@ public class MockClientRequest implements ClientRequest {
         return method;
     }
 
-    @Override public String getProtocol() {
-        return protocol;
+    @Override public String getScheme() {
+        return scheme;
     }
 
     @Override public String getPath() {
@@ -99,6 +102,12 @@ public class MockClientRequest implements ClientRequest {
     public void setBodyParameters(final Map<String, Deque<String>> params) {
         bodyParameters.clear();
         bodyParameters.putAll(params);
+    }
+
+    public MockClientRequest param(final String name, final String... values) {
+        val param = bodyParameters.computeIfAbsent(name, key -> new LinkedList<>());
+        param.addAll(Arrays.asList(values));
+        return this;
     }
 
     @Override public long getContentLength() {
@@ -140,8 +149,13 @@ public class MockClientRequest implements ClientRequest {
         this.method = method;
     }
 
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
+
+    public MockClientRequest scheme(final String scheme) {
+        this.scheme = scheme;
+        return this;
     }
 
     public void setPath(String path) {

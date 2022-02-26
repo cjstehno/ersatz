@@ -38,7 +38,7 @@ public interface ClientRequest {
      *
      * @return the request protocol
      */
-    String getProtocol();
+    String getScheme();
 
     /**
      * Retrieves the request path.

@@ -15,11 +15,10 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
 import org.hamcrest.Matcher;
 
 import java.util.function.Consumer;
-
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.pathMatcher;
 
 /**
  * Defines the available POST request expectations.
@@ -32,8 +31,8 @@ public interface PostExpectations {
      * @param path the request path.
      * @return a <code>RequestWithContent</code> configuration object
      */
-    default RequestWithContent POST(String path) {
-        return POST(pathMatcher(path));
+    default RequestWithContent POST(final String path) {
+        return POST(PathMatcher.pathMatching(path));
     }
 
     /**
@@ -42,20 +41,20 @@ public interface PostExpectations {
      * @param matcher the path matcher
      * @return a <code>RequestWithContent</code> configuration object
      */
-    default RequestWithContent POST(Matcher<String> matcher) {
-        return POST(matcher, (Consumer<RequestWithContent>) null);
+    default RequestWithContent POST(final Matcher<String> matcher) {
+        return POST(PathMatcher.pathMatching(matcher));
     }
 
     /**
      * Allows configuration of a POST request expectation using the provided <code>Consumer&lt;RequestWithContent&gt;</code>. The
      * <code>Consumer&lt;RequestWithContent&gt;</code> will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
-     * @param path the expected request path
-     * @return a <code>RequestWithContent</code> configuration object
+     * @param path   the expected request path
      * @param config the configuration consumer
+     * @return a <code>RequestWithContent</code> configuration object
      */
-    default RequestWithContent POST(String path, Consumer<RequestWithContent> config) {
-        return POST(pathMatcher(path), config);
+    default RequestWithContent POST(final String path, final Consumer<RequestWithContent> config) {
+        return POST(PathMatcher.pathMatching(path), config);
     }
 
     /**
@@ -63,8 +62,29 @@ public interface PostExpectations {
      * <code>Consumer&lt;RequestWithContent&gt;</code>will have an instance of <code>RequestWithContent</code> passed into it for configuration.
      *
      * @param matcher the path matcher
+     * @param config  the configuration consumer
      * @return a <code>RequestWithContent</code> configuration object
-     * @param config the configuration consumer
      */
-    RequestWithContent POST(Matcher<String> matcher, Consumer<RequestWithContent> config);
+    default RequestWithContent POST(final Matcher<String> matcher, final Consumer<RequestWithContent> config) {
+        return POST(PathMatcher.pathMatching(matcher), config);
+    }
+
+    /**
+     * Allows configuration of a POST request expectation.
+     *
+     * @param pathMatcher the path matcher
+     * @return a <code>RequestWithContent</code> configuration object
+     */
+    default RequestWithContent POST(final PathMatcher pathMatcher) {
+        return POST(pathMatcher, null);
+    }
+
+    /**
+     * Allows configuration of a POST request expectation with the provided <code>Consumer</code>.
+     *
+     * @param pathMatcher the path matcher
+     * @param config  the configuration consumer
+     * @return a <code>RequestWithContent</code> configuration object
+     */
+    RequestWithContent POST(final PathMatcher pathMatcher, final Consumer<RequestWithContent> config);
 }

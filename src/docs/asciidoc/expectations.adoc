@@ -305,6 +305,8 @@ It will show the incoming request that was not matched with all of its known det
 
 Alternately, you may specify the `reportToConsole true` configuration in the server config. This will cause the report to be written to the standard output console as well as into the log output. This is useful for cases when you might have logging turned off.
 
+TIP: Be aware that any <<Request Requirements>> are tested before expectation request matchers.
+
 ==== Hamcrest Matchers
 
 Many of the expectation methods accept http://hamcrest.org/[Hamcrest] `Matcher` instances as an alternate argument. Hamcrest matchers allow for a more rich and expressive matching configuration. Consider the following configuration:
@@ -342,6 +344,18 @@ server.expectations {
 ----
 
 This allows for additional flexibility in configuring expectations.
+
+=== Specialized Matchers
+
+There are a handful of specialized Hamcrest matchers defined and used in the API. They are used as the underlying internal matchers, but are also useful in your code - these may be found in the `io.github.cjstehno.ersatz.match` package:
+
+* `BodyMatcher` - provides various matching methods for body content.
+* `BodyParamMatcher` - provides matching methods for request body paramters.
+* `PathMatcher` - provides matching methods for request paths.
+* `QueryParamMatcher` - provides matching methods for request query string parameters.
+* `HeaderMatcher` - provides matching methods for request header values.
+* `RequestCookieMatcher` - provides matching methods for request cookie data.
+* `PredicateMatcher` - provides an adapter for wrapping simple `Predicate` functions as matchers.
 
 ==== Matching Cookies
 

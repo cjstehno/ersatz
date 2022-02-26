@@ -16,15 +16,16 @@
 package io.github.cjstehno.ersatz.encdec;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
+import lombok.RequiredArgsConstructor;
 
 import javax.activation.MimeType;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
+import static lombok.AccessLevel.PACKAGE;
 
 /**
  * Configuration manager for a collection of request content decoders.
@@ -91,7 +92,7 @@ public class RequestDecoders {
 
         final List<DecoderMapping> found = decoders.stream()
             .filter(c -> c.mimeType.match(mimeType))
-            .collect(Collectors.toList());
+            .toList();
 
         if (found.isEmpty()) {
             return null;
@@ -108,14 +109,10 @@ public class RequestDecoders {
         }
     }
 
+    @RequiredArgsConstructor(access = PACKAGE) @SuppressWarnings("ClassCanBeRecord")
     private static class DecoderMapping {
 
-        final MimeType mimeType;
-        final BiFunction<byte[], DecodingContext, Object> decoder;
-
-        DecoderMapping(MimeType mimeType, BiFunction<byte[], DecodingContext, Object> decoder) {
-            this.mimeType = mimeType;
-            this.decoder = decoder;
-        }
+        private final MimeType mimeType;
+        private final BiFunction<byte[], DecodingContext, Object> decoder;
     }
 }
