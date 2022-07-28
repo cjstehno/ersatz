@@ -17,6 +17,7 @@ package io.github.cjstehno.ersatz.util;
 
 import io.github.cjstehno.ersatz.cfg.Request;
 
+import static io.github.cjstehno.ersatz.util.HttpHeaders.AUTHORIZATION;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Base64.getEncoder;
 
@@ -28,7 +29,7 @@ public interface BasicAuth {
     /**
      * The authorization header name.
      */
-    String AUTHORIZATION_HEADER = "Authorization";
+    String AUTHORIZATION_HEADER = AUTHORIZATION;
 
     /**
      * Used to generate the Authorization header value for the given username and password.

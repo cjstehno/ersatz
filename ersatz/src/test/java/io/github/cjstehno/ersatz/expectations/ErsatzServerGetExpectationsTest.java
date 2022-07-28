@@ -63,6 +63,7 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static io.github.cjstehno.ersatz.match.PredicateMatcher.predicatedBy;
 import static io.github.cjstehno.ersatz.util.BasicAuth.basicAuth;
 import static io.github.cjstehno.ersatz.util.HttpClientExtension.Client.basicAuthHeader;
+import static io.github.cjstehno.ersatz.util.HttpHeaders.*;
 import static java.lang.System.currentTimeMillis;
 import static java.net.Proxy.Type.HTTP;
 import static java.util.Locale.ROOT;
@@ -460,7 +461,7 @@ public class ErsatzServerGetExpectationsTest {
             expect.GET("/download", req -> {
                 req.secure(https);
                 req.called(1);
-                req.header("Content-Disposition", "attachment; filename=\"data.zip\"");
+                req.header(CONTENT_DISPOSITION, "attachment; filename=\"data.zip\"");
                 req.responds().body(zipBites, "application/zip");
             });
         });
@@ -576,7 +577,7 @@ public class ErsatzServerGetExpectationsTest {
         assertOkWithString("ok", client.get(
             "/showkermit",
             builder -> {
-                builder.header("Cookie", "kermit=frog; path=/showkermit");
+                builder.header(COOKIE, "kermit=frog; path=/showkermit");
             },
             https
         ));
@@ -639,7 +640,7 @@ public class ErsatzServerGetExpectationsTest {
         val response = client.get("/gzip", https);
 
         assertEquals(200, response.code());
-        assertTrue(response.networkResponse().headers("Content-Encoding").contains("gzip"));
+        assertTrue(response.networkResponse().headers(CONTENT_ENCODING).contains("gzip"));
         assertEquals(responseText, response.body().string());
         verify(server);
     }
