@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id "com.github.hierynomus.license" version '0.16.1'
     id 'maven-publish'
-    id 'com.github.ben-manes.versions' version '0.41.0'
+    id 'com.github.ben-manes.versions' version '0.42.0'
     id "com.github.johnrengelman.shadow" version '7.1.2'
     id 'jacoco'
     id 'signing'
@@ -31,7 +31,7 @@ dependencies {
     api 'org.hamcrest:hamcrest-library:2.2'
 
     implementation 'javax.activation:activation:1.1.1'
-    implementation 'org.slf4j:slf4j-api:1.7.33'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
     implementation 'commons-fileupload:commons-fileupload:1.4'
     implementation 'commons-io:commons-io:2.11.0'
 
@@ -40,14 +40,14 @@ dependencies {
 
     // testing
 
-    testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.10'
+    testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.11'
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-    testImplementation 'org.mockito:mockito-junit-jupiter:4.2.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.6.1'
 
-    testImplementation 'org.awaitility:awaitility:4.1.1'
-    testImplementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    testImplementation  'com.fasterxml.jackson.core:jackson-databind:2.13.1'
+    testImplementation 'org.awaitility:awaitility:4.2.0'
+    testImplementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    testImplementation  'com.fasterxml.jackson.core:jackson-databind:2.13.3'
 }
 
 test {
