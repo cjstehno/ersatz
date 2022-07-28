@@ -15,10 +15,41 @@
  */
 package io.github.cjstehno.ersatz.util;
 
+import org.junit.jupiter.api.Test;
+
+import static io.github.cjstehno.ersatz.util.StatusCode.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StatusCodeTest {
 
-    // FIXME: test the enum values
-    // FIXME: test the isXXX checks
+    @Test void ofValue(){
+        assertEquals(OK, StatusCode.of(200));
+        assertEquals(LOOP_DETECTED, StatusCode.of(508));
+        assertEquals(NOT_FOUND, StatusCode.of(404));
+    }
+
+    @Test void informational(){
+        assertTrue(isInformational(CONTINUE));
+        assertFalse(isInformational(OK));
+    }
+
+    @Test void successful(){
+        assertTrue(isSuccessful(OK));
+        assertFalse(isSuccessful(NOT_FOUND));
+    }
+
+    @Test void redirection(){
+        assertTrue(isRedirection(PERMANENT_REDIRECT));
+        assertFalse(isRedirection(INTERNAL_SERVER_ERROR));
+    }
+
+    @Test void clientError(){
+        assertTrue(isClientError(NOT_FOUND));
+        assertFalse(isClientError(INTERNAL_SERVER_ERROR));
+    }
+
+    @Test void serverError(){
+        assertTrue(isServerError(INTERNAL_SERVER_ERROR));
+        assertFalse(isServerError(NOT_FOUND));
+    }
 }
