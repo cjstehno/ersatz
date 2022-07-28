@@ -42,7 +42,7 @@ public interface Expectations extends AnyExpectations, GetExpectations, HeadExpe
      * @return a <code>Request</code> configuration object
      */
     default Request request(final HttpMethod method, final String path) {
-        return ANY(pathMatching(path));
+        return request(method, pathMatching(path));
     }
 
     /**
@@ -53,7 +53,7 @@ public interface Expectations extends AnyExpectations, GetExpectations, HeadExpe
      * @return a <code>Request</code> configuration object
      */
     default Request request(final HttpMethod method, final Matcher<String> matcher) {
-        return ANY(pathMatching(matcher));
+        return request(method, pathMatching(matcher));
     }
 
     /**
@@ -66,7 +66,7 @@ public interface Expectations extends AnyExpectations, GetExpectations, HeadExpe
      * @return a <code>Request</code> configuration object
      */
     default Request request(final HttpMethod method, final String path, Consumer<Request> consumer) {
-        return ANY(pathMatching(path), consumer);
+        return request(method, pathMatching(path), consumer);
     }
 
     /**
@@ -79,7 +79,7 @@ public interface Expectations extends AnyExpectations, GetExpectations, HeadExpe
      * @return a <code>Request</code> configuration object
      */
     default Request request(final HttpMethod method, final Matcher<String> matcher, final Consumer<Request> consumer) {
-        return ANY(pathMatching(matcher), consumer);
+        return request(method, pathMatching(matcher), consumer);
     }
 
     /**
