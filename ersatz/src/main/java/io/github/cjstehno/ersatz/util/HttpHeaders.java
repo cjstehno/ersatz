@@ -20,23 +20,98 @@ package io.github.cjstehno.ersatz.util;
  */
 public interface HttpHeaders {
 
+    /**
+     * Authorization HTTP Header.
+     */
     String AUTHORIZATION = "Authorization";
+
+    /**
+     * Cache-Control HTTP Header.
+     */
     String CACHE_CONTROL = "Cache-Control";
+
+    /**
+     * Expires HTTP Header.
+     */
     String EXPIRES = "Expires";
+
+    /**
+     * Pragma HTTP Header.
+     */
     String PRAGMA = "Pragma";
+
+    /**
+     * Keep-Alive HTTP Header.
+     */
     String KEEP_ALIVE = "Keep-Alive";
+
+    /**
+     * Accept-Encoding HTTP Header.
+     */
     String ACCEPT_ENCODING = "Accept-Encoding";
+
+    /**
+     * Cookie HTTP Header.
+     */
     String COOKIE = "Cookie";
+
+    /**
+     * Set-Cookie HTTP Header.
+     */
     String SET_COOKIE = "Set-Cookie";
+
+    /**
+     * Content-Disposition HTTP Header.
+     */
     String CONTENT_DISPOSITION = "Content-Disposition";
+
+    /**
+     * Content-Length HTTP Header.
+     */
     String CONTENT_LENGTH = "Content-Length";
+
+    /**
+     * Content-Type HTTP Header.
+     */
     String CONTENT_TYPE = "Content-Type";
+
+    /**
+     * Content-Encoding HTTP Header.
+     */
     String CONTENT_ENCODING = "Content-Encoding";
+
+    /**
+     * Location HTTP Header.
+     */
     String LOCATION = "Location";
+
+    /**
+     * Host HTTP Header.
+     */
     String HOST = "Host";
+
+    /**
+     * Referer HTTP Header.
+     */
     String REFERER = "Referer";
+
+    /**
+     * User-Agent HTTP Header.
+     */
     String USER_AGENT = "User-Agent";
+
+    /**
+     * Allow HTTP Header.
+     */
     String ALLOW = "Allow";
+
+    /**
+     * Transfer-Encoding HTTP Header.
+     */
     String TRANSFER_ENCODING = "Transfer-Encoding";
+
+    /**
+     * Date HTTP Header.
+     */
     String DATE = "Date";
 }
