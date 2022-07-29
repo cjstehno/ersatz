@@ -241,6 +241,16 @@ public interface Request {
     }
 
     /**
+     * Configures a call count verifier such that at least one call is expected. This is analogous to calling
+     * <code>called(1)</code>.
+     *
+     * @return a reference to this request
+     */
+    default Request called(){
+        return called(1);
+    }
+
+    /**
      * Configures a matcher for the <code>ClientRequest</code>, which allows ad-hoc matching based on the request. This does <i>not</i> disallow
      * using other matcher methods, but be careful to consider any potential overlaps or unintended exclusions.
      *

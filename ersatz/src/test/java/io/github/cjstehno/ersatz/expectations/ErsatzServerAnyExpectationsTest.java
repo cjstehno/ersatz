@@ -16,6 +16,9 @@
 package io.github.cjstehno.ersatz.expectations;
 
 import io.github.cjstehno.ersatz.ErsatzServer;
+import io.github.cjstehno.ersatz.cfg.RequestWithContent;
+import io.github.cjstehno.ersatz.encdec.Decoders;
+import io.github.cjstehno.ersatz.encdec.Encoders;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +29,9 @@ import java.io.IOException;
 
 import static io.github.cjstehno.ersatz.TestAssertions.assertOkWithString;
 import static io.github.cjstehno.ersatz.TestAssertions.verify;
+import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_URLENCODED;
 import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
 import static org.hamcrest.Matchers.startsWith;
@@ -34,10 +39,11 @@ import static org.hamcrest.Matchers.startsWith;
 @ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
 public class ErsatzServerAnyExpectationsTest {
 
-    // FIXME: do some testing with ANY as with/out content
-
+    private static final String TEXT_PAYLOAD = "this is some text!";
     private final ErsatzServer server = new ErsatzServer(cfg -> {
         cfg.https();
+        cfg.decoder(TEXT_PLAIN, Decoders.string(UTF_8));
+        cfg.encoder(TEXT_PLAIN, String.class, Encoders.text(UTF_8));
     });
     @SuppressWarnings("unused") private HttpClientExtension.Client client;
 
@@ -94,6 +100,25 @@ public class ErsatzServerAnyExpectationsTest {
 
         assertOkWithString(responseText, client.get("/loader/insecure", https));
         assertOkWithString(responseText, client.post("/loader/insecure", create("", parse(TEXT_PLAIN.getValue())), https));
+        verify(server);
+    }
+
+    @ParameterizedTest(name = "[{index}] request with content and path only: https({0}) -> {1}")
+    @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
+    void withContentAndPath(final boolean https, final String responseText) throws IOException {
+        server.expectations(expect -> {
+            expect.ANY("/something", req -> {
+                req.secure(https);
+                req.called();
+                ((RequestWithContent)req).body(TEXT_PAYLOAD, TEXT_PLAIN.withCharset("utf-8"));
+                req.responds().body(responseText, TEXT_PLAIN);
+            });
+        });
+
+        assertOkWithString(
+            responseText,
+            client.post("/something", create(TEXT_PAYLOAD, parse("text/plain; charset=utf-8")), https)
+        );
         verify(server);
     }
 }
