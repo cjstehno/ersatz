@@ -62,7 +62,7 @@ class ErsatzRequestTest {
 
     @Test @DisplayName("to string")
     void string() {
-        assertEquals("Expectations (ErsatzRequest): HTTP method is (<POST>), Path matches \"/testing\", ", request.toString());
+        assertEquals("Expectations (ErsatzRequest): HTTP method is (<POST>), Path matches \"/testing\", and Called ANYTHING", request.toString());
     }
 
     @Test @DisplayName("method and path")

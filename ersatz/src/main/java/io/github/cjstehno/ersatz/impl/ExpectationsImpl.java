@@ -23,6 +23,7 @@ import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,6 +37,7 @@ import static java.util.Collections.unmodifiableList;
 /**
  * Implementation of the <code>Expectations</code> interface.
  */
+@Slf4j
 public class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = new LinkedList<>();
@@ -151,7 +153,8 @@ public class ExpectationsImpl implements Expectations {
     public boolean verify(final long timeout, final TimeUnit unit) {
         for (final Request r : requests) {
             if (!((ErsatzRequest) r).verify(timeout, unit)) {
-                throw new IllegalArgumentException("Expectations for " + r + " were not met.");
+                log.error("Call count mismatch -> {}", r);
+                return false;
             }
         }
 

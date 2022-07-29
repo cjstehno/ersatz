@@ -352,12 +352,7 @@ class ExpectationsImplTest {
     @Test @DisplayName("verification (failure)")
     void verificationFailure() {
         expectations.POST("/alpha").called(equalTo(1));
-
-        final var thrown = assertThrows(IllegalArgumentException.class, () -> {
-            expectations.verify();
-        });
-
-        assertEquals("Expectations for Expectations (ErsatzRequestWithContent): HTTP method is (<POST>), Path matches \"/alpha\",  were not met.", thrown.getMessage());
+        assertFalse(expectations.verify());
     }
 
     @Test @DisplayName("POST(String)")

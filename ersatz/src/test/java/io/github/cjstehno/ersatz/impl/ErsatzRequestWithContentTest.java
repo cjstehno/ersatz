@@ -79,7 +79,7 @@ class ErsatzRequestWithContentTest {
     void string() {
         request.body("Some body", TEXT_PLAIN);
 
-        assertEquals("Expectations (ErsatzRequestWithContent): HTTP method is (<POST>), Path matches \"/posting\", Body is \"Some body\" and content-type is a string starting with text/plain, ", request.toString());
+        assertEquals("Expectations (ErsatzRequestWithContent): HTTP method is (<POST>), Path matches \"/posting\", Body is \"Some body\" and content-type is a string starting with text/plain, and Called ANYTHING", request.toString());
     }
 
     @Test @DisplayName("matching body")
