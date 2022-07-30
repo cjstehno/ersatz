@@ -240,11 +240,11 @@ public class ErsatzResponse implements Response {
                     cachedContent.set(encoder.apply(content));
 
                 } else if (content instanceof byte[]) {
-                    log.debug("No encoder configured for byte[] - returning raw bytes.");
+                    log.warn("No encoder configured for byte[] of type ({}) - returning raw bytes.", getContentType());
                     cachedContent.set((byte[]) content);
 
                 } else {
-                    log.debug("No encoder configured for content ({}) - returning string bytes.", content.getClass().getSimpleName());
+                    log.warn("No encoder configured for content ({}) of type ({}) - returning string bytes.", content.getClass().getSimpleName(), getContentType());
                     cachedContent.set(content.toString().getBytes(UTF_8));
                 }
             }

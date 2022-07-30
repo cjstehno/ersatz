@@ -34,6 +34,7 @@ import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryExists;
 import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryMatching;
 import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.cookieMatching;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 /**
  * Configuration interface for HTTP request expectations.
@@ -242,12 +243,12 @@ public interface Request {
 
     /**
      * Configures a call count verifier such that at least one call is expected. This is analogous to calling
-     * <code>called(1)</code>.
+     * <code>called(greaterThanOrEqualTo(1))</code>.
      *
      * @return a reference to this request
      */
-    default Request called(){
-        return called(1);
+    default Request called() {
+        return called(greaterThanOrEqualTo(1));
     }
 
     /**

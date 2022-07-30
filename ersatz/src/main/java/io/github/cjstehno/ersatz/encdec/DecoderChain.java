@@ -69,17 +69,7 @@ public class DecoderChain {
      * @param contentType the request content type
      * @return the decoder function
      */
-    public BiFunction<byte[], DecodingContext, Object> resolveServerLevel(final String contentType) {
-        return serverLevel.findDecoder(contentType);
-    }
-
-    /**
-     * Resolves the decoder for the specified request content-type from the "server level" decoders.
-     *
-     * @param contentType the request content type
-     * @return the decoder function
-     */
-    public BiFunction<byte[], DecodingContext, Object> resolveServerLevel(final ContentType contentType) {
+    BiFunction<byte[], DecodingContext, Object> resolveServerLevel(final ContentType contentType) {
         return serverLevel.findDecoder(contentType);
     }
 }
