@@ -223,6 +223,8 @@ public class ErsatzRequest implements Request {
             str.append(desc).append(", ");
         });
 
+        str.append("and Called ").append(callVerifier);
+
         return str.toString();
     }
 }

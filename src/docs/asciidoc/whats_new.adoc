@@ -1,5 +1,12 @@
 == What's New
 
+=== In 3.2
+
+* Added generic `request` expectations to the `Expectations` interface - this allows programmatic specification of the request method.
+* Added static constants for commonly used HTTP headers and response status codes (see `HttpHeaders` and `StatusCode`).
+* Added JSON encoder and decoder implementations to the Groovy extension (based on Groovy internal support). These used to be in the core library, but were removed when it was converted to Java.
+* Minor tweaks and fixes.
+
 === In 3.1
 
 * Reduced the number of IO and Worker threads configured in Undertow by default.

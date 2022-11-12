@@ -15,6 +15,13 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.match.PathMatcher;
+import org.hamcrest.Matcher;
+
+import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
+
 /**
  * The <code>Expectations</code> interface is the root element of the expectation configuration, which provides the
  * ability to define request expectations and responses for test interactions.
@@ -26,5 +33,75 @@ package io.github.cjstehno.ersatz.cfg;
  * match.
  */
 public interface Expectations extends AnyExpectations, GetExpectations, HeadExpectations, PostExpectations, PutExpectations, DeleteExpectations, PatchExpectations, OptionsExpectations {
-    // just the place they all come together.
+
+    /**
+     * Allows configuration of a request expectation matching any request method.
+     *
+     * @param method the request method
+     * @param path   the expected request path
+     * @return a <code>Request</code> configuration object
+     */
+    default Request request(final HttpMethod method, final String path) {
+        return request(method, pathMatching(path));
+    }
+
+    /**
+     * Allows configuration of a request expectation matching any request method.
+     *
+     * @param method  the request method
+     * @param matcher the path matcher
+     * @return a <code>Request</code> configuration object
+     */
+    default Request request(final HttpMethod method, final Matcher<String> matcher) {
+        return request(method, pathMatching(matcher));
+    }
+
+    /**
+     * Allows configuration of request expectation matching any request method using the provided <code>Consumer&lt;Request&gt;</code>. The
+     * <code>Consumer&lt;Request&gt;</code> will have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param method   the request method
+     * @param path     the expected request path
+     * @param consumer the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    default Request request(final HttpMethod method, final String path, Consumer<Request> consumer) {
+        return request(method, pathMatching(path), consumer);
+    }
+
+    /**
+     * Allows configuration of request expectation matching any request method using the provided <code>Consumer&lt;Request&gt;</code>. The
+     * <code>Consumer&lt;Request&gt;</code> will have an instance of <code>Request</code> passed into it for configuration.
+     *
+     * @param method   the request method
+     * @param matcher  the path matcher
+     * @param consumer the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    default Request request(final HttpMethod method, final Matcher<String> matcher, final Consumer<Request> consumer) {
+        return request(method, pathMatching(matcher), consumer);
+    }
+
+    /**
+     * Allows configuration of request expectation matching any request method with a path matching the provided
+     * matcher.
+     *
+     * @param method      the request method
+     * @param pathMatcher the patch matcher
+     * @return a <code>Request</code> configuration object
+     */
+    default Request request(final HttpMethod method, final PathMatcher pathMatcher) {
+        return ANY(pathMatcher, null);
+    }
+
+    /**
+     * Allows configuration of request expectation matching any request method with a path matching the provided
+     * matcher. The consumer will be used to provide addition expectations on the request.
+     *
+     * @param method      the request method
+     * @param pathMatcher the patch matcher
+     * @param consumer    the configuration consumer
+     * @return a <code>Request</code> configuration object
+     */
+    Request request(final HttpMethod method, final PathMatcher pathMatcher, Consumer<Request> consumer);
 }

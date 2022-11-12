@@ -210,6 +210,52 @@ ersatzServer.expectations {
 
 In a RESTful interface, a `PATCH` request may be used as a "modify" operation for an existing resource.
 
+==== ANY
+
+The `ANY` request method creates a request expectation that can match any HTTP method - the body of the expectation will
+have the same format as the HTTP method expectations described earlier.
+
+[source,java]
+----
+server.expectations(expect -> {
+    expect.ANY("/something", req -> {
+        req.secure();
+        req.called(1);
+        req.responder(res -> res.body(responseText, TEXT_PLAIN));
+    });
+});
+----
+
+==== Generic Method
+
+In version 3.2 a generic set of request expectation methods were added to allow the definition of request expectations
+based on variable HTTP request methods:
+
+----
+Request request(final HttpMethod method, final String path)
+Request request(final HttpMethod method, final Matcher<String> matcher)
+Request request(final HttpMethod method, final String path, Consumer<Request> consumer)
+Request request(final HttpMethod method, final Matcher<String> matcher, final Consumer<Request> consumer)
+Request request(final HttpMethod method, final PathMatcher pathMatcher)
+Request request(final HttpMethod method, final PathMatcher pathMatcher, Consumer<Request> consumer)
+----
+
+These expectation methods work in the same manner as the method-specific interfaces described above.
+
+This functionality is useful when writing tests for an endpoint that may accept multiple HTTP methods for the same
+underlying endpoint resource.
+
+[source,java]
+----
+server.expectations(expect -> {
+    expect.request(GET, "/something", req -> {
+        req.secure();
+        req.called(1);
+        req.responds().body(responseText, TEXT_PLAIN);
+    });
+});
+----
+
 ==== TRACE
 
 The `TRACE` method is generally meant for debugging and diagnostics. The request will have no request content; however, if the request is valid, the response will contain the entire request message in the entity-body, with a Content-Type of `message/http`. With that in mind, the `TRACE` method is implemented a bit differently than the other HTTP methods. It's not available for mocking, but it will provide an echo of the request as it is supposed to. For example the following request (raw):

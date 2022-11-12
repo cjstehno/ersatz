@@ -64,15 +64,19 @@ public abstract class BodyMatcher extends BaseMatcher<ClientRequest> {
 
         private Object decode(final ClientRequest request) {
             val decoder = decoderChain.resolve(contentType);
-            return decoder != null ? decoder.apply(
-                request.getBody(),
-                new DecodingContext(
-                    request.getContentLength(),
-                    request.getContentType(),
-                    request.getCharacterEncoding(),
-                    decoderChain
-                )
-            ) : null;
+            if (decoder != null) {
+                return decoder.apply(
+                    request.getBody(),
+                    new DecodingContext(
+                        request.getContentLength(),
+                        request.getContentType(),
+                        request.getCharacterEncoding(),
+                        decoderChain
+                    )
+                );
+            } else {
+                throw new IllegalStateException("No decoder found for \"" + contentType + "\" - Did you configure one?");
+            }
         }
 
         @Override public void describeTo(final Description description) {

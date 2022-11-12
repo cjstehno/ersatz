@@ -19,6 +19,8 @@ import lombok.EqualsAndHashCode;
 
 import java.nio.charset.Charset;
 
+import static io.github.cjstehno.ersatz.util.HttpHeaders.CONTENT_TYPE;
+
 /**
  * A content-type representation. Some standard content-types are provided as static constants for use elsewhere,
  * others may be created as instances of this class as needed.
@@ -29,7 +31,7 @@ public class ContentType {
     /**
      * The name key for the HTTP content-type header.
      */
-    public static final String CONTENT_TYPE_HEADER = "Content-Type";
+    public static final String CONTENT_TYPE_HEADER = CONTENT_TYPE;
 
     /**
      * Constant content-type for application/javascript.
@@ -50,6 +52,11 @@ public class ContentType {
      * Constant content-type for application/xml.
      */
     public static final ContentType APPLICATION_XML = new ContentType("application/xml");
+
+    /**
+     * Constant content-type for application/octet-stream.
+     */
+    public static final ContentType APPLICATION_OCTET_STREAM = new ContentType("application/octet-stream");
 
     /**
      * Constant content-type for audio/mpeg.

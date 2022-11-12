@@ -53,20 +53,22 @@ As of 3.0.0 the built-in JSON Encoder was removed (to avoid dependency lock-in).
 
 ==== Groovy
 
-An encoder (serializer) implemented with the Groovy `JsonObject` could be implemented as:
+An encoder (serializer) implemented with the Groovy `JsonOutput` could be implemented as:
 
 public static final Function<Object, byte[]> json = obj -> (obj != null ? toJson(obj) : "{}").getBytes(UTF_8);
 
 [source,groovy]
 ----
 encoder(ContentType.APPLICATION_JSON, MyType){ obj ->
-    JsonObject.toJson(obj).getBytes(UTF_8)
+    JsonOutput.toJson(obj).getBytes(UTF_8)
 }
 ----
 
+TIP: If you are using the Groovy extension library, this encoder is available as the `JsonEncoder` class.
+
 ==== Jackson
 
-A decoder (parser) implemented using the Jackson JSON library could be implemented as:
+An encoder (serializer) implemented using the Jackson JSON library could be implemented as:
 
 [source,java]
 ----

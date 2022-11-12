@@ -23,6 +23,7 @@ import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,11 +31,13 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
 import static java.util.Collections.unmodifiableList;
 
 /**
  * Implementation of the <code>Expectations</code> interface.
  */
+@Slf4j
 public class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = new LinkedList<>();
@@ -60,43 +63,53 @@ public class ExpectationsImpl implements Expectations {
     }
 
     @Override
+    public Request request(final HttpMethod method, final PathMatcher pathMatcher, final Consumer<Request> consumer) {
+        // FIXME: do I still need both request implementations?
+        return applyExpectation(new ErsatzRequestWithContent(method, pathMatcher, globalDecoders, globalEncoders), consumer);
+    }
+
+    private RequestWithContent requestWithContent(final HttpMethod method, final PathMatcher pathMatcher, final Consumer<RequestWithContent> consumer) {
+        return applyExpectation(new ErsatzRequestWithContent(method, pathMatcher, globalDecoders, globalEncoders), consumer);
+    }
+
+    @Override
     public Request ANY(final PathMatcher pathMatcher, final Consumer<Request> consumer) {
-        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.ANY, pathMatcher, globalDecoders, globalEncoders), consumer);
+        return request(HttpMethod.ANY, pathMatcher, consumer);
     }
 
     @Override
     public Request GET(final PathMatcher pathMatcher, final Consumer<Request> consumer) {
-        return applyExpectation(new ErsatzRequest(HttpMethod.GET, pathMatcher, globalEncoders), consumer);
+        return request(HttpMethod.GET, pathMatcher, consumer);
     }
 
     @Override
     public Request HEAD(final PathMatcher pathMatcher, final Consumer<Request> consumer) {
-        return applyExpectation(new ErsatzRequest(HttpMethod.HEAD, pathMatcher, globalEncoders, true), consumer);
+        return request(HttpMethod.HEAD, pathMatcher, consumer);
     }
 
     @Override
     public RequestWithContent POST(final PathMatcher pathMatcher, Consumer<RequestWithContent> consumer) {
-        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.POST, pathMatcher, globalDecoders, globalEncoders), consumer);
+        return requestWithContent(POST, pathMatcher, consumer);
     }
 
     @Override
     public RequestWithContent PUT(final PathMatcher pathMatcher, Consumer<RequestWithContent> config) {
-        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.PUT, pathMatcher, globalDecoders, globalEncoders), config);
+        return requestWithContent(PUT, pathMatcher, config);
     }
 
     @Override
     public Request DELETE(final PathMatcher pathMatcher, Consumer<Request> config) {
-        return applyExpectation(new ErsatzRequest(HttpMethod.DELETE, pathMatcher, globalEncoders), config);
+        return request(HttpMethod.DELETE, pathMatcher, config);
     }
 
     @Override
     public RequestWithContent PATCH(final PathMatcher pathMatcher, Consumer<RequestWithContent> config) {
-        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.PATCH, pathMatcher, globalDecoders, globalEncoders), config);
+        return requestWithContent(PATCH, pathMatcher, config);
     }
 
     @Override
     public Request OPTIONS(final PathMatcher pathMatcher, Consumer<Request> config) {
-        return applyExpectation(new ErsatzRequest(HttpMethod.OPTIONS, pathMatcher, globalEncoders), config);
+        return request(HttpMethod.OPTIONS, pathMatcher, config);
     }
 
     private <R extends Request> R applyExpectation(final R request, final Consumer<R> consumer) {
@@ -140,7 +153,8 @@ public class ExpectationsImpl implements Expectations {
     public boolean verify(final long timeout, final TimeUnit unit) {
         for (final Request r : requests) {
             if (!((ErsatzRequest) r).verify(timeout, unit)) {
-                throw new IllegalArgumentException("Expectations for " + r + " were not met.");
+                log.error("Call count mismatch -> {}", r);
+                return false;
             }
         }
 
