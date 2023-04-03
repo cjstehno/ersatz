@@ -39,7 +39,6 @@ import java.util.function.Consumer;
 @Slf4j
 public class ErsatzProxyServer implements Closeable {
 
-    // FIXME: update docs and features
     // FIXME: should abstract and pull out proxy server impl
     // FIXME: there should be a JUnit exntesion for this
 
