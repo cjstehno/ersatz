@@ -20,11 +20,12 @@ import lombok.val;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.commons.support.ReflectionSupport;
 
 import java.lang.reflect.Field;
-import java.util.function.Supplier;
 
-import static java.util.Arrays.stream;
+import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
+import static org.junit.platform.commons.support.ModifierSupport.isNotStatic;
 
 /**
  * JUnit 5 Extension used to provide a simple means of managing an ErsatzServer instance during testing.
@@ -39,7 +40,8 @@ import static java.util.Arrays.stream;
  */
 public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallback {
 
-    @Override public void beforeEach(final ExtensionContext context) throws Exception {
+    @Override @SuppressWarnings("resource")
+    public void beforeEach(final ExtensionContext context) throws Exception {
         findInstance(context.getRequiredTestInstance(), true).start();
     }
 
@@ -51,6 +53,7 @@ public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallb
         }
     }
 
+    @SuppressWarnings("ReassignedVariable")
     private static ErsatzServer findInstance(final Object testInstance, final boolean create) throws Exception {
         val field = findField(testInstance);
         Object instance = field.get(testInstance);
@@ -63,13 +66,19 @@ public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallb
         return (ErsatzServer) instance;
     }
 
-    private static Field findField(final Object testInstance) throws Exception {
-        val field = stream(testInstance.getClass().getDeclaredFields())
-            .filter(f -> f.getType().getSimpleName().endsWith("ErsatzServer"))
-            .findFirst()
-            .orElseThrow((Supplier<Exception>) () -> new IllegalArgumentException("An ErsatzServer field must be specified."));
+    private static Field findField(final Object testInstance) {
+        val fields = ReflectionSupport.findFields(
+            testInstance.getClass(),
+            f -> isNotStatic(f) && f.getType().getSimpleName().endsWith("ErsatzServer"),
+            TOP_DOWN
+        );
 
-        field.setAccessible(true);
-        return field;
+        if (fields.isEmpty()) {
+            throw new IllegalArgumentException("An ErsatzServer field must be specified.");
+        } else {
+            val field = fields.get(0);
+            field.setAccessible(true);
+            return field;
+        }
     }
 }
