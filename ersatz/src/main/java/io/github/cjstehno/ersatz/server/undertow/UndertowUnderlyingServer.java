@@ -24,6 +24,7 @@ import io.undertow.server.handlers.HttpTraceHandler;
 import io.undertow.server.handlers.encoding.ContentEncodingRepository;
 import io.undertow.server.handlers.encoding.EncodingHandler;
 import io.undertow.server.handlers.encoding.GzipEncodingProvider;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +43,9 @@ import static io.undertow.UndertowOptions.*;
 /**
  * An <code>UnderlyingServer</code> implementation based on the Undertow server platform.
  */
+@Slf4j
 public class UndertowUnderlyingServer implements UnderlyingServer {
 
-    private static final Logger log = LoggerFactory.getLogger(UndertowUnderlyingServer.class);
     private static final String LOCALHOST = "localhost";
     private static final int UNSPECIFIED_PORT = -1;
     private final ServerConfigImpl serverConfig;

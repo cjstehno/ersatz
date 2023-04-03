@@ -18,17 +18,13 @@ package io.github.cjstehno.ersatz;
 import io.github.cjstehno.ersatz.cfg.ProxyServerConfig;
 import io.github.cjstehno.ersatz.impl.ProxyServerConfigImpl;
 import io.github.cjstehno.ersatz.impl.matchers.MatchCountingMatcher;
-import io.github.cjstehno.ersatz.server.undertow.UndertowClientRequest;
-import io.undertow.Undertow;
-import io.undertow.server.handlers.BlockingHandler;
-import io.undertow.server.handlers.proxy.LoadBalancingProxyClient;
-import io.undertow.server.handlers.proxy.ProxyHandler;
+import io.github.cjstehno.ersatz.server.UnderlyingProxyServer;
+import io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingProxyServer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.function.Consumer;
 
 /**
@@ -39,17 +35,8 @@ import java.util.function.Consumer;
 @Slf4j
 public class ErsatzProxyServer implements Closeable {
 
-    // FIXME: should abstract and pull out proxy server impl
-    // FIXME: there should be a JUnit exntesion for this
-
-    private static final String LOCALHOST = "localhost";
-    private static final int EPHEMERAL_PORT = 0;
-    private static final int UNSPECIFIED_PORT = -1;
-
     private final ProxyServerConfigImpl proxyServerConfig;
-    private int actualHttpPort = UNSPECIFIED_PORT;
-    private Undertow server;
-    private boolean started;
+    private final UnderlyingProxyServer underlyingServer;
 
     /**
      * Creates a new proxy server with the specified configuration. The configuration consumer will be provided an
@@ -63,6 +50,8 @@ public class ErsatzProxyServer implements Closeable {
         proxyServerConfig = new ProxyServerConfigImpl();
         consumer.accept(proxyServerConfig);
 
+        underlyingServer = new UndertowUnderlyingProxyServer(proxyServerConfig);
+
         if (proxyServerConfig.isAutoStart()) {
             start();
         }
@@ -75,36 +64,7 @@ public class ErsatzProxyServer implements Closeable {
      * This method does not need to be called if auto-start is not disabled.
      */
     public void start() {
-        if (!started) {
-            val builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST);
-
-            val client = new LoadBalancingProxyClient();
-            client.setConnectionsPerThread(1);
-            client.setMaxQueueSize(10);
-            client.setProblemServerRetry(3);
-            client.setSoftMaxConnectionsPerThread(1);
-            client.setTtl(1000);
-            client.addHost(proxyServerConfig.getTargetUri());
-
-            val proxyHandler = ProxyHandler.builder().setProxyClient(client).build();
-
-            builder.setHandler(new BlockingHandler(exchange -> {
-                val clientRequest = new UndertowClientRequest(exchange);
-
-                val matched = proxyServerConfig.getExpectations().matches(clientRequest);
-                if (!matched) {
-                    log.warn("No proxy match found for request: {}", clientRequest);
-                }
-
-                proxyHandler.handleRequest(exchange);
-            }));
-
-            server = builder.build();
-            server.start();
-
-            actualHttpPort = ((InetSocketAddress) server.getListenerInfo().get(0).getAddress()).getPort();
-            started = true;
-        }
+        underlyingServer.start();
     }
 
     /**
@@ -128,7 +88,7 @@ public class ErsatzProxyServer implements Closeable {
      * @return the full URL of the HTTP server
      */
     public String getUrl() {
-        return "http://localhost:" + actualHttpPort;
+        return "http://localhost:" + underlyingServer.getActualHttpPort();
     }
 
     /**
@@ -137,22 +97,14 @@ public class ErsatzProxyServer implements Closeable {
      * @return the port of the server
      */
     public int getPort() {
-        return actualHttpPort;
+        return underlyingServer.getActualHttpPort();
     }
 
     /**
      * Used to stop the proxy server, if it was running.
      */
     public void stop() {
-        if (started) {
-            actualHttpPort = UNSPECIFIED_PORT;
-
-            if (server != null) {
-                server.stop();
-            }
-
-            started = false;
-        }
+        underlyingServer.stop();
     }
 
     /**
