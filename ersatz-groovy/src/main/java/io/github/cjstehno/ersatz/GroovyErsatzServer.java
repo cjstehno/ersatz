@@ -15,10 +15,10 @@
  */
 package io.github.cjstehno.ersatz;
 
-import io.github.cjstehno.ersatz.cfg.Expectations;
-import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
+import io.github.cjstehno.ersatz.cfg.Expectations;
+import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;

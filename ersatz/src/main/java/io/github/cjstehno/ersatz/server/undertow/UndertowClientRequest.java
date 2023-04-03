@@ -36,12 +36,13 @@ import static java.util.Collections.emptyMap;
 /**
  * The primary <code>ClientRequest</code> implementation used to wrap and expose the important parts of the underlying Undertow request context.
  */
-class UndertowClientRequest implements ClientRequest {
+public class UndertowClientRequest implements ClientRequest {
+    // FIXME: see if putting proxy impl in with server makes thsi package private again
 
     private final HttpServerExchange exchange;
     private AtomicReference<byte[]> content;
 
-    UndertowClientRequest(final HttpServerExchange exchange) {
+    public UndertowClientRequest(final HttpServerExchange exchange) {
         this.exchange = exchange;
     }
 

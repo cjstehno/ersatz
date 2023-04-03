@@ -1,0 +1,44 @@
+== Proxy Server
+
+> FIXME: NEEDS TO BE UPDATED
+
+Starting in v1.5.0 a standalone proxy server was available. The `com.stehno.ersatz.proxy.ErsatzProxy` is useful for testing proxied HTTP connections.
+The proxy server has a similar configuration to the `ErsatzServer` and allows limited expectation configuration; it is expected that more detailed
+expectation configuration will be done on a standard `ErsatzServer` instance at the other end of the proxy.
+
+[source,groovy]
+----
+ErsatzServer ersatzServer = new ErsatzServer({
+    expectations {
+        get('/').called(1).responds().code(200).content('Hello', TEXT_PLAIN)
+        get('/foo').called(1).responds().code(200).content('Foo!', TEXT_PLAIN)
+    }
+})
+ErsatzProxy ersatzProxy = new ErsatzProxy({
+    target ersatzServer.httpUrl
+    expectations {
+        get '/'
+        get '/foo'
+    }
+})
+String text = "${ersatzProxy.url}".toURL().text
+assert text == 'Hello'
+text = "${ersatzProxy.url}/foo".toURL().text
+assert text == 'Foo!'
+assert ersatzServer.verify()
+assert ersatzProxy.verify()
+ersatzProxy.stop()
+ersatzServer.stop()
+----
+
+Notice that the `ErsatzProxy` has the same lifecycle as the `ErsatzServer`: you should call the `verify()` method to ensure that the expected requests
+were proxied, and the `stop()` method must be closed once the server is no longer needed.
+
+NOTE: One difference from the `ErsatzServer` lifecycle is that the proxy server defaults auto-starting, and must be disabled if this is not desired.
+
+The requests made to the proxy server are passed through to the `targetUri` and the response from that server is returned as the response from the
+proxy server.
+
+The proxy server is usable from both Java and Groovy based on the use of Groovy `Closure`s or Java `Consumer`s for configuration.
+
+Currently, the proxy server only supports HTTP endpoints (HTTPS will be supported in a future release).

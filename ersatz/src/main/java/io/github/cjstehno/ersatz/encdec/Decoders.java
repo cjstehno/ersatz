@@ -89,7 +89,7 @@ public interface Decoders {
                 val parts = nvp.split("=");
                 try {
                     if (parts.length == 2) {
-                        map.put(decode(parts[0], UTF_8.name()), decode(parts[1], UTF_8.name()));
+                        map.put(decode(parts[0], UTF_8), decode(parts[1], UTF_8));
                     }
                 } catch (Exception e) {
                     throw new IllegalArgumentException(e.getMessage());
