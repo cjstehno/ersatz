@@ -30,7 +30,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
-    maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
+    maxParallelForks = Runtime.runtime.availableProcessors()
 }
 
 jacocoTestReport {

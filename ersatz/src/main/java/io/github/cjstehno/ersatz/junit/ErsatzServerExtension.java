@@ -40,6 +40,9 @@ import static org.junit.platform.commons.support.ModifierSupport.isNotStatic;
  */
 public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallback {
 
+    // FIXME: add @ErsatzConfig annotation to define the field or method name for getting a ServerConfig to use
+    // FIXME: allow not creating an ErsatzServer instance - use ParameterResolver to pass into methods
+
     @Override @SuppressWarnings("resource")
     public void beforeEach(final ExtensionContext context) throws Exception {
         findInstance(context.getRequiredTestInstance(), true).start();
