@@ -15,13 +15,18 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
+import lombok.NoArgsConstructor;
+
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
+
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Helpers for working with <code>MimeType</code> objects.
  */
-public interface MimeTypes {
+@NoArgsConstructor(access = PRIVATE)
+public final class MimeTypes {
 
     /**
      * Creates a <code>MimeType</code> object from the specified string designator. If a parsing exception is thrown, it
@@ -30,7 +35,7 @@ public interface MimeTypes {
      * @param value the mime-type text value
      * @return the wrapped MimeType
      */
-    static MimeType createMimeType(final String value) {
+    public static MimeType createMimeType(final String value) {
         try {
             return new MimeType(value);
         } catch (MimeTypeParseException e) {

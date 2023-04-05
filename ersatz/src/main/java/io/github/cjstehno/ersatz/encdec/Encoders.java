@@ -15,6 +15,8 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
+import lombok.NoArgsConstructor;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,17 +32,19 @@ import java.util.function.Function;
 import static io.github.cjstehno.ersatz.util.ByteArrays.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.readAllBytes;
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Reusable response content encoders. An encoder is simply a <code>Function&lt;Object,String&gt;</code> which is used to convert the configured response
  * content object into the response output bytes.
  */
-public interface Encoders {
+@NoArgsConstructor(access = PRIVATE)
+public final class Encoders {
 
     /**
      * Encodes the object as a String of text (UTF-8).
      */
-    Function<Object, byte[]> text = text(UTF_8);
+    public static final Function<Object, byte[]> text = text(UTF_8);
 
     /**
      * Encodes the object as a String of text with the specified charset.
@@ -48,7 +52,7 @@ public interface Encoders {
      * @param charset the charset name
      * @return the encoded object as a String
      */
-    static Function<Object, byte[]> text(final String charset) {
+    public static Function<Object, byte[]> text(final String charset) {
         return text(Charset.forName(charset));
     }
 
@@ -58,14 +62,14 @@ public interface Encoders {
      * @param charset the charset object
      * @return the encoded object as a String
      */
-    static Function<Object, byte[]> text(final Charset charset) {
+    public static Function<Object, byte[]> text(final Charset charset) {
         return obj -> (obj != null ? obj.toString() : "").getBytes(charset);
     }
 
     /**
      * Encodes a byte array, InputStream or other object with a "getBytes()" method into a base-64 string.
      */
-    Function<Object, byte[]> binaryBase64 = obj -> obj == null ? "".getBytes(UTF_8) : Base64.getEncoder().encode(toBytes(obj));
+    public static Function<Object, byte[]> binaryBase64 = obj -> obj == null ? "".getBytes(UTF_8) : Base64.getEncoder().encode(toBytes(obj));
 
     /**
      * Loads the content at the specified destination and returns it as a byte array. The content destination may be
@@ -78,7 +82,7 @@ public interface Encoders {
      * URI - will load the contents of the URI
      * URL - will load the contents of the URL
      */
-    Function<Object, byte[]> content = obj -> {
+    public static Function<Object, byte[]> content = obj -> {
         try {
             if (obj instanceof InputStream) {
                 return readStream((InputStream) obj);
@@ -120,7 +124,7 @@ public interface Encoders {
      * multipart content is a simple message implementing the minimal multipart content specification - you may want to
      * find a more robust implementation if you require a more detailed multipart API.
      */
-    Function<Object, byte[]> multipart = obj -> {
+    public static Function<Object, byte[]> multipart = obj -> {
         if (!(obj instanceof MultipartResponseContent)) {
             throw new IllegalArgumentException(obj.getClass().getName() + " found, MultipartRequestContent is required.");
         }

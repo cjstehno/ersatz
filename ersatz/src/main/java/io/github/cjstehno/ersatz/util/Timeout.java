@@ -15,6 +15,7 @@
  */
 package io.github.cjstehno.ersatz.util;
 
+import lombok.NoArgsConstructor;
 import lombok.val;
 
 import java.util.concurrent.TimeUnit;
@@ -23,11 +24,13 @@ import java.util.function.Supplier;
 import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * A utility for operation timeout support.
  */
-public interface Timeout {
+@NoArgsConstructor(access = PRIVATE)
+public final class Timeout {
 
     /**
      * Used to wrap a blocking timeout around the provided condition. If it is not met (resolves <code>true</code>)
@@ -38,7 +41,7 @@ public interface Timeout {
      * @param unit the timeout units
      * @return a value of true if the condition was met before the timeout expired
      */
-    static boolean isTrueBefore(final Supplier<Boolean> condition, final long timeout, final TimeUnit unit) {
+    public static boolean isTrueBefore(final Supplier<Boolean> condition, final long timeout, final TimeUnit unit) {
         val started = currentTimeMillis();
         val timeoutMs = unit.toMillis(timeout);
 

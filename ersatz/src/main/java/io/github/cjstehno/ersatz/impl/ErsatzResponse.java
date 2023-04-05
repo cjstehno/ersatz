@@ -19,13 +19,21 @@ import io.github.cjstehno.ersatz.cfg.ChunkingConfig;
 import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Response;
-import io.github.cjstehno.ersatz.encdec.*;
+import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.encdec.EncoderChain;
+import io.github.cjstehno.ersatz.encdec.ErsatzMultipartResponseContent;
+import io.github.cjstehno.ersatz.encdec.MultipartResponseContent;
+import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -45,7 +53,6 @@ public class ErsatzResponse implements Response {
 
     private static final Logger log = LoggerFactory.getLogger(ErsatzResponse.class);
     private static final String ALLOW_HEADER = "Allow";
-    private final boolean empty;
     private final ResponseEncoders localEncoders = new ResponseEncoders();
     private final EncoderChain encoderChain;
 
@@ -60,21 +67,10 @@ public class ErsatzResponse implements Response {
     /**
      * Creates a new response implementation with the provided parameters.
      *
-     * @param empty whether the body is empty
      * @param globalEncoders the configured global encoders
      */
-    public ErsatzResponse(final boolean empty, final ResponseEncoders globalEncoders) {
-        this.empty = empty;
+    public ErsatzResponse(final ResponseEncoders globalEncoders) {
         this.encoderChain = new EncoderChain(globalEncoders, localEncoders);
-    }
-
-    /**
-     * Creates a new response implementation with the provided parameters, and no global encoders.
-     *
-     * @param empty whether the body is empty
-     */
-    public ErsatzResponse(final boolean empty) {
-        this(empty, null);
     }
 
     /**
@@ -87,11 +83,7 @@ public class ErsatzResponse implements Response {
     }
 
     @Override
-    public Response body(Object content) {
-        if (empty) {
-            throw new IllegalArgumentException("The response is configured as EMPTY and cannot have content.");
-        }
-
+    public Response body(final Object content) {
         this.content = content;
 
         if (content instanceof MultipartResponseContent) {

@@ -23,6 +23,7 @@ import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
@@ -31,29 +32,23 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.ANY;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.HEAD;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.PATCH;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.PUT;
 import static java.util.Collections.unmodifiableList;
 
 /**
  * Implementation of the <code>Expectations</code> interface.
  */
-@Slf4j
+@Slf4j @RequiredArgsConstructor
 public class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = new LinkedList<>();
-    private final RequestDecoders globalDecoders;
     private final ResponseEncoders globalEncoders;
-
-    /**
-     * Creates a new expectations container with the given encoders and decoders.
-     *
-     * @param encoders the response encoders
-     * @param decoders the request decoders
-     */
-    public ExpectationsImpl(final ResponseEncoders encoders, final RequestDecoders decoders) {
-        this.globalEncoders = encoders;
-        this.globalDecoders = decoders;
-    }
+    private final RequestDecoders globalDecoders;
 
     /**
      * Removes all expectation configuration, but does not modify global encoders or decoders.
@@ -64,7 +59,6 @@ public class ExpectationsImpl implements Expectations {
 
     @Override
     public Request request(final HttpMethod method, final PathMatcher pathMatcher, final Consumer<Request> consumer) {
-        // FIXME: do I still need both request implementations?
         return applyExpectation(new ErsatzRequestWithContent(method, pathMatcher, globalDecoders, globalEncoders), consumer);
     }
 
@@ -74,17 +68,17 @@ public class ExpectationsImpl implements Expectations {
 
     @Override
     public Request ANY(final PathMatcher pathMatcher, final Consumer<Request> consumer) {
-        return request(HttpMethod.ANY, pathMatcher, consumer);
+        return request(ANY, pathMatcher, consumer);
     }
 
     @Override
     public Request GET(final PathMatcher pathMatcher, final Consumer<Request> consumer) {
-        return request(HttpMethod.GET, pathMatcher, consumer);
+        return request(GET, pathMatcher, consumer);
     }
 
     @Override
     public Request HEAD(final PathMatcher pathMatcher, final Consumer<Request> consumer) {
-        return request(HttpMethod.HEAD, pathMatcher, consumer);
+        return request(HEAD, pathMatcher, consumer);
     }
 
     @Override

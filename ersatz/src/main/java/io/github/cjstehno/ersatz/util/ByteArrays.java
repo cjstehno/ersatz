@@ -15,15 +15,19 @@
  */
 package io.github.cjstehno.ersatz.util;
 
+import lombok.NoArgsConstructor;
+
 import java.nio.ByteBuffer;
 import java.util.List;
 
 import static java.lang.System.arraycopy;
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Utilities for working with arrays of <code>byte</code>s.
  */
-public class ByteArrays {
+@NoArgsConstructor(access = PRIVATE)
+public final class ByteArrays {
 
     /**
      * Joins all the byte arrays in the list, in order.

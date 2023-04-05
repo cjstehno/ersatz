@@ -16,20 +16,23 @@
 package io.github.cjstehno.ersatz.util;
 
 import io.github.cjstehno.ersatz.cfg.Request;
+import lombok.NoArgsConstructor;
 
 import static io.github.cjstehno.ersatz.util.HttpHeaders.AUTHORIZATION;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Base64.getEncoder;
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Helper utility for configuring BASIC request authentication.
  */
-public interface BasicAuth {
+@NoArgsConstructor(access = PRIVATE)
+public final class BasicAuth {
 
     /**
      * The authorization header name.
      */
-    String AUTHORIZATION_HEADER = AUTHORIZATION;
+    public static final String AUTHORIZATION_HEADER = AUTHORIZATION;
 
     /**
      * Used to generate the Authorization header value for the given username and password.
@@ -38,7 +41,7 @@ public interface BasicAuth {
      * @param password the password (cannot contain a colon)
      * @return the generated header value
      */
-    static String header(final String username, final String password) {
+    public static String header(final String username, final String password) {
         check(username, password);
         return "Basic " + getEncoder().encodeToString((username + ":" + password).getBytes(UTF_8));
     }
@@ -52,7 +55,7 @@ public interface BasicAuth {
      * @param password the password (cannot contain a colon)
      * @return the request passed in (to allow chaining)
      */
-    static Request basicAuth(final Request request, final String userame, final String password) {
+    public static Request basicAuth(final Request request, final String userame, final String password) {
         return request.header(AUTHORIZATION_HEADER, header(userame, password));
     }
 
