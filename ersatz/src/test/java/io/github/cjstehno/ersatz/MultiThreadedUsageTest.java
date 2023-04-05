@@ -17,6 +17,7 @@ package io.github.cjstehno.ersatz;
 
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
+import io.github.cjstehno.ersatz.util.HttpClientExtension.Client;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,36 +32,37 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
 class MultiThreadedUsageTest {
 
-    private final ErsatzServer server = new ErsatzServer();
-    @SuppressWarnings("unused") private HttpClientExtension.Client client;
+    private static final int REQUEST_COUNT = 8;
+    @SuppressWarnings("unused")
+    private Client client;
 
-    @Test @DisplayName("Multiple concurrent calls") void multipleConcurrent() {
-        final int requestCount = 8;
-
-        server.expects().GET("/something").called(requestCount).responds().code(200);
-        server.start();
+    @Test
+    @DisplayName("Multiple concurrent calls")
+    void multipleConcurrent(final ErsatzServer server) {
+        server.expects().GET("/something").called(REQUEST_COUNT).responds().code(200);
 
         final var responses = new CopyOnWriteArrayList<Integer>();
 
-        for (int r = 0; r < requestCount; r++) {
+        for (int r = 0; r < REQUEST_COUNT; r++) {
             client.aget("/something")
-                .thenAccept(res -> responses.add(res.code()));
+                    .thenAccept(res -> responses.add(res.code()));
         }
 
-        await().until(() -> responses.size() == requestCount);
+        await().until(() -> responses.size() == REQUEST_COUNT);
 
         assertTrue(server.verify());
-        assertEquals(requestCount, responses.size());
+        assertEquals(REQUEST_COUNT, responses.size());
         assertTrue(responses.stream().allMatch(r -> r == 200));
     }
 
-    @Test @DisplayName("Multiple concurrent calls with listener") void multipleConcurrentWithListener() {
-        final int requestCount = 8;
+    @Test
+    @DisplayName("Multiple concurrent calls with listener")
+    void multipleConcurrentWithListener(final ErsatzServer server) {
         final var counter = new AtomicInteger(0);
 
         server.expectations(e -> {
             e.GET("/something", req -> {
-                req.called(requestCount);
+                req.called(REQUEST_COUNT);
                 req.listener(cr -> counter.incrementAndGet());
                 req.responder(res -> res.code(200));
             });
@@ -68,15 +70,15 @@ class MultiThreadedUsageTest {
 
         final var responses = new CopyOnWriteArrayList<Integer>();
 
-        for (int r = 0; r < requestCount; r++) {
+        for (int r = 0; r < REQUEST_COUNT; r++) {
             client.aget("/something")
-                .thenAccept(res -> responses.add(res.code()));
+                    .thenAccept(res -> responses.add(res.code()));
         }
 
-        await().until(() -> responses.size() == requestCount && counter.get() == requestCount);
+        await().until(() -> responses.size() == REQUEST_COUNT && counter.get() == REQUEST_COUNT);
 
         assertTrue(server.verify());
-        assertEquals(requestCount, responses.size());
+        assertEquals(REQUEST_COUNT, responses.size());
         assertTrue(responses.stream().allMatch(r -> r == 200));
     }
 }

@@ -35,21 +35,15 @@ class ErsatzServerPortsTest {
 
     // NOTE: if this test starts failing for odd reasons, add some logic to ensure port is available
 
-    //    private ErsatzServer ersatz = new ErsatzServer(c -> {
-//        c.httpPort(8675);
-//        c.expectations(e -> e.GET("/hi").responds().code(200));
-//    });
     @SuppressWarnings("unused") private Client client;
 
     @Test @DisplayName("running with explicit port")
     void explicitPort(final ErsatzServer ersatz) throws IOException {
-        assertNotNull(ersatz.start());
-
         assertEquals(200, client.get("/hi").code());
         assertEquals(8675, ersatz.getHttpPort());
     }
 
-    @SuppressWarnings("unused") private void configure(final ServerConfig c) {
+    @SuppressWarnings("unused") private static void configure(final ServerConfig c) {
         c.httpPort(8675);
         c.autoStart(false);
         c.expectations(e -> e.GET("/hi").responds().code(200));
