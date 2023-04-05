@@ -11,7 +11,6 @@
 * User Guide: https://cjstehno.github.io/ersatz/docs/user_guide.html
 * Java API Docs: https://cjstehno.github.io/ersatz/javadoc/
 * Groovy API Docs: https://cjstehno.github.io/ersatz-groovy/javadoc/
-* Twitter: [@ErsatzServer](https://twitter.com/ersatzserver)
 
 ## Introduction
 
@@ -154,7 +153,7 @@ At this point the website will be published but it may take some time for GitHub
 ## License
 
 ```
-Copyright (C) 2022 Christopher J. Stehno
+Copyright (C) 2023 Christopher J. Stehno
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
