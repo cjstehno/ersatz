@@ -15,10 +15,14 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.testthings.Verifiers;
 import org.junit.jupiter.api.Test;
 
-import static io.github.cjstehno.ersatz.TestAssertions.verifyEqualityAndHashCode;
-import static io.github.cjstehno.ersatz.cfg.ContentType.*;
+import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_JSON;
+import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_URLENCODED;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_HTML;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_JAVASCRIPT;
+import static io.github.cjstehno.testthings.Verifiers.verifyEqualsAndHashCode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -41,6 +45,6 @@ class ContentTypeTest {
     }
 
     @Test void equalsAndHash() {
-        verifyEqualityAndHashCode(APPLICATION_JSON, APPLICATION_JSON);
+        verifyEqualsAndHashCode(APPLICATION_JSON, APPLICATION_JSON);
     }
 }

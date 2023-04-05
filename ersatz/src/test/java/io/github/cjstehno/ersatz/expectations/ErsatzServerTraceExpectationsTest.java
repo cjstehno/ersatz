@@ -26,8 +26,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.IOException;
 import java.util.Map;
 
-import static io.github.cjstehno.ersatz.TestHelpers.resourceString;
 import static io.github.cjstehno.ersatz.cfg.ContentType.MESSAGE_HTTP;
+import static io.github.cjstehno.testthings.Resources.template;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 
@@ -46,8 +46,8 @@ public class ErsatzServerTraceExpectationsTest {
         assertEquals(MESSAGE_HTTP.getValue(), response.header("Content-Type"));
 
         assertLinesMatch(
-            resourceString("/trace.txt", Map.of(
-                "<port>", String.valueOf(https ? server.getHttpsPort() : server.getHttpPort())
+            template("/trace.txt", Map.of(
+                "port", String.valueOf(https ? server.getHttpsPort() : server.getHttpPort())
             )).lines(),
             response.body().string().lines()
         );

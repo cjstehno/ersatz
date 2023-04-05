@@ -23,6 +23,7 @@ import io.github.cjstehno.ersatz.encdec.ErsatzMultipartResponseContent;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import io.github.cjstehno.ersatz.match.ErsatzMatchers;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
+import io.github.cjstehno.testthings.Resources;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import okhttp3.OkHttpClient;
@@ -33,7 +34,6 @@ import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.UploadContext;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,9 +53,13 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-import static io.github.cjstehno.ersatz.TestAssertions.*;
-import static io.github.cjstehno.ersatz.TestHelpers.resourceStream;
-import static io.github.cjstehno.ersatz.cfg.ContentType.*;
+import static io.github.cjstehno.ersatz.TestAssertions.assertNotFound;
+import static io.github.cjstehno.ersatz.TestAssertions.assertOkWithString;
+import static io.github.cjstehno.ersatz.TestAssertions.assertStatusWithString;
+import static io.github.cjstehno.ersatz.TestAssertions.verify;
+import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_JPG;
+import static io.github.cjstehno.ersatz.cfg.ContentType.MULTIPART_MIXED;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static io.github.cjstehno.ersatz.encdec.Cookie.cookie;
 import static io.github.cjstehno.ersatz.encdec.MultipartResponseContent.multipartResponse;
 import static io.github.cjstehno.ersatz.match.CookieMatcher.cookieMatcher;
@@ -63,7 +67,12 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static io.github.cjstehno.ersatz.match.PredicateMatcher.predicatedBy;
 import static io.github.cjstehno.ersatz.util.BasicAuth.basicAuth;
 import static io.github.cjstehno.ersatz.util.HttpClientExtension.Client.basicAuthHeader;
-import static io.github.cjstehno.ersatz.util.HttpHeaders.*;
+import static io.github.cjstehno.ersatz.util.HttpHeaders.CONTENT_DISPOSITION;
+import static io.github.cjstehno.ersatz.util.HttpHeaders.CONTENT_ENCODING;
+import static io.github.cjstehno.ersatz.util.HttpHeaders.COOKIE;
+import static io.github.cjstehno.testthings.Resources.resourceStream;
+import static io.github.cjstehno.testthings.Resources.resourceToBytes;
+import static io.github.cjstehno.testthings.Resources.resourceToString;
 import static java.lang.System.currentTimeMillis;
 import static java.net.Proxy.Type.HTTP;
 import static java.util.Locale.ROOT;
@@ -71,7 +80,11 @@ import static java.util.stream.Collectors.toList;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
 public class ErsatzServerGetExpectationsTest {
@@ -95,8 +108,8 @@ public class ErsatzServerGetExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] path and consumer: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void withPathAndConsumer(final boolean https, final String responseText) throws IOException {
-        server.expectations(expect -> {
+    void withPathAndConsumer(final boolean https, final String responseText, final ErsatzServer ersatz) throws IOException {
+        ersatz.expectations(expect -> {
             expect.GET("/something", req -> {
                 req.secure(https);
                 req.called(1);
@@ -195,7 +208,7 @@ public class ErsatzServerGetExpectationsTest {
 
         assertEquals(200, response.code());
         assertEquals("chunked", response.header("Transfer-encoding"));
-        assertArrayEquals(resourceStream("/test-image.jpg").readAllBytes(), response.body().bytes());
+        assertArrayEquals(resourceToBytes("/test-image.jpg"), response.body().bytes());
 
         verify(server);
     }
@@ -219,7 +232,7 @@ public class ErsatzServerGetExpectationsTest {
             });
         });
 
-        val expectedLines = IOUtils.readLines(resourceStream("/multipart-text.txt"));
+        val expectedLines = resourceToString("/multipart-text.txt").lines().collect(toList());
         val actualLines = client.get("/text", https).body().string().trim().lines().collect(toList());
 
         assertLinesMatch(expectedLines, actualLines);
@@ -264,8 +277,7 @@ public class ErsatzServerGetExpectationsTest {
         assertEquals("test-image.jpg", items.get(1).getName());
         assertEquals("image/jpeg", items.get(1).getContentType());
 
-        final var stream = resourceStream("/test-image.jpg");
-        final var imageBytes = IOUtils.toByteArray(stream);
+        val imageBytes = Resources.resourceToBytes("/test-image.jpg");
         assertEquals(imageBytes.length, items.get(1).getSize());
         assertArrayEquals(imageBytes, items.get(1).get());
 
@@ -302,7 +314,7 @@ public class ErsatzServerGetExpectationsTest {
         assertEquals("test-image.jpg", items.get(0).getName());
         assertEquals("image/jpeg", items.get(0).getContentType());
 
-        val bytes = resourceStream("/test-image.jpg").readAllBytes();
+        val bytes = resourceToBytes("/test-image.jpg");
         assertEquals(bytes.length, items.get(0).getSize());
         assertArrayEquals(bytes, items.get(0).get());
 
@@ -455,7 +467,7 @@ public class ErsatzServerGetExpectationsTest {
     @ParameterizedTest(name = "[{index}] Downloading file: https({0})")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
     void downloadingFile(final boolean https) throws IOException {
-        final var zipBites = resourceStream("/images.zip").readAllBytes();
+        final var zipBites = resourceToBytes("/images.zip");
 
         server.expectations(expect -> {
             expect.GET("/download", req -> {

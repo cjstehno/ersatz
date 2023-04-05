@@ -15,20 +15,24 @@
  */
 package io.github.cjstehno.ersatz;
 
+import lombok.NoArgsConstructor;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
 
-public interface TestArguments {
+import static lombok.AccessLevel.PRIVATE;
 
-    static Stream<Arguments> httpAndHttpsWithContent() {
+@NoArgsConstructor(access = PRIVATE) @SuppressWarnings("unused")
+public final class TestArguments {
+
+    public static Stream<Arguments> httpAndHttpsWithContent() {
         return Stream.of(
             Arguments.of(false, "insecure content"),
             Arguments.of(true, "secure content")
         );
     }
 
-    static Stream<Arguments> httpAndHttps() {
+    public static Stream<Arguments> httpAndHttps() {
         return Stream.of(
             Arguments.of(false),
             Arguments.of(true)

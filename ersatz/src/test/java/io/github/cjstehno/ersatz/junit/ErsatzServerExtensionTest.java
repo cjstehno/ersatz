@@ -38,8 +38,6 @@ class ErsatzServerExtensionTest {
 
     @SuppressWarnings("unused") private ErsatzServer server;
 
-    // FIXME: make a test without a field
-
     @Test @DisplayName("using provided server")
     void usingServer() throws Exception {
         server.expectations(expects -> {
@@ -112,7 +110,7 @@ class ErsatzServerExtensionTest {
         assertTrue(myServer.verify());
     }
 
-    private void localConfig(final ServerConfig config) {
+    @SuppressWarnings("unused") private void localConfig(final ServerConfig config) {
         config.requirements(requires -> {
             requires.that(HttpMethod.GET, pathMatching("/foo"), cfg -> {
                 cfg.header("key", "unlocked");

@@ -26,13 +26,19 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.stream.Stream;
 
-import static io.github.cjstehno.ersatz.TestHelpers.*;
+import static io.github.cjstehno.testthings.Resources.resourceFile;
+import static io.github.cjstehno.testthings.Resources.resourcePath;
+import static io.github.cjstehno.testthings.Resources.resourceStream;
+import static io.github.cjstehno.testthings.Resources.resourceUri;
+import static io.github.cjstehno.testthings.Resources.resourceUrl;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -95,8 +101,8 @@ class EncodersTest {
     }
 
     @Test @DisplayName("multipart with invalid object")
-    void invalidMultipart(){
-        val thrown = assertThrows(IllegalArgumentException.class, ()-> {
+    void invalidMultipart() {
+        val thrown = assertThrows(IllegalArgumentException.class, () -> {
             Encoders.multipart.apply(new Object());
         });
         assertEquals("java.lang.Object found, MultipartRequestContent is required.", thrown.getMessage());
@@ -111,7 +117,7 @@ class EncodersTest {
         );
     }
 
-    private static Stream<Arguments> contentProvider() throws URISyntaxException {
+    private static Stream<Arguments> contentProvider() {
         return Stream.of(
             arguments(resourcePath("/content.txt")),
             arguments("/content.txt"),

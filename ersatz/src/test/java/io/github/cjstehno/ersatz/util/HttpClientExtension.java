@@ -24,6 +24,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.commons.support.ModifierSupport;
+import org.junit.platform.commons.support.ReflectionSupport;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -42,6 +44,8 @@ import static io.github.cjstehno.ersatz.util.BasicAuth.AUTHORIZATION_HEADER;
 import static io.github.cjstehno.ersatz.util.BasicAuth.header;
 import static java.util.Arrays.stream;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
+import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
 
 /**
  * JUnit 5 Extension which provides a reusable HTTP client wrapper around a configured OkHttp client. This extension
@@ -49,18 +53,33 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
  */
 public class HttpClientExtension implements BeforeEachCallback {
 
-    @Override public void beforeEach(final ExtensionContext context) throws Exception {
+    private static final String SERVER_KEY = "instance";
+    private static final ExtensionContext.Namespace SERVER_NAMESPACE = create("ersatz-server", "server");
+
+    @Override @SuppressWarnings("resource") public void beforeEach(final ExtensionContext context) throws Exception {
         val testInstance = context.getRequiredTestInstance();
 
-        val server = findInstance(testInstance).start();
+        val server = findServer(context);
 
         val https = server.isHttpsEnabled();
         val client = new Client(server.getHttpUrl(), https ? server.getHttpsUrl() : server.getHttpUrl(), https);
         findField(testInstance, "Client").set(testInstance, client);
     }
 
-    private static ErsatzServer findInstance(final Object testInstance) throws Exception {
-        return (ErsatzServer) findField(testInstance, "ErsatzServer").get(testInstance);
+    private static ErsatzServer findServer(final ExtensionContext context) throws IllegalAccessException {
+        val fields = ReflectionSupport.findFields(
+            context.getRequiredTestClass(),
+            f -> f.getType().isAssignableFrom(ErsatzServer.class) && ModifierSupport.isNotStatic(f),
+            TOP_DOWN
+        );
+
+        if (fields.isEmpty()) {
+            return (ErsatzServer) context.getStore(SERVER_NAMESPACE).get(SERVER_KEY);
+        } else {
+            val field = fields.get(0);
+            field.setAccessible(true);
+            return (ErsatzServer) field.get(context.getRequiredTestInstance());
+        }
     }
 
     private static Field findField(final Object testInstance, final String type) throws Exception {

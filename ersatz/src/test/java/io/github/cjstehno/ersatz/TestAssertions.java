@@ -16,44 +16,34 @@
 package io.github.cjstehno.ersatz;
 
 import io.github.cjstehno.ersatz.ErsatzServer;
+import lombok.NoArgsConstructor;
 import okhttp3.Response;
 
 import java.io.IOException;
 
+import static lombok.AccessLevel.PRIVATE;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-public interface TestAssertions {
+@NoArgsConstructor(access = PRIVATE) @SuppressWarnings("unused")
+public class TestAssertions {
 
-    static void verify(final ErsatzServer server) {
+    public static void verify(final ErsatzServer server) {
         assertTrue(server.verify());
     }
 
-    static void assertOkWithString(final String content, final Response response) throws IOException {
+    public static void assertOkWithString(final String content, final Response response) throws IOException {
         assertStatusWithString(200, content, response);
     }
 
-    static void assertStatusWithString(final int status, final String content, final Response response) throws IOException {
+    public static void assertStatusWithString(final int status, final String content, final Response response) throws IOException {
         assertEquals(status, response.code());
         assertEquals(content, response.body().string());
     }
 
-    static void assertNotFound(final Response response) {
+    public static void assertNotFound(final Response response) {
         assertEquals(404, response.code());
-    }
-
-    static void verifyEqualityAndHashCode(final Object instanceA, final Object instanceB) {
-        assertThat(instanceA, equalTo(instanceA));
-        assertThat(instanceB, equalTo(instanceB));
-        assertThat(instanceA, equalTo(instanceB));
-        assertThat(instanceB, equalTo(instanceA));
-        assertThat(instanceA, not(equalTo(null)));
-        assertThat(instanceB, not(equalTo(null)));
-        assertThat(instanceA.hashCode(), equalTo(instanceA.hashCode()));
-        assertThat(instanceB.hashCode(), equalTo(instanceB.hashCode()));
-        assertThat(instanceA.hashCode(), equalTo(instanceB.hashCode()));
-        assertThat(instanceB.hashCode(), equalTo(instanceA.hashCode()));
     }
 }

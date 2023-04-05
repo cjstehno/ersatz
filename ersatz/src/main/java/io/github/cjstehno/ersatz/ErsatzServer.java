@@ -283,4 +283,13 @@ public class ErsatzServer implements Closeable {
     public boolean verify() {
         return verify(1, SECONDS);
     }
+
+    /**
+     * Retrieves the internal server configuration.
+     *
+     * @return the server configuration for this server.
+     */
+    protected final ServerConfigImpl getServerConfig(){
+        return serverConfig;
+    }
 }

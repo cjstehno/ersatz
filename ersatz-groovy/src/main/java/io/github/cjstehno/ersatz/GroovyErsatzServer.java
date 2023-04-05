@@ -19,6 +19,7 @@ import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import io.github.cjstehno.ersatz.cfg.Expectations;
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
+import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
@@ -33,6 +34,24 @@ public class GroovyErsatzServer extends ErsatzServer {
      */
     public GroovyErsatzServer() {
         super();
+    }
+
+    /**
+     * Creates a new Groovy Ersatz server with the given server configuration.
+     *
+     * @param serverConfig the server configuration object
+     */
+    public GroovyErsatzServer(final ServerConfigImpl serverConfig) {
+        super(serverConfig);
+    }
+
+    /**
+     * Creates a new Groovy Ersatz Server as a wrapper around the provided server instance.
+     *
+     * @param ersatzServer the server instance to be wrapped
+     */
+    public GroovyErsatzServer(final ErsatzServer ersatzServer){
+        super(ersatzServer.getServerConfig());
     }
 
     /**

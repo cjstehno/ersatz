@@ -15,9 +15,11 @@
  */
 package io.github.cjstehno.ersatz;
 
+import io.github.cjstehno.ersatz.cfg.ServerConfig;
+import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
-import io.github.cjstehno.ersatz.ErsatzServer;
+import io.github.cjstehno.ersatz.util.HttpClientExtension.Client;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,21 +30,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
+@ApplyServerConfig("configure")
 class ErsatzServerPortsTest {
 
     // NOTE: if this test starts failing for odd reasons, add some logic to ensure port is available
 
-    private ErsatzServer ersatz = new ErsatzServer(c -> {
-        c.httpPort(8675);
-        c.expectations(e -> e.GET("/hi").responds().code(200));
-    });
-    @SuppressWarnings("unused") private HttpClientExtension.Client client;
+    //    private ErsatzServer ersatz = new ErsatzServer(c -> {
+//        c.httpPort(8675);
+//        c.expectations(e -> e.GET("/hi").responds().code(200));
+//    });
+    @SuppressWarnings("unused") private Client client;
 
     @Test @DisplayName("running with explicit port")
-    void explicitPort() throws IOException {
+    void explicitPort(final ErsatzServer ersatz) throws IOException {
         assertNotNull(ersatz.start());
 
         assertEquals(200, client.get("/hi").code());
         assertEquals(8675, ersatz.getHttpPort());
+    }
+
+    @SuppressWarnings("unused") private void configure(final ServerConfig c) {
+        c.httpPort(8675);
+        c.autoStart(false);
+        c.expectations(e -> e.GET("/hi").responds().code(200));
     }
 }

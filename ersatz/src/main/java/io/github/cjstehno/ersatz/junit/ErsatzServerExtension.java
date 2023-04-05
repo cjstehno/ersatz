@@ -33,19 +33,20 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
+import static java.lang.Class.forName;
 import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
 import static org.junit.platform.commons.support.AnnotationSupport.findAnnotation;
 import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
 import static org.junit.platform.commons.support.ModifierSupport.isNotStatic;
 import static org.junit.platform.commons.support.ReflectionSupport.findFields;
 import static org.junit.platform.commons.support.ReflectionSupport.findMethod;
+import static org.junit.platform.commons.support.ReflectionSupport.newInstance;
 
 /**
  * JUnit 5 Extension used to provide a simple means of managing an ErsatzServer instance during testing.
-
  * BeforeEach test - the expectations will be cleared.
  * AfterEach test - the server will be stopped.
- *
+ * <p>
  * See the <a href="https://cjstehno.github.io/ersatz/docs/user_guide.html">User Guide</a> for more details.
  * <p>
  * Note: the <code>verify()</code> method is intentionally NOT called by this extension so that it may be called
@@ -57,6 +58,8 @@ public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallb
     private static final String FIELD_SUFFIX = "ErsatzServer";
     private static final String SERVER_KEY = "instance";
     private static final Namespace NAMESPACE = create("ersatz-server", "server");
+    private static final String GROOVY_ERSATZ_SERVER = "GroovyErsatzServer";
+    private static final String GROOVY_ERSATZ_SERVER_CLASS = "io.github.cjstehno.ersatz." + GROOVY_ERSATZ_SERVER;
 
     /**
      * Called before each test method is executed - an instance of ErsatzServer is located or instantiated, then started.
@@ -67,12 +70,16 @@ public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallb
     @Override
     public void beforeEach(final ExtensionContext context) throws Exception {
         val ersatzServer = resolveAppliedConfig(context)
-            .map(cfg -> findServerField(context)
-                .map(field -> buildServer(context, field, cfg))
-                .orElseGet(() -> new ErsatzServer(cfg)))
-            .orElseGet(() -> findServerField(context)
-                .map(field -> buildServer(context, field))
-                .orElseThrow(() -> new IllegalArgumentException("No server or configuration has been provided.")));
+            .map(cfg ->
+                findServerField(context)
+                    .map(field -> buildServer(context, field, cfg))
+                    .orElseGet(() -> new ErsatzServer(cfg))
+            )
+            .orElseGet(() ->
+                findServerField(context)
+                    .map(field -> buildServer(context, field))
+                    .orElseGet(ErsatzServer::new)
+            );
 
         // store the server in context
         context.getStore(NAMESPACE).put(SERVER_KEY, ersatzServer);
@@ -88,7 +95,20 @@ public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallb
 
     @Override
     public Object resolveParameter(final ParameterContext paramContext, final ExtensionContext extContext) throws ParameterResolutionException {
-        return extContext.getStore(NAMESPACE).get(SERVER_KEY);
+        if( paramContext.getParameter().getType().getSimpleName().equals(GROOVY_ERSATZ_SERVER)){
+            val server = extContext.getStore(NAMESPACE).get(SERVER_KEY);
+            if( server.getClass().getSimpleName().equals(GROOVY_ERSATZ_SERVER)){
+                return server;
+            } else {
+                try {
+                    return newInstance(forName(GROOVY_ERSATZ_SERVER_CLASS), server);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } else {
+            return extContext.getStore(NAMESPACE).get(SERVER_KEY);
+        }
     }
 
     /**
@@ -146,7 +166,7 @@ public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallb
 
     private static Object instantiateServer(final Class<?> type) {
         if (type.getSimpleName().equals("GroovyErsatzServer")) {
-            return ReflectionSupport.newInstance(type);
+            return newInstance(type);
         } else {
             return new ErsatzServer();
         }
@@ -154,7 +174,7 @@ public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallb
 
     private static Object instantiateServer(final Class<?> type, final ServerConfig serverConfig) {
         if (type.getSimpleName().equals("GroovyErsatzServer")) {
-            return ReflectionSupport.newInstance(type, serverConfig);
+            return newInstance(type, serverConfig);
         } else {
             return new ErsatzServer(serverConfig);
         }

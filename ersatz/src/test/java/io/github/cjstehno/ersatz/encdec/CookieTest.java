@@ -20,7 +20,8 @@ import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.github.cjstehno.ersatz.TestAssertions.verifyEqualityAndHashCode;
+import static io.github.cjstehno.testthings.Verifiers.verifyEqualsAndHashCode;
+import static io.github.cjstehno.testthings.Verifiers.verifyToString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -53,13 +54,13 @@ class CookieTest {
     }
 
     @Test void equalsAndHash() {
-        verifyEqualityAndHashCode(cookie(), cookie());
+        verifyEqualsAndHashCode(cookie(), cookie());
     }
 
     @Test void string() {
-        assertEquals(
+        verifyToString(
             "Cookie(value=alpha, comment=Something, domain=localhost, path=/foo, version=1, httpOnly=true, maxAge=100, secure=true)",
-            cookie().toString()
+            cookie()
         );
     }
 }

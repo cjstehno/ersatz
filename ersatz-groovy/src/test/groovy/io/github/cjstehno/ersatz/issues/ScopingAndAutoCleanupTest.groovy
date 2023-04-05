@@ -43,17 +43,19 @@ class ScopingAndAutoCleanupTest {
 
     private static final String INPUT_CONTENT = 'input'
     private static final String OUTPUT_CONTENT = 'output'
-    private GroovyErsatzServer server
     private Http http
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach(final GroovyErsatzServer server) {
+        // this is a bit of a hack do to the order of operations
+        server.start();
+
         http = new Http(server.getHttpUrl())
     }
 
     @Test
     @DisplayName('Posting One')
-    void postingOne() {
+    void postingOne(final GroovyErsatzServer server) {
         server.expectations {
             POST('/posting') {
                 called 1
@@ -73,7 +75,7 @@ class ScopingAndAutoCleanupTest {
 
     @Test
     @DisplayName('Posting Two')
-    void postingTwo() {
+    void postingTwo(final GroovyErsatzServer server) {
         String inputContent = INPUT_CONTENT
         String outputContent = OUTPUT_CONTENT
 
@@ -96,7 +98,7 @@ class ScopingAndAutoCleanupTest {
 
     @Test
     @DisplayName('Posting Three')
-    void postingThree() {
+    void postingThree(final GroovyErsatzServer server) {
         server.expectations {
             POST('/posting').body(INPUT_CONTENT, TEXT_PLAIN).decoder(TEXT_PLAIN, utf8String).called(1)
                     .responds().body(OUTPUT_CONTENT, TEXT_PLAIN)
