@@ -1,0 +1,49 @@
+== JUnit Extension
+
+The framework provides a JUnit 5 Extension to simplify server management and configuration.
+
+The main functionality of the extension is to provide two test lifecycle hooks:
+
+- `beforeEach`: Before each test method is executed, the server will be created, configured, and started.
+- `afterEach`: After each test method is done executing, the server will be stopped, and the expectations cleared.
+
+Configuration of the test server can take one of the following forms (in order of precedence):
+
+- *Annotated Method.* If the test method is annotated with the `@ApplyServerConfig(method)` annotation, the specified method will be called to populate a `ServerConfig` instance, which will be used to configure an instance of `ErsatzServer`, which will be exposed as a test method parameter.
+- *Annotated Class.* If the test class is annotated with the `@ApplyServerConfig(method)` annotation, the specified method will be called to populate a `ServerConfig` instance, which will be used to configure an instance of `ErsatzServer`, which will be exposed as a test method parameter.
+- *Typed field without value.* If a field of type `ErsatzServer` is added to the test, with no explicit value, the server will be created and used to populate that field. The created server will also be exposed as a test method parameter.
+- *Typed field with value.* If a field of type `ErsatzServer` is added to the test with a value, that value will be used as the server, and also exposed as a test method parameter.
+- *No configuration.* If no explicit configuration is added to the test, it will create an instance of `ErsatzServer` and expose it as an available test method parameter.
+
+The `@ApplyServerConfig` annotation may be added to the test class, for global default configuration, or to a test method, to define the configuration to be used by a single test method. The value of the annotation should be the name of a method of the test class which accepts a single argument of type `ServerConfig`. The method should use the provided `ServerConfig` instance and configure it.
+
+Lastly, if a test method adds a parameter of type `ErsatzServer`, it will be populated with the currently configured server instance for the test - this removes the need to store the server instance in a field of the test class.
+
+An example with some of the available configuration could look like the following:
+
+[source,java]
+----
+@ExtendWith(ErsatzServerExtension.class)
+@ApplyServerConfig("defaultConfig")
+class SomeTesting {
+
+    @Test void defaultTest(final ErsatzServer server){
+        // do some testing with the server - defaultConfig
+    }
+
+    @Test @ApplyServerConfig("anotherConfig")
+    void anotherTest(final ErsatzServer server){
+        // do some more testing with the server - anotherConfig
+    }
+
+    private void defaultConfig(final ServerConfig conf){
+        // apply some config
+    }
+
+    private void anotherConfig(final ServerConfig conf){
+        // apply some other config
+    }
+}
+----
+
+The legacy style of test configuration will continue to work, but now you have some additional options to help clean things up a bit.

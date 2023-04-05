@@ -56,7 +56,16 @@ public class ErsatzServer implements Closeable {
      * Creates a new Ersatz server instance with empty (default) configuration.
      */
     public ErsatzServer() {
-        this.serverConfig = new ServerConfigImpl();
+        this(new ServerConfigImpl());
+    }
+
+    /**
+     * Creates a new Ersatz server instance with the provided configuration.
+     *
+     * @param config the configuration instance.
+     */
+    public ErsatzServer(final ServerConfig config) {
+        this.serverConfig = (ServerConfigImpl) config;
         this.serverConfig.setStarter(this::start);
 
         this.underlyingServer = new UndertowUnderlyingServer(serverConfig);
