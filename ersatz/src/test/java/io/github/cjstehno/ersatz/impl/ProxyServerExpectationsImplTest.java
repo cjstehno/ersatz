@@ -24,8 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ProxyServerExpectationsImplTest {
 
-    // FIXME: more testing
-
     @Test void anyExpectation() {
         assertTrue(
             ((ProxyServerExpectationsImpl) new ProxyServerExpectationsImpl().any("/alpha")).matches(
