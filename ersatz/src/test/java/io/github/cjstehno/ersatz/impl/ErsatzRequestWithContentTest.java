@@ -59,7 +59,7 @@ class ErsatzRequestWithContentTest {
     private ErsatzServer server;
 
     @BeforeEach void beforeEach() {
-        request = new ErsatzRequestWithContent(POST, pathMatching("/posting"));
+        request = new ErsatzRequestWithContent(POST, pathMatching("/posting"), null, null);
     }
 
     @Test @DisplayName("body with content-type")

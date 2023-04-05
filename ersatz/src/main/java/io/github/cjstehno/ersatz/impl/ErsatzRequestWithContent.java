@@ -44,18 +44,8 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
      * @param globalEncoders the shared global encoders
      */
     public ErsatzRequestWithContent(final HttpMethod method, final PathMatcher pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
-        super(method, pathMatcher, globalEncoders);
+        super(method, pathMatcher, globalEncoders, false);
         this.decoderChain = new DecoderChain(globalDecoders, localDecoders);
-    }
-
-    /**
-     * Creates a request with the specified method and path.
-     *
-     * @param method      the request method
-     * @param pathMatcher the request path matcher
-     */
-    public ErsatzRequestWithContent(final HttpMethod method, final PathMatcher pathMatcher) {
-        this(method, pathMatcher, null, null);
     }
 
     @Override public RequestWithContent body(final BodyMatcher bodyMatcher) {

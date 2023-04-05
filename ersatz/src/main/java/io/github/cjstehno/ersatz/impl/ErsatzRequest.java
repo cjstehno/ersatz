@@ -68,17 +68,6 @@ public class ErsatzRequest implements Request {
         this.emptyResponse = noResponse;
     }
 
-    /**
-     * Creates a new request with the specified method, path matcher.
-     *
-     * @param meth           the request method
-     * @param pathMatcher    the path matcher
-     * @param globalEncoders the shared global encoders
-     */
-    public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders) {
-        this(meth, pathMatcher, globalEncoders, false);
-    }
-
     @Override
     public Request secure(final boolean value) {
         matchers.add(new RequestSchemeMatcher(value));

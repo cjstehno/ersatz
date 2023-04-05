@@ -57,7 +57,7 @@ class ErsatzRequestTest {
     private ErsatzRequest request;
 
     @BeforeEach void beforeEach() {
-        request = new ErsatzRequest(POST, pathMatching("/testing"), new ResponseEncoders());
+        request = new ErsatzRequest(POST, pathMatching("/testing"), new ResponseEncoders(), false);
     }
 
     @Test @DisplayName("to string")
