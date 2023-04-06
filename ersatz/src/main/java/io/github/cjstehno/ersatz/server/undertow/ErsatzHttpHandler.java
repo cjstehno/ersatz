@@ -33,7 +33,7 @@ import static io.undertow.util.HttpString.tryFromString;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-@Slf4j @RequiredArgsConstructor @SuppressWarnings("ClassCanBeRecord")
+@Slf4j @RequiredArgsConstructor
 class ErsatzHttpHandler implements HttpHandler {
 
     private static final String TRANSFER_ENCODING = "Transfer-encoding";
@@ -46,34 +46,32 @@ class ErsatzHttpHandler implements HttpHandler {
 
     @Override
     public void handleRequest(final HttpServerExchange exchange) throws Exception {
-        final ClientRequest clientRequest = new UndertowClientRequest(exchange);
+        val clientRequest = new UndertowClientRequest(exchange);
 
         log.debug("Request({}): {}", exchange.getProtocol(), clientRequest);
 
         // check the request against the global requirements
-        val requirementsMet = requirements.check(clientRequest);
-        if (!requirementsMet) {
+        if (!requirements.check(clientRequest)) {
             handleMismatch(exchange, clientRequest);
             return;
         }
 
         // check the request against the expectations
-        expectations.findMatch(clientRequest)
-            .ifPresentOrElse(
-                req -> {
-                    try {
-                        final var ereq = (ErsatzRequest) req;
-                        send(exchange, ereq.getCurrentResponse());
-                        ereq.mark(clientRequest);
+        expectations.findMatch(clientRequest).ifPresentOrElse(
+            req -> {
+                try {
+                    val ereq = (ErsatzRequest) req;
+                    send(exchange, ereq.getCurrentResponse());
+                    ereq.mark(clientRequest);
 
-                    } catch (final Exception ex) {
-                        log.error("Error-Response: Internal Server Error (500): {}", ex.getMessage(), ex);
-                        exchange.setStatusCode(500);
-                        sendFullResponse(exchange, EMPTY_RESPONSE);
-                    }
-                },
-                () -> handleMismatch(exchange, clientRequest)
-            );
+                } catch (final Exception ex) {
+                    log.error("Error-Response: Internal Server Error (500): {}", ex.getMessage(), ex);
+                    exchange.setStatusCode(500);
+                    sendFullResponse(exchange, EMPTY_RESPONSE);
+                }
+            },
+            () -> handleMismatch(exchange, clientRequest)
+        );
     }
 
     private void handleMismatch(final HttpServerExchange exchange, final ClientRequest clientRequest) {

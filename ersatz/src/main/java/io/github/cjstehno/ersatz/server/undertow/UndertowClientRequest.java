@@ -19,6 +19,8 @@ import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.undertow.server.HttpServerExchange;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.util.ArrayDeque;
@@ -36,14 +38,11 @@ import static java.util.Collections.emptyMap;
 /**
  * The primary <code>ClientRequest</code> implementation used to wrap and expose the important parts of the underlying Undertow request context.
  */
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class UndertowClientRequest implements ClientRequest {
 
     private final HttpServerExchange exchange;
     private AtomicReference<byte[]> content;
-
-    UndertowClientRequest(final HttpServerExchange exchange) {
-        this.exchange = exchange;
-    }
 
     /**
      * Used to retrieve the request scheme, generally HTTP or HTTPS.
