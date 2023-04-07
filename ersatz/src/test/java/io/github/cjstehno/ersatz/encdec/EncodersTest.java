@@ -29,16 +29,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.stream.Stream;
 
-import static io.github.cjstehno.testthings.Resources.resourceFile;
-import static io.github.cjstehno.testthings.Resources.resourcePath;
-import static io.github.cjstehno.testthings.Resources.resourceStream;
-import static io.github.cjstehno.testthings.Resources.resourceUri;
-import static io.github.cjstehno.testthings.Resources.resourceUrl;
+import static io.github.cjstehno.testthings.Resources.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

@@ -20,14 +20,8 @@ import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.*;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
-import org.junit.jupiter.api.extension.ParameterResolver;
-import org.junit.platform.commons.support.ReflectionSupport;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -38,9 +32,7 @@ import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
 import static org.junit.platform.commons.support.AnnotationSupport.findAnnotation;
 import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
 import static org.junit.platform.commons.support.ModifierSupport.isNotStatic;
-import static org.junit.platform.commons.support.ReflectionSupport.findFields;
-import static org.junit.platform.commons.support.ReflectionSupport.findMethod;
-import static org.junit.platform.commons.support.ReflectionSupport.newInstance;
+import static org.junit.platform.commons.support.ReflectionSupport.*;
 
 /**
  * JUnit 5 Extension used to provide a simple means of managing an ErsatzServer instance during testing.
@@ -56,10 +48,9 @@ import static org.junit.platform.commons.support.ReflectionSupport.newInstance;
 public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
     private static final String FIELD_SUFFIX = "ErsatzServer";
-    private static final String SERVER_KEY = "instance";
-    private static final Namespace NAMESPACE = create("ersatz-server", "server");
-    private static final String GROOVY_ERSATZ_SERVER = "GroovyErsatzServer";
-    private static final String GROOVY_ERSATZ_SERVER_CLASS = "io.github.cjstehno.ersatz." + GROOVY_ERSATZ_SERVER;
+    private static final String SERVER_KEY = "server-instance";
+    private static final Namespace NAMESPACE = create("io.github.cjstehno", "ersatz");
+    private static final ParameterResolver SERVER_PARAM_RESOLVER = new ErsatzServerParameterResolverDelegate(SERVER_KEY);
 
     /**
      * Called before each test method is executed - an instance of ErsatzServer is located or instantiated, then started.
@@ -90,25 +81,12 @@ public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallb
 
     @Override
     public boolean supportsParameter(final ParameterContext paramContext, final ExtensionContext extContext) throws ParameterResolutionException {
-        return paramContext.getParameter().getType().getSimpleName().endsWith(FIELD_SUFFIX);
+        return SERVER_PARAM_RESOLVER.supportsParameter(paramContext, extContext);
     }
 
     @Override
     public Object resolveParameter(final ParameterContext paramContext, final ExtensionContext extContext) throws ParameterResolutionException {
-        if( paramContext.getParameter().getType().getSimpleName().equals(GROOVY_ERSATZ_SERVER)){
-            val server = extContext.getStore(NAMESPACE).get(SERVER_KEY);
-            if( server.getClass().getSimpleName().equals(GROOVY_ERSATZ_SERVER)){
-                return server;
-            } else {
-                try {
-                    return newInstance(forName(GROOVY_ERSATZ_SERVER_CLASS), server);
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        } else {
-            return extContext.getStore(NAMESPACE).get(SERVER_KEY);
-        }
+        return SERVER_PARAM_RESOLVER.resolveParameter(paramContext, extContext);
     }
 
     /**

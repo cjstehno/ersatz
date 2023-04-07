@@ -17,9 +17,12 @@ package io.github.cjstehno.ersatz.expectations;
 
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.cfg.RequestWithContent;
+import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.encdec.Decoders;
 import io.github.cjstehno.ersatz.encdec.Encoders;
+import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
+import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,20 +39,22 @@ import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
 import static org.hamcrest.Matchers.startsWith;
 
-@ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
+@ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig("serverConfig")
 public class ErsatzServerAnyExpectationsTest {
 
     private static final String TEXT_PAYLOAD = "this is some text!";
-    private final ErsatzServer server = new ErsatzServer(cfg -> {
+
+    @SuppressWarnings("unused") private static void serverConfig(final ServerConfig cfg){
         cfg.https();
         cfg.decoder(TEXT_PLAIN, Decoders.string(UTF_8));
         cfg.encoder(TEXT_PLAIN, String.class, Encoders.text(UTF_8));
-    });
+    }
+
     @SuppressWarnings("unused") private HttpClientExtension.Client client;
 
     @ParameterizedTest(name = "[{index}] path only: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void withPath(final boolean https, final String responseText) throws IOException {
+    void withPath(final boolean https, final String responseText, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.ANY("/something").secure(https).called(2).responds().body(responseText, TEXT_PLAIN);
         });
@@ -61,7 +66,7 @@ public class ErsatzServerAnyExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] path and consumer: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void withPathAndConsumer(final boolean https, final String responseText) throws IOException {
+    void withPathAndConsumer(final boolean https, final String responseText, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.ANY("/something", req -> {
                 req.secure(https);
@@ -77,7 +82,7 @@ public class ErsatzServerAnyExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] path matcher: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void withPathMatcher(final boolean https, final String responseText) throws IOException {
+    void withPathMatcher(final boolean https, final String responseText, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.ANY(startsWith("/loader/")).secure(https).called(2).responds().body(responseText, TEXT_PLAIN);
         });
@@ -89,7 +94,7 @@ public class ErsatzServerAnyExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] path matcher and consumer: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void withPathMatcherAndConsumer(final boolean https, final String responseText) throws IOException {
+    void withPathMatcherAndConsumer(final boolean https, final String responseText, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.ANY(startsWith("/loader/"), req -> {
                 req.secure(https);
@@ -105,7 +110,7 @@ public class ErsatzServerAnyExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] request with content and path only: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void withContentAndPath(final boolean https, final String responseText) throws IOException {
+    void withContentAndPath(final boolean https, final String responseText, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.ANY("/something", req -> {
                 req.secure(https);

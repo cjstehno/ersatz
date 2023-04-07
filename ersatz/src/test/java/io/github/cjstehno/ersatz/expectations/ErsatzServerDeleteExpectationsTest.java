@@ -17,7 +17,8 @@ package io.github.cjstehno.ersatz.expectations;
 
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
-import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
+import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
+import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import lombok.val;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,15 +34,18 @@ import static io.github.cjstehno.ersatz.util.HttpClientExtension.Client.basicAut
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
+@ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig("serverConfig")
 public class ErsatzServerDeleteExpectationsTest {
 
-    private final ErsatzServer server = new ErsatzServer(ServerConfig::https);
+    @SuppressWarnings("unused") private static void serverConfig(final ServerConfig cfg) {
+        cfg.https();
+    }
+
     @SuppressWarnings("unused") private HttpClientExtension.Client client;
 
     @ParameterizedTest(name = "[{index}] path only: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
-    void withPath(final boolean https) throws IOException {
+    void withPath(final boolean https, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.DELETE("/something").secure(https).called(1).responds().code(200);
         });
@@ -51,8 +55,8 @@ public class ErsatzServerDeleteExpectationsTest {
     }
 
     @ParameterizedTest(name = "[{index}] path and consumer: https({0}) -> {1}")
-    @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void withPathAndConsumer(final boolean https) throws IOException {
+    @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
+    void withPathAndConsumer(final boolean https, final ErsatzServer server) throws IOException {
         server.expects().DELETE("/something", req -> {
             req.secure(https).called(1);
             req.responds().code(200);
@@ -63,8 +67,8 @@ public class ErsatzServerDeleteExpectationsTest {
     }
 
     @ParameterizedTest(name = "[{index}] path matcher: https({0}) -> {1}")
-    @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void withPathMatcher(final boolean https, final String responseText) throws IOException {
+    @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
+    void withPathMatcher(final boolean https, final ErsatzServer server) throws IOException {
         server.expects().DELETE(startsWith("/loader/")).secure(https).called(1).responds().code(200);
 
         assertEquals(200, client.delete("/loader/something", https).code());
@@ -72,8 +76,8 @@ public class ErsatzServerDeleteExpectationsTest {
     }
 
     @ParameterizedTest(name = "[{index}] path matcher and consumer: https({0}) -> {1}")
-    @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void withPathMatcherAndConsumer(final boolean https, final String responseText) throws IOException {
+    @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
+    void withPathMatcherAndConsumer(final boolean https, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.DELETE(startsWith("/loader/"), req -> {
                 req.secure(https);
@@ -88,7 +92,7 @@ public class ErsatzServerDeleteExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] path and consumer (with response headers): https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
-    void withPathAndConsumerWithResponseHeaders(final boolean https) throws IOException {
+    void withPathAndConsumerWithResponseHeaders(final boolean https, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.DELETE("/something", req -> {
                 req.secure(https);
@@ -111,7 +115,7 @@ public class ErsatzServerDeleteExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] BASIC authentication: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
-    void withBASICAuthentication(final boolean https) throws IOException {
+    void withBASICAuthentication(final boolean https, final ErsatzServer server) throws IOException {
         server.expectations(cfg -> {
             cfg.DELETE("/safe", req -> {
                 basicAuth(req, "basicuser", "ba$icp@$$");

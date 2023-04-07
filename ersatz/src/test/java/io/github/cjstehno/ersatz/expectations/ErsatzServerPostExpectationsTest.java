@@ -16,9 +16,11 @@
 package io.github.cjstehno.ersatz.expectations;
 
 import io.github.cjstehno.ersatz.ErsatzServer;
+import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.encdec.Decoders;
 import io.github.cjstehno.ersatz.encdec.Encoders;
-import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
+import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
+import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
@@ -41,22 +43,24 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
+@ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig("serverConfig")
 public class ErsatzServerPostExpectationsTest {
 
     private static final String TEXT_PAYLOAD = "this is some text!";
-    private final ErsatzServer server = new ErsatzServer(cfg -> {
+
+    @SuppressWarnings("unused") private static void serverConfig(final ServerConfig cfg) {
         cfg.logResponseContent();
         cfg.https();
         cfg.decoder(TEXT_PLAIN, Decoders.string(UTF_8));
         cfg.decoder(APPLICATION_URLENCODED, Decoders.passthrough);
         cfg.encoder(TEXT_PLAIN, String.class, Encoders.text(UTF_8));
-    });
+    }
+
     @SuppressWarnings("unused") private HttpClientExtension.Client client;
 
     @ParameterizedTest(name = "[{index}] layered encoders/decoders: https({0})")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
-    void layeredEncodingDecoding(final boolean https) throws IOException {
+    void layeredEncodingDecoding(final boolean https, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.POST("/posting", req -> {
                 req.secure(https);
@@ -88,7 +92,7 @@ public class ErsatzServerPostExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] path only: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void withPath(final boolean https, final String responseText) throws IOException {
+    void withPath(final boolean https, final String responseText, final ErsatzServer server) throws IOException {
         server.expects().POST("/something").body(TEXT_PAYLOAD, TEXT_PLAIN.withCharset("utf-8")).secure(https).called(1).responds().body(responseText, TEXT_PLAIN);
 
         assertOkWithString(
@@ -100,7 +104,7 @@ public class ErsatzServerPostExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] path and consumer: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void withPathAndConsumer(final boolean https, final String responseText) throws IOException {
+    void withPathAndConsumer(final boolean https, final String responseText, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.POST("/something", req -> {
                 req.secure(https);
@@ -119,7 +123,7 @@ public class ErsatzServerPostExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] path matcher: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void withPathMatcher(final boolean https, final String responseText) throws IOException {
+    void withPathMatcher(final boolean https, final String responseText, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.POST(startsWith("/loader/")).body(TEXT_PAYLOAD, TEXT_PLAIN).secure(https).called(1).responds().body(responseText, TEXT_PLAIN);
         });
@@ -131,7 +135,7 @@ public class ErsatzServerPostExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] path matcher and consumer: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void withPathMatcherAndConsumer(final boolean https, final String responseText) throws IOException {
+    void withPathMatcherAndConsumer(final boolean https, final String responseText, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.POST(startsWith("/loader/"), req -> {
                 req.body(TEXT_PAYLOAD, TEXT_PLAIN);
@@ -148,7 +152,7 @@ public class ErsatzServerPostExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] variable case headers: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
-    void variableCaseHeaders(final boolean https, final String responseContent) throws IOException {
+    void variableCaseHeaders(final boolean https, final String responseContent, final ErsatzServer server) throws IOException {
         server.expectations(expect -> expect.POST("*", req -> {
             req.secure(https);
             req.called(3);
@@ -183,7 +187,7 @@ public class ErsatzServerPostExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] post params: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
-    void postParams(final boolean https) throws IOException {
+    void postParams(final boolean https, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.POST("/updates", req -> {
                 req.secure(https);
@@ -209,7 +213,7 @@ public class ErsatzServerPostExpectationsTest {
     }
 
     @Test @DisplayName("handling exception in encoder")
-    void encoderErrorHandling() throws IOException {
+    void encoderErrorHandling(final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.POST("/foo", req -> {
                 req.body(TEXT_PAYLOAD, TEXT_PLAIN);

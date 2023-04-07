@@ -42,7 +42,10 @@ public class UndertowUnderlyingProxyServer implements UnderlyingProxyServer {
 
     @Override public void start() {
         if (server == null) {
-            val builder = Undertow.builder().addHttpListener(EPHEMERAL_PORT, LOCALHOST);
+            val builder = Undertow.builder()
+                .addHttpListener(EPHEMERAL_PORT, LOCALHOST)
+                .setIoThreads(serverConfig.getIoThreads())
+                .setWorkerThreads(serverConfig.getWorkerThreads());
 
             val client = new LoadBalancingProxyClient();
             client.setConnectionsPerThread(1);

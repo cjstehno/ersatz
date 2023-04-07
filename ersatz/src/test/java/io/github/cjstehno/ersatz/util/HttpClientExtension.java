@@ -24,6 +24,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.platform.commons.support.ModifierSupport;
 import org.junit.platform.commons.support.ReflectionSupport;
 
@@ -53,8 +54,9 @@ import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN
  */
 public class HttpClientExtension implements BeforeEachCallback {
 
-    private static final String SERVER_KEY = "instance";
-    private static final ExtensionContext.Namespace SERVER_NAMESPACE = create("ersatz-server", "server");
+    private static final String SERVER_KEY = "server-instance";
+    private static final String SHARED_SERVER_KEY = "shared-instance";
+    private static final Namespace SERVER_NAMESPACE = create("io.github.cjstehno", "ersatz");
 
     @Override @SuppressWarnings("resource") public void beforeEach(final ExtensionContext context) throws Exception {
         val testInstance = context.getRequiredTestInstance();
@@ -74,7 +76,12 @@ public class HttpClientExtension implements BeforeEachCallback {
         );
 
         if (fields.isEmpty()) {
-            return (ErsatzServer) context.getStore(SERVER_NAMESPACE).get(SERVER_KEY);
+            var instance = context.getStore(SERVER_NAMESPACE).get(SERVER_KEY);
+            if (instance == null) {
+                instance = context.getStore(SERVER_NAMESPACE).get(SHARED_SERVER_KEY);
+            }
+            return (ErsatzServer) instance;
+
         } else {
             val field = fields.get(0);
             field.setAccessible(true);

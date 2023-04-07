@@ -17,7 +17,8 @@ package io.github.cjstehno.ersatz.expectations;
 
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
-import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
+import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
+import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import lombok.val;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,15 +35,18 @@ import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
+@ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig("serverConfig")
 public class ErsatzServerOptionsExpectationsTest {
 
-    private final ErsatzServer server = new ErsatzServer(ServerConfig::https);
+    @SuppressWarnings("unused") private static void serverConfig(final ServerConfig cfg) {
+        cfg.https();
+    }
+
     @SuppressWarnings("unused") private HttpClientExtension.Client client;
 
     @ParameterizedTest(name = "[{index}] allowed options: https({0}) {1} -> {2}")
     @MethodSource("optionsProvider")
-    void optionsPathAllows(final boolean https, final String path,final Collection<String> allowed) throws IOException {
+    void optionsPathAllows(final boolean https, final String path, final Collection<String> allowed, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.OPTIONS("/options").secure(https).responds().allows(GET, POST).code(200);
             expect.OPTIONS("/*").secure(https).responds().allows(DELETE, GET, OPTIONS).code(200);

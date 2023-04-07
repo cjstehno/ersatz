@@ -76,19 +76,19 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
                 log.debug("HTTPS listener enabled and configured.");
             }
 
-            final var blockingHandler = new BlockingHandler(new EncodingHandler(
-                new HttpTraceHandler(
-                    new ErsatzHttpHandler(
-                        serverConfig.getRequirements(),
-                        serverConfig.getExpectations(),
-                        serverConfig.isMismatchToConsole(),
-                        serverConfig.isLogResponseContent()
-                    )
-                ),
-                new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), 50)
-            ));
-
-            server = builder.setHandler(blockingHandler).build();
+            server = builder.setHandler(
+                new BlockingHandler(new EncodingHandler(
+                    new HttpTraceHandler(
+                        new ErsatzHttpHandler(
+                            serverConfig.getRequirements(),
+                            serverConfig.getExpectations(),
+                            serverConfig.isMismatchToConsole(),
+                            serverConfig.isLogResponseContent()
+                        )
+                    ),
+                    new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), 50)
+                ))
+            ).build();
 
             server.start();
 

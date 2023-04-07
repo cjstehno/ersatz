@@ -1,6 +1,13 @@
 == JUnit Extension
 
-The framework provides a JUnit 5 Extension with `ErsatzServerExtension` to simplify server management and configuration of a server instance.
+The framework provides two JUnit 5 Extensions:
+
+- `ErsatzServerExtension`. A configurable server management extension that creates and destroys the server after each test method.
+- `SharedErsatzServerExtension`. A server management extension that creates the server at the start of the test class, and destroys it when all tests are done.
+
+=== ErsatzServerExtension
+
+NOTE: This is the extension that has been around for a while - the new extension was created with a different name so as not to break existing tests.
 
 The main functionality of the extension is to provide two test lifecycle hooks:
 
@@ -47,3 +54,36 @@ class SomeTesting {
 ----
 
 The legacy style of test configuration will continue to work, but now you have some additional options to help clean things up a bit.
+
+=== SharedErsatzServerExtension
+
+This JUnit extension provides some of the features of the other extension, though its main purpose is to provide a means
+of simple and fast server management.
+
+NOTE: While theoretically, creating and starting the server once per test class _should_ be faster than doing it for each test method, your results may vary... and it will be highly dependant on how many tests you have in the class. As a general rule, I would suggest starting with this extension and then switching to the other one if/when you need more flexible configuration.
+
+This extension differ from the other in that it creates the server instance in `beforeAll` and destroys it in `afterAll`, so that there is one server running and available for all of the tests in the class. This cuts down on the startup and shutdown time, at the cost of being able to configure the server for each test method.
+
+The server expectations are cleared after each test method completes (e.g. `afterEach`).
+
+Configuration of the server instance may be done using a class-level `@ApplyServerConfig` annotation (not method level), or, if none is provided, the default configuration will be used to create the server. Also, note that for this extension, the configuration method must be `static`.
+
+Test methods should add an `ErsatzServer` or `GroovyErsatzServer` typed parameter to the test methods that require access to the server instance.
+
+A simple example (similar to the one above), would be:
+
+[source,java]
+----
+@ExtendWith(SharedErsatzServerExtension.class)
+@ApplyServerConfig
+class SomeTesting {
+
+    @Test void defaultTest(final ErsatzServer server){
+        // do some testing with the server - defaultConfig
+    }
+
+    private static void serverConfig(final ServerConfig conf){
+        // apply some config
+    }
+}
+----

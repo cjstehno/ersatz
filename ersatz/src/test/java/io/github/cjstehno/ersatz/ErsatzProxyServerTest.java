@@ -15,40 +15,25 @@
  */
 package io.github.cjstehno.ersatz;
 
-import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
+import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(ErsatzServerExtension.class)
+@ExtendWith(SharedErsatzServerExtension.class)
 class ErsatzProxyServerTest {
 
-    private ErsatzServer server;
-    private ErsatzProxyServer proxyServer;
-
-    @BeforeEach void beforeEach() {
-        proxyServer = new ErsatzProxyServer(config -> {
+    @Test void usage(final ErsatzServer server) throws Exception {
+        val proxyServer = new ErsatzProxyServer(config -> {
             config.target(server.getHttpUrl()).expectations(expects -> {
                 expects.get("/foo");
             });
         });
-    }
 
-    @AfterEach void afterEach() throws IOException {
-        if (proxyServer != null) {
-            proxyServer.close();
-        }
-    }
-
-    @Test void usage() throws Exception {
         server.expectations(expects -> {
             expects.GET("/foo", res -> res.responds().code(200));
         });
@@ -61,5 +46,7 @@ class ErsatzProxyServerTest {
 
         server.verify();
         proxyServer.verify();
+
+        proxyServer.close();
     }
 }

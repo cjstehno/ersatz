@@ -15,29 +15,21 @@
  */
 package io.github.cjstehno.ersatz;
 
+import io.github.cjstehno.ersatz.cfg.ServerConfig;
+import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
+import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(ErsatzServerExtension.class)
 class ErsatzServerTest {
 
-    @Test @DisplayName("verify url information")
-    void urlInformation() {
-        val server = new ErsatzServer(cfg -> {
-            cfg.reportToConsole();
-            cfg.https();
-            cfg.httpPort(8182);
-            cfg.httpsPort(8584);
-            cfg.serverThreads(1);
-            cfg.timeout(5);
-        }).start();
-
+    @Test @DisplayName("verify url information") @ApplyServerConfig("infoConfig")
+    void urlInformation(final ErsatzServer server) {
         assertEquals("http://localhost:8182", server.getHttpUrl());
         assertEquals("http://localhost:8182/stuff", server.httpUrl("/stuff"));
 
@@ -45,31 +37,25 @@ class ErsatzServerTest {
         assertEquals("https://localhost:8584/stuff", server.httpsUrl("/stuff"));
     }
 
-    @Test @DisplayName("not started should give useful error")
-    void not_started() {
-        val server = new ErsatzServer();
-        try {
-
-            final var thrown = assertThrows(IllegalStateException.class, () -> server.httpUrl("/nothing"));
-            assertEquals("The port (-1) is invalid: Has the server been started?", thrown.getMessage());
-
-        } finally {
-            server.close();
-        }
+    @SuppressWarnings("unused") private void infoConfig(final ServerConfig cfg) {
+        cfg.reportToConsole();
+        cfg.https();
+        cfg.httpPort(8182);
+        cfg.httpsPort(8584);
+        cfg.serverThreads(1);
+        cfg.timeout(5);
     }
 
     @Test @DisplayName("auto-start disabled")
     void autoStartDisabled() {
         val server = new ErsatzServer(cfg -> cfg.autoStart(false));
         try {
-
             server.expectations(expect -> {
                 expect.GET("/foo").responds().code(200);
             });
 
             val thrown = assertThrows(Exception.class, server::getHttpUrl);
             assertEquals("The port (-1) is invalid: Has the server been started?", thrown.getMessage());
-
         } finally {
             server.close();
         }
@@ -79,13 +65,11 @@ class ErsatzServerTest {
     void autoStartEnabled() {
         val server = new ErsatzServer(cfg -> cfg.autoStart(true));
         try {
-
             server.expectations(expect -> {
                 expect.GET("/foo").responds().code(200);
             });
 
             assertTrue(server.getHttpUrl().startsWith("http://localhost:"));
-
         } finally {
             server.close();
         }

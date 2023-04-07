@@ -72,4 +72,24 @@ public interface ProxyServerConfig {
      * @return a reference to this configuration
      */
     ProxyServerConfig expectations(final Consumer<ProxyServerExpectations> consumer);
+
+    /**
+     * Allows the configuration of the number of IO and Worker threads to be used by the underlying server.
+     *
+     * @param io the number of IO threads (should be fewer than workers; default is 1)
+     * @param worker the number of worker threads (should be more than io; default is 4)
+     * @return a reference to this server configuration
+     */
+    ProxyServerConfig serverThreads(final int io, final int worker);
+
+    /**
+     * Allows the configuration of the number of IO threads to be used by the underlying server. The worker threads will
+     * be configured to 4 times the configured io number.
+     *
+     * @param io the number of IO threads (should be a small number; default is 1)
+     * @return a reference to this server configuration
+     */
+    default ProxyServerConfig serverThreads(final int io) {
+        return serverThreads(io, io * 4);
+    }
 }

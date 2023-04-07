@@ -42,7 +42,7 @@ public @interface ApplyServerConfig {
      * The body of the method should perform any configuration operations on the <code>ServerConfig</code> instance
      * provided.
      *
-     * @return the configuration method name
+     * @return the configuration method name (defaults to "serverConfig").
      */
-    String value();
+    String value() default "serverConfig";
 }
