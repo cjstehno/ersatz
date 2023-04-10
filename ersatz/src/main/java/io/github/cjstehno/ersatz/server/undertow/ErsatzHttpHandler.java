@@ -33,6 +33,9 @@ import static io.undertow.util.HttpString.tryFromString;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+/**
+ * The Ersatz handler used to perform the actual request handling for the chain.
+ */
 @Slf4j @RequiredArgsConstructor
 class ErsatzHttpHandler implements ErsatzHandler {
 

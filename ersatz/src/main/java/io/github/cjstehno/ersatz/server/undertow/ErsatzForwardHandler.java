@@ -60,6 +60,8 @@ public class ErsatzForwardHandler implements ErsatzHandler {
             val fullTargetUri = ((ErsatzForwardResponse) ersatzResponse).getProxyTargetUri() + exchange.getRequestPath();
             log.info("Request forwarding to: {}", fullTargetUri);
 
+            System.getProperties().setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
+
             val requestBuilder = HttpRequest.newBuilder(new URI(fullTargetUri))
                 .method(exchange.getRequestMethod().toString(), HttpRequest.BodyPublishers.ofByteArray(clientRequest.getBody()));
 

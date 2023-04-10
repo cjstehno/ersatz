@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2023 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,14 +16,13 @@
 package io.github.cjstehno.ersatz.impl;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.encdec.Decoders;
-import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
+import io.github.cjstehno.ersatz.util.JsonEncDec;
 import lombok.val;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -34,7 +33,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 import static io.github.cjstehno.ersatz.cfg.ContentType.*;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
@@ -42,7 +40,6 @@ import static io.github.cjstehno.ersatz.encdec.MultipartRequestContent.multipart
 import static io.github.cjstehno.ersatz.match.MultipartRequestMatcher.multipartMatcher;
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
 import static org.hamcrest.Matchers.equalTo;
@@ -118,16 +115,6 @@ class ErsatzRequestWithContentTest {
 
     @Test @DisplayName("matching body with converter (builder)")
     void matchingBodyWithConverter() throws IOException {
-        // this is also an example of how you can implement a JSON decoder
-        // FIXME: pull this to a reusable test area
-        final BiFunction<byte[], DecodingContext, Object> parseJson = (content, ctx) -> {
-            try {
-                return new ObjectMapper().readValue(content != null ? content : "{}".getBytes(UTF_8), Map.class);
-            } catch (IOException e) {
-                throw new IllegalArgumentException(e.getMessage());
-            }
-        };
-
         val contentType = "some/json; charset=utf-8";
         server.expectations(e -> {
             e.POST("/posting", req -> {
@@ -138,7 +125,7 @@ class ErsatzRequestWithContentTest {
                     ),
                     contentType
                 );
-                req.decoder(new ContentType(contentType), parseJson);
+                req.decoder(new ContentType(contentType), JsonEncDec.jsonDecoder);
                 req.responds().body("accepted");
             });
         });
