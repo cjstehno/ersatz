@@ -63,6 +63,8 @@ public class ErsatzServerHeadExpectationsTest {
             req.responds().code(200);
         });
 
+        // fIXME: if you change the response code, it does not pass it through - bug
+
         assertEquals(200, client.head("/something", https).code());
         verify(server);
     }

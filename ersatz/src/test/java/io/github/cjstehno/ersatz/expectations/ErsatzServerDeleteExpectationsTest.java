@@ -59,10 +59,10 @@ public class ErsatzServerDeleteExpectationsTest {
     void withPathAndConsumer(final boolean https, final ErsatzServer server) throws IOException {
         server.expects().DELETE("/something", req -> {
             req.secure(https).called(1);
-            req.responds().code(200);
+            req.responds().code(201);
         });
 
-        assertEquals(200, client.delete("/something", https).code());
+        assertEquals(201, client.delete("/something", https).code());
         verify(server);
     }
 

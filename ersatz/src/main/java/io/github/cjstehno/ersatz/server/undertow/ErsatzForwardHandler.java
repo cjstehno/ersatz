@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2023 Christopher J. Stehno
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,27 +23,36 @@ import io.undertow.util.HttpString;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.nio.ByteBuffer;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Set;
+
+import static java.lang.String.join;
 
 /**
  * An Ersatz Undertow handler used to handle request forwarding to gather response data from an external server URI.
  * <p>
- * This implementation utilizes the built-in Java <code>HttpClient</code> framework.
+ * This implementation utilizes the <a href="https://square.github.io/okhttp/">OkHttp</a> library to make its forwarded
+ * requests. An attempt was made to use the built-in JDK HttpClient, however, it was overly restrictive and was too much
+ * effort to make it work with HTTPS requests.
  */
 @RequiredArgsConstructor @Slf4j
 public class ErsatzForwardHandler implements ErsatzHandler {
 
-    private static final Set<String> RESTRICTED_HEADER_NAMES = Set.of(
-        "accept-charset", "accept-encoding", "access-control-request-headers", "access-control-request-method",
-        "connection", "content-length", "cookie", "date", "dnt", "expect", "host", "keep-alive", "origin",
-        "permissions-policy", "referer", "te", "trailer", "transfer-encoding", "upgrade", "via"
-    );
+    // FIXME: okhttp becomes prod dependency (hide in shadow)
+
+    private static final Set<String> REQUESTS_WITH_BODY = Set.of("post", "put", "patch");
     private final ErsatzHandler next;
 
     /**
@@ -60,36 +69,70 @@ public class ErsatzForwardHandler implements ErsatzHandler {
             val fullTargetUri = ((ErsatzForwardResponse) ersatzResponse).getProxyTargetUri() + exchange.getRequestPath();
             log.info("Request forwarding to: {}", fullTargetUri);
 
-            System.getProperties().setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
+            val client = configureClient(clientRequest.getScheme().equalsIgnoreCase("https"));
 
-            val requestBuilder = HttpRequest.newBuilder(new URI(fullTargetUri))
-                .method(exchange.getRequestMethod().toString(), HttpRequest.BodyPublishers.ofByteArray(clientRequest.getBody()));
+            val requestMethod = exchange.getRequestMethod().toString();
+            val hasBody = REQUESTS_WITH_BODY.contains(requestMethod.toLowerCase());
+
+            val requestBuilder = new Request.Builder()
+                .method(exchange.getRequestMethod().toString(), hasBody ? RequestBody.create(clientRequest.getBody()) : null)
+                .url(fullTargetUri);
 
             // copy request headers
             exchange.getRequestHeaders().forEach(header -> {
-                if (!isRestrictedHeader(header.getHeaderName())) {
-                    requestBuilder.header(header.getHeaderName().toString(), String.join(";", header));
-                }
+                requestBuilder.header(header.getHeaderName().toString(), join(";", header));
             });
 
-            val response = HttpClient.newHttpClient().send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
+            try (val response = client.newCall(requestBuilder.build()).execute()) {
+                // copy response headers
+                response.headers().forEach(pair -> {
+                    exchange.getResponseHeaders().putAll(new HttpString(pair.getFirst()), response.headers(pair.getFirst()));
+                });
 
-            // copy response headers
-            response.headers().map().forEach((name, values) -> {
-                exchange.getResponseHeaders().putAll(new HttpString(name), values);
-            });
-
-            // copy response content
-            exchange.getResponseSender().send(ByteBuffer.wrap(response.body()));
+                exchange.setStatusCode(response.code());
+                exchange.getResponseSender().send(ByteBuffer.wrap(response.body().bytes()));
+            }
 
         } else {
             next.handleRequest(exchange, clientRequest, ersatzResponse);
         }
     }
 
-    // certain headers cannot be set - if this becomes an issue, the okhttp client seems to allow it (switch)
-    private static boolean isRestrictedHeader(final HttpString name) {
-        val headerName = name.toString().toLowerCase();
-        return headerName.startsWith("proxy-") || headerName.startsWith("sec-") || RESTRICTED_HEADER_NAMES.contains(headerName);
+    // We're just going to ignore HTTPS for forwarded requests
+    private static OkHttpClient configureClient(final boolean https) throws KeyManagementException, NoSuchAlgorithmException {
+        val builder = new OkHttpClient.Builder();
+
+        if (https) {
+            // Create a trust manager that does not validate certificate chains
+            final var trustAllCerts = new TrustManager[]{
+                new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                    }
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                    }
+
+                    @Override public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[0];
+                    }
+                }
+            };
+
+            // Install the all-trusting trust manager
+            val sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new SecureRandom());
+
+            // Create an ssl socket factory with our all-trusting manager
+            val sslSocketFactory = sslContext.getSocketFactory();
+
+            builder.sslSocketFactory(
+                sslSocketFactory,
+                (X509TrustManager) trustAllCerts[0]
+            ).hostnameVerifier((s, sslSession) -> true);
+        }
+
+        return builder.build();
     }
 }
