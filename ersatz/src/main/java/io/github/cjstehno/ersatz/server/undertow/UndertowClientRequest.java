@@ -130,7 +130,6 @@ class UndertowClientRequest implements ClientRequest {
     @Override public byte[] getBody() {
         if (content == null) {
             content = new AtomicReference<>();
-
             exchange.getRequestReceiver().receiveFullBytes((exch, message) -> content.set(message));
         }
 

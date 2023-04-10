@@ -32,6 +32,8 @@ import static org.hamcrest.core.IsIterableContaining.hasItem;
  */
 public abstract class HeaderMatcher extends BaseMatcher<ClientRequest> {
 
+    // FIXME: these dont work very well
+
     /**
      * Creates a matcher for a request header that matches the given name matcher and value matcher.
      *

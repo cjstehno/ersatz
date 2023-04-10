@@ -47,15 +47,15 @@ public class UndertowUnderlyingProxyServer implements UnderlyingProxyServer {
                 .setIoThreads(serverConfig.getIoThreads())
                 .setWorkerThreads(serverConfig.getWorkerThreads());
 
-            val client = new LoadBalancingProxyClient();
-            client.setConnectionsPerThread(1);
-            client.setMaxQueueSize(10);
-            client.setProblemServerRetry(3);
-            client.setSoftMaxConnectionsPerThread(1);
-            client.setTtl(1000);
-            client.addHost(serverConfig.getTargetUri());
+            val proxyClient = new LoadBalancingProxyClient()
+                .setConnectionsPerThread(1)
+                .setMaxQueueSize(10)
+                .setProblemServerRetry(3)
+                .setSoftMaxConnectionsPerThread(1)
+                .setTtl(1000)
+                .addHost(serverConfig.getTargetUri());
 
-            val proxyHandler = ProxyHandler.builder().setProxyClient(client).build();
+            val proxyHandler = ProxyHandler.builder().setProxyClient(proxyClient).build();
 
             builder.setHandler(new BlockingHandler(exchange -> {
                 val clientRequest = new UndertowClientRequest(exchange);
@@ -87,4 +87,5 @@ public class UndertowUnderlyingProxyServer implements UnderlyingProxyServer {
     @Override public int getActualHttpPort() {
         return actualHttpPort;
     }
+
 }

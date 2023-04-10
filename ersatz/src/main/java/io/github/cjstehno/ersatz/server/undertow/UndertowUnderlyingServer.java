@@ -26,8 +26,6 @@ import io.undertow.server.handlers.encoding.EncodingHandler;
 import io.undertow.server.handlers.encoding.GzipEncodingProvider;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xnio.Options;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -79,11 +77,15 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
             server = builder.setHandler(
                 new BlockingHandler(new EncodingHandler(
                     new HttpTraceHandler(
-                        new ErsatzHttpHandler(
+                        new ErsatzMatchingHandler(
                             serverConfig.getRequirements(),
                             serverConfig.getExpectations(),
                             serverConfig.isMismatchToConsole(),
-                            serverConfig.isLogResponseContent()
+                            new ErsatzForwardHandler(
+                                new ErsatzHttpHandler(
+                                    serverConfig.isLogResponseContent()
+                                )
+                            )
                         )
                     ),
                     new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), 50)

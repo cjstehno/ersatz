@@ -429,7 +429,6 @@ public class ErsatzServerGetExpectationsTest {
     void proxiedShouldReturnProxy(final ErsatzServer server) throws IOException {
         val proxyServer = new ErsatzServer(c -> c.expectations(e -> e.GET("/proxied").called(1).responds().body("forwarded").code(200)));
         try {
-
             server.expectations(e -> {
                 e.GET("/proxied").called(0).responds().body("original").code(200);
             });

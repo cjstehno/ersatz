@@ -20,9 +20,12 @@ import io.github.cjstehno.ersatz.match.HeaderMatcher;
 import io.github.cjstehno.ersatz.match.QueryParamMatcher;
 import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.hamcrest.Matcher;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
@@ -275,4 +278,42 @@ public interface Request {
      * @return a reference to this request
      */
     Request responder(final Consumer<Response> responder);
+
+    // FIXME: document in guide
+
+    /**
+     * Causes the response to be generated from the result of making the request against a proxied target server. The
+     * request will be matched by normal means, and the response will be the resulting response from the target server,
+     * making the same request.
+     *
+     * @param targetUri the target URI
+     * @return a reference to this request
+     */
+    @SneakyThrows
+    default Request forward(final String targetUri) {
+        return forward(new URI(targetUri));
+    }
+
+    /**
+     * Causes the response to be generated from the result of making the request against a proxied target server. The
+     * request will be matched by normal means, and the response will be the resulting response from the target server,
+     * making the same request.
+     *
+     * @param targetUri the target URI
+     * @return a reference to this request
+     */
+    Request forward(final URI targetUri);
+
+    /**
+     * Causes the response to be generated from the result of making the request against a proxied target server. The
+     * request will be matched by normal means, and the response will be the resulting response from the target server,
+     * making the same request.
+     *
+     * @param targetUrl the target URL
+     * @return a reference to this request
+     */
+    @SneakyThrows
+    default Request forward(final URL targetUrl) {
+        return forward(targetUrl.toURI());
+    }
 }

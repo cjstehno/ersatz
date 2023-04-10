@@ -119,6 +119,7 @@ class ErsatzRequestWithContentTest {
     @Test @DisplayName("matching body with converter (builder)")
     void matchingBodyWithConverter() throws IOException {
         // this is also an example of how you can implement a JSON decoder
+        // FIXME: pull this to a reusable test area
         final BiFunction<byte[], DecodingContext, Object> parseJson = (content, ctx) -> {
             try {
                 return new ObjectMapper().readValue(content != null ? content : "{}".getBytes(UTF_8), Map.class);
