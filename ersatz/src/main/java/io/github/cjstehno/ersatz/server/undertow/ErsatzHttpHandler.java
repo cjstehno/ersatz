@@ -39,9 +39,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 @Slf4j @RequiredArgsConstructor
 class ErsatzHttpHandler implements ErsatzHandler {
 
-    // FIXME: need to test all request methods
-    // FIXME: need to test with http and https
-
     private static final String TRANSFER_ENCODING = "Transfer-encoding";
     private static final String NO_HEADERS = "<no-headers>";
     private static final byte[] EMPTY_RESPONSE = new byte[0];

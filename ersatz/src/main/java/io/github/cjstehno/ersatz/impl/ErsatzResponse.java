@@ -16,25 +16,13 @@
 package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.cfg.ChunkingConfig;
-import io.github.cjstehno.ersatz.cfg.ContentType;
-import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Response;
-import io.github.cjstehno.ersatz.encdec.Cookie;
-import io.github.cjstehno.ersatz.encdec.EncoderChain;
-import io.github.cjstehno.ersatz.encdec.ErsatzMultipartResponseContent;
-import io.github.cjstehno.ersatz.encdec.MultipartResponseContent;
-import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+import io.github.cjstehno.ersatz.encdec.*;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -43,8 +31,6 @@ import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
 import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.unmodifiableMap;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of the <code>Response</code> interface.
@@ -52,7 +38,6 @@ import static java.util.stream.Collectors.toList;
 public class ErsatzResponse implements Response {
 
     private static final Logger log = LoggerFactory.getLogger(ErsatzResponse.class);
-    private static final String ALLOW_HEADER = "Allow";
     private final ResponseEncoders localEncoders = new ResponseEncoders();
     private final EncoderChain encoderChain;
 
@@ -100,17 +85,6 @@ public class ErsatzResponse implements Response {
     }
 
     @Override
-    public Response body(Object data, String contentType) {
-        body(data);
-        return this.contentType(contentType);
-    }
-
-    @Override
-    public Response body(Object data, ContentType contentType) {
-        return body(data, contentType.getValue());
-    }
-
-    @Override
     public Response header(final String name, final String... value) {
         final List<String> list = headers.computeIfAbsent(name, s -> new LinkedList<>());
         list.addAll(Arrays.asList(value));
@@ -137,12 +111,6 @@ public class ErsatzResponse implements Response {
     }
 
     @Override
-    public Response allows(final HttpMethod... methods) {
-        header(ALLOW_HEADER, Arrays.stream(methods).map(HttpMethod::getValue).collect(toList()));
-        return this;
-    }
-
-    @Override
     public Response cookies(final Map<String, String> cookies) {
         this.cookies.putAll(cookies);
         return this;
@@ -161,18 +129,6 @@ public class ErsatzResponse implements Response {
     }
 
     @Override
-    public Response contentType(final String contentType) {
-        header(CONTENT_TYPE_HEADER, contentType);
-        return this;
-    }
-
-    @Override
-    public Response contentType(final ContentType contentType) {
-        header(CONTENT_TYPE_HEADER, contentType.getValue());
-        return this;
-    }
-
-    @Override
     public String getContentType() {
         final var type = headers.get(CONTENT_TYPE_HEADER);
         return type != null ? String.join(",", type) : TEXT_PLAIN.getValue();
@@ -185,18 +141,7 @@ public class ErsatzResponse implements Response {
 
     @Override
     public Response delay(final long time) {
-        return delay(time, MILLISECONDS);
-    }
-
-    @Override
-    public Response delay(final long time, final TimeUnit unit) {
-        this.delayTime = MILLISECONDS.convert(time, unit);
-        return this;
-    }
-
-    @Override
-    public Response delay(final String time) {
-        this.delayTime = Duration.parse(time).toMillis();
+        this.delayTime = time;
         return this;
     }
 
@@ -256,12 +201,6 @@ public class ErsatzResponse implements Response {
 
     @Override
     public Response encoder(final String contentType, final Class objectType, final Function<Object, byte[]> encoder) {
-        localEncoders.register(contentType, objectType, encoder);
-        return this;
-    }
-
-    @Override
-    public Response encoder(final ContentType contentType, final Class objectType, final Function<Object, byte[]> encoder) {
         localEncoders.register(contentType, objectType, encoder);
         return this;
     }

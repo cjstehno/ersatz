@@ -36,6 +36,9 @@ dependencies {
     implementation 'commons-fileupload:commons-fileupload:1.5'
     implementation 'commons-io:commons-io:2.11.0'
 
+    // this is required for the forwarding
+    api 'com.squareup.okhttp3:okhttp:4.10.0'
+
     // this is required for the test extension
     compileOnly "org.junit.jupiter:junit-jupiter-api:$junitVersion"
 
@@ -49,8 +52,6 @@ dependencies {
     testImplementation 'org.mockito:mockito-junit-jupiter:5.2.0'
 
     testImplementation 'org.awaitility:awaitility:4.2.0'
-//  FIXME:   testImplementation 'com.squareup.okhttp3:okhttp:4.10.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 }
 

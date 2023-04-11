@@ -50,8 +50,6 @@ import static java.lang.String.join;
 @RequiredArgsConstructor @Slf4j
 public class ErsatzForwardHandler implements ErsatzHandler {
 
-    // FIXME: okhttp becomes prod dependency (hide in shadow)
-
     private static final Set<String> REQUESTS_WITH_BODY = Set.of("post", "put", "patch");
     private final ErsatzHandler next;
 
@@ -66,7 +64,7 @@ public class ErsatzForwardHandler implements ErsatzHandler {
      */
     public void handleRequest(final HttpServerExchange exchange, final ClientRequest clientRequest, final Response ersatzResponse) throws Exception {
         if (ersatzResponse instanceof ErsatzForwardResponse) {
-            val fullTargetUri = ((ErsatzForwardResponse) ersatzResponse).getProxyTargetUri() + exchange.getRequestPath();
+            val fullTargetUri = resolveTargetUri(exchange, ersatzResponse);
             log.info("Request forwarding to: {}", fullTargetUri);
 
             val client = configureClient(clientRequest.getScheme().equalsIgnoreCase("https"));
@@ -96,6 +94,11 @@ public class ErsatzForwardHandler implements ErsatzHandler {
         } else {
             next.handleRequest(exchange, clientRequest, ersatzResponse);
         }
+    }
+
+    private static String resolveTargetUri(final HttpServerExchange exchange, final Response response) {
+        val queryString = exchange.getQueryString();
+        return ((ErsatzForwardResponse) response).getProxyTargetUri() + exchange.getRequestPath() + (!queryString.isEmpty() ? "?" + queryString : "");
     }
 
     // We're just going to ignore HTTPS for forwarded requests

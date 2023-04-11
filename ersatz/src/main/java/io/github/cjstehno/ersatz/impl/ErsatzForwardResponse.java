@@ -16,8 +16,6 @@
 package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.cfg.ChunkingConfig;
-import io.github.cjstehno.ersatz.cfg.ContentType;
-import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
@@ -27,31 +25,21 @@ import lombok.RequiredArgsConstructor;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
  * This is an empty implementation that does not allow configuration - it denotes that the response is to contain the
- * response from a forwarded source.
+ * response from a request made to a forwarded.
  */
 @RequiredArgsConstructor
 public class ErsatzForwardResponse implements Response {
-    // TODO: see if there is a better way to do this - this is really just a marker
 
     @Getter private final URI proxyTargetUri;
 
-    private static final String EXCEPTION_MESSAGE = "A proxied response is not configurable.";
+    private static final String EXCEPTION_MESSAGE = "A forward response is not configurable.";
 
     @Override public Response body(Object content) {
-        throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
-    }
-
-    @Override public Response body(Object content, String contentType) {
-        throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
-    }
-
-    @Override public Response body(Object content, ContentType contentType) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
@@ -67,10 +55,6 @@ public class ErsatzForwardResponse implements Response {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
-    @Override public Response allows(HttpMethod... methods) {
-        throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
-    }
-
     @Override public Response cookie(String name, String value) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
@@ -83,14 +67,6 @@ public class ErsatzForwardResponse implements Response {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
-    @Override public Response contentType(String contentType) {
-        throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
-    }
-
-    @Override public Response contentType(ContentType contentType) {
-        throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
-    }
-
     @Override public String getContentType() {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
@@ -100,14 +76,6 @@ public class ErsatzForwardResponse implements Response {
     }
 
     @Override public Response delay(long time) {
-        throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
-    }
-
-    @Override public Response delay(long time, TimeUnit unit) {
-        throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
-    }
-
-    @Override public Response delay(String time) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
@@ -136,10 +104,6 @@ public class ErsatzForwardResponse implements Response {
     }
 
     @Override public Response encoder(String contentType, Class objectType, Function<Object, byte[]> encoder) {
-        throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
-    }
-
-    @Override public Response encoder(ContentType contentType, Class objectType, Function<Object, byte[]> encoder) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 

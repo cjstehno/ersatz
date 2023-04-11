@@ -35,10 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig
-public class ErsatzServerProxyTest {
-
-    // FIXME: this functionality needs to be in teh guide and feature list
-    // FIXME: test: OPTIONS
+public class ErsatzServerForwardTest {
 
     @SuppressWarnings("unused") private static void serverConfig(final ServerConfig cfg) {
         cfg.decoder(APPLICATION_JSON, JsonEncDec.jsonDecoder);
@@ -50,11 +47,12 @@ public class ErsatzServerProxyTest {
 
     @ParameterizedTest @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
     void forwardGet(final boolean secure, final ErsatzServer server) throws Exception {
-        try (val targetServer = new ErsatzServer(ErsatzServerProxyTest::serverConfig)) {
+        try (val targetServer = new ErsatzServer(ErsatzServerForwardTest::serverConfig)) {
             targetServer.expectations(expect -> {
                 expect.GET("/endpoint/get", req -> {
                     req.secure(secure);
                     req.called();
+                    req.query("foo", "bar");
                     req.responder(res -> res.body(Map.of("status", "golden"), APPLICATION_JSON));
                 });
             });
@@ -63,11 +61,12 @@ public class ErsatzServerProxyTest {
                 expect.GET("/endpoint/get", req -> {
                     req.secure(secure);
                     req.called();
+                    req.query("foo", "bar");
                     req.forward(secure ? targetServer.getHttpsUrl() : targetServer.getHttpUrl());
                 });
             });
 
-            try (val responseFromPost = client.get("/endpoint/get", secure)) {
+            try (val responseFromPost = client.get("/endpoint/get?foo=bar", secure)) {
                 assertEquals(200, responseFromPost.code());
                 assertEquals("{\"status\":\"golden\"}", responseFromPost.body().string());
             }
@@ -79,7 +78,7 @@ public class ErsatzServerProxyTest {
 
     @ParameterizedTest @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
     void forwardHead(final boolean secure, final ErsatzServer server) throws Exception {
-        try (val targetServer = new ErsatzServer(ErsatzServerProxyTest::serverConfig)) {
+        try (val targetServer = new ErsatzServer(ErsatzServerForwardTest::serverConfig)) {
             targetServer.expectations(expect -> {
                 expect.HEAD("/endpoint/head", req -> {
                     req.secure(secure);
@@ -107,7 +106,7 @@ public class ErsatzServerProxyTest {
 
     @ParameterizedTest @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
     void forwardDelete(final boolean secure, final ErsatzServer server) throws Exception {
-        try (val targetServer = new ErsatzServer(ErsatzServerProxyTest::serverConfig)) {
+        try (val targetServer = new ErsatzServer(ErsatzServerForwardTest::serverConfig)) {
             targetServer.expectations(expect -> {
                 expect.DELETE("/endpoint/delete", req -> {
                     req.secure(secure);
@@ -135,7 +134,7 @@ public class ErsatzServerProxyTest {
 
     @ParameterizedTest @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
     void usingErsatzPost(final boolean secure, final ErsatzServer server) throws Exception {
-        try (val targetServer = new ErsatzServer(ErsatzServerProxyTest::serverConfig)) {
+        try (val targetServer = new ErsatzServer(ErsatzServerForwardTest::serverConfig)) {
             targetServer.expectations(expect -> {
                 expect.POST("/endpoint/post", req -> {
                     req.secure(secure);
@@ -169,7 +168,7 @@ public class ErsatzServerProxyTest {
 
     @ParameterizedTest @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
     void usingErsatzPut(final boolean secure, final ErsatzServer server) throws Exception {
-        try (val targetServer = new ErsatzServer(ErsatzServerProxyTest::serverConfig)) {
+        try (val targetServer = new ErsatzServer(ErsatzServerForwardTest::serverConfig)) {
             targetServer.expectations(expect -> {
                 expect.PUT("/endpoint/put", req -> {
                     req.secure(secure);
@@ -202,7 +201,7 @@ public class ErsatzServerProxyTest {
 
     @ParameterizedTest @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
     void usingErsatzPatch(final boolean secure, final ErsatzServer server) throws Exception {
-        try (val targetServer = new ErsatzServer(ErsatzServerProxyTest::serverConfig)) {
+        try (val targetServer = new ErsatzServer(ErsatzServerForwardTest::serverConfig)) {
             targetServer.expectations(expect -> {
                 expect.PATCH("/endpoint/patch", req -> {
                     req.secure(secure);

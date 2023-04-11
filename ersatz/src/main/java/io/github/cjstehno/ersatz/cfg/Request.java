@@ -279,10 +279,8 @@ public interface Request {
      */
     Request responder(final Consumer<Response> responder);
 
-    // FIXME: document in guide
-
     /**
-     * Causes the response to be generated from the result of making the request against a proxied target server. The
+     * Causes the response to be generated from the result of making the request against another target server. The
      * request will be matched by normal means, and the response will be the resulting response from the target server,
      * making the same request.
      *
@@ -295,7 +293,7 @@ public interface Request {
     }
 
     /**
-     * Causes the response to be generated from the result of making the request against a proxied target server. The
+     * Causes the response to be generated from the result of making the request against another target server. The
      * request will be matched by normal means, and the response will be the resulting response from the target server,
      * making the same request.
      *
@@ -305,7 +303,7 @@ public interface Request {
     Request forward(final URI targetUri);
 
     /**
-     * Causes the response to be generated from the result of making the request against a proxied target server. The
+     * Causes the response to be generated from the result of making the request against another target server. The
      * request will be matched by normal means, and the response will be the resulting response from the target server,
      * making the same request.
      *

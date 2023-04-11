@@ -60,12 +60,10 @@ public class ErsatzServerHeadExpectationsTest {
     void withPathAndConsumer(final boolean https, final ErsatzServer server) throws IOException {
         server.expects().HEAD("/something", req -> {
             req.secure(https).called(1);
-            req.responds().code(200);
+            req.responds().code(202);
         });
 
-        // fIXME: if you change the response code, it does not pass it through - bug
-
-        assertEquals(200, client.head("/something", https).code());
+        assertEquals(202, client.head("/something", https).code());
         verify(server);
     }
 
