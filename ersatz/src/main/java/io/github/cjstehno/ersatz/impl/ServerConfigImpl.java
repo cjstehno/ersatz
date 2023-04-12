@@ -274,11 +274,6 @@ public class ServerConfigImpl implements ServerConfig {
         return this;
     }
 
-    @Override
-    public ServerConfig decoder(ContentType contentType, BiFunction<byte[], DecodingContext, Object> decoder) {
-        return decoder(contentType.getValue(), decoder);
-    }
-
     @Override public ServerConfig encoder(String contentType, Class objectType, Function<Object, byte[]> encoder) {
         globalEncoders.register(contentType, objectType, encoder);
         return this;

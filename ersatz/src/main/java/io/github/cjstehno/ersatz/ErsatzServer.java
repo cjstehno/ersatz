@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The main entry point for configuring an Ersatz server, which allows configuring of the expectations and management of the server itself. This is
@@ -285,11 +286,18 @@ public class ErsatzServer implements Closeable {
     }
 
     /**
+     * Helper method to wrap a call to the <code>verify()</code> method within a JUnit <code>assertTrue(...)</code> call.
+     */
+    public void assertVerified() {
+        assertTrue(verify(), "The server expectation verification failed.");
+    }
+
+    /**
      * Retrieves the internal server configuration.
      *
      * @return the server configuration for this server.
      */
-    protected final ServerConfigImpl getServerConfig(){
+    protected final ServerConfigImpl getServerConfig() {
         return serverConfig;
     }
 }

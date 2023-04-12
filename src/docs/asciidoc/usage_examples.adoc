@@ -6,16 +6,19 @@ This section contains some recipe-style usage examples.
 
 Url-encoded form requests are supported by default when the request content-type is specified as `application/x-www-form-urlencoded`. The request `body` expectation configuration will expect a `Map<String,String>` equivalent to the name-value pairs specified in the request body content. An example would be:
 
-[source,groovy]
+[source,java]
 ----
-server.expectations {
-    POST('/form') {
-        body([alpha: 'some data', bravo: '42'], 'application/x-www-form-urlencoded')
-        responder {
-            body 'ok'
-        }
-    }
-}
+server.expectations(expect -> {
+    expect.POST("/form", req -> {
+        req.body(Map.of(
+            "alpha", "some data",
+            "bravo", "42"
+        ), ContentType.APPLICATION_URLENCODED);
+        req.responder(res -> {
+            res.body("ok");
+        });
+    });
+});
 ----
 
 where the `POST` content data would look like:
@@ -109,7 +112,7 @@ which will print out "Hello Kotlin!" when executed.
 
 === Matching XML Body Content
 
-An example of how to use the Hamcrest matchers in a request.
+An example of how to use the Hamcrest matchers in a request (in a Groovy test using Spock).
 
 [source,groovy]
 ----
@@ -142,9 +145,14 @@ class BodyContentMatcherSpec extends Specification {
         server.expectations {
             POST('/posting') {
                 decoder('text/xml; charset=utf-8') { byte[] bytes, DecodingContext ctx ->
-                    DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(bytes))
+                    DocumentBuilderFactory.newInstance()
+                        .newDocumentBuilder()
+                        .parse(new ByteArrayInputStream(bytes))
                 }
-                body hasXPath('string(//request/node/@foo)', equalTo('bar')), 'text/xml; charset=utf-8'
+                body(
+                    hasXPath('string(//request/node/@foo)', equalTo('bar')),
+                    'text/xml; charset=utf-8'
+                )
                 called 1
                 responder {
                     body responseXml, TEXT_XML
@@ -154,13 +162,22 @@ class BodyContentMatcherSpec extends Specification {
         }
 
         when:
-        Response response = http.post(server.httpUrl('/posting'), create(MediaType.get('text/xml; charset=utf-8'), requestXml))
+        Response response = http.post(
+            server.httpUrl('/posting'),
+            create(MediaType.get('text/xml; charset=utf-8'), requestXml)
+        )
 
         then:
         response.body().string() == responseXml
 
         when:
-        response = http.post(server.httpUrl('/posting'), create(MediaType.get('text/xml; charset=utf-8'), '<request><node foo="blah"/></request>'))
+        response = http.post(
+            server.httpUrl('/posting'),
+            create(
+                MediaType.get('text/xml; charset=utf-8'),
+                '<request><node foo="blah"/></request>'
+            )
+        )
 
         then:
         response.code() == 404
@@ -196,3 +213,82 @@ server.expectations(expect -> {
 In this example, a GET request is expected at the `/endpoint/get` path. It should be an HTTPS request, with the query string `foo=bar`. The Ersatz server will match the request, and if it matches it will forward the request to the configured server (`https://somother:9753/endpoint/get?foo=bar` in this case). The response from that request will be returned as the response from the Ersatz server.
 
 With this, you can verify that you sent the expected request, once, and that it retrieves the expected response from the server.
+
+=== Using Test-Things with Ersatz
+
+In the test `io.github.cjstehno.ersatz.examples.ErsatzThingsTest` example, you can see how well the https://cjstehno.github.io/test-things/[Test-Things] library integrates with Ersatz (yes, it's another project of mine). The example is a bit contrived, but is shows how you can use the `SharedRandomExtension`, and `ResourcesExtension` with the `ErsatzExtension` to simplify random value generation and resource loading.
+
+The example configures a GET request that will respond with JPG image content, when a secret header value is matched in the request - the header value is randomly generated. Yes, there are simpler means of generating a single random number, but this is just to show how the randomizers might be useful with Ersatz.
+
+[source,java]
+----
+package io.github.cjstehno.ersatz.examples;
+
+import io.github.cjstehno.ersatz.ErsatzServer;
+import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
+import io.github.cjstehno.ersatz.util.HttpClientExtension;
+import io.github.cjstehno.ersatz.util.HttpClientExtension.Client;
+import io.github.cjstehno.testthings.junit.Resource;
+import io.github.cjstehno.testthings.junit.ResourcesExtension;
+import io.github.cjstehno.testthings.junit.SharedRandomExtension;
+import lombok.val;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_JPG;
+import static io.github.cjstehno.testthings.rando.NumberRandomizers.aFloat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+/**
+ * A bit of a contrived example to show how you can use the
+ * <a href="https://cjstehno.github.io/test-things/">Test-Things</a> testing library with Ersatz, also written by me.
+ */
+@ExtendWith({
+    // provides a means of pinning randomness
+    SharedRandomExtension.class,
+
+    // provides access to resources
+    ResourcesExtension.class,
+
+    // provides the server management
+    SharedErsatzServerExtension.class,
+
+    // provides a pre-wired test client for ersatz (internal only)
+    HttpClientExtension.class
+})
+public class ErsatzThingsTest {
+
+    private static final String SECRET_HEADER = "X-Secret";
+
+    // loads the image resource as a byte array
+    @Resource("/test-image.jpg") private static byte[] IMAGE_CONTENT;
+
+    // stores the http client instance
+    private Client client;
+
+    @Test void things(final ErsatzServer ersatz) throws Exception {
+        // generates a random secret value
+        val secret = aFloat().one().toString();
+
+        ersatz.expectations(expect -> {
+            expect.GET("/images/42", req -> {
+                req.called();
+                req.header(SECRET_HEADER, secret);
+                req.responder(res -> {
+                    res.body(IMAGE_CONTENT, IMAGE_JPG);
+                    res.code(200);
+                });
+            });
+        });
+
+        // make the request
+        val response = client.get("/images/42", builder -> builder.header(SECRET_HEADER, secret));
+        assertEquals(200, response.code());
+        assertEquals(721501, response.body().bytes().length);
+
+        ersatz.assertVerified();
+    }
+}
+----
+
+NOTE: The `HttpClientExtension` show in the example is an internal client management extension used in testing Ersatz itself, but the general idea is that it provides an HTTP client wired up to the configured Ersatz server. Yes. even my test tools, have test tools.

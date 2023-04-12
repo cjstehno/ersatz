@@ -152,7 +152,9 @@ public interface ServerConfig {
      * @param decoder     the request content decoder
      * @return the reference to the server configuration
      */
-    ServerConfig decoder(final ContentType contentType, final BiFunction<byte[], DecodingContext, Object> decoder);
+    default ServerConfig decoder(final ContentType contentType, final BiFunction<byte[], DecodingContext, Object> decoder){
+        return decoder(contentType.getValue(), decoder);
+    }
 
     /**
      * Registers a global response body encoder.

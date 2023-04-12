@@ -16,6 +16,7 @@
 package io.github.cjstehno.ersatz.encdec;
 
 import lombok.NoArgsConstructor;
+import lombok.val;
 
 import java.io.File;
 import java.io.IOException;
@@ -129,9 +130,8 @@ public final class Encoders {
             throw new IllegalArgumentException(obj.getClass().getName() + " found, MultipartRequestContent is required.");
         }
 
-        final ErsatzMultipartResponseContent mrc = (ErsatzMultipartResponseContent) obj;
-
-        final var arrays = new LinkedList<byte[]>();
+        val mrc = (ErsatzMultipartResponseContent) obj;
+        val arrays = new LinkedList<byte[]>();
 
         mrc.parts().forEach(p -> {
             arrays.add(("--" + mrc.getBoundary() + "\r\n").getBytes(UTF_8));
