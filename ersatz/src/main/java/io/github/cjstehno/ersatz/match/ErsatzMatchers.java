@@ -16,6 +16,7 @@
 package io.github.cjstehno.ersatz.match;
 
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -24,6 +25,7 @@ import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import java.util.Collection;
 import java.util.function.Function;
 
+import static lombok.AccessLevel.PACKAGE;
 import static lombok.AccessLevel.PRIVATE;
 
 /**
@@ -65,13 +67,10 @@ public final class ErsatzMatchers {
     }
 }
 
+@RequiredArgsConstructor(access = PACKAGE)
 class FunctionMatcher<T> extends BaseMatcher<T> {
 
     private final Function<T, Boolean> function;
-
-    FunctionMatcher(final Function<T, Boolean> function) {
-        this.function = function;
-    }
 
     @Override public boolean matches(Object actual) {
         return function.apply((T) actual);
@@ -82,13 +81,10 @@ class FunctionMatcher<T> extends BaseMatcher<T> {
     }
 }
 
+@RequiredArgsConstructor(access = PACKAGE)
 class StringIterableMatcher extends BaseMatcher<Iterable<? super String>> {
 
     private final Collection<Matcher<? super String>> matchers;
-
-    StringIterableMatcher(final Collection<Matcher<? super String>> matchers) {
-        this.matchers = matchers;
-    }
 
     @Override public boolean matches(final Object item) {
         return IsIterableContainingInAnyOrder.containsInAnyOrder(matchers).matches(item);
@@ -101,13 +97,10 @@ class StringIterableMatcher extends BaseMatcher<Iterable<? super String>> {
     }
 }
 
+@RequiredArgsConstructor(access = PACKAGE)
 class ByteArrayMatcher extends BaseMatcher<byte[]> {
 
     private final byte[] array;
-
-    ByteArrayMatcher(final byte[] array) {
-        this.array = array;
-    }
 
     @Override
     public boolean matches(final Object item) {

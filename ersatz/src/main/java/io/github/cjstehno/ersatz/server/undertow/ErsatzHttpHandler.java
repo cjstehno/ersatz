@@ -22,6 +22,7 @@ import io.github.cjstehno.ersatz.impl.ErsatzResponse;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.CookieImpl;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,7 +37,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 /**
  * The Ersatz handler used to perform the actual request handling for the chain.
  */
-@Slf4j @RequiredArgsConstructor
+@Slf4j @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class ErsatzHttpHandler implements ErsatzHandler {
 
     private static final String TRANSFER_ENCODING = "Transfer-encoding";

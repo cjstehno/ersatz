@@ -129,7 +129,7 @@ public class ErsatzServer implements Closeable {
         return getUrl("https", getHttpsPort());
     }
 
-    private String getUrl(final String prefix, final int port) {
+    private static String getUrl(final String prefix, final int port) {
         if (port > 0) {
             return prefix + "://localhost:" + port;
         } else {

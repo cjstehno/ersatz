@@ -31,8 +31,12 @@ import java.util.function.Consumer;
  * Standalone simple proxy server useful for testing proxy configurations.
  * <p>
  * At this time, only HTTP proxies are supported.
+ *
+ * @deprecated The proxy server functionality was removed in a recent release - it has been brought back temporarily,
+ * by request, but will be removed again in a near-future release. Use the <code>Request::forward(String)</code>
+ * functionality to achieve the same goal.
  */
-@Slf4j
+@Slf4j @Deprecated
 public class ErsatzProxyServer implements Closeable {
 
     private final ProxyServerConfigImpl proxyServerConfig;

@@ -22,6 +22,7 @@ import io.github.cjstehno.ersatz.impl.UnmatchedRequestReport;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,7 +36,7 @@ import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
  * requirements and configured matchers. If the request satisfies the matchers, control is handed off to the next handler
  * in the chain, otherwise a mismatch is reported.
  */
-@RequiredArgsConstructor @Slf4j
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE) @Slf4j
 public class ErsatzMatchingHandler implements HttpHandler {
 
     private static final byte[] EMPTY_RESPONSE = new byte[0];

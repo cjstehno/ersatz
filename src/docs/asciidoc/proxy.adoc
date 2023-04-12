@@ -1,5 +1,7 @@
 == Proxy Server
 
+WARNING: This functionality has been brought back into the framework, and slightly updated, but it will be removed in a near-future release. The request forwarding functionality should be used instead, as it provides a more flexible and expressive framework.
+
 A simple standalone proxy server is available/ The `io.github.cjstehno.ersatz.ErsatzProxyServer` is useful for testing proxied HTTP connections.
 The proxy server has a similar configuration to the `ErsatzServer` and allows limited expectation configuration; it is expected that more detailed expectation configuration will be done on a standard `ErsatzServer` instance at the other end of the proxy, something like the following:
 
@@ -33,4 +35,3 @@ The proxy server is usable from both Java and Groovy based on the use of Groovy 
 
 Currently, the proxy server only supports HTTP endpoints (HTTPS _may_ be supported in a future release).
 
-WARNING: This functionality is considered "BETA" - it may have issues and be less-tested than that core Ersatz Server code.

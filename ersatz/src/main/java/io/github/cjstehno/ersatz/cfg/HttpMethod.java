@@ -15,9 +15,13 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+
 /**
  * Enumeration of the supported HTTP request methods.
  */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum HttpMethod {
 
     /**
@@ -66,10 +70,6 @@ public enum HttpMethod {
     TRACE("TRACE");
 
     private final String value;
-
-    HttpMethod(final String value) {
-        this.value = value;
-    }
 
     /**
      * Retrieve the text value for the method.

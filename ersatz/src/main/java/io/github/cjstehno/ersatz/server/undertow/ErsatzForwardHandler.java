@@ -20,6 +20,7 @@ import io.github.cjstehno.ersatz.impl.ErsatzForwardResponse;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HttpString;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -47,7 +48,7 @@ import static java.lang.String.join;
  * requests. An attempt was made to use the built-in JDK HttpClient, however, it was overly restrictive and was too much
  * effort to make it work with HTTPS requests.
  */
-@RequiredArgsConstructor @Slf4j
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE) @Slf4j
 public class ErsatzForwardHandler implements ErsatzHandler {
 
     private static final Set<String> REQUESTS_WITH_BODY = Set.of("post", "put", "patch");

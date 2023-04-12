@@ -16,7 +16,6 @@
 package io.github.cjstehno.ersatz.junit;
 
 import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.junit.jupiter.api.extension.ExtensionContext;

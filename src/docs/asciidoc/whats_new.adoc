@@ -5,8 +5,9 @@
 * Added generic `request` expectations to the `Expectations` interface - this allows programmatic specification of the request method.
 * Added static constants for commonly used HTTP headers and response status codes (see `HttpHeaders` and `StatusCode`).
 * Added JSON encoder and decoder implementations to the Groovy extension (based on Groovy internal support). These used to be in the core library, but were removed when it was converted to Java.
-* Resurrected the `ErsatzProxyServer` stand-alone proxy server component.
-* Added more functionality to the `ErsatzServerExtension` JUnit 5 helper class.
+* Added request forwarding, such that a matched request can be forwarded to another server, and have that response returned as the response to the original request.
+* Resurrected the `ErsatzProxyServer` stand-alone proxy server component (temporarily) - the represented functionality will be replaced by the aforementioned request forwarding.
+* Added more functionality to the `ErsatzServerExtension` JUnit 5 helper class, and added a `SharedErsatzServerExtension` which uses a shared server instance for all test methods in a test class - rather than creating and destroying it for each test.
 * Minor tweaks, fixes, and updates.
 
 === In 3.1

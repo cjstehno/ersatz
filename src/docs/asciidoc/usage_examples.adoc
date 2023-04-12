@@ -176,3 +176,23 @@ This test sets up a POST expectation with the XML request body content being use
 The test shows two requests made to the server, one with the expected content and one without - the results verify that only the correct call was actually matched.
 
 See the http://hamcrest.org/JavaHamcrest/[Hamcrest] documentation for more details about pre-existing and custom `Matcher`s.
+
+=== Forwarding to Another Server for Response
+
+A test case may arise where you have a real server running, where you want to verify the contents of your request, but then respond with the real server response to that request. The "request forwarding" functionality can do that:
+
+[source,java]
+----
+server.expectations(expect -> {
+    expect.GET("/endpoint/get", req -> {
+        req.secure();
+        req.called();
+        req.query("foo", "bar");
+        req.forward("https://someother:9753");
+    });
+});
+----
+
+In this example, a GET request is expected at the `/endpoint/get` path. It should be an HTTPS request, with the query string `foo=bar`. The Ersatz server will match the request, and if it matches it will forward the request to the configured server (`https://somother:9753/endpoint/get?foo=bar` in this case). The response from that request will be returned as the response from the Ersatz server.
+
+With this, you can verify that you sent the expected request, once, and that it retrieves the expected response from the server.
