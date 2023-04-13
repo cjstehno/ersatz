@@ -19,9 +19,10 @@ package io.github.cjstehno.ersatz.impl;
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.encdec.Decoders;
-import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
+import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
+import io.github.cjstehno.ersatz.util.HttpClientExtension.Client;
 import io.github.cjstehno.ersatz.util.JsonEncDec;
 import lombok.val;
 import okhttp3.MediaType;
@@ -47,15 +48,14 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
+@ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class})
 class ErsatzRequestWithContentTest {
 
     private static final String BODY_CONTENT = "{\"label\":\"Body Content\", \"text\":\"This is some body content.\"}";
     private ErsatzRequestWithContent request;
-    private HttpClientExtension.Client client;
-    private ErsatzServer server;
 
-    @BeforeEach void beforeEach() {
+    @BeforeEach
+    void beforeEach() {
         request = new ErsatzRequestWithContent(POST, pathMatching("/posting"), null, null);
     }
 
@@ -76,11 +76,14 @@ class ErsatzRequestWithContentTest {
     void string() {
         request.body("Some body", TEXT_PLAIN);
 
-        assertEquals("Expectations (ErsatzRequestWithContent): HTTP method is (<POST>), Path matches \"/posting\", Body is \"Some body\" and content-type is a string starting with text/plain, and Called ANYTHING", request.toString());
+        assertEquals(
+            "Expectations (ErsatzRequestWithContent): HTTP method is (<POST>), Path matches \"/posting\", Body is \"Some body\" and content-type is a string starting with text/plain, and Called ANYTHING",
+            request.toString()
+        );
     }
 
     @Test @DisplayName("matching body")
-    void matchingBody() throws IOException {
+    void matchingBody(final ErsatzServer server, final Client client) throws IOException {
         server.expectations(e -> {
             e.POST("/posting", req -> {
                 req.body(BODY_CONTENT, TEXT_PLAIN);
@@ -97,7 +100,7 @@ class ErsatzRequestWithContentTest {
     }
 
     @Test @DisplayName("matching: body and content-type")
-    void matchingBodyAndContentType() throws IOException {
+    void matchingBodyAndContentType(final ErsatzServer server, final Client client) throws IOException {
         server.expectations(e -> {
             e.POST("/posting", req -> {
                 req.body(BODY_CONTENT, "text/plain; charset=utf-8");
@@ -114,7 +117,7 @@ class ErsatzRequestWithContentTest {
     }
 
     @Test @DisplayName("matching body with converter (builder)")
-    void matchingBodyWithConverter() throws IOException {
+    void matchingBodyWithConverter(final ErsatzServer server, final Client client) throws IOException {
         val contentType = "some/json; charset=utf-8";
         server.expectations(e -> {
             e.POST("/posting", req -> {
@@ -130,15 +133,17 @@ class ErsatzRequestWithContentTest {
             });
         });
 
-        var response = client.post("/posting", create(BODY_CONTENT, MediaType.get(contentType)));
-        assertEquals("accepted", response.body().string());
+        try (val response = client.post("/posting", create(BODY_CONTENT, MediaType.get(contentType)))) {
+            assertEquals("accepted", response.body().string());
+        }
 
-        response = client.post("/posting", create(BODY_CONTENT, MediaType.get("text/html")));
-        assertEquals(NOT_FOUND_BODY, response.body().string());
+        try (val response = client.post("/posting", create(BODY_CONTENT, MediaType.get("text/html")))) {
+            assertEquals(NOT_FOUND_BODY, response.body().string());
+        }
     }
 
     @Test @DisplayName("application/x-www-form-urlencoded")
-    void applicationFormEncoded() throws IOException {
+    void applicationFormEncoded(final ErsatzServer server, final Client client) throws IOException {
         server.expectations(e -> {
             e.POST("/form", req -> {
                 req.decoder(APPLICATION_URLENCODED, Decoders.urlEncoded);
@@ -159,7 +164,7 @@ class ErsatzRequestWithContentTest {
     }
 
     @Test @DisplayName("multipart/form-data")
-    void multipartFormData() throws IOException {
+    void multipartFormData(final ErsatzServer server, final Client client) throws IOException {
         server.expectations(e -> {
             e.POST("/upload", req -> {
                 req.decoder(TEXT_PLAIN, Decoders.utf8String);
@@ -188,7 +193,7 @@ class ErsatzRequestWithContentTest {
     }
 
     @Test @DisplayName("multipart/form-data using matcher object")
-    void multipartUsingMatcher() throws IOException {
+    void multipartUsingMatcher(final ErsatzServer server, final Client client) throws IOException {
         server.expectations(e -> {
             e.POST("/upload", req -> {
                 req.decoder(TEXT_PLAIN, Decoders.utf8String);
@@ -203,7 +208,7 @@ class ErsatzRequestWithContentTest {
             });
         });
 
-        final var bodyBuilder = new MultipartBody.Builder()
+        val bodyBuilder = new MultipartBody.Builder()
             .addFormDataPart("something", "interesting")
             .addFormDataPart("infoFile", "info.txt", create(parse("text/plain"), "This is some interesting file content."))
             .addFormDataPart("dataFile", "data.bin", create(parse("image/png"), new byte[]{8, 6, 7, 5, 3, 0, 9}));
