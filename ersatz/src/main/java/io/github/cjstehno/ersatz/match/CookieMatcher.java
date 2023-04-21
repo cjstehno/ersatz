@@ -196,11 +196,9 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
 
     @Override
     public boolean matches(final Object item) {
-        if (!(item instanceof Cookie)) {
+        if (!(item instanceof Cookie cookie)) {
             return false;
         }
-
-        val cookie = (Cookie) item;
 
         return matchers.entrySet().stream().allMatch(entry -> {
             val matcher = entry.getValue();

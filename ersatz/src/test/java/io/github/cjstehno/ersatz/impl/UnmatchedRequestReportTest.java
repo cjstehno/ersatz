@@ -67,8 +67,8 @@ class UnmatchedRequestReportTest {
         val actualLines = new UnmatchedRequestReport(
             request,
             List.of(
-                new ErsatzRequest(POST, pathMatching("/alpha/foo"), new ResponseEncoders()),
-                (ErsatzRequest) new ErsatzRequest(PUT, pathMatching(startsWith("/alpha/bar")), new ResponseEncoders()).secure()
+                new ErsatzRequest(POST, pathMatching("/alpha/foo"), new ResponseEncoders(), false),
+                (ErsatzRequest) new ErsatzRequest(PUT, pathMatching(startsWith("/alpha/bar")), new ResponseEncoders(), false).secure()
             ),
             List.of(
                 (ErsatzRequestRequirement) new ErsatzRequestRequirement(methodMatching(DELETE), pathMatching("/delete")).header("some", "header"),

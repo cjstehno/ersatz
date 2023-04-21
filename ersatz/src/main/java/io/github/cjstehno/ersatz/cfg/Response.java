@@ -18,11 +18,18 @@ package io.github.cjstehno.ersatz.cfg;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 
+import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static io.github.cjstehno.ersatz.util.HttpHeaders.ALLOW;
+import static io.github.cjstehno.ersatz.util.HttpHeaders.CONTENT_TYPE;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Used to configure the provided response to an HTTP request.
@@ -46,7 +53,10 @@ public interface Response {
      * @param contentType the content type
      * @return this response
      */
-    Response body(final Object content, final String contentType);
+    default Response body(final Object content, final String contentType) {
+        body(content);
+        return contentType(contentType);
+    }
 
     /**
      * Defines the request content to be sent back to the client, along with its content-type. Multipart responses may be specified using this method;
@@ -57,7 +67,9 @@ public interface Response {
      * @param contentType the content type
      * @return this response
      */
-    Response body(final Object content, final ContentType contentType);
+    default Response body(final Object content, final ContentType contentType) {
+        return body(content, contentType.getValue());
+    }
 
     /**
      * Used to add a header to the response with the given name and value.
@@ -71,7 +83,7 @@ public interface Response {
     /**
      * Used to add a header to the response with the given name and value.
      *
-     * @param name  the header name
+     * @param name   the header name
      * @param values the header values
      * @return this response
      */
@@ -91,7 +103,9 @@ public interface Response {
      * @param methods the allowed HTTP methods
      * @return this response
      */
-    Response allows(final HttpMethod... methods);
+    default Response allows(final HttpMethod... methods) {
+        return header(ALLOW, Arrays.stream(methods).map(HttpMethod::getValue).collect(toList()));
+    }
 
     /**
      * Used to add a cookie to the response with the given name and value.
@@ -125,7 +139,9 @@ public interface Response {
      * @param contentType the response content type
      * @return this response
      */
-    Response contentType(final String contentType);
+    default Response contentType(final String contentType) {
+        return header(CONTENT_TYPE, contentType);
+    }
 
     /**
      * Used to specify the content type of the response.
@@ -133,7 +149,9 @@ public interface Response {
      * @param contentType the response content type
      * @return this response
      */
-    Response contentType(final ContentType contentType);
+    default Response contentType(final ContentType contentType) {
+        return contentType(contentType.getValue());
+    }
 
     /**
      * Used to retrieve the content type of the response.
@@ -165,7 +183,9 @@ public interface Response {
      * @param unit the time unit to use
      * @return this response
      */
-    Response delay(final long time, TimeUnit unit);
+    default Response delay(final long time, TimeUnit unit) {
+        return delay(MILLISECONDS.convert(time, unit));
+    }
 
     /**
      * Used to specify a delay in the response time for the request as a <code>Duration</code> string.
@@ -173,7 +193,9 @@ public interface Response {
      * @param time the delay time as a string
      * @return this response
      */
-    Response delay(final String time);
+    default Response delay(final String time) {
+        return delay(Duration.parse(time).toMillis());
+    }
 
     /**
      * Used to retrieve the response delay time.
@@ -229,8 +251,8 @@ public interface Response {
      * param contentType the response content-type to be encoded
      *
      * @param contentType the response content type to be encoded
-     * @param objectType the response object type to be encoded
-     * @param encoder    the encoder function
+     * @param objectType  the response object type to be encoded
+     * @param encoder     the encoder function
      * @return a reference to this response configuration
      */
     Response encoder(String contentType, Class objectType, Function<Object, byte[]> encoder);
@@ -241,11 +263,13 @@ public interface Response {
      * param contentType the response content-type to be encoded
      *
      * @param contentType the response content type to be encoded
-     * @param objectType the response object type to be encoded
-     * @param encoder    the encoder function
+     * @param objectType  the response object type to be encoded
+     * @param encoder     the encoder function
      * @return a reference to this response configuration
      */
-    Response encoder(ContentType contentType, Class objectType, Function<Object, byte[]> encoder);
+    default Response encoder(ContentType contentType, Class objectType, Function<Object, byte[]> encoder) {
+        return encoder(contentType.getValue(), objectType, encoder);
+    }
 
     /**
      * Registers the collection of shared encoders on the response. Any server-level encoders will be overridden. This

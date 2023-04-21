@@ -15,15 +15,18 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.UploadContext;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -31,30 +34,35 @@ import java.util.function.BiFunction;
 import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static java.net.URLDecoder.decode;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.createTempDirectory;
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Reusable request content decoder functions. Decoders are simply implementations of the <code>BiFunction&lt;byte[], DecodingContext, Object&gt;</code>
  * interface, which takes the request content as a byte array along with the <code>DecodingContext</code> to return an <code>Object</code>
  * representation of the request data.
  */
-public interface Decoders {
+@NoArgsConstructor(access = PRIVATE)
+public final class Decoders {
+
+    private static final String TEMP_DIR = "ersatz-multipart-";
 
     /**
      * Decoder that simply passes the content bytes through as an array of bytes.
      */
-    BiFunction<byte[], DecodingContext, Object> passthrough = (content, ctx) -> content;
+    public static final BiFunction<byte[], DecodingContext, Object> passthrough = (content, ctx) -> content;
 
     /**
      * Decoder that converts request content bytes into a UTF-8 string.
      */
-    BiFunction<byte[], DecodingContext, Object> utf8String = string(UTF_8);
+    public static final BiFunction<byte[], DecodingContext, Object> utf8String = string(UTF_8);
 
     /**
      * Decoder that converts request content bytes into a UTF-8 string.
      *
      * @return the decoded bytes as a string
      */
-    static BiFunction<byte[], DecodingContext, Object> string() {
+    public static BiFunction<byte[], DecodingContext, Object> string() {
         return string(UTF_8);
     }
 
@@ -64,7 +72,7 @@ public interface Decoders {
      * @param charset the name of the charset
      * @return the decoded bytes as a string
      */
-    static BiFunction<byte[], DecodingContext, Object> string(final String charset) {
+    public static BiFunction<byte[], DecodingContext, Object> string(final String charset) {
         return string(Charset.forName(charset));
     }
 
@@ -74,14 +82,14 @@ public interface Decoders {
      * @param charset the charset to be used
      * @return the decoded bytes as a string
      */
-    static BiFunction<byte[], DecodingContext, Object> string(final Charset charset) {
+    public static BiFunction<byte[], DecodingContext, Object> string(final Charset charset) {
         return (content, ctx) -> content != null ? new String(content, charset) : "";
     }
 
     /**
      * Decoder that converts request content bytes in an url-encoded format into a map of name/value pairs.
      */
-    BiFunction<byte[], DecodingContext, Object> urlEncoded = (content, ctx) -> {
+    public static BiFunction<byte[], DecodingContext, Object> urlEncoded = (content, ctx) -> {
         val map = new HashMap<String, String>();
 
         if (content != null) {
@@ -89,7 +97,7 @@ public interface Decoders {
                 val parts = nvp.split("=");
                 try {
                     if (parts.length == 2) {
-                        map.put(decode(parts[0], UTF_8.name()), decode(parts[1], UTF_8.name()));
+                        map.put(decode(parts[0], UTF_8), decode(parts[1], UTF_8));
                     }
                 } catch (Exception e) {
                     throw new IllegalArgumentException(e.getMessage());
@@ -103,40 +111,8 @@ public interface Decoders {
     /**
      * Decoder that converts request content bytes into a <code>MultipartRequestContent</code> object populated with the multipart request content.
      */
-    BiFunction<byte[], DecodingContext, Object> multipart = (content, ctx) -> {
-        List<FileItem> parts;
-        try {
-            val tempDir = Files.createTempDirectory("ersatz-multipart-").toFile();
-            parts = new FileUpload(new DiskFileItemFactory(10_000, tempDir)).parseRequest(new UploadContext() {
-                @Override
-                public long contentLength() {
-                    return ctx.getContentLength();
-                }
-
-                @Override
-                public String getCharacterEncoding() {
-                    return ctx.getCharacterEncoding();
-                }
-
-                @Override
-                public String getContentType() {
-                    return ctx.getContentType();
-                }
-
-                @Override
-                public int getContentLength() {
-                    return (int) ctx.getContentLength();
-                }
-
-                @Override
-                public InputStream getInputStream() throws IOException {
-                    return new ByteArrayInputStream(content);
-                }
-            });
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-
+    public static BiFunction<byte[], DecodingContext, Object> multipart = (content, ctx) -> {
+        val parts = resolveFileParts(content, ctx);
         val multipartRequest = new MultipartRequestContent();
 
         parts.forEach(part -> {
@@ -156,4 +132,45 @@ public interface Decoders {
 
         return multipartRequest;
     };
+
+    private static List<FileItem> resolveFileParts(final byte[] content, final DecodingContext ctx) {
+        try {
+            return new FileUpload(new DiskFileItemFactory(10_000, createTempDirectory(TEMP_DIR).toFile()))
+                .parseRequest(new ErsatzUploadContext(content, ctx));
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
+    }
+
+    @RequiredArgsConstructor(access = PRIVATE) @SuppressWarnings("ClassCanBeRecord")
+    private static final class ErsatzUploadContext implements UploadContext {
+
+        private final byte[] content;
+        private final DecodingContext ctx;
+
+        @Override
+        public long contentLength() {
+            return ctx.getContentLength();
+        }
+
+        @Override
+        public String getCharacterEncoding() {
+            return ctx.getCharacterEncoding();
+        }
+
+        @Override
+        public String getContentType() {
+            return ctx.getContentType();
+        }
+
+        @Override
+        public int getContentLength() {
+            return (int) ctx.getContentLength();
+        }
+
+        @Override
+        public InputStream getInputStream() throws IOException {
+            return new ByteArrayInputStream(content);
+        }
+    }
 }

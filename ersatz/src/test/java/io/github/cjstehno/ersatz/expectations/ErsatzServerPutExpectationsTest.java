@@ -16,8 +16,10 @@
 package io.github.cjstehno.ersatz.expectations;
 
 import io.github.cjstehno.ersatz.ErsatzServer;
+import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.encdec.Decoders;
-import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
+import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
+import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import lombok.val;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,19 +37,21 @@ import static okhttp3.RequestBody.create;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
+@ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig("serverConfig")
 public class ErsatzServerPutExpectationsTest {
 
     private static final byte[] BYTES_PAYLOAD = "fear is the mind killer, the little death...".getBytes(UTF_8);
-    private final ErsatzServer server = new ErsatzServer(cfg -> {
+
+    @SuppressWarnings("unused") private static void serverConfig(final ServerConfig cfg) {
         cfg.https();
         cfg.decoder(IMAGE_GIF, Decoders.passthrough);
-    });
+    }
+
     @SuppressWarnings("unused") private HttpClientExtension.Client client;
 
     @ParameterizedTest(name = "[{index}] path only: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
-    void withPath(final boolean https) throws IOException {
+    void withPath(final boolean https, final ErsatzServer server) throws IOException {
         server.expects().PUT("/something").body(BYTES_PAYLOAD, IMAGE_GIF).secure(https).called(1).responds().code(200);
 
         assertEquals(
@@ -64,7 +68,7 @@ public class ErsatzServerPutExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] path and consumer: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
-    void withPathAndConsumer(final boolean https) throws IOException {
+    void withPathAndConsumer(final boolean https, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.PUT("/something", req -> {
                 req.secure(https);
@@ -87,7 +91,7 @@ public class ErsatzServerPutExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] path matcher: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
-    void withPathMatcher(final boolean https) throws IOException {
+    void withPathMatcher(final boolean https, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.PUT(startsWith("/loader/")).body(BYTES_PAYLOAD, IMAGE_GIF).secure(https).called(1)
                 .responds().code(200);
@@ -106,7 +110,7 @@ public class ErsatzServerPutExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] path matcher and consumer: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
-    void withPathMatcherAndConsumer(final boolean https) throws IOException {
+    void withPathMatcherAndConsumer(final boolean https, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.PUT(startsWith("/loader/"), req -> {
                 req.body(BYTES_PAYLOAD, IMAGE_GIF);
@@ -129,7 +133,7 @@ public class ErsatzServerPutExpectationsTest {
 
     @ParameterizedTest(name = "[{index}] Multiple responses: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttps")
-    void multipleResponsesForPut(final boolean https) throws IOException {
+    void multipleResponsesForPut(final boolean https, final ErsatzServer server) throws IOException {
         server.expectations(expect -> {
             expect.PUT("/aclue", req -> {
                 req.secure(https);

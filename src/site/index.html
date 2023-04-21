@@ -53,6 +53,8 @@
             <p>Ersatz Server is a "mock" HTTP server library for testing HTTP clients. It allows for server-side request/response expectations to be
                 configured so that your client library can make real HTTP calls and get back real pre-configured responses rather than fake stubs.</p>
 
+            <p>And it's fast!</p>
+
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Features</h2>
 
             <ul>
@@ -73,57 +75,38 @@
                 <li>Alternate distribution as a shadowed jar with many of the dependencies repackaged to avoid collisions.</li>
                 <li>Support for upload requests with up to 1.5 GB of content and response downloads of up to 500 MB.</li>
                 <li>Support for chunked response content (e.g. Transfer-encoding: "chunked"), with optional delay times.</li>
+                <li>Provides a means of using an external endpoint as a configured response (i.e. request forwarding).</li>
             </ul>
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Getting Started</h2>
 
             <p>The Ersatz <a href="docs/user_guide.html" target="_blank">User Guide</a>, <a href="ersatz/javadoc" target="_blank">Ersatz Java Docs</a>
                 and <a href="ersatz-groovy/javadoc" target="_blank">Ersatz Groovy Docs</a> provide detailed documentation
-                of the features and configuration; however, a simple example of the expectation configuration would be (using
-                Groovy):</p>
+                of the features and configuration; however, a simple example of the expectation configuration would be something like:</p>
 
-            <pre><code>def ersatz = new GroovyErsatzServer()
+            <pre><code>var ersatz = new ErsatzServer();
 
-ersatz.expectations {
-    GET('/say/hello') {
-        called 1
-        query 'name', 'Ersatz'
-        responder {
-            body 'Hello Ersatz', 'text/plain'
-        }
-    }
-}
-
-URL url = "&#36;{ersatz.httpUrl}/say/hello?name=Ersatz".toURL()
-assert url.text == 'Hello Ersatz'
-
-assert ersatz.verify()
-
-ersatz.stop()</code></pre>
+ersatz.expectations(expect -> {
+    expect.GET("/say/hello", req -> {
+        req.called(1);
+        req.query("name", "Ersatz");
+        req.responder(res -> {
+            res.body("Hello Ersatz", "text/plain");
+        });
+    });
+});</code></pre>
 
             <p>which will assert that a GET request to "/say/hello?name=Ersatz" will only happen once and that it will respond with "Hello Ersatz" so
                 that the client code being tested may proceed and do what it needs to do with the response. The expectation may also be written in a
                 builder form, such as:</p>
 
-            <pre><code>server.expectations {
-    GET('/say/hello').called(1).query('name','Ersatz')
-        .responds().body('Hello Ersatz','text/plain')
-}</code></pre>
-
-            <p>Standard Java 11+ may also be used; the "expectations" block in the example above would look very similar in Java:</p>
-
-            <pre><code>var ersatz = new ErsatzServer();
-
-server.expectations(expectations -> {
-    expectations.GET("/say/hello", req -> {
-        req.called(1);
-        req.query("name","Ersatz");
-        req.responder().body("Hello Ersatz","text/plain");
-    }
-}).start();
-</code></pre>
-
-            <p>Both forms are equivalent and may be used together.</p>
+            <pre><code>server.expectations(expect -> {
+    expect.GET("/say/hello")
+        .called(1)
+        .query("name","Ersatz")
+        .responds()
+            .body("Hello Ersatz","text/plain");
+});</code></pre>
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Artifacts</h2>
 

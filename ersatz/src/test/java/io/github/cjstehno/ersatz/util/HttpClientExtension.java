@@ -22,12 +22,15 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.*;
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
+import org.junit.platform.commons.support.ModifierSupport;
+import org.junit.platform.commons.support.ReflectionSupport;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.print.attribute.standard.MediaSize;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.security.KeyManagementException;
@@ -35,6 +38,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -42,35 +46,83 @@ import static io.github.cjstehno.ersatz.util.BasicAuth.AUTHORIZATION_HEADER;
 import static io.github.cjstehno.ersatz.util.BasicAuth.header;
 import static java.util.Arrays.stream;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
+import static org.junit.platform.commons.support.HierarchyTraversalMode.BOTTOM_UP;
+import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
 
 /**
  * JUnit 5 Extension which provides a reusable HTTP client wrapper around a configured OkHttp client. This extension
  * requires the ErsatzServerExtension configured to provide the server link.
  */
-public class HttpClientExtension implements BeforeEachCallback {
+public class HttpClientExtension implements BeforeEachCallback, ParameterResolver {
 
-    @Override public void beforeEach(final ExtensionContext context) throws Exception {
+    // TODO: make client create on beforeAll and then shared - ensure cleared after each request
+    // TODO: maybe make annotation to force it to create a new one for a method
+
+    private static final String SERVER_KEY = "server-instance";
+    private static final String CLIENT_KEY = "client-instance";
+    private static final String SHARED_SERVER_KEY = "shared-instance";
+    private static final String CLIENT_SUFFIX = "Client";
+    private static final Namespace NAMESPACE = create("io.github.cjstehno", "ersatz");
+
+    @Override @SuppressWarnings("resource") public void beforeEach(final ExtensionContext context) throws Exception {
         val testInstance = context.getRequiredTestInstance();
 
-        val server = findInstance(testInstance).start();
+        val server = findServer(context);
 
         val https = server.isHttpsEnabled();
         val client = new Client(server.getHttpUrl(), https ? server.getHttpsUrl() : server.getHttpUrl(), https);
-        findField(testInstance, "Client").set(testInstance, client);
+
+        findClient(testInstance).ifPresent(field -> {
+            try {
+                field.set(testInstance, client);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        context.getStore(NAMESPACE).put(CLIENT_KEY, client);
     }
 
-    private static ErsatzServer findInstance(final Object testInstance) throws Exception {
-        return (ErsatzServer) findField(testInstance, "ErsatzServer").get(testInstance);
+    @Override
+    public boolean supportsParameter(final ParameterContext pCtx,final ExtensionContext eCtx) throws ParameterResolutionException {
+        return pCtx.getParameter().getType().isAssignableFrom(Client.class);
     }
 
-    private static Field findField(final Object testInstance, final String type) throws Exception {
-        val field = stream(testInstance.getClass().getDeclaredFields())
-            .filter(f -> f.getType().getSimpleName().endsWith(type))
+    @Override
+    public Object resolveParameter(final ParameterContext pCtx,final ExtensionContext eCtx) throws ParameterResolutionException {
+        return eCtx.getStore(NAMESPACE).get(CLIENT_KEY);
+    }
+
+    private static ErsatzServer findServer(final ExtensionContext context) throws IllegalAccessException {
+        val fields = ReflectionSupport.findFields(
+            context.getRequiredTestClass(),
+            f -> f.getType().isAssignableFrom(ErsatzServer.class) && ModifierSupport.isNotStatic(f),
+            TOP_DOWN
+        );
+
+        if (fields.isEmpty()) {
+            var instance = context.getStore(NAMESPACE).get(SERVER_KEY);
+            if (instance == null) {
+                instance = context.getStore(NAMESPACE).get(SHARED_SERVER_KEY);
+            }
+            return (ErsatzServer) instance;
+
+        } else {
+            val field = fields.get(0);
+            field.setAccessible(true);
+            return (ErsatzServer) field.get(context.getRequiredTestInstance());
+        }
+    }
+
+    private static Optional<Field> findClient(final Object testInstance) {
+        return stream(testInstance.getClass().getDeclaredFields())
+            .filter(f -> f.getType().getSimpleName().endsWith(CLIENT_SUFFIX))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("A field of type " + type + " must be specified."));
-        field.setAccessible(true);
-
-        return field;
+            .map(f -> {
+                f.setAccessible(true);
+                return f;
+            });
     }
 
     /**

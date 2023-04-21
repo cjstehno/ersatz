@@ -15,100 +15,56 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
+import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.Cookie;
-import io.github.cjstehno.ersatz.impl.*;
+import io.github.cjstehno.ersatz.impl.ChunkingConfigImpl;
+import io.github.cjstehno.ersatz.impl.ErsatzResponse;
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.CookieImpl;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.nio.ByteBuffer;
 
-import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
 import static io.github.cjstehno.ersatz.server.undertow.ResponseChunker.prepareChunks;
 import static io.undertow.util.HttpString.tryFromString;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-@Slf4j @RequiredArgsConstructor @SuppressWarnings("ClassCanBeRecord")
-class ErsatzHttpHandler implements HttpHandler {
+/**
+ * The Ersatz handler used to perform the actual request handling for the chain.
+ */
+@Slf4j @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+class ErsatzHttpHandler implements ErsatzHandler {
 
     private static final String TRANSFER_ENCODING = "Transfer-encoding";
     private static final String NO_HEADERS = "<no-headers>";
     private static final byte[] EMPTY_RESPONSE = new byte[0];
-    private final RequirementsImpl requirements;
-    private final ExpectationsImpl expectations;
-    private final boolean reportToConsole;
     private final boolean logResponseContent;
 
     @Override
-    public void handleRequest(final HttpServerExchange exchange) throws Exception {
-        final ClientRequest clientRequest = new UndertowClientRequest(exchange);
-
-        log.debug("Request({}): {}", exchange.getProtocol(), clientRequest);
-
-        // check the request against the global requirements
-        val requirementsMet = requirements.check(clientRequest);
-        if (!requirementsMet) {
-            handleMismatch(exchange, clientRequest);
-            return;
-        }
-
-        // check the request against the expectations
-        expectations.findMatch(clientRequest)
-            .ifPresentOrElse(
-                req -> {
-                    try {
-                        final var ereq = (ErsatzRequest) req;
-                        send(exchange, ereq.getCurrentResponse());
-                        ereq.mark(clientRequest);
-
-                    } catch (final Exception ex) {
-                        log.error("Error-Response: Internal Server Error (500): {}", ex.getMessage(), ex);
-                        exchange.setStatusCode(500);
-                        sendFullResponse(exchange, EMPTY_RESPONSE);
-                    }
-                },
-                () -> handleMismatch(exchange, clientRequest)
-            );
-    }
-
-    private void handleMismatch(final HttpServerExchange exchange, final ClientRequest clientRequest) {
-        val report = new UnmatchedRequestReport(
-            clientRequest,
-            expectations.getRequests().stream().map(r -> (ErsatzRequest) r).toList(),
-            requirements.getRequirements()
-        );
-
-        log.warn(report.render());
-
-        if (reportToConsole) {
-            System.out.println(report.render());
-        }
-
-        exchange.setStatusCode(404).getResponseSender().send(NOT_FOUND_BODY);
-    }
-
-    private void send(final HttpServerExchange exchange, final ErsatzResponse response) {
+    public void handleRequest(final HttpServerExchange exchange, final ClientRequest clientRequest, final Response response) throws Exception {
         if (response == null) {
             log.debug("Unconfigured-Response: No Content (204)");
             exchange.setStatusCode(204);
             sendFullResponse(exchange, EMPTY_RESPONSE);
 
         } else {
-            applyResponseDelay(response);
+            val ersatzResponse = (ErsatzResponse) response;
+
+            applyResponseDelay(ersatzResponse);
 
             exchange.setStatusCode(response.getCode());
 
-            applyResponseHeaders(exchange, response);
+            applyResponseHeaders(exchange, ersatzResponse);
 
-            applyResponseCookies(exchange, response);
+            applyResponseCookies(exchange, ersatzResponse);
 
             final var responseHeaders = exchange.getResponseHeaders() != null ? exchange.getResponseHeaders() : NO_HEADERS;
-            final ChunkingConfigImpl chunking = response.getChunkingConfig();
+            final ChunkingConfigImpl chunking = ersatzResponse.getChunkingConfig();
 
             if (response.getContent().length > 0 && chunking != null) {
                 log.debug("Chunked-Response({}; {}; {}; {}): {}", exchange.getProtocol(), exchange.getRequestURL(), responseHeaders, chunking, renderResponse(response));
@@ -121,7 +77,7 @@ class ErsatzHttpHandler implements HttpHandler {
         }
     }
 
-    private String renderResponse(final ErsatzResponse response) {
+    private String renderResponse(final Response response) {
         final var bytes = response.getContent();
 
         if (logResponseContent && isContentTypeRenderable(response.getContentType())) {

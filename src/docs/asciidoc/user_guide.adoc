@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno
-v3.1.0, March 2022
+v3.2.0, April 2023
 :toc: left
 :toclevels: 4
 
@@ -22,6 +22,8 @@ include::whats_new.adoc[]
 
 include::getting_started.adoc[]
 
+include::junit_extension.adoc[]
+
 include::lifecycle.adoc[]
 
 include::configuration.adoc[]
@@ -33,6 +35,8 @@ include::response_encoders.adoc[]
 include::requirements.adoc[]
 
 include::expectations.adoc[]
+
+include::proxy.adoc[]
 
 == Shadow Jar
 
@@ -140,215 +144,26 @@ For a Maven `pom.xml` entry, this would be:
 
 The inclusions and exclusions are required to truly isolate and configure the artifact, due to some odd maven publishing requirements.
 
-NOTE: The Groovy
-
-== Common Usage Examples
-
-This section contains some recipe-style usage examples.
-
-=== Url-Encoded Form Requests
-
-Url-encoded form requests are supported by default when the request content-type is specified as `application/x-www-form-urlencoded`. The request `body` expectation configuration will expect a `Map<String,String>` equivalent to the name-value pairs specified in the request body content. An example would be:
-
-[source,groovy]
-----
-server.expectations {
-    POST('/form') {
-        body([alpha: 'some data', bravo: '42'], 'application/x-www-form-urlencoded')
-        responder {
-            body 'ok'
-        }
-    }
-}
-----
-
-where the `POST` content data would look like:
-
-----
-alpha=some+data&bravo=42
-----
-
-=== File Upload (POST)
-
-You can set up an expectation for a file upload POST using the `multipart` support, something like:
-
-[source,groovy]
-----
-import io.github.cjstehno.erstaz.ErsatzServer
-import io.github.cjstehno.ersatz.MultipartRequestContent
-import static io.github.cjstehno.ersatz.ContentType.TEXT_PLAIN
-
-def ersatz = new ErsatzServer({
-    encoder TEXT_PLAIN, File, Encoders.text
-})
-
-def file = new File(/* some file */)
-
-ersatz.expectations {
-    POST('/upload') {
-        decoder TEXT_PLAIN, Decoders.utf8String
-        decoder MULTIPART_MIXED, Decoders.multipart
-
-        body MultipartRequestContent.multipart {
-            part 'fileName', file.name
-            part 'file', file.name, 'text/plain; charset=utf-8', file.text
-        }, MULTIPART_MIXED
-
-        responder {
-            body 'ok'
-        }
-    }
-}
-----
-
-This will expect the posting of the given file content to the `/upload` path of the server.
-
-=== File Download (GET)
-
-Setting up an expectation for a GET request to respond with a file to download can be done as follows:
-
-[source,groovy]
-----
-import io.github.cjstehno.erstaz.ErsatzServer
-import static io.github.cjstehno.ersatz.ContentType.TEXT_PLAIN
-
-def ersatz = new ErsatzServer({
-    encoder TEXT_PLAIN, File, Encoders.text
-})
-
-def file = new File(/* some file */)
-
-ersatz.expectations {
-    GET('/download'){
-        responder {
-            header 'Content-Disposition', "attachment; filename=\"${file.name}\""
-            body file, TEXT_PLAIN
-        }
-    }
-}
-----
-
-This will respond to the request with file download content.
-
-=== Kotlin Usage
-
-You can use the Ersatz Server from the Kotlin programming language just as easily as Java or Groovy:
-
-[source,kotlin]
-----
-val ersatz = ErsatzServer { config -> config.autoStart(true) }
-
-ersatz.expectations { expectations ->
-    expectations.GET("/kotlin").called(1).responder { response ->
-        response.body("Hello Kotlin!", ContentType.TEXT_PLAIN).code(200)
-    }
-}
-
-val http = OkHttpClient.Builder().build()
-val request: okhttp3.Request = okhttp3.Request.Builder().url("${ersatz.httpUrl}/kotlin").build()
-println( http.newCall(request).execute().body().string() )
-----
-
-which will print out "Hello Kotlin!" when executed.
-
-=== Matching XML Body Content
-
-An example of how to use the Hamcrest matchers in a request.
-
-[source,groovy]
-----
-import io.github.cjstehno.ersatz.encdec.DecodingContext
-import io.github.cjstehno.ersatz.ErsatzServer
-import okhttp3.MediaType
-import okhttp3.Response
-import spock.lang.AutoCleanup
-import spock.lang.Specification
-
-import javax.xml.parsers.DocumentBuilderFactory
-
-import static io.github.cjstehno.ersatz.encdec.ContentType.TEXT_XML
-import static io.github.cjstehno.ersatz.encdec.Decoders.utf8String
-import static io.github.cjstehno.ersatz.encdec.Encoders.text
-import static okhttp3.RequestBody.create
-import static org.hamcrest.CoreMatchers.equalTo
-import static org.hamcrest.xml.HasXPath.hasXPath
-
-class BodyContentMatcherSpec extends Specification {
-
-    @AutoCleanup private final ErsatzServer server = new ErsatzServer()
-    private final HttpClient http = new HttpClient()
-
-    void 'matching part of body content'() {
-        setup:
-        String requestXml = '<request><node foo="bar"/></request>'
-        String responseXml = '<response>OK</response>'
-
-        server.expectations {
-            POST('/posting') {
-                decoder('text/xml; charset=utf-8') { byte[] bytes, DecodingContext ctx ->
-                    DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(bytes))
-                }
-                body hasXPath('string(//request/node/@foo)', equalTo('bar')), 'text/xml; charset=utf-8'
-                called 1
-                responder {
-                    body responseXml, TEXT_XML
-                    encoder TEXT_XML, String, text
-                }
-            }
-        }
-
-        when:
-        Response response = http.post(server.httpUrl('/posting'), create(MediaType.get('text/xml; charset=utf-8'), requestXml))
-
-        then:
-        response.body().string() == responseXml
-
-        when:
-        response = http.post(server.httpUrl('/posting'), create(MediaType.get('text/xml; charset=utf-8'), '<request><node foo="blah"/></request>'))
-
-        then:
-        response.code() == 404
-
-        and:
-        server.verify()
-    }
-}
-----
-
-This test sets up a POST expectation with the XML request body content being used as one of the matching criteria. Hamcrest provides an XPath-based matcher, `hasXPath(String, Matcher)`, which works well here. A custom XML-decoder was installed to parse the request into the XML document format required by the matcher.
-
-The test shows two requests made to the server, one with the expected content and one without - the results verify that only the correct call was actually matched.
-
-See the http://hamcrest.org/JavaHamcrest/[Hamcrest] documentation for more details about pre-existing and custom `Matcher`s.
+include::usage_examples.adoc[]
 
 == Appendices
 
 === A. Development Philosophy
 
-As this project starts its sixth year (started in December 2016) it's doing well, but I now have less time to devote to it. I figured it would be a good time to outline my general development philosophy/strategy for the project as it moves forward.
+As this project starts its seventh year (started in December 2016) it's doing well, and it is stable, but I have less time to devote to it. I figured it would be a good time to outline my general development philosophy/strategy for the project as it moves forward.
 
-The primary goal of the 3.0 release was increased simplicity and ease of development. This is why I removed some of the more niche features in favor of keeping it more maintainable. I also removed some automated development tools (e.g. Coveralls and Travis). There is some maintenance effort involved in keeping them current, and I am a one-developer team - the information provided by these tools can easily be discovered by building the project (and will be published with the releases).
+The primary goal of the 3.x release was increased simplicity and ease of development. This is why I removed some of the more niche features in favor of keeping it more maintainable. I also removed some automated development tools (e.g. Coveralls and Travis). There is some maintenance effort involved in keeping them current, and I am a one-developer team - the information provided by these tools can easily be discovered by building the project (and will be published with the releases).
 
 Being that this is a project used in writing unit tests, I don't generally feel the need for strict backwards compatability as long as there is a simple upgrade path. That being said, if some change causes a major problem, I am not against cutting a new release with changes that make the transition easier.
 
 The audience for this project is very small and there are very few bugs and feature requests, so if that continues, I will plan on putting out a new release once a year to keep up with current JDK and dependency versions.
 
-=== B. Sightings
-
-Here are some external references and discussions about developing with Ersatz:
-
-* http://guides.grails.org/grails-mock-http-server/guide/index.html[Consume and test a third-party REST API] _(Sergio del Amo)_ - Use Ersatz, a "mock" HTTP library, for testing code dealing with HTTP requests
-* https://github.com/cjstehno/coffeaelectronica/blob/master/src/jbake/content/blog/2017/rest-httpbuilder-ersatz.adoc[Taking a REST with HttpBulder-NG and Ersatz] _(Christopher J Stehno)_ - Building and testing a REST interface with HttpBuilder-NG and Ersatz (https://github.com/cjstehno/rest-dev[implementations] in Groovy, Java and Kotlin). This is an old post from my now-dead blog, but the content is still available.
-* The https://http-builder-ng.github.io/http-builder-ng/[HttpBuilder-NG] project has extensive examples of testing with Ersatz, though it is now a dead project (and uses an old version of Ersatz).
-
-NOTE: If you see Ersatz in the wild, feel free to let me know where it is and I will add it to this list.
-
-=== C. License
+=== B. License
 
 This project is licensed under the https://www.apache.org/licenses/LICENSE-2.0[Apache 2.0 License].
 
 ----
-Copyright (C) 2022 Christopher J. Stehno
+Copyright (C) 2023 Christopher J. Stehno
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

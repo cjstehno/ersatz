@@ -83,7 +83,7 @@ class DecodersTest {
             Decoders.multipart.apply(null, null);
         });
         assertEquals(
-            "Cannot invoke \"io.github.cjstehno.ersatz.encdec.DecodingContext.getContentType()\" because \"this.val$ctx\" is null",
+            "Cannot invoke \"io.github.cjstehno.ersatz.encdec.DecodingContext.getContentType()\" because \"this.ctx\" is null",
             thrown.getMessage()
         );
     }

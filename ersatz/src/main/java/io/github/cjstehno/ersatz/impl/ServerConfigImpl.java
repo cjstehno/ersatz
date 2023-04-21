@@ -24,6 +24,7 @@ import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import lombok.Getter;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
@@ -271,11 +272,6 @@ public class ServerConfigImpl implements ServerConfig {
     public ServerConfig decoder(String contentType, BiFunction<byte[], DecodingContext, Object> decoder) {
         globalDecoders.register(contentType, decoder);
         return this;
-    }
-
-    @Override
-    public ServerConfig decoder(ContentType contentType, BiFunction<byte[], DecodingContext, Object> decoder) {
-        return decoder(contentType.getValue(), decoder);
     }
 
     @Override public ServerConfig encoder(String contentType, Class objectType, Function<Object, byte[]> encoder) {

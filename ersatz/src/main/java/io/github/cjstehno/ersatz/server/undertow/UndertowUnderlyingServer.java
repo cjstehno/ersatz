@@ -24,9 +24,8 @@ import io.undertow.server.handlers.HttpTraceHandler;
 import io.undertow.server.handlers.encoding.ContentEncodingRepository;
 import io.undertow.server.handlers.encoding.EncodingHandler;
 import io.undertow.server.handlers.encoding.GzipEncodingProvider;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xnio.Options;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -42,9 +41,9 @@ import static io.undertow.UndertowOptions.*;
 /**
  * An <code>UnderlyingServer</code> implementation based on the Undertow server platform.
  */
+@Slf4j
 public class UndertowUnderlyingServer implements UnderlyingServer {
 
-    private static final Logger log = LoggerFactory.getLogger(UndertowUnderlyingServer.class);
     private static final String LOCALHOST = "localhost";
     private static final int UNSPECIFIED_PORT = -1;
     private final ServerConfigImpl serverConfig;
@@ -75,19 +74,23 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
                 log.debug("HTTPS listener enabled and configured.");
             }
 
-            final var blockingHandler = new BlockingHandler(new EncodingHandler(
-                new HttpTraceHandler(
-                    new ErsatzHttpHandler(
-                        serverConfig.getRequirements(),
-                        serverConfig.getExpectations(),
-                        serverConfig.isMismatchToConsole(),
-                        serverConfig.isLogResponseContent()
-                    )
-                ),
-                new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), 50)
-            ));
-
-            server = builder.setHandler(blockingHandler).build();
+            server = builder.setHandler(
+                new BlockingHandler(new EncodingHandler(
+                    new HttpTraceHandler(
+                        new ErsatzMatchingHandler(
+                            serverConfig.getRequirements(),
+                            serverConfig.getExpectations(),
+                            serverConfig.isMismatchToConsole(),
+                            new ErsatzForwardHandler(
+                                new ErsatzHttpHandler(
+                                    serverConfig.isLogResponseContent()
+                                )
+                            )
+                        )
+                    ),
+                    new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), 50)
+                ))
+            ).build();
 
             server.start();
 

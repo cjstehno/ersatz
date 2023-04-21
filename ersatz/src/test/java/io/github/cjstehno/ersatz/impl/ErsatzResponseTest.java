@@ -16,7 +16,6 @@
 package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-import io.github.cjstehno.ersatz.impl.ErsatzResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,8 +23,12 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_JSON;
+import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_XML;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ErsatzResponseTest {
 
@@ -33,13 +36,13 @@ class ErsatzResponseTest {
     private ErsatzResponse response;
 
     @BeforeEach void beforeEach() {
-        response = new ErsatzResponse(false, new ResponseEncoders());
+        response = new ErsatzResponse(new ResponseEncoders());
     }
 
     @Test @DisplayName("content when empty")
     void contentWhenEmpty() {
         final var thrown = assertThrows(IllegalArgumentException.class, () -> {
-            new ErsatzResponse(true).body(CONTENT_A);
+            new ErsatzResponseWithoutContent().body(CONTENT_A);
         });
         assertEquals("The response is configured as EMPTY and cannot have content.", thrown.getMessage());
     }

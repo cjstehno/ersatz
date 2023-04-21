@@ -1,0 +1,37 @@
+== Proxy Server
+
+WARNING: This functionality has been brought back into the framework, and slightly updated, but it will be removed in a near-future release. The request forwarding functionality should be used instead, as it provides a more flexible and expressive framework.
+
+A simple standalone proxy server is available/ The `io.github.cjstehno.ersatz.ErsatzProxyServer` is useful for testing proxied HTTP connections.
+The proxy server has a similar configuration to the `ErsatzServer` and allows limited expectation configuration; it is expected that more detailed expectation configuration will be done on a standard `ErsatzServer` instance at the other end of the proxy, something like the following:
+
+[source,java]
+----
+var ersatzServer = new ErsatzServer(cfg -> {
+    cfg.expectations(expect -> {
+        expect.get("/").called(1).responds().code(200).content("Hello", TEXT_PLAIN);
+        expect.get("/foo").called(1).responds().code(200).content("Foo!", TEXT_PLAIN);
+    });
+});
+
+var ersatzProxy = new ErsatzProxyServer(cfg -> {
+    cfg.target(ersatzServer.httpUrl);
+    cfg.expectations(expect -> {
+        expect.get("/");
+        expect.get("/foo");
+    });
+});
+----
+
+Such that, hitting the proxy `/foo` URL will forward the request to the `/foo` URL on the server, and likewise it will pass through the response.
+
+Notice that the `ErsatzProxy` has the same lifecycle as the `ErsatzServer`: you should call the `verify()` method to ensure that the expected requests were proxied, and the `stop()` method must be closed once the server is no longer needed.
+
+NOTE: One difference from the `ErsatzServer` lifecycle is that the proxy server defaults auto-starting, and must be disabled if this is not desired.
+
+The requests made to the proxy server are passed through to the `targetUri` and the response from that server is returned as the response from the proxy server.
+
+The proxy server is usable from both Java and Groovy based on the use of Groovy `Closure`s or Java `Consumer`s for configuration.
+
+Currently, the proxy server only supports HTTP endpoints (HTTPS _may_ be supported in a future release).
+

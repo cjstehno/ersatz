@@ -16,32 +16,35 @@
 package io.github.cjstehno.ersatz.encdec;
 
 
+import io.github.cjstehno.testthings.Resources;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static io.github.cjstehno.ersatz.TestHelpers.resourceStream;
-import static io.github.cjstehno.ersatz.cfg.ContentType.*;
+import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_JSON;
+import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_JPG;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static io.github.cjstehno.ersatz.encdec.MultipartResponseContent.multipartResponse;
-import static org.apache.commons.io.IOUtils.readLines;
-import static org.junit.jupiter.api.Assertions.*;
+import static io.github.cjstehno.testthings.Resources.resourceToString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ErsatzMultipartResponseContentTest {
 
     private static final Function<Object, byte[]> BYTE_ENCODER = o -> ((String) o).getBytes();
 
-    private static Stream<String> expectedResponse() throws IOException {
-        return readLines(resourceStream("/multipart-response.txt")).stream();
+    private static Stream<String> expectedResponse() {
+        return resourceToString("/multipart-response.txt").lines();
     }
 
     @Test @DisplayName("multipart content")
-    void multipartContent() throws Exception {
+    void multipartContent() {
         final var multipartContent = (ErsatzMultipartResponseContent) multipartResponse(mult -> {
             mult.boundary("abc123");
 
@@ -67,7 +70,7 @@ class ErsatzMultipartResponseContentTest {
     }
 
     @Test @DisplayName("Encoder not found")
-    void encoderNotFound(){
+    void encoderNotFound() {
         val mrc = new ErsatzMultipartResponseContent();
         val thrown = assertThrows(IllegalArgumentException.class, () -> {
             mrc.encoder("foo/bar", String.class);

@@ -15,9 +15,8 @@
  */
 package io.github.cjstehno.ersatz;
 
-import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
+import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
-import io.github.cjstehno.ersatz.ErsatzServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,20 +28,19 @@ import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
+@ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class})
 class ReusedServerTest {
 
-    @SuppressWarnings("unused") private ErsatzServer ersatzServer;
     @SuppressWarnings("unused") private HttpClientExtension.Client client;
 
-    @BeforeEach void beforeEach() {
+    @BeforeEach void beforeEach(final ErsatzServer ersatzServer) {
         ersatzServer.expectations(e -> {
             e.GET("/alpha").called(1).responds().body("alpha-response", TEXT_PLAIN);
             e.GET("/bravo").called(2).responds().body("bravo-response", TEXT_PLAIN);
         });
     }
 
-    @Test @DisplayName("expected calls") void expectedCalls() throws IOException {
+    @Test @DisplayName("expected calls") void expectedCalls(final ErsatzServer ersatzServer) throws IOException {
         String resp1 = request("/alpha");
         String resp2 = request("/bravo");
         String resp3 = request("/bravo");
@@ -54,14 +52,15 @@ class ReusedServerTest {
     }
 
     @Test @DisplayName("clear expectations and they should be not-found")
-    void clearShouldNotBeFound() throws IOException {
+    void clearShouldNotBeFound(final ErsatzServer ersatzServer) throws IOException {
         ersatzServer.clearExpectations();
 
         assertEquals("404: Not Found", request("/alpha"));
         assertEquals("404: Not Found", request("/bravo"));
     }
 
-    @Test @DisplayName("clear expectations and add new ones") void clearAndAdd() throws IOException {
+    @Test @DisplayName("clear expectations and add new ones")
+    void clearAndAdd(final ErsatzServer ersatzServer) throws IOException {
         ersatzServer.clearExpectations();
 
         ersatzServer.expectations(e -> {
@@ -72,7 +71,7 @@ class ReusedServerTest {
     }
 
     @Test @DisplayName("same calls again to ensure that server resets normally")
-    void sameCallsAgain() throws IOException {
+    void sameCallsAgain(final ErsatzServer ersatzServer) throws IOException {
         String resp1 = request("/alpha");
         String resp2 = request("/bravo");
         String resp3 = request("/bravo");

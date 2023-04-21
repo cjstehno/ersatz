@@ -61,9 +61,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(ErsatzServerExtension.class)
 class HelloTest {
 
-    private ErsatzServer server;
-
-    @Test void sayHello() throws Exception {
+    @Test void sayHello(final ErsatzServer server) throws Exception {
         server.expectations(expect -> {
             expect.GET("/say/hello", req -> {
                 req.called(1);
@@ -110,9 +108,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue
 @ExtendWith(ErsatzServerExtension)
 class HelloGroovyTest {
 
-    private GroovyErsatzServer server
-
-    @Test void 'say hello'() {
+    @Test void 'say hello'(final GroovyErsatzServer server) {
         server.expectations {
             GET('/say/hello') {
                 called 1
@@ -138,3 +134,4 @@ class HelloGroovyTest {
 ----
 
 Note that the configuration is almost identical between the two, though with Groovy it's just a bit cleaner. Also note that for the Groovy version, the `GroovyErsatzServer` is used instead of the `ErsatzServer` -- this provides additional Groovy DSL support.
+

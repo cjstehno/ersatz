@@ -25,9 +25,11 @@ import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.match.QueryParamMatcher;
 import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.val;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +46,7 @@ import static org.hamcrest.Matchers.anything;
  */
 public class ErsatzRequest implements Request {
 
+    private static final String FORWARD_HEADER_NAME = "X-Ersatz-Forward";
     private final List<Matcher<ClientRequest>> matchers = new LinkedList<>();
     private final List<Consumer<ClientRequest>> listeners = new LinkedList<>();
     private final List<Response> responses = new LinkedList<>();
@@ -58,25 +61,14 @@ public class ErsatzRequest implements Request {
      * @param meth           the request method
      * @param pathMatcher    the path matcher
      * @param globalEncoders the shared global encoders
-     * @param noResponse     whether this is a request with an empty response (defaults to false)
+     * @param emptyResponse     whether this is a request with an empty response
      */
-    public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse) {
+    public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders, final boolean emptyResponse) {
         matchers.add(methodMatching(meth));
         matchers.add(pathMatcher);
 
         this.globalEncoders = globalEncoders;
-        this.emptyResponse = noResponse;
-    }
-
-    /**
-     * Creates a new request with the specified method, path matcher.
-     *
-     * @param meth           the request method
-     * @param pathMatcher    the path matcher
-     * @param globalEncoders the shared global encoders
-     */
-    public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders) {
-        this(meth, pathMatcher, globalEncoders, false);
+        this.emptyResponse = emptyResponse;
     }
 
     @Override
@@ -115,8 +107,14 @@ public class ErsatzRequest implements Request {
 
     @Override
     public Request responder(final Consumer<Response> responder) {
-        final Response response = newResponse();
+        val response = newResponse();
         responder.accept(response);
+        responses.add(response);
+        return this;
+    }
+
+    @Override public Request forward(final URI targetUri) {
+        val response = new ErsatzForwardResponse(targetUri);
         responses.add(response);
         return this;
     }
@@ -187,7 +185,7 @@ public class ErsatzRequest implements Request {
      * @return a new response container
      */
     protected Response newResponse() {
-        return new ErsatzResponse(emptyResponse, globalEncoders);
+        return emptyResponse ? new ErsatzResponseWithoutContent() : new ErsatzResponse(globalEncoders);
     }
 
     /**
@@ -196,10 +194,10 @@ public class ErsatzRequest implements Request {
      *
      * @return the current response
      */
-    public ErsatzResponse getCurrentResponse() {
+    public Response getCurrentResponse() {
         final int currentCount = callCount.get();
         final int index = currentCount >= responses.size() ? responses.size() - 1 : currentCount;
-        return index >= 0 ? (ErsatzResponse) responses.get(index) : null;
+        return index >= 0 ? responses.get(index) : null;
     }
 
     /**

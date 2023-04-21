@@ -16,18 +16,22 @@
 package io.github.cjstehno.ersatz.junit;
 
 import io.github.cjstehno.ersatz.ErsatzServer;
-import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
+import io.github.cjstehno.ersatz.cfg.HttpMethod;
+import io.github.cjstehno.ersatz.cfg.ServerConfig;
+import io.github.cjstehno.ersatz.match.PathMatcher;
+import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
+import static java.net.http.HttpClient.newHttpClient;
+import static java.net.http.HttpRequest.newBuilder;
+import static java.net.http.HttpResponse.BodyHandlers.ofString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(ErsatzServerExtension.class)
 class ErsatzServerExtensionTest {
@@ -35,7 +39,7 @@ class ErsatzServerExtensionTest {
     @SuppressWarnings("unused") private ErsatzServer server;
 
     @Test @DisplayName("using provided server")
-    void usingServer() throws IOException, InterruptedException {
+    void usingServer() throws Exception {
         server.expectations(expects -> {
             expects.GET("/foo", request -> {
                 request.called(1);
@@ -43,11 +47,74 @@ class ErsatzServerExtensionTest {
             });
         });
 
-        final HttpResponse<String> response = HttpClient.newHttpClient().send(
-            HttpRequest.newBuilder(URI.create(server.httpUrl("/foo"))).GET().build(),
-            HttpResponse.BodyHandlers.ofString()
+        val response = newHttpClient().send(
+            newBuilder(URI.create(server.httpUrl("/foo"))).GET().build(),
+            ofString()
         );
 
         assertEquals(200, response.statusCode());
+        assertTrue(server.verify());
+    }
+
+    @Test @DisplayName("Using annotation config with field")
+    @ApplyServerConfig("localConfig")
+    void usingAnnotationConfigWithField() throws Exception {
+        server.expectations(expects -> {
+            expects.GET("/foo", request -> {
+                request.called(1);
+                request.responds().code(200);
+            });
+        });
+
+        assertEquals(
+            200,
+            newHttpClient().send(
+                newBuilder(URI.create(server.httpUrl("/foo"))).GET().header("key", "unlocked").build(),
+                ofString()
+            ).statusCode()
+        );
+        assertEquals(
+            404,
+            newHttpClient().send(
+                newBuilder(URI.create(server.httpUrl("/foo"))).GET().build(),
+                ofString()
+            ).statusCode()
+        );
+        assertTrue(server.verify());
+    }
+
+    @Test @DisplayName("Using annotation config with field and param")
+    @ApplyServerConfig("localConfig")
+    void usingAnnotationConfigWithFieldAndParam(final ErsatzServer myServer) throws Exception {
+        myServer.expectations(expects -> {
+            expects.GET("/foo", request -> {
+                request.called(1);
+                request.responds().code(200);
+            });
+        });
+
+        assertEquals(
+            200,
+            newHttpClient().send(
+                newBuilder(URI.create(myServer.httpUrl("/foo"))).GET().header("key", "unlocked").build(),
+                ofString()
+            ).statusCode()
+        );
+        assertEquals(
+            404,
+            newHttpClient().send(
+                newBuilder(URI.create(myServer.httpUrl("/foo"))).GET().build(),
+                ofString()
+            ).statusCode()
+        );
+        assertTrue(myServer.verify());
+    }
+
+    @SuppressWarnings("unused") private void localConfig(final ServerConfig config) {
+        config.requirements(requires -> {
+            requires.that(HttpMethod.GET, pathMatching("/foo"), cfg -> {
+                cfg.header("key", "unlocked");
+            });
+        });
     }
 }

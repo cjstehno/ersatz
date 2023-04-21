@@ -19,10 +19,10 @@ import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.github.cjstehno.ersatz.TestAssertions.verifyEqualityAndHashCode;
 import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_PNG;
 import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static io.github.cjstehno.ersatz.encdec.MultipartRequestContent.multipartRequest;
+import static io.github.cjstehno.testthings.Verifiers.verifyEqualsAndHashCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MultipartRequestContentTest {
@@ -48,6 +48,6 @@ class MultipartRequestContentTest {
     }
 
     @Test void equalsAndHash() {
-        verifyEqualityAndHashCode(multipartRequestContent(), multipartRequestContent());
+        verifyEqualsAndHashCode(multipartRequestContent(), multipartRequestContent());
     }
 }

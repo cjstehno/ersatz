@@ -3,9 +3,10 @@ plugins {
     id 'groovy'
     id 'maven-publish'
     id "com.github.hierynomus.license" version '0.16.1'
-    id "com.github.johnrengelman.shadow" version '7.1.2'
+    id "com.github.johnrengelman.shadow" version '8.1.1'
     id 'jacoco'
     id 'signing'
+    id 'com.adarshr.test-logger' version '3.2.0'
 }
 
 group = rootProject.group
@@ -23,6 +24,8 @@ dependencies {
     implementation "org.codehaus.groovy:groovy:$groovyVersion"
     implementation "org.codehaus.groovy:groovy-json:$groovyVersion"
 
+    testImplementation 'io.github.cjstehno:test-things:0.1.0'
+
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
@@ -30,7 +33,27 @@ dependencies {
 
 test {
     useJUnitPlatform()
-    maxParallelForks = Math.min(Runtime.runtime.availableProcessors(), 8)
+    maxParallelForks = Runtime.runtime.availableProcessors()
+}
+
+testlogger {
+    theme 'mocha-parallel'
+    showExceptions true
+    showStackTraces true
+    showFullStackTraces false
+    showCauses true
+    slowThreshold 2000
+    showSummary true
+    showSimpleNames false
+    showPassed false
+    showSkipped true
+    showFailed true
+    showOnlySlow false
+    showStandardStreams false
+    showPassedStandardStreams true
+    showSkippedStandardStreams true
+    showFailedStandardStreams true
+    logLevel 'lifecycle'
 }
 
 jacocoTestReport {
@@ -79,6 +102,11 @@ shadowJar {
     relocate 'org.apache.commons.io', 'ersatz.io'
     relocate 'space.jasan.support.groovy', 'ersatz.groovy'
     relocate 'org.wildfly.common', 'ersatz.wildfly.common'
+    relocate 'okhttp3', 'ersatz.okhttp3'
+    relocate 'okio', 'ersatz.okio'
+    relocate 'kotlin', 'ersatz.kotlin'
+    relocate 'org.intellij', 'ersatz.intellij'
+    relocate 'org.jetbrains', 'ersatz.jetbrains'
 }
 
 

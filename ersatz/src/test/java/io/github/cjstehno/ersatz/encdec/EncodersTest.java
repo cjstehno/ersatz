@@ -26,11 +26,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.stream.Stream;
 
-import static io.github.cjstehno.ersatz.TestHelpers.*;
+import static io.github.cjstehno.testthings.Resources.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -95,8 +94,8 @@ class EncodersTest {
     }
 
     @Test @DisplayName("multipart with invalid object")
-    void invalidMultipart(){
-        val thrown = assertThrows(IllegalArgumentException.class, ()-> {
+    void invalidMultipart() {
+        val thrown = assertThrows(IllegalArgumentException.class, () -> {
             Encoders.multipart.apply(new Object());
         });
         assertEquals("java.lang.Object found, MultipartRequestContent is required.", thrown.getMessage());
@@ -111,7 +110,7 @@ class EncodersTest {
         );
     }
 
-    private static Stream<Arguments> contentProvider() throws URISyntaxException {
+    private static Stream<Arguments> contentProvider() {
         return Stream.of(
             arguments(resourcePath("/content.txt")),
             arguments("/content.txt"),

@@ -19,18 +19,20 @@ import io.undertow.io.IoCallback;
 import io.undertow.io.Sender;
 import io.undertow.server.HttpServerExchange;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.lang.System.arraycopy;
 import static lombok.AccessLevel.PACKAGE;
 
 /**
  * Undertow server callback used to provide the delayed chunked content.
  */
-@RequiredArgsConstructor(access = PACKAGE) @SuppressWarnings("ClassCanBeRecord")
+@RequiredArgsConstructor(access = PACKAGE)
 class ResponseChunker implements IoCallback {
 
     private final List<byte[]> chunks;
@@ -67,8 +69,9 @@ class ResponseChunker implements IoCallback {
      * @param chunks  the number of chunks
      * @return a List&lt;String&gt; containing the chunk data
      */
+    @SuppressWarnings("ReassignedVariable")
     public static List<byte[]> prepareChunks(final byte[] content, final int chunks) {
-        int chunklen = content.length / chunks;
+        val chunkLen = content.length / chunks;
         int remainder = content.length % chunks;
 
         final List<byte[]> chunked = new LinkedList<>();
@@ -82,10 +85,9 @@ class ResponseChunker implements IoCallback {
                 --remainder;
             }
 
-            int len = chunklen + extra;
-
-            final byte[] chunk = new byte[len];
-            System.arraycopy(content, index, chunk, 0, len);
+            val len = chunkLen + extra;
+            val chunk = new byte[len];
+            arraycopy(content, index, chunk, 0, len);
             chunked.add(chunk);
 
             index += len;

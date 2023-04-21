@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The main entry point for configuring an Ersatz server, which allows configuring of the expectations and management of the server itself. This is
@@ -56,7 +57,16 @@ public class ErsatzServer implements Closeable {
      * Creates a new Ersatz server instance with empty (default) configuration.
      */
     public ErsatzServer() {
-        this.serverConfig = new ServerConfigImpl();
+        this(new ServerConfigImpl());
+    }
+
+    /**
+     * Creates a new Ersatz server instance with the provided configuration.
+     *
+     * @param config the configuration instance.
+     */
+    public ErsatzServer(final ServerConfig config) {
+        this.serverConfig = (ServerConfigImpl) config;
         this.serverConfig.setStarter(this::start);
 
         this.underlyingServer = new UndertowUnderlyingServer(serverConfig);
@@ -120,7 +130,7 @@ public class ErsatzServer implements Closeable {
         return getUrl("https", getHttpsPort());
     }
 
-    private String getUrl(final String prefix, final int port) {
+    private static String getUrl(final String prefix, final int port) {
         if (port > 0) {
             return prefix + "://localhost:" + port;
         } else {
@@ -273,5 +283,21 @@ public class ErsatzServer implements Closeable {
      */
     public boolean verify() {
         return verify(1, SECONDS);
+    }
+
+    /**
+     * Helper method to wrap a call to the <code>verify()</code> method within a JUnit <code>assertTrue(...)</code> call.
+     */
+    public void assertVerified() {
+        assertTrue(verify(), "The server expectation verification failed.");
+    }
+
+    /**
+     * Retrieves the internal server configuration.
+     *
+     * @return the server configuration for this server.
+     */
+    protected final ServerConfigImpl getServerConfig() {
+        return serverConfig;
     }
 }
