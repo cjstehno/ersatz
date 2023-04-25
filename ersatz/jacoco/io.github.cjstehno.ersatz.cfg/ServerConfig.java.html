@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ServerConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.cfg</a> &gt; <span class="el_source">ServerConfig.java</span></div><h1>ServerConfig.java</h1><pre class="source lang-java linenums">/**
- * Copyright (C) 2022 Christopher J. Stehno
+ * Copyright (C) 2023 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@
 package io.github.cjstehno.ersatz.cfg;
 
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
+import lombok.SneakyThrows;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
@@ -73,7 +75,7 @@ public interface ServerConfig {
      * @return a reference to the server being configured
      */
     default ServerConfig timeout(int value) {
-<span class="fc" id="L76">        return timeout(value, SECONDS);</span>
+<span class="fc" id="L78">        return timeout(value, SECONDS);</span>
     }
 
     /**
@@ -82,7 +84,7 @@ public interface ServerConfig {
      * @return a reference to the server being configured
      */
     default ServerConfig reportToConsole() {
-<span class="fc" id="L85">        return reportToConsole(true);</span>
+<span class="fc" id="L87">        return reportToConsole(true);</span>
     }
 
     /**
@@ -150,7 +152,9 @@ public interface ServerConfig {
      * @param decoder     the request content decoder
      * @return the reference to the server configuration
      */
-    ServerConfig decoder(final ContentType contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder);
+    default ServerConfig decoder(final ContentType contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder){
+<span class="fc" id="L156">        return decoder(contentType.getValue(), decoder);</span>
+    }
 
     /**
      * Registers a global response body encoder.
@@ -175,7 +179,7 @@ public interface ServerConfig {
      * @return a reference to this server configuration
      */
     default ServerConfig encoder(ContentType contentType, Class objectType, Function&lt;Object, byte[]&gt; encoder) {
-<span class="fc" id="L178">        return encoder(contentType.getValue(), objectType, encoder);</span>
+<span class="fc" id="L182">        return encoder(contentType.getValue(), objectType, encoder);</span>
     }
 
     /**
@@ -220,7 +224,7 @@ public interface ServerConfig {
      * @return a reference to this server configuration.
      */
     default ServerConfig logResponseContent() {
-<span class="fc" id="L223">        return logResponseContent(true);</span>
+<span class="fc" id="L227">        return logResponseContent(true);</span>
     }
 
     /**
@@ -240,7 +244,7 @@ public interface ServerConfig {
      * @return a reference to this server configuration
      */
     default ServerConfig serverThreads(final int io) {
-<span class="fc" id="L243">        return serverThreads(io, io * 8);</span>
+<span class="fc" id="L247">        return serverThreads(io, io * 8);</span>
     }
 
     /**
@@ -251,4 +255,4 @@ public interface ServerConfig {
      */
     ServerConfig requirements(final Consumer&lt;Requirements&gt; requirements);
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

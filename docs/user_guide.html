@@ -442,8 +442,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>Ersatz Server User Guide</h1>
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
-<span id="revnumber">version 3.1.0,</span>
-<span id="revdate">March 2022</span>
+<span id="revnumber">version 3.2.0,</span>
+<span id="revdate">April 2023</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -451,6 +451,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_introduction">Introduction</a></li>
 <li><a href="#_whats_new">What&#8217;s New</a>
 <ul class="sectlevel2">
+<li><a href="#_in_3_2">In 3.2</a></li>
 <li><a href="#_in_3_1">In 3.1</a></li>
 <li><a href="#_in_3_0">In 3.0</a>
 <ul class="sectlevel3">
@@ -471,6 +472,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_gradle">Gradle</a></li>
 <li><a href="#_maven">Maven</a></li>
 <li><a href="#_writing_a_test">Writing a Test</a></li>
+</ul>
+</li>
+<li><a href="#_junit_extension">JUnit Extension</a>
+<ul class="sectlevel2">
+<li><a href="#_ersatzserverextension">ErsatzServerExtension</a></li>
+<li><a href="#_sharedersatzserverextension">SharedErsatzServerExtension</a></li>
 </ul>
 </li>
 <li><a href="#_server_lifecycle">Server Lifecycle</a>
@@ -533,6 +540,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_put">PUT</a></li>
 <li><a href="#_delete">DELETE</a></li>
 <li><a href="#_patch">PATCH</a></li>
+<li><a href="#_any">ANY</a></li>
+<li><a href="#_generic_method">Generic Method</a></li>
 <li><a href="#_trace">TRACE</a></li>
 </ul>
 </li>
@@ -560,10 +569,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_request_response_compression">Request / Response Compression</a></li>
 <li><a href="#_chunked_response">Chunked Response</a></li>
 <li><a href="#_multipart_response_content">Multipart Response Content</a></li>
+<li><a href="#_request_forwarding">Request Forwarding</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li><a href="#_proxy_server">Proxy Server</a></li>
 <li><a href="#_shadow_jar">Shadow Jar</a>
 <ul class="sectlevel2">
 <li><a href="#_gradle_2">Gradle</a></li>
@@ -577,13 +588,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_file_download_get">File Download (GET)</a></li>
 <li><a href="#_kotlin_usage">Kotlin Usage</a></li>
 <li><a href="#_matching_xml_body_content">Matching XML Body Content</a></li>
+<li><a href="#_forwarding_to_another_server_for_response">Forwarding to Another Server for Response</a></li>
+<li><a href="#_using_test_things_with_ersatz">Using Test-Things with Ersatz</a></li>
 </ul>
 </li>
 <li><a href="#_appendices">Appendices</a>
 <ul class="sectlevel2">
 <li><a href="#_a_development_philosophy">A. Development Philosophy</a></li>
-<li><a href="#_b_sightings">B. Sightings</a></li>
-<li><a href="#_c_license">C. License</a></li>
+<li><a href="#_b_license">B. License</a></li>
 </ul>
 </li>
 </ul>
@@ -625,6 +637,34 @@ The code examples throughout this document are written with either Java or Groov
 <div class="sect1">
 <h2 id="_whats_new">What&#8217;s New</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_in_3_2">In 3.2</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Added generic <code>request</code> expectations to the <code>Expectations</code> interface - this allows programmatic specification of the request method.</p>
+</li>
+<li>
+<p>Added static constants for commonly used HTTP headers and response status codes (see <code>HttpHeaders</code> and <code>StatusCode</code>).</p>
+</li>
+<li>
+<p>Added JSON encoder and decoder implementations to the Groovy extension (based on Groovy internal support). These used to be in the core library, but were removed when it was converted to Java.</p>
+</li>
+<li>
+<p>Added request forwarding, such that a matched request can be forwarded to another server, and have that response returned as the response to the original request.</p>
+</li>
+<li>
+<p>Resurrected the <code>ErsatzProxyServer</code> stand-alone proxy server component (temporarily) - the represented functionality will be replaced by the aforementioned request forwarding.</p>
+</li>
+<li>
+<p>Added more functionality to the <code>ErsatzServerExtension</code> JUnit 5 helper class, and added a <code>SharedErsatzServerExtension</code> which uses a shared server instance for all test methods in a test class - rather than creating and destroying it for each test.</p>
+</li>
+<li>
+<p>Minor tweaks, fixes, and updates.</p>
+</li>
+</ul>
+</div>
+</div>
 <div class="sect2">
 <h3 id="_in_3_1">In 3.1</h3>
 <div class="ulist">
@@ -842,10 +882,10 @@ The code examples throughout this document are written with either Java or Groov
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz:3.1.0'</span>
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz:3.2.0'</span>
 
 <span class="c1">// or, for the Groovy extensions</span>
-<span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:3.1.0'</span></code></pre>
+<span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:3.2.0'</span></code></pre>
 </div>
 </div>
 </div>
@@ -859,7 +899,7 @@ The code examples throughout this document are written with either Java or Groov
 <pre class="rouge highlight"><code data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>3.1.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.2.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 
@@ -867,7 +907,7 @@ The code examples throughout this document are written with either Java or Groov
 <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz-groovy<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>3.1.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.2.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span></code></pre>
 </div>
@@ -909,9 +949,7 @@ If you are using Groovy, you need only add the <code>ersatz-groovy</code> depend
 <span class="nd">@ExtendWith</span><span class="o">(</span><span class="nc">ErsatzServerExtension</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
 <span class="kd">class</span> <span class="nc">HelloTest</span> <span class="o">{</span>
 
-    <span class="kd">private</span> <span class="nc">ErsatzServer</span> <span class="n">server</span><span class="o">;</span>
-
-    <span class="nd">@Test</span> <span class="kt">void</span> <span class="nf">sayHello</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+    <span class="nd">@Test</span> <span class="kt">void</span> <span class="nf">sayHello</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ErsatzServer</span> <span class="n">server</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
         <span class="n">server</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expect</span> <span class="o">-&gt;</span> <span class="o">{</span>
             <span class="n">expect</span><span class="o">.</span><span class="na">GET</span><span class="o">(</span><span class="s">"/say/hello"</span><span class="o">,</span> <span class="n">req</span> <span class="o">-&gt;</span> <span class="o">{</span>
                 <span class="n">req</span><span class="o">.</span><span class="na">called</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
@@ -960,9 +998,7 @@ If you are using Groovy, you need only add the <code>ersatz-groovy</code> depend
 <span class="nd">@ExtendWith</span><span class="o">(</span><span class="n">ErsatzServerExtension</span><span class="o">)</span>
 <span class="kd">class</span> <span class="nc">HelloGroovyTest</span> <span class="o">{</span>
 
-    <span class="kd">private</span> <span class="n">GroovyErsatzServer</span> <span class="n">server</span>
-
-    <span class="nd">@Test</span> <span class="kt">void</span> <span class="s1">'say hello'</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Test</span> <span class="kt">void</span> <span class="s1">'say hello'</span><span class="o">(</span><span class="kd">final</span> <span class="n">GroovyErsatzServer</span> <span class="n">server</span><span class="o">)</span> <span class="o">{</span>
         <span class="n">server</span><span class="o">.</span><span class="na">expectations</span> <span class="o">{</span>
             <span class="n">GET</span><span class="o">(</span><span class="s1">'/say/hello'</span><span class="o">)</span> <span class="o">{</span>
                 <span class="n">called</span> <span class="mi">1</span>
@@ -989,6 +1025,161 @@ If you are using Groovy, you need only add the <code>ersatz-groovy</code> depend
 </div>
 <div class="paragraph">
 <p>Note that the configuration is almost identical between the two, though with Groovy it&#8217;s just a bit cleaner. Also note that for the Groovy version, the <code>GroovyErsatzServer</code> is used instead of the <code>ErsatzServer</code>&#8201;&#8212;&#8201;this provides additional Groovy DSL support.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_junit_extension">JUnit Extension</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The framework provides two JUnit 5 Extensions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ErsatzServerExtension</code>. A configurable server management extension that creates and destroys the server after each test method.</p>
+</li>
+<li>
+<p><code>SharedErsatzServerExtension</code>. A server management extension that creates the server at the start of the test class, and destroys it when all tests are done.</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_ersatzserverextension">ErsatzServerExtension</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This is the extension that has been around for a while - the new extension was created with a different name so as not to break existing tests.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The main functionality of the extension is to provide two test lifecycle hooks:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>beforeEach</code>: Before each test method is executed, the server will be created, configured, and started.</p>
+</li>
+<li>
+<p><code>afterEach</code>: After each test method is done executing, the server will be stopped, and the expectations cleared.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Configuration of the test server can take one of the following forms (in order of precedence):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Annotated Method.</strong> If the test method is annotated with the <code>@ApplyServerConfig(method)</code> annotation, the specified method will be called to populate a <code>ServerConfig</code> instance, which will be used to configure an instance of <code>ErsatzServer</code>, which will be exposed as a test method parameter.</p>
+</li>
+<li>
+<p><strong>Annotated Class.</strong> If the test class is annotated with the <code>@ApplyServerConfig(method)</code> annotation, the specified method will be called to populate a <code>ServerConfig</code> instance, which will be used to configure an instance of <code>ErsatzServer</code>, which will be exposed as a test method parameter.</p>
+</li>
+<li>
+<p><strong>Typed field without value.</strong> If a field of type <code>ErsatzServer</code> is added to the test, with no explicit value, the server will be created and used to populate that field. The created server will also be exposed as a test method parameter.</p>
+</li>
+<li>
+<p><strong>Typed field with value.</strong> If a field of type <code>ErsatzServer</code> is added to the test with a value, that value will be used as the server, and also exposed as a test method parameter.</p>
+</li>
+<li>
+<p><strong>No configuration.</strong> If no explicit configuration is added to the test, it will create an instance of <code>ErsatzServer</code> and expose it as an available test method parameter.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The <code>@ApplyServerConfig</code> annotation may be added to the test class, for global default configuration, or to a test method, to define the configuration to be used by a single test method. The value of the annotation should be the name of a method of the test class which accepts a single argument of type <code>ServerConfig</code>. The method should use the provided <code>ServerConfig</code> instance and configure it.</p>
+</div>
+<div class="paragraph">
+<p>Lastly, if a test method adds a parameter of type <code>ErsatzServer</code>, it will be populated with the currently configured server instance for the test - this removes the need to store the server instance in a field of the test class.</p>
+</div>
+<div class="paragraph">
+<p>An example with some of the available configuration could look like the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@ExtendWith</span><span class="o">(</span><span class="nc">ErsatzServerExtension</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="nd">@ApplyServerConfig</span><span class="o">(</span><span class="s">"defaultConfig"</span><span class="o">)</span>
+<span class="kd">class</span> <span class="nc">SomeTesting</span> <span class="o">{</span>
+
+    <span class="nd">@Test</span> <span class="kt">void</span> <span class="nf">defaultTest</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ErsatzServer</span> <span class="n">server</span><span class="o">){</span>
+        <span class="c1">// do some testing with the server - defaultConfig</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Test</span> <span class="nd">@ApplyServerConfig</span><span class="o">(</span><span class="s">"anotherConfig"</span><span class="o">)</span>
+    <span class="kt">void</span> <span class="nf">anotherTest</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ErsatzServer</span> <span class="n">server</span><span class="o">){</span>
+        <span class="c1">// do some more testing with the server - anotherConfig</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">defaultConfig</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ServerConfig</span> <span class="n">conf</span><span class="o">){</span>
+        <span class="c1">// apply some config</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">anotherConfig</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ServerConfig</span> <span class="n">conf</span><span class="o">){</span>
+        <span class="c1">// apply some other config</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The legacy style of test configuration will continue to work, but now you have some additional options to help clean things up a bit.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sharedersatzserverextension">SharedErsatzServerExtension</h3>
+<div class="paragraph">
+<p>This JUnit extension provides some of the features of the other extension, though its main purpose is to provide a means
+of simple and fast server management.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+While theoretically, creating and starting the server once per test class <em>should</em> be faster than doing it for each test method, your results may vary&#8230;&#8203; and it will be highly dependant on how many tests you have in the class. As a general rule, I would suggest starting with this extension and then switching to the other one if/when you need more flexible configuration.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This extension differ from the other in that it creates the server instance in <code>beforeAll</code> and destroys it in <code>afterAll</code>, so that there is one server running and available for all of the tests in the class. This cuts down on the startup and shutdown time, at the cost of being able to configure the server for each test method.</p>
+</div>
+<div class="paragraph">
+<p>The server expectations are cleared after each test method completes (e.g. <code>afterEach</code>).</p>
+</div>
+<div class="paragraph">
+<p>Configuration of the server instance may be done using a class-level <code>@ApplyServerConfig</code> annotation (not method level), or, if none is provided, the default configuration will be used to create the server. Also, note that for this extension, the configuration method must be <code>static</code>.</p>
+</div>
+<div class="paragraph">
+<p>Test methods should add an <code>ErsatzServer</code> or <code>GroovyErsatzServer</code> typed parameter to the test methods that require access to the server instance.</p>
+</div>
+<div class="paragraph">
+<p>A simple example (similar to the one above), would be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="nd">@ExtendWith</span><span class="o">(</span><span class="nc">SharedErsatzServerExtension</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="nd">@ApplyServerConfig</span>
+<span class="kd">class</span> <span class="nc">SomeTesting</span> <span class="o">{</span>
+
+    <span class="nd">@Test</span> <span class="kt">void</span> <span class="nf">defaultTest</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ErsatzServer</span> <span class="n">server</span><span class="o">){</span>
+        <span class="c1">// do some testing with the server - defaultConfig</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">serverConfig</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ServerConfig</span> <span class="n">conf</span><span class="o">){</span>
+        <span class="c1">// apply some config</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1411,6 +1602,18 @@ As a design decision, no decoders are defined and registered on the server by de
 <span class="o">}</span></code></pre>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+If you are using the Groovy extension library, this decoder is available as the <code>JsonDecoder</code> class.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_jackson">Jackson</h4>
@@ -1515,7 +1718,7 @@ As a design decision, no encoders are defined and registered on the server by de
 <div class="sect3">
 <h4 id="_groovy_2">Groovy</h4>
 <div class="paragraph">
-<p>An encoder (serializer) implemented with the Groovy <code>JsonObject</code> could be implemented as:</p>
+<p>An encoder (serializer) implemented with the Groovy <code>JsonOutput</code> could be implemented as:</p>
 </div>
 <div class="paragraph">
 <p>public static final Function&lt;Object, byte[]&gt; json = obj &#8594; (obj != null ? toJson(obj) : "{}").getBytes(UTF_8);</p>
@@ -1523,15 +1726,27 @@ As a design decision, no encoders are defined and registered on the server by de
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="groovy"><span class="n">encoder</span><span class="o">(</span><span class="n">ContentType</span><span class="o">.</span><span class="na">APPLICATION_JSON</span><span class="o">,</span> <span class="n">MyType</span><span class="o">){</span> <span class="n">obj</span> <span class="o">-&gt;</span>
-    <span class="n">JsonObject</span><span class="o">.</span><span class="na">toJson</span><span class="o">(</span><span class="n">obj</span><span class="o">).</span><span class="na">getBytes</span><span class="o">(</span><span class="n">UTF_8</span><span class="o">)</span>
+    <span class="n">JsonOutput</span><span class="o">.</span><span class="na">toJson</span><span class="o">(</span><span class="n">obj</span><span class="o">).</span><span class="na">getBytes</span><span class="o">(</span><span class="n">UTF_8</span><span class="o">)</span>
 <span class="o">}</span></code></pre>
 </div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+If you are using the Groovy extension library, this encoder is available as the <code>JsonEncoder</code> class.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_jackson_2">Jackson</h4>
 <div class="paragraph">
-<p>A decoder (parser) implemented using the Jackson JSON library could be implemented as:</p>
+<p>An encoder (serializer) implemented using the Jackson JSON library could be implemented as:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1945,6 +2160,59 @@ Not all client and servers will support the <code>OPTIONS</code> request method.
 </div>
 </div>
 <div class="sect3">
+<h4 id="_any">ANY</h4>
+<div class="paragraph">
+<p>The <code>ANY</code> request method creates a request expectation that can match any HTTP method - the body of the expectation will
+have the same format as the HTTP method expectations described earlier.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="n">server</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expect</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">expect</span><span class="o">.</span><span class="na">ANY</span><span class="o">(</span><span class="s">"/something"</span><span class="o">,</span> <span class="n">req</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">secure</span><span class="o">();</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">called</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">responder</span><span class="o">(</span><span class="n">res</span> <span class="o">-&gt;</span> <span class="n">res</span><span class="o">.</span><span class="na">body</span><span class="o">(</span><span class="n">responseText</span><span class="o">,</span> <span class="no">TEXT_PLAIN</span><span class="o">));</span>
+    <span class="o">});</span>
+<span class="o">});</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_generic_method">Generic Method</h4>
+<div class="paragraph">
+<p>In version 3.2 a generic set of request expectation methods were added to allow the definition of request expectations
+based on variable HTTP request methods:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Request request(final HttpMethod method, final String path)
+Request request(final HttpMethod method, final Matcher&lt;String&gt; matcher)
+Request request(final HttpMethod method, final String path, Consumer&lt;Request&gt; consumer)
+Request request(final HttpMethod method, final Matcher&lt;String&gt; matcher, final Consumer&lt;Request&gt; consumer)
+Request request(final HttpMethod method, final PathMatcher pathMatcher)
+Request request(final HttpMethod method, final PathMatcher pathMatcher, Consumer&lt;Request&gt; consumer)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These expectation methods work in the same manner as the method-specific interfaces described above.</p>
+</div>
+<div class="paragraph">
+<p>This functionality is useful when writing tests for an endpoint that may accept multiple HTTP methods for the same
+underlying endpoint resource.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="n">server</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expect</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">expect</span><span class="o">.</span><span class="na">request</span><span class="o">(</span><span class="no">GET</span><span class="o">,</span> <span class="s">"/something"</span><span class="o">,</span> <span class="n">req</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">secure</span><span class="o">();</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">called</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">responds</span><span class="o">().</span><span class="na">body</span><span class="o">(</span><span class="n">responseText</span><span class="o">,</span> <span class="no">TEXT_PLAIN</span><span class="o">);</span>
+    <span class="o">});</span>
+<span class="o">});</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_trace">TRACE</h4>
 <div class="paragraph">
 <p>The <code>TRACE</code> method is generally meant for debugging and diagnostics. The request will have no request content; however, if the request is valid, the response will contain the entire request message in the entity-body, with a Content-Type of <code>message/http</code>. With that in mind, the <code>TRACE</code> method is implemented a bit differently than the other HTTP methods. It&#8217;s not available for mocking, but it will provide an echo of the request as it is supposed to. For example the following request (raw):</p>
@@ -2318,7 +2586,7 @@ No decoders are provided by default, any used in the request content <em>must</e
 <div class="sect2">
 <h3 id="_response_building">Response Building</h3>
 <div class="paragraph">
-<p>The <code>responds(&#8230;&#8203;)</code> and <code>responder(&#8230;&#8203;)</code> methods of the <code>Request</code> matcher allow for the customization of the response to the request. Basic response properties such as headers, status code, and content body are available, as well as some more advanced configuration options, described below:</p>
+<p>The <code>responds(&#8230;&#8203;)</code>, <code>responder(&#8230;&#8203;)</code>, and <code>forward(&#8230;&#8203;)</code> methods of the <code>Request</code> matcher allow for the customization of the response to the request. Basic response properties such as headers, status code, and content body are available, as well as some more advanced configuration options, described below:</p>
 </div>
 <div class="sect3">
 <h4 id="_request_response_compression">Request / Response Compression</h4>
@@ -2422,6 +2690,98 @@ Content-Type: image/jpeg
 <p>which could be decoded in the same manner a multipart <em>request</em> content (an example using the Apache File Upload multipart parser can be found in the unit tests).</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_request_forwarding">Request Forwarding</h4>
+<div class="paragraph">
+<p>The <code>forward(String)</code> response configuration method causes the incoming request to be forwarded to another server - the <code>String</code> parameter is the scheme, host, and port of the target server. The response generated by the same incoming request, on that server, is then returned to the original client. As an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="n">ersatz</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expect</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">expect</span><span class="o">.</span><span class="na">GET</span><span class="o">(</span><span class="s">"/api/widgets/list"</span><span class="o">,</span> <span class="n">req</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">called</span><span class="o">();</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="s">"partial"</span><span class="o">,</span> <span class="s">"true"</span><span class="o">);</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">forward</span><span class="o">(</span><span class="s">"http://somehost:1234"</span><span class="o">);</span>
+    <span class="o">});</span>
+<span class="o">});</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will expect that a GET request to <code>/api/widgets/list?partial=true</code> will be called once, and that its response will be the response from making the same request against <code><a href="http://somehost:1234/api/widgets/list?partial=true" class="bare">http://somehost:1234/api/widgets/list?partial=true</a></code>.</p>
+</div>
+<div class="paragraph">
+<p>This feature allows you to ensure that a request is made, with optional expectations, but that the response comes from the other source.</p>
+</div>
+<div class="paragraph">
+<p>This feature works with both HTTP and HTTPS requests, though the target URI must reflect the desired scheme.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_proxy_server">Proxy Server</h2>
+<div class="sectionbody">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+This functionality has been brought back into the framework, and slightly updated, but it will be removed in a near-future release. The request forwarding functionality should be used instead, as it provides a more flexible and expressive framework.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>A simple standalone proxy server is available/ The <code>io.github.cjstehno.ersatz.ErsatzProxyServer</code> is useful for testing proxied HTTP connections.
+The proxy server has a similar configuration to the <code>ErsatzServer</code> and allows limited expectation configuration; it is expected that more detailed expectation configuration will be done on a standard <code>ErsatzServer</code> instance at the other end of the proxy, something like the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="kt">var</span> <span class="n">ersatzServer</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ErsatzServer</span><span class="o">(</span><span class="n">cfg</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expect</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">expect</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/"</span><span class="o">).</span><span class="na">called</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">responds</span><span class="o">().</span><span class="na">code</span><span class="o">(</span><span class="mi">200</span><span class="o">).</span><span class="na">content</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">,</span> <span class="no">TEXT_PLAIN</span><span class="o">);</span>
+        <span class="n">expect</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/foo"</span><span class="o">).</span><span class="na">called</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">responds</span><span class="o">().</span><span class="na">code</span><span class="o">(</span><span class="mi">200</span><span class="o">).</span><span class="na">content</span><span class="o">(</span><span class="s">"Foo!"</span><span class="o">,</span> <span class="no">TEXT_PLAIN</span><span class="o">);</span>
+    <span class="o">});</span>
+<span class="o">});</span>
+
+<span class="kt">var</span> <span class="n">ersatzProxy</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ErsatzProxyServer</span><span class="o">(</span><span class="n">cfg</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="na">target</span><span class="o">(</span><span class="n">ersatzServer</span><span class="o">.</span><span class="na">httpUrl</span><span class="o">);</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expect</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">expect</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/"</span><span class="o">);</span>
+        <span class="n">expect</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/foo"</span><span class="o">);</span>
+    <span class="o">});</span>
+<span class="o">});</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Such that, hitting the proxy <code>/foo</code> URL will forward the request to the <code>/foo</code> URL on the server, and likewise it will pass through the response.</p>
+</div>
+<div class="paragraph">
+<p>Notice that the <code>ErsatzProxy</code> has the same lifecycle as the <code>ErsatzServer</code>: you should call the <code>verify()</code> method to ensure that the expected requests were proxied, and the <code>stop()</code> method must be closed once the server is no longer needed.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+One difference from the <code>ErsatzServer</code> lifecycle is that the proxy server defaults auto-starting, and must be disabled if this is not desired.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The requests made to the proxy server are passed through to the <code>targetUri</code> and the response from that server is returned as the response from the proxy server.</p>
+</div>
+<div class="paragraph">
+<p>The proxy server is usable from both Java and Groovy based on the use of Groovy `Closure`s or Java `Consumer`s for configuration.</p>
+</div>
+<div class="paragraph">
+<p>Currently, the proxy server only supports HTTP endpoints (HTTPS <em>may</em> be supported in a future release).</p>
 </div>
 </div>
 </div>
@@ -2453,14 +2813,14 @@ There are examples of various usage configurations in the <a href="https://githu
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz:3.1.0:safe'</span><span class="o">){</span>
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz:3.2.0:safe'</span><span class="o">){</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'io.undertow'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'undertow-core'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'javax.servlet'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'javax.servlet-api'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'commons-fileupload'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'commons-fileupload'</span>
 <span class="o">}</span>
 
 <span class="c1">// or for the Groovy DSL</span>
-<span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:3.1.0:safe'</span><span class="o">){</span>
+<span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:3.2.0:safe'</span><span class="o">){</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'io.undertow'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'undertow-core'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'javax.servlet'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'javax.servlet-api'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'commons-fileupload'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'commons-fileupload'</span>
@@ -2485,7 +2845,7 @@ There are examples of various usage configurations in the <a href="https://githu
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz<span class="nt">&lt;/artifactId&gt;</span>
     <span class="nt">&lt;classifier&gt;</span>safe<span class="nt">&lt;/classifier&gt;</span>
-    <span class="nt">&lt;version&gt;</span>3.1.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.2.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
     <span class="nt">&lt;exclusions&gt;</span>
         <span class="nt">&lt;exclusion&gt;</span>
@@ -2508,7 +2868,7 @@ There are examples of various usage configurations in the <a href="https://githu
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz-groovy<span class="nt">&lt;/artifactId&gt;</span>
     <span class="nt">&lt;classifier&gt;</span>safe<span class="nt">&lt;/classifier&gt;</span>
-    <span class="nt">&lt;version&gt;</span>3.1.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.2.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;type&gt;</span>jar<span class="nt">&lt;/type&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
     <span class="nt">&lt;exclusions&gt;</span>
@@ -2549,18 +2909,6 @@ There are examples of various usage configurations in the <a href="https://githu
 <div class="paragraph">
 <p>The inclusions and exclusions are required to truly isolate and configure the artifact, due to some odd maven publishing requirements.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-The Groovy
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 </div>
@@ -2577,14 +2925,17 @@ The Groovy
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="groovy"><span class="n">server</span><span class="o">.</span><span class="na">expectations</span> <span class="o">{</span>
-    <span class="n">POST</span><span class="o">(</span><span class="s1">'/form'</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">body</span><span class="o">([</span><span class="nl">alpha:</span> <span class="s1">'some data'</span><span class="o">,</span> <span class="nl">bravo:</span> <span class="s1">'42'</span><span class="o">],</span> <span class="s1">'application/x-www-form-urlencoded'</span><span class="o">)</span>
-        <span class="n">responder</span> <span class="o">{</span>
-            <span class="n">body</span> <span class="s1">'ok'</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span></code></pre>
+<pre class="rouge highlight"><code data-lang="java"><span class="n">server</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expect</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">expect</span><span class="o">.</span><span class="na">POST</span><span class="o">(</span><span class="s">"/form"</span><span class="o">,</span> <span class="n">req</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">body</span><span class="o">(</span><span class="nc">Map</span><span class="o">.</span><span class="na">of</span><span class="o">(</span>
+            <span class="s">"alpha"</span><span class="o">,</span> <span class="s">"some data"</span><span class="o">,</span>
+            <span class="s">"bravo"</span><span class="o">,</span> <span class="s">"42"</span>
+        <span class="o">),</span> <span class="nc">ContentType</span><span class="o">.</span><span class="na">APPLICATION_URLENCODED</span><span class="o">);</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">responder</span><span class="o">(</span><span class="n">res</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="n">res</span><span class="o">.</span><span class="na">body</span><span class="o">(</span><span class="s">"ok"</span><span class="o">);</span>
+        <span class="o">});</span>
+    <span class="o">});</span>
+<span class="o">});</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2691,7 +3042,7 @@ The Groovy
 <div class="sect2">
 <h3 id="_matching_xml_body_content">Matching XML Body Content</h3>
 <div class="paragraph">
-<p>An example of how to use the Hamcrest matchers in a request.</p>
+<p>An example of how to use the Hamcrest matchers in a request (in a Groovy test using Spock).</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2724,9 +3075,14 @@ The Groovy
         <span class="n">server</span><span class="o">.</span><span class="na">expectations</span> <span class="o">{</span>
             <span class="n">POST</span><span class="o">(</span><span class="s1">'/posting'</span><span class="o">)</span> <span class="o">{</span>
                 <span class="n">decoder</span><span class="o">(</span><span class="s1">'text/xml; charset=utf-8'</span><span class="o">)</span> <span class="o">{</span> <span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span><span class="o">,</span> <span class="n">DecodingContext</span> <span class="n">ctx</span> <span class="o">-&gt;</span>
-                    <span class="n">DocumentBuilderFactory</span><span class="o">.</span><span class="na">newInstance</span><span class="o">().</span><span class="na">newDocumentBuilder</span><span class="o">().</span><span class="na">parse</span><span class="o">(</span><span class="k">new</span> <span class="n">ByteArrayInputStream</span><span class="o">(</span><span class="n">bytes</span><span class="o">))</span>
+                    <span class="n">DocumentBuilderFactory</span><span class="o">.</span><span class="na">newInstance</span><span class="o">()</span>
+                        <span class="o">.</span><span class="na">newDocumentBuilder</span><span class="o">()</span>
+                        <span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="k">new</span> <span class="n">ByteArrayInputStream</span><span class="o">(</span><span class="n">bytes</span><span class="o">))</span>
                 <span class="o">}</span>
-                <span class="n">body</span> <span class="nf">hasXPath</span><span class="o">(</span><span class="s1">'string(//request/node/@foo)'</span><span class="o">,</span> <span class="n">equalTo</span><span class="o">(</span><span class="s1">'bar'</span><span class="o">)),</span> <span class="s1">'text/xml; charset=utf-8'</span>
+                <span class="n">body</span><span class="o">(</span>
+                    <span class="n">hasXPath</span><span class="o">(</span><span class="s1">'string(//request/node/@foo)'</span><span class="o">,</span> <span class="n">equalTo</span><span class="o">(</span><span class="s1">'bar'</span><span class="o">)),</span>
+                    <span class="s1">'text/xml; charset=utf-8'</span>
+                <span class="o">)</span>
                 <span class="n">called</span> <span class="mi">1</span>
                 <span class="n">responder</span> <span class="o">{</span>
                     <span class="n">body</span> <span class="n">responseXml</span><span class="o">,</span> <span class="n">TEXT_XML</span>
@@ -2736,13 +3092,22 @@ The Groovy
         <span class="o">}</span>
 
         <span class="nl">when:</span>
-        <span class="n">Response</span> <span class="n">response</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="na">post</span><span class="o">(</span><span class="n">server</span><span class="o">.</span><span class="na">httpUrl</span><span class="o">(</span><span class="s1">'/posting'</span><span class="o">),</span> <span class="n">create</span><span class="o">(</span><span class="n">MediaType</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s1">'text/xml; charset=utf-8'</span><span class="o">),</span> <span class="n">requestXml</span><span class="o">))</span>
+        <span class="n">Response</span> <span class="n">response</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="na">post</span><span class="o">(</span>
+            <span class="n">server</span><span class="o">.</span><span class="na">httpUrl</span><span class="o">(</span><span class="s1">'/posting'</span><span class="o">),</span>
+            <span class="n">create</span><span class="o">(</span><span class="n">MediaType</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s1">'text/xml; charset=utf-8'</span><span class="o">),</span> <span class="n">requestXml</span><span class="o">)</span>
+        <span class="o">)</span>
 
         <span class="nl">then:</span>
         <span class="n">response</span><span class="o">.</span><span class="na">body</span><span class="o">().</span><span class="na">string</span><span class="o">()</span> <span class="o">==</span> <span class="n">responseXml</span>
 
         <span class="nl">when:</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="na">post</span><span class="o">(</span><span class="n">server</span><span class="o">.</span><span class="na">httpUrl</span><span class="o">(</span><span class="s1">'/posting'</span><span class="o">),</span> <span class="n">create</span><span class="o">(</span><span class="n">MediaType</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s1">'text/xml; charset=utf-8'</span><span class="o">),</span> <span class="s1">'&lt;request&gt;&lt;node foo="blah"/&gt;&lt;/request&gt;'</span><span class="o">))</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="na">post</span><span class="o">(</span>
+            <span class="n">server</span><span class="o">.</span><span class="na">httpUrl</span><span class="o">(</span><span class="s1">'/posting'</span><span class="o">),</span>
+            <span class="n">create</span><span class="o">(</span>
+                <span class="n">MediaType</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s1">'text/xml; charset=utf-8'</span><span class="o">),</span>
+                <span class="s1">'&lt;request&gt;&lt;node foo="blah"/&gt;&lt;/request&gt;'</span>
+            <span class="o">)</span>
+        <span class="o">)</span>
 
         <span class="nl">then:</span>
         <span class="n">response</span><span class="o">.</span><span class="na">code</span><span class="o">()</span> <span class="o">==</span> <span class="mi">404</span>
@@ -2763,6 +3128,122 @@ The Groovy
 <p>See the <a href="http://hamcrest.org/JavaHamcrest/">Hamcrest</a> documentation for more details about pre-existing and custom `Matcher`s.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_forwarding_to_another_server_for_response">Forwarding to Another Server for Response</h3>
+<div class="paragraph">
+<p>A test case may arise where you have a real server running, where you want to verify the contents of your request, but then respond with the real server response to that request. The "request forwarding" functionality can do that:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="n">server</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expect</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">expect</span><span class="o">.</span><span class="na">GET</span><span class="o">(</span><span class="s">"/endpoint/get"</span><span class="o">,</span> <span class="n">req</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">secure</span><span class="o">();</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">called</span><span class="o">();</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="s">"bar"</span><span class="o">);</span>
+        <span class="n">req</span><span class="o">.</span><span class="na">forward</span><span class="o">(</span><span class="s">"https://someother:9753"</span><span class="o">);</span>
+    <span class="o">});</span>
+<span class="o">});</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example, a GET request is expected at the <code>/endpoint/get</code> path. It should be an HTTPS request, with the query string <code>foo=bar</code>. The Ersatz server will match the request, and if it matches it will forward the request to the configured server (<code><a href="https://somother:9753/endpoint/get?foo=bar" class="bare">https://somother:9753/endpoint/get?foo=bar</a></code> in this case). The response from that request will be returned as the response from the Ersatz server.</p>
+</div>
+<div class="paragraph">
+<p>With this, you can verify that you sent the expected request, once, and that it retrieves the expected response from the server.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_using_test_things_with_ersatz">Using Test-Things with Ersatz</h3>
+<div class="paragraph">
+<p>In the test <code>io.github.cjstehno.ersatz.examples.ErsatzThingsTest</code> example, you can see how well the <a href="https://cjstehno.github.io/test-things/">Test-Things</a> library integrates with Ersatz (yes, it&#8217;s another project of mine). The example is a bit contrived, but is shows how you can use the <code>SharedRandomExtension</code>, and <code>ResourcesExtension</code> with the <code>ErsatzExtension</code> to simplify random value generation and resource loading.</p>
+</div>
+<div class="paragraph">
+<p>The example configures a GET request that will respond with JPG image content, when a secret header value is matched in the request - the header value is randomly generated. Yes, there are simpler means of generating a single random number, but this is just to show how the randomizers might be useful with Ersatz.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="kn">package</span> <span class="nn">io.github.cjstehno.ersatz.examples</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">io.github.cjstehno.ersatz.ErsatzServer</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.github.cjstehno.ersatz.util.HttpClientExtension</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.github.cjstehno.ersatz.util.HttpClientExtension.Client</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.github.cjstehno.testthings.junit.Resource</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.github.cjstehno.testthings.junit.ResourcesExtension</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.github.cjstehno.testthings.junit.SharedRandomExtension</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">lombok.val</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.junit.jupiter.api.Test</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.junit.jupiter.api.extension.ExtendWith</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">io</span><span class="o">.</span><span class="na">github</span><span class="o">.</span><span class="na">cjstehno</span><span class="o">.</span><span class="na">ersatz</span><span class="o">.</span><span class="na">cfg</span><span class="o">.</span><span class="na">ContentType</span><span class="o">.</span><span class="na">IMAGE_JPG</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">io</span><span class="o">.</span><span class="na">github</span><span class="o">.</span><span class="na">cjstehno</span><span class="o">.</span><span class="na">testthings</span><span class="o">.</span><span class="na">rando</span><span class="o">.</span><span class="na">NumberRandomizers</span><span class="o">.</span><span class="na">aFloat</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">junit</span><span class="o">.</span><span class="na">jupiter</span><span class="o">.</span><span class="na">api</span><span class="o">.</span><span class="na">Assertions</span><span class="o">.</span><span class="na">assertEquals</span><span class="o">;</span>
+
+<span class="cm">/**
+ * A bit of a contrived example to show how you can use the
+ * &lt;a href="https://cjstehno.github.io/test-things/"&gt;Test-Things&lt;/a&gt; testing library with Ersatz, also written by me.
+ */</span>
+<span class="nd">@ExtendWith</span><span class="o">({</span>
+    <span class="c1">// provides a means of pinning randomness</span>
+    <span class="nc">SharedRandomExtension</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+
+    <span class="c1">// provides access to resources</span>
+    <span class="nc">ResourcesExtension</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+
+    <span class="c1">// provides the server management</span>
+    <span class="nc">SharedErsatzServerExtension</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+
+    <span class="c1">// provides a pre-wired test client for ersatz (internal only)</span>
+    <span class="nc">HttpClientExtension</span><span class="o">.</span><span class="na">class</span>
+<span class="o">})</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ErsatzThingsTest</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">SECRET_HEADER</span> <span class="o">=</span> <span class="s">"X-Secret"</span><span class="o">;</span>
+
+    <span class="c1">// loads the image resource as a byte array</span>
+    <span class="nd">@Resource</span><span class="o">(</span><span class="s">"/test-image.jpg"</span><span class="o">)</span> <span class="kd">private</span> <span class="kd">static</span> <span class="kt">byte</span><span class="o">[]</span> <span class="no">IMAGE_CONTENT</span><span class="o">;</span>
+
+    <span class="c1">// stores the http client instance</span>
+    <span class="kd">private</span> <span class="nc">Client</span> <span class="n">client</span><span class="o">;</span>
+
+    <span class="nd">@Test</span> <span class="kt">void</span> <span class="nf">things</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ErsatzServer</span> <span class="n">ersatz</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// generates a random secret value</span>
+        <span class="n">val</span> <span class="n">secret</span> <span class="o">=</span> <span class="n">aFloat</span><span class="o">().</span><span class="na">one</span><span class="o">().</span><span class="na">toString</span><span class="o">();</span>
+
+        <span class="n">ersatz</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expect</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="n">expect</span><span class="o">.</span><span class="na">GET</span><span class="o">(</span><span class="s">"/images/42"</span><span class="o">,</span> <span class="n">req</span> <span class="o">-&gt;</span> <span class="o">{</span>
+                <span class="n">req</span><span class="o">.</span><span class="na">called</span><span class="o">();</span>
+                <span class="n">req</span><span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="no">SECRET_HEADER</span><span class="o">,</span> <span class="n">secret</span><span class="o">);</span>
+                <span class="n">req</span><span class="o">.</span><span class="na">responder</span><span class="o">(</span><span class="n">res</span> <span class="o">-&gt;</span> <span class="o">{</span>
+                    <span class="n">res</span><span class="o">.</span><span class="na">body</span><span class="o">(</span><span class="no">IMAGE_CONTENT</span><span class="o">,</span> <span class="no">IMAGE_JPG</span><span class="o">);</span>
+                    <span class="n">res</span><span class="o">.</span><span class="na">code</span><span class="o">(</span><span class="mi">200</span><span class="o">);</span>
+                <span class="o">});</span>
+            <span class="o">});</span>
+        <span class="o">});</span>
+
+        <span class="c1">// make the request</span>
+        <span class="n">val</span> <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/images/42"</span><span class="o">,</span> <span class="n">builder</span> <span class="o">-&gt;</span> <span class="n">builder</span><span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="no">SECRET_HEADER</span><span class="o">,</span> <span class="n">secret</span><span class="o">));</span>
+        <span class="n">assertEquals</span><span class="o">(</span><span class="mi">200</span><span class="o">,</span> <span class="n">response</span><span class="o">.</span><span class="na">code</span><span class="o">());</span>
+        <span class="n">assertEquals</span><span class="o">(</span><span class="mi">721501</span><span class="o">,</span> <span class="n">response</span><span class="o">.</span><span class="na">body</span><span class="o">().</span><span class="na">bytes</span><span class="o">().</span><span class="na">length</span><span class="o">);</span>
+
+        <span class="n">ersatz</span><span class="o">.</span><span class="na">assertVerified</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The <code>HttpClientExtension</code> show in the example is an internal client management extension used in testing Ersatz itself, but the general idea is that it provides an HTTP client wired up to the configured Ersatz server. Yes. even my test tools, have test tools.
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2771,10 +3252,10 @@ The Groovy
 <div class="sect2">
 <h3 id="_a_development_philosophy">A. Development Philosophy</h3>
 <div class="paragraph">
-<p>As this project starts its sixth year (started in December 2016) it&#8217;s doing well, but I now have less time to devote to it. I figured it would be a good time to outline my general development philosophy/strategy for the project as it moves forward.</p>
+<p>As this project starts its seventh year (started in December 2016) it&#8217;s doing well, and it is stable, but I have less time to devote to it. I figured it would be a good time to outline my general development philosophy/strategy for the project as it moves forward.</p>
 </div>
 <div class="paragraph">
-<p>The primary goal of the 3.0 release was increased simplicity and ease of development. This is why I removed some of the more niche features in favor of keeping it more maintainable. I also removed some automated development tools (e.g. Coveralls and Travis). There is some maintenance effort involved in keeping them current, and I am a one-developer team - the information provided by these tools can easily be discovered by building the project (and will be published with the releases).</p>
+<p>The primary goal of the 3.x release was increased simplicity and ease of development. This is why I removed some of the more niche features in favor of keeping it more maintainable. I also removed some automated development tools (e.g. Coveralls and Travis). There is some maintenance effort involved in keeping them current, and I am a one-developer team - the information provided by these tools can easily be discovered by building the project (and will be published with the releases).</p>
 </div>
 <div class="paragraph">
 <p>Being that this is a project used in writing unit tests, I don&#8217;t generally feel the need for strict backwards compatability as long as there is a simple upgrade path. That being said, if some change causes a major problem, I am not against cutting a new release with changes that make the transition easier.</p>
@@ -2784,44 +3265,13 @@ The Groovy
 </div>
 </div>
 <div class="sect2">
-<h3 id="_b_sightings">B. Sightings</h3>
-<div class="paragraph">
-<p>Here are some external references and discussions about developing with Ersatz:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="http://guides.grails.org/grails-mock-http-server/guide/index.html">Consume and test a third-party REST API</a> <em>(Sergio del Amo)</em> - Use Ersatz, a "mock" HTTP library, for testing code dealing with HTTP requests</p>
-</li>
-<li>
-<p><a href="https://github.com/cjstehno/coffeaelectronica/blob/master/src/jbake/content/blog/2017/rest-httpbuilder-ersatz.adoc">Taking a REST with HttpBulder-NG and Ersatz</a> <em>(Christopher J Stehno)</em> - Building and testing a REST interface with HttpBuilder-NG and Ersatz (<a href="https://github.com/cjstehno/rest-dev">implementations</a> in Groovy, Java and Kotlin). This is an old post from my now-dead blog, but the content is still available.</p>
-</li>
-<li>
-<p>The <a href="https://http-builder-ng.github.io/http-builder-ng/">HttpBuilder-NG</a> project has extensive examples of testing with Ersatz, though it is now a dead project (and uses an old version of Ersatz).</p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-If you see Ersatz in the wild, feel free to let me know where it is and I will add it to this list.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_c_license">C. License</h3>
+<h3 id="_b_license">B. License</h3>
 <div class="paragraph">
 <p>This project is licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Copyright (C) 2022 Christopher J. Stehno
+<pre>Copyright (C) 2023 Christopher J. Stehno
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -2842,8 +3292,8 @@ limitations under the License.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 3.1.0<br>
-Last updated 2022-02-26 09:23:51 -0600
+Version 3.2.0<br>
+Last updated 2023-04-25 04:05:12 -0500
 </div>
 </div>
 <style>

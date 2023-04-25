@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzServer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz</a> &gt; <span class="el_source">ErsatzServer.java</span></div><h1>ErsatzServer.java</h1><pre class="source lang-java linenums">/**
- * Copyright (C) 2022 Christopher J. Stehno
+ * Copyright (C) 2023 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The main entry point for configuring an Ersatz server, which allows configuring of the expectations and management of the server itself. This is
@@ -55,12 +56,21 @@ public class ErsatzServer implements Closeable {
     /**
      * Creates a new Ersatz server instance with empty (default) configuration.
      */
-<span class="fc" id="L58">    public ErsatzServer() {</span>
-<span class="fc" id="L59">        this.serverConfig = new ServerConfigImpl();</span>
-<span class="fc" id="L60">        this.serverConfig.setStarter(this::start);</span>
+    public ErsatzServer() {
+<span class="fc" id="L60">        this(new ServerConfigImpl());</span>
+<span class="fc" id="L61">    }</span>
 
-<span class="fc" id="L62">        this.underlyingServer = new UndertowUnderlyingServer(serverConfig);</span>
-<span class="fc" id="L63">    }</span>
+    /**
+     * Creates a new Ersatz server instance with the provided configuration.
+     *
+     * @param config the configuration instance.
+     */
+<span class="fc" id="L68">    public ErsatzServer(final ServerConfig config) {</span>
+<span class="fc" id="L69">        this.serverConfig = (ServerConfigImpl) config;</span>
+<span class="fc" id="L70">        this.serverConfig.setStarter(this::start);</span>
+
+<span class="fc" id="L72">        this.underlyingServer = new UndertowUnderlyingServer(serverConfig);</span>
+<span class="fc" id="L73">    }</span>
 
     /**
      * Creates a new Ersatz server instance configured by the provided &lt;code&gt;Consumer&lt;/code&gt;, which will have an instance of &lt;code&gt;ServerConfig&lt;/code&gt;
@@ -69,11 +79,11 @@ public class ErsatzServer implements Closeable {
      * @param consumer the configuration consumer
      */
     public ErsatzServer(final Consumer&lt;ServerConfig&gt; consumer) {
-<span class="fc" id="L72">        this();</span>
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        if (consumer != null) {</span>
-<span class="fc" id="L74">            consumer.accept(serverConfig);</span>
+<span class="fc" id="L82">        this();</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if (consumer != null) {</span>
+<span class="fc" id="L84">            consumer.accept(serverConfig);</span>
         }
-<span class="fc" id="L76">    }</span>
+<span class="fc" id="L86">    }</span>
 
     /**
      * Used to retrieve the port where the HTTP server is running.
@@ -81,7 +91,7 @@ public class ErsatzServer implements Closeable {
      * @return the HTTP port
      */
     public int getHttpPort() {
-<span class="fc" id="L84">        return underlyingServer.getActualHttpPort();</span>
+<span class="fc" id="L94">        return underlyingServer.getActualHttpPort();</span>
     }
 
     /**
@@ -90,7 +100,7 @@ public class ErsatzServer implements Closeable {
      * @return the HTTPS port
      */
     public int getHttpsPort() {
-<span class="fc" id="L93">        return underlyingServer.getActualHttpsPort();</span>
+<span class="fc" id="L103">        return underlyingServer.getActualHttpsPort();</span>
     }
 
     /**
@@ -99,7 +109,7 @@ public class ErsatzServer implements Closeable {
      * @return true if HTTPS is enabled
      */
     public boolean isHttpsEnabled() {
-<span class="fc" id="L102">        return serverConfig.isHttpsEnabled();</span>
+<span class="fc" id="L112">        return serverConfig.isHttpsEnabled();</span>
     }
 
     /**
@@ -108,7 +118,7 @@ public class ErsatzServer implements Closeable {
      * @return the full URL of the HTTP server
      */
     public String getHttpUrl() {
-<span class="fc" id="L111">        return getUrl(&quot;http&quot;, getHttpPort());</span>
+<span class="fc" id="L121">        return getUrl(&quot;http&quot;, getHttpPort());</span>
     }
 
     /**
@@ -117,14 +127,14 @@ public class ErsatzServer implements Closeable {
      * @return the full URL of the HTTP server
      */
     public String getHttpsUrl() {
-<span class="fc" id="L120">        return getUrl(&quot;https&quot;, getHttpsPort());</span>
+<span class="fc" id="L130">        return getUrl(&quot;https&quot;, getHttpsPort());</span>
     }
 
-    private String getUrl(final String prefix, final int port) {
-<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (port &gt; 0) {</span>
-<span class="fc" id="L125">            return prefix + &quot;://localhost:&quot; + port;</span>
+    private static String getUrl(final String prefix, final int port) {
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        if (port &gt; 0) {</span>
+<span class="fc" id="L135">            return prefix + &quot;://localhost:&quot; + port;</span>
         } else {
-<span class="fc" id="L127">            throw new IllegalStateException(&quot;The port (&quot; + port + &quot;) is invalid: Has the server been started?&quot;);</span>
+<span class="fc" id="L137">            throw new IllegalStateException(&quot;The port (&quot; + port + &quot;) is invalid: Has the server been started?&quot;);</span>
         }
     }
 
@@ -135,7 +145,7 @@ public class ErsatzServer implements Closeable {
      * @return the resulting URL
      */
     public String httpUrl(final String path) {
-<span class="fc" id="L138">        return getHttpUrl() + path;</span>
+<span class="fc" id="L148">        return getHttpUrl() + path;</span>
     }
 
     /**
@@ -145,7 +155,7 @@ public class ErsatzServer implements Closeable {
      * @return the resulting URL
      */
     public String httpsUrl(final String path) {
-<span class="fc" id="L148">        return getHttpsUrl() + path;</span>
+<span class="fc" id="L158">        return getHttpsUrl() + path;</span>
     }
 
     /**
@@ -158,13 +168,13 @@ public class ErsatzServer implements Closeable {
      * @return a reference to this server
      */
     public ErsatzServer expectations(final Consumer&lt;Expectations&gt; expects) {
-<span class="fc" id="L161">        serverConfig.expectations(expects);</span>
+<span class="fc" id="L171">        serverConfig.expectations(expects);</span>
 
-<span class="fc bfc" id="L163" title="All 2 branches covered.">        if (serverConfig.isAutoStartEnabled()) {</span>
-<span class="fc" id="L164">            underlyingServer.start();</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">        if (serverConfig.isAutoStartEnabled()) {</span>
+<span class="fc" id="L174">            underlyingServer.start();</span>
         }
 
-<span class="fc" id="L167">        return this;</span>
+<span class="fc" id="L177">        return this;</span>
     }
 
     /**
@@ -176,7 +186,7 @@ public class ErsatzServer implements Closeable {
      * @return the reference to the Expectation configuration object
      */
     public Expectations expects() {
-<span class="fc" id="L179">        return serverConfig.expects();</span>
+<span class="fc" id="L189">        return serverConfig.expects();</span>
     }
 
     /**
@@ -190,7 +200,7 @@ public class ErsatzServer implements Closeable {
      * @return a reference to the server being configured
      */
     public ServerConfig timeout(final int value, final TimeUnit units) {
-<span class="nc" id="L193">        return serverConfig.timeout(value, units);</span>
+<span class="nc" id="L203">        return serverConfig.timeout(value, units);</span>
     }
 
     /**
@@ -203,7 +213,7 @@ public class ErsatzServer implements Closeable {
      * @return a reference to the server being configured
      */
     public ServerConfig timeout(final int value) {
-<span class="nc" id="L206">        return timeout(value, SECONDS);</span>
+<span class="nc" id="L216">        return timeout(value, SECONDS);</span>
     }
 
     /**
@@ -213,31 +223,31 @@ public class ErsatzServer implements Closeable {
      * @return a reference to this server
      */
     public ErsatzServer start() {
-<span class="fc" id="L216">        underlyingServer.start();</span>
-<span class="fc" id="L217">        return this;</span>
+<span class="fc" id="L226">        underlyingServer.start();</span>
+<span class="fc" id="L227">        return this;</span>
     }
 
     /**
      * Clears all configured expectations from the server. Does not affect global encoders or decoders.
      */
     public void clearExpectations() {
-<span class="fc" id="L224">        serverConfig.clearExpectations();</span>
-<span class="fc" id="L225">    }</span>
+<span class="fc" id="L234">        serverConfig.clearExpectations();</span>
+<span class="fc" id="L235">    }</span>
 
     /**
      * Used to stop the HTTP server. The server may be restarted after it has been stopped.
      */
     public void stop() {
-<span class="fc" id="L231">        underlyingServer.stop();</span>
-<span class="fc" id="L232">    }</span>
+<span class="fc" id="L241">        underlyingServer.stop();</span>
+<span class="fc" id="L242">    }</span>
 
     /**
      * An alias to the &lt;code&gt;stop()&lt;/code&gt; method.
      */
     @Override
     public void close() {
-<span class="fc" id="L239">        stop();</span>
-<span class="fc" id="L240">    }</span>
+<span class="fc" id="L249">        stop();</span>
+<span class="fc" id="L250">    }</span>
 
     /**
      * Used to verify that all of the expected request interactions were called the appropriate number of times. This method should be called after
@@ -249,7 +259,7 @@ public class ErsatzServer implements Closeable {
      * @return &lt;code&gt;true&lt;/code&gt; if all call criteria were met during test execution.
      */
     public boolean verify(final long timeout, final TimeUnit unit) {
-<span class="fc" id="L252">        return serverConfig.getExpectations().verify(timeout, unit);</span>
+<span class="fc" id="L262">        return serverConfig.getExpectations().verify(timeout, unit);</span>
     }
 
     /**
@@ -261,7 +271,7 @@ public class ErsatzServer implements Closeable {
      * @return &lt;code&gt;true&lt;/code&gt; if all call criteria were met during test execution.
      */
     public boolean verify(final long timeout) {
-<span class="nc" id="L264">        return verify(timeout, SECONDS);</span>
+<span class="nc" id="L274">        return verify(timeout, SECONDS);</span>
     }
 
     /**
@@ -272,7 +282,23 @@ public class ErsatzServer implements Closeable {
      * @return &lt;code&gt;true&lt;/code&gt; if all call criteria were met during test execution.
      */
     public boolean verify() {
-<span class="fc" id="L275">        return verify(1, SECONDS);</span>
+<span class="fc" id="L285">        return verify(1, SECONDS);</span>
+    }
+
+    /**
+     * Helper method to wrap a call to the &lt;code&gt;verify()&lt;/code&gt; method within a JUnit &lt;code&gt;assertTrue(...)&lt;/code&gt; call.
+     */
+    public void assertVerified() {
+<span class="fc" id="L292">        assertTrue(verify(), &quot;The server expectation verification failed.&quot;);</span>
+<span class="fc" id="L293">    }</span>
+
+    /**
+     * Retrieves the internal server configuration.
+     *
+     * @return the server configuration for this server.
+     */
+    protected final ServerConfigImpl getServerConfig() {
+<span class="nc" id="L301">        return serverConfig;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

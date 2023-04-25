@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ResponseChunker.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.server.undertow</a> &gt; <span class="el_source">ResponseChunker.java</span></div><h1>ResponseChunker.java</h1><pre class="source lang-java linenums">/**
- * Copyright (C) 2022 Christopher J. Stehno
+ * Copyright (C) 2023 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,20 @@ import io.undertow.io.IoCallback;
 import io.undertow.io.Sender;
 import io.undertow.server.HttpServerExchange;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.lang.System.arraycopy;
 import static lombok.AccessLevel.PACKAGE;
 
 /**
  * Undertow server callback used to provide the delayed chunked content.
  */
-<span class="fc" id="L33">@RequiredArgsConstructor(access = PACKAGE) @SuppressWarnings(&quot;ClassCanBeRecord&quot;)</span>
+<span class="fc" id="L35">@RequiredArgsConstructor(access = PACKAGE)</span>
 class ResponseChunker implements IoCallback {
 
     private final List&lt;byte[]&gt; chunks;
@@ -38,26 +40,26 @@ class ResponseChunker implements IoCallback {
 
     @Override
     public void onComplete(final HttpServerExchange exchange, final Sender sender) {
-<span class="pc bpc" id="L41" title="1 of 4 branches missed.">        if (chunks != null &amp;&amp; !chunks.isEmpty()) {</span>
-<span class="fc" id="L42">            rest();</span>
-<span class="fc" id="L43">            sender.send(ByteBuffer.wrap(chunks.remove(0)), this);</span>
+<span class="pc bpc" id="L43" title="1 of 4 branches missed.">        if (chunks != null &amp;&amp; !chunks.isEmpty()) {</span>
+<span class="fc" id="L44">            rest();</span>
+<span class="fc" id="L45">            sender.send(ByteBuffer.wrap(chunks.remove(0)), this);</span>
         }
-<span class="fc" id="L45">    }</span>
+<span class="fc" id="L47">    }</span>
 
     private void rest() {
-<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if (delay &gt; 0) {</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if (delay &gt; 0) {</span>
             try {
-<span class="fc" id="L50">                Thread.sleep(delay);</span>
-<span class="nc" id="L51">            } catch (InterruptedException e) {</span>
+<span class="fc" id="L52">                Thread.sleep(delay);</span>
+<span class="nc" id="L53">            } catch (InterruptedException e) {</span>
                 // ignore
-<span class="fc" id="L53">            }</span>
+<span class="fc" id="L55">            }</span>
         }
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L57">    }</span>
 
     @Override
     public void onException(HttpServerExchange exchange, Sender sender, IOException exception) {
-<span class="nc" id="L59">        exception.printStackTrace();</span>
-<span class="nc" id="L60">    }</span>
+<span class="nc" id="L61">        exception.printStackTrace();</span>
+<span class="nc" id="L62">    }</span>
 
     /**
      * Splits the provided string of content into the specified number of chunks. Any remaining characters will be spread out over the chunks to
@@ -67,31 +69,31 @@ class ResponseChunker implements IoCallback {
      * @param chunks  the number of chunks
      * @return a List&amp;lt;String&amp;gt; containing the chunk data
      */
+    @SuppressWarnings(&quot;ReassignedVariable&quot;)
     public static List&lt;byte[]&gt; prepareChunks(final byte[] content, final int chunks) {
-<span class="fc" id="L71">        int chunklen = content.length / chunks;</span>
-<span class="fc" id="L72">        int remainder = content.length % chunks;</span>
+<span class="fc" id="L74">        val chunkLen = content.length / chunks;</span>
+<span class="fc" id="L75">        int remainder = content.length % chunks;</span>
 
-<span class="fc" id="L74">        final List&lt;byte[]&gt; chunked = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L77">        final List&lt;byte[]&gt; chunked = new LinkedList&lt;&gt;();</span>
 
-<span class="fc" id="L76">        int index = 0;</span>
+<span class="fc" id="L79">        int index = 0;</span>
 
-<span class="fc bfc" id="L78" title="All 2 branches covered.">        for (int n = 0; n &lt; chunks; n++) {</span>
-<span class="fc" id="L79">            int extra = 0;</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">            if (remainder &gt; 0) {</span>
-<span class="fc" id="L81">                extra = 1;</span>
-<span class="fc" id="L82">                --remainder;</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        for (int n = 0; n &lt; chunks; n++) {</span>
+<span class="fc" id="L82">            int extra = 0;</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">            if (remainder &gt; 0) {</span>
+<span class="fc" id="L84">                extra = 1;</span>
+<span class="fc" id="L85">                --remainder;</span>
             }
 
-<span class="fc" id="L85">            int len = chunklen + extra;</span>
+<span class="fc" id="L88">            val len = chunkLen + extra;</span>
+<span class="fc" id="L89">            val chunk = new byte[len];</span>
+<span class="fc" id="L90">            arraycopy(content, index, chunk, 0, len);</span>
+<span class="fc" id="L91">            chunked.add(chunk);</span>
 
-<span class="fc" id="L87">            final byte[] chunk = new byte[len];</span>
-<span class="fc" id="L88">            System.arraycopy(content, index, chunk, 0, len);</span>
-<span class="fc" id="L89">            chunked.add(chunk);</span>
-
-<span class="fc" id="L91">            index += len;</span>
+<span class="fc" id="L93">            index += len;</span>
         }
 
-<span class="fc" id="L94">        return chunked;</span>
+<span class="fc" id="L96">        return chunked;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

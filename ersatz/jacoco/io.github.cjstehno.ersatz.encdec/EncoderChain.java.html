@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EncoderChain.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.encdec</a> &gt; <span class="el_source">EncoderChain.java</span></div><h1>EncoderChain.java</h1><pre class="source lang-java linenums">/**
- * Copyright (C) 2022 Christopher J. Stehno
+ * Copyright (C) 2023 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import java.util.function.Function;
 /**
  * A function chain for response encoders.
  */
-@SuppressWarnings(&quot;ClassCanBeRecord&quot;)
 public class EncoderChain {
 
     private final ResponseEncoders serverLevel;
@@ -36,10 +35,10 @@ public class EncoderChain {
      * @param serverLevel   the server configured response encoders
      * @param responseLevel the response configured response encoders
      */
-<span class="fc" id="L39">    public EncoderChain(final ResponseEncoders serverLevel, final ResponseEncoders responseLevel) {</span>
-<span class="fc bfc" id="L40" title="All 2 branches covered.">        this.serverLevel = serverLevel != null ? serverLevel : new ResponseEncoders();</span>
-<span class="pc bpc" id="L41" title="1 of 2 branches missed.">        this.responseLevel = responseLevel != null ? responseLevel : new ResponseEncoders();</span>
-<span class="fc" id="L42">    }</span>
+<span class="fc" id="L38">    public EncoderChain(final ResponseEncoders serverLevel, final ResponseEncoders responseLevel) {</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        this.serverLevel = serverLevel != null ? serverLevel : new ResponseEncoders();</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        this.responseLevel = responseLevel != null ? responseLevel : new ResponseEncoders();</span>
+<span class="fc" id="L41">    }</span>
 
     /**
      * Resolves the encoder for the specified response content-type and object type.
@@ -49,11 +48,11 @@ public class EncoderChain {
      * @return the encoder
      */
     public Function&lt;Object, byte[]&gt; resolve(final String contentType, final Class objectType) {
-<span class="fc" id="L52">        var found = responseLevel.findEncoder(contentType, objectType);</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">        if (found == null) {</span>
-<span class="fc" id="L54">            found = serverLevel.findEncoder(contentType, objectType);</span>
+<span class="fc" id="L51">        var found = responseLevel.findEncoder(contentType, objectType);</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (found == null) {</span>
+<span class="fc" id="L53">            found = serverLevel.findEncoder(contentType, objectType);</span>
         }
-<span class="fc" id="L56">        return found;</span>
+<span class="fc" id="L55">        return found;</span>
     }
 
     /**
@@ -64,7 +63,7 @@ public class EncoderChain {
      * @return the encoder
      */
     public Function&lt;Object, byte[]&gt; resolve(final ContentType contentType, final Class objectType) {
-<span class="fc" id="L67">        return resolve(contentType.getValue(), objectType);</span>
+<span class="fc" id="L66">        return resolve(contentType.getValue(), objectType);</span>
     }
 
     /**
@@ -75,7 +74,7 @@ public class EncoderChain {
      * @return the encoder
      */
     public Function&lt;Object, byte[]&gt; resolveServerLevel(final String contentType, final Class objectType) {
-<span class="nc" id="L78">        return serverLevel.findEncoder(contentType, objectType);</span>
+<span class="nc" id="L77">        return serverLevel.findEncoder(contentType, objectType);</span>
     }
 
     /**
@@ -86,7 +85,7 @@ public class EncoderChain {
      * @return the encoder
      */
     public Function&lt;Object, byte[]&gt; resolveServerLevel(final ContentType contentType, final Class objectType) {
-<span class="fc" id="L89">        return serverLevel.findEncoder(contentType, objectType);</span>
+<span class="fc" id="L88">        return serverLevel.findEncoder(contentType, objectType);</span>
     }
 
     /**
@@ -95,7 +94,7 @@ public class EncoderChain {
      * @return a list of the encoder configurations
      */
     public Collection&lt;ResponseEncoders&gt; items() {
-<span class="fc" id="L98">        return List.of(serverLevel, responseLevel);</span>
+<span class="fc" id="L97">        return List.of(serverLevel, responseLevel);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

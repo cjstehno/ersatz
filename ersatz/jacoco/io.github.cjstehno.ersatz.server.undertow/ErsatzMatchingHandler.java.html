@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzMatchingHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.server.undertow</a> &gt; <span class="el_source">ErsatzMatchingHandler.java</span></div><h1>ErsatzMatchingHandler.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2023 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.server.undertow;
+
+import io.github.cjstehno.ersatz.impl.ErsatzRequest;
+import io.github.cjstehno.ersatz.impl.ExpectationsImpl;
+import io.github.cjstehno.ersatz.impl.RequirementsImpl;
+import io.github.cjstehno.ersatz.impl.UnmatchedRequestReport;
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import io.undertow.server.HttpHandler;
+import io.undertow.server.HttpServerExchange;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
+import java.nio.ByteBuffer;
+
+import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
+
+/**
+ * An Undertow &lt;code&gt;HttpHandler&lt;/code&gt; used to start the Ersatz handling chain, but checking the request against its
+ * requirements and configured matchers. If the request satisfies the matchers, control is handed off to the next handler
+ * in the chain, otherwise a mismatch is reported.
+ */
+<span class="fc" id="L39">@RequiredArgsConstructor(access = AccessLevel.PACKAGE) @Slf4j</span>
+public class ErsatzMatchingHandler implements HttpHandler {
+
+<span class="fc" id="L42">    private static final byte[] EMPTY_RESPONSE = new byte[0];</span>
+    private final RequirementsImpl requirements;
+    private final ExpectationsImpl expectations;
+    private final boolean reportToConsole;
+    private final ErsatzHandler next;
+
+    @Override public void handleRequest(final HttpServerExchange exchange) throws Exception {
+<span class="fc" id="L49">        val clientRequest = new UndertowClientRequest(exchange);</span>
+<span class="fc" id="L50">        log.debug(&quot;Handling request({}): {}&quot;, exchange.getProtocol(), clientRequest);</span>
+
+        // check the request against the global requirements
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if (!requirements.check(clientRequest)) {</span>
+<span class="fc" id="L54">            handleMismatch(exchange, clientRequest);</span>
+<span class="fc" id="L55">            return;</span>
+        }
+
+        // check the request against the expectations
+<span class="fc" id="L59">        expectations.findMatch(clientRequest).ifPresentOrElse(</span>
+            req -&gt; {
+                try {
+<span class="fc" id="L62">                    val ersatzRequest = (ErsatzRequest) req;</span>
+
+                    // handle the matching request
+<span class="fc" id="L65">                    next.handleRequest(exchange, clientRequest, ersatzRequest.getCurrentResponse());</span>
+
+                    // mark it as accepted
+<span class="fc" id="L68">                    ersatzRequest.mark(clientRequest);</span>
+
+<span class="fc" id="L70">                } catch (final Exception ex) {</span>
+<span class="fc" id="L71">                    log.error(&quot;Error-Response: Internal Server Error (500): {}&quot;, ex.getMessage(), ex);</span>
+<span class="fc" id="L72">                    exchange.setStatusCode(500);</span>
+<span class="fc" id="L73">                    exchange.getResponseSender().send(ByteBuffer.wrap(EMPTY_RESPONSE));</span>
+<span class="fc" id="L74">                }</span>
+<span class="fc" id="L75">            },</span>
+<span class="fc" id="L76">            () -&gt; handleMismatch(exchange, clientRequest)</span>
+        );
+<span class="fc" id="L78">    }</span>
+
+    private void handleMismatch(final HttpServerExchange exchange, final ClientRequest clientRequest) {
+<span class="fc" id="L81">        val report = new UnmatchedRequestReport(</span>
+            clientRequest,
+<span class="fc" id="L83">            expectations.getRequests().stream().map(r -&gt; (ErsatzRequest) r).toList(),</span>
+<span class="fc" id="L84">            requirements.getRequirements()</span>
+        );
+
+<span class="fc" id="L87">        log.warn(report.render());</span>
+
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (reportToConsole) {</span>
+<span class="nc" id="L90">            System.out.println(report.render());</span>
+        }
+
+<span class="fc" id="L93">        exchange.setStatusCode(404).getResponseSender().send(NOT_FOUND_BODY);</span>
+<span class="fc" id="L94">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

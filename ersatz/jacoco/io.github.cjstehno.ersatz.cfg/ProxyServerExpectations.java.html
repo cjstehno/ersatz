@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProxyServerExpectations.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.cfg</a> &gt; <span class="el_source">ProxyServerExpectations.java</span></div><h1>ProxyServerExpectations.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2023 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.cfg;
+
+import io.github.cjstehno.ersatz.match.PathMatcher;
+
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
+
+/**
+ * Defines the expectation configurations available for the proxy server.
+ */
+public interface ProxyServerExpectations {
+
+    /**
+     * Configures an expected request with any request method and the specified path.
+     *
+     * @param path the expected path
+     * @return a reference to this configuration
+     */
+    default ProxyServerExpectations any(final String path) {
+<span class="fc" id="L34">        return any(pathMatching(path));</span>
+    }
+
+    /**
+     * Configures an expected request with any request method using the given path matcher.
+     *
+     * @param matcher the path matcher
+     * @return a reference to this configuration
+     */
+    ProxyServerExpectations any(final PathMatcher matcher);
+
+    /**
+     * Configures an expected GET request with the specified path.
+     *
+     * @param path the expected path
+     * @return a reference to this configuration
+     */
+    default ProxyServerExpectations get(final String path) {
+<span class="fc" id="L52">        return get(pathMatching(path));</span>
+    }
+
+    /**
+     * Configures an expected GET request using the provided matcher to match the path.
+     *
+     * @param matcher the path matcher
+     * @return a reference to this configuration
+     */
+    ProxyServerExpectations get(final PathMatcher matcher);
+
+    /**
+     * Configures an expected HEAD request with the specified path.
+     *
+     * @param path the expected path
+     * @return a reference to this configuration
+     */
+    default ProxyServerExpectations head(final String path) {
+<span class="nc" id="L70">        return head(pathMatching(path));</span>
+    }
+
+    /**
+     * Configures an expected HEAD request using the provided matcher to match the path.
+     *
+     * @param matcher the path matcher
+     * @return a reference to this configuration
+     */
+    ProxyServerExpectations head(final PathMatcher matcher);
+
+    /**
+     * Configures an expected PUT request with the specified path.
+     *
+     * @param path the expected path
+     * @return a reference to this configuration
+     */
+    default ProxyServerExpectations put(final String path) {
+<span class="nc" id="L88">        return put(pathMatching(path));</span>
+    }
+
+    /**
+     * Configures an expected PUT request using the provided matcher to match the path.
+     *
+     * @param matcher the path matcher
+     * @return a reference to this configuration
+     */
+    ProxyServerExpectations put(final PathMatcher matcher);
+
+    /**
+     * Configures an expected POST request with the specified path.
+     *
+     * @param path the expected path
+     * @return a reference to this configuration
+     */
+    default ProxyServerExpectations post(final String path) {
+<span class="nc" id="L106">        return post(pathMatching(path));</span>
+    }
+
+    /**
+     * Configures an expected POST request using the provided matcher to match the path.
+     *
+     * @param matcher the path matcher
+     * @return a reference to this configuration
+     */
+    ProxyServerExpectations post(final PathMatcher matcher);
+
+    /**
+     * Configures an expected DELETE request with the specified path.
+     *
+     * @param path the expected path
+     * @return a reference to this configuration
+     */
+    default ProxyServerExpectations delete(final String path) {
+<span class="nc" id="L124">        return delete(pathMatching(path));</span>
+    }
+
+    /**
+     * Configures an expected DELETE request using the provided matcher to match the path.
+     *
+     * @param matcher the path matcher
+     * @return a reference to this configuration
+     */
+    ProxyServerExpectations delete(final PathMatcher matcher);
+
+    /**
+     * Configures an expected PATCH request with the specified path.
+     *
+     * @param path the expected path
+     * @return a reference to this configuration
+     */
+    default ProxyServerExpectations patch(final String path) {
+<span class="nc" id="L142">        return patch(pathMatching(path));</span>
+    }
+
+    /**
+     * Configures an expected PATCH request using the provided matcher to match the path.
+     *
+     * @param matcher the path matcher
+     * @return a reference to this configuration
+     */
+    ProxyServerExpectations patch(final PathMatcher matcher);
+
+    /**
+     * Configures an expected OPTIONS request with the specified path.
+     *
+     * @param path the expected path
+     * @return a reference to this configuration
+     */
+    default ProxyServerExpectations options(final String path) {
+<span class="nc" id="L160">        return options(pathMatching(path));</span>
+    }
+
+    /**
+     * Configures an expected OPTIONS request using the provided matcher to match the path.
+     *
+     * @param matcher the path matcher
+     * @return a reference to this configuration
+     */
+    ProxyServerExpectations options(final PathMatcher matcher);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

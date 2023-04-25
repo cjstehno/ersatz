@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DecoderChain.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.encdec</a> &gt; <span class="el_source">DecoderChain.java</span></div><h1>DecoderChain.java</h1><pre class="source lang-java linenums">/**
- * Copyright (C) 2022 Christopher J. Stehno
+ * Copyright (C) 2023 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.function.BiFunction;
 /**
  * A function chain for request decoders.
  */
-@SuppressWarnings(&quot;ClassCanBeRecord&quot;)
 public class DecoderChain {
 
     private final RequestDecoders serverLevel;
@@ -34,10 +33,10 @@ public class DecoderChain {
      * @param serverLevel  the server-defined request decoders
      * @param requestLevel the request-defined request decoders
      */
-<span class="fc" id="L37">    public DecoderChain(final RequestDecoders serverLevel, final RequestDecoders requestLevel) {</span>
-<span class="fc bfc" id="L38" title="All 2 branches covered.">        this.serverLevel = serverLevel != null ? serverLevel : new RequestDecoders();</span>
-<span class="fc bfc" id="L39" title="All 2 branches covered.">        this.requestLevel = requestLevel != null ? requestLevel : new RequestDecoders();</span>
-<span class="fc" id="L40">    }</span>
+<span class="fc" id="L36">    public DecoderChain(final RequestDecoders serverLevel, final RequestDecoders requestLevel) {</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        this.serverLevel = serverLevel != null ? serverLevel : new RequestDecoders();</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        this.requestLevel = requestLevel != null ? requestLevel : new RequestDecoders();</span>
+<span class="fc" id="L39">    }</span>
 
     /**
      * Resolves the decoder for the specified request content-type.
@@ -46,11 +45,11 @@ public class DecoderChain {
      * @return the decoder function
      */
     public BiFunction&lt;byte[], DecodingContext, Object&gt; resolve(final String contentType) {
-<span class="fc" id="L49">        var found = requestLevel.findDecoder(contentType);</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (found == null) {</span>
-<span class="fc" id="L51">            found = serverLevel.findDecoder(contentType);</span>
+<span class="fc" id="L48">        var found = requestLevel.findDecoder(contentType);</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (found == null) {</span>
+<span class="fc" id="L50">            found = serverLevel.findDecoder(contentType);</span>
         }
-<span class="fc" id="L53">        return found;</span>
+<span class="fc" id="L52">        return found;</span>
     }
 
     /**
@@ -60,7 +59,7 @@ public class DecoderChain {
      * @return the decoder function
      */
     public BiFunction&lt;byte[], DecodingContext, Object&gt; resolve(final ContentType contentType) {
-<span class="fc" id="L63">        return resolve(contentType.getValue());</span>
+<span class="fc" id="L62">        return resolve(contentType.getValue());</span>
     }
 
     /**
@@ -69,19 +68,9 @@ public class DecoderChain {
      * @param contentType the request content type
      * @return the decoder function
      */
-    public BiFunction&lt;byte[], DecodingContext, Object&gt; resolveServerLevel(final String contentType) {
-<span class="nc" id="L73">        return serverLevel.findDecoder(contentType);</span>
-    }
-
-    /**
-     * Resolves the decoder for the specified request content-type from the &quot;server level&quot; decoders.
-     *
-     * @param contentType the request content type
-     * @return the decoder function
-     */
-    public BiFunction&lt;byte[], DecodingContext, Object&gt; resolveServerLevel(final ContentType contentType) {
-<span class="fc" id="L83">        return serverLevel.findDecoder(contentType);</span>
+    BiFunction&lt;byte[], DecodingContext, Object&gt; resolveServerLevel(final ContentType contentType) {
+<span class="fc" id="L72">        return serverLevel.findDecoder(contentType);</span>
     }
 }
 
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

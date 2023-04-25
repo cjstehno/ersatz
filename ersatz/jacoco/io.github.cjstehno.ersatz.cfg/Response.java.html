@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Response.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.cfg</a> &gt; <span class="el_source">Response.java</span></div><h1>Response.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2023 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.cfg;
+
+import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import static io.github.cjstehno.ersatz.util.HttpHeaders.ALLOW;
+import static io.github.cjstehno.ersatz.util.HttpHeaders.CONTENT_TYPE;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.stream.Collectors.toList;
+
+/**
+ * Used to configure the provided response to an HTTP request.
+ */
+public interface Response {
+
+    /**
+     * Defines the request content to be sent back to the client. In the case of &lt;code&gt;MultipartContent&lt;/code&gt;, the content-type will also be set.
+     *
+     * @param content the content object
+     * @return this response
+     */
+    Response body(final Object content);
+
+    /**
+     * Defines the request content to be sent back to the client, along with its content-type. Multipart responses may be specified using this method;
+     * however, the content-type will need to specify the boundary string and the boundary will need to be specified in the
+     * &lt;code&gt;MultipartContent&lt;/code&gt; configuration as well.
+     *
+     * @param content     the content object
+     * @param contentType the content type
+     * @return this response
+     */
+    default Response body(final Object content, final String contentType) {
+<span class="fc" id="L57">        body(content);</span>
+<span class="fc" id="L58">        return contentType(contentType);</span>
+    }
+
+    /**
+     * Defines the request content to be sent back to the client, along with its content-type. Multipart responses may be specified using this method;
+     * however, the content-type will need to specify the boundary string and the boundary will need to be specified in the
+     * &lt;code&gt;MultipartContent&lt;/code&gt; configuration as well.
+     *
+     * @param content     the content object
+     * @param contentType the content type
+     * @return this response
+     */
+    default Response body(final Object content, final ContentType contentType) {
+<span class="fc" id="L71">        return body(content, contentType.getValue());</span>
+    }
+
+    /**
+     * Used to add a header to the response with the given name and value.
+     *
+     * @param name  the header name
+     * @param value the header value
+     * @return this response
+     */
+    Response header(final String name, final String... value);
+
+    /**
+     * Used to add a header to the response with the given name and value.
+     *
+     * @param name   the header name
+     * @param values the header values
+     * @return this response
+     */
+    Response header(final String name, final List&lt;String&gt; values);
+
+    /**
+     * Used to add multiple headers to the response.
+     *
+     * @param headers the headers
+     * @return this response
+     */
+    Response headers(final Map&lt;String, Object&gt; headers);
+
+    /**
+     * Shortcut method for adding values to the &quot;Allow&quot; header. These values will be appended to the existing header.
+     *
+     * @param methods the allowed HTTP methods
+     * @return this response
+     */
+    default Response allows(final HttpMethod... methods) {
+<span class="fc" id="L107">        return header(ALLOW, Arrays.stream(methods).map(HttpMethod::getValue).collect(toList()));</span>
+    }
+
+    /**
+     * Used to add a cookie to the response with the given name and value.
+     *
+     * @param name  the cookie name
+     * @param value the cookie value
+     * @return this response
+     */
+    Response cookie(final String name, final String value);
+
+    /**
+     * Used to add a cookie to the response.
+     *
+     * @param name   the cookie name
+     * @param cookie the cookie definition
+     * @return this response
+     */
+    Response cookie(final String name, final Cookie cookie);
+
+    /**
+     * Used to add multiple cookies to the response, with the provided names and values.
+     *
+     * @param cookies the cookies to be added
+     * @return this response
+     */
+    Response cookies(final Map&lt;String, String&gt; cookies);
+
+    /**
+     * Used to specify the content type of the response.
+     *
+     * @param contentType the response content type
+     * @return this response
+     */
+    default Response contentType(final String contentType) {
+<span class="fc" id="L143">        return header(CONTENT_TYPE, contentType);</span>
+    }
+
+    /**
+     * Used to specify the content type of the response.
+     *
+     * @param contentType the response content type
+     * @return this response
+     */
+    default Response contentType(final ContentType contentType) {
+<span class="fc" id="L153">        return contentType(contentType.getValue());</span>
+    }
+
+    /**
+     * Used to retrieve the content type of the response.
+     *
+     * @return the content type
+     */
+    String getContentType();
+
+    /**
+     * Used to specify the response code for the response.
+     *
+     * @param code the response code
+     * @return this response
+     */
+    Response code(int code);
+
+    /**
+     * Used to specify a delay in the response time for the request. The response will not be returned to the client until the delay has passed.
+     *
+     * @param time the response delay in milliseconds
+     * @return this response
+     */
+    Response delay(final long time);
+
+    /**
+     * Used to specify a delay in the response time for the request. The response will not be returned to the client until the delay has passed.
+     *
+     * @param time the response delay in the specified unit
+     * @param unit the time unit to use
+     * @return this response
+     */
+    default Response delay(final long time, TimeUnit unit) {
+<span class="nc" id="L187">        return delay(MILLISECONDS.convert(time, unit));</span>
+    }
+
+    /**
+     * Used to specify a delay in the response time for the request as a &lt;code&gt;Duration&lt;/code&gt; string.
+     *
+     * @param time the delay time as a string
+     * @return this response
+     */
+    default Response delay(final String time) {
+<span class="fc" id="L197">        return delay(Duration.parse(time).toMillis());</span>
+    }
+
+    /**
+     * Used to retrieve the response delay time.
+     *
+     * @return the response delay time in milliseconds
+     */
+    long getDelay();
+
+    /**
+     * Configures the response as &quot;chunked&quot;, with the specified chunking configuration.
+     *
+     * @param config the chunking configuration
+     * @return a reference to this response
+     */
+    Response chunked(final Consumer&lt;ChunkingConfig&gt; config);
+
+    /**
+     * Used to retrieve the configured response headers.
+     *
+     * @return the response headers
+     */
+    Map&lt;String, List&lt;String&gt;&gt; getHeaders();
+
+    /**
+     * Used to retrieve the configured response cookies. The map keys will be the cookie names, while the values will be either the cookie value as
+     * as String, or a &lt;code&gt;Cookie&lt;/code&gt; object.
+     *
+     * @return the response cookies
+     */
+    Map&lt;String, Object&gt; getCookies();
+
+    /**
+     * Used to retrieve the configured response content. The content will be converted to a byte array based on the
+     * encoder configured for the content-type and content object type; if no encoder is found, the
+     * &lt;code&gt;toString()&lt;/code&gt; method will be called on the content object and its bytes will be used.
+     * &lt;p&gt;
+     * If no content exists, an empty array will be returned.
+     *
+     * @return the response content (encoded)
+     */
+    byte[] getContent();
+
+    /**
+     * Used to retrieve the configured response code.
+     *
+     * @return the response code
+     */
+    Integer getCode();
+
+    /**
+     * Registers a response body encoder for this response, which will override any matching encoders configured globally (or shared).
+     * &lt;p&gt;
+     * param contentType the response content-type to be encoded
+     *
+     * @param contentType the response content type to be encoded
+     * @param objectType  the response object type to be encoded
+     * @param encoder     the encoder function
+     * @return a reference to this response configuration
+     */
+    Response encoder(String contentType, Class objectType, Function&lt;Object, byte[]&gt; encoder);
+
+    /**
+     * Registers a response body encoder for this response, which will override any matching encoders configured globally (or shared).
+     * &lt;p&gt;
+     * param contentType the response content-type to be encoded
+     *
+     * @param contentType the response content type to be encoded
+     * @param objectType  the response object type to be encoded
+     * @param encoder     the encoder function
+     * @return a reference to this response configuration
+     */
+    default Response encoder(ContentType contentType, Class objectType, Function&lt;Object, byte[]&gt; encoder) {
+<span class="fc" id="L271">        return encoder(contentType.getValue(), objectType, encoder);</span>
+    }
+
+    /**
+     * Registers the collection of shared encoders on the response. Any server-level encoders will be overridden. This
+     * equivalent to configuring individual encoders on the response. Any existing encoder that matches the same
+     * content-type and object type will be replaced by the incoming encoder (at the response-level).
+     *
+     * @param encoders the shared encoders to be applied
+     * @return a reference to this response configuration
+     */
+    Response encoders(ResponseEncoders encoders);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

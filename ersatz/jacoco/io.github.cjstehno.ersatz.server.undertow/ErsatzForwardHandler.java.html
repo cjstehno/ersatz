@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzForwardHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.server.undertow</a> &gt; <span class="el_source">ErsatzForwardHandler.java</span></div><h1>ErsatzForwardHandler.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2023 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.server.undertow;
+
+import io.github.cjstehno.ersatz.cfg.Response;
+import io.github.cjstehno.ersatz.impl.ErsatzForwardResponse;
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import io.undertow.server.HttpServerExchange;
+import io.undertow.util.HttpString;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.nio.ByteBuffer;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Set;
+
+import static java.lang.String.join;
+
+/**
+ * An Ersatz Undertow handler used to handle request forwarding to gather response data from an external server URI.
+ * &lt;p&gt;
+ * This implementation utilizes the &lt;a href=&quot;https://square.github.io/okhttp/&quot;&gt;OkHttp&lt;/a&gt; library to make its forwarded
+ * requests. An attempt was made to use the built-in JDK HttpClient, however, it was overly restrictive and was too much
+ * effort to make it work with HTTPS requests.
+ */
+<span class="fc" id="L51">@RequiredArgsConstructor(access = AccessLevel.PACKAGE) @Slf4j</span>
+public class ErsatzForwardHandler implements ErsatzHandler {
+
+<span class="fc" id="L54">    private static final Set&lt;String&gt; REQUESTS_WITH_BODY = Set.of(&quot;post&quot;, &quot;put&quot;, &quot;patch&quot;);</span>
+    private final ErsatzHandler next;
+
+    /**
+     * Handles the request. It will determine whether the request should be forwarded to an external resource to retrieve
+     * its response, otherwise it will continue the standard Ersatz processing.
+     *
+     * @param exchange       the server exchange object for the current request/response cycle
+     * @param clientRequest  the incoming client request
+     * @param ersatzResponse the configured outgoing response
+     * @throws Exception if there is a problem handling the request/response
+     */
+    public void handleRequest(final HttpServerExchange exchange, final ClientRequest clientRequest, final Response ersatzResponse) throws Exception {
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        if (ersatzResponse instanceof ErsatzForwardResponse) {</span>
+<span class="fc" id="L68">            val fullTargetUri = resolveTargetUri(exchange, ersatzResponse);</span>
+<span class="fc" id="L69">            log.info(&quot;Request forwarding to: {}&quot;, fullTargetUri);</span>
+
+<span class="fc" id="L71">            val client = configureClient(clientRequest.getScheme().equalsIgnoreCase(&quot;https&quot;));</span>
+
+<span class="fc" id="L73">            val requestMethod = exchange.getRequestMethod().toString();</span>
+<span class="fc" id="L74">            val hasBody = REQUESTS_WITH_BODY.contains(requestMethod.toLowerCase());</span>
+
+<span class="fc" id="L76">            val requestBuilder = new Request.Builder()</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">                .method(exchange.getRequestMethod().toString(), hasBody ? RequestBody.create(clientRequest.getBody()) : null)</span>
+<span class="fc" id="L78">                .url(fullTargetUri);</span>
+
+            // copy request headers
+<span class="fc" id="L81">            exchange.getRequestHeaders().forEach(header -&gt; {</span>
+<span class="fc" id="L82">                requestBuilder.header(header.getHeaderName().toString(), join(&quot;;&quot;, header));</span>
+<span class="fc" id="L83">            });</span>
+
+<span class="fc" id="L85">            try (val response = client.newCall(requestBuilder.build()).execute()) {</span>
+                // copy response headers
+<span class="fc" id="L87">                response.headers().forEach(pair -&gt; {</span>
+<span class="fc" id="L88">                    exchange.getResponseHeaders().putAll(new HttpString(pair.getFirst()), response.headers(pair.getFirst()));</span>
+<span class="fc" id="L89">                });</span>
+
+<span class="fc" id="L91">                exchange.setStatusCode(response.code());</span>
+<span class="fc" id="L92">                exchange.getResponseSender().send(ByteBuffer.wrap(response.body().bytes()));</span>
+            }
+
+<span class="fc" id="L95">        } else {</span>
+<span class="fc" id="L96">            next.handleRequest(exchange, clientRequest, ersatzResponse);</span>
+        }
+<span class="fc" id="L98">    }</span>
+
+    private static String resolveTargetUri(final HttpServerExchange exchange, final Response response) {
+<span class="fc" id="L101">        val queryString = exchange.getQueryString();</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        return ((ErsatzForwardResponse) response).getProxyTargetUri() + exchange.getRequestPath() + (!queryString.isEmpty() ? &quot;?&quot; + queryString : &quot;&quot;);</span>
+    }
+
+    // We're just going to ignore HTTPS for forwarded requests
+    private static OkHttpClient configureClient(final boolean https) throws KeyManagementException, NoSuchAlgorithmException {
+<span class="fc" id="L107">        val builder = new OkHttpClient.Builder();</span>
+
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (https) {</span>
+            // Create a trust manager that does not validate certificate chains
+<span class="fc" id="L111">            final var trustAllCerts = new TrustManager[]{</span>
+<span class="fc" id="L112">                new X509TrustManager() {</span>
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+<span class="nc" id="L115">                    }</span>
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+<span class="fc" id="L119">                    }</span>
+
+                    @Override public X509Certificate[] getAcceptedIssuers() {
+<span class="fc" id="L122">                        return new X509Certificate[0];</span>
+                    }
+                }
+            };
+
+            // Install the all-trusting trust manager
+<span class="fc" id="L128">            val sslContext = SSLContext.getInstance(&quot;SSL&quot;);</span>
+<span class="fc" id="L129">            sslContext.init(null, trustAllCerts, new SecureRandom());</span>
+
+            // Create an ssl socket factory with our all-trusting manager
+<span class="fc" id="L132">            val sslSocketFactory = sslContext.getSocketFactory();</span>
+
+<span class="fc" id="L134">            builder.sslSocketFactory(</span>
+                sslSocketFactory,
+                (X509TrustManager) trustAllCerts[0]
+<span class="fc" id="L137">            ).hostnameVerifier((s, sslSession) -&gt; true);</span>
+        }
+
+<span class="fc" id="L140">        return builder.build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BasicAuth.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.util</a> &gt; <span class="el_source">BasicAuth.java</span></div><h1>BasicAuth.java</h1><pre class="source lang-java linenums">/**
- * Copyright (C) 2022 Christopher J. Stehno
+ * Copyright (C) 2023 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,23 @@
 package io.github.cjstehno.ersatz.util;
 
 import io.github.cjstehno.ersatz.cfg.Request;
+import lombok.NoArgsConstructor;
 
+import static io.github.cjstehno.ersatz.util.HttpHeaders.AUTHORIZATION;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Base64.getEncoder;
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Helper utility for configuring BASIC request authentication.
  */
-public interface BasicAuth {
+@NoArgsConstructor(access = PRIVATE)
+public final class BasicAuth {
 
     /**
      * The authorization header name.
      */
-    String AUTHORIZATION_HEADER = &quot;Authorization&quot;;
+    public static final String AUTHORIZATION_HEADER = AUTHORIZATION;
 
     /**
      * Used to generate the Authorization header value for the given username and password.
@@ -37,9 +41,9 @@ public interface BasicAuth {
      * @param password the password (cannot contain a colon)
      * @return the generated header value
      */
-    static String header(final String username, final String password) {
-<span class="fc" id="L41">        check(username, password);</span>
-<span class="fc" id="L42">        return &quot;Basic &quot; + getEncoder().encodeToString((username + &quot;:&quot; + password).getBytes(UTF_8));</span>
+    public static String header(final String username, final String password) {
+<span class="fc" id="L45">        check(username, password);</span>
+<span class="fc" id="L46">        return &quot;Basic &quot; + getEncoder().encodeToString((username + &quot;:&quot; + password).getBytes(UTF_8));</span>
     }
 
     /**
@@ -51,15 +55,15 @@ public interface BasicAuth {
      * @param password the password (cannot contain a colon)
      * @return the request passed in (to allow chaining)
      */
-    static Request basicAuth(final Request request, final String userame, final String password) {
-<span class="fc" id="L55">        return request.header(AUTHORIZATION_HEADER, header(userame, password));</span>
+    public static Request basicAuth(final Request request, final String userame, final String password) {
+<span class="fc" id="L59">        return request.header(AUTHORIZATION_HEADER, header(userame, password));</span>
     }
 
     private static void check(final String... values) {
-<span class="fc bfc" id="L59" title="All 2 branches covered.">        for (String value : values) {</span>
-<span class="pc bpc" id="L60" title="1 of 2 branches missed.">            if (value.contains(&quot;:&quot;))</span>
-<span class="nc" id="L61">                throw new IllegalArgumentException(&quot;The username and password cannot contain a colon!&quot;);</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        for (String value : values) {</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">            if (value.contains(&quot;:&quot;))</span>
+<span class="nc" id="L65">                throw new IllegalArgumentException(&quot;The username and password cannot contain a colon!&quot;);</span>
         }
-<span class="fc" id="L63">    }</span>
+<span class="fc" id="L67">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

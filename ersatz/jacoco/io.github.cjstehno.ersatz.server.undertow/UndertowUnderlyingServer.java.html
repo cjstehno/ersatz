@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UndertowUnderlyingServer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.server.undertow</a> &gt; <span class="el_source">UndertowUnderlyingServer.java</span></div><h1>UndertowUnderlyingServer.java</h1><pre class="source lang-java linenums">/**
- * Copyright (C) 2022 Christopher J. Stehno
+ * Copyright (C) 2023 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,8 @@ import io.undertow.server.handlers.HttpTraceHandler;
 import io.undertow.server.handlers.encoding.ContentEncodingRepository;
 import io.undertow.server.handlers.encoding.EncodingHandler;
 import io.undertow.server.handlers.encoding.GzipEncodingProvider;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xnio.Options;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -42,126 +41,130 @@ import static io.undertow.UndertowOptions.*;
 /**
  * An &lt;code&gt;UnderlyingServer&lt;/code&gt; implementation based on the Undertow server platform.
  */
+<span class="fc" id="L44">@Slf4j</span>
 public class UndertowUnderlyingServer implements UnderlyingServer {
 
-<span class="fc" id="L47">    private static final Logger log = LoggerFactory.getLogger(UndertowUnderlyingServer.class);</span>
     private static final String LOCALHOST = &quot;localhost&quot;;
     private static final int UNSPECIFIED_PORT = -1;
     private final ServerConfigImpl serverConfig;
     private Undertow server;
-<span class="fc" id="L52">    private int actualHttpPort = UNSPECIFIED_PORT;</span>
-<span class="fc" id="L53">    private int actualHttpsPort = UNSPECIFIED_PORT;</span>
+<span class="fc" id="L51">    private int actualHttpPort = UNSPECIFIED_PORT;</span>
+<span class="fc" id="L52">    private int actualHttpsPort = UNSPECIFIED_PORT;</span>
 
     /**
      * Creates a new Undertow underlying server with the specified server config.
      *
      * @param serverConfig the server config information
      */
-<span class="fc" id="L60">    public UndertowUnderlyingServer(final ServerConfigImpl serverConfig) {</span>
-<span class="fc" id="L61">        this.serverConfig = serverConfig;</span>
-<span class="fc" id="L62">    }</span>
+<span class="fc" id="L59">    public UndertowUnderlyingServer(final ServerConfigImpl serverConfig) {</span>
+<span class="fc" id="L60">        this.serverConfig = serverConfig;</span>
+<span class="fc" id="L61">    }</span>
 
     @Override public void start() {
-<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (server == null) {</span>
-<span class="fc" id="L66">            val builder = Undertow.builder()</span>
-<span class="fc" id="L67">                .addHttpListener(serverConfig.getDesiredHttpPort(), LOCALHOST)</span>
-<span class="fc" id="L68">                .setIoThreads(serverConfig.getIoThreads())</span>
-<span class="fc" id="L69">                .setWorkerThreads(serverConfig.getWorkerThreads());</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (server == null) {</span>
+<span class="fc" id="L65">            val builder = Undertow.builder()</span>
+<span class="fc" id="L66">                .addHttpListener(serverConfig.getDesiredHttpPort(), LOCALHOST)</span>
+<span class="fc" id="L67">                .setIoThreads(serverConfig.getIoThreads())</span>
+<span class="fc" id="L68">                .setWorkerThreads(serverConfig.getWorkerThreads());</span>
 
-<span class="fc" id="L71">            applyTimeout(builder, serverConfig.getTimeout());</span>
+<span class="fc" id="L70">            applyTimeout(builder, serverConfig.getTimeout());</span>
 
-<span class="fc bfc" id="L73" title="All 2 branches covered.">            if (serverConfig.isHttpsEnabled()) {</span>
-<span class="fc" id="L74">                builder.addHttpsListener(serverConfig.getDesiredHttpsPort(), LOCALHOST, sslContext());</span>
-<span class="fc" id="L75">                log.debug(&quot;HTTPS listener enabled and configured.&quot;);</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            if (serverConfig.isHttpsEnabled()) {</span>
+<span class="fc" id="L73">                builder.addHttpsListener(serverConfig.getDesiredHttpsPort(), LOCALHOST, sslContext());</span>
+<span class="fc" id="L74">                log.debug(&quot;HTTPS listener enabled and configured.&quot;);</span>
             }
 
-<span class="fc" id="L78">            final var blockingHandler = new BlockingHandler(new EncodingHandler(</span>
-                new HttpTraceHandler(
-                    new ErsatzHttpHandler(
-<span class="fc" id="L81">                        serverConfig.getRequirements(),</span>
-<span class="fc" id="L82">                        serverConfig.getExpectations(),</span>
-<span class="fc" id="L83">                        serverConfig.isMismatchToConsole(),</span>
-<span class="fc" id="L84">                        serverConfig.isLogResponseContent()</span>
-                    )
-                ),
-<span class="fc" id="L87">                new ContentEncodingRepository().addEncodingHandler(&quot;gzip&quot;, new GzipEncodingProvider(), 50)</span>
-            ));
+<span class="fc" id="L77">            server = builder.setHandler(</span>
+                new BlockingHandler(new EncodingHandler(
+                    new HttpTraceHandler(
+                        new ErsatzMatchingHandler(
+<span class="fc" id="L81">                            serverConfig.getRequirements(),</span>
+<span class="fc" id="L82">                            serverConfig.getExpectations(),</span>
+<span class="fc" id="L83">                            serverConfig.isMismatchToConsole(),</span>
+                            new ErsatzForwardHandler(
+                                new ErsatzHttpHandler(
+<span class="fc" id="L86">                                    serverConfig.isLogResponseContent()</span>
+                                )
+                            )
+                        )
+                    ),
+<span class="fc" id="L91">                    new ContentEncodingRepository().addEncodingHandler(&quot;gzip&quot;, new GzipEncodingProvider(), 50)</span>
+                ))
+<span class="fc" id="L93">            ).build();</span>
 
-<span class="fc" id="L90">            server = builder.setHandler(blockingHandler).build();</span>
+<span class="fc" id="L95">            server.start();</span>
 
-<span class="fc" id="L92">            server.start();</span>
+<span class="fc" id="L97">            applyPorts();</span>
 
-<span class="fc" id="L94">            applyPorts();</span>
-
-<span class="fc" id="L96">            log.info(&quot;Started.&quot;);</span>
+<span class="fc" id="L99">            log.info(&quot;Started.&quot;);</span>
         }
-<span class="fc" id="L98">    }</span>
+<span class="fc" id="L101">    }</span>
 
     private void applyTimeout(final Undertow.Builder builder, final long timeout) {
-<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (timeout &gt; 0) {</span>
-<span class="fc" id="L102">            final var ms = (int) timeout;</span>
-<span class="fc" id="L103">            builder.setServerOption(IDLE_TIMEOUT, ms);</span>
-<span class="fc" id="L104">            builder.setServerOption(NO_REQUEST_TIMEOUT, ms);</span>
-<span class="fc" id="L105">            builder.setServerOption(REQUEST_PARSE_TIMEOUT, ms);</span>
-<span class="fc" id="L106">            builder.setSocketOption(Options.READ_TIMEOUT, ms);</span>
-<span class="fc" id="L107">            builder.setSocketOption(Options.WRITE_TIMEOUT, ms);</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if (timeout &gt; 0) {</span>
+<span class="fc" id="L105">            final var ms = (int) timeout;</span>
+<span class="fc" id="L106">            builder.setServerOption(IDLE_TIMEOUT, ms);</span>
+<span class="fc" id="L107">            builder.setServerOption(NO_REQUEST_TIMEOUT, ms);</span>
+<span class="fc" id="L108">            builder.setServerOption(REQUEST_PARSE_TIMEOUT, ms);</span>
+<span class="fc" id="L109">            builder.setSocketOption(Options.READ_TIMEOUT, ms);</span>
+<span class="fc" id="L110">            builder.setSocketOption(Options.WRITE_TIMEOUT, ms);</span>
 
-<span class="fc" id="L109">            log.debug(&quot;Timeout ({} ms) applied.&quot;, timeout);</span>
+<span class="fc" id="L112">            log.debug(&quot;Timeout ({} ms) applied.&quot;, timeout);</span>
         }
-<span class="fc" id="L111">    }</span>
+<span class="fc" id="L114">    }</span>
 
     @Override public void stop() {
-<span class="fc bfc" id="L114" title="All 2 branches covered.">        if (server != null) {</span>
-<span class="fc" id="L115">            actualHttpPort = UNSPECIFIED_PORT;</span>
-<span class="fc" id="L116">            actualHttpsPort = UNSPECIFIED_PORT;</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        if (server != null) {</span>
+<span class="fc" id="L118">            actualHttpPort = UNSPECIFIED_PORT;</span>
+<span class="fc" id="L119">            actualHttpsPort = UNSPECIFIED_PORT;</span>
 
-<span class="fc" id="L118">            server.stop();</span>
+<span class="fc" id="L121">            server.stop();</span>
 
-<span class="fc" id="L120">            server = null;</span>
+<span class="fc" id="L123">            server = null;</span>
         }
 
-<span class="fc" id="L123">        log.info(&quot;Stopped.&quot;);</span>
-<span class="fc" id="L124">    }</span>
+<span class="fc" id="L126">        log.info(&quot;Stopped.&quot;);</span>
+<span class="fc" id="L127">    }</span>
 
     @Override public int getActualHttpPort() {
-<span class="fc" id="L127">        return actualHttpPort;</span>
+<span class="fc" id="L130">        return actualHttpPort;</span>
     }
 
     @Override public int getActualHttpsPort() {
-<span class="fc" id="L131">        return actualHttpsPort;</span>
+<span class="fc" id="L134">        return actualHttpsPort;</span>
     }
 
     private void applyPorts() {
-<span class="fc" id="L135">        actualHttpPort = ((InetSocketAddress) server.getListenerInfo().get(0).getAddress()).getPort();</span>
+<span class="fc" id="L138">        actualHttpPort = ((InetSocketAddress) server.getListenerInfo().get(0).getAddress()).getPort();</span>
 
-<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (serverConfig.isHttpsEnabled()) {</span>
-<span class="fc" id="L138">            actualHttpsPort = ((InetSocketAddress) server.getListenerInfo().get(1).getAddress()).getPort();</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        if (serverConfig.isHttpsEnabled()) {</span>
+<span class="fc" id="L141">            actualHttpsPort = ((InetSocketAddress) server.getListenerInfo().get(1).getAddress()).getPort();</span>
         }
 
-<span class="fc" id="L141">        log.debug(&quot;Applied ports (http:{}, https:{}).&quot;, actualHttpPort, actualHttpsPort);</span>
-<span class="fc" id="L142">    }</span>
+<span class="fc" id="L144">        log.debug(&quot;Applied ports (http:{}, https:{}).&quot;, actualHttpPort, actualHttpsPort);</span>
+<span class="fc" id="L145">    }</span>
 
     private SSLContext sslContext() {
         try {
-<span class="fc" id="L146">            KeyStore keyStore = KeyStore.getInstance(&quot;JKS&quot;);</span>
+<span class="fc" id="L149">            KeyStore keyStore = KeyStore.getInstance(&quot;JKS&quot;);</span>
 
-<span class="pc bpc" id="L148" title="1 of 2 branches missed.">            final var location = serverConfig.getKeystoreLocation() != null ? serverConfig.getKeystoreLocation() : ErsatzServer.class.getResource(&quot;/ersatz.keystore&quot;);</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">            final var location = serverConfig.getKeystoreLocation() != null ? serverConfig.getKeystoreLocation() : ErsatzServer.class.getResource(&quot;/ersatz.keystore&quot;);</span>
 
-<span class="fc" id="L150">            try (final InputStream instr = location.openStream()) {</span>
-<span class="fc" id="L151">                keyStore.load(instr, serverConfig.getKeystorePass().toCharArray());</span>
+<span class="fc" id="L153">            try (final InputStream instr = location.openStream()) {</span>
+<span class="fc" id="L154">                keyStore.load(instr, serverConfig.getKeystorePass().toCharArray());</span>
             }
 
-<span class="fc" id="L154">            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());</span>
-<span class="fc" id="L155">            keyManagerFactory.init(keyStore, serverConfig.getKeystorePass().toCharArray());</span>
+<span class="fc" id="L157">            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());</span>
+<span class="fc" id="L158">            keyManagerFactory.init(keyStore, serverConfig.getKeystorePass().toCharArray());</span>
 
-<span class="fc" id="L157">            SSLContext sslContext = SSLContext.getInstance(&quot;TLS&quot;);</span>
-<span class="fc" id="L158">            sslContext.init(keyManagerFactory.getKeyManagers(), null, null);</span>
+<span class="fc" id="L160">            SSLContext sslContext = SSLContext.getInstance(&quot;TLS&quot;);</span>
+<span class="fc" id="L161">            sslContext.init(keyManagerFactory.getKeyManagers(), null, null);</span>
 
-<span class="fc" id="L160">            return sslContext;</span>
+<span class="fc" id="L163">            return sslContext;</span>
 
-<span class="nc" id="L162">        } catch (IOException | GeneralSecurityException ex) {</span>
-<span class="nc" id="L163">            throw new IllegalStateException(ex);</span>
+<span class="nc" id="L165">        } catch (IOException | GeneralSecurityException ex) {</span>
+<span class="nc" id="L166">            throw new IllegalStateException(ex);</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Request.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.cfg</a> &gt; <span class="el_source">Request.java</span></div><h1>Request.java</h1><pre class="source lang-java linenums">/**
- * Copyright (C) 2022 Christopher J. Stehno
+ * Copyright (C) 2023 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,12 @@ import io.github.cjstehno.ersatz.match.HeaderMatcher;
 import io.github.cjstehno.ersatz.match.QueryParamMatcher;
 import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.hamcrest.Matcher;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
@@ -34,6 +37,7 @@ import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryExists;
 import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryMatching;
 import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.cookieMatching;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 /**
  * Configuration interface for HTTP request expectations.
@@ -45,7 +49,7 @@ public interface Request {
      * @return a reference to this request
      */
     default Request secure() {
-<span class="fc" id="L48">        return secure(true);</span>
+<span class="fc" id="L52">        return secure(true);</span>
     }
 
     /**
@@ -65,7 +69,7 @@ public interface Request {
      * @return this request
      */
     default Request header(final String name, final String value) {
-<span class="fc" id="L68">        return header(headerMatching(name, value));</span>
+<span class="fc" id="L72">        return header(headerMatching(name, value));</span>
     }
 
     /**
@@ -77,7 +81,7 @@ public interface Request {
      * @return this request
      */
     default Request header(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; matcher) {
-<span class="fc" id="L80">        return header(headerMatching(name, matcher));</span>
+<span class="fc" id="L84">        return header(headerMatching(name, matcher));</span>
     }
 
     /**
@@ -97,14 +101,14 @@ public interface Request {
      * @return this request
      */
     default Request headers(final Map&lt;String, Object&gt; heads) {
-<span class="fc" id="L100">        heads.forEach((k, v) -&gt; {</span>
-<span class="fc bfc" id="L101" title="All 2 branches covered.">            if (v instanceof Matcher) {</span>
-<span class="fc" id="L102">                header(k, (Matcher&lt;Iterable&lt;? super String&gt;&gt;) v);</span>
+<span class="fc" id="L104">        heads.forEach((k, v) -&gt; {</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            if (v instanceof Matcher) {</span>
+<span class="fc" id="L106">                header(k, (Matcher&lt;Iterable&lt;? super String&gt;&gt;) v);</span>
             } else {
-<span class="fc" id="L104">                header(k, v.toString());</span>
+<span class="fc" id="L108">                header(k, v.toString());</span>
             }
-<span class="fc" id="L106">        });</span>
-<span class="fc" id="L107">        return this;</span>
+<span class="fc" id="L110">        });</span>
+<span class="fc" id="L111">        return this;</span>
     }
 
     /**
@@ -116,7 +120,7 @@ public interface Request {
      * @return this request
      */
     default Request query(final String name, final String value) {
-<span class="fc" id="L119">        return query(queryMatching(name, value));</span>
+<span class="fc" id="L123">        return query(queryMatching(name, value));</span>
     }
 
     /**
@@ -126,7 +130,7 @@ public interface Request {
      * @return this request
      */
     default Request query(final String name) {
-<span class="fc" id="L129">        return query(queryExists(name));</span>
+<span class="fc" id="L133">        return query(queryExists(name));</span>
     }
 
     /**
@@ -146,10 +150,10 @@ public interface Request {
      * @return this request
      */
     default Request query(final String name, final Iterable&lt;? super String&gt; values) {
-<span class="fc" id="L149">        val queryMatchers = new LinkedList&lt;Matcher&lt;? super String&gt;&gt;();</span>
-<span class="fc" id="L150">        values.forEach(v -&gt; queryMatchers.add(equalTo(v)));</span>
+<span class="fc" id="L153">        val queryMatchers = new LinkedList&lt;Matcher&lt;? super String&gt;&gt;();</span>
+<span class="fc" id="L154">        values.forEach(v -&gt; queryMatchers.add(equalTo(v)));</span>
 
-<span class="fc" id="L152">        return query(queryMatching(name, stringIterableMatcher(queryMatchers)));</span>
+<span class="fc" id="L156">        return query(queryMatching(name, stringIterableMatcher(queryMatchers)));</span>
     }
 
     /**
@@ -161,7 +165,7 @@ public interface Request {
      * @return this request
      */
     default Request query(final String name, final Matcher&lt;Iterable&lt;? super String&gt;&gt; matcher) {
-<span class="fc" id="L164">        return query(queryMatching(name, matcher));</span>
+<span class="fc" id="L168">        return query(queryMatching(name, matcher));</span>
     }
 
     /**
@@ -171,16 +175,16 @@ public interface Request {
      * @return this request
      */
     default Request queries(final Map&lt;String, Object&gt; map) {
-<span class="fc" id="L174">        map.forEach((k, v) -&gt; {</span>
-<span class="fc bfc" id="L175" title="All 2 branches covered.">            if (v instanceof Matcher) {</span>
-<span class="fc" id="L176">                query(k, (Matcher&lt;Iterable&lt;? super String&gt;&gt;) v);</span>
-<span class="fc bfc" id="L177" title="All 2 branches covered.">            } else if (v instanceof Collection) {</span>
-<span class="fc" id="L178">                query(k, (Collection&lt;? super String&gt;) v);</span>
+<span class="fc" id="L178">        map.forEach((k, v) -&gt; {</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">            if (v instanceof Matcher) {</span>
+<span class="fc" id="L180">                query(k, (Matcher&lt;Iterable&lt;? super String&gt;&gt;) v);</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">            } else if (v instanceof Collection) {</span>
+<span class="fc" id="L182">                query(k, (Collection&lt;? super String&gt;) v);</span>
             } else {
-<span class="fc" id="L180">                query(k, v.toString());</span>
+<span class="fc" id="L184">                query(k, v.toString());</span>
             }
-<span class="fc" id="L182">        });</span>
-<span class="fc" id="L183">        return this;</span>
+<span class="fc" id="L186">        });</span>
+<span class="fc" id="L187">        return this;</span>
     }
 
     /**
@@ -191,7 +195,7 @@ public interface Request {
      * @return this request
      */
     default Request cookie(final String name, final String value) {
-<span class="fc" id="L194">        return cookie(cookieMatching(name, value));</span>
+<span class="fc" id="L198">        return cookie(cookieMatching(name, value));</span>
     }
 
     /**
@@ -202,7 +206,7 @@ public interface Request {
      * @return this request
      */
     default Request cookie(final String name, final Matcher&lt;Cookie&gt; matcher) {
-<span class="fc" id="L205">        return cookie(cookieMatching(name, matcher));</span>
+<span class="fc" id="L209">        return cookie(cookieMatching(name, matcher));</span>
     }
 
     /**
@@ -237,7 +241,17 @@ public interface Request {
      * @return a reference to this request
      */
     default Request called(final int count) {
-<span class="fc" id="L240">        return called(equalTo(count));</span>
+<span class="fc" id="L244">        return called(equalTo(count));</span>
+    }
+
+    /**
+     * Configures a call count verifier such that at least one call is expected. This is analogous to calling
+     * &lt;code&gt;called(greaterThanOrEqualTo(1))&lt;/code&gt;.
+     *
+     * @return a reference to this request
+     */
+    default Request called() {
+<span class="fc" id="L254">        return called(greaterThanOrEqualTo(1));</span>
     }
 
     /**
@@ -264,5 +278,41 @@ public interface Request {
      * @return a reference to this request
      */
     Request responder(final Consumer&lt;Response&gt; responder);
+
+    /**
+     * Causes the response to be generated from the result of making the request against another target server. The
+     * request will be matched by normal means, and the response will be the resulting response from the target server,
+     * making the same request.
+     *
+     * @param targetUri the target URI
+     * @return a reference to this request
+     */
+<span class="nc" id="L290">    @SneakyThrows</span>
+    default Request forward(final String targetUri) {
+<span class="fc" id="L292">        return forward(new URI(targetUri));</span>
+    }
+
+    /**
+     * Causes the response to be generated from the result of making the request against another target server. The
+     * request will be matched by normal means, and the response will be the resulting response from the target server,
+     * making the same request.
+     *
+     * @param targetUri the target URI
+     * @return a reference to this request
+     */
+    Request forward(final URI targetUri);
+
+    /**
+     * Causes the response to be generated from the result of making the request against another target server. The
+     * request will be matched by normal means, and the response will be the resulting response from the target server,
+     * making the same request.
+     *
+     * @param targetUrl the target URL
+     * @return a reference to this request
+     */
+<span class="nc" id="L313">    @SneakyThrows</span>
+    default Request forward(final URL targetUrl) {
+<span class="nc" id="L315">        return forward(targetUrl.toURI());</span>
+    }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

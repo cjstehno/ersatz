@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProxyServerExpectationsImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.impl</a> &gt; <span class="el_source">ProxyServerExpectationsImpl.java</span></div><h1>ProxyServerExpectationsImpl.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2023 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.impl;
+
+import io.github.cjstehno.ersatz.cfg.HttpMethod;
+import io.github.cjstehno.ersatz.cfg.ProxyServerExpectations;
+import io.github.cjstehno.ersatz.impl.matchers.MatchCountingMatcher;
+import io.github.cjstehno.ersatz.match.PathMatcher;
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.Getter;
+import org.hamcrest.Matcher;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.ANY;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.DELETE;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.HEAD;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.OPTIONS;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.PATCH;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.PUT;
+import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
+import static org.hamcrest.Matchers.allOf;
+
+/**
+ * The implementation of the &lt;code&gt;ProxyServerExpectations&lt;/code&gt; class.
+ */
+<span class="fc" id="L43">public class ProxyServerExpectationsImpl implements ProxyServerExpectations {</span>
+
+<span class="fc" id="L45">    @Getter private final List&lt;Matcher&lt;ClientRequest&gt;&gt; matchers = new LinkedList&lt;&gt;();</span>
+
+    @Override public ProxyServerExpectations any(final PathMatcher matcher) {
+<span class="fc" id="L48">        return addMatcherFor(ANY, matcher);</span>
+    }
+
+    @Override public ProxyServerExpectations get(final PathMatcher matcher) {
+<span class="fc" id="L52">        return addMatcherFor(GET, matcher);</span>
+    }
+
+    @Override public ProxyServerExpectations head(final PathMatcher matcher) {
+<span class="nc" id="L56">        return addMatcherFor(HEAD, matcher);</span>
+    }
+
+    @Override public ProxyServerExpectations put(final PathMatcher matcher) {
+<span class="nc" id="L60">        return addMatcherFor(PUT, matcher);</span>
+    }
+
+    @Override public ProxyServerExpectations post(final PathMatcher matcher) {
+<span class="nc" id="L64">        return addMatcherFor(POST, matcher);</span>
+    }
+
+    @Override public ProxyServerExpectations delete(final PathMatcher matcher) {
+<span class="nc" id="L68">        return addMatcherFor(DELETE, matcher);</span>
+    }
+
+    @Override public ProxyServerExpectations patch(final PathMatcher matcher) {
+<span class="nc" id="L72">        return addMatcherFor(PATCH, matcher);</span>
+    }
+
+    @Override public ProxyServerExpectations options(final PathMatcher matcher) {
+<span class="nc" id="L76">        return addMatcherFor(OPTIONS, matcher);</span>
+    }
+
+    /**
+     * Determines whether the given client request is matched by the expectations.
+     *
+     * @param clientRequest the client request
+     * @return whether the request is matched
+     */
+    public boolean matches(final ClientRequest clientRequest) {
+<span class="fc" id="L86">        return matchers.stream().anyMatch(m -&gt; m.matches(clientRequest));</span>
+    }
+
+    private ProxyServerExpectations addMatcherFor(final HttpMethod method, final PathMatcher matcher) {
+<span class="fc" id="L90">        matchers.add(MatchCountingMatcher.countingMatcher(allOf(methodMatching(method), matcher)));</span>
+<span class="fc" id="L91">        return this;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

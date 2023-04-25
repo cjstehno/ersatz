@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExpectationsImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.impl</a> &gt; <span class="el_source">ExpectationsImpl.java</span></div><h1>ExpectationsImpl.java</h1><pre class="source lang-java linenums">/**
- * Copyright (C) 2022 Christopher J. Stehno
+ * Copyright (C) 2023 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,83 +32,88 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.ANY;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.HEAD;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.PATCH;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.PUT;
 import static java.util.Collections.unmodifiableList;
 
 /**
  * Implementation of the &lt;code&gt;Expectations&lt;/code&gt; interface.
  */
+<span class="fc" id="L46">@Slf4j @RequiredArgsConstructor</span>
 public class ExpectationsImpl implements Expectations {
 
-<span class="fc" id="L40">    private final List&lt;Request&gt; requests = new LinkedList&lt;&gt;();</span>
-    private final RequestDecoders globalDecoders;
+<span class="fc" id="L49">    private final List&lt;Request&gt; requests = new LinkedList&lt;&gt;();</span>
     private final ResponseEncoders globalEncoders;
-
-    /**
-     * Creates a new expectations container with the given encoders and decoders.
-     *
-     * @param encoders the response encoders
-     * @param decoders the request decoders
-     */
-<span class="fc" id="L50">    public ExpectationsImpl(final ResponseEncoders encoders, final RequestDecoders decoders) {</span>
-<span class="fc" id="L51">        this.globalEncoders = encoders;</span>
-<span class="fc" id="L52">        this.globalDecoders = decoders;</span>
-<span class="fc" id="L53">    }</span>
+    private final RequestDecoders globalDecoders;
 
     /**
      * Removes all expectation configuration, but does not modify global encoders or decoders.
      */
     public void clear() {
-<span class="fc" id="L59">        requests.clear();</span>
-<span class="fc" id="L60">    }</span>
+<span class="fc" id="L57">        requests.clear();</span>
+<span class="fc" id="L58">    }</span>
+
+    @Override
+    public Request request(final HttpMethod method, final PathMatcher pathMatcher, final Consumer&lt;Request&gt; consumer) {
+<span class="fc" id="L62">        return applyExpectation(new ErsatzRequestWithContent(method, pathMatcher, globalDecoders, globalEncoders), consumer);</span>
+    }
+
+    private RequestWithContent requestWithContent(final HttpMethod method, final PathMatcher pathMatcher, final Consumer&lt;RequestWithContent&gt; consumer) {
+<span class="fc" id="L66">        return applyExpectation(new ErsatzRequestWithContent(method, pathMatcher, globalDecoders, globalEncoders), consumer);</span>
+    }
 
     @Override
     public Request ANY(final PathMatcher pathMatcher, final Consumer&lt;Request&gt; consumer) {
-<span class="fc" id="L64">        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.ANY, pathMatcher, globalDecoders, globalEncoders), consumer);</span>
+<span class="fc" id="L71">        return request(ANY, pathMatcher, consumer);</span>
     }
 
     @Override
     public Request GET(final PathMatcher pathMatcher, final Consumer&lt;Request&gt; consumer) {
-<span class="fc" id="L69">        return applyExpectation(new ErsatzRequest(HttpMethod.GET, pathMatcher, globalEncoders), consumer);</span>
+<span class="fc" id="L76">        return request(GET, pathMatcher, consumer);</span>
     }
 
     @Override
     public Request HEAD(final PathMatcher pathMatcher, final Consumer&lt;Request&gt; consumer) {
-<span class="fc" id="L74">        return applyExpectation(new ErsatzRequest(HttpMethod.HEAD, pathMatcher, globalEncoders, true), consumer);</span>
+<span class="fc" id="L81">        return request(HEAD, pathMatcher, consumer);</span>
     }
 
     @Override
     public RequestWithContent POST(final PathMatcher pathMatcher, Consumer&lt;RequestWithContent&gt; consumer) {
-<span class="fc" id="L79">        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.POST, pathMatcher, globalDecoders, globalEncoders), consumer);</span>
+<span class="fc" id="L86">        return requestWithContent(POST, pathMatcher, consumer);</span>
     }
 
     @Override
     public RequestWithContent PUT(final PathMatcher pathMatcher, Consumer&lt;RequestWithContent&gt; config) {
-<span class="fc" id="L84">        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.PUT, pathMatcher, globalDecoders, globalEncoders), config);</span>
+<span class="fc" id="L91">        return requestWithContent(PUT, pathMatcher, config);</span>
     }
 
     @Override
     public Request DELETE(final PathMatcher pathMatcher, Consumer&lt;Request&gt; config) {
-<span class="fc" id="L89">        return applyExpectation(new ErsatzRequest(HttpMethod.DELETE, pathMatcher, globalEncoders), config);</span>
+<span class="fc" id="L96">        return request(HttpMethod.DELETE, pathMatcher, config);</span>
     }
 
     @Override
     public RequestWithContent PATCH(final PathMatcher pathMatcher, Consumer&lt;RequestWithContent&gt; config) {
-<span class="fc" id="L94">        return applyExpectation(new ErsatzRequestWithContent(HttpMethod.PATCH, pathMatcher, globalDecoders, globalEncoders), config);</span>
+<span class="fc" id="L101">        return requestWithContent(PATCH, pathMatcher, config);</span>
     }
 
     @Override
     public Request OPTIONS(final PathMatcher pathMatcher, Consumer&lt;Request&gt; config) {
-<span class="fc" id="L99">        return applyExpectation(new ErsatzRequest(HttpMethod.OPTIONS, pathMatcher, globalEncoders), config);</span>
+<span class="fc" id="L106">        return request(HttpMethod.OPTIONS, pathMatcher, config);</span>
     }
 
     private &lt;R extends Request&gt; R applyExpectation(final R request, final Consumer&lt;R&gt; consumer) {
-<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (consumer != null) {</span>
-<span class="fc" id="L104">            consumer.accept(request);</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (consumer != null) {</span>
+<span class="fc" id="L111">            consumer.accept(request);</span>
         }
 
-<span class="fc" id="L107">        requests.add(request);</span>
+<span class="fc" id="L114">        requests.add(request);</span>
 
-<span class="fc" id="L109">        return request;</span>
+<span class="fc" id="L116">        return request;</span>
     }
 
     /**
@@ -116,7 +123,7 @@ public class ExpectationsImpl implements Expectations {
      * @return the matching request expectation
      */
     public Optional&lt;Request&gt; findMatch(final ClientRequest clientRequest) {
-<span class="fc" id="L119">        return requests.stream().filter(r -&gt; ((ErsatzRequest) r).matches(clientRequest)).findFirst();</span>
+<span class="fc" id="L126">        return requests.stream().filter(r -&gt; ((ErsatzRequest) r).matches(clientRequest)).findFirst();</span>
     }
 
     /**
@@ -125,7 +132,7 @@ public class ExpectationsImpl implements Expectations {
      * @return the list of request expectations
      */
     public List&lt;Request&gt; getRequests() {
-<span class="fc" id="L128">        return unmodifiableList(requests);</span>
+<span class="fc" id="L135">        return unmodifiableList(requests);</span>
     }
 
     /**
@@ -138,13 +145,14 @@ public class ExpectationsImpl implements Expectations {
      * @return a value of true if all requests are verified
      */
     public boolean verify(final long timeout, final TimeUnit unit) {
-<span class="fc bfc" id="L141" title="All 2 branches covered.">        for (final Request r : requests) {</span>
-<span class="fc bfc" id="L142" title="All 2 branches covered.">            if (!((ErsatzRequest) r).verify(timeout, unit)) {</span>
-<span class="fc" id="L143">                throw new IllegalArgumentException(&quot;Expectations for &quot; + r + &quot; were not met.&quot;);</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        for (final Request r : requests) {</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">            if (!((ErsatzRequest) r).verify(timeout, unit)) {</span>
+<span class="fc" id="L150">                log.error(&quot;Call count mismatch -&gt; {}&quot;, r);</span>
+<span class="fc" id="L151">                return false;</span>
             }
-<span class="fc" id="L145">        }</span>
+<span class="fc" id="L153">        }</span>
 
-<span class="fc" id="L147">        return true;</span>
+<span class="fc" id="L155">        return true;</span>
     }
 
     /**
@@ -156,7 +164,7 @@ public class ExpectationsImpl implements Expectations {
      * @return a value of true if all requests are verified
      */
     public boolean verify(final long timeout) {
-<span class="nc" id="L159">        return verify(timeout, TimeUnit.SECONDS);</span>
+<span class="nc" id="L167">        return verify(timeout, TimeUnit.SECONDS);</span>
     }
 
     /**
@@ -166,7 +174,7 @@ public class ExpectationsImpl implements Expectations {
      * @return a value of true if all requests are verified
      */
     public boolean verify() {
-<span class="fc" id="L169">        return verify(1, TimeUnit.SECONDS);</span>
+<span class="fc" id="L177">        return verify(1, TimeUnit.SECONDS);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

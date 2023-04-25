@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzServerExtension.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.junit</a> &gt; <span class="el_source">ErsatzServerExtension.java</span></div><h1>ErsatzServerExtension.java</h1><pre class="source lang-java linenums">/**
- * Copyright (C) 2022 Christopher J. Stehno
+ * Copyright (C) 2023 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -16,61 +16,185 @@
 package io.github.cjstehno.ersatz.junit;
 
 import io.github.cjstehno.ersatz.ErsatzServer;
+import io.github.cjstehno.ersatz.cfg.ServerConfig;
+import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.*;
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 
 import java.lang.reflect.Field;
-import java.util.function.Supplier;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 
-import static java.util.Arrays.stream;
+import static java.lang.Class.forName;
+import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
+import static org.junit.platform.commons.support.AnnotationSupport.findAnnotation;
+import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
+import static org.junit.platform.commons.support.ModifierSupport.isNotStatic;
+import static org.junit.platform.commons.support.ReflectionSupport.*;
 
 /**
  * JUnit 5 Extension used to provide a simple means of managing an ErsatzServer instance during testing.
- * &lt;p&gt;
- * A field of type &lt;code&gt;ErsatzServer&lt;/code&gt; must be specified in the test class.
- * &lt;p&gt;
  * BeforeEach test - the expectations will be cleared.
  * AfterEach test - the server will be stopped.
+ * &lt;p&gt;
+ * See the &lt;a href=&quot;https://cjstehno.github.io/ersatz/docs/user_guide.html&quot;&gt;User Guide&lt;/a&gt; for more details.
  * &lt;p&gt;
  * Note: the &lt;code&gt;verify()&lt;/code&gt; method is intentionally NOT called by this extension so that it may be called
  * only when needed.
  */
-<span class="fc" id="L40">public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallback {</span>
+<span class="fc" id="L47">@Slf4j</span>
+<span class="fc" id="L48">public class ErsatzServerExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {</span>
 
-    @Override public void beforeEach(final ExtensionContext context) throws Exception {
-<span class="fc" id="L43">        findInstance(context.getRequiredTestInstance(), true).start();</span>
-<span class="fc" id="L44">    }</span>
+    private static final String FIELD_SUFFIX = &quot;ErsatzServer&quot;;
+    private static final String SERVER_KEY = &quot;server-instance&quot;;
+<span class="fc" id="L52">    private static final Namespace NAMESPACE = create(&quot;io.github.cjstehno&quot;, &quot;ersatz&quot;);</span>
+<span class="fc" id="L53">    private static final ParameterResolver SERVER_PARAM_RESOLVER = new ErsatzServerParameterResolverDelegate(SERVER_KEY);</span>
 
-    @Override public void afterEach(final ExtensionContext context) throws Exception {
-<span class="fc" id="L47">        val ersatzInstance = findInstance(context.getRequiredTestInstance(), false);</span>
-<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if (ersatzInstance != null) {</span>
-<span class="fc" id="L49">            ersatzInstance.close();</span>
-<span class="fc" id="L50">            ersatzInstance.clearExpectations();</span>
-        }
-<span class="fc" id="L52">    }</span>
+    /**
+     * Called before each test method is executed - an instance of ErsatzServer is located or instantiated, then started.
+     *
+     * @param context the current extension context; never {@code null}
+     * @throws Exception if there is a problem locating or creating the server instance
+     */
+    @Override
+    public void beforeEach(final ExtensionContext context) throws Exception {
+<span class="fc" id="L63">        val ersatzServer = resolveAppliedConfig(context)</span>
+<span class="fc" id="L64">            .map(cfg -&gt;</span>
+<span class="fc" id="L65">                findServerField(context)</span>
+<span class="fc" id="L66">                    .map(field -&gt; buildServer(context, field, cfg))</span>
+<span class="fc" id="L67">                    .orElseGet(() -&gt; new ErsatzServer(cfg))</span>
+            )
+<span class="fc" id="L69">            .orElseGet(() -&gt;</span>
+<span class="fc" id="L70">                findServerField(context)</span>
+<span class="fc" id="L71">                    .map(field -&gt; buildServer(context, field))</span>
+<span class="fc" id="L72">                    .orElseGet(ErsatzServer::new)</span>
+            );
 
-    private static ErsatzServer findInstance(final Object testInstance, final boolean create) throws Exception {
-<span class="fc" id="L55">        val field = findField(testInstance);</span>
-<span class="fc" id="L56">        Object instance = field.get(testInstance);</span>
+        // store the server in context
+<span class="fc" id="L76">        context.getStore(NAMESPACE).put(SERVER_KEY, ersatzServer);</span>
 
-<span class="pc bpc" id="L58" title="1 of 4 branches missed.">        if (instance == null &amp;&amp; create) {</span>
-<span class="fc" id="L59">            instance = field.getType().getDeclaredConstructor().newInstance();</span>
-<span class="fc" id="L60">            field.set(testInstance, instance);</span>
-        }
+        // start the server
+<span class="fc" id="L79">        ersatzServer.start();</span>
+<span class="fc" id="L80">    }</span>
 
-<span class="fc" id="L63">        return (ErsatzServer) instance;</span>
+    @Override
+    public boolean supportsParameter(final ParameterContext paramContext, final ExtensionContext extContext) throws ParameterResolutionException {
+<span class="fc" id="L84">        return SERVER_PARAM_RESOLVER.supportsParameter(paramContext, extContext);</span>
     }
 
-    private static Field findField(final Object testInstance) throws Exception {
-<span class="fc" id="L67">        val field = stream(testInstance.getClass().getDeclaredFields())</span>
-<span class="fc" id="L68">            .filter(f -&gt; f.getType().getSimpleName().endsWith(&quot;ErsatzServer&quot;))</span>
-<span class="fc" id="L69">            .findFirst()</span>
-<span class="pc" id="L70">            .orElseThrow((Supplier&lt;Exception&gt;) () -&gt; new IllegalArgumentException(&quot;An ErsatzServer field must be specified.&quot;));</span>
+    @Override
+    public Object resolveParameter(final ParameterContext paramContext, final ExtensionContext extContext) throws ParameterResolutionException {
+<span class="fc" id="L89">        return SERVER_PARAM_RESOLVER.resolveParameter(paramContext, extContext);</span>
+    }
 
-<span class="fc" id="L72">        field.setAccessible(true);</span>
-<span class="fc" id="L73">        return field;</span>
+    /**
+     * Called after each test method has executed - closes the server instance and clears its expectations.
+     *
+     * @param context the current extension context; never {@code null}
+     * @throws Exception if there is a problem shutting down the server
+     */
+    @Override public void afterEach(final ExtensionContext context) throws Exception {
+<span class="fc" id="L99">        val ersatzServer = (ErsatzServer) context.getStore(NAMESPACE).get(SERVER_KEY);</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        if (ersatzServer != null) {</span>
+<span class="fc" id="L101">            ersatzServer.close();</span>
+<span class="fc" id="L102">            ersatzServer.clearExpectations();</span>
+        }
+<span class="fc" id="L104">    }</span>
+
+    private static ErsatzServer buildServer(final ExtensionContext context, final Field field, final ServerConfig serverConfig) {
+        try {
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">            if (field.get(context.getRequiredTestInstance()) != null) {</span>
+<span class="nc" id="L109">                log.warn(&quot;An ErsatzServer instance field is configured - it will be overwritten.&quot;);</span>
+            }
+
+            // configure it with resolved config
+<span class="fc" id="L113">            val server = instantiateServer(field.getType(), serverConfig);</span>
+
+            // update the field value
+<span class="fc" id="L116">            field.set(context.getRequiredTestInstance(), server);</span>
+
+<span class="fc" id="L118">            return (ErsatzServer) server;</span>
+
+<span class="nc" id="L120">        } catch (Exception ex) {</span>
+<span class="nc" id="L121">            throw new RuntimeException(ex);</span>
+        }
+    }
+
+    private static ErsatzServer buildServer(final ExtensionContext context, final Field field) {
+        try {
+<span class="fc" id="L127">            val server = field.get(context.getRequiredTestInstance());</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">            if (server != null) {</span>
+<span class="fc" id="L129">                return (ErsatzServer) server;</span>
+
+            } else {
+                // create default
+<span class="fc" id="L133">                val newServer = instantiateServer(field.getType());</span>
+
+                // update the field value
+<span class="fc" id="L136">                field.set(context.getRequiredTestInstance(), newServer);</span>
+
+<span class="fc" id="L138">                return (ErsatzServer) newServer;</span>
+            }
+<span class="nc" id="L140">        } catch (IllegalAccessException e) {</span>
+<span class="nc" id="L141">            throw new RuntimeException(e);</span>
+        }
+    }
+
+    private static Object instantiateServer(final Class&lt;?&gt; type) {
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        if (type.getSimpleName().equals(&quot;GroovyErsatzServer&quot;)) {</span>
+<span class="nc" id="L147">            return newInstance(type);</span>
+        } else {
+<span class="fc" id="L149">            return new ErsatzServer();</span>
+        }
+    }
+
+    private static Object instantiateServer(final Class&lt;?&gt; type, final ServerConfig serverConfig) {
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        if (type.getSimpleName().equals(&quot;GroovyErsatzServer&quot;)) {</span>
+<span class="nc" id="L155">            return newInstance(type, serverConfig);</span>
+        } else {
+<span class="fc" id="L157">            return new ErsatzServer(serverConfig);</span>
+        }
+    }
+
+    private static Optional&lt;Field&gt; findServerField(final ExtensionContext context) {
+<span class="fc" id="L162">        val fields = findFields(</span>
+<span class="fc" id="L163">            context.getRequiredTestClass(),</span>
+<span class="fc bfc" id="L164" title="All 4 branches covered.">            f -&gt; isNotStatic(f) &amp;&amp; f.getType().getSimpleName().endsWith(FIELD_SUFFIX),</span>
+            TOP_DOWN
+        );
+
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        if (fields.isEmpty()) {</span>
+<span class="fc" id="L169">            return Optional.empty();</span>
+        } else {
+<span class="fc" id="L171">            val field = fields.get(0);</span>
+<span class="fc" id="L172">            field.setAccessible(true);</span>
+<span class="fc" id="L173">            return Optional.of(field);</span>
+        }
+    }
+
+    private static Optional&lt;ServerConfig&gt; resolveAppliedConfig(final ExtensionContext context) {
+        // check for annotation on test method -&gt; then check class
+<span class="fc" id="L179">        return findAnnotation(context.getRequiredTestMethod(), ApplyServerConfig.class)</span>
+<span class="fc" id="L180">            .map(applyServerConfig -&gt; buildServerConfig(context, applyServerConfig))</span>
+<span class="fc" id="L181">            .or(() -&gt; findAnnotation(context.getRequiredTestClass(), ApplyServerConfig.class)</span>
+<span class="pc" id="L182">                .map(applyServerConfig -&gt; buildServerConfig(context, applyServerConfig)));</span>
+    }
+
+    private static ServerConfig buildServerConfig(final ExtensionContext context, final ApplyServerConfig anno) {
+<span class="fc" id="L186">        return findMethod(context.getRequiredTestClass(), anno.value(), ServerConfig.class)</span>
+<span class="fc" id="L187">            .map(meth -&gt; {</span>
+<span class="fc" id="L188">                val serverConfig = new ServerConfigImpl();</span>
+                try {
+<span class="fc" id="L190">                    meth.setAccessible(true);</span>
+<span class="fc" id="L191">                    meth.invoke(context.getRequiredTestInstance(), serverConfig);</span>
+<span class="nc" id="L192">                } catch (IllegalAccessException | InvocationTargetException e) {</span>
+<span class="nc" id="L193">                    throw new RuntimeException(e);</span>
+<span class="fc" id="L194">                }</span>
+<span class="fc" id="L195">                return serverConfig;</span>
+            })
+<span class="pc" id="L197">            .orElseThrow(() -&gt; new IllegalArgumentException(&quot;No method \&quot;void &quot; + anno.value() + &quot;(ServerConfig)\&quot; exists.&quot;));</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

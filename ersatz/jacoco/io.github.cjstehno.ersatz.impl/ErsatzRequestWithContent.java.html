@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzRequestWithContent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.impl</a> &gt; <span class="el_source">ErsatzRequestWithContent.java</span></div><h1>ErsatzRequestWithContent.java</h1><pre class="source lang-java linenums">/**
- * Copyright (C) 2022 Christopher J. Stehno
+ * Copyright (C) 2023 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -44,36 +44,26 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
      * @param globalEncoders the shared global encoders
      */
     public ErsatzRequestWithContent(final HttpMethod method, final PathMatcher pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
-<span class="fc" id="L47">        super(method, pathMatcher, globalEncoders);</span>
+<span class="fc" id="L47">        super(method, pathMatcher, globalEncoders, false);</span>
 <span class="fc" id="L48">        this.decoderChain = new DecoderChain(globalDecoders, localDecoders);</span>
 <span class="fc" id="L49">    }</span>
 
-    /**
-     * Creates a request with the specified method and path.
-     *
-     * @param method      the request method
-     * @param pathMatcher the request path matcher
-     */
-    public ErsatzRequestWithContent(final HttpMethod method, final PathMatcher pathMatcher) {
-<span class="fc" id="L58">        this(method, pathMatcher, null, null);</span>
-<span class="fc" id="L59">    }</span>
-
     @Override public RequestWithContent body(final BodyMatcher bodyMatcher) {
-<span class="fc" id="L62">        bodyMatcher.setDecoderChain(decoderChain);</span>
-<span class="fc" id="L63">        addMatcher(bodyMatcher);</span>
-<span class="fc" id="L64">        return this;</span>
+<span class="fc" id="L52">        bodyMatcher.setDecoderChain(decoderChain);</span>
+<span class="fc" id="L53">        addMatcher(bodyMatcher);</span>
+<span class="fc" id="L54">        return this;</span>
     }
 
     @Override
     public RequestWithContent decoder(final String contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {
-<span class="fc" id="L69">        localDecoders.register(contentType, decoder);</span>
-<span class="fc" id="L70">        return this;</span>
+<span class="fc" id="L59">        localDecoders.register(contentType, decoder);</span>
+<span class="fc" id="L60">        return this;</span>
     }
 
     @Override public RequestWithContent param(final BodyParamMatcher bodyParamMatcher) {
-<span class="fc" id="L74">        addMatcher(bodyParamMatcher);</span>
-<span class="fc" id="L75">        return this;</span>
+<span class="fc" id="L64">        addMatcher(bodyParamMatcher);</span>
+<span class="fc" id="L65">        return this;</span>
     }
 }
 
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

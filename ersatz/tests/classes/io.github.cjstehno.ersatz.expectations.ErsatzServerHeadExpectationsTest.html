@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">11.716s</div>
+<div class="counter">5.907s</div>
 <p>duration</p>
 </div>
 </td>
@@ -80,74 +80,74 @@
 </thead>
 <tr>
 <td class="success">[1] BASIC authentication: https(false) -&gt; {1}</td>
-<td class="success">withBASICAuthentication(boolean)[1]</td>
-<td class="success">0.184s</td>
+<td class="success">withBASICAuthentication(boolean, ErsatzServer)[1]</td>
+<td class="success">0.341s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[2] BASIC authentication: https(true) -&gt; {1}</td>
-<td class="success">withBASICAuthentication(boolean)[2]</td>
-<td class="success">0.356s</td>
+<td class="success">withBASICAuthentication(boolean, ErsatzServer)[2]</td>
+<td class="success">0.159s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[1] path only: https(false) -&gt; {1}</td>
-<td class="success">withPath(boolean)[1]</td>
-<td class="success">0.403s</td>
+<td class="success">withPath(boolean, ErsatzServer)[1]</td>
+<td class="success">0.047s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[2] path only: https(true) -&gt; {1}</td>
-<td class="success">withPath(boolean)[2]</td>
-<td class="success">0.264s</td>
+<td class="success">withPath(boolean, ErsatzServer)[2]</td>
+<td class="success">0.212s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[1] path and consumer: https(false) -&gt; {1}</td>
-<td class="success">withPathAndConsumer(boolean)[1]</td>
-<td class="success">0.362s</td>
+<td class="success">withPathAndConsumer(boolean, ErsatzServer)[1]</td>
+<td class="success">0.028s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[2] path and consumer: https(true) -&gt; {1}</td>
-<td class="success">withPathAndConsumer(boolean)[2]</td>
-<td class="success">0.207s</td>
+<td class="success">withPathAndConsumer(boolean, ErsatzServer)[2]</td>
+<td class="success">0.218s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[1] path and consumer (with response headers): https(false) -&gt; {1}</td>
-<td class="success">withPathAndConsumerWithResponseHeaders(boolean)[1]</td>
-<td class="success">7.085s</td>
+<td class="success">withPathAndConsumerWithResponseHeaders(boolean, ErsatzServer)[1]</td>
+<td class="success">3.155s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[2] path and consumer (with response headers): https(true) -&gt; {1}</td>
-<td class="success">withPathAndConsumerWithResponseHeaders(boolean)[2]</td>
-<td class="success">0.947s</td>
+<td class="success">withPathAndConsumerWithResponseHeaders(boolean, ErsatzServer)[2]</td>
+<td class="success">1.201s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">[1] path matcher: https(false) -&gt; insecure content</td>
-<td class="success">withPathMatcher(boolean, String)[1]</td>
-<td class="success">0.487s</td>
+<td class="success">[1] path matcher: https(false) -&gt; {1}</td>
+<td class="success">withPathMatcher(boolean, ErsatzServer)[1]</td>
+<td class="success">0.060s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">[2] path matcher: https(true) -&gt; secure content</td>
-<td class="success">withPathMatcher(boolean, String)[2]</td>
-<td class="success">0.514s</td>
+<td class="success">[2] path matcher: https(true) -&gt; {1}</td>
+<td class="success">withPathMatcher(boolean, ErsatzServer)[2]</td>
+<td class="success">0.247s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">[1] path matcher and consumer: https(false) -&gt; insecure content</td>
-<td class="success">withPathMatcherAndConsumer(boolean, String)[1]</td>
-<td class="success">0.407s</td>
+<td class="success">[1] path matcher and consumer: https(false) -&gt; {1}</td>
+<td class="success">withPathMatcherAndConsumer(boolean, ErsatzServer)[1]</td>
+<td class="success">0.052s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">[2] path matcher and consumer: https(true) -&gt; secure content</td>
-<td class="success">withPathMatcherAndConsumer(boolean, String)[2]</td>
-<td class="success">0.500s</td>
+<td class="success">[2] path matcher and consumer: https(true) -&gt; {1}</td>
+<td class="success">withPathMatcherAndConsumer(boolean, ErsatzServer)[2]</td>
+<td class="success">0.187s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -155,166 +155,42 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>09:24:52.713 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-09:24:53.374 [Test worker] DEBUG org.jboss.logging - Logging Provider: org.jboss.logging.Slf4jLoggerProvider
-09:24:53.504 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-09:24:53.711 [Test worker] INFO org.xnio - XNIO version 3.8.4.Final
-09:24:54.027 [Test worker] INFO org.xnio.nio - XNIO NIO Implementation Version 3.8.4.Final
-09:24:54.984 [Test worker] INFO org.jboss.threads - JBoss Threads version 3.1.0.Final
-09:24:55.157 [XNIO-1 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-1', selector sun.nio.ch.EPollSelectorImpl@598638a8
-09:24:55.162 [XNIO-1 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-2', selector sun.nio.ch.EPollSelectorImpl@6867b2ae
-09:24:55.177 [XNIO-1 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 Accept', selector sun.nio.ch.EPollSelectorImpl@49e4fe3
-09:24:55.182 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-09:24:55.495 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-09:24:55.595 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:41209, https:46527).
-09:24:55.596 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-09:24:58.541 [XNIO-1 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { HEAD /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.9.3], Host=[localhost:41209]}, cookies={}): &lt;-1 of null content&gt; }
-09:24:58.727 [XNIO-1 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; http://localhost:41209/something; {Alpha=[Header-A], Bravo=[Header-B1, Header-B2]}): &lt;0 bytes of text/plain content&gt;
-09:24:59.012 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-09:24:59.028 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
-09:24:59.054 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-09:24:59.055 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-09:24:59.089 [XNIO-2 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-1', selector sun.nio.ch.EPollSelectorImpl@24a13213
-09:24:59.097 [XNIO-2 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 I/O-2', selector sun.nio.ch.EPollSelectorImpl@adf1343
-09:24:59.129 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-09:24:59.130 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-09:24:59.131 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:44189, https:33427).
-09:24:59.132 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-09:24:59.141 [XNIO-2 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-2 Accept', selector sun.nio.ch.EPollSelectorImpl@20a1441f
-09:24:59.958 [XNIO-2 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { HEAD /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.9.3], Host=[localhost:33427]}, cookies={}): &lt;-1 of null content&gt; }
-09:24:59.959 [XNIO-2 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; https://localhost:33427/something; {Alpha=[Header-A], Bravo=[Header-B1, Header-B2]}): &lt;0 bytes of text/plain content&gt;
-09:24:59.975 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-09:24:59.979 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
-09:25:00.026 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-09:25:00.027 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-09:25:00.076 [XNIO-3 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-1', selector sun.nio.ch.EPollSelectorImpl@3cbca45f
-09:25:00.103 [XNIO-3 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 I/O-2', selector sun.nio.ch.EPollSelectorImpl@5ab6bcbf
-09:25:00.146 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-09:25:00.147 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-09:25:00.148 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:33191, https:34017).
-09:25:00.148 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-09:25:00.169 [XNIO-3 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-3 Accept', selector sun.nio.ch.EPollSelectorImpl@59a6a8dc
-09:25:00.189 [XNIO-3 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { HEAD /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.9.3], Host=[localhost:33191]}, cookies={}): &lt;-1 of null content&gt; }
-09:25:00.200 [XNIO-3 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; http://localhost:33191/loader/something; {}): &lt;0 bytes of text/plain content&gt;
-09:25:00.458 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-09:25:00.469 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
-09:25:00.476 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-09:25:00.477 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-09:25:00.483 [XNIO-4 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-1', selector sun.nio.ch.EPollSelectorImpl@40ccd03c
-09:25:00.497 [XNIO-4 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 I/O-2', selector sun.nio.ch.EPollSelectorImpl@69a7b5b1
-09:25:00.502 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-09:25:00.513 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-09:25:00.514 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:37891, https:42187).
-09:25:00.514 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-09:25:00.503 [XNIO-4 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-4 Accept', selector sun.nio.ch.EPollSelectorImpl@6693b137
-09:25:00.720 [XNIO-4 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { HEAD /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.9.3], Host=[localhost:42187]}, cookies={}): &lt;-1 of null content&gt; }
-09:25:00.723 [XNIO-4 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; https://localhost:42187/loader/something; {}): &lt;0 bytes of text/plain content&gt;
-09:25:00.978 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-09:25:00.985 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
-09:25:01.001 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-09:25:01.002 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-09:25:01.032 [XNIO-5 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-1', selector sun.nio.ch.EPollSelectorImpl@28eebf9d
-09:25:01.047 [XNIO-5 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 I/O-2', selector sun.nio.ch.EPollSelectorImpl@15582e45
-09:25:01.073 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-09:25:01.074 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-09:25:01.075 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:35993, https:45651).
-09:25:01.075 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-09:25:01.082 [XNIO-5 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-5 Accept', selector sun.nio.ch.EPollSelectorImpl@5dc5cc49
-09:25:01.127 [XNIO-5 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { HEAD /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.9.3], Host=[localhost:35993]}, cookies={}): &lt;-1 of null content&gt; }
-09:25:01.132 [XNIO-5 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; http://localhost:35993/something; {}): &lt;0 bytes of text/plain content&gt;
-09:25:01.396 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-09:25:01.397 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
-09:25:01.404 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-09:25:01.410 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-09:25:01.423 [XNIO-6 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-1', selector sun.nio.ch.EPollSelectorImpl@5a41e1a1
-09:25:01.424 [XNIO-6 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 I/O-2', selector sun.nio.ch.EPollSelectorImpl@419a44d8
-09:25:01.428 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-09:25:01.429 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-09:25:01.430 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:39481, https:35571).
-09:25:01.430 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-09:25:01.453 [XNIO-6 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-6 Accept', selector sun.nio.ch.EPollSelectorImpl@4e350cf5
-09:25:01.653 [XNIO-6 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { HEAD /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.9.3], Host=[localhost:35571]}, cookies={}): &lt;-1 of null content&gt; }
-09:25:01.654 [XNIO-6 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; https://localhost:35571/something; {}): &lt;0 bytes of text/plain content&gt;
-09:25:01.658 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-09:25:01.662 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
-09:25:01.680 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-09:25:01.682 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-09:25:01.724 [XNIO-7 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-1', selector sun.nio.ch.EPollSelectorImpl@66b1d496
-09:25:01.728 [XNIO-7 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 I/O-2', selector sun.nio.ch.EPollSelectorImpl@42dbd50d
-09:25:01.730 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-09:25:01.731 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-09:25:01.732 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:33671, https:35153).
-09:25:01.732 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-09:25:01.737 [XNIO-7 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-7 Accept', selector sun.nio.ch.EPollSelectorImpl@2bfd223c
-09:25:01.773 [XNIO-7 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { HEAD /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.9.3], Host=[localhost:33671]}, cookies={}): &lt;-1 of null content&gt; }
-09:25:01.774 [XNIO-7 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; http://localhost:33671/something; {}): &lt;0 bytes of text/plain content&gt;
-09:25:02.025 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-09:25:02.029 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
-09:25:02.034 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-09:25:02.034 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-09:25:02.068 [XNIO-8 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-1', selector sun.nio.ch.EPollSelectorImpl@38297b5d
-09:25:02.079 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-09:25:02.080 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-09:25:02.081 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:43711, https:44951).
-09:25:02.082 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-09:25:02.079 [XNIO-8 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 I/O-2', selector sun.nio.ch.EPollSelectorImpl@50d5d9b2
-09:25:02.092 [XNIO-8 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-8 Accept', selector sun.nio.ch.EPollSelectorImpl@5c64f2b2
-09:25:02.229 [XNIO-8 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { HEAD /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.9.3], Host=[localhost:44951]}, cookies={}): &lt;-1 of null content&gt; }
-09:25:02.230 [XNIO-8 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; https://localhost:44951/something; {}): &lt;0 bytes of text/plain content&gt;
-09:25:02.233 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-09:25:02.237 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
-09:25:02.259 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-09:25:02.259 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-09:25:02.306 [XNIO-9 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-1', selector sun.nio.ch.EPollSelectorImpl@6d39ef15
-09:25:02.347 [XNIO-9 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 I/O-2', selector sun.nio.ch.EPollSelectorImpl@b0c3ee4
-09:25:02.357 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-09:25:02.358 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-09:25:02.359 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:34857, https:43759).
-09:25:02.359 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-09:25:02.369 [XNIO-9 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-9 Accept', selector sun.nio.ch.EPollSelectorImpl@43de2e08
-09:25:02.397 [XNIO-9 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { HEAD /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.9.3], Host=[localhost:34857]}, cookies={}): &lt;-1 of null content&gt; }
-09:25:02.398 [XNIO-9 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; http://localhost:34857/loader/something; {}): &lt;0 bytes of text/plain content&gt;
-09:25:02.651 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-09:25:02.653 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
-09:25:02.662 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-09:25:02.663 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-09:25:02.674 [XNIO-10 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-1', selector sun.nio.ch.EPollSelectorImpl@40a534c2
-09:25:02.684 [XNIO-10 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 I/O-2', selector sun.nio.ch.EPollSelectorImpl@73432d05
-09:25:02.705 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-09:25:02.705 [XNIO-10 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-10 Accept', selector sun.nio.ch.EPollSelectorImpl@22aa2074
-09:25:02.706 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-09:25:02.707 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:38511, https:44731).
-09:25:02.708 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-09:25:02.900 [XNIO-10 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { HEAD /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.9.3], Host=[localhost:44731]}, cookies={}): &lt;-1 of null content&gt; }
-09:25:02.900 [XNIO-10 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; https://localhost:44731/loader/something; {}): &lt;0 bytes of text/plain content&gt;
-09:25:03.152 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-09:25:03.154 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
-09:25:03.166 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-09:25:03.167 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-09:25:03.199 [XNIO-11 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-1', selector sun.nio.ch.EPollSelectorImpl@368ec9f8
-09:25:03.236 [XNIO-11 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 I/O-2', selector sun.nio.ch.EPollSelectorImpl@1966c451
-09:25:03.246 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-09:25:03.246 [XNIO-11 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-11 Accept', selector sun.nio.ch.EPollSelectorImpl@4b276bfd
-09:25:03.263 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-09:25:03.264 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:46741, https:37399).
-09:25:03.264 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-09:25:03.333 [XNIO-11 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { HEAD /safe(query={}, headers={Connection=[Keep-Alive], Authorization=[Basic YmFzaWN1c2VyOmJhJGljcEAkJA==], Accept-Encoding=[gzip], User-Agent=[okhttp/4.9.3], Host=[localhost:46741]}, cookies={}): &lt;-1 of null content&gt; }
-09:25:03.337 [XNIO-11 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; http://localhost:46741/safe; {}): &lt;0 bytes of text/plain content&gt;
-09:25:03.338 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-09:25:03.340 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
-09:25:03.350 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - HTTPS listener enabled and configured.
-09:25:03.351 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-09:25:03.361 [XNIO-12 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-1', selector sun.nio.ch.EPollSelectorImpl@d68e706
-09:25:03.379 [XNIO-12 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 I/O-2', selector sun.nio.ch.EPollSelectorImpl@4b97e176
-09:25:03.397 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-09:25:03.398 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTPS for interface localhost and port 0
-09:25:03.398 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:43947, https:37613).
-09:25:03.399 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-09:25:03.407 [XNIO-12 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-12 Accept', selector sun.nio.ch.EPollSelectorImpl@58a3afcc
-09:25:03.445 [XNIO-12 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { HEAD /safe(query={}, headers={Connection=[Keep-Alive], Authorization=[Basic YmFzaWN1c2VyOmJhJGljcEAkJA==], Accept-Encoding=[gzip], User-Agent=[okhttp/4.9.3], Host=[localhost:37613]}, cookies={}): &lt;-1 of null content&gt; }
-09:25:03.445 [XNIO-12 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; https://localhost:37613/safe; {}): &lt;0 bytes of text/plain content&gt;
-09:25:03.697 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-09:25:03.699 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
+<pre>04:05:56.240 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- HTTPS listener enabled and configured.
+04:05:56.241 [Test worker] INFO io.undertow -- starting server: Undertow - 2.3.5.Final
+04:05:56.243 [Test worker] DEBUG org.xnio -- Creating worker:null, pool size:16, max pool size:16, keep alive:60000, io threads:2, stack size:0
+04:05:56.261 [XNIO-2 I/O-1] DEBUG org.xnio.nio -- Started channel thread 'XNIO-2 I/O-1', selector sun.nio.ch.EPollSelectorImpl@382f867b
+04:05:56.268 [XNIO-2 I/O-2] DEBUG org.xnio.nio -- Started channel thread 'XNIO-2 I/O-2', selector sun.nio.ch.EPollSelectorImpl@27baabd8
+04:05:56.277 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTP for interface localhost and port 0
+04:05:56.279 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTPS for interface localhost and port 0
+04:05:56.279 [XNIO-2 Accept] DEBUG org.xnio.nio -- Started channel thread 'XNIO-2 Accept', selector sun.nio.ch.EPollSelectorImpl@42427e3d
+04:05:56.344 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Applied ports (http:34703, https:45289).
+04:05:56.346 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Started.
+04:05:59.197 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { HEAD /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.10.0], Host=[localhost:34703]}, cookies={}): &lt;-1 of null content&gt; }
+04:05:59.392 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34703/something; {Alpha=[Header-A], Bravo=[Header-B1, Header-B2]}): &lt;0 bytes of text/plain content&gt;
+04:06:00.857 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { HEAD /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.10.0], Host=[localhost:45289]}, cookies={}): &lt;-1 of null content&gt; }
+04:06:00.858 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:45289/something; {Alpha=[Header-A], Bravo=[Header-B1, Header-B2]}): &lt;0 bytes of text/plain content&gt;
+04:06:00.961 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { HEAD /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.10.0], Host=[localhost:34703]}, cookies={}): &lt;-1 of null content&gt; }
+04:06:00.962 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34703/loader/something; {}): &lt;0 bytes of text/plain content&gt;
+04:06:01.226 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { HEAD /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.10.0], Host=[localhost:45289]}, cookies={}): &lt;-1 of null content&gt; }
+04:06:01.227 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:45289/loader/something; {}): &lt;0 bytes of text/plain content&gt;
+04:06:01.345 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { HEAD /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.10.0], Host=[localhost:34703]}, cookies={}): &lt;-1 of null content&gt; }
+04:06:01.346 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34703/something; {}): &lt;0 bytes of text/plain content&gt;
+04:06:01.594 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { HEAD /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.10.0], Host=[localhost:45289]}, cookies={}): &lt;-1 of null content&gt; }
+04:06:01.595 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:45289/something; {}): &lt;0 bytes of text/plain content&gt;
+04:06:01.650 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { HEAD /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.10.0], Host=[localhost:34703]}, cookies={}): &lt;-1 of null content&gt; }
+04:06:01.651 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34703/something; {}): &lt;0 bytes of text/plain content&gt;
+04:06:01.846 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { HEAD /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.10.0], Host=[localhost:45289]}, cookies={}): &lt;-1 of null content&gt; }
+04:06:01.847 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:45289/something; {}): &lt;0 bytes of text/plain content&gt;
+04:06:01.945 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { HEAD /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.10.0], Host=[localhost:34703]}, cookies={}): &lt;-1 of null content&gt; }
+04:06:01.946 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34703/loader/something; {}): &lt;0 bytes of text/plain content&gt;
+04:06:02.126 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { HEAD /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.10.0], Host=[localhost:45289]}, cookies={}): &lt;-1 of null content&gt; }
+04:06:02.127 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:45289/loader/something; {}): &lt;0 bytes of text/plain content&gt;
+04:06:02.281 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { HEAD /safe(query={}, headers={Connection=[Keep-Alive], Authorization=[Basic YmFzaWN1c2VyOmJhJGljcEAkJA==], Accept-Encoding=[gzip], User-Agent=[okhttp/4.10.0], Host=[localhost:34703]}, cookies={}): &lt;-1 of null content&gt; }
+04:06:02.287 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34703/safe; {}): &lt;0 bytes of text/plain content&gt;
+04:06:02.695 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { HEAD /safe(query={}, headers={Connection=[Keep-Alive], Authorization=[Basic YmFzaWN1c2VyOmJhJGljcEAkJA==], Accept-Encoding=[gzip], User-Agent=[okhttp/4.10.0], Host=[localhost:45289]}, cookies={}): &lt;-1 of null content&gt; }
+04:06:02.696 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:45289/safe; {}): &lt;0 bytes of text/plain content&gt;
+04:06:02.709 [Test worker] INFO io.undertow -- stopping server: Undertow - 2.3.5.Final
+04:06:02.725 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Stopped.
 </pre>
 </span>
 </div>
@@ -326,7 +202,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 7.2</a> at Feb 26, 2022, 9:25:12 AM</p>
+<a href="http://www.gradle.org">Gradle 8.0.2</a> at Apr 25, 2023, 4:06:10 AM</p>
 </div>
 </div>
 </body>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GroovyErsatzServer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz-groovy</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz</a> &gt; <span class="el_source">GroovyErsatzServer.java</span></div><h1>GroovyErsatzServer.java</h1><pre class="source lang-java linenums">/**
- * Copyright (C) 2022 Christopher J. Stehno
+ * Copyright (C) 2023 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,11 @@
  */
 package io.github.cjstehno.ersatz;
 
-import io.github.cjstehno.ersatz.cfg.Expectations;
-import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
+import io.github.cjstehno.ersatz.cfg.Expectations;
+import io.github.cjstehno.ersatz.cfg.ServerConfig;
+import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
@@ -32,8 +33,26 @@ public class GroovyErsatzServer extends ErsatzServer {
      * Creates a new Groovy Ersatz server with no specific configuration.
      */
     public GroovyErsatzServer() {
-<span class="fc" id="L35">        super();</span>
-<span class="fc" id="L36">    }</span>
+<span class="fc" id="L36">        super();</span>
+<span class="fc" id="L37">    }</span>
+
+    /**
+     * Creates a new Groovy Ersatz server with the given server configuration.
+     *
+     * @param serverConfig the server configuration object
+     */
+    public GroovyErsatzServer(final ServerConfigImpl serverConfig) {
+<span class="fc" id="L45">        super(serverConfig);</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * Creates a new Groovy Ersatz Server as a wrapper around the provided server instance.
+     *
+     * @param ersatzServer the server instance to be wrapped
+     */
+    public GroovyErsatzServer(final ErsatzServer ersatzServer){
+<span class="fc" id="L54">        super(ersatzServer.getServerConfig());</span>
+<span class="fc" id="L55">    }</span>
 
     /**
      * Creates a new Ersatz server instance with either the default configuration or a configuration provided by the Groovy DSL closure.
@@ -41,8 +60,8 @@ public class GroovyErsatzServer extends ErsatzServer {
      * @param closure the configuration closure (delegated to &lt;code&gt;ServerConfig&lt;/code&gt;)
      */
     public GroovyErsatzServer(@DelegatesTo(value = ServerConfig.class, strategy = DELEGATE_FIRST) final Closure closure) {
-<span class="fc" id="L44">        super(ConsumerWithDelegate.create(closure));</span>
-<span class="fc" id="L45">    }</span>
+<span class="fc" id="L63">        super(ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L64">    }</span>
 
     /**
      * Used to configure HTTP expectations on the server; the provided Groovy &lt;code&gt;Closure&lt;/code&gt; will delegate to an &lt;code&gt;Expectations&lt;/code&gt;
@@ -54,7 +73,7 @@ public class GroovyErsatzServer extends ErsatzServer {
      * @return a reference to this server
      */
     public GroovyErsatzServer expectations(@DelegatesTo(value = Expectations.class, strategy = DELEGATE_FIRST) final Closure closure) {
-<span class="fc" id="L57">        return (GroovyErsatzServer) expectations(ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L76">        return (GroovyErsatzServer) expectations(ConsumerWithDelegate.create(closure));</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErsatzRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.impl</a> &gt; <span class="el_source">ErsatzRequest.java</span></div><h1>ErsatzRequest.java</h1><pre class="source lang-java linenums">/**
- * Copyright (C) 2022 Christopher J. Stehno
+ * Copyright (C) 2023 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,11 @@ import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.match.QueryParamMatcher;
 import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.val;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -44,13 +46,14 @@ import static org.hamcrest.Matchers.anything;
  */
 public class ErsatzRequest implements Request {
 
-<span class="fc" id="L47">    private final List&lt;Matcher&lt;ClientRequest&gt;&gt; matchers = new LinkedList&lt;&gt;();</span>
-<span class="fc" id="L48">    private final List&lt;Consumer&lt;ClientRequest&gt;&gt; listeners = new LinkedList&lt;&gt;();</span>
-<span class="fc" id="L49">    private final List&lt;Response&gt; responses = new LinkedList&lt;&gt;();</span>
+    private static final String FORWARD_HEADER_NAME = &quot;X-Ersatz-Forward&quot;;
+<span class="fc" id="L50">    private final List&lt;Matcher&lt;ClientRequest&gt;&gt; matchers = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L51">    private final List&lt;Consumer&lt;ClientRequest&gt;&gt; listeners = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L52">    private final List&lt;Response&gt; responses = new LinkedList&lt;&gt;();</span>
     private final ResponseEncoders globalEncoders;
     private final boolean emptyResponse;
-<span class="fc" id="L52">    private Matcher&lt;?&gt; callVerifier = anything();</span>
-<span class="fc" id="L53">    private final AtomicInteger callCount = new AtomicInteger(0);</span>
+<span class="fc" id="L55">    private Matcher&lt;?&gt; callVerifier = anything();</span>
+<span class="fc" id="L56">    private final AtomicInteger callCount = new AtomicInteger(0);</span>
 
     /**
      * Creates a new request with the specified method, path matcher and optional empty response flag (defaults to false).
@@ -58,79 +61,74 @@ public class ErsatzRequest implements Request {
      * @param meth           the request method
      * @param pathMatcher    the path matcher
      * @param globalEncoders the shared global encoders
-     * @param noResponse     whether this is a request with an empty response (defaults to false)
+     * @param emptyResponse     whether this is a request with an empty response
      */
-<span class="fc" id="L63">    public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders, final boolean noResponse) {</span>
-<span class="fc" id="L64">        matchers.add(methodMatching(meth));</span>
-<span class="fc" id="L65">        matchers.add(pathMatcher);</span>
+<span class="fc" id="L66">    public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders, final boolean emptyResponse) {</span>
+<span class="fc" id="L67">        matchers.add(methodMatching(meth));</span>
+<span class="fc" id="L68">        matchers.add(pathMatcher);</span>
 
-<span class="fc" id="L67">        this.globalEncoders = globalEncoders;</span>
-<span class="fc" id="L68">        this.emptyResponse = noResponse;</span>
-<span class="fc" id="L69">    }</span>
-
-    /**
-     * Creates a new request with the specified method, path matcher.
-     *
-     * @param meth           the request method
-     * @param pathMatcher    the path matcher
-     * @param globalEncoders the shared global encoders
-     */
-    public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders) {
-<span class="fc" id="L79">        this(meth, pathMatcher, globalEncoders, false);</span>
-<span class="fc" id="L80">    }</span>
+<span class="fc" id="L70">        this.globalEncoders = globalEncoders;</span>
+<span class="fc" id="L71">        this.emptyResponse = emptyResponse;</span>
+<span class="fc" id="L72">    }</span>
 
     @Override
     public Request secure(final boolean value) {
-<span class="fc" id="L84">        matchers.add(new RequestSchemeMatcher(value));</span>
-<span class="fc" id="L85">        return this;</span>
+<span class="fc" id="L76">        matchers.add(new RequestSchemeMatcher(value));</span>
+<span class="fc" id="L77">        return this;</span>
     }
 
     @Override public Request header(final HeaderMatcher headerMatcher) {
-<span class="fc" id="L89">        matchers.add(headerMatcher);</span>
-<span class="fc" id="L90">        return this;</span>
+<span class="fc" id="L81">        matchers.add(headerMatcher);</span>
+<span class="fc" id="L82">        return this;</span>
     }
 
     @Override public Request query(final QueryParamMatcher queryMatcher) {
-<span class="fc" id="L94">        matchers.add(queryMatcher);</span>
-<span class="fc" id="L95">        return this;</span>
+<span class="fc" id="L86">        matchers.add(queryMatcher);</span>
+<span class="fc" id="L87">        return this;</span>
     }
 
     @Override public Request cookie(RequestCookieMatcher cookieMatcher) {
-<span class="fc" id="L99">        matchers.add(cookieMatcher);</span>
-<span class="fc" id="L100">        return this;</span>
+<span class="fc" id="L91">        matchers.add(cookieMatcher);</span>
+<span class="fc" id="L92">        return this;</span>
     }
 
     @Override
     public Request listener(final Consumer&lt;ClientRequest&gt; listener) {
-<span class="fc" id="L105">        listeners.add(listener);</span>
-<span class="fc" id="L106">        return this;</span>
+<span class="fc" id="L97">        listeners.add(listener);</span>
+<span class="fc" id="L98">        return this;</span>
     }
 
     @Override
     public Response responds() {
-<span class="fc" id="L111">        final Response response = newResponse();</span>
-<span class="fc" id="L112">        responses.add(response);</span>
-<span class="fc" id="L113">        return response;</span>
+<span class="fc" id="L103">        final Response response = newResponse();</span>
+<span class="fc" id="L104">        responses.add(response);</span>
+<span class="fc" id="L105">        return response;</span>
     }
 
     @Override
     public Request responder(final Consumer&lt;Response&gt; responder) {
-<span class="fc" id="L118">        final Response response = newResponse();</span>
-<span class="fc" id="L119">        responder.accept(response);</span>
-<span class="fc" id="L120">        responses.add(response);</span>
-<span class="fc" id="L121">        return this;</span>
+<span class="fc" id="L110">        val response = newResponse();</span>
+<span class="fc" id="L111">        responder.accept(response);</span>
+<span class="fc" id="L112">        responses.add(response);</span>
+<span class="fc" id="L113">        return this;</span>
+    }
+
+    @Override public Request forward(final URI targetUri) {
+<span class="fc" id="L117">        val response = new ErsatzForwardResponse(targetUri);</span>
+<span class="fc" id="L118">        responses.add(response);</span>
+<span class="fc" id="L119">        return this;</span>
     }
 
     @Override
     public Request called(final Matcher&lt;Integer&gt; callVerifier) {
-<span class="fc" id="L126">        this.callVerifier = callVerifier;</span>
-<span class="fc" id="L127">        return this;</span>
+<span class="fc" id="L124">        this.callVerifier = callVerifier;</span>
+<span class="fc" id="L125">        return this;</span>
     }
 
     @Override
     public Request matcher(final Matcher&lt;ClientRequest&gt; matcher) {
-<span class="fc" id="L132">        matchers.add(matcher);</span>
-<span class="fc" id="L133">        return this;</span>
+<span class="fc" id="L130">        matchers.add(matcher);</span>
+<span class="fc" id="L131">        return this;</span>
     }
 
     /**
@@ -144,8 +142,8 @@ public class ErsatzRequest implements Request {
      * @return true if the call count matches the expected verification criteria
      */
     public boolean verify(final long timeout, final TimeUnit unit) {
-<span class="fc" id="L147">        return isTrueBefore(</span>
-<span class="fc" id="L148">            () -&gt; callVerifier.matches(callCount.get()),</span>
+<span class="fc" id="L145">        return isTrueBefore(</span>
+<span class="fc" id="L146">            () -&gt; callVerifier.matches(callCount.get()),</span>
             timeout,
             unit
         );
@@ -160,7 +158,7 @@ public class ErsatzRequest implements Request {
      * @return true if the incoming request matches the configured request
      */
     public boolean matches(final ClientRequest clientRequest) {
-<span class="fc" id="L163">        return matchers.stream().allMatch(m -&gt; m.matches(clientRequest));</span>
+<span class="fc" id="L161">        return matchers.stream().allMatch(m -&gt; m.matches(clientRequest));</span>
     }
 
     /**
@@ -169,7 +167,7 @@ public class ErsatzRequest implements Request {
      * @return an immutable list of the configured matchers.
      */
     public List&lt;Matcher&lt;ClientRequest&gt;&gt; getRequestMatchers() {
-<span class="fc" id="L172">        return unmodifiableList(matchers);</span>
+<span class="fc" id="L170">        return unmodifiableList(matchers);</span>
     }
 
     /**
@@ -178,8 +176,8 @@ public class ErsatzRequest implements Request {
      * @param matcher the matcher to be added
      */
     protected void addMatcher(final Matcher&lt;ClientRequest&gt; matcher) {
-<span class="fc" id="L181">        matchers.add(matcher);</span>
-<span class="fc" id="L182">    }</span>
+<span class="fc" id="L179">        matchers.add(matcher);</span>
+<span class="fc" id="L180">    }</span>
 
     /**
      * Creates a new response container for this request.
@@ -187,7 +185,7 @@ public class ErsatzRequest implements Request {
      * @return a new response container
      */
     protected Response newResponse() {
-<span class="fc" id="L190">        return new ErsatzResponse(emptyResponse, globalEncoders);</span>
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">        return emptyResponse ? new ErsatzResponseWithoutContent() : new ErsatzResponse(globalEncoders);</span>
     }
 
     /**
@@ -196,10 +194,10 @@ public class ErsatzRequest implements Request {
      *
      * @return the current response
      */
-    public ErsatzResponse getCurrentResponse() {
-<span class="fc" id="L200">        final int currentCount = callCount.get();</span>
-<span class="fc bfc" id="L201" title="All 2 branches covered.">        final int index = currentCount &gt;= responses.size() ? responses.size() - 1 : currentCount;</span>
-<span class="fc bfc" id="L202" title="All 2 branches covered.">        return index &gt;= 0 ? (ErsatzResponse) responses.get(index) : null;</span>
+    public Response getCurrentResponse() {
+<span class="fc" id="L198">        final int currentCount = callCount.get();</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">        final int index = currentCount &gt;= responses.size() ? responses.size() - 1 : currentCount;</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        return index &gt;= 0 ? responses.get(index) : null;</span>
     }
 
     /**
@@ -208,22 +206,24 @@ public class ErsatzRequest implements Request {
      * @param cr the client request to be marked
      */
     public void mark(final ClientRequest cr) {
-<span class="fc" id="L211">        callCount.incrementAndGet();</span>
+<span class="fc" id="L209">        callCount.incrementAndGet();</span>
 
-<span class="fc" id="L213">        listeners.forEach(listener -&gt; listener.accept(cr));</span>
-<span class="fc" id="L214">    }</span>
+<span class="fc" id="L211">        listeners.forEach(listener -&gt; listener.accept(cr));</span>
+<span class="fc" id="L212">    }</span>
 
     @Override public String toString() {
-<span class="fc" id="L217">        final var str = new StringBuilder();</span>
-<span class="fc" id="L218">        str.append(&quot;Expectations (&quot;).append(getClass().getSimpleName()).append(&quot;): &quot;);</span>
+<span class="fc" id="L215">        final var str = new StringBuilder();</span>
+<span class="fc" id="L216">        str.append(&quot;Expectations (&quot;).append(getClass().getSimpleName()).append(&quot;): &quot;);</span>
 
-<span class="fc" id="L220">        matchers.forEach(m -&gt; {</span>
-<span class="fc" id="L221">            final var desc = new StringDescription();</span>
-<span class="fc" id="L222">            m.describeTo(desc);</span>
-<span class="fc" id="L223">            str.append(desc).append(&quot;, &quot;);</span>
-<span class="fc" id="L224">        });</span>
+<span class="fc" id="L218">        matchers.forEach(m -&gt; {</span>
+<span class="fc" id="L219">            final var desc = new StringDescription();</span>
+<span class="fc" id="L220">            m.describeTo(desc);</span>
+<span class="fc" id="L221">            str.append(desc).append(&quot;, &quot;);</span>
+<span class="fc" id="L222">        });</span>
+
+<span class="fc" id="L224">        str.append(&quot;and Called &quot;).append(callVerifier);</span>
 
 <span class="fc" id="L226">        return str.toString();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

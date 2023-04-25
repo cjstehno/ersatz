@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">4.323s</div>
+<div class="counter">5.148s</div>
 <p>duration</p>
 </div>
 </td>
@@ -81,7 +81,7 @@
 <tr>
 <td class="success">Support for Http/1</td>
 <td class="success">http_1_support()</td>
-<td class="success">4.323s</td>
+<td class="success">5.148s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -89,22 +89,23 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>09:24:53.366 [Test worker] DEBUG org.jboss.logging - Logging Provider: org.jboss.logging.Slf4jLoggerProvider
-09:24:53.580 [Test worker] INFO io.undertow - starting server: Undertow - 2.2.14.Final
-09:24:53.729 [Test worker] INFO org.xnio - XNIO version 3.8.4.Final
-09:24:54.029 [Test worker] INFO org.xnio.nio - XNIO NIO Implementation Version 3.8.4.Final
-09:24:55.151 [Test worker] INFO org.jboss.threads - JBoss Threads version 3.1.0.Final
-09:24:55.320 [XNIO-1 I/O-1] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-1', selector sun.nio.ch.EPollSelectorImpl@4e7c5bab
-09:24:55.330 [XNIO-1 I/O-2] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 I/O-2', selector sun.nio.ch.EPollSelectorImpl@7b59adcb
-09:24:55.353 [XNIO-1 Accept] DEBUG org.xnio.nio - Started channel thread 'XNIO-1 Accept', selector sun.nio.ch.EPollSelectorImpl@407b5992
-09:24:55.361 [Test worker] DEBUG io.undertow - Configuring listener with protocol HTTP for interface localhost and port 0
-09:24:55.775 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Applied ports (http:45707, https:-1).
-09:24:55.776 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Started.
-09:24:56.284 [XNIO-1 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Request(HTTP/1.1): { GET /hello(query={}, headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/17.0.1], Host=[localhost:45707]}, cookies={}): &lt;-1 of null content&gt; }
-09:24:56.431 [XNIO-1 task-1] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse - No encoder configured for content (String) - returning string bytes.
-09:24:56.437 [XNIO-1 task-1] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler - Response(HTTP/1.1; http://localhost:45707/hello; {Content-Type=[text/plain]}): &lt;9 bytes of text/plain content&gt;
-09:24:56.923 [Test worker] INFO io.undertow - stopping server: Undertow - 2.2.14.Final
-09:24:56.929 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer - Stopped.
+<pre>04:05:53.421 [Test worker] DEBUG org.jboss.logging -- Logging Provider: org.jboss.logging.Slf4jLoggerProvider
+04:05:53.593 [Test worker] INFO io.undertow -- starting server: Undertow - 2.3.5.Final
+04:05:53.812 [Test worker] INFO org.xnio -- XNIO version 3.8.8.Final
+04:05:54.091 [Test worker] INFO org.xnio.nio -- XNIO NIO Implementation Version 3.8.8.Final
+04:05:55.241 [Test worker] DEBUG org.xnio -- Creating worker:null, pool size:16, max pool size:16, keep alive:60000, io threads:2, stack size:0
+04:05:55.578 [Test worker] INFO org.jboss.threads -- JBoss Threads version 3.5.0.Final
+04:05:55.733 [XNIO-1 I/O-1] DEBUG org.xnio.nio -- Started channel thread 'XNIO-1 I/O-1', selector sun.nio.ch.EPollSelectorImpl@680dca9c
+04:05:55.741 [XNIO-1 I/O-2] DEBUG org.xnio.nio -- Started channel thread 'XNIO-1 I/O-2', selector sun.nio.ch.EPollSelectorImpl@495b4e2
+04:05:55.751 [XNIO-1 Accept] DEBUG org.xnio.nio -- Started channel thread 'XNIO-1 Accept', selector sun.nio.ch.EPollSelectorImpl@6c03bcba
+04:05:55.762 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTP for interface localhost and port 0
+04:05:56.286 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Applied ports (http:42909, https:-1).
+04:05:56.287 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Started.
+04:05:56.763 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { GET /hello(query={}, headers={Accept=[text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2], Connection=[keep-alive], User-Agent=[Java/17.0.6], Host=[localhost:42909]}, cookies={}): &lt;-1 of null content&gt; }
+04:05:56.906 [XNIO-1 task-2] WARN io.github.cjstehno.ersatz.impl.ErsatzResponse -- No encoder configured for content (String) of type (text/plain) - returning string bytes.
+04:05:57.039 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:42909/hello; {Content-Type=[text/plain]}): &lt;9 bytes of text/plain content&gt;
+04:05:57.586 [Test worker] INFO io.undertow -- stopping server: Undertow - 2.3.5.Final
+04:05:57.619 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Stopped.
 </pre>
 </span>
 </div>
@@ -116,7 +117,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 7.2</a> at Feb 26, 2022, 9:25:12 AM</p>
+<a href="http://www.gradle.org">Gradle 8.0.2</a> at Apr 25, 2023, 4:06:10 AM</p>
 </div>
 </div>
 </body>

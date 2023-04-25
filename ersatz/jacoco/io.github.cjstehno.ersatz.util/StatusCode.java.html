@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StatusCode.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.util</a> &gt; <span class="el_source">StatusCode.java</span></div><h1>StatusCode.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2023 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.util;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import static java.util.Arrays.stream;
+import static lombok.AccessLevel.PRIVATE;
+
+/**
+ * Some available HTTP response status codes.
+ */
+<span class="fc" id="L27">@RequiredArgsConstructor(access = PRIVATE)</span>
+public enum StatusCode {
+
+    // 100s
+
+    /**
+     * HTTP Status Code for Continue 100.
+     */
+<span class="fc" id="L35">    CONTINUE(100),</span>
+
+    /**
+     * HTTP Status Code for Switching Protocols 101.
+     */
+<span class="fc" id="L40">    SWITCHING_PROTOCOLS(101),</span>
+
+    /**
+     * HTTP Status Code for Processing 102.
+     */
+<span class="fc" id="L45">    PROCESSING(102),</span>
+
+    // 200s
+
+    /**
+     * HTTP Status Code for Ok 200.
+     */
+<span class="fc" id="L52">    OK(200),</span>
+
+    /**
+     * HTTP Status Code for Created 201.
+     */
+<span class="fc" id="L57">    CREATED(201),</span>
+
+    /**
+     * HTTP Status Code for Accepted 202.
+     */
+<span class="fc" id="L62">    ACCEPTED(202),</span>
+
+    /**
+     * HTTP Status Code for Non-Authoritative Information 203.
+     */
+<span class="fc" id="L67">    NON_AUTHORITATIVE_INFORMATION(203),</span>
+
+    /**
+     * HTTP Status Code for No Content 204.
+     */
+<span class="fc" id="L72">    NO_CONTENT(204),</span>
+
+    /**
+     * HTTP Status Code for Reset Content 205.
+     */
+<span class="fc" id="L77">    RESET_CONTENT(205),</span>
+
+    /**
+     * HTTP Status Code for Partial Content 206.
+     */
+<span class="fc" id="L82">    PARTIAL_CONTENT(206),</span>
+
+    /**
+     * HTTP Status Code for Multi-Status 207.
+     */
+<span class="fc" id="L87">    MULTI_STATUS(207),</span>
+
+    /**
+     * HTTP Status Code for Already Reported 208.
+     */
+<span class="fc" id="L92">    ALREADY_REPORTED(208),</span>
+
+    // 300s
+
+    /**
+     * HTTP Status Code for Multiple Choice 300.
+     */
+<span class="fc" id="L99">    MULTIPLE_CHOICE(300),</span>
+
+    /**
+     * HTTP Status Code for Moved Permanently 301.
+     */
+<span class="fc" id="L104">    MOVED_PERMANENTLY(301),</span>
+
+    /**
+     * HTTP Status Code for Found 302.
+     */
+<span class="fc" id="L109">    FOUND(302),</span>
+
+    /**
+     * HTTP Status Code for See Other 303.
+     */
+<span class="fc" id="L114">    SEE_OTHER(303),</span>
+
+    /**
+     * HTTP Status Code for Not Modified.
+     */
+<span class="fc" id="L119">    NOT_MODIFIED(304),</span>
+
+    /**
+     * HTTP Status Code for Temporary Redirect 307.
+     */
+<span class="fc" id="L124">    TEMPORARY_REDIRECT(307),</span>
+
+    /**
+     * HTTP Status Code for Permanent Redirect 308.
+     */
+<span class="fc" id="L129">    PERMANENT_REDIRECT(308),</span>
+
+    // 400s
+
+    /**
+     * HTTP Status Code for Bad Request 400.
+     */
+<span class="fc" id="L136">    BAD_REQUEST(400),</span>
+
+    /**
+     * HTTP Status Code for Unauthorized 401.
+     */
+<span class="fc" id="L141">    UNAUTHORIZED(401),</span>
+
+    /**
+     * HTTP Status Code for Payment Required 402.
+     */
+<span class="fc" id="L146">    PAYMENT_REQUIRED(402),</span>
+
+    /**
+     * HTTP Status Code for Forbidden 403.
+     */
+<span class="fc" id="L151">    FORBIDDEN(403),</span>
+
+    /**
+     * HTTP Status Code for Not Found 404.
+     */
+<span class="fc" id="L156">    NOT_FOUND(404),</span>
+
+    /**
+     * HTTP Status Code for Method Not Allowed 405.
+     */
+<span class="fc" id="L161">    METHOD_NOT_ALLOWED(405),</span>
+
+    /**
+     * HTTP Status Code for Not Acceptable 406.
+     */
+<span class="fc" id="L166">    NOT_ACCEPTABLE(406),</span>
+
+    /**
+     * HTTP Status Code for Request Timeout 408.
+     */
+<span class="fc" id="L171">    REQUEST_TIMEOUT(408),</span>
+
+    /**
+     * HTTP Status Code for Conflict 409.
+     */
+<span class="fc" id="L176">    CONFLICT(409),</span>
+
+    /**
+     * HTTP Status Code for Gone 410.
+     */
+<span class="fc" id="L181">    GONE(410),</span>
+
+    /**
+     * HTTP Status Code for Length Required 411.
+     */
+<span class="fc" id="L186">    LENGTH_REQUIRED(411),</span>
+
+    /**
+     * HTTP Status Code for Precondition Failed.
+     */
+<span class="fc" id="L191">    PRECONDITION_FAILED(412),</span>
+
+    /**
+     * HTTP Status Code for Payload Too Large 413.
+     */
+<span class="fc" id="L196">    PAYLOAD_TOO_LARGE(413),</span>
+
+    /**
+     * HTTP Status Code for URI Too Long 414.
+     */
+<span class="fc" id="L201">    URI_TOO_LONG(414),</span>
+
+    /**
+     * HTTP Status Code for Unsupported Media Type 415.
+     */
+<span class="fc" id="L206">    UNSUPPORTED_MEDIA_TYPE(415),</span>
+
+    /**
+     * HTTP Status Code for Misdirected Request 421.
+     */
+<span class="fc" id="L211">    MISDIRECTED_REQUEST(421),</span>
+
+    /**
+     * HTTP Status Code for Unprocessable Entity 422.
+     */
+<span class="fc" id="L216">    UNPROCESSABLE_ENTITY(422),</span>
+
+    /**
+     * HTTP Status Code for Locked 423.
+     */
+<span class="fc" id="L221">    LOCKED(423),</span>
+
+    /**
+     * HTTP Status Code for Failed Dependency 424.
+     */
+<span class="fc" id="L226">    FAILED_DEPENDENCY(424),</span>
+
+    /**
+     * HTTP Status Code for Upgrade Required 426.
+     */
+<span class="fc" id="L231">    UPGRADE_REQUIRED(426),</span>
+
+    /**
+     * HTTP Status Code for Precondition Required 428.
+     */
+<span class="fc" id="L236">    PRECONDITION_REQUIRED(428),</span>
+
+    /**
+     * HTTP Status Code for Too Many Requests 429.
+     */
+<span class="fc" id="L241">    TOO_MANY_REQUESTS(429),</span>
+
+    /**
+     * HTTP Status Code for Request Header Fields Too Large 431.
+     */
+<span class="fc" id="L246">    REQUEST_HEADER_FIELDS_TOO_LARGE(431),</span>
+
+    /**
+     * HTTP Status Code for Unavailable for Legal Reasons 451.
+     */
+<span class="fc" id="L251">    UNAVAILABLE_FOR_LEGAL_REASONS(451),</span>
+
+    // 500s
+
+    /**
+     * HTTP Status Code for Internal Server Error 500.
+     */
+<span class="fc" id="L258">    INTERNAL_SERVER_ERROR(500),</span>
+
+    /**
+     * HTTP Status Code for Not Implemented 501.
+     */
+<span class="fc" id="L263">    NOT_IMPLEMENTED(501),</span>
+
+    /**
+     * HTTP Status Code for Bad Gateway 502.
+     */
+<span class="fc" id="L268">    BAD_GATEWAY(502),</span>
+
+    /**
+     * HTTP Status Code for Service Unavailable 503.
+     */
+<span class="fc" id="L273">    SERVICE_UNAVAILABLE(503),</span>
+
+    /**
+     * HTTP Status Code for Gateway Timeout 504.
+     */
+<span class="fc" id="L278">    GATEWAY_TIMEOUT(504),</span>
+
+    /**
+     * HTTP Status Code for HTTP Version Not Supported 505.
+     */
+<span class="fc" id="L283">    HTTP_VERSION_NOT_SUPPORTED(505),</span>
+
+    /**
+     * HTTP Status Code for Insufficient Storage 507.
+     */
+<span class="fc" id="L288">    INSUFFICIENT_STORAGE(507),</span>
+
+    /**
+     * HTTP Status Code for Loop Detected 508.
+     */
+<span class="fc" id="L293">    LOOP_DETECTED(508),</span>
+
+    /**
+     * HTTP Status Code for Not Extended 510.
+     */
+<span class="fc" id="L298">    NOT_EXTENDED(510),</span>
+
+    /**
+     * HTTP Status Code for Network Authentication Requested 511.
+     */
+<span class="fc" id="L303">    NETWORK_AUTHENTICATION_REQUIRED(511);</span>
+
+    /**
+     * The numerical status value.
+     */
+<span class="nc" id="L308">    @Getter private final int value;</span>
+
+    /**
+     * Retrieves the enum value for the provided status code number value.
+     *
+     * @param value the status number value
+     * @return the StatusCode for the number
+     * @throws IllegalArgumentException if there is no enum value for the number value
+     */
+    public static StatusCode of(final int value) {
+<span class="fc bfc" id="L318" title="All 2 branches covered.">        return stream(values()).filter(sc -&gt; sc.value == value).findAny().orElseThrow();</span>
+    }
+
+    /**
+     * Returns true if the status code is &quot;informational&quot; (100-199).
+     *
+     * @param code the status code enum
+     * @return true if the code is informational
+     */
+    public static boolean isInformational(final StatusCode code) {
+<span class="fc" id="L328">        return isBetween(code, 100, 199);</span>
+    }
+
+    /**
+     * Returns true if the status code is &quot;successful&quot; (200-299).
+     *
+     * @param code the status code enum
+     * @return true if the code is successful
+     */
+    public static boolean isSuccessful(final StatusCode code) {
+<span class="fc" id="L338">        return isBetween(code, 200, 299);</span>
+    }
+
+    /**
+     * Returns true if the status code is &quot;redirection&quot; (300-399).
+     *
+     * @param code the status code enum
+     * @return true if the code is redirection
+     */
+    public static boolean isRedirection(final StatusCode code) {
+<span class="fc" id="L348">        return isBetween(code, 300, 399);</span>
+    }
+
+    /**
+     * Returns true if the status code is a &quot;client error&quot; (400-499).
+     *
+     * @param code the status code enum
+     * @return true if the code is a client error
+     */
+    public static boolean isClientError(final StatusCode code) {
+<span class="fc" id="L358">        return isBetween(code, 400, 499);</span>
+    }
+
+    /**
+     * Returns true if the status code is a &quot;server error&quot; (500-599).
+     *
+     * @param code the status code enum
+     * @return true if the code is a server error
+     */
+    public static boolean isServerError(final StatusCode code) {
+<span class="fc" id="L368">        return isBetween(code, 500, 599);</span>
+    }
+
+    private static boolean isBetween(final StatusCode code, int lowInclusive, int highInclusive) {
+<span class="fc bfc" id="L372" title="All 4 branches covered.">        return code.value &gt;= lowInclusive &amp;&amp; code.value &lt;= highInclusive;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
