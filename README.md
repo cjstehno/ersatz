@@ -89,10 +89,10 @@ In order to build specific reports, run the appropriate one of the following:
 
 You can publish the all the source, javadoc, "safe" and regular jars to your local maven repository (`~/.m2/repository` directory) using the following command:
 
-    ./gradlew publishToMavenLocal -x sign
+    ./gradlew publishToMavenLocal -x signErsatzGroovyPublication signErsatzPublication
     
     // or, if you have not built recently
-    ./gradlew clean build publishToMavenLocal -x sign
+    ./gradlew clean build publishToMavenLocal -x signErsatzGroovyPublication signErsatzPublication
 
 The `-x sign` skips the signing step, which requires signing information. See the section on "signing" below if you need 
 to have the locally published artifacts signed.
@@ -127,7 +127,7 @@ where `<last-8-of-key>` is the last 8 characters of the key, and `<key-password>
 
 You can list the available keys using:
 
-    gpg2 -k
+    gpg -k
 
 ## Documentation Site
 
