@@ -31,9 +31,11 @@ class ErsatzServerTest {
     @Test @DisplayName("verify url information") @ApplyServerConfig("infoConfig")
     void urlInformation(final ErsatzServer server) {
         assertEquals("http://localhost:8182", server.getHttpUrl());
+        assertEquals("http://localhost:8182", server.getUrl(false));
         assertEquals("http://localhost:8182/stuff", server.httpUrl("/stuff"));
 
         assertEquals("https://localhost:8584", server.getHttpsUrl());
+        assertEquals("https://localhost:8584", server.getUrl(true));
         assertEquals("https://localhost:8584/stuff", server.httpsUrl("/stuff"));
     }
 

@@ -51,7 +51,7 @@ public class ErsatzServerTraceExpectationsTest {
 
         assertLinesMatch(
             template("/trace.txt", Map.of(
-                "port", String.valueOf(https ? server.getHttpsPort() : server.getHttpPort())
+                "port", String.valueOf(server.getPort(https))
             )).lines(),
             response.body().string().lines()
         );

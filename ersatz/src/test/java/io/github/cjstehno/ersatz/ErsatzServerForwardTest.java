@@ -62,7 +62,7 @@ public class ErsatzServerForwardTest {
                     req.secure(secure);
                     req.called();
                     req.query("foo", "bar");
-                    req.forward(secure ? targetServer.getHttpsUrl() : targetServer.getHttpUrl());
+                    req.forward(targetServer.getUrl(secure));
                 });
             });
 
@@ -91,7 +91,7 @@ public class ErsatzServerForwardTest {
                 expect.HEAD("/endpoint/head", req -> {
                     req.secure(secure);
                     req.called();
-                    req.forward(secure ? targetServer.getHttpsUrl() : targetServer.getHttpUrl());
+                    req.forward(targetServer.getUrl(secure));
                 });
             });
 
@@ -119,7 +119,7 @@ public class ErsatzServerForwardTest {
                 expect.DELETE("/endpoint/delete", req -> {
                     req.secure(secure);
                     req.called();
-                    req.forward(secure ? targetServer.getHttpsUrl() : targetServer.getHttpUrl());
+                    req.forward(targetServer.getUrl(secure));
                 });
             });
 
@@ -149,7 +149,7 @@ public class ErsatzServerForwardTest {
                     req.secure(secure);
                     req.called();
                     req.body(Map.of("foo", "bar"), APPLICATION_JSON);
-                    req.forward(secure ? targetServer.getHttpsUrl() : targetServer.getHttpUrl());
+                    req.forward(targetServer.getUrl(secure));
                 });
             });
 
@@ -183,7 +183,7 @@ public class ErsatzServerForwardTest {
                     req.secure(secure);
                     req.called();
                     req.body(Map.of("foo", "bar"), APPLICATION_JSON);
-                    req.forward(secure ? targetServer.getHttpsUrl() : targetServer.getHttpUrl());
+                    req.forward(targetServer.getUrl(secure));
                 });
             });
 
@@ -216,7 +216,7 @@ public class ErsatzServerForwardTest {
                     req.secure(secure);
                     req.called();
                     req.body(Map.of("foo", "bar"), APPLICATION_JSON);
-                    req.forward(secure ? targetServer.getHttpsUrl() : targetServer.getHttpUrl());
+                    req.forward(targetServer.getUrl(secure));
                 });
             });
 
