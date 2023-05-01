@@ -1,0 +1,81 @@
+plugins {
+    id 'java-library'
+    id 'jacoco'
+    id "com.github.hierynomus.license" version '0.16.1'
+    id 'com.github.ben-manes.versions' version '0.42.0'
+    id 'com.adarshr.test-logger' version '3.2.0'
+}
+
+group = rootProject.group
+version = rootProject.version
+
+sourceCompatibility = 17
+targetCompatibility = 17
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // production
+
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    implementation 'org.slf4j:slf4j-api:2.0.7'
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+
+    // testing
+
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    testCompileOnly "org.junit.jupiter:junit-jupiter-api:5.9.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.9.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.2"
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.2.0'
+
+    testImplementation 'io.github.cjstehno.ersatz:ersatz:3.2.0'
+    testImplementation 'io.github.cjstehno:test-things:0.1.0'
+}
+
+test {
+    useJUnitPlatform()
+    maxParallelForks = Runtime.runtime.availableProcessors()
+}
+
+testlogger {
+    theme 'mocha-parallel'
+    showExceptions true
+    showStackTraces true
+    showFullStackTraces false
+    showCauses true
+    slowThreshold 2000
+    showSummary true
+    showSimpleNames false
+    showPassed false
+    showSkipped true
+    showFailed true
+    showOnlySlow false
+    showStandardStreams false
+    showPassedStandardStreams true
+    showSkippedStandardStreams true
+    showFailedStandardStreams true
+    logLevel 'lifecycle'
+}
+
+jacocoTestReport {
+    dependsOn test
+}
+
+license {
+    header = file('../config/license_header.txt')
+
+    ignoreFailures false
+
+    ext.year = Calendar.instance.get(Calendar.YEAR)
+
+    excludes(['**/*.txt', '**/*.dtd', '**/*.xml', '**/*.ent', '**/*.jks', '**/*.jpg'])
+}

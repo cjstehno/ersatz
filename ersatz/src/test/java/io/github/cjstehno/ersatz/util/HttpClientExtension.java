@@ -293,7 +293,7 @@ public class HttpClientExtension implements BeforeEachCallback, ParameterResolve
         private static OkHttpClient.Builder configureHttps(final OkHttpClient.Builder builder, final boolean enabled) throws KeyManagementException, NoSuchAlgorithmException {
             if (enabled) {
                 // Create a trust manager that does not validate certificate chains
-                final var trustAllCerts = new TrustManager[]{
+                val trustAllCerts = new TrustManager[]{
                     new X509TrustManager() {
                         @Override
                         public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {

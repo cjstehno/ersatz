@@ -1,0 +1,235 @@
+= Filepile
+:toc: left
+:toclevels: 4
+
+== Introduction
+
+Filepile is a hypothetical simple and contrived cloud file storage system with a RESTful API.
+
+WARNING: This is NOT meant to be a guide to how you should write a RESTful API.
+Some shortcuts and omissions have been made here to simplify the tutorial.
+
+== Endpoints
+
+The following sections define the RESTful endpoints for the Filepile API.
+
+=== Secure Requests
+
+All requests are to be made with HTTPS.
+If a request is made with HTTP, the server will respond with an error:
+
+*_400 Bad Request_*
+
+[source,json]
+----
+{
+  "message": "Only HTTPS is supported."
+}
+----
+
+=== Security Token Header
+
+Requests to all endpoints, except `POST /api/token` are expected to have a request header `X-Filepile-Token` present containing a valid request token (retrieved from a login request).
+If a request does not have this header, or it is invalid, an error response will be returned.
+
+*_401 Unauthorized_*
+
+[source,json]
+----
+{
+  "message": "Invalid request token."
+}
+----
+
+=== General Error
+
+All of the endpoints may respond with a general server error if there is a problem with the server or in handling the request (not otherwise accounted for by specified errors) - there may or may not be a useful message with the error.
+The response will be:
+
+*_500 Internal Server Error_*
+
+[source,json]
+----
+{
+  "message": "<MESSAGE>"
+}
+----
+
+=== `POST /api/token`
+
+A request to retrieve a session request token, which should be used in all other requests.
+
+==== Request
+
+Uses BASIC Authentication (username and password).
+
+==== Responses
+
+*_200 Ok_*
+
+[source,json]
+----
+{
+  "token": "<TOKEN>",
+  "expires": <EPOCH-TIMESTAMP>
+}
+----
+
+*_401 Unauthorized_*
+
+[source,json]
+----
+{
+  "message": "Unable to retrieve token."
+}
+----
+
+=== `GET /api/storage`
+
+Retrieves a list of the meta information for all files in the system.
+
+==== Request
+
+- Query String: *_nameFilter_*: Filters the results to show only those items whose "name" contains the filter value (regardless of case).
+
+==== Responses
+
+*_200 Ok_*
+
+[source,json]
+----
+[
+  {
+    "id": "<FILE-ID>",
+    "name": "<FILE-NAME>",
+    "type": "<FILE-TYPE>",
+    "size": FILE_SIZE_BYTES
+  },
+  // ...
+]
+----
+
+=== `GET /api/storage/{id}`
+
+Retrieves the file (information or bytes) for the file with the specified "id", based on the values of the `Accept` header.
+
+==== Request
+
+- Accept Header: `application/json` - requests that the response be JSON content.
+- Accept Header: `application/octet-stream` - requests that the response be the binary content of the file.
+
+==== Responses
+
+*_200 Ok_*
+
+The JSON response would be:
+
+[source,json]
+----
+{
+    "id": "<FILE-ID>",
+    "name": "<FILE-NAME>",
+    "type": "<FILE-TYPE>",
+    "size": FILE_SIZE_BYTES
+}
+----
+
+whereas the binary response would be a stream of bytes.
+
+*_404 Not Found_*
+
+For the JSON response case the content would be:
+
+[source,json]
+----
+{
+    "message": "<MESSAGE>"
+}
+----
+
+but for the binary response, it will be empty.
+
+=== `POST /api/storage`
+
+Create or update a file (metadata and content).
+
+==== Request
+
+FIXME: multipart request with params (below and file content)
+
+id:
+name:
+type: - determined from request
+size: - determined from request
+
+file content
+
+==== Response
+
+*_200 Ok_*
+
+[source,json]
+----
+{
+    "id": "<FILE-ID>",
+    "name": "<FILE-NAME>",
+    "type": "<FILE-TYPE>",
+    "size": FILE_SIZE_BYTES
+}
+----
+
+=== `DELETE /api/storage/{id}`
+
+Deletes the stored file with the given id.
+
+==== Response
+
+*_200 Ok_*
+
+If the file was deleted.
+
+*_404 Not Found_*
+
+[source,json]
+----
+{
+  "message": "The file does not exist."
+}
+----
+
+=== `PATCH /api/storage/{id}`
+
+Updates the meta data (name and/or type) for the file item with the given id. The fields specified in the request body will update those in the stored item.
+
+==== Request
+
+[source,json]
+----
+{
+    "name": "<FILE-NAME>",
+    "type": "<FILE-TYPE>"
+}
+----
+
+==== Response
+
+*_200 Ok_*
+
+[source,json]
+----
+{
+    "id": "<FILE-ID>",
+    "name": "<FILE-NAME>",
+    "type": "<FILE-TYPE>",
+    "size": FILE_SIZE_BYTES
+}
+----
+
+*_404 Not Found_*
+
+[source,json]
+----
+{
+  "message": "The file does not exist."
+}
+----
