@@ -15,7 +15,6 @@
  */
 package io.github.cjstehno.ersatz.util;
 
-import io.github.cjstehno.ersatz.util.BasicAuth;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BasicAuthTest {
 
     @Test void basicHeader() {
-        val header = BasicAuth.header("Aladdin", "open sesame");
+        val header = BasicAuth.basicAuthHeaderValue("Aladdin", "open sesame");
         assertEquals("Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==", header);
     }
 }

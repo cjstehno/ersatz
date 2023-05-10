@@ -55,6 +55,8 @@ class HeaderMatcherTest {
         assertEquals(result, contentTypeHeader(startsWith("application/")).matches(request));
     }
 
+    // FIXME: add test of basic auth matcher
+
     private static Stream<Arguments> contentTypeProvider() {
         final var factory = new Function<String, MockClientRequest>() {
             @Override public MockClientRequest apply(String ctype) {
