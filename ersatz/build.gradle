@@ -27,17 +27,17 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:$lombokVersion"
     testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
-    api 'io.undertow:undertow-core:2.3.5.Final'
+    api 'io.undertow:undertow-core:2.3.7.Final'
     api 'javax.servlet:javax.servlet-api:4.0.1'
     api 'org.hamcrest:hamcrest-library:2.2'
 
     implementation 'javax.activation:activation:1.1.1'
     implementation 'org.slf4j:slf4j-api:2.0.7'
     implementation 'commons-fileupload:commons-fileupload:1.5'
-    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'commons-io:commons-io:2.13.0'
 
     // this is required for the forwarding
-    api 'com.squareup.okhttp3:okhttp:4.10.0'
+    api 'com.squareup.okhttp3:okhttp:4.11.0'
 
     // this is required for the test extension
     compileOnly "org.junit.jupiter:junit-jupiter-api:$junitVersion"
@@ -49,7 +49,7 @@ dependencies {
     testRuntimeOnly 'ch.qos.logback:logback-classic:1.4.8'
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-    testImplementation 'org.mockito:mockito-junit-jupiter:5.2.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.4.0'
 
     testImplementation 'org.awaitility:awaitility:4.2.0'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
