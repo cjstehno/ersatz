@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id "com.github.hierynomus.license" version '0.16.1'
     id 'maven-publish'
-    id 'com.github.ben-manes.versions' version '0.42.0'
+    id 'com.github.ben-manes.versions' version '0.47.0'
     id "com.github.johnrengelman.shadow" version '8.1.1'
     id 'jacoco'
     id 'signing'
@@ -46,13 +46,13 @@ dependencies {
 
     testImplementation 'io.github.cjstehno:test-things:0.1.0'
 
-    testRuntimeOnly 'ch.qos.logback:logback-classic:1.4.6'
+    testRuntimeOnly 'ch.qos.logback:logback-classic:1.4.8'
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     testImplementation 'org.mockito:mockito-junit-jupiter:5.2.0'
 
     testImplementation 'org.awaitility:awaitility:4.2.0'
-    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 }
 
 test {
