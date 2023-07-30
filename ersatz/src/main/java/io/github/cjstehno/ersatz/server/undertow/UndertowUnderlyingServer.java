@@ -75,11 +75,11 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
             }
 
             server = builder.setHandler(
-                new WebSocketsHandlerBuilder(
-                    serverConfig.getExpectations(),
+                new WebSocketHandler(
                     new BlockingHandler(new EncodingHandler(
                         new HttpTraceHandler(
                             new ErsatzMatchingHandler(
+                                // FIXME: roll these into the handler to be resolved at runtime (to avoid double-start issue)
                                 serverConfig.getRequirements(),
                                 serverConfig.getExpectations(),
                                 serverConfig.isMismatchToConsole(),
@@ -92,8 +92,8 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
                         ),
                         new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), 50)
                     )),
-                    serverConfig.isMismatchToConsole()
-                ).build()
+                    serverConfig
+                )
             ).build();
 
             server.start();

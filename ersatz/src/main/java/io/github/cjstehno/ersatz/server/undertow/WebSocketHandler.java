@@ -16,12 +16,13 @@
 package io.github.cjstehno.ersatz.server.undertow;
 
 import io.github.cjstehno.ersatz.cfg.MessageType;
-import io.github.cjstehno.ersatz.impl.ExpectationsImpl;
 import io.github.cjstehno.ersatz.impl.InboundMessageImpl;
+import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
 import io.github.cjstehno.ersatz.impl.UnmatchedWsReport;
 import io.github.cjstehno.ersatz.impl.WebSocketExpectationsImpl;
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
+import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.websockets.core.*;
 import lombok.AccessLevel;
@@ -35,34 +36,43 @@ import java.nio.ByteBuffer;
 import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
 import static io.github.cjstehno.ersatz.cfg.MessageType.resolve;
 
+// FIXME: alternate handler that resolves at runtime rather than startup
+
 @RequiredArgsConstructor @Slf4j
-public class WebSocketsHandlerBuilder {
+public class WebSocketHandler implements HttpHandler {
 
-    private final ExpectationsImpl expectations;
     private final HttpHandler defaultHandler;
-    private final boolean mismatchToConsole;
+    private final ServerConfigImpl serverConfig;
+    private HttpHandler effectiveHandler;
 
-    public HttpHandler build() {
-        HttpHandler wrappedHandler = defaultHandler;
-        for (val path : expectations.getWebSocketPaths()) {
-            wrappedHandler = buildPath(path, wrappedHandler);
+    @Override public void handleRequest(final HttpServerExchange exchange) throws Exception {
+        if (effectiveHandler == null) {
+            // only create the effective handlers once (on the first request)
+            HttpHandler handler = defaultHandler;
+            for (val path : serverConfig.getExpectations().getWebSocketPaths()) {
+                handler = build(path, handler);
+            }
+
+            // store the configured handler
+            effectiveHandler = handler;
         }
-        return wrappedHandler;
+
+        effectiveHandler.handleRequest(exchange);
     }
 
-    private PathHandler buildPath(final String pathPrefix, final HttpHandler wrappedHandler) {
+    private PathHandler build(final String pathPrefix, final HttpHandler wrappedHandler) {
         return Handlers.path(wrappedHandler).addPrefixPath(pathPrefix, Handlers.websocket((exchange, channel) -> {
             log.debug("Connected ({}).", pathPrefix);
 
             // find the ws for this path and register a connection
-            WebSocketExpectationsImpl wsExpectation = (WebSocketExpectationsImpl) expectations.findWsMatch(pathPrefix);
+            WebSocketExpectationsImpl wsExpectation = (WebSocketExpectationsImpl) serverConfig.getExpectations().findWsMatch(pathPrefix);
             if (wsExpectation != null) {
                 wsExpectation.connect();
 
                 // perform on-connect sends
-                wsExpectation.eachSender(sm -> WebSocketsHandlerBuilder.sendMessage(channel, sm.getPayload(), sm.getMessageType()));
+                wsExpectation.eachSender(sm -> WebSocketHandler.sendMessage(channel, sm.getPayload(), sm.getMessageType()));
 
-                channel.getReceiveSetter().set(new ReceiveHandler(wsExpectation, mismatchToConsole));
+                channel.getReceiveSetter().set(new WebSocketHandler.ReceiveHandler(wsExpectation, serverConfig.isMismatchToConsole()));
                 channel.resumeReceives();
 
             } else {

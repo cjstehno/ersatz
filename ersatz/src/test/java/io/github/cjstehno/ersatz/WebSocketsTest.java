@@ -36,14 +36,10 @@ import java.util.function.Consumer;
 
 import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
 
-@ExtendWith(ErsatzServerExtension.class) @ApplyServerConfig
+@ExtendWith(ErsatzServerExtension.class)
 public class WebSocketsTest {
 
     // FIXME: more and better testing
-
-    private static void serverConfig(final ServerConfig cfg){
-        cfg.autoStart(false);
-    }
 
     private OkHttpClient client = new OkHttpClient.Builder().build();
 
@@ -51,7 +47,6 @@ public class WebSocketsTest {
         ersatz.expectations(expects -> {
             expects.ws("/stuff");
         });
-        ersatz.start();
 
         openWebSocket(ersatz.wsUrl("/stuff"));
 
