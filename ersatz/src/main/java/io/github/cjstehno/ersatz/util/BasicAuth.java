@@ -29,6 +29,8 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public final class BasicAuth {
 
+    // FIXME: add usage to guide (and matcher)
+
     /**
      * The authorization header name.
      */
@@ -41,9 +43,22 @@ public final class BasicAuth {
      * @param password the password (cannot contain a colon)
      * @return the generated header value
      */
-    public static String header(final String username, final String password) {
+    public static String basicAuthHeaderValue(final String username, final String password) {
         check(username, password);
         return "Basic " + getEncoder().encodeToString((username + ":" + password).getBytes(UTF_8));
+    }
+
+    /**
+     * Used to generate the Authorization header value for the given username and password.
+     *
+     * @param username the username (cannot contain a colon)
+     * @param password the password (cannot contain a colon)
+     * @return the generated header value
+     * @deprecated Use <code>basicAuthHeaderValue(String,String)</code> instead.
+     */
+    @Deprecated
+    public static String header(final String username, final String password) {
+        return basicAuthHeaderValue(username, password);
     }
 
     /**

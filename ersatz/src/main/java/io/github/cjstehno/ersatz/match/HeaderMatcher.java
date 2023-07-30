@@ -23,6 +23,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
 import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
+import static io.github.cjstehno.ersatz.util.BasicAuth.basicAuthHeaderValue;
+import static io.github.cjstehno.ersatz.util.HttpHeaders.AUTHORIZATION;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
@@ -123,6 +125,17 @@ public abstract class HeaderMatcher extends BaseMatcher<ClientRequest> {
      */
     public static HeaderMatcher contentTypeHeader(final Matcher<String> contentTypeMatcher) {
         return headerMatching(CONTENT_TYPE_HEADER, hasItem(contentTypeMatcher));
+    }
+
+    /**
+     * Creates a matcher that expects a BASIC authorization header with the generated value based on the given username
+     * and password.
+     *
+     * @param username the BASIC auth username
+     * @param password the BASIC auth password
+     */
+    public static HeaderMatcher basicAuthHeader(final String username, final String password) {
+        return headerMatching(AUTHORIZATION, hasItem(basicAuthHeaderValue(username, password)));
     }
 
     private static class HeaderMatches extends HeaderMatcher {

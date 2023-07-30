@@ -71,7 +71,7 @@ public class HttpClientExtension implements BeforeEachCallback, ParameterResolve
         val server = findServer(context);
 
         val https = server.isHttpsEnabled();
-        val client = new Client(server.getHttpUrl(), https ? server.getHttpsUrl() : server.getHttpUrl(), https);
+        val client = new Client(server.getHttpUrl(), server.getUrl(https), https);
 
         findClient(testInstance).ifPresent(field -> {
             try {

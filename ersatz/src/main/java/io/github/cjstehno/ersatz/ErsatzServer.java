@@ -104,6 +104,17 @@ public class ErsatzServer implements Closeable {
     }
 
     /**
+     * Used to retrieve the HTTP or HTTPS port where the server is running, based on the value of the boolean passed in.
+     * This method is useful for test cases where the SSL state is parameterized.
+     *
+     * @param https whether the retrieved port is for HTTPS.
+     * @return the port value, or -1 if not available.
+     */
+    public int getPort(final boolean https){
+        return https ? getHttpsPort() : getHttpPort();
+    }
+
+    /**
      * Used to retrieve whether HTTPS is enabled or not.
      *
      * @return true if HTTPS is enabled
@@ -128,6 +139,19 @@ public class ErsatzServer implements Closeable {
      */
     public String getHttpsUrl() {
         return getUrl("https", getHttpsPort());
+    }
+
+    /**
+     * Used to retrieve the full url of the server, either HTTP or HTTPS, based on the passed in boolean value. This
+     * method is useful for testing in cases where the HTTPS enablement is parameterized.
+     *
+     * If the scheme is not available, the port value in the URL will be -1.
+     *
+     * @param https whether the retrieved URL is for HTTPS or not
+     * @return the full url of the server for the scheme (HTTPS or HTTP).
+     */
+    public String getUrl(final boolean https){
+        return https ? getHttpsUrl() : getHttpUrl();
     }
 
     private static String getUrl(final String prefix, final int port) {

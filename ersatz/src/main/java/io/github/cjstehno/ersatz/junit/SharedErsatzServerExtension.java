@@ -18,6 +18,7 @@ package io.github.cjstehno.ersatz.junit;
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.extension.*;
 
@@ -32,29 +33,37 @@ import static org.junit.platform.commons.support.ReflectionSupport.findMethod;
  * JUnit 5 extension used to provide a simple means of managing an ErsatzServer instance during testing, similar to the
  * <code>ErsatzServerExtension</code> - however, this extension differs in that this extension creates the server
  * instance in the <code>beforeAll</code> method, and destroys it in the <code>afterAll</code> method.
- *
+ * <p>
  * The test expectations are cleared in the <code>afterEach</code> method.
- *
+ * <p>
  * Configuration of the server instance may be done using a class-level <code>@ApplyServerConfig</code> annotation (not
  * method level), or, if none is provided, the default configuration will be used to create the server.
- *
+ * <p>
  * Test methods should add an <code>ErsatzServer</code> typed parameter to the test methods that require access to the
  * server instance.
- *
+ * <p>
  * Note: if you need more configuration flexibility, the <code>ErsatzServerExtension</code> allows more, but with the
  * caveat that the server is created and torn down with each test method.
  */
+@Slf4j
 public class SharedErsatzServerExtension implements BeforeAllCallback, AfterEachCallback, AfterAllCallback, ParameterResolver {
 
     private static final String SERVER_KEY = "shared-instance";
     private static final ExtensionContext.Namespace NAMESPACE = create("io.github.cjstehno", "ersatz");
     private static final ParameterResolver SERVER_PARAM_RESOLVER = new ErsatzServerParameterResolverDelegate(SERVER_KEY);
+    private static final String DEFAULT_METHOD_NAME = "serverConfig";
 
     @Override public void beforeAll(final ExtensionContext context) throws Exception {
         // find configuration and configure server
         val server = resolveAppliedConfig(context)
-            .map(ErsatzServer::new)
-            .orElseGet(ErsatzServer::new);
+            .map(sc -> {
+                log.info("Creating server instance with provided config.");
+                return new ErsatzServer(sc);
+            })
+            .orElseGet(() -> {
+                log.info("Create server instance with no config.");
+                return new ErsatzServer();
+            });
 
         context.getStore(NAMESPACE).put(SERVER_KEY, server);
 
@@ -87,11 +96,18 @@ public class SharedErsatzServerExtension implements BeforeAllCallback, AfterEach
 
     private static Optional<ServerConfig> resolveAppliedConfig(final ExtensionContext context) {
         return findAnnotation(context.getRequiredTestClass(), ApplyServerConfig.class)
-            .map(applyServerConfig -> buildServerConfig(context, applyServerConfig));
+            .map(sc -> {
+                log.info("Using server config from method named: {}", sc.value());
+                return buildServerConfig(context, sc.value());
+            })
+            .orElseGet(() -> {
+                log.info("Using server config from method named: {}", DEFAULT_METHOD_NAME);
+                return buildServerConfig(context, DEFAULT_METHOD_NAME);
+            });
     }
 
-    private static ServerConfig buildServerConfig(final ExtensionContext context, final ApplyServerConfig anno) {
-        return findMethod(context.getRequiredTestClass(), anno.value(), ServerConfig.class)
+    private static Optional<ServerConfig> buildServerConfig(final ExtensionContext context, final String configMethodName) {
+        return findMethod(context.getRequiredTestClass(), configMethodName, ServerConfig.class)
             .map(meth -> {
                 val serverConfig = new ServerConfigImpl();
                 try {
@@ -101,7 +117,6 @@ public class SharedErsatzServerExtension implements BeforeAllCallback, AfterEach
                     throw new RuntimeException(e);
                 }
                 return serverConfig;
-            })
-            .orElseThrow(() -> new IllegalArgumentException("No method \"void " + anno.value() + "(ServerConfig)\" exists."));
+            });
     }
 }
