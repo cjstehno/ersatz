@@ -15,10 +15,7 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import io.github.cjstehno.ersatz.cfg.Expectations;
-import io.github.cjstehno.ersatz.cfg.HttpMethod;
-import io.github.cjstehno.ersatz.cfg.Request;
-import io.github.cjstehno.ersatz.cfg.RequestWithContent;
+import io.github.cjstehno.ersatz.cfg.*;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.match.PathMatcher;
@@ -26,18 +23,11 @@ import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.ANY;
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.HEAD;
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.PATCH;
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.PUT;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
 import static java.util.Collections.unmodifiableList;
 
 /**
@@ -47,6 +37,7 @@ import static java.util.Collections.unmodifiableList;
 public class ExpectationsImpl implements Expectations {
 
     private final List<Request> requests = new LinkedList<>();
+    private final Map<String, WebSocketExpectations> webSockets = new LinkedHashMap<>();
     private final ResponseEncoders globalEncoders;
     private final RequestDecoders globalDecoders;
 
@@ -152,6 +143,13 @@ public class ExpectationsImpl implements Expectations {
             }
         }
 
+        for (final var entry : webSockets.entrySet()) {
+            if (!(((WebSocketExpectationsImpl) entry.getValue()).verify(timeout, unit))) {
+                log.error("WebSocket expectations for {} were not met.", entry.getValue());
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -175,5 +173,25 @@ public class ExpectationsImpl implements Expectations {
      */
     public boolean verify() {
         return verify(1, TimeUnit.SECONDS);
+    }
+
+    @Override public WebSocketExpectations ws(final String path, final Consumer<WebSocketExpectations> config) {
+        final WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path);
+
+        if (config != null) {
+            config.accept(wse);
+        }
+
+        webSockets.put(path, wse);
+
+        return wse;
+    }
+
+    public Set<String> getWebSocketPaths() {
+        return webSockets.keySet();
+    }
+
+    public WebSocketExpectations findWsMatch(final String path) {
+        return webSockets.get(path);
     }
 }

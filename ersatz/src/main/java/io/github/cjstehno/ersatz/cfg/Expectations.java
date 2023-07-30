@@ -32,7 +32,7 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
  * a match and if there are multiple matching expectations, the first one configured will be the one considered as the
  * match.
  */
-public interface Expectations extends AnyExpectations, GetExpectations, HeadExpectations, PostExpectations, PutExpectations, DeleteExpectations, PatchExpectations, OptionsExpectations {
+public interface Expectations extends AnyExpectations, GetExpectations, HeadExpectations, PostExpectations, PutExpectations, DeleteExpectations, PatchExpectations, OptionsExpectations, WSExpectations {
 
     /**
      * Allows configuration of a request expectation matching any request method.

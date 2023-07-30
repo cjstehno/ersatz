@@ -110,7 +110,7 @@ public class ErsatzServer implements Closeable {
      * @param https whether the retrieved port is for HTTPS.
      * @return the port value, or -1 if not available.
      */
-    public int getPort(final boolean https){
+    public int getPort(final boolean https) {
         return https ? getHttpsPort() : getHttpPort();
     }
 
@@ -142,6 +142,19 @@ public class ErsatzServer implements Closeable {
     }
 
     /**
+     * Used to retrieve the Web Socket URL.
+     *
+     * @return the web socket URL
+     */
+    public String getWsUrl() {
+        return getUrl("ws", getHttpPort());
+    }
+
+    public String wsUrl(final String path) {
+        return getWsUrl() + path;
+    }
+
+    /**
      * Used to retrieve the full url of the server, either HTTP or HTTPS, based on the passed in boolean value. This
      * method is useful for testing in cases where the HTTPS enablement is parameterized.
      *
@@ -150,7 +163,7 @@ public class ErsatzServer implements Closeable {
      * @param https whether the retrieved URL is for HTTPS or not
      * @return the full url of the server for the scheme (HTTPS or HTTP).
      */
-    public String getUrl(final boolean https){
+    public String getUrl(final boolean https) {
         return https ? getHttpsUrl() : getHttpUrl();
     }
 

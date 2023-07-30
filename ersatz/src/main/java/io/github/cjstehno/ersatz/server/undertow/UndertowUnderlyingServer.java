@@ -75,21 +75,25 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
             }
 
             server = builder.setHandler(
-                new BlockingHandler(new EncodingHandler(
-                    new HttpTraceHandler(
-                        new ErsatzMatchingHandler(
-                            serverConfig.getRequirements(),
-                            serverConfig.getExpectations(),
-                            serverConfig.isMismatchToConsole(),
-                            new ErsatzForwardHandler(
-                                new ErsatzHttpHandler(
-                                    serverConfig.isLogResponseContent()
+                new WebSocketsHandlerBuilder(
+                    serverConfig.getExpectations(),
+                    new BlockingHandler(new EncodingHandler(
+                        new HttpTraceHandler(
+                            new ErsatzMatchingHandler(
+                                serverConfig.getRequirements(),
+                                serverConfig.getExpectations(),
+                                serverConfig.isMismatchToConsole(),
+                                new ErsatzForwardHandler(
+                                    new ErsatzHttpHandler(
+                                        serverConfig.isLogResponseContent()
+                                    )
                                 )
                             )
-                        )
-                    ),
-                    new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), 50)
-                ))
+                        ),
+                        new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), 50)
+                    )),
+                    serverConfig.isMismatchToConsole()
+                ).build()
             ).build();
 
             server.start();
