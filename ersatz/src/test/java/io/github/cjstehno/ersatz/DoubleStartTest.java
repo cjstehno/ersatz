@@ -59,4 +59,33 @@ public class DoubleStartTest {
 
         server.assertVerified();
     }
+
+    @Test void directConfig() throws Exception{
+        try (val server = new ErsatzServer(cfg -> {
+            // setup some server expectations
+            cfg.expectations(expects -> {
+                expects.GET("/setup", req -> {
+                    req.called();
+                    req.responds().code(200);
+                });
+            });
+        })) {
+            // setup more expectations
+            server.expectations(expects -> {
+                expects.GET("/other", req -> {
+                    req.called().responds().code(200).body("things", TEXT_PLAIN);
+                });
+            });
+
+            val http = new HttpClientExtension.Client(server.getHttpUrl(), null, false);
+
+            assertEquals(200, http.get("/setup").code());
+
+            val stuffResponse = http.get("/other");
+            assertEquals(200, stuffResponse.code());
+            assertEquals("things", stuffResponse.body().string());
+
+            server.assertVerified();
+        }
+    }
 }

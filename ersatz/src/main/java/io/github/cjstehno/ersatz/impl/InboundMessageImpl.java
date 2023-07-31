@@ -36,7 +36,9 @@ import java.util.function.Consumer;
 import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
 import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
 
-// FIXME: document
+/**
+ * Implementation of the InboundMessage for websocket connections.
+ */
 @AllArgsConstructor @NoArgsConstructor
 public class InboundMessageImpl implements InboundMessage {
 

@@ -21,7 +21,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// FIXME: document
+/**
+ * Implementation of the MessageReaction for websockets.
+ */
 @NoArgsConstructor @AllArgsConstructor @Getter
 public class MessageReactionImpl implements MessageReaction {
 

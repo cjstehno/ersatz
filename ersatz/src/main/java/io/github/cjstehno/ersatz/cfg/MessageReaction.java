@@ -15,12 +15,24 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-// FIXME: document
+/**
+ * Defines a reaction to an incoming websocket message.
+ */
 public interface MessageReaction {
 
-    // FIXME: should this just be an OutboundMessage?
-
+    /**
+     * Specifies the payload for the reaction, should be based on the MessageType.
+     *
+     * @param obj the payload object
+     * @return a reference to this reaction instance
+     */
     MessageReaction payload(Object obj);
 
+    /**
+     * Specifies the message type for the payload.
+     *
+     * @param type the message type
+     * @return a reference to this reaction instance
+     */
     MessageReaction messageType(MessageType type);
 }

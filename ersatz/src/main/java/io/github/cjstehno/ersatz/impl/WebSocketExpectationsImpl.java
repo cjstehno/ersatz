@@ -32,6 +32,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+/**
+ * Implementation of the WebSocketExpectations.
+ */
 @RequiredArgsConstructor
 public class WebSocketExpectationsImpl implements WebSocketExpectations {
 
@@ -68,29 +71,55 @@ public class WebSocketExpectationsImpl implements WebSocketExpectations {
         return message;
     }
 
+    /**
+     * Marks that the websocket has connected for this expectation.
+     */
     public void connect() {
         connectionLatch.countDown();
     }
 
+    /**
+     * Determines whether this expectation has connected.
+     *
+     * @return true if the websocket has connected for this expectation
+     */
     public boolean isConnected() {
         return connectionLatch.getCount() == 0;
     }
 
-
-    // FIXME: below here are potential
-
+    /**
+     * Retrieves the number of messages that are expected.
+     *
+     * @return the expected count
+     */
     public int getExpectedMessageCount() {
         return inboundMessages.size();
     }
 
+    /**
+     * Iterates over the outbound messages with the given consumer.
+     *
+     * @param consumer the iteration consumer
+     */
     public void eachSender(Consumer<OutboundMessageImpl> consumer) {
         outboundMessages.forEach(consumer);
     }
 
+    /**
+     * Iterates over the inbound messages with the given consumer.
+     *
+     * @param consumer the iteration consumer
+     */
     public void eachMessage(Consumer<InboundMessageImpl> consumer) {
         inboundMessages.forEach(consumer);
     }
 
+    /**
+     * Finds a websocket expectation matching the provided message.
+     *
+     * @param message the message
+     * @return the message expectation
+     */
     public Optional<InboundMessageImpl> findMatch(final Object message) {
         if (message instanceof BufferedTextMessage) {
             return findMatch((BufferedTextMessage) message);
@@ -120,6 +149,4 @@ public class WebSocketExpectationsImpl implements WebSocketExpectations {
             return false;
         }
     }
-
-
 }

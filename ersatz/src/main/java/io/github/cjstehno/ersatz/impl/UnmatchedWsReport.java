@@ -22,7 +22,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-// FIXME: document
+/**
+ * Reporter used to display mismatch information about websocket expectations.
+ */
 @RequiredArgsConstructor
 public class UnmatchedWsReport implements Report {
 

@@ -19,7 +19,9 @@ import java.util.function.Consumer;
 
 import static io.github.cjstehno.ersatz.cfg.MessageType.*;
 
-// FIXME: document
+/**
+ * Defines a message coming into the websockets handler.
+ */
 public interface InboundMessage {
 
     /**

@@ -36,8 +36,10 @@ import java.nio.ByteBuffer;
 import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
 import static io.github.cjstehno.ersatz.cfg.MessageType.resolve;
 
-// FIXME: alternate handler that resolves at runtime rather than startup
-
+/**
+ * Undertow handler for the websocket support. It resolves the handled paths for each request so that the configuration
+ * does not get frozen on the first server startup (which can be before the socket expectations are configured).
+ */
 @RequiredArgsConstructor @Slf4j
 public class WebSocketHandler implements HttpHandler {
 

@@ -21,7 +21,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// FIXME: document
+/**
+ * Implementation of the OutboundMessage for websockets.
+ */
 @AllArgsConstructor @NoArgsConstructor @Getter
 public class OutboundMessageImpl implements OutboundMessage {
 

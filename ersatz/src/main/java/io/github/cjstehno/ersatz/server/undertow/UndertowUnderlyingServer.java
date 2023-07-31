@@ -79,7 +79,6 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
                     new BlockingHandler(new EncodingHandler(
                         new HttpTraceHandler(
                             new ErsatzMatchingHandler(
-                                // FIXME: roll these into the handler to be resolved at runtime (to avoid double-start issue)
                                 serverConfig.getRequirements(),
                                 serverConfig.getExpectations(),
                                 serverConfig.isMismatchToConsole(),

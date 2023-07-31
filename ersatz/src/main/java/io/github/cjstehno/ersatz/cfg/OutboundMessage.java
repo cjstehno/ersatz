@@ -15,10 +15,24 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-// FIXME: document
+/**
+ * Defines a message being sent from the websocket handler.
+ */
 public interface OutboundMessage {
 
+    /**
+     * Specifies the payload for the message, based on the message type.
+     *
+     * @param obj the message payload
+     * @return a reference to the message instance
+     */
     OutboundMessage payload(final Object obj);
 
+    /**
+     * Specifies the message type for the payload.
+     *
+     * @param type the message type
+     * @return a reference to the message instance
+     */
     OutboundMessage messageType(final MessageType type);
 }

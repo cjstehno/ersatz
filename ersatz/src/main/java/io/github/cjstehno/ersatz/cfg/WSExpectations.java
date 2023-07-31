@@ -18,7 +18,7 @@ package io.github.cjstehno.ersatz.cfg;
 import java.util.function.Consumer;
 
 /**
- * FIXME: document
+ * Defines the expectations configuration available for websockets.
  */
 public interface WSExpectations {
 
@@ -29,8 +29,8 @@ public interface WSExpectations {
      * @param path the request path
      * @return a reference to the web socket expectations
      */
-    default WebSocketExpectations ws(String path) {
-        return ws(path, null);
+    default WebSocketExpectations webSocket(String path) {
+        return webSocket(path, null);
     }
 
     // FIXME: move to groovy
@@ -55,5 +55,5 @@ public interface WSExpectations {
      * @return a reference to the web socket expectations
      */
     // FIXME: rename this to "webSockets"
-    WebSocketExpectations ws(final String path, final Consumer<WebSocketExpectations> config);
+    WebSocketExpectations webSocket(final String path, final Consumer<WebSocketExpectations> config);
 }

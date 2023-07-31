@@ -175,7 +175,7 @@ public class ExpectationsImpl implements Expectations {
         return verify(1, TimeUnit.SECONDS);
     }
 
-    @Override public WebSocketExpectations ws(final String path, final Consumer<WebSocketExpectations> config) {
+    @Override public WebSocketExpectations webSocket(final String path, final Consumer<WebSocketExpectations> config) {
         final WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path);
 
         if (config != null) {
