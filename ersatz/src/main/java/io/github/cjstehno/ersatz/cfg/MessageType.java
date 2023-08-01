@@ -15,8 +15,20 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+/**
+ * Defines the available types of web socket messages.
+ */
 public enum MessageType {
-    TEXT, BINARY;
+
+    /**
+     * Denotes a text-based message.
+     */
+    TEXT,
+
+    /**
+     * Denotes a byte-based message.
+     */
+    BINARY;
 
     /**
      * Resolves the default message type for the specified object.

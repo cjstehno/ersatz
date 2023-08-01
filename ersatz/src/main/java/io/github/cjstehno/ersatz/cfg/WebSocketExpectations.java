@@ -19,6 +19,9 @@ import java.util.function.Consumer;
 
 import static io.github.cjstehno.ersatz.cfg.MessageType.*;
 
+/**
+ * Defines the expectations for web socket support.
+ */
 public interface WebSocketExpectations {
 
     /**

@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2023 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,10 +44,11 @@ import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(ErsatzServerExtension.class) @Disabled("FIXME: this test does not pass on full build - timing?")
+@ExtendWith(ErsatzServerExtension.class)
 public class WebSocketsTest {
 
-    @Test void connecting(final ErsatzServer ersatz) {
+    @Test
+    void connecting(final ErsatzServer ersatz) {
         ersatz.expectations(expects -> {
             expects.webSocket("/stuff");
         });
@@ -57,7 +58,8 @@ public class WebSocketsTest {
         ersatz.assertVerified();
     }
 
-    @Test void sendAndReceiveText(final ErsatzServer server) {
+    @Test @Disabled("fifth")
+    void sendAndReceiveText(final ErsatzServer server) {
         val inboundMessageContent = "some message";
 
         server.expectations(expects -> {
@@ -73,7 +75,8 @@ public class WebSocketsTest {
         server.assertVerified();
     }
 
-    @Test void sendAndReceiveBinary(final ErsatzServer server) {
+    @Test @Disabled("second")
+    void sendAndReceiveBinary(final ErsatzServer server) {
         val bytes = NumberRandomizers.byteArray(8).one();
         val messageContent = ByteString.of(bytes);
 
@@ -90,7 +93,8 @@ public class WebSocketsTest {
         server.assertVerified();
     }
 
-    @Test void multipleConnections(final ErsatzServer ersatz) {
+    @Test @Disabled("third")
+    void multipleConnections(final ErsatzServer ersatz) {
         ersatz.expectations(expects -> {
             expects.webSocket("/alpha");
             expects.webSocket("/bravo");
@@ -102,7 +106,8 @@ public class WebSocketsTest {
         ersatz.assertVerified();
     }
 
-    @Test void reactToMessageWithText(final ErsatzServer ersatz) throws InterruptedException {
+    @Test @Disabled("seventh")
+    void reactToMessageWithText(final ErsatzServer ersatz) throws InterruptedException {
         ersatz.expectations(expects -> {
             expects.webSocket("/foo", ws -> {
                 ws.receive("ping").reaction("pong", TEXT);
@@ -121,7 +126,8 @@ public class WebSocketsTest {
         assertEquals(listener.getMessages().get(0), "pong");
     }
 
-    @Test void reactToMessageWithBinary(final ErsatzServer ersatz) throws Exception {
+    @Test @Disabled("sixth")
+    void reactToMessageWithBinary(final ErsatzServer ersatz) throws Exception {
         val pingBytes = "ping".getBytes(UTF_8);
         val pingMessage = ByteString.of(pingBytes);
         val pongBytes = "pong".getBytes(UTF_8);
@@ -145,7 +151,7 @@ public class WebSocketsTest {
         assertEquals(listener.getMessages().get(0), pongMessage);
     }
 
-    @ParameterizedTest(name = "[{index}] sending message on connection: {0}") @MethodSource("onConnectMessages")
+    @ParameterizedTest(name = "[{index}] sending message on connection: {0}") @MethodSource("onConnectMessages") @Disabled("first")
     void sendingMessageOnConnect(final MessageType mType, final Object message, final Object expected, final ErsatzServer ersatz) throws Exception {
         ersatz.expectations(expects -> {
             expects.webSocket("/hello", ws -> ws.send(message, mType));
