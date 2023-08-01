@@ -326,7 +326,14 @@ public class ErsatzServer implements Closeable {
      * Helper method to wrap a call to the <code>verify()</code> method within a JUnit <code>assertTrue(...)</code> call.
      */
     public void assertVerified() {
-        assertTrue(verify(), "The server expectation verification failed.");
+        assertVerified(1, SECONDS);
+    }
+
+    /**
+     * Helper method to wrap a call to the <code>verify(timeout, unit)</code> method within a JUnit <code>assertTrue(...)</code> call.
+     */
+    public void assertVerified(final long timeout, final TimeUnit unit) {
+        assertTrue(verify(timeout, unit), "The server expectation verification failed.");
     }
 
     /**

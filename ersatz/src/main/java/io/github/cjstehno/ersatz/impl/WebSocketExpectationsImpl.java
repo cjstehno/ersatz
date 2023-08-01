@@ -23,6 +23,7 @@ import io.undertow.websockets.core.BufferedBinaryMessage;
 import io.undertow.websockets.core.BufferedTextMessage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.LinkedList;
@@ -35,7 +36,7 @@ import java.util.function.Consumer;
 /**
  * Implementation of the WebSocketExpectations.
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor @Slf4j
 public class WebSocketExpectationsImpl implements WebSocketExpectations {
 
     private final CountDownLatch connectionLatch = new CountDownLatch(1);
@@ -139,12 +140,18 @@ public class WebSocketExpectationsImpl implements WebSocketExpectations {
     }
 
     public boolean verify(final long timeout, final TimeUnit unit) {
-        return waitForLatch(timeout, unit) && inboundMessages.stream().allMatch(m -> m.marked(timeout, unit));
+        return waitForLatch() && inboundMessages.stream().allMatch(m -> m.marked(timeout, unit));
     }
 
-    private boolean waitForLatch(final long timeout, final TimeUnit unit) {
+    private boolean waitForLatch() {
         try {
-            return connectionLatch.await(timeout, unit);
+            /*
+                Note: Using a timeout here works, but you need to increase the time value when running all tests - this
+                would lead to unpredictable tests. I am going to make this wait for now. If this causes issues down the
+                road, consider adding in a timeout with some option to wait-forever, like this.
+             */
+            connectionLatch.await();
+            return true;
         } catch (InterruptedException e) {
             return false;
         }

@@ -145,7 +145,7 @@ public class ExpectationsImpl implements Expectations {
 
         for (final var entry : webSockets.entrySet()) {
             if (!(((WebSocketExpectationsImpl) entry.getValue()).verify(timeout, unit))) {
-                log.error("WebSocket expectations for {} were not met.", entry.getValue());
+                log.error("WebSocket expectations for {} were not met.", ((WebSocketExpectationsImpl) entry.getValue()).getPath());
                 return false;
             }
         }
