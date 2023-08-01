@@ -15,17 +15,6 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import io.github.cjstehno.ersatz.cfg.HttpMethod;
-import io.github.cjstehno.ersatz.cfg.ProxyServerExpectations;
-import io.github.cjstehno.ersatz.impl.matchers.MatchCountingMatcher;
-import io.github.cjstehno.ersatz.match.PathMatcher;
-import io.github.cjstehno.ersatz.server.ClientRequest;
-import lombok.Getter;
-import org.hamcrest.Matcher;
-
-import java.util.LinkedList;
-import java.util.List;
-
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.ANY;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.DELETE;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
@@ -36,6 +25,16 @@ import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.PUT;
 import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
 import static org.hamcrest.Matchers.allOf;
+
+import io.github.cjstehno.ersatz.cfg.HttpMethod;
+import io.github.cjstehno.ersatz.cfg.ProxyServerExpectations;
+import io.github.cjstehno.ersatz.impl.matchers.MatchCountingMatcher;
+import io.github.cjstehno.ersatz.match.PathMatcher;
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import java.util.LinkedList;
+import java.util.List;
+import lombok.Getter;
+import org.hamcrest.Matcher;
 
 /**
  * The implementation of the <code>ProxyServerExpectations</code> class.

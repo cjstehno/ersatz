@@ -15,18 +15,17 @@
  */
 package io.github.cjstehno.ersatz.impl.matchers;
 
-import io.github.cjstehno.ersatz.server.ClientRequest;
-import lombok.RequiredArgsConstructor;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
+import static java.util.Arrays.asList;
 
+import io.github.cjstehno.ersatz.server.ClientRequest;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 import java.util.function.Function;
-
-import static java.util.Arrays.asList;
+import lombok.RequiredArgsConstructor;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 
 /**
  * A matcher used to match a map with String keys mapped to a Deque of Strings. This is a common pattern for various

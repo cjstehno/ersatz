@@ -15,44 +15,6 @@
  */
 package io.github.cjstehno.ersatz.expectations;
 
-import io.github.cjstehno.ersatz.ErsatzServer;
-import io.github.cjstehno.ersatz.InMemoryCookieJar;
-import io.github.cjstehno.ersatz.cfg.HttpMethod;
-import io.github.cjstehno.ersatz.cfg.ServerConfig;
-import io.github.cjstehno.ersatz.encdec.Encoders;
-import io.github.cjstehno.ersatz.encdec.ErsatzMultipartResponseContent;
-import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
-import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
-import io.github.cjstehno.ersatz.match.ErsatzMatchers;
-import io.github.cjstehno.ersatz.util.HttpClientExtension;
-import io.github.cjstehno.testthings.Resources;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.ResponseBody;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUpload;
-import org.apache.commons.fileupload.UploadContext;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-
 import static io.github.cjstehno.ersatz.TestAssertions.*;
 import static io.github.cjstehno.ersatz.cfg.ContentType.*;
 import static io.github.cjstehno.ersatz.encdec.Cookie.cookie;
@@ -72,6 +34,43 @@ import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.*;
+
+import io.github.cjstehno.ersatz.ErsatzServer;
+import io.github.cjstehno.ersatz.InMemoryCookieJar;
+import io.github.cjstehno.ersatz.cfg.HttpMethod;
+import io.github.cjstehno.ersatz.cfg.ServerConfig;
+import io.github.cjstehno.ersatz.encdec.Encoders;
+import io.github.cjstehno.ersatz.encdec.ErsatzMultipartResponseContent;
+import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
+import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
+import io.github.cjstehno.ersatz.match.ErsatzMatchers;
+import io.github.cjstehno.ersatz.util.HttpClientExtension;
+import io.github.cjstehno.testthings.Resources;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.ResponseBody;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUpload;
+import org.apache.commons.fileupload.UploadContext;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig("serverConfig")
 public class ErsatzServerGetExpectationsTest {

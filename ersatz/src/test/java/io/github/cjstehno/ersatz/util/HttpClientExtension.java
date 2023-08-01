@@ -15,22 +15,15 @@
  */
 package io.github.cjstehno.ersatz.util;
 
+import static io.github.cjstehno.ersatz.util.BasicAuth.AUTHORIZATION_HEADER;
+import static io.github.cjstehno.ersatz.util.BasicAuth.header;
+import static java.util.Arrays.stream;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
+import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
+
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.InMemoryCookieJar;
-import lombok.val;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import org.junit.jupiter.api.extension.*;
-import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
-import org.junit.platform.commons.support.ModifierSupport;
-import org.junit.platform.commons.support.ReflectionSupport;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.print.attribute.standard.MediaSize;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.security.KeyManagementException;
@@ -41,14 +34,18 @@ import java.security.cert.X509Certificate;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-
-import static io.github.cjstehno.ersatz.util.BasicAuth.AUTHORIZATION_HEADER;
-import static io.github.cjstehno.ersatz.util.BasicAuth.header;
-import static java.util.Arrays.stream;
-import static java.util.concurrent.CompletableFuture.supplyAsync;
-import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
-import static org.junit.platform.commons.support.HierarchyTraversalMode.BOTTOM_UP;
-import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import lombok.val;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import org.junit.jupiter.api.extension.*;
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
+import org.junit.platform.commons.support.ModifierSupport;
+import org.junit.platform.commons.support.ReflectionSupport;
 
 /**
  * JUnit 5 Extension which provides a reusable HTTP client wrapper around a configured OkHttp client. This extension

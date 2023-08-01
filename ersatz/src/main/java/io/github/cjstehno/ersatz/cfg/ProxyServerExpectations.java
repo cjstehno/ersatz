@@ -15,9 +15,9 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import io.github.cjstehno.ersatz.match.PathMatcher;
-
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
+
+import io.github.cjstehno.ersatz.match.PathMatcher;
 
 /**
  * Defines the expectation configurations available for the proxy server.

@@ -15,20 +15,6 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import io.github.cjstehno.ersatz.encdec.Cookie;
-import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-import io.github.cjstehno.ersatz.server.MockClientRequest;
-import lombok.val;
-import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Stream;
-
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
 import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
@@ -36,6 +22,19 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+
+import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+import io.github.cjstehno.ersatz.server.MockClientRequest;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Stream;
+import lombok.val;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class UnmatchedRequestReportTest {
 

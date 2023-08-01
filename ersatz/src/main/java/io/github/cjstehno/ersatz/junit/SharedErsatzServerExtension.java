@@ -15,19 +15,18 @@
  */
 package io.github.cjstehno.ersatz.junit;
 
-import io.github.cjstehno.ersatz.ErsatzServer;
-import io.github.cjstehno.ersatz.cfg.ServerConfig;
-import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.junit.jupiter.api.extension.*;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
 import static org.junit.platform.commons.support.AnnotationSupport.findAnnotation;
 import static org.junit.platform.commons.support.ReflectionSupport.findMethod;
+
+import io.github.cjstehno.ersatz.ErsatzServer;
+import io.github.cjstehno.ersatz.cfg.ServerConfig;
+import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.junit.jupiter.api.extension.*;
 
 /**
  * JUnit 5 extension used to provide a simple means of managing an ErsatzServer instance during testing, similar to the

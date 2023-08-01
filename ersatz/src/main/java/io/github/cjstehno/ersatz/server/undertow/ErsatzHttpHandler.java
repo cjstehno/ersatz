@@ -15,6 +15,11 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
+import static io.github.cjstehno.ersatz.server.undertow.ResponseChunker.prepareChunks;
+import static io.undertow.util.HttpString.tryFromString;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.impl.ChunkingConfigImpl;
@@ -22,17 +27,11 @@ import io.github.cjstehno.ersatz.impl.ErsatzResponse;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.CookieImpl;
+import java.nio.ByteBuffer;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.nio.ByteBuffer;
-
-import static io.github.cjstehno.ersatz.server.undertow.ResponseChunker.prepareChunks;
-import static io.undertow.util.HttpString.tryFromString;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * The Ersatz handler used to perform the actual request handling for the chain.

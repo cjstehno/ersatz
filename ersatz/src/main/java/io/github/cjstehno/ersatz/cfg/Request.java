@@ -15,22 +15,6 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import io.github.cjstehno.ersatz.encdec.Cookie;
-import io.github.cjstehno.ersatz.match.HeaderMatcher;
-import io.github.cjstehno.ersatz.match.QueryParamMatcher;
-import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
-import io.github.cjstehno.ersatz.server.ClientRequest;
-import lombok.SneakyThrows;
-import lombok.val;
-import org.hamcrest.Matcher;
-
-import java.net.URI;
-import java.net.URL;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
 import static io.github.cjstehno.ersatz.match.HeaderMatcher.headerMatching;
 import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryExists;
@@ -38,6 +22,21 @@ import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryMatching;
 import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.cookieMatching;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+
+import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.match.HeaderMatcher;
+import io.github.cjstehno.ersatz.match.QueryParamMatcher;
+import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import java.net.URI;
+import java.net.URL;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.function.Consumer;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.hamcrest.Matcher;
 
 /**
  * Configuration interface for HTTP request expectations.

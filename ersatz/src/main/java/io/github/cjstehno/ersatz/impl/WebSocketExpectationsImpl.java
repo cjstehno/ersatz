@@ -15,21 +15,20 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
+import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
+
 import io.github.cjstehno.ersatz.cfg.*;
 import io.undertow.websockets.core.BufferedBinaryMessage;
 import io.undertow.websockets.core.BufferedTextMessage;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
-
-import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Implementation of the WebSocketExpectations.

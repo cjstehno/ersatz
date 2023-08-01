@@ -15,16 +15,16 @@
  */
 package io.github.cjstehno.ersatz.match;
 
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.ANY;
+import static java.util.Arrays.stream;
+import static org.hamcrest.CoreMatchers.*;
+
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.ANY;
-import static java.util.Arrays.stream;
-import static org.hamcrest.CoreMatchers.*;
 
 /**
  * A matcher used to match the HTTP method of a request.

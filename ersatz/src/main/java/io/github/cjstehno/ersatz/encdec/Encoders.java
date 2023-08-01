@@ -15,8 +15,10 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import lombok.NoArgsConstructor;
-import lombok.val;
+import static io.github.cjstehno.ersatz.util.ByteArrays.join;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.readAllBytes;
+import static lombok.AccessLevel.PRIVATE;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,11 +31,8 @@ import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.function.Function;
-
-import static io.github.cjstehno.ersatz.util.ByteArrays.join;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.Files.readAllBytes;
-import static lombok.AccessLevel.PRIVATE;
+import lombok.NoArgsConstructor;
+import lombok.val;
 
 /**
  * Reusable response content encoders. An encoder is simply a <code>Function&lt;Object,String&gt;</code> which is used to convert the configured response

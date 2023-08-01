@@ -15,14 +15,13 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import io.github.cjstehno.ersatz.cfg.ContentType;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 
+import io.github.cjstehno.ersatz.cfg.ContentType;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
-
-import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 
 /**
  * Implementation of the multipart response content interface.

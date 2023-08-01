@@ -15,9 +15,9 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import io.github.cjstehno.ersatz.cfg.ChunkingConfig;
-
 import static java.lang.String.format;
+
+import io.github.cjstehno.ersatz.cfg.ChunkingConfig;
 
 /**
  * Default implementation of the <code>ChunkingConfig</code> interface.

@@ -15,18 +15,17 @@
  */
 package io.github.cjstehno.ersatz.match;
 
+import static lombok.AccessLevel.PACKAGE;
+import static lombok.AccessLevel.PRIVATE;
+
+import java.util.Collection;
+import java.util.function.Function;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
-
-import java.util.Collection;
-import java.util.function.Function;
-
-import static lombok.AccessLevel.PACKAGE;
-import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Some reusable Hamcrest matchers useful in Ersatz expectations.

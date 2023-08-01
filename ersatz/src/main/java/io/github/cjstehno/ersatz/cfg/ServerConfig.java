@@ -15,17 +15,14 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import io.github.cjstehno.ersatz.encdec.DecodingContext;
-import lombok.SneakyThrows;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
-import java.net.URI;
+import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Configuration interface for an Ersatz server instance.

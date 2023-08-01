@@ -15,17 +15,17 @@
  */
 package io.github.cjstehno.ersatz.match;
 
-import io.github.cjstehno.ersatz.server.ClientRequest;
-import io.github.cjstehno.ersatz.server.MockClientRequest;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
 import static io.github.cjstehno.ersatz.match.PathMatcher.anyPath;
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import io.github.cjstehno.ersatz.server.MockClientRequest;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class PathMatcherTest {
 

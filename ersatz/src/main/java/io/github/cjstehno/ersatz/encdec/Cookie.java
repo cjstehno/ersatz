@@ -15,12 +15,11 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
+import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.util.function.Consumer;
 
 /**
  * Ersatz abstraction of a request or response cookie. See also the <code>CookieMatcher</code>.

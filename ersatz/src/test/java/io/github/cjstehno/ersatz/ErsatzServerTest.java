@@ -15,6 +15,8 @@
  */
 package io.github.cjstehno.ersatz;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
@@ -22,8 +24,6 @@ import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(ErsatzServerExtension.class)
 class ErsatzServerTest {

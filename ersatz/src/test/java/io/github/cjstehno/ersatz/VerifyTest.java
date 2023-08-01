@@ -15,12 +15,12 @@
  */
 package io.github.cjstehno.ersatz;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith({ErsatzServerExtension.class})
 public class VerifyTest {

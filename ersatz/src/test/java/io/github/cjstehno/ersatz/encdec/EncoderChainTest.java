@@ -15,13 +15,13 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import lombok.val;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import static io.github.cjstehno.ersatz.cfg.ContentType.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.*;
+
+import lombok.val;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class EncoderChainTest {
 

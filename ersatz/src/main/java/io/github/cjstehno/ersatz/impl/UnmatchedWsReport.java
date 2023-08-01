@@ -16,10 +16,9 @@
 package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.cfg.WaitFor;
-import lombok.RequiredArgsConstructor;
-
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Reporter used to display mismatch information about websocket expectations.

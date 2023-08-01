@@ -15,21 +15,18 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.cfg.Expectations;
 import io.github.cjstehno.ersatz.cfg.Requirements;
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-import lombok.Getter;
-
-import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import lombok.Getter;
 
 /**
  * Default implementation of the <code>ServerConfig</code> interface.

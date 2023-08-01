@@ -15,6 +15,9 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
+import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
+import static io.github.cjstehno.ersatz.cfg.MessageType.resolve;
+
 import io.github.cjstehno.ersatz.cfg.MessageType;
 import io.github.cjstehno.ersatz.impl.InboundMessageImpl;
 import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
@@ -25,16 +28,12 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.websockets.core.*;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
-import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
-import static io.github.cjstehno.ersatz.cfg.MessageType.resolve;
 
 /**
  * Undertow handler for the websocket support. It resolves the handled paths for each request so that the configuration

@@ -15,12 +15,11 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import io.github.cjstehno.ersatz.match.PathMatcher;
-import org.hamcrest.Matcher;
-
-import java.util.function.Consumer;
-
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
+
+import io.github.cjstehno.ersatz.match.PathMatcher;
+import java.util.function.Consumer;
+import org.hamcrest.Matcher;
 
 /**
  * Defines the available GET request expectations.
@@ -90,5 +89,3 @@ public interface GetExpectations {
      */
     Request GET(final PathMatcher pathMatcher, final Consumer<Request> config);
 }
-
-

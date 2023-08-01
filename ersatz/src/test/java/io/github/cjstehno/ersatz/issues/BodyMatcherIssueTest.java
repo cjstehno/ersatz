@@ -15,16 +15,6 @@
  */
 package io.github.cjstehno.ersatz.issues;
 
-import io.github.cjstehno.ersatz.ErsatzServer;
-import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
-import io.github.cjstehno.ersatz.util.HttpClientExtension;
-import okhttp3.MediaType;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import java.io.IOException;
-
 import static io.github.cjstehno.ersatz.TestAssertions.verify;
 import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_XML;
@@ -33,6 +23,15 @@ import static io.github.cjstehno.ersatz.encdec.Encoders.text;
 import static okhttp3.RequestBody.create;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import io.github.cjstehno.ersatz.ErsatzServer;
+import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
+import io.github.cjstehno.ersatz.util.HttpClientExtension;
+import java.io.IOException;
+import okhttp3.MediaType;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
 class BodyMatcherIssueTest {

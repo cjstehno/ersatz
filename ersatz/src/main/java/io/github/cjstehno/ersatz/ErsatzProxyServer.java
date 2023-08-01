@@ -20,12 +20,11 @@ import io.github.cjstehno.ersatz.impl.ProxyServerConfigImpl;
 import io.github.cjstehno.ersatz.impl.matchers.MatchCountingMatcher;
 import io.github.cjstehno.ersatz.server.UnderlyingProxyServer;
 import io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingProxyServer;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.function.Consumer;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Standalone simple proxy server useful for testing proxy configurations.

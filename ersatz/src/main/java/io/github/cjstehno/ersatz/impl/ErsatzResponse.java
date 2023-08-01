@@ -15,22 +15,21 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import io.github.cjstehno.ersatz.cfg.ChunkingConfig;
-import io.github.cjstehno.ersatz.cfg.Response;
-import io.github.cjstehno.ersatz.encdec.*;
-import lombok.val;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
 import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.unmodifiableMap;
+
+import io.github.cjstehno.ersatz.cfg.ChunkingConfig;
+import io.github.cjstehno.ersatz.cfg.Response;
+import io.github.cjstehno.ersatz.encdec.*;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of the <code>Response</code> interface.

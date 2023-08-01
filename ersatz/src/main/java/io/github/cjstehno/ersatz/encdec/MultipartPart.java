@@ -15,11 +15,10 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import lombok.Getter;
-import lombok.ToString;
-
 import java.util.Arrays;
 import java.util.Objects;
+import lombok.Getter;
+import lombok.ToString;
 
 /**
  * Representation of a multipart part for requests and responses.

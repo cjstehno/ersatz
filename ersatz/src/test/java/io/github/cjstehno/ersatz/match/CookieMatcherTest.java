@@ -15,14 +15,13 @@
  */
 package io.github.cjstehno.ersatz.match;
 
-import io.github.cjstehno.ersatz.match.CookieMatcher;
+import static io.github.cjstehno.ersatz.encdec.Cookie.cookie;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import static io.github.cjstehno.ersatz.encdec.Cookie.cookie;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CookieMatcherTest {
 

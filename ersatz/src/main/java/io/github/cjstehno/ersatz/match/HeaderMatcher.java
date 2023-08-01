@@ -15,19 +15,19 @@
  */
 package io.github.cjstehno.ersatz.match;
 
-import io.github.cjstehno.ersatz.impl.matchers.MapKeyMatcher;
-import io.github.cjstehno.ersatz.impl.matchers.MappedValuesMatcher;
-import io.github.cjstehno.ersatz.server.ClientRequest;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-
 import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
 import static io.github.cjstehno.ersatz.util.BasicAuth.basicAuthHeaderValue;
 import static io.github.cjstehno.ersatz.util.HttpHeaders.AUTHORIZATION;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
+
+import io.github.cjstehno.ersatz.impl.matchers.MapKeyMatcher;
+import io.github.cjstehno.ersatz.impl.matchers.MappedValuesMatcher;
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 
 /**
  * Matcher used to match a request header.

@@ -15,18 +15,17 @@
  */
 package io.github.cjstehno.ersatz;
 
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
+import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import java.io.IOException;
-
-import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class})
 class ReusedServerTest {

@@ -15,19 +15,18 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import io.github.cjstehno.ersatz.server.ClientRequest;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-import org.hamcrest.Matcher;
-import org.hamcrest.StringDescription;
+import static java.util.stream.Collectors.joining;
 
+import io.github.cjstehno.ersatz.server.ClientRequest;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static java.util.stream.Collectors.joining;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
 
 /**
  * Helper object used to build and render a report of the unmatched request and the configured expectations.

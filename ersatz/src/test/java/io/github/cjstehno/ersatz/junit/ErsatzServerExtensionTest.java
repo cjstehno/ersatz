@@ -15,23 +15,21 @@
  */
 package io.github.cjstehno.ersatz.junit;
 
-import io.github.cjstehno.ersatz.ErsatzServer;
-import io.github.cjstehno.ersatz.cfg.HttpMethod;
-import io.github.cjstehno.ersatz.cfg.ServerConfig;
-import io.github.cjstehno.ersatz.match.PathMatcher;
-import lombok.val;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import java.net.URI;
-
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static java.net.http.HttpClient.newHttpClient;
 import static java.net.http.HttpRequest.newBuilder;
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import io.github.cjstehno.ersatz.ErsatzServer;
+import io.github.cjstehno.ersatz.cfg.HttpMethod;
+import io.github.cjstehno.ersatz.cfg.ServerConfig;
+import java.net.URI;
+import lombok.val;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(ErsatzServerExtension.class)
 class ErsatzServerExtensionTest {

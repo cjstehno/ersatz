@@ -15,14 +15,12 @@
  */
 package io.github.cjstehno.ersatz.util;
 
-import io.github.cjstehno.ersatz.util.ByteArrays;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.ByteBuffer;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class ByteArraysTest {
 

@@ -15,15 +15,15 @@
  */
 package io.github.cjstehno.ersatz.match;
 
+import static lombok.AccessLevel.PRIVATE;
+import static org.hamcrest.CoreMatchers.equalTo;
+
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-
-import static lombok.AccessLevel.PRIVATE;
-import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * Matcher used to match request cookie information.

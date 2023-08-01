@@ -15,6 +15,11 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
+import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
+import static io.github.cjstehno.ersatz.util.Timeout.isTrueBefore;
+import static java.util.Collections.unmodifiableList;
+import static org.hamcrest.Matchers.anything;
+
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.cfg.Response;
@@ -26,20 +31,14 @@ import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.match.QueryParamMatcher;
 import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import lombok.val;
-import org.hamcrest.Matcher;
-import org.hamcrest.StringDescription;
-
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-
-import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
-import static io.github.cjstehno.ersatz.util.Timeout.isTrueBefore;
-import static java.util.Collections.unmodifiableList;
-import static org.hamcrest.Matchers.anything;
+import lombok.val;
+import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
 
 /**
  * <code>Request</code> implementation representing requests without body content.

@@ -16,25 +16,6 @@
 package io.github.cjstehno.ersatz.impl;
 
 
-import io.github.cjstehno.ersatz.ErsatzServer;
-import io.github.cjstehno.ersatz.cfg.ContentType;
-import io.github.cjstehno.ersatz.encdec.Decoders;
-import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
-import io.github.cjstehno.ersatz.server.MockClientRequest;
-import io.github.cjstehno.ersatz.util.HttpClientExtension;
-import io.github.cjstehno.ersatz.util.HttpClientExtension.Client;
-import io.github.cjstehno.ersatz.util.JsonEncDec;
-import lombok.val;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import java.io.IOException;
-import java.util.Map;
-
 import static io.github.cjstehno.ersatz.cfg.ContentType.*;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
 import static io.github.cjstehno.ersatz.encdec.MultipartRequestContent.multipartRequest;
@@ -47,6 +28,24 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import io.github.cjstehno.ersatz.ErsatzServer;
+import io.github.cjstehno.ersatz.cfg.ContentType;
+import io.github.cjstehno.ersatz.encdec.Decoders;
+import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
+import io.github.cjstehno.ersatz.server.MockClientRequest;
+import io.github.cjstehno.ersatz.util.HttpClientExtension;
+import io.github.cjstehno.ersatz.util.HttpClientExtension.Client;
+import io.github.cjstehno.ersatz.util.JsonEncDec;
+import java.io.IOException;
+import java.util.Map;
+import lombok.val;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class})
 class ErsatzRequestWithContentTest {

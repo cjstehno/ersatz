@@ -15,22 +15,13 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
+import static java.lang.String.join;
+
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.impl.ErsatzForwardResponse;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HttpString;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.nio.ByteBuffer;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -38,8 +29,16 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Set;
-
-import static java.lang.String.join;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 /**
  * An Ersatz Undertow handler used to handle request forwarding to gather response data from an external server URI.

@@ -15,6 +15,10 @@
  */
 package io.github.cjstehno.ersatz.junit;
 
+import static java.lang.Class.forName;
+import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
+import static org.junit.platform.commons.support.ReflectionSupport.newInstance;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -23,10 +27,6 @@ import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
-
-import static java.lang.Class.forName;
-import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
-import static org.junit.platform.commons.support.ReflectionSupport.newInstance;
 
 /**
  * A delegate used to perform the ErsatzServer parameter resolution in an abstracted manner.

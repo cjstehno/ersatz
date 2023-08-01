@@ -15,22 +15,6 @@
  */
 package io.github.cjstehno.ersatz.expectations;
 
-import io.github.cjstehno.ersatz.ErsatzServer;
-import io.github.cjstehno.ersatz.cfg.RequestWithContent;
-import io.github.cjstehno.ersatz.cfg.ServerConfig;
-import io.github.cjstehno.ersatz.encdec.Decoders;
-import io.github.cjstehno.ersatz.encdec.Encoders;
-import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
-import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
-import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
-import io.github.cjstehno.ersatz.util.HttpClientExtension;
-import lombok.val;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.io.IOException;
-
 import static io.github.cjstehno.ersatz.TestAssertions.assertOkWithString;
 import static io.github.cjstehno.ersatz.TestAssertions.verify;
 import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
@@ -40,6 +24,20 @@ import static okhttp3.MediaType.parse;
 import static okhttp3.RequestBody.create;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import io.github.cjstehno.ersatz.ErsatzServer;
+import io.github.cjstehno.ersatz.cfg.RequestWithContent;
+import io.github.cjstehno.ersatz.cfg.ServerConfig;
+import io.github.cjstehno.ersatz.encdec.Decoders;
+import io.github.cjstehno.ersatz.encdec.Encoders;
+import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
+import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
+import io.github.cjstehno.ersatz.util.HttpClientExtension;
+import java.io.IOException;
+import lombok.val;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig("serverConfig")
 public class ErsatzServerExpectationsTest {

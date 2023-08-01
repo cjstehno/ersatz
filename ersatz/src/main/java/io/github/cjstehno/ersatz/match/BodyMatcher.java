@@ -15,6 +15,10 @@
  */
 package io.github.cjstehno.ersatz.match;
 
+import static io.github.cjstehno.ersatz.match.HeaderMatcher.contentTypeHeader;
+import static lombok.AccessLevel.PRIVATE;
+import static org.hamcrest.CoreMatchers.startsWith;
+
 import io.github.cjstehno.ersatz.encdec.DecoderChain;
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.server.ClientRequest;
@@ -24,10 +28,6 @@ import lombok.val;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-
-import static io.github.cjstehno.ersatz.match.HeaderMatcher.contentTypeHeader;
-import static lombok.AccessLevel.PRIVATE;
-import static org.hamcrest.CoreMatchers.startsWith;
 
 /**
  * Matcher for matching request body content.

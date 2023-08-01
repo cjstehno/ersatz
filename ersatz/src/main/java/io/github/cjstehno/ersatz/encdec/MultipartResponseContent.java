@@ -16,7 +16,6 @@
 package io.github.cjstehno.ersatz.encdec;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
-
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -184,4 +183,3 @@ public abstract class MultipartResponseContent {
      */
     public abstract MultipartResponseContent part(String fieldName, String fileName, ContentType contentType, Object value);
 }
-

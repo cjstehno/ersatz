@@ -15,12 +15,12 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
+import static org.hamcrest.CoreMatchers.startsWith;
+
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import static org.hamcrest.CoreMatchers.startsWith;
 
 public class HeadExpectationsTest extends ExpectationHarness {
 

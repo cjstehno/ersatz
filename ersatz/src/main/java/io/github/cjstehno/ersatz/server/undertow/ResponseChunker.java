@@ -15,19 +15,18 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
+import static java.lang.System.arraycopy;
+import static lombok.AccessLevel.PACKAGE;
+
 import io.undertow.io.IoCallback;
 import io.undertow.io.Sender;
 import io.undertow.server.HttpServerExchange;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
-
-import static java.lang.System.arraycopy;
-import static lombok.AccessLevel.PACKAGE;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 /**
  * Undertow server callback used to provide the delayed chunked content.

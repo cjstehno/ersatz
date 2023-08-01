@@ -15,19 +15,18 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
-import org.junit.jupiter.api.BeforeEach;
-
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.jupiter.api.BeforeEach;
 
 abstract class ExpectationHarness {
 

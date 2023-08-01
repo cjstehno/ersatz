@@ -15,11 +15,10 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import lombok.SneakyThrows;
-
 import java.net.URI;
 import java.net.URL;
 import java.util.function.Consumer;
+import lombok.SneakyThrows;
 
 /**
  * Defines the server configuration options available for the proxy server.

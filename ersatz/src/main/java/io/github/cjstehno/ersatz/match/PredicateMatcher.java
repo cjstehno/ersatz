@@ -15,13 +15,12 @@
  */
 package io.github.cjstehno.ersatz.match;
 
+import static lombok.AccessLevel.PRIVATE;
+
+import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-
-import java.util.function.Predicate;
-
-import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Matcher used to match based on the result of a Predicate.

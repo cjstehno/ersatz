@@ -16,8 +16,15 @@
 package io.github.cjstehno.ersatz.match;
 
 
+import static io.github.cjstehno.ersatz.cfg.ContentType.*;
+import static io.github.cjstehno.ersatz.encdec.MultipartRequestContent.multipartRequest;
+import static io.github.cjstehno.ersatz.match.MultipartRequestMatcher.multipartMatcher;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+
 import io.github.cjstehno.ersatz.encdec.MultipartRequestContent;
-import io.github.cjstehno.ersatz.match.MultipartRequestMatcher;
+import java.util.stream.Stream;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
@@ -28,15 +35,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
-
-import static io.github.cjstehno.ersatz.cfg.ContentType.*;
-import static io.github.cjstehno.ersatz.encdec.MultipartRequestContent.multipartRequest;
-import static io.github.cjstehno.ersatz.match.MultipartRequestMatcher.multipartMatcher;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class MultipartRequestMatcherTest {
 

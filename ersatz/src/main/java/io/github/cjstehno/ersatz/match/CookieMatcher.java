@@ -15,17 +15,16 @@
  */
 package io.github.cjstehno.ersatz.match;
 
+import static org.hamcrest.Matchers.equalTo;
+
 import io.github.cjstehno.ersatz.encdec.Cookie;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.function.Consumer;
 import lombok.val;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.function.Consumer;
-
-import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Hamcrest matcher used to match Ersatz request cookie instances.
@@ -231,4 +230,3 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
         VALUE, COMMENT, DOMAIN, PATH, MAX_AGE, HTTP_ONLY, SECURE, VERSION
     }
 }
-

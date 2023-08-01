@@ -18,7 +18,6 @@ package io.github.cjstehno.ersatz.impl;
 import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-
 import java.util.function.Function;
 
 /**

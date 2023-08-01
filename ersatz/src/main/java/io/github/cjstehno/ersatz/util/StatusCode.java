@@ -15,11 +15,11 @@
  */
 package io.github.cjstehno.ersatz.util;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import static java.util.Arrays.stream;
 import static lombok.AccessLevel.PRIVATE;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Some available HTTP response status codes.

@@ -15,22 +15,21 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import io.github.cjstehno.ersatz.encdec.Cookie;
-import io.github.cjstehno.ersatz.match.HeaderMatcher;
-import io.github.cjstehno.ersatz.match.QueryParamMatcher;
-import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
-import io.github.cjstehno.ersatz.server.ClientRequest;
-import lombok.val;
-import org.hamcrest.Matcher;
-
-import java.util.LinkedList;
-
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
 import static io.github.cjstehno.ersatz.match.HeaderMatcher.headerMatching;
 import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryExists;
 import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryMatching;
 import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.cookieMatching;
 import static org.hamcrest.CoreMatchers.equalTo;
+
+import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.match.HeaderMatcher;
+import io.github.cjstehno.ersatz.match.QueryParamMatcher;
+import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import java.util.LinkedList;
+import lombok.val;
+import org.hamcrest.Matcher;
 
 /**
  * Defines a global request requirement.

@@ -24,7 +24,6 @@ import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.match.BodyMatcher;
 import io.github.cjstehno.ersatz.match.BodyParamMatcher;
 import io.github.cjstehno.ersatz.match.PathMatcher;
-
 import java.util.function.BiFunction;
 
 /**
@@ -65,4 +64,3 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
         return this;
     }
 }
-

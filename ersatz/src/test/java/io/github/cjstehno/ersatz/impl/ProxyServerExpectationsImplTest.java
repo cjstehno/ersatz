@@ -15,12 +15,12 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import io.github.cjstehno.ersatz.server.MockClientRequest;
-import org.junit.jupiter.api.Test;
-
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import io.github.cjstehno.ersatz.server.MockClientRequest;
+import org.junit.jupiter.api.Test;
 
 class ProxyServerExpectationsImplTest {
 

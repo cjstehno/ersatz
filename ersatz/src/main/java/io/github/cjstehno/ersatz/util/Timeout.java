@@ -15,16 +15,15 @@
  */
 package io.github.cjstehno.ersatz.util;
 
-import lombok.NoArgsConstructor;
-import lombok.val;
-
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
-
 import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static lombok.AccessLevel.PRIVATE;
+
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
+import lombok.NoArgsConstructor;
+import lombok.val;
 
 /**
  * A utility for operation timeout support.

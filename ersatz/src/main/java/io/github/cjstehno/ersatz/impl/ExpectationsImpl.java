@@ -15,20 +15,19 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
+import static io.github.cjstehno.ersatz.cfg.WaitFor.ONE_SECOND;
+import static java.util.Collections.unmodifiableList;
+
 import io.github.cjstehno.ersatz.cfg.*;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.*;
 import java.util.function.Consumer;
-
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
-import static io.github.cjstehno.ersatz.cfg.WaitFor.ONE_SECOND;
-import static java.util.Collections.unmodifiableList;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation of the <code>Expectations</code> interface.

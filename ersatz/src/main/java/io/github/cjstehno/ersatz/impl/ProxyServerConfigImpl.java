@@ -17,11 +17,9 @@ package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.cfg.ProxyServerConfig;
 import io.github.cjstehno.ersatz.cfg.ProxyServerExpectations;
-import io.github.cjstehno.ersatz.cfg.ServerConfig;
-import lombok.Getter;
-
 import java.net.URI;
 import java.util.function.Consumer;
+import lombok.Getter;
 
 /**
  * The implementation of the <code>ProxyServerConfig</code> interface.

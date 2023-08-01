@@ -15,24 +15,23 @@
  */
 package io.github.cjstehno.ersatz;
 
+import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_JSON;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
 import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension.Client;
 import io.github.cjstehno.ersatz.util.JsonEncDec;
+import java.util.Map;
 import lombok.val;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.Map;
-
-import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_JSON;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig
 public class ErsatzServerForwardTest {

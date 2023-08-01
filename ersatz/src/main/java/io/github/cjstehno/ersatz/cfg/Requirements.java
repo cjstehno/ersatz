@@ -15,12 +15,11 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
+
 import io.github.cjstehno.ersatz.match.HttpMethodMatcher;
 import io.github.cjstehno.ersatz.match.PathMatcher;
-
 import java.util.function.Consumer;
-
-import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
 
 /**
  * Defines the available requirements configuration methods.

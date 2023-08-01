@@ -15,12 +15,12 @@
  */
 package io.github.cjstehno.ersatz.impl.matchers;
 
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.github.cjstehno.ersatz.server.MockClientRequest;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RequestSchemeMatcherTest {
 

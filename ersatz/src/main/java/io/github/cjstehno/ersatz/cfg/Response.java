@@ -15,9 +15,13 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import static io.github.cjstehno.ersatz.util.HttpHeaders.ALLOW;
+import static io.github.cjstehno.ersatz.util.HttpHeaders.CONTENT_TYPE;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.stream.Collectors.toList;
+
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
@@ -25,11 +29,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static io.github.cjstehno.ersatz.util.HttpHeaders.ALLOW;
-import static io.github.cjstehno.ersatz.util.HttpHeaders.CONTENT_TYPE;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Used to configure the provided response to an HTTP request.

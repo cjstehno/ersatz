@@ -15,6 +15,10 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
+import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
+import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
+import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
+
 import io.github.cjstehno.ersatz.cfg.InboundMessage;
 import io.github.cjstehno.ersatz.cfg.MessageReaction;
 import io.github.cjstehno.ersatz.cfg.MessageType;
@@ -22,20 +26,15 @@ import io.github.cjstehno.ersatz.cfg.WaitFor;
 import io.github.cjstehno.ersatz.util.ByteArrays;
 import io.undertow.websockets.core.BufferedBinaryMessage;
 import io.undertow.websockets.core.BufferedTextMessage;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.val;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
-
-import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
-import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
-import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.val;
 
 /**
  * Implementation of the InboundMessage for websocket connections.

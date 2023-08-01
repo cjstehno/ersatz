@@ -15,16 +15,15 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import io.github.cjstehno.ersatz.encdec.DecodingContext;
-import io.github.cjstehno.ersatz.match.BodyMatcher;
-import io.github.cjstehno.ersatz.match.BodyParamMatcher;
-import org.hamcrest.Matcher;
-
-import java.util.function.BiFunction;
-
 import static io.github.cjstehno.ersatz.match.BodyMatcher.bodyMatching;
 import static io.github.cjstehno.ersatz.match.BodyParamMatcher.bodyParamMatching;
 import static org.hamcrest.Matchers.equalTo;
+
+import io.github.cjstehno.ersatz.encdec.DecodingContext;
+import io.github.cjstehno.ersatz.match.BodyMatcher;
+import io.github.cjstehno.ersatz.match.BodyParamMatcher;
+import java.util.function.BiFunction;
+import org.hamcrest.Matcher;
 
 /**
  * Expectation configuration for a request with body content.

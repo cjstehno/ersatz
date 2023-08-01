@@ -15,10 +15,9 @@
  */
 package io.github.cjstehno.ersatz.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 import static lombok.AccessLevel.PRIVATE;
+
+import lombok.NoArgsConstructor;
 
 /**
  * Some useful HTTP request/response header names.

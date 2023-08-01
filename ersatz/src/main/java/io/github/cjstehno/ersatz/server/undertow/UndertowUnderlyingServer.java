@@ -15,6 +15,8 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
+import static io.undertow.UndertowOptions.*;
+
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
 import io.github.cjstehno.ersatz.server.UnderlyingServer;
@@ -24,19 +26,16 @@ import io.undertow.server.handlers.HttpTraceHandler;
 import io.undertow.server.handlers.encoding.ContentEncodingRepository;
 import io.undertow.server.handlers.encoding.EncodingHandler;
 import io.undertow.server.handlers.encoding.GzipEncodingProvider;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.xnio.Options;
-
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-
-import static io.undertow.UndertowOptions.*;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.xnio.Options;
 
 /**
  * An <code>UnderlyingServer</code> implementation based on the Undertow server platform.

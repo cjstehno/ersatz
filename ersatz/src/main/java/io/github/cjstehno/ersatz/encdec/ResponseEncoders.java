@@ -15,17 +15,16 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import io.github.cjstehno.ersatz.cfg.ContentType;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
 
-import javax.activation.MimeType;
+import io.github.cjstehno.ersatz.cfg.ContentType;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
+import javax.activation.MimeType;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 /**
  * Provides management of response encoders. You may share an instance of this class to define response part encoders across multiple multipart

@@ -15,9 +15,9 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import java.util.function.Consumer;
-
 import static io.github.cjstehno.ersatz.cfg.MessageType.*;
+
+import java.util.function.Consumer;
 
 /**
  * Defines the expectations for web socket support.

@@ -15,6 +15,8 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
+import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
+
 import io.github.cjstehno.ersatz.impl.ErsatzRequest;
 import io.github.cjstehno.ersatz.impl.ExpectationsImpl;
 import io.github.cjstehno.ersatz.impl.RequirementsImpl;
@@ -22,14 +24,11 @@ import io.github.cjstehno.ersatz.impl.UnmatchedRequestReport;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import java.nio.ByteBuffer;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.nio.ByteBuffer;
-
-import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
 
 /**
  * An Undertow <code>HttpHandler</code> used to start the Ersatz handling chain, but checking the request against its

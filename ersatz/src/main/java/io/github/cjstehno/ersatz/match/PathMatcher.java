@@ -15,14 +15,14 @@
  */
 package io.github.cjstehno.ersatz.match;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.any;
+
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.any;
 
 /**
  * Matcher used to match the request path.

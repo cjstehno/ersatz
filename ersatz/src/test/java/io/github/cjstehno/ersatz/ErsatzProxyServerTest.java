@@ -15,14 +15,14 @@
  */
 package io.github.cjstehno.ersatz;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SharedErsatzServerExtension.class)
 class ErsatzProxyServerTest {

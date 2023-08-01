@@ -7,6 +7,7 @@ plugins {
     id 'jacoco'
     id 'signing'
     id 'com.adarshr.test-logger' version '3.2.0'
+    id "com.diffplug.spotless" version "6.20.0"
 }
 
 group = rootProject.group
@@ -192,4 +193,15 @@ signing {
     sign publishing.publications.ersatz
 }
 
+spotless {
+    java {
+        importOrder()
+        removeUnusedImports()
 
+        cleanthat()
+
+//        prettier()
+
+        formatAnnotations()
+    }
+}

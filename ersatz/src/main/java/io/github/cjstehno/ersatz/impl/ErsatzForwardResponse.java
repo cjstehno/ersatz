@@ -19,14 +19,13 @@ import io.github.cjstehno.ersatz.cfg.ChunkingConfig;
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * This is an empty implementation that does not allow configuration - it denotes that the response is to contain the

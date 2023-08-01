@@ -15,16 +15,15 @@
  */
 package io.github.cjstehno.ersatz.impl.matchers;
 
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.collection.IsMapContaining.hasKey;
+
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import java.util.Map;
+import java.util.function.Function;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-
-import java.util.Map;
-import java.util.function.Function;
-
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.collection.IsMapContaining.hasKey;
 
 /**
  * Matcher for matching the existence of a key in a map.

@@ -15,8 +15,21 @@
  */
 package io.github.cjstehno.ersatz;
 
+import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
+import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
+import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import io.github.cjstehno.ersatz.cfg.MessageType;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,20 +42,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
-
-import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
-import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
-import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(ErsatzServerExtension.class)
 public class WebSocketsTest {
@@ -245,4 +244,3 @@ public class WebSocketsTest {
         }
     }
 }
-

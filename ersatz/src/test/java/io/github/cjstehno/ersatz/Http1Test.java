@@ -15,11 +15,8 @@
  */
 package io.github.cjstehno.ersatz;
 
-import io.github.cjstehno.ersatz.ErsatzServer;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,9 +24,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.LinkedList;
-
-import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 public class Http1Test {
 

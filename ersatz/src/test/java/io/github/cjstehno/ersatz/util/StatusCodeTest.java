@@ -15,10 +15,10 @@
  */
 package io.github.cjstehno.ersatz.util;
 
-import org.junit.jupiter.api.Test;
-
 import static io.github.cjstehno.ersatz.util.StatusCode.*;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 class StatusCodeTest {
 

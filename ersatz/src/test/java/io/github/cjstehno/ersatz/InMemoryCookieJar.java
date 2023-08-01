@@ -15,15 +15,14 @@
  */
 package io.github.cjstehno.ersatz;
 
-import okhttp3.Cookie;
-import okhttp3.CookieJar;
-import okhttp3.HttpUrl;
+import static java.util.Collections.emptyList;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import static java.util.Collections.emptyList;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
 
 /**
  * In-memory OkHttp CookieJar Implementation used for testing.

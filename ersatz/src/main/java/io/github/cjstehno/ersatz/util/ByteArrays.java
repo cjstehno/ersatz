@@ -15,13 +15,12 @@
  */
 package io.github.cjstehno.ersatz.util;
 
-import lombok.NoArgsConstructor;
+import static java.lang.System.arraycopy;
+import static lombok.AccessLevel.PRIVATE;
 
 import java.nio.ByteBuffer;
 import java.util.List;
-
-import static java.lang.System.arraycopy;
-import static lombok.AccessLevel.PRIVATE;
+import lombok.NoArgsConstructor;
 
 /**
  * Utilities for working with arrays of <code>byte</code>s.

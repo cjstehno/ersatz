@@ -15,20 +15,18 @@
  */
 package io.github.cjstehno.ersatz.match;
 
-import io.github.cjstehno.ersatz.cfg.HttpMethod;
-import io.github.cjstehno.ersatz.server.MockClientRequest;
-import lombok.val;
-import org.apache.commons.fileupload.portlet.PortletRequestContext;
-import org.hamcrest.CoreMatchers;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
 import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
+
+import io.github.cjstehno.ersatz.cfg.HttpMethod;
+import io.github.cjstehno.ersatz.server.MockClientRequest;
+import lombok.val;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class HttpMethodMatcherTest {
 

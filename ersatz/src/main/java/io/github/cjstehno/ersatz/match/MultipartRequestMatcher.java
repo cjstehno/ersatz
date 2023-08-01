@@ -15,19 +15,18 @@
  */
 package io.github.cjstehno.ersatz.match;
 
+import static org.hamcrest.Matchers.*;
+
 import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.encdec.MultipartRequestContent;
-import lombok.val;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import static org.hamcrest.Matchers.*;
+import lombok.val;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 
 /**
  * A Hamcrest matcher used to match <code>MultipartRequestContent</code>. The matcher may be created directly or by using the closure or consumer

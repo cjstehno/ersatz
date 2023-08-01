@@ -15,11 +15,10 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
-import io.github.cjstehno.ersatz.server.undertow.ResponseChunker;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ResponseChunkerTest {
 

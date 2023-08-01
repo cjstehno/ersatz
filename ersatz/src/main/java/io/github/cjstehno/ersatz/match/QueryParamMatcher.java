@@ -15,15 +15,15 @@
  */
 package io.github.cjstehno.ersatz.match;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.IsIterableContaining.hasItem;
+
 import io.github.cjstehno.ersatz.impl.matchers.MapKeyMatcher;
 import io.github.cjstehno.ersatz.impl.matchers.MappedValuesMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.core.IsIterableContaining.hasItem;
 
 /**
  * Matcher used to match request query parameters.

@@ -16,16 +16,6 @@
 package io.github.cjstehno.ersatz.encdec;
 
 
-import io.github.cjstehno.testthings.Resources;
-import lombok.val;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_JSON;
 import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_JPG;
 import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
@@ -34,6 +24,14 @@ import static io.github.cjstehno.testthings.Resources.resourceToString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.function.Function;
+import java.util.stream.Stream;
+import lombok.val;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class ErsatzMultipartResponseContentTest {
 

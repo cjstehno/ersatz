@@ -15,23 +15,21 @@
  */
 package io.github.cjstehno.ersatz;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
-import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension.Client;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class})
 @ApplyServerConfig("serverConfig")

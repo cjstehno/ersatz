@@ -15,12 +15,11 @@
  */
 package io.github.cjstehno.ersatz;
 
-import lombok.NoArgsConstructor;
-import org.junit.jupiter.params.provider.Arguments;
+import static lombok.AccessLevel.PRIVATE;
 
 import java.util.stream.Stream;
-
-import static lombok.AccessLevel.PRIVATE;
+import lombok.NoArgsConstructor;
+import org.junit.jupiter.params.provider.Arguments;
 
 @NoArgsConstructor(access = PRIVATE) @SuppressWarnings("unused")
 public final class TestArguments {

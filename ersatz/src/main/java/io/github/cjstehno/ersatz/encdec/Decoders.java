@@ -15,13 +15,11 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUpload;
-import org.apache.commons.fileupload.UploadContext;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static java.net.URLDecoder.decode;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.createTempDirectory;
+import static lombok.AccessLevel.PRIVATE;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -30,12 +28,13 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiFunction;
-
-import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
-import static java.net.URLDecoder.decode;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.Files.createTempDirectory;
-import static lombok.AccessLevel.PRIVATE;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUpload;
+import org.apache.commons.fileupload.UploadContext;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 
 /**
  * Reusable request content decoder functions. Decoders are simply implementations of the <code>BiFunction&lt;byte[], DecodingContext, Object&gt;</code>

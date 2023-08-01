@@ -15,14 +15,13 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import io.github.cjstehno.ersatz.cfg.ContentType;
-import lombok.EqualsAndHashCode;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 
+import io.github.cjstehno.ersatz.cfg.ContentType;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import lombok.EqualsAndHashCode;
 
 /**
  * Defines the request body content for a multipart request. An instance of this class may be created directly or by using the Groovy DSL closure or

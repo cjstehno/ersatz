@@ -15,13 +15,12 @@
  */
 package io.github.cjstehno.ersatz.server;
 
+import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
+
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.encdec.Cookie;
-import lombok.val;
-
 import java.util.*;
-
-import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
+import lombok.val;
 
 public class MockClientRequest implements ClientRequest {
 
@@ -183,4 +182,3 @@ public class MockClientRequest implements ClientRequest {
         return this;
     }
 }
-

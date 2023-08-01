@@ -15,20 +15,19 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
+import static org.hamcrest.CoreMatchers.allOf;
+
 import io.github.cjstehno.ersatz.cfg.RequestRequirement;
 import io.github.cjstehno.ersatz.impl.matchers.RequestSchemeMatcher;
 import io.github.cjstehno.ersatz.match.*;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import java.util.LinkedList;
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.hamcrest.CoreMatchers.allOf;
 
 /**
  * Implementation of a request requirement.

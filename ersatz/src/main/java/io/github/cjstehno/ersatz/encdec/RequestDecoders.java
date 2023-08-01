@@ -15,17 +15,16 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import io.github.cjstehno.ersatz.cfg.ContentType;
-import lombok.RequiredArgsConstructor;
+import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
+import static lombok.AccessLevel.PACKAGE;
 
-import javax.activation.MimeType;
+import io.github.cjstehno.ersatz.cfg.ContentType;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-
-import static io.github.cjstehno.ersatz.encdec.MimeTypes.createMimeType;
-import static lombok.AccessLevel.PACKAGE;
+import javax.activation.MimeType;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Configuration manager for a collection of request content decoders.
