@@ -17,6 +17,7 @@ package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.cfg.Response;
+import io.github.cjstehno.ersatz.cfg.WaitFor;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import io.github.cjstehno.ersatz.server.ClientRequest;
@@ -211,7 +212,7 @@ class ErsatzRequestTest {
             request.mark(clientRequest());
         }
 
-        assertEquals(verified, request.verify(1, SECONDS));
+        assertEquals(verified, request.verify(WaitFor.ONE_SECOND));
     }
 
     @Test @DisplayName("responds")

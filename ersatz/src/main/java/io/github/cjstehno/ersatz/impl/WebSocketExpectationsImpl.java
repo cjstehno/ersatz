@@ -15,10 +15,7 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import io.github.cjstehno.ersatz.cfg.InboundMessage;
-import io.github.cjstehno.ersatz.cfg.MessageType;
-import io.github.cjstehno.ersatz.cfg.OutboundMessage;
-import io.github.cjstehno.ersatz.cfg.WebSocketExpectations;
+import io.github.cjstehno.ersatz.cfg.*;
 import io.undertow.websockets.core.BufferedBinaryMessage;
 import io.undertow.websockets.core.BufferedTextMessage;
 import lombok.Getter;
@@ -30,8 +27,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
 
 /**
  * Implementation of the WebSocketExpectations.
@@ -139,19 +137,26 @@ public class WebSocketExpectationsImpl implements WebSocketExpectations {
         return inboundMessages.stream().filter(m -> m.matches(message)).findFirst();
     }
 
-    public boolean verify(final long timeout, final TimeUnit unit) {
-        return waitForLatch() && inboundMessages.stream().allMatch(m -> m.marked(timeout, unit));
+    /**
+     * Verifies that the configured expectations have been met.
+     *
+     * @param waitFor the amount of time verification should wait before considering a timeout
+     * @return true if the verification conditions have been met
+     */
+    public boolean verify(final WaitFor waitFor) {
+        return waitForLatch(waitFor) && inboundMessages.stream().allMatch(m -> m.marked(waitFor));
     }
 
-    private boolean waitForLatch() {
+    private boolean waitForLatch(final WaitFor waitFor) {
         try {
-            /*
-                Note: Using a timeout here works, but you need to increase the time value when running all tests - this
-                would lead to unpredictable tests. I am going to make this wait for now. If this causes issues down the
-                road, consider adding in a timeout with some option to wait-forever, like this.
-             */
-            connectionLatch.await();
-            return true;
+            if (waitFor == FOREVER) {
+                connectionLatch.await();
+                return true;
+
+            } else {
+                return connectionLatch.await(waitFor.getTime(), waitFor.getUnit());
+            }
+
         } catch (InterruptedException e) {
             return false;
         }

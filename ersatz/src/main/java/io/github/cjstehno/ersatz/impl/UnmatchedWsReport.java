@@ -15,12 +15,11 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
+import io.github.cjstehno.ersatz.cfg.WaitFor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Reporter used to display mismatch information about websocket expectations.
@@ -45,7 +44,7 @@ public class UnmatchedWsReport implements Report {
 
             final AtomicInteger failed = new AtomicInteger(0);
             expectations.eachMessage(rm -> {
-                boolean matched = rm.marked(1, SECONDS);
+                boolean matched = rm.marked(WaitFor.ONE_SECOND);
                 out.append("  ").append(mark(matched)).append(" Received ").append(rm.getMessageType()).append(" message: ").append(rm.getPayload()).append("\n");
                 if (!matched) {
                     failed.incrementAndGet();

@@ -17,7 +17,6 @@ package io.github.cjstehno.ersatz;
 
 import io.github.cjstehno.ersatz.cfg.MessageType;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
-import io.github.cjstehno.testthings.rando.NumberRandomizers;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,11 +39,17 @@ import java.util.stream.Stream;
 
 import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
 import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
+import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(ErsatzServerExtension.class)
 public class WebSocketsTest {
+
+    private static final String MESSAGE_STRING = "message for you, sir";
+    private static final byte[] MESSAGE_BYTES = MESSAGE_STRING.getBytes(UTF_8);
+    private static final ByteString MESSAGE_BYTESTRING = ByteString.of(MESSAGE_BYTES);
 
     @Test void connecting(final ErsatzServer ersatz) {
         ersatz.expectations(expects -> {
@@ -53,40 +58,49 @@ public class WebSocketsTest {
 
         openWebSocket(ersatz.wsUrl("/stuff"));
 
-        ersatz.assertVerified();
+        ersatz.assertVerified(FOREVER);
+    }
+
+    /**
+     * A bit of a contrived test - basically it ensures that a test will fail if the connection expectation is not met.
+     */
+    @Test void expectingConnectThatNeverHappens(final ErsatzServer ersatz) {
+        ersatz.expectations(expects -> {
+            expects.webSocket("/never");
+        });
+
+        openWebSocket(ersatz.wsUrl("/ever"));
+
+        // it will timeout after 1 s
+        assertFalse(ersatz.verify());
     }
 
     @Test void sendAndReceiveText(final ErsatzServer server) {
-        val inboundMessageContent = "some message";
-
         server.expectations(expects -> {
             expects.webSocket("/ws", ws -> {
-                ws.receive(inboundMessageContent, TEXT);
+                ws.receive(MESSAGE_STRING, TEXT);
             });
         });
 
         openWebSocket(server.wsUrl("/ws"), wskt -> {
-            wskt.send(inboundMessageContent);
+            wskt.send(MESSAGE_STRING);
         });
 
-        server.assertVerified();
+        server.assertVerified(FOREVER);
     }
 
     @Test void sendAndReceiveBinary(final ErsatzServer server) {
-        val bytes = NumberRandomizers.byteArray(8).one();
-        val messageContent = ByteString.of(bytes);
-
         server.expectations(expects -> {
             expects.webSocket("/ws", ws -> {
-                ws.receive(bytes, BINARY);
+                ws.receive(MESSAGE_BYTES, BINARY);
             });
         });
 
         openWebSocket(server.wsUrl("/ws"), wskt -> {
-            wskt.send(messageContent);
+            wskt.send(MESSAGE_BYTESTRING);
         });
 
-        server.assertVerified();
+        server.assertVerified(FOREVER);
     }
 
     @Test void multipleConnections(final ErsatzServer ersatz) {
@@ -98,7 +112,7 @@ public class WebSocketsTest {
         openWebSocket(ersatz.wsUrl("/alpha"));
         openWebSocket(ersatz.wsUrl("/bravo"));
 
-        ersatz.assertVerified();
+        ersatz.assertVerified(FOREVER);
     }
 
     @Test void reactToMessageWithText(final ErsatzServer ersatz) throws InterruptedException {
@@ -114,7 +128,7 @@ public class WebSocketsTest {
             wskt.send("ping");
         });
 
-        ersatz.assertVerified();
+        ersatz.assertVerified(FOREVER);
 
         listener.await(1, TimeUnit.SECONDS);
         assertEquals(listener.getMessages().get(0), "pong");
@@ -138,7 +152,7 @@ public class WebSocketsTest {
             wskt.send(pingMessage);
         });
 
-        ersatz.assertVerified();
+        ersatz.assertVerified(FOREVER);
 
         listener.await(1, TimeUnit.SECONDS);
         assertEquals(listener.getMessages().get(0), pongMessage);
@@ -154,7 +168,7 @@ public class WebSocketsTest {
 
         openWebSocket(ersatz.wsUrl("/hello"), listener, null);
 
-        ersatz.assertVerified();
+        ersatz.assertVerified(FOREVER);
 
         listener.await(1, TimeUnit.SECONDS);
         assertEquals(listener.getMessages().get(0), expected);
@@ -163,8 +177,8 @@ public class WebSocketsTest {
     private static Stream<Arguments> onConnectMessages() {
         return Stream.of(
             // type, message, expected
-            Arguments.of(TEXT, "message for you, sir", "message for you, sir"),
-            Arguments.of(BINARY, "message for you, sir".getBytes(UTF_8), ByteString.of("message for you, sir".getBytes(UTF_8)))
+            Arguments.of(TEXT, MESSAGE_STRING, MESSAGE_STRING),
+            Arguments.of(BINARY, MESSAGE_BYTES, MESSAGE_BYTESTRING)
         );
     }
 

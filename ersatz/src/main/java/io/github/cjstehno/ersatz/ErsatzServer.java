@@ -17,15 +17,19 @@ package io.github.cjstehno.ersatz;
 
 import io.github.cjstehno.ersatz.cfg.Expectations;
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
+import io.github.cjstehno.ersatz.cfg.WaitFor;
 import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
 import io.github.cjstehno.ersatz.server.UnderlyingServer;
 import io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer;
+import lombok.Getter;
 
 import java.io.Closeable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import static io.github.cjstehno.ersatz.cfg.WaitFor.atMost;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static lombok.AccessLevel.PROTECTED;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -51,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ErsatzServer implements Closeable {
 
     private final UnderlyingServer underlyingServer;
-    private final ServerConfigImpl serverConfig;
+    @Getter(PROTECTED) private final ServerConfigImpl serverConfig;
 
     /**
      * Creates a new Ersatz server instance with empty (default) configuration.
@@ -150,6 +154,12 @@ public class ErsatzServer implements Closeable {
         return getUrl("ws", getHttpPort());
     }
 
+    /**
+     * Used to retrieve the Web Socket URL with the appended path.
+     *
+     * @param path the path to be appended to the web socket url
+     * @return the web socket url with the appended path
+     */
     public String wsUrl(final String path) {
         return getWsUrl() + path;
     }
@@ -157,7 +167,7 @@ public class ErsatzServer implements Closeable {
     /**
      * Used to retrieve the full url of the server, either HTTP or HTTPS, based on the passed in boolean value. This
      * method is useful for testing in cases where the HTTPS enablement is parameterized.
-     *
+     * <p>
      * If the scheme is not available, the port value in the URL will be -1.
      *
      * @param https whether the retrieved URL is for HTTPS or not
@@ -294,9 +304,23 @@ public class ErsatzServer implements Closeable {
      * @param timeout the timeout value
      * @param unit    the timeout unit
      * @return <code>true</code> if all call criteria were met during test execution.
+     * @deprecated Use the <code>verify(WaitFor)</code> version instead
      */
+    @Deprecated(since = "4.0.0", forRemoval = true)
     public boolean verify(final long timeout, final TimeUnit unit) {
-        return serverConfig.getExpectations().verify(timeout, unit);
+        return verify(atMost(timeout, unit));
+    }
+
+    /**
+     * Used to verify that all of the expected request interactions were called the appropriate number of times. This method should be called after
+     * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back
+     * from the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
+     *
+     * @param waitFor the timeout waiting value
+     * @return <code>true</code> if all call criteria were met during test execution.
+     */
+    public boolean verify(final WaitFor waitFor) {
+        return serverConfig.getExpectations().verify(waitFor);
     }
 
     /**
@@ -306,7 +330,9 @@ public class ErsatzServer implements Closeable {
      *
      * @param timeout the timeout value (in seconds)
      * @return <code>true</code> if all call criteria were met during test execution.
+     * @deprecated Use the <code>verify(WaitFor)</code> version instead
      */
+    @Deprecated(since = "4.0.0", forRemoval = true)
     public boolean verify(final long timeout) {
         return verify(timeout, SECONDS);
     }
@@ -324,24 +350,19 @@ public class ErsatzServer implements Closeable {
 
     /**
      * Helper method to wrap a call to the <code>verify()</code> method within a JUnit <code>assertTrue(...)</code> call.
+     *
+     * This method applies a 1 second waiting time before timing out.
      */
     public void assertVerified() {
-        assertVerified(1, SECONDS);
+        assertVerified(WaitFor.ONE_SECOND);
     }
 
     /**
      * Helper method to wrap a call to the <code>verify(timeout, unit)</code> method within a JUnit <code>assertTrue(...)</code> call.
-     */
-    public void assertVerified(final long timeout, final TimeUnit unit) {
-        assertTrue(verify(timeout, unit), "The server expectation verification failed.");
-    }
-
-    /**
-     * Retrieves the internal server configuration.
      *
-     * @return the server configuration for this server.
+     * @param waitFor the amount of time the verification should wait before considering a timeout.
      */
-    protected final ServerConfigImpl getServerConfig() {
-        return serverConfig;
+    public void assertVerified(final WaitFor waitFor) {
+        assertTrue(verify(waitFor), "The server expectation verification failed.");
     }
 }

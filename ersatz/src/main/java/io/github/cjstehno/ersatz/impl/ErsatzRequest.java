@@ -18,6 +18,7 @@ package io.github.cjstehno.ersatz.impl;
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.cfg.Response;
+import io.github.cjstehno.ersatz.cfg.WaitFor;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.impl.matchers.RequestSchemeMatcher;
 import io.github.cjstehno.ersatz.match.HeaderMatcher;
@@ -32,7 +33,6 @@ import org.hamcrest.StringDescription;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -46,7 +46,6 @@ import static org.hamcrest.Matchers.anything;
  */
 public class ErsatzRequest implements Request {
 
-    private static final String FORWARD_HEADER_NAME = "X-Ersatz-Forward";
     private final List<Matcher<ClientRequest>> matchers = new LinkedList<>();
     private final List<Consumer<ClientRequest>> listeners = new LinkedList<>();
     private final List<Response> responses = new LinkedList<>();
@@ -61,7 +60,7 @@ public class ErsatzRequest implements Request {
      * @param meth           the request method
      * @param pathMatcher    the path matcher
      * @param globalEncoders the shared global encoders
-     * @param emptyResponse     whether this is a request with an empty response
+     * @param emptyResponse  whether this is a request with an empty response
      */
     public ErsatzRequest(final HttpMethod meth, final PathMatcher pathMatcher, final ResponseEncoders globalEncoders, final boolean emptyResponse) {
         matchers.add(methodMatching(meth));
@@ -137,15 +136,14 @@ public class ErsatzRequest implements Request {
      * <p>
      * This method will block until the call count condition is met or the timeout is exceeded.
      *
-     * @param timeout the timeout duration
-     * @param unit    the timeout duration units
+     * @param waitFor the amount of time that verification should wait until timing out
      * @return true if the call count matches the expected verification criteria
      */
-    public boolean verify(final long timeout, final TimeUnit unit) {
+    public boolean verify(final WaitFor waitFor) {
         return isTrueBefore(
             () -> callVerifier.matches(callCount.get()),
-            timeout,
-            unit
+            waitFor.getTime(),
+            waitFor.getUnit()
         );
     }
 
