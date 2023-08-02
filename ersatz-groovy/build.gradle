@@ -21,8 +21,8 @@ repositories {
 
 dependencies {
     implementation project(':ersatz')
-    implementation "org.codehaus.groovy:groovy:$groovyVersion"
-    implementation "org.codehaus.groovy:groovy-json:$groovyVersion"
+    implementation "org.apache.groovy:groovy:$groovyVersion"
+    implementation "org.apache.groovy:groovy-json:$groovyVersion"
 
     testImplementation 'io.github.cjstehno:test-things:0.1.0'
 
@@ -89,7 +89,7 @@ shadowJar {
         exclude(dependency('org.slf4j:slf4j-api:.*'))
         exclude(dependency('org.hamcrest::.*'))
         exclude(dependency('org.wildfly.client::.*'))
-        exclude(dependency('org.codehaus.groovy::.*'))
+        exclude(dependency('org.apache.groovy::.*'))
     }
 
     mergeServiceFiles()
