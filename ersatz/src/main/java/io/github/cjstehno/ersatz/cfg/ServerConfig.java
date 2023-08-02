@@ -30,8 +30,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  */
 public interface ServerConfig {
 
-    int SERVER_THREAD_MULTIPLIER = 8;
-
     /**
      * Used to control the enabled/disabled state of HTTPS on the server. By default HTTPS is disabled.
      *
@@ -243,8 +241,9 @@ public interface ServerConfig {
      * @param io the number of IO threads (should be a small number; default is 2)
      * @return a reference to this server configuration
      */
+    @SuppressWarnings("checkstyle:MagicNumber")
     default ServerConfig serverThreads(final int io) {
-        return serverThreads(io, io * SERVER_THREAD_MULTIPLIER);
+        return serverThreads(io, io * 8);
     }
 
     /**
