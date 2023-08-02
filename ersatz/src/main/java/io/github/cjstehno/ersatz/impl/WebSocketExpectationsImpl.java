@@ -46,28 +46,26 @@ public class WebSocketExpectationsImpl implements WebSocketExpectations {
     private final List<OutboundMessageImpl> outboundMessages = new LinkedList<>();
     @Getter private final String path;
 
-    // FIXME: consider changing names to "toReceive" and "sends"
-
-    @Override public InboundMessage receive(final Object payload, final MessageType messageType) {
+    @Override public InboundMessage receives(final Object payload, final MessageType messageType) {
         val message = new InboundMessageImpl(payload, messageType);
         inboundMessages.add(message);
         return message;
     }
 
-    @Override public InboundMessage receive(final Consumer<InboundMessage> config) {
+    @Override public InboundMessage receives(final Consumer<InboundMessage> config) {
         val message = new InboundMessageImpl();
         config.accept(message);
         inboundMessages.add(message);
         return message;
     }
 
-    @Override public OutboundMessage send(final Object payload, final MessageType messageType) {
+    @Override public OutboundMessage sends(final Object payload, final MessageType messageType) {
         val message = new OutboundMessageImpl(payload, messageType);
         outboundMessages.add(message);
         return message;
     }
 
-    @Override public OutboundMessage send(final Consumer<OutboundMessage> config) {
+    @Override public OutboundMessage sends(final Consumer<OutboundMessage> config) {
         val message = new OutboundMessageImpl();
         config.accept(message);
         outboundMessages.add(message);

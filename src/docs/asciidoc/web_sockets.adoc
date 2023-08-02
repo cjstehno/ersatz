@@ -1,0 +1,23 @@
+== Web Sockets
+
+NOTE: The websocket support is very rudimentary at this time and only supports non-secure (ws://) connections. Please file an issue if this is blocking your usage of it.
+
+WebSocket support is provided in the "expectations" configuration. You can expect that a websocket is connected-to, and that it receives a specified message. You can also "react" to the connection or inbound message by sending a message back to the client.
+
+An example would be something like:
+
+[source,java]
+----
+ersatz.expectations(expects -> {
+    expects.webSocket("/game", ws -> {
+        ws.receives(pingBytes).reaction(pongBytes, BINARY);
+    });
+});
+----
+
+In this example, the server expects that a websocket connection occurs for "/game", when that connection occurs, the server will expect to receive a message of `pingBytes`. When it receives that message, it will respond with a message `pongBytes` (in `BINARY` format).
+
+If the client does not make the "/game" request with the expected message, it will not receive the reaction message, and the test should fail - verification will also fail.
+
+**Verification Timeouts.** Sometimes, when running asynchronous network tests, such as these, you can run into issues on different environments - your laptop might burn through the tests quickly and have no issues, but your over-worked build server might take more time and cause tests to fail by timing out. The `verify` methods accept a `WaitFor` parameter which allows you to configure a wait time. One useful value here is `FOREVER` which causes the test verification to wait for the expected conditions. When this fails, it will hang your test environment - not a great condition, but at least then you know you have a real problem, rather than having to come up with some arbitrary timeout value.
+

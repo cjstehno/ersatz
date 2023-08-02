@@ -83,7 +83,7 @@ public final class Encoders {
      * URI - will load the contents of the URI
      * URL - will load the contents of the URL
      */
-    @SuppressWarnings({"checkstyle:ReturnCount", "checkstyle:LambdaBodyLength"}) // TODO: can I reduce this?
+    @SuppressWarnings({"checkstyle:ReturnCount", "checkstyle:LambdaBodyLength"})
     public static final Function<Object, byte[]> content = obj -> {
         try {
             if (obj instanceof InputStream) {

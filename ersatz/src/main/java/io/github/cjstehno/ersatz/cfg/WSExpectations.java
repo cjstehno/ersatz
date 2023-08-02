@@ -33,19 +33,6 @@ public interface WSExpectations {
         return webSocket(path, null);
     }
 
-    // FIXME: move to groovy
-//    /**
-//     * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection
-//     * will be expected in order for the verification to pass.
-//     *
-//     * @param path the request path
-//     * @param closure the configuration closure
-//     * @return a reference to the web socket expectations
-//     */
-//    default WebSocketExpectations ws(String path, @DelegatesTo(value = WebSocketExpectations.class, strategy = DELEGATE_FIRST) Closure closure){
-//        return ws(path, ConsumerWithDelegate.create(closure));
-//    }
-
     /**
      * Defines a web socket expectation. When this expectation block is configured, at least one web socket connection
      * will be expected in order for the verification to pass.

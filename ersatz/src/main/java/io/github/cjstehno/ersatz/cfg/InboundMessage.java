@@ -65,15 +65,6 @@ public interface InboundMessage {
      */
     MessageReaction reaction(Object payload, MessageType messageType);
 
-    // FIXME: move to Groovy
-//    /**
-//     * Used to specify a reaction message to be sent after receiving this message.
-//     *
-//     * @param closure the reaction configuration closure
-//     * @return a reference to this ReceivedMessage
-//     */
-//    MessageReaction reaction(@DelegatesTo(value = MessageReaction.class, strategy = DELEGATE_FIRST) Closure closure);
-
     /**
      * Used to specify a reaction message to be sent after receiving this message.
      *

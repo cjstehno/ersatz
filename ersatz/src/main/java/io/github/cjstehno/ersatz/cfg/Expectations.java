@@ -93,7 +93,7 @@ public interface Expectations extends AnyExpectations, GetExpectations, HeadExpe
      */
     default Request request(final HttpMethod method, final PathMatcher pathMatcher) {
         return ANY(pathMatcher, null);
-    } // FIXME: is this right?
+    }
 
     /**
      * Allows configuration of request expectation matching any request method with a path matching the provided

@@ -33,11 +33,11 @@ public interface WebSocketExpectations {
      * @param payload the payload object
      * @return a reference to this ReceivedMessage
      */
-    default InboundMessage receive(Object payload) {
+    default InboundMessage receives(Object payload) {
         if (resolve(payload) == BINARY) {
-            return receive(payload, BINARY);
+            return receives(payload, BINARY);
         }
-        return receive(payload.toString(), TEXT);
+        return receives(payload.toString(), TEXT);
     }
 
     /**
@@ -48,16 +48,7 @@ public interface WebSocketExpectations {
      * @param messageType the message type
      * @return a reference to this ReceivedMessage
      */
-    InboundMessage receive(Object payload, MessageType messageType);
-
-    /**
-     * Configures an expectation that the web socket connection will receive a message configured by the closure.
-     *
-     * @param closure the configuration closure
-     * @return a reference to this ReceivedMessage
-     */
-    // FIXME: groovy
-//    InboundMessage receive(@DelegatesTo(value = ReceivedMessage.class, strategy = DELEGATE_FIRST) Closure closure);
+    InboundMessage receives(Object payload, MessageType messageType);
 
     /**
      * Configures an expectation that the web socket connection will receive a message configured by the consumer.
@@ -65,7 +56,7 @@ public interface WebSocketExpectations {
      * @param config the configuration consumer
      * @return a reference to this ReceivedMessage
      */
-    InboundMessage receive(Consumer<InboundMessage> config);
+    InboundMessage receives(Consumer<InboundMessage> config);
 
     /**
      * Configures a web socket message which will be sent to the client after it connects.
@@ -73,11 +64,11 @@ public interface WebSocketExpectations {
      * @param payload the message payload
      * @return a reference to this ReceivedMessage
      */
-    default OutboundMessage send(Object payload){
+    default OutboundMessage sends(Object payload) {
         if (resolve(payload) == BINARY) {
-            return send(payload, BINARY);
+            return sends(payload, BINARY);
         }
-        return send(payload.toString(), TEXT);
+        return sends(payload.toString(), TEXT);
     }
 
     /**
@@ -87,16 +78,7 @@ public interface WebSocketExpectations {
      * @param messageType the message type
      * @return a reference to this ReceivedMessage
      */
-    OutboundMessage send(Object payload, MessageType messageType);
-
-    /**
-     * Configures a web socket message which will be sent to the client after it connects.
-     *
-     * @param closure the message configuration closure
-     * @return a reference to this ReceivedMessage
-     */
-    // FIXME: Groovy
-//    OutboundMessage send(@DelegatesTo(value = SentMessage.class, strategy = DELEGATE_FIRST) Closure closure);
+    OutboundMessage sends(Object payload, MessageType messageType);
 
     /**
      * Configures a web socket message which will be sent to the client after it connects.
@@ -104,5 +86,5 @@ public interface WebSocketExpectations {
      * @param config the configuration consumer
      * @return a reference to this ReceivedMessage
      */
-    OutboundMessage send(Consumer<OutboundMessage> config);
+    OutboundMessage sends(Consumer<OutboundMessage> config);
 }

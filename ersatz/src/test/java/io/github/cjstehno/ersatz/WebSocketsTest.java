@@ -78,7 +78,7 @@ public class WebSocketsTest {
     @Test void sendAndReceiveText(final ErsatzServer server) {
         server.expectations(expects -> {
             expects.webSocket("/ws", ws -> {
-                ws.receive(MESSAGE_STRING, TEXT);
+                ws.receives(MESSAGE_STRING, TEXT);
             });
         });
 
@@ -92,7 +92,7 @@ public class WebSocketsTest {
     @Test void sendAndReceiveBinary(final ErsatzServer server) {
         server.expectations(expects -> {
             expects.webSocket("/ws", ws -> {
-                ws.receive(MESSAGE_BYTES, BINARY);
+                ws.receives(MESSAGE_BYTES, BINARY);
             });
         });
 
@@ -118,7 +118,7 @@ public class WebSocketsTest {
     @Test void reactToMessageWithText(final ErsatzServer ersatz) throws InterruptedException {
         ersatz.expectations(expects -> {
             expects.webSocket("/foo", ws -> {
-                ws.receive("ping").reaction("pong", TEXT);
+                ws.receives("ping").reaction("pong", TEXT);
             });
         });
 
@@ -143,7 +143,7 @@ public class WebSocketsTest {
 
         ersatz.expectations(expects -> {
             expects.webSocket("/foo", ws -> {
-                ws.receive(pingBytes).reaction(pongBytes, BINARY);
+                ws.receives(pingBytes).reaction(pongBytes, BINARY);
             });
         });
 
@@ -162,7 +162,7 @@ public class WebSocketsTest {
     @ParameterizedTest(name = "[{index}] sending message on connection: {0}") @MethodSource("onConnectMessages")
     void sendingMessageOnConnect(final MessageType mType, final Object message, final Object expected, final ErsatzServer ersatz) throws Exception {
         ersatz.expectations(expects -> {
-            expects.webSocket("/hello", ws -> ws.send(message, mType));
+            expects.webSocket("/hello", ws -> ws.sends(message, mType));
         });
 
         val listener = new CapturingWebSocketListener(1);

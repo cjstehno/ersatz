@@ -257,7 +257,6 @@ public class ServerConfigImpl implements ServerConfig {
     @Override public ServerConfig expectations(final Consumer<Expectations> expects) {
         expects.accept(expectations);
 
-        // fIXME: may need to figure out a different way to auto-start
         if (autoStartEnabled && starter != null) {
             starter.run();
         }
