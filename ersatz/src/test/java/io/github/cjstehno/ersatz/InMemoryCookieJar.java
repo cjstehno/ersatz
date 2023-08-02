@@ -15,14 +15,15 @@
  */
 package io.github.cjstehno.ersatz;
 
-import static java.util.Collections.emptyList;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import okhttp3.Cookie;
-import okhttp3.CookieJar;
-import okhttp3.HttpUrl;
+
+import static java.util.Collections.emptyList;
 
 /**
  * In-memory OkHttp CookieJar Implementation used for testing.
@@ -32,12 +33,12 @@ public class InMemoryCookieJar implements CookieJar {
     private final ConcurrentMap<HttpUrl, List<Cookie>> cookies = new ConcurrentHashMap<>();
 
     @Override
-    public void saveFromResponse(HttpUrl url, List<Cookie> cook) {
+    public void saveFromResponse(final HttpUrl url, final List<Cookie> cook) {
         cookies.put(url, cook);
     }
 
     @Override
-    public List<Cookie> loadForRequest(HttpUrl url) {
+    public List<Cookie> loadForRequest(final HttpUrl url) {
         return cookies.getOrDefault(url, emptyList());
     }
 }

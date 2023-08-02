@@ -15,16 +15,6 @@
  */
 package io.github.cjstehno.ersatz.expectations;
 
-import static io.github.cjstehno.ersatz.TestAssertions.*;
-import static io.github.cjstehno.ersatz.cfg.ContentType.*;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static okhttp3.MediaType.parse;
-import static okhttp3.RequestBody.create;
-import static org.hamcrest.CoreMatchers.anything;
-import static org.hamcrest.Matchers.startsWith;
-import static org.hamcrest.core.IsIterableContaining.hasItem;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.encdec.Decoders;
@@ -32,15 +22,30 @@ import io.github.cjstehno.ersatz.encdec.Encoders;
 import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
 import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+import static io.github.cjstehno.ersatz.TestAssertions.assertOkWithString;
+import static io.github.cjstehno.ersatz.TestAssertions.assertStatusWithString;
+import static io.github.cjstehno.ersatz.TestAssertions.verify;
+import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_URLENCODED;
+import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_JPG;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static okhttp3.MediaType.parse;
+import static okhttp3.RequestBody.create;
+import static org.hamcrest.CoreMatchers.anything;
+import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.core.IsIterableContaining.hasItem;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig("serverConfig")
 public class ErsatzServerPostExpectationsTest {
@@ -92,7 +97,9 @@ public class ErsatzServerPostExpectationsTest {
     @ParameterizedTest(name = "[{index}] path only: https({0}) -> {1}")
     @MethodSource("io.github.cjstehno.ersatz.TestArguments#httpAndHttpsWithContent")
     void withPath(final boolean https, final String responseText, final ErsatzServer server) throws IOException {
-        server.expects().POST("/something").body(TEXT_PAYLOAD, TEXT_PLAIN.withCharset("utf-8")).secure(https).called(1).responds().body(responseText, TEXT_PLAIN);
+        server.expects().POST("/something")
+            .body(TEXT_PAYLOAD, TEXT_PLAIN.withCharset("utf-8")).secure(https).called(1)
+            .responds().body(responseText, TEXT_PLAIN);
 
         assertOkWithString(
             responseText,

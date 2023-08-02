@@ -15,19 +15,22 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
+
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 /**
  * Configuration interface for an Ersatz server instance.
  */
 public interface ServerConfig {
+
+    int SERVER_THREAD_MULTIPLIER = 8;
 
     /**
      * Used to control the enabled/disabled state of HTTPS on the server. By default HTTPS is disabled.
@@ -122,7 +125,7 @@ public interface ServerConfig {
      * @param expects the <code>Consumer&lt;Expectations&gt;</code> instance to perform the configuration
      * @return a reference to this server
      */
-    ServerConfig expectations(final Consumer<Expectations> expects);
+    ServerConfig expectations(Consumer<Expectations> expects);
 
     /**
      * An alternate means of starting the expectation chain.
@@ -139,7 +142,7 @@ public interface ServerConfig {
      * @param decoder     the request content decoder
      * @return the reference to the server configuration
      */
-    ServerConfig decoder(final String contentType, final BiFunction<byte[], DecodingContext, Object> decoder);
+    ServerConfig decoder(String contentType, BiFunction<byte[], DecodingContext, Object> decoder);
 
     /**
      * Configures the given request content decoder for the specified request content-type. The decoder will be configured globally and used if no
@@ -149,7 +152,7 @@ public interface ServerConfig {
      * @param decoder     the request content decoder
      * @return the reference to the server configuration
      */
-    default ServerConfig decoder(final ContentType contentType, final BiFunction<byte[], DecodingContext, Object> decoder){
+    default ServerConfig decoder(final ContentType contentType, final BiFunction<byte[], DecodingContext, Object> decoder) {
         return decoder(contentType.getValue(), decoder);
     }
 
@@ -211,7 +214,7 @@ public interface ServerConfig {
      * @param value whether or not to enable logging of response content (false by default)
      * @return a reference to this server configuration.
      */
-    ServerConfig logResponseContent(final boolean value);
+    ServerConfig logResponseContent(boolean value);
 
     /**
      * Causes the full response content to be rendered in the server log message for the cases where the response
@@ -231,7 +234,7 @@ public interface ServerConfig {
      * @param worker the number of worker threads (should be more than io; default is 16)
      * @return a reference to this server configuration
      */
-    ServerConfig serverThreads(final int io, final int worker);
+    ServerConfig serverThreads(int io, int worker);
 
     /**
      * Allows the configuration of the number of IO threads to be used by the underlying server. The worker threads will
@@ -241,7 +244,7 @@ public interface ServerConfig {
      * @return a reference to this server configuration
      */
     default ServerConfig serverThreads(final int io) {
-        return serverThreads(io, io * 8);
+        return serverThreads(io, io * SERVER_THREAD_MULTIPLIER);
     }
 
     /**
@@ -250,5 +253,5 @@ public interface ServerConfig {
      * @param requirements the requirements configuration consumer
      * @return a reference to this server configuration
      */
-    ServerConfig requirements(final Consumer<Requirements> requirements);
+    ServerConfig requirements(Consumer<Requirements> requirements);
 }

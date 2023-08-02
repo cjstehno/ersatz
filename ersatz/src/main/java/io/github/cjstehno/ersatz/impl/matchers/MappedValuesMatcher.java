@@ -15,17 +15,18 @@
  */
 package io.github.cjstehno.ersatz.impl.matchers;
 
-import static java.util.Arrays.asList;
-
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Map;
-import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Map;
+import java.util.function.Function;
+
+import static java.util.Arrays.asList;
 
 /**
  * A matcher used to match a map with String keys mapped to a Deque of Strings. This is a common pattern for various
@@ -40,7 +41,7 @@ public class MappedValuesMatcher extends BaseMatcher<ClientRequest> {
     private final Function<ClientRequest, Map<String, Deque<String>>> mapProvider;
 
     @Override public boolean matches(final Object actual) {
-        return mapProvider.apply(((ClientRequest) actual)).entrySet().stream()
+        return mapProvider.apply((ClientRequest) actual).entrySet().stream()
             .filter(ent -> nameMatcher.matches(ent.getKey()))
             .anyMatch(ent -> valuesMatcher.matches(new ArrayDeque<>(asList(ent.getValue().toArray(new String[0])))));
     }

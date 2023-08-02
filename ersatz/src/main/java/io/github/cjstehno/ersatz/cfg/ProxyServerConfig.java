@@ -15,14 +15,16 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import lombok.SneakyThrows;
+
 import java.net.URI;
 import java.net.URL;
 import java.util.function.Consumer;
-import lombok.SneakyThrows;
 
 /**
  * Defines the server configuration options available for the proxy server.
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public interface ProxyServerConfig {
 
     /**
@@ -31,7 +33,7 @@ public interface ProxyServerConfig {
      * @param auto enable/disable auto-start
      * @return a reference to this configuration
      */
-    ProxyServerConfig autoStart(final boolean auto);
+    ProxyServerConfig autoStart(boolean auto);
 
     /**
      * Specifies the target URI for the proxy server.
@@ -50,7 +52,7 @@ public interface ProxyServerConfig {
      * @param value the target URI
      * @return a reference to this configuration
      */
-    ProxyServerConfig target(final URI value);
+    ProxyServerConfig target(URI value);
 
     /**
      * Specifies the target URI for the proxy server.
@@ -70,7 +72,7 @@ public interface ProxyServerConfig {
      * @param consumer the configuration consumer
      * @return a reference to this configuration
      */
-    ProxyServerConfig expectations(final Consumer<ProxyServerExpectations> consumer);
+    ProxyServerConfig expectations(Consumer<ProxyServerExpectations> consumer);
 
     /**
      * Allows the configuration of the number of IO and Worker threads to be used by the underlying server.
@@ -79,7 +81,7 @@ public interface ProxyServerConfig {
      * @param worker the number of worker threads (should be more than io; default is 4)
      * @return a reference to this server configuration
      */
-    ProxyServerConfig serverThreads(final int io, final int worker);
+    ProxyServerConfig serverThreads(int io, int worker);
 
     /**
      * Allows the configuration of the number of IO threads to be used by the underlying server. The worker threads will

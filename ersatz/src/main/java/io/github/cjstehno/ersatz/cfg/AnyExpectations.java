@@ -15,15 +15,17 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
-
 import io.github.cjstehno.ersatz.match.PathMatcher;
-import java.util.function.Consumer;
 import org.hamcrest.Matcher;
+
+import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * Defines the available generic request (ANY) expectations.
  */
+@SuppressWarnings("checkstyle:MethodName")
 public interface AnyExpectations {
 
     /**
@@ -89,5 +91,5 @@ public interface AnyExpectations {
      * @param consumer the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    Request ANY(final PathMatcher pathMatcher, Consumer<Request> consumer);
+    Request ANY(PathMatcher pathMatcher, Consumer<Request> consumer);
 }

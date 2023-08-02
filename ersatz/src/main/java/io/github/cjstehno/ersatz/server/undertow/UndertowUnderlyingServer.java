@@ -15,8 +15,6 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
-import static io.undertow.UndertowOptions.*;
-
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
 import io.github.cjstehno.ersatz.server.UnderlyingServer;
@@ -26,16 +24,21 @@ import io.undertow.server.handlers.HttpTraceHandler;
 import io.undertow.server.handlers.encoding.ContentEncodingRepository;
 import io.undertow.server.handlers.encoding.EncodingHandler;
 import io.undertow.server.handlers.encoding.GzipEncodingProvider;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.xnio.Options;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.xnio.Options;
+
+import static io.undertow.UndertowOptions.IDLE_TIMEOUT;
+import static io.undertow.UndertowOptions.NO_REQUEST_TIMEOUT;
+import static io.undertow.UndertowOptions.REQUEST_PARSE_TIMEOUT;
 
 /**
  * An <code>UnderlyingServer</code> implementation based on the Undertow server platform.
@@ -44,6 +47,7 @@ import org.xnio.Options;
 public class UndertowUnderlyingServer implements UnderlyingServer {
 
     private static final String LOCALHOST = "localhost";
+    private static final int GZIP_HANDLER_PRIORITY = 50;
     private static final int UNSPECIFIED_PORT = -1;
     private final ServerConfigImpl serverConfig;
     private Undertow server;
@@ -88,7 +92,7 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
                                 )
                             )
                         ),
-                        new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), 50)
+                        new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), GZIP_HANDLER_PRIORITY)
                     )),
                     serverConfig
                 )
@@ -150,9 +154,11 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
         try {
             KeyStore keyStore = KeyStore.getInstance("JKS");
 
-            final var location = serverConfig.getKeystoreLocation() != null ? serverConfig.getKeystoreLocation() : ErsatzServer.class.getResource("/ersatz.keystore");
+            val location = serverConfig.getKeystoreLocation() != null
+                ? serverConfig.getKeystoreLocation()
+                : ErsatzServer.class.getResource("/ersatz.keystore");
 
-            try (final InputStream instr = location.openStream()) {
+            try (InputStream instr = location.openStream()) {
                 keyStore.load(instr, serverConfig.getKeystorePass().toCharArray());
             }
 

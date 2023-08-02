@@ -15,17 +15,18 @@
  */
 package io.github.cjstehno.ersatz.match;
 
-import static lombok.AccessLevel.PACKAGE;
-import static lombok.AccessLevel.PRIVATE;
-
-import java.util.Collection;
-import java.util.function.Function;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
+
+import java.util.Collection;
+import java.util.function.Function;
+
+import static lombok.AccessLevel.PACKAGE;
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Some reusable Hamcrest matchers useful in Ersatz expectations.
@@ -71,11 +72,11 @@ class FunctionMatcher<T> extends BaseMatcher<T> {
 
     private final Function<T, Boolean> function;
 
-    @Override public boolean matches(Object actual) {
+    @Override public boolean matches(final Object actual) {
         return function.apply((T) actual);
     }
 
-    @Override public void describeTo(Description description) {
+    @Override public void describeTo(final Description description) {
         description.appendText("A function that checks for matching.");
     }
 }
@@ -108,7 +109,10 @@ class ByteArrayMatcher extends BaseMatcher<byte[]> {
     }
 
     @Override
-    public void describeTo(Description description) {
-        description.appendText("A byte array of length " + array.length + " having " + array[0] + " as the first element and " + array[array.length - 1] + " as the last.");
+    public void describeTo(final Description description) {
+        description.appendText(
+            "A byte array of length " + array.length + " having " + array[0] + " as the first element and " +
+                array[array.length - 1] + " as the last."
+        );
     }
 }

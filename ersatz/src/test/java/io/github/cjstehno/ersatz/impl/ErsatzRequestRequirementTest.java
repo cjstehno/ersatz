@@ -15,20 +15,25 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
+import io.github.cjstehno.ersatz.server.MockClientRequest;
+import lombok.val;
+import org.hamcrest.core.IsIterableContaining;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.ANY;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
 import static io.github.cjstehno.ersatz.match.CookieMatcher.cookieMatcher;
 import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anEmptyMap;
+import static org.hamcrest.Matchers.any;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import io.github.cjstehno.ersatz.server.MockClientRequest;
-import java.util.List;
-import lombok.val;
-import org.hamcrest.core.IsIterableContaining;
-import org.junit.jupiter.api.Test;
 
 class ErsatzRequestRequirementTest {
 

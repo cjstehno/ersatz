@@ -15,15 +15,15 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
+import io.github.cjstehno.ersatz.server.MockClientRequest;
+import lombok.val;
+import org.junit.jupiter.api.Test;
+
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import io.github.cjstehno.ersatz.server.MockClientRequest;
-import lombok.val;
-import org.junit.jupiter.api.Test;
 
 class RequirementsImplTest {
 

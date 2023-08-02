@@ -15,10 +15,11 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import static io.github.cjstehno.ersatz.util.HttpHeaders.CONTENT_TYPE;
+import lombok.EqualsAndHashCode;
 
 import java.nio.charset.Charset;
-import lombok.EqualsAndHashCode;
+
+import static io.github.cjstehno.ersatz.util.HttpHeaders.CONTENT_TYPE;
 
 /**
  * A content-type representation. Some standard content-types are provided as static constants for use elsewhere,

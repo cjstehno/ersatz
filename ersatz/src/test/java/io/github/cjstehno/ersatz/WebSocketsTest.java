@@ -15,21 +15,8 @@
  */
 package io.github.cjstehno.ersatz;
 
-import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
-import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
-import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 import io.github.cjstehno.ersatz.cfg.MessageType;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -42,6 +29,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
+import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
+import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
+import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(ErsatzServerExtension.class)
 public class WebSocketsTest {
@@ -133,7 +134,8 @@ public class WebSocketsTest {
         assertEquals(listener.getMessages().get(0), "pong");
     }
 
-    @Test void reactToMessageWithBinary(final ErsatzServer ersatz) throws Exception {
+    @Test @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
+    void reactToMessageWithBinary(final ErsatzServer ersatz) throws Exception {
         val pingBytes = "ping".getBytes(UTF_8);
         val pingMessage = ByteString.of(pingBytes);
         val pongBytes = "pong".getBytes(UTF_8);
@@ -186,13 +188,16 @@ public class WebSocketsTest {
         openWebSocket(url, null);
     }
 
-    private void openWebSocket(final String url, Consumer<WebSocket> consumer) {
+    private void openWebSocket(final String url, final Consumer<WebSocket> consumer) {
         openWebSocket(url, null, consumer);
     }
 
-    private void openWebSocket(final String url, WebSocketListener listener, Consumer<WebSocket> consumer) {
+    private void openWebSocket(final String url, final WebSocketListener listener, final Consumer<WebSocket> consumer) {
         okhttp3.Request request = new okhttp3.Request.Builder().url(url).build();
-        WebSocket webSocket = new OkHttpClient.Builder().build().newWebSocket(request, listener != null ? listener : new CapturingWebSocketListener(0));
+        WebSocket webSocket = new OkHttpClient.Builder().build().newWebSocket(
+            request,
+            listener != null ? listener : new CapturingWebSocketListener(0)
+        );
 
         if (consumer != null) {
             consumer.accept(webSocket);
@@ -207,39 +212,39 @@ public class WebSocketsTest {
         @Getter private final List<Object> messages = new LinkedList<>();
         private final CountDownLatch latch;
 
-        CapturingWebSocketListener(int expectedMessageCount) {
+        CapturingWebSocketListener(final int expectedMessageCount) {
             latch = new CountDownLatch(expectedMessageCount);
         }
 
-        boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+        boolean await(final long timeout, final TimeUnit unit) throws InterruptedException {
             return latch.await(timeout, unit);
         }
 
-        @Override public void onOpen(WebSocket webSocket, okhttp3.Response response) {
+        @Override public void onOpen(final WebSocket webSocket, final okhttp3.Response response) {
             log.info("open");
         }
 
-        @Override public void onMessage(WebSocket webSocket, String text) {
+        @Override public void onMessage(final WebSocket webSocket, final String text) {
             log.info("message (string): {}", text);
             messages.add(text);
             latch.countDown();
         }
 
-        @Override public void onMessage(WebSocket webSocket, ByteString bytes) {
+        @Override public void onMessage(final WebSocket webSocket, final ByteString bytes) {
             log.info("message (bytes): {}", bytes);
             messages.add(bytes);
             latch.countDown();
         }
 
-        @Override public void onClosing(WebSocket webSocket, int code, String reason) {
+        @Override public void onClosing(final WebSocket webSocket, final int code, final String reason) {
             log.info("closing");
         }
 
-        @Override public void onClosed(WebSocket webSocket, int code, String reason) {
+        @Override public void onClosed(final WebSocket webSocket, final int code, final String reason) {
             log.info("closed");
         }
 
-        @Override public void onFailure(WebSocket webSocket, Throwable t, okhttp3.Response response) {
+        @Override public void onFailure(final WebSocket webSocket, final Throwable t, final okhttp3.Response response) {
             log.info("failure: {}", t.getMessage());
         }
     }

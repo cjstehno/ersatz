@@ -15,13 +15,13 @@
  */
 package io.github.cjstehno.ersatz.util;
 
+import io.github.cjstehno.ersatz.cfg.Request;
+import lombok.NoArgsConstructor;
+
 import static io.github.cjstehno.ersatz.util.HttpHeaders.AUTHORIZATION;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Base64.getEncoder;
 import static lombok.AccessLevel.PRIVATE;
-
-import io.github.cjstehno.ersatz.cfg.Request;
-import lombok.NoArgsConstructor;
 
 /**
  * Helper utility for configuring BASIC request authentication.

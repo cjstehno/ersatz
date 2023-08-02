@@ -15,15 +15,17 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
-
 import io.github.cjstehno.ersatz.match.PathMatcher;
-import java.util.function.Consumer;
 import org.hamcrest.Matcher;
+
+import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * Defines the available PATCH request expectations.
  */
+@SuppressWarnings("checkstyle:MethodName")
 public interface PatchExpectations {
 
     /**
@@ -87,5 +89,5 @@ public interface PatchExpectations {
      * @param config  the configuration consumer
      * @return a <code>RequestWithContent</code> configuration object
      */
-    RequestWithContent PATCH(final PathMatcher pathMatcher, final Consumer<RequestWithContent> config);
+    RequestWithContent PATCH(PathMatcher pathMatcher, Consumer<RequestWithContent> config);
 }

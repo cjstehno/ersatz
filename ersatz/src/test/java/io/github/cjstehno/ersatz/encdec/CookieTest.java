@@ -16,14 +16,14 @@
 package io.github.cjstehno.ersatz.encdec;
 
 
+import lombok.val;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import static io.github.cjstehno.testthings.Verifiers.verifyEqualsAndHashCode;
 import static io.github.cjstehno.testthings.Verifiers.verifyToString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import lombok.val;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 class CookieTest {
 

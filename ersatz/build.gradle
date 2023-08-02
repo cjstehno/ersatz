@@ -7,7 +7,7 @@ plugins {
     id 'jacoco'
     id 'signing'
     id 'com.adarshr.test-logger' version '3.2.0'
-    id "com.diffplug.spotless" version "6.20.0"
+    id 'checkstyle'
 }
 
 group = rootProject.group
@@ -193,15 +193,20 @@ signing {
     sign publishing.publications.ersatz
 }
 
-spotless {
-    java {
-        importOrder()
-        removeUnusedImports()
+checkstyle {
+    toolVersion "10.12.2"
+//    configFile file("$rootDir/config/checkstyle/checkstyle.xml")
+}
 
-        cleanthat()
+checkstyleMain {
+    configFile file("$rootDir/config/checkstyle/checkstyle.xml")
+}
 
-//        prettier()
+checkstyleTest {
+    configFile file("$rootDir/config/checkstyle/checkstyle-test.xml")
+}
 
-        formatAnnotations()
-    }
+tasks.withType(Checkstyle) {
+    minHeapSize = "200m"
+    maxHeapSize = "1g"
 }

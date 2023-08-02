@@ -20,11 +20,12 @@ import io.github.cjstehno.ersatz.cfg.Requirements;
 import io.github.cjstehno.ersatz.match.HttpMethodMatcher;
 import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.Getter;
+import lombok.val;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
-import lombok.Getter;
-import lombok.val;
 
 /**
  * Implementation of the Requirements interface used to perform the configuration of the request requirements.

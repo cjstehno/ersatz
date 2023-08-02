@@ -15,21 +15,22 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
+import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.match.HeaderMatcher;
+import io.github.cjstehno.ersatz.match.QueryParamMatcher;
+import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
+import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.val;
+import org.hamcrest.Matcher;
+
+import java.util.LinkedList;
+
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
 import static io.github.cjstehno.ersatz.match.HeaderMatcher.headerMatching;
 import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryExists;
 import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryMatching;
 import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.cookieMatching;
 import static org.hamcrest.CoreMatchers.equalTo;
-
-import io.github.cjstehno.ersatz.encdec.Cookie;
-import io.github.cjstehno.ersatz.match.HeaderMatcher;
-import io.github.cjstehno.ersatz.match.QueryParamMatcher;
-import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
-import io.github.cjstehno.ersatz.server.ClientRequest;
-import java.util.LinkedList;
-import lombok.val;
-import org.hamcrest.Matcher;
 
 /**
  * Defines a global request requirement.
@@ -51,7 +52,7 @@ public interface RequestRequirement {
      * @param enabled true if the request is secure (HTTPS)
      * @return a reference to this request requirement
      */
-    RequestRequirement secure(final boolean enabled);
+    RequestRequirement secure(boolean enabled);
 
     /**
      * Specifies a request header to be configured in the expected request. The value specified must match one of the
@@ -85,7 +86,7 @@ public interface RequestRequirement {
      * @param headerMatcher the header matcher
      * @return this request requirement
      */
-    RequestRequirement header(final HeaderMatcher headerMatcher);
+    RequestRequirement header(HeaderMatcher headerMatcher);
 
     /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
@@ -115,7 +116,7 @@ public interface RequestRequirement {
      * @param queryMatcher the query param matcher
      * @return this request requirement
      */
-    RequestRequirement query(final QueryParamMatcher queryMatcher);
+    RequestRequirement query(QueryParamMatcher queryMatcher);
 
     /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
@@ -172,7 +173,7 @@ public interface RequestRequirement {
      * @param cookieMatcher the request cookie matcher
      * @return this request requirement
      */
-    RequestRequirement cookie(final RequestCookieMatcher cookieMatcher);
+    RequestRequirement cookie(RequestCookieMatcher cookieMatcher);
 
     /**
      * Configures a matcher for the <code>ClientRequest</code>, which allows ad-hoc matching based on the request. This does <i>not</i> disallow
@@ -181,5 +182,5 @@ public interface RequestRequirement {
      * @param matcher a matcher based on the <code>ClientRequest</code> object
      * @return a reference to this request requirement
      */
-    RequestRequirement matcher(final Matcher<ClientRequest> matcher);
+    RequestRequirement matcher(Matcher<ClientRequest> matcher);
 }

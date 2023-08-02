@@ -15,15 +15,16 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import static io.github.cjstehno.ersatz.match.BodyMatcher.bodyMatching;
-import static io.github.cjstehno.ersatz.match.BodyParamMatcher.bodyParamMatching;
-import static org.hamcrest.Matchers.equalTo;
-
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.match.BodyMatcher;
 import io.github.cjstehno.ersatz.match.BodyParamMatcher;
-import java.util.function.BiFunction;
 import org.hamcrest.Matcher;
+
+import java.util.function.BiFunction;
+
+import static io.github.cjstehno.ersatz.match.BodyMatcher.bodyMatching;
+import static io.github.cjstehno.ersatz.match.BodyParamMatcher.bodyParamMatching;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Expectation configuration for a request with body content.
@@ -80,7 +81,7 @@ public interface RequestWithContent extends Request {
      * @param bodyMatcher the body matcher
      * @return a reference to this request
      */
-    RequestWithContent body(final BodyMatcher bodyMatcher);
+    RequestWithContent body(BodyMatcher bodyMatcher);
 
     /**
      * Specifies a custom body content converter function. The function will have the client request body content as a byte array and it will be
@@ -91,7 +92,7 @@ public interface RequestWithContent extends Request {
      * @param decoder     the conversion function
      * @return a reference to this request
      */
-    RequestWithContent decoder(final String contentType, final BiFunction<byte[], DecodingContext, Object> decoder);
+    RequestWithContent decoder(String contentType, BiFunction<byte[], DecodingContext, Object> decoder);
 
     /**
      * Specifies a custom body content converter function. The function will have the client request body content as a
@@ -148,5 +149,5 @@ public interface RequestWithContent extends Request {
      * @param bodyParamMatcher the request body parameter matcher
      * @return a reference to this request
      */
-    RequestWithContent param(final BodyParamMatcher bodyParamMatcher);
+    RequestWithContent param(BodyParamMatcher bodyParamMatcher);
 }

@@ -15,20 +15,25 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
-
-import io.github.cjstehno.ersatz.cfg.*;
+import io.github.cjstehno.ersatz.cfg.InboundMessage;
+import io.github.cjstehno.ersatz.cfg.MessageType;
+import io.github.cjstehno.ersatz.cfg.OutboundMessage;
+import io.github.cjstehno.ersatz.cfg.WaitFor;
+import io.github.cjstehno.ersatz.cfg.WebSocketExpectations;
 import io.undertow.websockets.core.BufferedBinaryMessage;
 import io.undertow.websockets.core.BufferedTextMessage;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
+
+import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
 
 /**
  * Implementation of the WebSocketExpectations.
@@ -99,7 +104,7 @@ public class WebSocketExpectationsImpl implements WebSocketExpectations {
      *
      * @param consumer the iteration consumer
      */
-    public void eachSender(Consumer<OutboundMessageImpl> consumer) {
+    public void eachSender(final Consumer<OutboundMessageImpl> consumer) {
         outboundMessages.forEach(consumer);
     }
 
@@ -108,7 +113,7 @@ public class WebSocketExpectationsImpl implements WebSocketExpectations {
      *
      * @param consumer the iteration consumer
      */
-    public void eachMessage(Consumer<InboundMessageImpl> consumer) {
+    public void eachMessage(final Consumer<InboundMessageImpl> consumer) {
         inboundMessages.forEach(consumer);
     }
 

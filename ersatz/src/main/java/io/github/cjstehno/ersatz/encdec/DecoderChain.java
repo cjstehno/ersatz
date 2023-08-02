@@ -16,6 +16,7 @@
 package io.github.cjstehno.ersatz.encdec;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
+
 import java.util.function.BiFunction;
 
 /**

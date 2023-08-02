@@ -15,12 +15,13 @@
  */
 package io.github.cjstehno.ersatz.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
 import java.util.List;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ByteArraysTest {
 
@@ -29,19 +30,19 @@ class ByteArraysTest {
     private static final byte[] A_2 = "third byte array".getBytes();
 
     @Test @DisplayName("joining two byte arrays")
-    void joining_two() {
+    void joiningTwo() {
         final var result = ByteArrays.join(A_0, A_1);
         assertEquals("first byte arraysecond byte array", new String(result));
     }
 
     @Test @DisplayName("joining a collection of arrays")
-    void joining_collection() {
+    void joiningCollection() {
         final var result = ByteArrays.join(List.of(A_0, A_1, A_2));
         assertEquals("first byte arraysecond byte arraythird byte array", new String(result));
     }
 
     @Test @DisplayName("joining an array of bytebuffers")
-    void joiing_buffers() {
+    void joiingBuffers() {
         final var result = ByteArrays.join(new ByteBuffer[]{ByteBuffer.wrap(A_0), ByteBuffer.wrap(A_2)});
         assertEquals("first byte arraythird byte array", new String(result));
     }

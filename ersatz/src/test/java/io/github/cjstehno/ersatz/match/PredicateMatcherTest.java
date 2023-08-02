@@ -15,13 +15,13 @@
  */
 package io.github.cjstehno.ersatz.match;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import lombok.val;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PredicateMatcherTest {
 

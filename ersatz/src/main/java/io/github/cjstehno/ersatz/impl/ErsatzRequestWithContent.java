@@ -24,6 +24,7 @@ import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.match.BodyMatcher;
 import io.github.cjstehno.ersatz.match.BodyParamMatcher;
 import io.github.cjstehno.ersatz.match.PathMatcher;
+
 import java.util.function.BiFunction;
 
 /**
@@ -42,7 +43,9 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
      * @param globalDecoders the shared global decoders
      * @param globalEncoders the shared global encoders
      */
-    public ErsatzRequestWithContent(final HttpMethod method, final PathMatcher pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
+    public ErsatzRequestWithContent(
+        final HttpMethod method, final PathMatcher pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders
+    ) {
         super(method, pathMatcher, globalEncoders, false);
         this.decoderChain = new DecoderChain(globalDecoders, localDecoders);
     }

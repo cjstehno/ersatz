@@ -15,9 +15,11 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import static io.github.cjstehno.ersatz.cfg.MessageType.*;
-
 import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
+import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
+import static io.github.cjstehno.ersatz.cfg.MessageType.resolve;
 
 /**
  * Defines a message coming into the websockets handler.
@@ -78,5 +80,5 @@ public interface InboundMessage {
      * @param config the reaction configuration consumer
      * @return a reference to this ReceivedMessage
      */
-    MessageReaction reaction(final Consumer<MessageReaction> config);
+    MessageReaction reaction(Consumer<MessageReaction> config);
 }

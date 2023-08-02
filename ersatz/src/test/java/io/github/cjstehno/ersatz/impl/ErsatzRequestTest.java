@@ -15,15 +15,6 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
-import static io.github.cjstehno.ersatz.encdec.Cookie.cookie;
-import static io.github.cjstehno.ersatz.match.CookieMatcher.cookieMatcher;
-import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
-import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.cfg.WaitFor;
@@ -32,11 +23,6 @@ import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +32,27 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
+
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
+import static io.github.cjstehno.ersatz.encdec.Cookie.cookie;
+import static io.github.cjstehno.ersatz.match.CookieMatcher.cookieMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
+import static io.github.cjstehno.ersatz.server.UnderlyingServer.NOT_FOUND_BODY;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anEmptyMap;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @ExtendWith({ErsatzServerExtension.class, HttpClientExtension.class})
 class ErsatzRequestTest {
@@ -85,7 +92,9 @@ class ErsatzRequestTest {
         return Stream.of(
             arguments(clientRequest().header("alpha", "bravo").header("charlie", "delta").header("echo", "foxtrot"), true),
             arguments(clientRequest().header("alpha", "bravo").header("echo", "foxtrot"), false),
-            arguments(clientRequest().header("alpha", "bravo").header("charlie", "delta").header("echo", "foxtrot").header("nothing", "nowhere"), true),
+            arguments(
+                clientRequest().header("alpha", "bravo").header("charlie", "delta").header("echo", "foxtrot").header("nothing", "nowhere"), true
+            ),
             arguments(clientRequest().header("alpha", "bravo").header("charlie", "not-right").header("echo", "foxtrot"), false)
         );
     }

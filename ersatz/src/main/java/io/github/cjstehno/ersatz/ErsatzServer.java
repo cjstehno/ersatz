@@ -15,21 +15,22 @@
  */
 package io.github.cjstehno.ersatz;
 
-import static io.github.cjstehno.ersatz.cfg.WaitFor.atMost;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static lombok.AccessLevel.PROTECTED;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.github.cjstehno.ersatz.cfg.Expectations;
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.cfg.WaitFor;
 import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
 import io.github.cjstehno.ersatz.server.UnderlyingServer;
 import io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer;
+import lombok.Getter;
+
 import java.io.Closeable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import lombok.Getter;
+
+import static io.github.cjstehno.ersatz.cfg.WaitFor.atMost;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static lombok.AccessLevel.PROTECTED;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The main entry point for configuring an Ersatz server, which allows configuring of the expectations and management of the server itself. This is

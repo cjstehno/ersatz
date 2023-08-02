@@ -15,22 +15,28 @@
  */
 package io.github.cjstehno.ersatz.match;
 
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
-import static io.github.cjstehno.ersatz.match.HeaderMatcher.*;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.core.IsIterableContaining.hasItem;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-
 import io.github.cjstehno.ersatz.server.MockClientRequest;
-import java.util.function.Function;
-import java.util.stream.Stream;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
+import static io.github.cjstehno.ersatz.match.HeaderMatcher.contentTypeHeader;
+import static io.github.cjstehno.ersatz.match.HeaderMatcher.headerDoesNotExist;
+import static io.github.cjstehno.ersatz.match.HeaderMatcher.headerExists;
+import static io.github.cjstehno.ersatz.match.HeaderMatcher.headerMatching;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.core.IsIterableContaining.hasItem;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class HeaderMatcherTest {
 
@@ -58,7 +64,7 @@ class HeaderMatcherTest {
 
     private static Stream<Arguments> contentTypeProvider() {
         final var factory = new Function<String, MockClientRequest>() {
-            @Override public MockClientRequest apply(String ctype) {
+            @Override public MockClientRequest apply(final String ctype) {
                 final var mcr = new MockClientRequest();
                 mcr.setContentType(ctype);
                 return mcr;

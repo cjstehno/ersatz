@@ -15,15 +15,17 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
-
 import io.github.cjstehno.ersatz.match.PathMatcher;
-import java.util.function.Consumer;
 import org.hamcrest.Matcher;
+
+import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * Defines the available DELETE request expectations.
  */
+@SuppressWarnings("checkstyle:MethodName")
 public interface DeleteExpectations {
 
     /**
@@ -91,5 +93,5 @@ public interface DeleteExpectations {
      * @return a <code>Request</code> configuration object
      * @param config the configuration consumer
      */
-    Request DELETE(final PathMatcher pathMatcher, final Consumer<Request> config);
+    Request DELETE(PathMatcher pathMatcher, Consumer<Request> config);
 }

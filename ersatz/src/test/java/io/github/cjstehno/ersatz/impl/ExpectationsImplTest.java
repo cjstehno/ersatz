@@ -15,11 +15,6 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.cfg.RequestWithContent;
@@ -27,8 +22,6 @@ import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +29,22 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.DELETE;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.HEAD;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.OPTIONS;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.PATCH;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.PUT;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class ExpectationsImplTest {
 

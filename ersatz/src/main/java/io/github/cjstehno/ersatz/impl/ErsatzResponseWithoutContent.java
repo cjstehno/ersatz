@@ -18,6 +18,7 @@ package io.github.cjstehno.ersatz.impl;
 import io.github.cjstehno.ersatz.cfg.ContentType;
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+
 import java.util.function.Function;
 
 /**
@@ -33,7 +34,7 @@ public class ErsatzResponseWithoutContent extends ErsatzResponse {
     }
 
     @Override
-    public Response body(Object content) {
+    public Response body(final Object content) {
         throw new IllegalArgumentException("The response is configured as EMPTY and cannot have content.");
     }
 

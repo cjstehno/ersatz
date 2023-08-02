@@ -15,23 +15,25 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
-import static io.github.cjstehno.ersatz.server.undertow.ResponseChunker.prepareChunks;
-import static io.undertow.util.HttpString.tryFromString;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.impl.ChunkingConfigImpl;
 import io.github.cjstehno.ersatz.impl.ErsatzResponse;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import io.github.cjstehno.ersatz.util.StatusCode;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.CookieImpl;
-import java.nio.ByteBuffer;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+
+import java.nio.ByteBuffer;
+
+import static io.github.cjstehno.ersatz.server.undertow.ResponseChunker.prepareChunks;
+import static io.undertow.util.HttpString.tryFromString;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * The Ersatz handler used to perform the actual request handling for the chain.
@@ -48,7 +50,7 @@ class ErsatzHttpHandler implements ErsatzHandler {
     public void handleRequest(final HttpServerExchange exchange, final ClientRequest clientRequest, final Response response) throws Exception {
         if (response == null) {
             log.debug("Unconfigured-Response: No Content (204)");
-            exchange.setStatusCode(204);
+            exchange.setStatusCode(StatusCode.NO_CONTENT.getValue());
             sendFullResponse(exchange, EMPTY_RESPONSE);
 
         } else {
@@ -66,7 +68,10 @@ class ErsatzHttpHandler implements ErsatzHandler {
             final ChunkingConfigImpl chunking = ersatzResponse.getChunkingConfig();
 
             if (response.getContent().length > 0 && chunking != null) {
-                log.debug("Chunked-Response({}; {}; {}; {}): {}", exchange.getProtocol(), exchange.getRequestURL(), responseHeaders, chunking, renderResponse(response));
+                log.debug(
+                    "Chunked-Response({}; {}; {}; {}): {}",
+                    exchange.getProtocol(), exchange.getRequestURL(), responseHeaders, chunking, renderResponse(response)
+                );
                 sendChunkedResponse(exchange, response.getContent(), chunking);
 
             } else {
@@ -86,6 +91,7 @@ class ErsatzHttpHandler implements ErsatzHandler {
         }
     }
 
+    @SuppressWarnings("checkstyle:BooleanExpressionComplexity")
     private static boolean isContentTypeRenderable(final String contentType) {
         return contentType != null && (
             contentType.startsWith("text/") ||

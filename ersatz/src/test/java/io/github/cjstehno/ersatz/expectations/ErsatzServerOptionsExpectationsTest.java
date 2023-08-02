@@ -15,24 +15,30 @@
  */
 package io.github.cjstehno.ersatz.expectations;
 
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
 import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Stream;
 import lombok.val;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.DELETE;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.OPTIONS;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig("serverConfig")
 public class ErsatzServerOptionsExpectationsTest {

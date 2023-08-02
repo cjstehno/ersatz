@@ -15,9 +15,9 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
-
 import io.github.cjstehno.ersatz.match.PathMatcher;
+
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * Defines the expectation configurations available for the proxy server.
@@ -40,7 +40,7 @@ public interface ProxyServerExpectations {
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyServerExpectations any(final PathMatcher matcher);
+    ProxyServerExpectations any(PathMatcher matcher);
 
     /**
      * Configures an expected GET request with the specified path.
@@ -58,7 +58,7 @@ public interface ProxyServerExpectations {
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyServerExpectations get(final PathMatcher matcher);
+    ProxyServerExpectations get(PathMatcher matcher);
 
     /**
      * Configures an expected HEAD request with the specified path.
@@ -76,7 +76,7 @@ public interface ProxyServerExpectations {
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyServerExpectations head(final PathMatcher matcher);
+    ProxyServerExpectations head(PathMatcher matcher);
 
     /**
      * Configures an expected PUT request with the specified path.
@@ -94,7 +94,7 @@ public interface ProxyServerExpectations {
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyServerExpectations put(final PathMatcher matcher);
+    ProxyServerExpectations put(PathMatcher matcher);
 
     /**
      * Configures an expected POST request with the specified path.
@@ -112,7 +112,7 @@ public interface ProxyServerExpectations {
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyServerExpectations post(final PathMatcher matcher);
+    ProxyServerExpectations post(PathMatcher matcher);
 
     /**
      * Configures an expected DELETE request with the specified path.
@@ -130,7 +130,7 @@ public interface ProxyServerExpectations {
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyServerExpectations delete(final PathMatcher matcher);
+    ProxyServerExpectations delete(PathMatcher matcher);
 
     /**
      * Configures an expected PATCH request with the specified path.
@@ -148,7 +148,7 @@ public interface ProxyServerExpectations {
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyServerExpectations patch(final PathMatcher matcher);
+    ProxyServerExpectations patch(PathMatcher matcher);
 
     /**
      * Configures an expected OPTIONS request with the specified path.
@@ -166,5 +166,5 @@ public interface ProxyServerExpectations {
      * @param matcher the path matcher
      * @return a reference to this configuration
      */
-    ProxyServerExpectations options(final PathMatcher matcher);
+    ProxyServerExpectations options(PathMatcher matcher);
 }

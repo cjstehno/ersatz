@@ -21,15 +21,16 @@ import io.undertow.Undertow;
 import io.undertow.server.handlers.BlockingHandler;
 import io.undertow.server.handlers.proxy.LoadBalancingProxyClient;
 import io.undertow.server.handlers.proxy.ProxyHandler;
-import java.net.InetSocketAddress;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.net.InetSocketAddress;
+
 /**
  * The Undertow-based implementation of the <code>UnderlyingProxyServer</code> interface.
  */
-@Slf4j @RequiredArgsConstructor
+@Slf4j @RequiredArgsConstructor @SuppressWarnings("checkstyle:MagicNumber")
 public class UndertowUnderlyingProxyServer implements UnderlyingProxyServer {
 
     private static final String LOCALHOST = "localhost";

@@ -30,12 +30,12 @@ public class OutboundMessageImpl implements OutboundMessage {
     private Object payload;
     private MessageType messageType;
 
-    @Override public OutboundMessage payload(Object obj) {
+    @Override public OutboundMessage payload(final Object obj) {
         this.payload = obj;
         return this;
     }
 
-    @Override public OutboundMessage messageType(MessageType type) {
+    @Override public OutboundMessage messageType(final MessageType type) {
         this.messageType = type;
         return this;
     }

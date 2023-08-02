@@ -15,12 +15,14 @@
  */
 package io.github.cjstehno.ersatz;
 
-import static lombok.AccessLevel.PRIVATE;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.IOException;
 import lombok.NoArgsConstructor;
 import okhttp3.Response;
+
+import java.io.IOException;
+
+import static lombok.AccessLevel.PRIVATE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @NoArgsConstructor(access = PRIVATE) @SuppressWarnings("unused")
 public class TestAssertions {

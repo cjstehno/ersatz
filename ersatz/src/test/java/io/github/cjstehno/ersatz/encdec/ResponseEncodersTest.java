@@ -15,17 +15,18 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_GIF;
-import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import lombok.val;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.function.Function;
-import lombok.val;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+
+import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_GIF;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ResponseEncodersTest {
 

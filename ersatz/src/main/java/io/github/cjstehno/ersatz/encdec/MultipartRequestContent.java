@@ -15,13 +15,14 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
-
 import io.github.cjstehno.ersatz.cfg.ContentType;
+import lombok.EqualsAndHashCode;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-import lombok.EqualsAndHashCode;
+
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 
 /**
  * Defines the request body content for a multipart request. An instance of this class may be created directly or by using the Groovy DSL closure or
@@ -94,7 +95,7 @@ public class MultipartRequestContent {
      * @param value       the value
      * @return a reference to this multipart request instance
      */
-    public MultipartRequestContent part(String fieldName, String fileName, String contentType, Object value) {
+    public MultipartRequestContent part(final String fieldName, final String fileName, final String contentType, final Object value) {
         parts.put(fieldName, new MultipartPart(fieldName, fileName, contentType, null, value));
         return this;
     }
@@ -108,7 +109,7 @@ public class MultipartRequestContent {
      * @param value       the value
      * @return a reference to this multipart request instance
      */
-    public MultipartRequestContent part(String fieldName, String fileName, ContentType contentType, Object value) {
+    public MultipartRequestContent part(final String fieldName, final String fileName, final ContentType contentType, final Object value) {
         parts.put(fieldName, new MultipartPart(fieldName, fileName, contentType.getValue(), null, value));
         return this;
     }

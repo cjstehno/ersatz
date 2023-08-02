@@ -15,13 +15,9 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import static io.github.cjstehno.ersatz.util.HttpHeaders.ALLOW;
-import static io.github.cjstehno.ersatz.util.HttpHeaders.CONTENT_TYPE;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.stream.Collectors.toList;
-
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +25,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static io.github.cjstehno.ersatz.util.HttpHeaders.ALLOW;
+import static io.github.cjstehno.ersatz.util.HttpHeaders.CONTENT_TYPE;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Used to configure the provided response to an HTTP request.
@@ -41,7 +42,7 @@ public interface Response {
      * @param content the content object
      * @return this response
      */
-    Response body(final Object content);
+    Response body(Object content);
 
     /**
      * Defines the request content to be sent back to the client, along with its content-type. Multipart responses may be specified using this method;
@@ -77,7 +78,7 @@ public interface Response {
      * @param value the header value
      * @return this response
      */
-    Response header(final String name, final String... value);
+    Response header(String name, String... value);
 
     /**
      * Used to add a header to the response with the given name and value.
@@ -86,7 +87,7 @@ public interface Response {
      * @param values the header values
      * @return this response
      */
-    Response header(final String name, final List<String> values);
+    Response header(String name, List<String> values);
 
     /**
      * Used to add multiple headers to the response.
@@ -94,7 +95,7 @@ public interface Response {
      * @param headers the headers
      * @return this response
      */
-    Response headers(final Map<String, Object> headers);
+    Response headers(Map<String, Object> headers);
 
     /**
      * Shortcut method for adding values to the "Allow" header. These values will be appended to the existing header.
@@ -113,7 +114,7 @@ public interface Response {
      * @param value the cookie value
      * @return this response
      */
-    Response cookie(final String name, final String value);
+    Response cookie(String name, String value);
 
     /**
      * Used to add a cookie to the response.
@@ -122,7 +123,7 @@ public interface Response {
      * @param cookie the cookie definition
      * @return this response
      */
-    Response cookie(final String name, final Cookie cookie);
+    Response cookie(String name, Cookie cookie);
 
     /**
      * Used to add multiple cookies to the response, with the provided names and values.
@@ -130,7 +131,7 @@ public interface Response {
      * @param cookies the cookies to be added
      * @return this response
      */
-    Response cookies(final Map<String, String> cookies);
+    Response cookies(Map<String, String> cookies);
 
     /**
      * Used to specify the content type of the response.
@@ -173,7 +174,7 @@ public interface Response {
      * @param time the response delay in milliseconds
      * @return this response
      */
-    Response delay(final long time);
+    Response delay(long time);
 
     /**
      * Used to specify a delay in the response time for the request. The response will not be returned to the client until the delay has passed.
@@ -209,7 +210,7 @@ public interface Response {
      * @param config the chunking configuration
      * @return a reference to this response
      */
-    Response chunked(final Consumer<ChunkingConfig> config);
+    Response chunked(Consumer<ChunkingConfig> config);
 
     /**
      * Used to retrieve the configured response headers.

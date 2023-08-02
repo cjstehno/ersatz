@@ -15,24 +15,25 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
-import static io.undertow.util.QueryParameterUtils.parseQueryString;
-import static java.lang.String.format;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.emptyMap;
-
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.undertow.server.HttpServerExchange;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+
+import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
+import static io.undertow.util.QueryParameterUtils.parseQueryString;
+import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyMap;
 
 /**
  * The primary <code>ClientRequest</code> implementation used to wrap and expose the important parts of the underlying Undertow request context.
@@ -151,7 +152,10 @@ class UndertowClientRequest implements ClientRequest {
             contentString = format("<%d of %s content>", getContentLength(), getContentType());
         }
 
-        return format("{ %s %s(query=%s, headers=%s, cookies=%s): %s }", getMethod(), getPath(), getQueryParams(), getHeaders(), getCookies(), contentString);
+        return format(
+            "{ %s %s(query=%s, headers=%s, cookies=%s): %s }",
+            getMethod(), getPath(), getQueryParams(), getHeaders(), getCookies(), contentString
+        );
     }
 
     /**

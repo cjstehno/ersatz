@@ -15,17 +15,18 @@
  */
 package io.github.cjstehno.ersatz;
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
 import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
-import java.io.IOException;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.io.IOException;
+
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test is to verify issue <a href="https://github.com/cjstehno/ersatz/issues/182">#182</a>.

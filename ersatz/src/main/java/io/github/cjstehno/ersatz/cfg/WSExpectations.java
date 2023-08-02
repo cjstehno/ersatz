@@ -54,6 +54,5 @@ public interface WSExpectations {
      * @param config the configuration consumer
      * @return a reference to the web socket expectations
      */
-    // FIXME: rename this to "webSockets"
-    WebSocketExpectations webSocket(final String path, final Consumer<WebSocketExpectations> config);
+    WebSocketExpectations webSocket(String path, Consumer<WebSocketExpectations> config);
 }

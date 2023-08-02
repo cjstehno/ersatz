@@ -15,13 +15,14 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
-
 import io.github.cjstehno.ersatz.cfg.ContentType;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
+
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 
 /**
  * Implementation of the multipart response content interface.
@@ -78,21 +79,25 @@ public class ErsatzMultipartResponseContent extends MultipartResponseContent {
         return part(fieldName, contentType, value, null);
     }
 
-    public MultipartResponseContent part(String fieldName, String fileName, String contentType, Object value, String transferEncoding) {
+    public MultipartResponseContent part(
+        final String fieldName, final String fileName, final String contentType, final Object value, final String transferEncoding
+    ) {
         parts.add(new MultipartPart(fieldName, fileName, contentType, transferEncoding, value));
         return this;
     }
 
-    public MultipartResponseContent part(String fieldName, String fileName, String contentType, Object value) {
+    public MultipartResponseContent part(final String fieldName, final String fileName, final String contentType, final Object value) {
         return part(fieldName, fileName, contentType, value, null);
     }
 
-    public MultipartResponseContent part(String fieldName, String fileName, ContentType contentType, Object value, String transferEncoding) {
+    public MultipartResponseContent part(
+        final String fieldName, final String fileName, final ContentType contentType, final Object value, final String transferEncoding
+    ) {
         parts.add(new MultipartPart(fieldName, fileName, contentType.getValue(), transferEncoding, value));
         return this;
     }
 
-    public MultipartResponseContent part(String fieldName, String fileName, ContentType contentType, Object value) {
+    public MultipartResponseContent part(final String fieldName, final String fileName, final ContentType contentType, final Object value) {
         return part(fieldName, fileName, contentType, value, null);
     }
 
@@ -127,7 +132,7 @@ public class ErsatzMultipartResponseContent extends MultipartResponseContent {
      * Resolves the encoder function for the specified content-type and object-type being encoded.
      *
      * @param contentType the content-type being encoded
-     * @param objectType the type of object being encoded
+     * @param objectType  the type of object being encoded
      * @return the encoder function for the criteria
      * @throws IllegalArgumentException if no encoder is found for the content-type and object-type
      */
@@ -137,6 +142,8 @@ public class ErsatzMultipartResponseContent extends MultipartResponseContent {
             return encoder;
         }
 
-        throw new IllegalArgumentException("No encoder found for content-type (" + contentType + ") and object type (" + objectType.getSimpleName() + ").");
+        throw new IllegalArgumentException(
+            "No encoder found for content-type (" + contentType + ") and object type (" + objectType.getSimpleName() + ")."
+        );
     }
 }

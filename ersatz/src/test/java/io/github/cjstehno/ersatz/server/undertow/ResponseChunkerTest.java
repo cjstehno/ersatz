@@ -15,17 +15,17 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ResponseChunkerTest {
 
     private static final byte[] BYTES = "abcdefghijklmnop".getBytes();
 
     @Test @DisplayName("parsing 3 chunks")
-    void parsing_3_chunks(){
+    void parsing3Chunks(){
         final var chunks = ResponseChunker.prepareChunks(BYTES, 3);
 
         assertEquals(3, chunks.size());
@@ -35,7 +35,7 @@ class ResponseChunkerTest {
     }
 
     @Test @DisplayName("parsing 2 chunks")
-    void parsing_2_chunks(){
+    void parsing2Chunks(){
         final var chunks = ResponseChunker.prepareChunks(BYTES, 2);
 
         assertEquals(2, chunks.size());

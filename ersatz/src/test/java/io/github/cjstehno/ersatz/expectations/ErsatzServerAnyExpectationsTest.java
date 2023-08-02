@@ -15,14 +15,6 @@
  */
 package io.github.cjstehno.ersatz.expectations;
 
-import static io.github.cjstehno.ersatz.TestAssertions.assertOkWithString;
-import static io.github.cjstehno.ersatz.TestAssertions.verify;
-import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static okhttp3.MediaType.parse;
-import static okhttp3.RequestBody.create;
-import static org.hamcrest.Matchers.startsWith;
-
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.cfg.RequestWithContent;
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
@@ -31,10 +23,19 @@ import io.github.cjstehno.ersatz.encdec.Encoders;
 import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
 import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
-import java.io.IOException;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+
+import static io.github.cjstehno.ersatz.TestAssertions.assertOkWithString;
+import static io.github.cjstehno.ersatz.TestAssertions.verify;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static okhttp3.MediaType.parse;
+import static okhttp3.RequestBody.create;
+import static org.hamcrest.Matchers.startsWith;
 
 @ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig("serverConfig")
 public class ErsatzServerAnyExpectationsTest {

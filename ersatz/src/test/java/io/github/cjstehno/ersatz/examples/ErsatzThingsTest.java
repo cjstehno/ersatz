@@ -15,10 +15,6 @@
  */
 package io.github.cjstehno.ersatz.examples;
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_JPG;
-import static io.github.cjstehno.testthings.rando.NumberRandomizers.aFloat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
@@ -29,6 +25,10 @@ import io.github.cjstehno.testthings.junit.SharedRandomExtension;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_JPG;
+import static io.github.cjstehno.testthings.rando.NumberRandomizers.aFloat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A bit of a contrived example to show how you can use the
@@ -52,7 +52,7 @@ public class ErsatzThingsTest {
     private static final String SECRET_HEADER = "X-Secret";
 
     // loads the image resource as a byte array
-    @Resource("/test-image.jpg") private static byte[] IMAGE_CONTENT;
+    @Resource("/test-image.jpg") @SuppressWarnings("checkstyle:StaticVariableName") private static byte[] IMAGE_CONTENT;
 
     @Test void things(final ErsatzServer ersatz, final Client client) throws Exception {
         // generates a random secret value

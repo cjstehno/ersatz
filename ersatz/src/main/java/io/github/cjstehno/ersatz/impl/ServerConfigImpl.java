@@ -21,18 +21,21 @@ import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+import lombok.Getter;
+
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import lombok.Getter;
 
 /**
  * Default implementation of the <code>ServerConfig</code> interface.
  */
 public class ServerConfigImpl implements ServerConfig {
 
+    private static final int DEFAULT_WORKER_THREADS = 16;
+    private static final int DEFAULT_IO_THREADS = 2;
     private static final int EPHEMERAL_PORT = 0;
     private boolean httpsEnabled;
     private boolean autoStartEnabled = true;
@@ -48,8 +51,8 @@ public class ServerConfigImpl implements ServerConfig {
     private Runnable starter;
     private long timeout;
     private boolean logResponseContent;
-    private int ioThreads = 2;
-    private int workerThreads = 16;
+    private int ioThreads = DEFAULT_IO_THREADS;
+    private int workerThreads = DEFAULT_WORKER_THREADS;
 
     /**
      * Creates a new empty configuration instance.
@@ -74,7 +77,7 @@ public class ServerConfigImpl implements ServerConfig {
      * @param enabled optional toggle value (true if not specified)
      * @return a reference to the server being configured
      */
-    @Override public ServerConfig https(boolean enabled) {
+    @Override public ServerConfig https(final boolean enabled) {
         httpsEnabled = enabled;
         return this;
     }
@@ -200,7 +203,7 @@ public class ServerConfigImpl implements ServerConfig {
      * @param autoStart whether or not auto-start is enabled
      * @return a reference to the server being configured
      */
-    @Override public ServerConfig autoStart(boolean autoStart) {
+    @Override public ServerConfig autoStart(final boolean autoStart) {
         autoStartEnabled = autoStart;
         return this;
     }
@@ -228,7 +231,7 @@ public class ServerConfigImpl implements ServerConfig {
      * @return a reference to the server being configured
      */
     @Override
-    public ServerConfig reportToConsole(boolean toConsole) {
+    public ServerConfig reportToConsole(final boolean toConsole) {
         mismatchToConsole = toConsole;
         return this;
     }
@@ -267,34 +270,34 @@ public class ServerConfigImpl implements ServerConfig {
     }
 
     @Override
-    public ServerConfig decoder(String contentType, BiFunction<byte[], DecodingContext, Object> decoder) {
+    public ServerConfig decoder(final String contentType, final BiFunction<byte[], DecodingContext, Object> decoder) {
         globalDecoders.register(contentType, decoder);
         return this;
     }
 
-    @Override public ServerConfig encoder(String contentType, Class objectType, Function<Object, byte[]> encoder) {
+    @Override public ServerConfig encoder(final String contentType, final Class objectType, final Function<Object, byte[]> encoder) {
         globalEncoders.register(contentType, objectType, encoder);
         return this;
     }
 
     @Override
-    public ServerConfig httpPort(int serverPort) {
+    public ServerConfig httpPort(final int serverPort) {
         desiredHttpPort = serverPort;
         return this;
     }
 
     @Override
-    public ServerConfig httpsPort(int serverPort) {
+    public ServerConfig httpsPort(final int serverPort) {
         desiredHttpsPort = serverPort;
         return this;
     }
 
-    @Override public ServerConfig logResponseContent(boolean value) {
+    @Override public ServerConfig logResponseContent(final boolean value) {
         logResponseContent = value;
         return this;
     }
 
-    @Override public ServerConfig serverThreads(int io, int worker) {
+    @Override public ServerConfig serverThreads(final int io, final int worker) {
         ioThreads = io;
         workerThreads = worker;
         return this;

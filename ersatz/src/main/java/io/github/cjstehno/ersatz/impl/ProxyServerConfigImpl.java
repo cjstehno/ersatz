@@ -17,9 +17,10 @@ package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.cfg.ProxyServerConfig;
 import io.github.cjstehno.ersatz.cfg.ProxyServerExpectations;
+import lombok.Getter;
+
 import java.net.URI;
 import java.util.function.Consumer;
-import lombok.Getter;
 
 /**
  * The implementation of the <code>ProxyServerConfig</code> interface.
@@ -27,12 +28,15 @@ import lombok.Getter;
 @Getter
 public class ProxyServerConfigImpl implements ProxyServerConfig {
 
+    private static final int DEFAULT_IO_THREADS = 1;
+    private static final int DEFAULT_WORKER_THREADS = 4;
+
     private static final String HTTP = "HTTP";
     private static final String HTTP_ONLY_MESSAGE = "Only HTTP targets are supported at this time.";
     private boolean autoStart = true;
     private URI targetUri;
-    private int ioThreads = 1;
-    private int workerThreads = 4;
+    private int ioThreads = DEFAULT_IO_THREADS;
+    private int workerThreads = DEFAULT_WORKER_THREADS;
 
     private final ProxyServerExpectationsImpl expectations = new ProxyServerExpectationsImpl();
 
@@ -55,7 +59,7 @@ public class ProxyServerConfigImpl implements ProxyServerConfig {
         return this;
     }
 
-    @Override public ProxyServerConfig serverThreads(int io, int worker) {
+    @Override public ProxyServerConfig serverThreads(final int io, final int worker) {
         ioThreads = io;
         workerThreads = worker;
         return this;

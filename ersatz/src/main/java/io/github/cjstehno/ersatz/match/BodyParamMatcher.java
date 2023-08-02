@@ -15,18 +15,19 @@
  */
 package io.github.cjstehno.ersatz.match;
 
-import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.core.IsIterableContaining.hasItem;
-
 import io.github.cjstehno.ersatz.impl.matchers.MapKeyMatcher;
 import io.github.cjstehno.ersatz.impl.matchers.MappedValuesMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import java.util.LinkedList;
 import lombok.val;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+
+import java.util.LinkedList;
+
+import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.IsIterableContaining.hasItem;
 
 /**
  * Matcher used to match request body parameters (e.g. form posts).

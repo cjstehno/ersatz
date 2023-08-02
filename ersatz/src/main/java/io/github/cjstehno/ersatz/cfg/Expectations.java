@@ -15,11 +15,12 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
-
 import io.github.cjstehno.ersatz.match.PathMatcher;
-import java.util.function.Consumer;
 import org.hamcrest.Matcher;
+
+import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 
 /**
  * The <code>Expectations</code> interface is the root element of the expectation configuration, which provides the
@@ -31,6 +32,7 @@ import org.hamcrest.Matcher;
  * a match and if there are multiple matching expectations, the first one configured will be the one considered as the
  * match.
  */
+@SuppressWarnings("checkstyle:LineLength")
 public interface Expectations extends AnyExpectations, GetExpectations, HeadExpectations, PostExpectations, PutExpectations, DeleteExpectations, PatchExpectations, OptionsExpectations, WSExpectations {
 
     /**
@@ -91,7 +93,7 @@ public interface Expectations extends AnyExpectations, GetExpectations, HeadExpe
      */
     default Request request(final HttpMethod method, final PathMatcher pathMatcher) {
         return ANY(pathMatcher, null);
-    }
+    } // FIXME: is this right?
 
     /**
      * Allows configuration of request expectation matching any request method with a path matching the provided
@@ -102,5 +104,5 @@ public interface Expectations extends AnyExpectations, GetExpectations, HeadExpe
      * @param consumer    the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    Request request(final HttpMethod method, final PathMatcher pathMatcher, Consumer<Request> consumer);
+    Request request(HttpMethod method, PathMatcher pathMatcher, Consumer<Request> consumer);
 }

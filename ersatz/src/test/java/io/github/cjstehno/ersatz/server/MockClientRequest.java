@@ -15,12 +15,18 @@
  */
 package io.github.cjstehno.ersatz.server;
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
-
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.encdec.Cookie;
-import java.util.*;
 import lombok.val;
+
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
+
+import static io.github.cjstehno.ersatz.cfg.ContentType.CONTENT_TYPE_HEADER;
 
 public class MockClientRequest implements ClientRequest {
 
@@ -57,11 +63,11 @@ public class MockClientRequest implements ClientRequest {
         setContentType(contentType);
     }
 
-    public void setCookies(Map<String, Cookie> cookies) {
+    public void setCookies(final Map<String, Cookie> cookies) {
         this.cookies = cookies;
     }
 
-    public void setHeaders(Map<String, Deque<String>> headers) {
+    public void setHeaders(final Map<String, Deque<String>> headers) {
         this.headers.clear();
         this.headers.putAll(headers);
     }
@@ -140,15 +146,15 @@ public class MockClientRequest implements ClientRequest {
         return this;
     }
 
-    public void setContentType(String contentType) {
+    public void setContentType(final String contentType) {
         header(CONTENT_TYPE_HEADER, contentType);
     }
 
-    public void setMethod(HttpMethod method) {
+    public void setMethod(final HttpMethod method) {
         this.method = method;
     }
 
-    public void setScheme(String scheme) {
+    public void setScheme(final String scheme) {
         this.scheme = scheme;
     }
 
@@ -157,27 +163,30 @@ public class MockClientRequest implements ClientRequest {
         return this;
     }
 
-    public void setPath(String path) {
+    public void setPath(final String path) {
         this.path = path;
     }
 
-    public void setBody(byte[] body) {
+    public void setBody(final byte[] body) {
         this.body = body;
     }
 
-    public void setContentLength(int contentLength) {
+    public void setContentLength(final int contentLength) {
         this.contentLength = contentLength;
     }
 
-    public void setCharacterEncoding(String characterEncoding) {
+    public void setCharacterEncoding(final String characterEncoding) {
         this.characterEncoding = characterEncoding;
     }
 
-    public MockClientRequest cookie(String name, String value) {
+    public MockClientRequest cookie(final String name, final String value) {
         return cookie(name, value, null, null, null, 0, false, false, 0);
     }
 
-    public MockClientRequest cookie(final String name, String value, String comment, String domain, String path, Integer maxAge, Boolean httpOnly, Boolean secure, Integer version) {
+    public MockClientRequest cookie(
+        final String name, final String value, final String comment, final String domain, final String path,
+        final Integer maxAge, final Boolean httpOnly, final Boolean secure, final Integer version
+    ) {
         cookies.put(name, new Cookie(value, comment, domain, path, version, httpOnly, maxAge, secure));
         return this;
     }

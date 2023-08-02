@@ -15,10 +15,22 @@
  */
 package io.github.cjstehno.ersatz.util;
 
-import static io.github.cjstehno.ersatz.util.StatusCode.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
+
+import static io.github.cjstehno.ersatz.util.StatusCode.CONTINUE;
+import static io.github.cjstehno.ersatz.util.StatusCode.INTERNAL_SERVER_ERROR;
+import static io.github.cjstehno.ersatz.util.StatusCode.LOOP_DETECTED;
+import static io.github.cjstehno.ersatz.util.StatusCode.NOT_FOUND;
+import static io.github.cjstehno.ersatz.util.StatusCode.OK;
+import static io.github.cjstehno.ersatz.util.StatusCode.PERMANENT_REDIRECT;
+import static io.github.cjstehno.ersatz.util.StatusCode.isClientError;
+import static io.github.cjstehno.ersatz.util.StatusCode.isInformational;
+import static io.github.cjstehno.ersatz.util.StatusCode.isRedirection;
+import static io.github.cjstehno.ersatz.util.StatusCode.isServerError;
+import static io.github.cjstehno.ersatz.util.StatusCode.isSuccessful;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StatusCodeTest {
 

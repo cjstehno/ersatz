@@ -15,13 +15,17 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import static io.github.cjstehno.ersatz.cfg.WaitFor.*;
+import org.junit.jupiter.api.Test;
+
+import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
+import static io.github.cjstehno.ersatz.cfg.WaitFor.ONE_SECOND;
+import static io.github.cjstehno.ersatz.cfg.WaitFor.atMost;
 import static io.github.cjstehno.testthings.Verifiers.verifyEqualsAndHashCode;
 import static io.github.cjstehno.testthings.Verifiers.verifyToString;
-import static java.util.concurrent.TimeUnit.*;
+import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.Test;
 
 class WaitForTest {
 

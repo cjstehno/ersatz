@@ -15,18 +15,19 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import static java.util.stream.Collectors.joining;
-
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static java.nio.charset.Charset.forName;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Helper object used to build and render a report of the unmatched request and the configured expectations.
@@ -47,8 +48,9 @@ public class UnmatchedRequestReport implements Report {
 
             out.append("# Unmatched Request\n\n");
 
-            final String query = request.getQueryParams().entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue()).collect(joining(", "));
-            out.append(request.getScheme()).append(" ").append(request.getMethod()).append(" ").append(request.getPath()).append(" ? ").append(query).append("\n");
+            val query = request.getQueryParams().entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue()).collect(joining(", "));
+            out.append(request.getScheme()).append(" ").append(request.getMethod()).append(" ").append(request.getPath())
+                .append(" ? ").append(query).append("\n");
 
             if (request.getHeaders() != null) {
                 out.append("Headers:\n");
@@ -60,7 +62,8 @@ public class UnmatchedRequestReport implements Report {
             if (request.getCookies() != null) {
                 out.append("Cookies:\n");
                 request.getCookies().forEach((n, c) -> {
-                    out.append(" - ").append(n).append(" (").append(c.getDomain()).append(", ").append(c.getPath()).append("): ").append(c.getValue()).append("\n");
+                    out.append(" - ").append(n).append(" (").append(c.getDomain()).append(", ").append(c.getPath()).append("): ")
+                        .append(c.getValue()).append("\n");
                 });
             }
 
@@ -79,7 +82,9 @@ public class UnmatchedRequestReport implements Report {
             if (request.getBody() != null) {
                 out.append("Content:\n");
                 if (request.getContentType() != null && TEXT_CONTENT_HINTS.stream().anyMatch(h -> request.getContentType().contains(h))) {
-                    out.append("  ").append(new String(request.getBody(), Charset.forName(request.getCharacterEncoding() != null ? request.getCharacterEncoding() : "UTF-8"))).append("\n");
+                    out.append("  ").append(
+                        new String(request.getBody(), forName(request.getCharacterEncoding() != null ? request.getCharacterEncoding() : "UTF-8"))
+                    ).append("\n");
                 } else {
                     out.append("  ").append(Arrays.toString(request.getBody())).append("\n");
                 }
@@ -97,7 +102,7 @@ public class UnmatchedRequestReport implements Report {
         return cache.get();
     }
 
-    private void renderRequirements(StringBuilder out) {
+    private void renderRequirements(final StringBuilder out) {
         out.append("\n# Requirements\n\n");
 
         for (int r = 0; r < requirements.size(); r++) {
@@ -127,7 +132,7 @@ public class UnmatchedRequestReport implements Report {
         }
     }
 
-    private void renderExpectations(StringBuilder out) {
+    private void renderExpectations(final StringBuilder out) {
         out.append("# Expectations\n\n");
 
         for (int index = 0; index < expectations.size(); index++) {
@@ -149,7 +154,9 @@ public class UnmatchedRequestReport implements Report {
 
             val matched = count - failed.get();
             val failures = failed.get() > 0;
-            out.append("  (%d matchers: %d matched, %s%d failed%s)\n\n".formatted(count, matched, failures ? RED : "", failed.get(), failures ? RESET : ""));
+            out.append(
+                "  (%d matchers: %d matched, %s%d failed%s)\n\n".formatted(count, matched, failures ? RED : "", failed.get(), failures ? RESET : "")
+            );
         }
     }
 

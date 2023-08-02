@@ -15,15 +15,16 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import static java.util.concurrent.TimeUnit.HOURS;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static lombok.AccessLevel.PRIVATE;
-
-import java.util.concurrent.TimeUnit;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+
+import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * An abstraction for expectation timeouts, allowing for explicit values, along with a FOREVER value.

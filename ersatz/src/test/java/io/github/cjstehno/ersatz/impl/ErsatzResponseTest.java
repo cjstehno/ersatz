@@ -15,19 +15,20 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
+import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Map;
+
 import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_JSON;
 import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_XML;
 import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
-import java.util.List;
-import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 class ErsatzResponseTest {
 

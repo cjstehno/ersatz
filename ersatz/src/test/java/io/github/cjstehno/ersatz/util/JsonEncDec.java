@@ -15,17 +15,18 @@
  */
 package io.github.cjstehno.ersatz.util;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * A reusable JSON encoder/decoder for testing.

@@ -15,19 +15,35 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
-import static io.github.cjstehno.ersatz.cfg.WaitFor.ONE_SECOND;
-import static java.util.Collections.unmodifiableList;
-
-import io.github.cjstehno.ersatz.cfg.*;
+import io.github.cjstehno.ersatz.cfg.Expectations;
+import io.github.cjstehno.ersatz.cfg.HttpMethod;
+import io.github.cjstehno.ersatz.cfg.Request;
+import io.github.cjstehno.ersatz.cfg.RequestWithContent;
+import io.github.cjstehno.ersatz.cfg.WaitFor;
+import io.github.cjstehno.ersatz.cfg.WebSocketExpectations;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.match.PathMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import java.util.*;
-import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.ANY;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.HEAD;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.PATCH;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.PUT;
+import static io.github.cjstehno.ersatz.cfg.WaitFor.ONE_SECOND;
+import static java.util.Collections.unmodifiableList;
 
 /**
  * Implementation of the <code>Expectations</code> interface.
@@ -52,7 +68,9 @@ public class ExpectationsImpl implements Expectations {
         return applyExpectation(new ErsatzRequestWithContent(method, pathMatcher, globalDecoders, globalEncoders), consumer);
     }
 
-    private RequestWithContent requestWithContent(final HttpMethod method, final PathMatcher pathMatcher, final Consumer<RequestWithContent> consumer) {
+    private RequestWithContent requestWithContent(
+        final HttpMethod method, final PathMatcher pathMatcher, final Consumer<RequestWithContent> consumer
+    ) {
         return applyExpectation(new ErsatzRequestWithContent(method, pathMatcher, globalDecoders, globalEncoders), consumer);
     }
 
@@ -72,27 +90,27 @@ public class ExpectationsImpl implements Expectations {
     }
 
     @Override
-    public RequestWithContent POST(final PathMatcher pathMatcher, Consumer<RequestWithContent> consumer) {
+    public RequestWithContent POST(final PathMatcher pathMatcher, final Consumer<RequestWithContent> consumer) {
         return requestWithContent(POST, pathMatcher, consumer);
     }
 
     @Override
-    public RequestWithContent PUT(final PathMatcher pathMatcher, Consumer<RequestWithContent> config) {
+    public RequestWithContent PUT(final PathMatcher pathMatcher, final Consumer<RequestWithContent> config) {
         return requestWithContent(PUT, pathMatcher, config);
     }
 
     @Override
-    public Request DELETE(final PathMatcher pathMatcher, Consumer<Request> config) {
+    public Request DELETE(final PathMatcher pathMatcher, final Consumer<Request> config) {
         return request(HttpMethod.DELETE, pathMatcher, config);
     }
 
     @Override
-    public RequestWithContent PATCH(final PathMatcher pathMatcher, Consumer<RequestWithContent> config) {
+    public RequestWithContent PATCH(final PathMatcher pathMatcher, final Consumer<RequestWithContent> config) {
         return requestWithContent(PATCH, pathMatcher, config);
     }
 
     @Override
-    public Request OPTIONS(final PathMatcher pathMatcher, Consumer<Request> config) {
+    public Request OPTIONS(final PathMatcher pathMatcher, final Consumer<Request> config) {
         return request(HttpMethod.OPTIONS, pathMatcher, config);
     }
 

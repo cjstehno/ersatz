@@ -15,15 +15,15 @@
  */
 package io.github.cjstehno.ersatz.match;
 
-import static lombok.AccessLevel.PRIVATE;
-import static org.hamcrest.CoreMatchers.equalTo;
-
 import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+
+import static lombok.AccessLevel.PRIVATE;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * Matcher used to match request cookie information.
@@ -124,7 +124,7 @@ public abstract class RequestCookieMatcher extends BaseMatcher<ClientRequest> {
                 .anyMatch(ent -> cookieMatcher.matches(ent.getValue()));
         }
 
-        @Override public void describeTo(Description description) {
+        @Override public void describeTo(final Description description) {
             description.appendText("Cookie name is ");
             nameMatcher.describeTo(description);
             description.appendText(" and is ");
@@ -142,7 +142,7 @@ public abstract class RequestCookieMatcher extends BaseMatcher<ClientRequest> {
             return negated != ((ClientRequest) actual).getCookies().keySet().stream().anyMatch(nameMatcher::matches);
         }
 
-        @Override public void describeTo(Description description) {
+        @Override public void describeTo(final Description description) {
             description.appendText("Cookie name is ");
             nameMatcher.describeTo(description);
         }

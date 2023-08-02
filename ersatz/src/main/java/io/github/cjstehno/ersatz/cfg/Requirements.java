@@ -15,11 +15,12 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
-
 import io.github.cjstehno.ersatz.match.HttpMethodMatcher;
 import io.github.cjstehno.ersatz.match.PathMatcher;
+
 import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
 
 /**
  * Defines the available requirements configuration methods.
@@ -73,5 +74,5 @@ public interface Requirements {
      * @param config        the requirements configuration
      * @return a reference to the request requirement for chained configuration
      */
-    RequestRequirement that(final HttpMethodMatcher methodMatcher, final PathMatcher pathMatcher, final Consumer<RequestRequirement> config);
+    RequestRequirement that(HttpMethodMatcher methodMatcher, PathMatcher pathMatcher,  Consumer<RequestRequirement> config);
 }

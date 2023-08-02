@@ -16,12 +16,13 @@
 package io.github.cjstehno.ersatz.impl.matchers;
 
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A matcher used to count the number of times the wrapped matcher is matched (true).

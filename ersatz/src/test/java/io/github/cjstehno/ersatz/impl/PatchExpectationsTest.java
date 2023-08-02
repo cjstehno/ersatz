@@ -15,12 +15,12 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import static org.hamcrest.CoreMatchers.startsWith;
 
 class PatchExpectationsTest extends ExpectationHarness {
 
@@ -33,7 +33,7 @@ class PatchExpectationsTest extends ExpectationHarness {
         "/foo,/foo,true",
         "/foo,/bar,false"
     })
-    void patch_path(final String requestPath, final String expectedPath, final boolean exists) {
+    void patchPath(final String requestPath, final String expectedPath, final boolean exists) {
         execAndAssert(
             mock -> mock.setPath(requestPath),
             expectations -> expectations.PATCH(expectedPath),
@@ -46,7 +46,7 @@ class PatchExpectationsTest extends ExpectationHarness {
         "/prefix/a,true",
         "/a,false"
     })
-    void patch_matcher(final String requestPath, final boolean present) {
+    void patchMatcher(final String requestPath, final boolean present) {
         execAndAssert(
             mock -> mock.setPath(requestPath),
             expectations -> expectations.PATCH(startsWith("/prefix")),
@@ -59,7 +59,7 @@ class PatchExpectationsTest extends ExpectationHarness {
         "alpha,alpha,true",
         "alpha,bravo,false"
     })
-    void patch_path_consumer(final String label, final String expectedLabel, final boolean present) {
+    void patchPathConsumer(final String label, final String expectedLabel, final boolean present) {
         execAndAssert(
             mock -> {
                 mock.setPath("/blah");

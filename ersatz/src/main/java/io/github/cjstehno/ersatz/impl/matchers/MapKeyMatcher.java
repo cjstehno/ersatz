@@ -15,15 +15,16 @@
  */
 package io.github.cjstehno.ersatz.impl.matchers;
 
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.collection.IsMapContaining.hasKey;
-
 import io.github.cjstehno.ersatz.server.ClientRequest;
-import java.util.Map;
-import java.util.function.Function;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+
+import java.util.Map;
+import java.util.function.Function;
+
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.collection.IsMapContaining.hasKey;
 
 /**
  * Matcher for matching the existence of a key in a map.
@@ -42,7 +43,9 @@ public class MapKeyMatcher extends BaseMatcher<ClientRequest> {
      * @param negated whether the match is negated
      * @param mapProvider the provider of the data map
      */
-    public MapKeyMatcher(final String label, final Matcher<String> nameMatcher, final boolean negated, final Function<ClientRequest, Map<String, ?>> mapProvider) {
+    public MapKeyMatcher(
+        final String label, final Matcher<String> nameMatcher, final boolean negated, final Function<ClientRequest, Map<String, ?>> mapProvider
+    ) {
         this.label = label;
         this.keyMatcher = negated ? not(hasKey(nameMatcher)) : hasKey(nameMatcher);
         this.mapProvider = mapProvider;
@@ -52,7 +55,7 @@ public class MapKeyMatcher extends BaseMatcher<ClientRequest> {
         return keyMatcher.matches(mapProvider.apply((ClientRequest) actual));
     }
 
-    @Override public void describeTo(Description description) {
+    @Override public void describeTo(final Description description) {
         description.appendText(label + " name is ");
         keyMatcher.describeTo(description);
     }

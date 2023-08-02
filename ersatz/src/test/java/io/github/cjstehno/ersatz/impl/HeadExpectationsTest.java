@@ -15,12 +15,12 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import static org.hamcrest.CoreMatchers.startsWith;
 
 public class HeadExpectationsTest extends ExpectationHarness {
 
@@ -33,7 +33,7 @@ public class HeadExpectationsTest extends ExpectationHarness {
         "/foo,/foo,true",
         "/foo,/bar,false"
     })
-    void head_path(final String requestPath, final String expectedPath, final boolean exists) {
+    void headPath(final String requestPath, final String expectedPath, final boolean exists) {
         execAndAssert(
             mock -> mock.setPath(requestPath),
             expectations -> expectations.HEAD(expectedPath),
@@ -46,7 +46,7 @@ public class HeadExpectationsTest extends ExpectationHarness {
         "/prefix/a,true",
         "/a,false"
     })
-    void head_matcher(final String requestPath, final boolean present) {
+    void headMatcher(final String requestPath, final boolean present) {
         execAndAssert(
             mock -> mock.setPath(requestPath),
             expectations -> expectations.HEAD(startsWith("/prefix")),
@@ -59,7 +59,7 @@ public class HeadExpectationsTest extends ExpectationHarness {
         "alpha,alpha,true",
         "alpha,bravo,false"
     })
-    void head_path_consumer(final String label, final String expectedLabel, final boolean present) {
+    void headPathConsumer(final String label, final String expectedLabel, final boolean present) {
         execAndAssert(
             mock -> {
                 mock.setPath("/blah");

@@ -15,26 +15,6 @@
  */
 package io.github.cjstehno.ersatz.expectations;
 
-import static io.github.cjstehno.ersatz.TestAssertions.*;
-import static io.github.cjstehno.ersatz.cfg.ContentType.*;
-import static io.github.cjstehno.ersatz.encdec.Cookie.cookie;
-import static io.github.cjstehno.ersatz.encdec.MultipartResponseContent.multipartResponse;
-import static io.github.cjstehno.ersatz.match.CookieMatcher.cookieMatcher;
-import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
-import static io.github.cjstehno.ersatz.match.PredicateMatcher.predicatedBy;
-import static io.github.cjstehno.ersatz.util.BasicAuth.basicAuth;
-import static io.github.cjstehno.ersatz.util.HttpClientExtension.Client.basicAuthHeader;
-import static io.github.cjstehno.ersatz.util.HttpHeaders.*;
-import static io.github.cjstehno.testthings.Resources.*;
-import static java.lang.System.currentTimeMillis;
-import static java.net.Proxy.Type.HTTP;
-import static java.util.Locale.ROOT;
-import static java.util.stream.Collectors.toList;
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.jupiter.api.Assertions.*;
-
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.InMemoryCookieJar;
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
@@ -46,15 +26,6 @@ import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.match.ErsatzMatchers;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import io.github.cjstehno.testthings.Resources;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import okhttp3.OkHttpClient;
@@ -71,6 +42,49 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+
+import static io.github.cjstehno.ersatz.TestAssertions.assertNotFound;
+import static io.github.cjstehno.ersatz.TestAssertions.assertOkWithString;
+import static io.github.cjstehno.ersatz.TestAssertions.assertStatusWithString;
+import static io.github.cjstehno.ersatz.TestAssertions.verify;
+import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_JPG;
+import static io.github.cjstehno.ersatz.cfg.ContentType.MULTIPART_MIXED;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
+import static io.github.cjstehno.ersatz.encdec.Cookie.cookie;
+import static io.github.cjstehno.ersatz.encdec.MultipartResponseContent.multipartResponse;
+import static io.github.cjstehno.ersatz.match.CookieMatcher.cookieMatcher;
+import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
+import static io.github.cjstehno.ersatz.match.PredicateMatcher.predicatedBy;
+import static io.github.cjstehno.ersatz.util.BasicAuth.basicAuth;
+import static io.github.cjstehno.ersatz.util.HttpClientExtension.Client.basicAuthHeader;
+import static io.github.cjstehno.ersatz.util.HttpHeaders.CONTENT_DISPOSITION;
+import static io.github.cjstehno.ersatz.util.HttpHeaders.CONTENT_ENCODING;
+import static io.github.cjstehno.ersatz.util.HttpHeaders.COOKIE;
+import static io.github.cjstehno.testthings.Resources.resourceStream;
+import static io.github.cjstehno.testthings.Resources.resourceToBytes;
+import static io.github.cjstehno.testthings.Resources.resourceToString;
+import static java.lang.System.currentTimeMillis;
+import static java.net.Proxy.Type.HTTP;
+import static java.util.Locale.ROOT;
+import static java.util.stream.Collectors.toList;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig("serverConfig")
 public class ErsatzServerGetExpectationsTest {
@@ -211,7 +225,7 @@ public class ErsatzServerGetExpectationsTest {
                     res.encoder(MULTIPART_MIXED, ErsatzMultipartResponseContent.class, Encoders.multipart);
                     res.body(multipartResponse(mrc -> {
                         mrc.boundary("t8xOJjySKePdRgBHYD");
-                        mrc.encoder(TEXT_PLAIN.getValue(), CharSequence.class, (o) -> o.toString().getBytes());
+                        mrc.encoder(TEXT_PLAIN.getValue(), CharSequence.class, o -> o.toString().getBytes());
                         mrc.field("alpha", "bravo");
                         mrc.part("file", "data.txt", TEXT_PLAIN, "This is some file data");
                     }));

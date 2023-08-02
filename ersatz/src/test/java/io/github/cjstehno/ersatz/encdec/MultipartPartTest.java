@@ -15,13 +15,13 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_PNG;
 import static io.github.cjstehno.testthings.Verifiers.verifyEqualsAndHashCode;
 import static io.github.cjstehno.testthings.Verifiers.verifyToString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 class MultipartPartTest {
 

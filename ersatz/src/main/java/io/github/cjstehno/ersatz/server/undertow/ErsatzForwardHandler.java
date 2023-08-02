@@ -15,23 +15,11 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
-import static java.lang.String.join;
-
 import io.github.cjstehno.ersatz.cfg.Response;
 import io.github.cjstehno.ersatz.impl.ErsatzForwardResponse;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HttpString;
-import java.nio.ByteBuffer;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.Set;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +27,19 @@ import lombok.val;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.nio.ByteBuffer;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Set;
+
+import static java.lang.String.join;
 
 /**
  * An Ersatz Undertow handler used to handle request forwarding to gather response data from an external server URI.
@@ -110,11 +111,11 @@ public class ErsatzForwardHandler implements ErsatzHandler {
             final var trustAllCerts = new TrustManager[]{
                 new X509TrustManager() {
                     @Override
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                    public void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
                     }
 
                     @Override
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                    public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
                     }
 
                     @Override public X509Certificate[] getAcceptedIssuers() {

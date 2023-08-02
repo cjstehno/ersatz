@@ -15,11 +15,12 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import static lombok.AccessLevel.PRIVATE;
+import lombok.NoArgsConstructor;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
-import lombok.NoArgsConstructor;
+
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Helpers for working with <code>MimeType</code> objects.

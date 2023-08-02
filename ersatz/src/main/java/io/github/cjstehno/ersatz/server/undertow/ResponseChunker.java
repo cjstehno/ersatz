@@ -15,18 +15,19 @@
  */
 package io.github.cjstehno.ersatz.server.undertow;
 
-import static java.lang.System.arraycopy;
-import static lombok.AccessLevel.PACKAGE;
-
 import io.undertow.io.IoCallback;
 import io.undertow.io.Sender;
 import io.undertow.server.HttpServerExchange;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+
+import static java.lang.System.arraycopy;
+import static lombok.AccessLevel.PACKAGE;
 
 /**
  * Undertow server callback used to provide the delayed chunked content.
@@ -35,7 +36,7 @@ import lombok.val;
 class ResponseChunker implements IoCallback {
 
     private final List<byte[]> chunks;
-    public final int delay;
+    private final int delay;
 
     @Override
     public void onComplete(final HttpServerExchange exchange, final Sender sender) {
@@ -56,7 +57,7 @@ class ResponseChunker implements IoCallback {
     }
 
     @Override
-    public void onException(HttpServerExchange exchange, Sender sender, IOException exception) {
+    public void onException(final HttpServerExchange exchange, final Sender sender, final IOException exception) {
         exception.printStackTrace();
     }
 

@@ -28,7 +28,7 @@ public interface ChunkingConfig {
      * @param value the number of chunks
      * @return a reference to the config
      */
-    ChunkingConfig chunks(final int value);
+    ChunkingConfig chunks(int value);
 
     /**
      * Used to specify the delay time between each chunk, fixed to the specified milliseconds.
@@ -36,5 +36,5 @@ public interface ChunkingConfig {
      * @param value the delay value in milliseconds
      * @return a reference to the config
      */
-    ChunkingConfig delay(final int value);
+    ChunkingConfig delay(int value);
 }

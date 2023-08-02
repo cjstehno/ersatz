@@ -15,10 +15,6 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
-import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
-import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
-import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
-
 import io.github.cjstehno.ersatz.cfg.InboundMessage;
 import io.github.cjstehno.ersatz.cfg.MessageReaction;
 import io.github.cjstehno.ersatz.cfg.MessageType;
@@ -26,15 +22,20 @@ import io.github.cjstehno.ersatz.cfg.WaitFor;
 import io.github.cjstehno.ersatz.util.ByteArrays;
 import io.undertow.websockets.core.BufferedBinaryMessage;
 import io.undertow.websockets.core.BufferedTextMessage;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.val;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.val;
+
+import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
+import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
+import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
 
 /**
  * Implementation of the InboundMessage for websocket connections.
@@ -47,23 +48,23 @@ public class InboundMessageImpl implements InboundMessage {
     @Getter private final List<MessageReactionImpl> reactions = new LinkedList<>();
     private final CountDownLatch matchLatch = new CountDownLatch(1);
 
-    @Override public InboundMessage payload(Object obj) {
+    @Override public InboundMessage payload(final Object obj) {
         this.payload = obj;
         return this;
     }
 
-    @Override public InboundMessage messageType(MessageType type) {
+    @Override public InboundMessage messageType(final MessageType type) {
         this.messageType = type;
         return this;
     }
 
-    @Override public MessageReaction reaction(Object payload, MessageType messageType) {
+    @Override public MessageReaction reaction(final Object payload, final MessageType messageType) {
         val messageReaction = new MessageReactionImpl(payload, messageType);
         reactions.add(messageReaction);
         return messageReaction;
     }
 
-    @Override public MessageReaction reaction(Consumer<MessageReaction> config) {
+    @Override public MessageReaction reaction(final Consumer<MessageReaction> config) {
         val reaction = new MessageReactionImpl();
         config.accept(reaction);
         reactions.add(reaction);
