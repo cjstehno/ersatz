@@ -31,26 +31,28 @@ import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN
 import static io.github.cjstehno.ersatz.encdec.Decoders.utf8String
 import static java.net.http.HttpRequest.BodyPublishers.ofString
 import static java.nio.charset.StandardCharsets.UTF_8
-import static java.util.stream.Stream.of
 import static org.hamcrest.Matchers.startsWith
-import static org.junit.jupiter.api.Assertions.*
-import static org.junit.jupiter.params.provider.Arguments.arguments
+import static org.junit.jupiter.api.Assertions.assertArrayEquals
+import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 @ExtendWith(ErsatzServerExtension)
 class RequestResponseExtensionsTest {
 
     private static final String TEXT_RESPONSE = 'I am some test to respond with'
-    private GroovyErsatzServer server = new GroovyErsatzServer({
+    private final GroovyErsatzServer server = new GroovyErsatzServer({
         reportToConsole()
         decoder TEXT_PLAIN, utf8String
     })
     private Http http
 
-    @BeforeEach void before() {
-        http = new Http(server.getHttpUrl())
+    @BeforeEach
+    void before() {
+        http = new Http(server.httpUrl)
     }
 
-    @Test void anyExtensions() {
+    @Test
+    void anyExtensions() {
         server.expectations {
             ANY('/whatever') {
                 called 1
@@ -69,7 +71,8 @@ class RequestResponseExtensionsTest {
         assertTrue server.verify()
     }
 
-    @Test void getExtension() {
+    @Test
+    void getExtension() {
         server.expectations {
             GET(startsWith('/some/')) {
                 called 1
@@ -84,7 +87,8 @@ class RequestResponseExtensionsTest {
         assertTrue server.verify()
     }
 
-    @Test void headExtensions() {
+    @Test
+    void headExtensions() {
         server.expectations {
             HEAD(startsWith('/some/')) {
                 called 1
@@ -105,7 +109,8 @@ class RequestResponseExtensionsTest {
         assertTrue server.verify()
     }
 
-    @Test void deleteExtensions() {
+    @Test
+    void deleteExtensions() {
         server.expectations {
             DELETE(startsWith('/some/')) {
                 called 1
@@ -126,7 +131,8 @@ class RequestResponseExtensionsTest {
         assertTrue server.verify()
     }
 
-    @Test void postExtensions() {
+    @Test
+    void postExtensions() {
         server.expectations {
             POST(startsWith('/some/')) {
                 called 1
@@ -151,7 +157,8 @@ class RequestResponseExtensionsTest {
         assertTrue server.verify()
     }
 
-    @Test void putExtensions() {
+    @Test
+    void putExtensions() {
         server.expectations {
             PUT(startsWith('/some/')) {
                 called 1
@@ -174,7 +181,8 @@ class RequestResponseExtensionsTest {
         assertTrue server.verify()
     }
 
-    @Test void patchExtensions() {
+    @Test
+    void patchExtensions() {
         server.expectations {
             PATCH(startsWith('/some/')) {
                 called 1
@@ -197,8 +205,8 @@ class RequestResponseExtensionsTest {
         assertTrue server.verify()
     }
 
-    @ParameterizedTest(name = "[{index}] allowed options: https({0}) {1} -> {2}")
-    @MethodSource("optionsProvider")
+    @ParameterizedTest(name = '[{index}] allowed options: https({0}) {1} -> {2}')
+    @MethodSource('optionsProvider')
     void optionsExtensions(final String path, final Collection<String> allowed) {
         server.expectations {
             OPTIONS(startsWith('/options')) {
@@ -223,10 +231,11 @@ class RequestResponseExtensionsTest {
         assertArrayEquals(new byte[0], response.body() as byte[])
     }
 
+    @SuppressWarnings('UnusedPrivateMethod')
     private static Stream<Arguments> optionsProvider() {
-        of(
-            arguments('/options', List.of('GET', 'POST')),
-            arguments('/*', List.of('OPTIONS', 'GET', 'DELETE'))
+        Stream.of(
+            Arguments.arguments('/options', List.of('GET', 'POST')),
+            Arguments.arguments('/*', List.of('OPTIONS', 'GET', 'DELETE'))
         )
     }
 }

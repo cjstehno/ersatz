@@ -7,6 +7,8 @@ plugins {
     id 'jacoco'
     id 'signing'
     id 'com.adarshr.test-logger' version '3.2.0'
+    id 'codenarc'
+    id 'checkstyle'
 }
 
 group = rootProject.group
@@ -170,3 +172,24 @@ signing {
     sign publishing.publications.ersatzGroovy
 }
 
+codenarc {
+    toolVersion = '3.3.0'
+}
+
+codenarcTest {
+    configFile file("$rootDir/config/codenarc/rules.groovy")
+    ignoreFailures = false
+}
+
+checkstyle {
+    toolVersion "10.12.2"
+}
+
+checkstyleMain {
+    configFile file("$rootDir/config/checkstyle/checkstyle.xml")
+}
+
+tasks.withType(Checkstyle) {
+    minHeapSize = "200m"
+    maxHeapSize = "1g"
+}

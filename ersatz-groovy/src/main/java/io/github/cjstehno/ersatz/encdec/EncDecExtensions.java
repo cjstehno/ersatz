@@ -17,7 +17,6 @@ package io.github.cjstehno.ersatz.encdec;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import io.github.cjstehno.ersatz.encdec.*;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
@@ -50,7 +49,7 @@ public class EncDecExtensions {
      */
     public static ResponseEncoders encoders(
         final ResponseEncoders type,
-        @DelegatesTo(value = ResponseEncoders.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = ResponseEncoders.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return ResponseEncoders.encoders(ConsumerWithDelegate.create(closure));
     }
@@ -64,7 +63,7 @@ public class EncDecExtensions {
      */
     public static RequestDecoders decoders(
         final RequestDecoders type,
-        @DelegatesTo(value = RequestDecoders.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = RequestDecoders.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return RequestDecoders.decoders(ConsumerWithDelegate.create(closure));
     }

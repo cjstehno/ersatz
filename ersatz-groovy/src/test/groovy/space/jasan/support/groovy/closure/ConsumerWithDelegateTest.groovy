@@ -15,7 +15,6 @@
  */
 package space.jasan.support.groovy.closure
 
-
 import org.junit.jupiter.api.Test
 
 import java.util.concurrent.atomic.AtomicReference
@@ -30,14 +29,16 @@ class ConsumerWithDelegateTest {
 
     private static final String SOMETHING = 'smtg'
 
-    @Test void useAsConsumer() {
+    @Test
+    void useAsConsumer() {
         Consumer<ConsumerFoo> consumer = ConsumerWithDelegate.create {
             foo = 'FOO'
         }
         assertEquals 'FOO', AcceptsConsumer.testMe(consumer).foo
     }
 
-    @Test void ownerIsSetFromPropagator() {
+    @Test
+    void ownerIsSetFromPropagator() {
         Object o = null
 
         ConsumerWithDelegate.create {
@@ -49,7 +50,8 @@ class ConsumerWithDelegateTest {
         assertEquals 'foo', o
     }
 
-    @Test void ownerIsSet() {
+    @Test
+    void ownerIsSet() {
         AtomicReference<String> reference = new AtomicReference<>()
 
         ConsumerWithDelegate.create({

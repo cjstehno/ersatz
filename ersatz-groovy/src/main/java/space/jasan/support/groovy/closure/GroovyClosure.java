@@ -79,7 +79,7 @@ public class GroovyClosure {
         GET_DELEGATE_METHOD = getDelegateMethod;
     }
 
-    private static Class<?> getClassIfAvailable(String name) {
+    private static Class<?> getClassIfAvailable(final String name) {
         Class<?> closureClass;
         try {
             closureClass = Class.forName(name, false, ClassLoader.getSystemClassLoader());
@@ -103,7 +103,7 @@ public class GroovyClosure {
      * @param <T>              the type of the object which might be backed by Groovy closure
      * @return always the original potentialClosure parameter which might have the delegate set if possible
      */
-    public static <T> T setDelegate(T potentialClosure, Object delegateWanted) {
+    public static <T> T setDelegate(final T potentialClosure, final Object delegateWanted) {
         if (potentialClosure == null || CLOSURE_CLASS == null || SET_RESOLVE_STRATEGY_METHOD == null || SET_DELEGATE_METHOD == null) {
             return potentialClosure;
         }
@@ -152,7 +152,7 @@ public class GroovyClosure {
      * @param object maybe a closure
      * @return closure's owner if the object is closure or the object self otherwise
      */
-    public static Object getPropagatedOwner(Object object) {
+    public static Object getPropagatedOwner(final Object object) {
         if (object instanceof Closure) {
             return ((Closure) object).getOwner();
         }
@@ -166,7 +166,7 @@ public class GroovyClosure {
      * @param <T> the closure type
      * @return the returned closure
      */
-    public static <T> Closure<T> cloneWithTopLevelOwner(Closure<T> closure) {
+    public static <T> Closure<T> cloneWithTopLevelOwner(final Closure<T> closure) {
         return cloneWithTopLevelOwner(closure, closure.getDelegate());
     }
 
@@ -178,7 +178,7 @@ public class GroovyClosure {
      * @param <T> the closure type
      * @return the returned closure
      */
-    public static <T> Closure<T> cloneWithTopLevelOwner(Closure<T> closure, Object delegate) {
+    public static <T> Closure<T> cloneWithTopLevelOwner(final Closure<T> closure, final Object delegate) {
         return cloneWithTopLevelOwner(closure, delegate, Closure.DELEGATE_FIRST);
     }
 
@@ -191,7 +191,7 @@ public class GroovyClosure {
      * @param <T> the closure type
      * @return the returned closure
      */
-    public static <T> Closure<T> cloneWithTopLevelOwner(Closure<T> closure, Object delegate, int strategy) {
+    public static <T> Closure<T> cloneWithTopLevelOwner(final Closure<T> closure, final Object delegate, final int strategy) {
         Closure<T> clone = closure.rehydrate(delegate, getPropagatedOwner(closure.getOwner()), closure.getThisObject());
         clone.setResolveStrategy(strategy);
         return clone;

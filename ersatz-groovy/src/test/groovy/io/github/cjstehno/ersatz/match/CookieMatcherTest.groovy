@@ -16,12 +16,11 @@
 package io.github.cjstehno.ersatz.match
 
 import io.github.cjstehno.ersatz.encdec.Cookie
-import io.github.cjstehno.ersatz.match.CookieMatcher
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals
 
 class CookieMatcherTest {
 
@@ -29,7 +28,7 @@ class CookieMatcherTest {
     @CsvSource([
         '/foo,stuff,true,true',
         '/foo,other,true,false',
-        '/bar,stuff,true,false'
+        '/bar,stuff,true,false',
     ])
     void cookieMatcherConfig(final String cookiePath, final String cookieValue, final boolean http, final boolean result) {
         def matcher = CookieMatcher.cookieMatcher {
