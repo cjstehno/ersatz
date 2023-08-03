@@ -17,11 +17,16 @@ package io.github.cjstehno.ersatz.util;
 
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.InMemoryCookieJar;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
@@ -41,8 +46,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static io.github.cjstehno.ersatz.util.BasicAuth.AUTHORIZATION_HEADER;
@@ -294,6 +303,19 @@ public class HttpClientExtension implements BeforeEachCallback, ParameterResolve
             return patch(path, null, body, false);
         }
 
+        public void webSocket(final String path, final WebSocketListener listener, final Consumer<WebSocket> consumer){
+            val webSocket = client.newWebSocket(
+                new Request.Builder().url(path).build(),
+                listener != null ? listener : new CapturingWebSocketListener(0)
+            );
+
+            if (consumer != null) {
+                consumer.accept(webSocket);
+            }
+
+            webSocket.close(1000, "done");
+        }
+
         public static Request.Builder basicAuthHeader(final Request.Builder builder, final String user, final String pass) {
             return builder.header(AUTHORIZATION_HEADER, header(user, pass));
         }
@@ -334,6 +356,49 @@ public class HttpClientExtension implements BeforeEachCallback, ParameterResolve
             }
 
             return builder;
+        }
+    }
+
+    @Slf4j
+    public static class CapturingWebSocketListener extends WebSocketListener {
+
+        @Getter private final List<Object> messages = new LinkedList<>();
+        private final CountDownLatch latch;
+
+        public CapturingWebSocketListener(final int expectedMessageCount) {
+            latch = new CountDownLatch(expectedMessageCount);
+        }
+
+        public boolean await(final long timeout, final TimeUnit unit) throws InterruptedException {
+            return latch.await(timeout, unit);
+        }
+
+        @Override public void onOpen(final WebSocket webSocket, final okhttp3.Response response) {
+            log.info("open");
+        }
+
+        @Override public void onMessage(final WebSocket webSocket, final String text) {
+            log.info("message (string): {}", text);
+            messages.add(text);
+            latch.countDown();
+        }
+
+        @Override public void onMessage(final WebSocket webSocket, final ByteString bytes) {
+            log.info("message (bytes): {}", bytes);
+            messages.add(bytes);
+            latch.countDown();
+        }
+
+        @Override public void onClosing(final WebSocket webSocket, final int code, final String reason) {
+            log.info("closing");
+        }
+
+        @Override public void onClosed(final WebSocket webSocket, final int code, final String reason) {
+            log.info("closed");
+        }
+
+        @Override public void onFailure(final WebSocket webSocket, final Throwable t, final okhttp3.Response response) {
+            log.info("failure: {}", t.getMessage());
         }
     }
 }
