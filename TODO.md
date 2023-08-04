@@ -3,5 +3,6 @@
 - web socket support documentation 
 - resolve the groovy ws support methods
 - refactor the ws client into a reusable form
+- test ws when expected connect never occurs - timeout issue?
 
 - Note that ws does not support secure web sockets `wss://` connections - if this is a desired feature, please file and issue
