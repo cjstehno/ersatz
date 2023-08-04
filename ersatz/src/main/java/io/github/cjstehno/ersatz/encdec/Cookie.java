@@ -62,7 +62,7 @@ public class Cookie {
      * @param value the cookie value
      * @return this cookie
      */
-    public Cookie value(String value) {
+    public Cookie value(final String value) {
         this.value = value;
         return this;
     }

@@ -40,7 +40,7 @@ public class ConsumerWithDelegate<T> implements Consumer<T> {
      * @param <T> the parameter
      * @return the consumer
      */
-    public static <T> Consumer<T> create(Closure c, Object owner, int strategy) {
+    public static <T> Consumer<T> create(final Closure c, final Object owner, final int strategy) {
         return new ConsumerWithDelegate<>(c, strategy, owner);
     }
 
@@ -52,7 +52,7 @@ public class ConsumerWithDelegate<T> implements Consumer<T> {
      * @param <T> the parameter
      * @return the consumer
      */
-    public static <T> Consumer<T> create(Closure c, Object owner) {
+    public static <T> Consumer<T> create(final Closure c, final Object owner) {
         return create(c, owner, Closure.DELEGATE_FIRST);
     }
 
@@ -64,7 +64,7 @@ public class ConsumerWithDelegate<T> implements Consumer<T> {
      * @param <T> the parameter
      * @return the consumer
      */
-    public static <T> Consumer<T> create(Closure c, int strategy) {
+    public static <T> Consumer<T> create(final Closure c, final int strategy) {
         return create(c, GroovyClosure.getPropagatedOwner(c.getOwner()), strategy);
     }
 
@@ -75,7 +75,7 @@ public class ConsumerWithDelegate<T> implements Consumer<T> {
      * @param <T> the parameter
      * @return the consumer
      */
-    public static <T> Consumer<T> create(Closure c) {
+    public static <T> Consumer<T> create(final Closure c) {
         return create(c, Closure.DELEGATE_FIRST);
     }
 
@@ -83,14 +83,14 @@ public class ConsumerWithDelegate<T> implements Consumer<T> {
     private final Object owner;
     private final Closure closure;
 
-    private ConsumerWithDelegate(Closure closure, int strategy, Object owner) {
+    private ConsumerWithDelegate(final Closure closure, final int strategy, final Object owner) {
         this.strategy = strategy;
         this.owner = owner;
         this.closure = closure;
     }
 
     @Override
-    public void accept(T t) {
+    public void accept(final T t) {
         Closure closure = this.closure.rehydrate(t, owner, this.closure.getThisObject());
         closure.setResolveStrategy(strategy);
         closure.call(t);

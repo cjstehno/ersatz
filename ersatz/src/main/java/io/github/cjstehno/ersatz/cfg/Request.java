@@ -57,7 +57,7 @@ public interface Request {
      * @param enabled true if the request is secure (HTTPS)
      * @return a reference to this request
      */
-    Request secure(final boolean enabled);
+    Request secure(boolean enabled);
 
     /**
      * Specifies a request header to be configured in the expected request. The value specified must match one of the
@@ -91,7 +91,7 @@ public interface Request {
      * @param headerMatcher the header matcher
      * @return this request
      */
-    Request header(final HeaderMatcher headerMatcher);
+    Request header(HeaderMatcher headerMatcher);
 
     /**
      * Specifies request headers as a Map of names to values to be configured in the expected request. The map values may be <code>String</code> or
@@ -139,7 +139,7 @@ public interface Request {
      * @param queryMatcher the query param matcher
      * @return this request
      */
-    Request query(final QueryParamMatcher queryMatcher);
+    Request query(QueryParamMatcher queryMatcher);
 
     /**
      * Used to specify a request query parameter to be configured in the expected request. As per the HTTP spec, the query string parameters may be
@@ -215,7 +215,7 @@ public interface Request {
      * @param cookieMatcher the request cookie matcher
      * @return this request
      */
-    Request cookie(final RequestCookieMatcher cookieMatcher);
+    Request cookie(RequestCookieMatcher cookieMatcher);
 
     /**
      * Specifies a listener which will be called with the active request whenever this request is matched at test-time.
@@ -223,7 +223,7 @@ public interface Request {
      * @param listener the request call listener
      * @return a reference to this request
      */
-    Request listener(final Consumer<ClientRequest> listener);
+    Request listener(Consumer<ClientRequest> listener);
 
     /**
      * Allows the specification of a custom call verifier so that the number of times the request is called may be matched.
@@ -231,7 +231,7 @@ public interface Request {
      * @param callVerifier the verifier to be used
      * @return a reference to this request
      */
-    Request called(final Matcher<Integer> callVerifier);
+    Request called(Matcher<Integer> callVerifier);
 
     /**
      * Configures a call count verifier such that the number of calls must be equivalent to the provided count. This is analogous to calling
@@ -261,7 +261,7 @@ public interface Request {
      * @param matcher a matcher based on the <code>ClientRequest</code> object
      * @return a reference to this request
      */
-    Request matcher(final Matcher<ClientRequest> matcher);
+    Request matcher(Matcher<ClientRequest> matcher);
 
     /**
      * Initiates the definition of a response for this request.
@@ -277,7 +277,7 @@ public interface Request {
      * @param responder the <code>Consumer&lt;Response&gt;</code> to provide configuration of the response
      * @return a reference to this request
      */
-    Request responder(final Consumer<Response> responder);
+    Request responder(Consumer<Response> responder);
 
     /**
      * Causes the response to be generated from the result of making the request against another target server. The
@@ -300,7 +300,7 @@ public interface Request {
      * @param targetUri the target URI
      * @return a reference to this request
      */
-    Request forward(final URI targetUri);
+    Request forward(URI targetUri);
 
     /**
      * Causes the response to be generated from the result of making the request against another target server. The

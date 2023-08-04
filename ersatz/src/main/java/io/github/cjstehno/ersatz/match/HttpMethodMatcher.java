@@ -24,7 +24,9 @@ import org.hamcrest.Matcher;
 
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.ANY;
 import static java.util.Arrays.stream;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.any;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * A matcher used to match the HTTP method of a request.

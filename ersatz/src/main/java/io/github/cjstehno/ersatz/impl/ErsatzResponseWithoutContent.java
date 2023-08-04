@@ -34,7 +34,7 @@ public class ErsatzResponseWithoutContent extends ErsatzResponse {
     }
 
     @Override
-    public Response body(Object content) {
+    public Response body(final Object content) {
         throw new IllegalArgumentException("The response is configured as EMPTY and cannot have content.");
     }
 

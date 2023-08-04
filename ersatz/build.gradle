@@ -7,6 +7,7 @@ plugins {
     id 'jacoco'
     id 'signing'
     id 'com.adarshr.test-logger' version '3.2.0'
+    id 'checkstyle'
 }
 
 group = rootProject.group
@@ -192,4 +193,19 @@ signing {
     sign publishing.publications.ersatz
 }
 
+checkstyle {
+    toolVersion "10.12.2"
+}
 
+checkstyleMain {
+    configFile file("$rootDir/config/checkstyle/checkstyle.xml")
+}
+
+checkstyleTest {
+    configFile file("$rootDir/config/checkstyle/checkstyle-test.xml")
+}
+
+tasks.withType(Checkstyle) {
+    minHeapSize = "200m"
+    maxHeapSize = "1g"
+}

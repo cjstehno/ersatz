@@ -18,6 +18,7 @@ package io.github.cjstehno.ersatz.match;
 import io.github.cjstehno.ersatz.encdec.DecoderChain;
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
@@ -27,6 +28,7 @@ import org.hamcrest.Matcher;
 
 import static io.github.cjstehno.ersatz.match.HeaderMatcher.contentTypeHeader;
 import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PROTECTED;
 import static org.hamcrest.CoreMatchers.startsWith;
 
 /**
@@ -37,12 +39,12 @@ public abstract class BodyMatcher extends BaseMatcher<ClientRequest> {
     /**
      * The decoder chain to be used when decoding the request body.
      */
-    @Setter public DecoderChain decoderChain;
+    @Setter @Getter(PROTECTED) private DecoderChain decoderChain;
 
     /**
      * Creates a matcher which will match based on the body content matcher and the specified content type.
      *
-     * @param matcher the body content matcher
+     * @param matcher     the body content matcher
      * @param contentType the expected content type
      * @return the body matcher
      */
@@ -63,7 +65,7 @@ public abstract class BodyMatcher extends BaseMatcher<ClientRequest> {
         }
 
         private Object decode(final ClientRequest request) {
-            val decoder = decoderChain.resolve(contentType);
+            val decoder = getDecoderChain().resolve(contentType);
             if (decoder != null) {
                 return decoder.apply(
                     request.getBody(),
@@ -71,7 +73,7 @@ public abstract class BodyMatcher extends BaseMatcher<ClientRequest> {
                         request.getContentLength(),
                         request.getContentType(),
                         request.getCharacterEncoding(),
-                        decoderChain
+                        getDecoderChain()
                     )
                 );
             } else {

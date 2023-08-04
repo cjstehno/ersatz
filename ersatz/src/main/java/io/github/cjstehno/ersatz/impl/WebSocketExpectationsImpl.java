@@ -18,6 +18,7 @@ package io.github.cjstehno.ersatz.impl;
 import io.github.cjstehno.ersatz.cfg.InboundMessage;
 import io.github.cjstehno.ersatz.cfg.MessageType;
 import io.github.cjstehno.ersatz.cfg.OutboundMessage;
+import io.github.cjstehno.ersatz.cfg.WaitFor;
 import io.github.cjstehno.ersatz.cfg.WebSocketExpectations;
 import io.undertow.websockets.core.BufferedBinaryMessage;
 import io.undertow.websockets.core.BufferedTextMessage;
@@ -30,8 +31,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
 
 /**
  * Implementation of the WebSocketExpectations.
@@ -44,28 +46,26 @@ public class WebSocketExpectationsImpl implements WebSocketExpectations {
     private final List<OutboundMessageImpl> outboundMessages = new LinkedList<>();
     @Getter private final String path;
 
-    // FIXME: consider changing names to "toReceive" and "sends"
-
-    @Override public InboundMessage receive(final Object payload, final MessageType messageType) {
+    @Override public InboundMessage receives(final Object payload, final MessageType messageType) {
         val message = new InboundMessageImpl(payload, messageType);
         inboundMessages.add(message);
         return message;
     }
 
-    @Override public InboundMessage receive(final Consumer<InboundMessage> config) {
+    @Override public InboundMessage receives(final Consumer<InboundMessage> config) {
         val message = new InboundMessageImpl();
         config.accept(message);
         inboundMessages.add(message);
         return message;
     }
 
-    @Override public OutboundMessage send(final Object payload, final MessageType messageType) {
+    @Override public OutboundMessage sends(final Object payload, final MessageType messageType) {
         val message = new OutboundMessageImpl(payload, messageType);
         outboundMessages.add(message);
         return message;
     }
 
-    @Override public OutboundMessage send(final Consumer<OutboundMessage> config) {
+    @Override public OutboundMessage sends(final Consumer<OutboundMessage> config) {
         val message = new OutboundMessageImpl();
         config.accept(message);
         outboundMessages.add(message);
@@ -102,7 +102,7 @@ public class WebSocketExpectationsImpl implements WebSocketExpectations {
      *
      * @param consumer the iteration consumer
      */
-    public void eachSender(Consumer<OutboundMessageImpl> consumer) {
+    public void eachSender(final Consumer<OutboundMessageImpl> consumer) {
         outboundMessages.forEach(consumer);
     }
 
@@ -111,7 +111,7 @@ public class WebSocketExpectationsImpl implements WebSocketExpectations {
      *
      * @param consumer the iteration consumer
      */
-    public void eachMessage(Consumer<InboundMessageImpl> consumer) {
+    public void eachMessage(final Consumer<InboundMessageImpl> consumer) {
         inboundMessages.forEach(consumer);
     }
 
@@ -139,19 +139,26 @@ public class WebSocketExpectationsImpl implements WebSocketExpectations {
         return inboundMessages.stream().filter(m -> m.matches(message)).findFirst();
     }
 
-    public boolean verify(final long timeout, final TimeUnit unit) {
-        return waitForLatch() && inboundMessages.stream().allMatch(m -> m.marked(timeout, unit));
+    /**
+     * Verifies that the configured expectations have been met.
+     *
+     * @param waitFor the amount of time verification should wait before considering a timeout
+     * @return true if the verification conditions have been met
+     */
+    public boolean verify(final WaitFor waitFor) {
+        return waitForLatch(waitFor) && inboundMessages.stream().allMatch(m -> m.marked(waitFor));
     }
 
-    private boolean waitForLatch() {
+    private boolean waitForLatch(final WaitFor waitFor) {
         try {
-            /*
-                Note: Using a timeout here works, but you need to increase the time value when running all tests - this
-                would lead to unpredictable tests. I am going to make this wait for now. If this causes issues down the
-                road, consider adding in a timeout with some option to wait-forever, like this.
-             */
-            connectionLatch.await();
-            return true;
+            if (waitFor == FOREVER) {
+                connectionLatch.await();
+                return true;
+
+            } else {
+                return connectionLatch.await(waitFor.getTime(), waitFor.getUnit());
+            }
+
         } catch (InterruptedException e) {
             return false;
         }

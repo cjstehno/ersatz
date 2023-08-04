@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 /**
  * Defines the available PUT request expectations.
  */
+@SuppressWarnings("checkstyle:MethodName")
 public interface PutExpectations {
 
     /**
@@ -86,5 +87,5 @@ public interface PutExpectations {
      * @param config the configuration consumer
      * @return a <code>RequestWithContent</code> configuration object
      */
-    RequestWithContent PUT(final PathMatcher pathMatcher, final Consumer<RequestWithContent> config);
+    RequestWithContent PUT(PathMatcher pathMatcher, Consumer<RequestWithContent> config);
 }

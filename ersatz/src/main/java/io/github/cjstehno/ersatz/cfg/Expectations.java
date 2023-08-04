@@ -32,6 +32,7 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
  * a match and if there are multiple matching expectations, the first one configured will be the one considered as the
  * match.
  */
+@SuppressWarnings("checkstyle:LineLength")
 public interface Expectations extends AnyExpectations, GetExpectations, HeadExpectations, PostExpectations, PutExpectations, DeleteExpectations, PatchExpectations, OptionsExpectations, WSExpectations {
 
     /**
@@ -103,5 +104,5 @@ public interface Expectations extends AnyExpectations, GetExpectations, HeadExpe
      * @param consumer    the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    Request request(final HttpMethod method, final PathMatcher pathMatcher, Consumer<Request> consumer);
+    Request request(HttpMethod method, PathMatcher pathMatcher, Consumer<Request> consumer);
 }

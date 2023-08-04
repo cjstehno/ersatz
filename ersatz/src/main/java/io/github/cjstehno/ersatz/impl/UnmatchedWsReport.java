@@ -15,12 +15,11 @@
  */
 package io.github.cjstehno.ersatz.impl;
 
+import io.github.cjstehno.ersatz.cfg.WaitFor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Reporter used to display mismatch information about websocket expectations.
@@ -45,8 +44,9 @@ public class UnmatchedWsReport implements Report {
 
             final AtomicInteger failed = new AtomicInteger(0);
             expectations.eachMessage(rm -> {
-                boolean matched = rm.marked(1, SECONDS);
-                out.append("  ").append(mark(matched)).append(" Received ").append(rm.getMessageType()).append(" message: ").append(rm.getPayload()).append("\n");
+                boolean matched = rm.marked(WaitFor.ONE_SECOND);
+                out.append("  ").append(mark(matched)).append(" Received ").append(rm.getMessageType())
+                    .append(" message: ").append(rm.getPayload()).append("\n");
                 if (!matched) {
                     failed.incrementAndGet();
                 }
@@ -54,7 +54,8 @@ public class UnmatchedWsReport implements Report {
 
             int count = expectations.getExpectedMessageCount() + 1;
             int matchedCount = count - failed.get();
-            out.append("  (").append(count).append(" matchers: ").append(matchedCount).append(" matched, ").append((failed.get() > 0 ? RED : "") + failed).append(" failed").append(failed.get() > 0 ? RESET : "").append(")\n\n");
+            out.append("  (").append(count).append(" matchers: ").append(matchedCount).append(" matched, ")
+                .append(failed.get() > 0 ? RED : "").append(failed).append(" failed").append(failed.get() > 0 ? RESET : "").append(")\n\n");
 
             cached.set(out.toString());
         }

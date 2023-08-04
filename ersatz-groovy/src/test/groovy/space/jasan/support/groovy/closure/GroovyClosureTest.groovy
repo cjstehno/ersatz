@@ -25,12 +25,23 @@ import java.util.stream.Stream
 
 import static org.junit.jupiter.api.Assertions.assertEquals
 import static org.junit.jupiter.api.Assertions.assertTrue
-import static org.junit.jupiter.params.provider.Arguments.arguments
 
 /**
  * Specification for GroovyClosure helper.
  */
 class GroovyClosureTest {
+
+    static void setDelegateInterfaceTest(Runnable consumer, Object token) {
+        GroovyClosure.setDelegate(consumer, token)
+    }
+
+    static void setDelegateSAMTest(SAM consumer, Object token) {
+        GroovyClosure.setDelegate(consumer, token)
+    }
+
+    static void setClosureTest(Closure consumer, Object token) {
+        GroovyClosure.setDelegate(consumer, token)
+    }
 
     @ParameterizedTest @DisplayName('test delegate method') @MethodSource('methodProvider')
     void delegateMethod(final String method) {
@@ -41,19 +52,6 @@ class GroovyClosureTest {
 
         assertEquals Closure.DELEGATE_FIRST, tester.resolveStrategy
         assertEquals token, tester.delegate
-    }
-
-    private static Stream<Arguments> methodProvider() {
-        List<Arguments> ret = [
-            arguments('setDelegateInterfaceTest'),
-            arguments('setClosureTest')
-        ]
-
-        if (!(GroovySystem.version ==~ /2\.[01]\..*/)) {
-            ret << arguments('setDelegateSAMTest')
-        }
-
-        ret.stream()
     }
 
     @Test @DisplayName('clone with top level owner - manual delegate')
@@ -76,16 +74,18 @@ class GroovyClosureTest {
         assertTrue level1.level2.closure.owner instanceof GroovyClosureTest
     }
 
-    static void setDelegateInterfaceTest(Runnable consumer, Object token) {
-        GroovyClosure.setDelegate(consumer, token)
-    }
+    @SuppressWarnings('UnusedPrivateMethod')
+    private static Stream<Arguments> methodProvider() {
+        List<Arguments> ret = [
+            Arguments.arguments('setDelegateInterfaceTest'),
+            Arguments.arguments('setClosureTest'),
+        ]
 
-    static void setDelegateSAMTest(SAM consumer, Object token) {
-        GroovyClosure.setDelegate(consumer, token)
-    }
+        if (!(GroovySystem.version ==~ /2\.[01]\..*/)) {
+            ret << Arguments.arguments('setDelegateSAMTest')
+        }
 
-    static void setClosureTest(Closure consumer, Object token) {
-        GroovyClosure.setDelegate(consumer, token)
+        ret.stream()
     }
 }
 

@@ -25,6 +25,7 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 /**
  * Defines the available GET request expectations.
  */
+@SuppressWarnings("checkstyle:MethodName")
 public interface GetExpectations {
 
     /**
@@ -48,8 +49,8 @@ public interface GetExpectations {
     }
 
     /**
-     * Allows configuration of a GET request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The <code>Consumer&lt;Request&gt;</code> will
-     * have an instance of <code>Request</code> passed into it for configuration.
+     * Allows configuration of a GET request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The
+     * <code>Consumer&lt;Request&gt;</code> will have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param path   the expected request path
      * @param config the configuration consumer
@@ -60,8 +61,8 @@ public interface GetExpectations {
     }
 
     /**
-     * Allows configuration of a GET request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The <code>Consumer&lt;Request&gt;</code> will
-     * have an instance of <code>Request</code> passed into it for configuration.
+     * Allows configuration of a GET request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The
+     * <code>Consumer&lt;Request&gt;</code> will have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param matcher the path matcher
      * @param config  the configuration consumer
@@ -88,7 +89,5 @@ public interface GetExpectations {
      * @param config the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    Request GET(final PathMatcher pathMatcher, final Consumer<Request> config);
+    Request GET( PathMatcher pathMatcher,  Consumer<Request> config);
 }
-
-

@@ -26,7 +26,7 @@ public interface OutboundMessage {
      * @param obj the message payload
      * @return a reference to the message instance
      */
-    OutboundMessage payload(final Object obj);
+    OutboundMessage payload(Object obj);
 
     /**
      * Specifies the message type for the payload.
@@ -34,5 +34,5 @@ public interface OutboundMessage {
      * @param type the message type
      * @return a reference to the message instance
      */
-    OutboundMessage messageType(final MessageType type);
+    OutboundMessage messageType(MessageType type);
 }

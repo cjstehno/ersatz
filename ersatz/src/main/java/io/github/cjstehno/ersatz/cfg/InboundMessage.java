@@ -17,7 +17,9 @@ package io.github.cjstehno.ersatz.cfg;
 
 import java.util.function.Consumer;
 
-import static io.github.cjstehno.ersatz.cfg.MessageType.*;
+import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
+import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
+import static io.github.cjstehno.ersatz.cfg.MessageType.resolve;
 
 /**
  * Defines a message coming into the websockets handler.
@@ -63,20 +65,11 @@ public interface InboundMessage {
      */
     MessageReaction reaction(Object payload, MessageType messageType);
 
-    // FIXME: move to Groovy
-//    /**
-//     * Used to specify a reaction message to be sent after receiving this message.
-//     *
-//     * @param closure the reaction configuration closure
-//     * @return a reference to this ReceivedMessage
-//     */
-//    MessageReaction reaction(@DelegatesTo(value = MessageReaction.class, strategy = DELEGATE_FIRST) Closure closure);
-
     /**
      * Used to specify a reaction message to be sent after receiving this message.
      *
      * @param config the reaction configuration consumer
      * @return a reference to this ReceivedMessage
      */
-    MessageReaction reaction(final Consumer<MessageReaction> config);
+    MessageReaction reaction(Consumer<MessageReaction> config);
 }

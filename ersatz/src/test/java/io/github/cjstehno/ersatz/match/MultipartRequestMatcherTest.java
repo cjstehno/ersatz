@@ -17,7 +17,6 @@ package io.github.cjstehno.ersatz.match;
 
 
 import io.github.cjstehno.ersatz.encdec.MultipartRequestContent;
-import io.github.cjstehno.ersatz.match.MultipartRequestMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
@@ -31,11 +30,20 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.*;
+import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_JSON;
+import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_PNG;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static io.github.cjstehno.ersatz.encdec.MultipartRequestContent.multipartRequest;
 import static io.github.cjstehno.ersatz.match.MultipartRequestMatcher.multipartMatcher;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.blankOrNullString;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class MultipartRequestMatcherTest {
@@ -74,7 +82,7 @@ class MultipartRequestMatcherTest {
     }
 
     @ParameterizedTest @DisplayName("part(fieldName,matcher)") @MethodSource("partFieldMatcherProvider")
-    void partFieldMatcher(final String name, Matcher<Object> m, final boolean result) {
+    void partFieldMatcher(final String name, final Matcher<Object> m, final boolean result) {
         assertEquals(result, newMatcher().part(name, m).matches(content));
     }
 
@@ -99,7 +107,7 @@ class MultipartRequestMatcherTest {
 
     @ParameterizedTest @DisplayName("part(fieldName,contentType,matcher)")
     @MethodSource("partFieldContentMatcherProvider")
-    void partFieldContentMatcher(String name, Matcher<String> contentMatcher, Matcher<Object> valueMatcher, boolean result) {
+    void partFieldContentMatcher(final String name, final Matcher<String> contentMatcher, final Matcher<Object> valueMatcher, final boolean result) {
         assertEquals(result, newMatcher().part(name, contentMatcher, valueMatcher).matches(content));
     }
 
@@ -113,7 +121,7 @@ class MultipartRequestMatcherTest {
 
     @ParameterizedTest @DisplayName("part(fieldName,fileName,contentType,matcher)")
     @MethodSource("partEverythingProvider")
-    void partFieldFileContentMatcher(Matcher matcher, boolean result) {
+    void partFieldFileContentMatcher(final Matcher matcher, final boolean result) {
         assertEquals(result, matcher.matches(content));
     }
 
@@ -121,10 +129,16 @@ class MultipartRequestMatcherTest {
         return Stream.of(
             arguments(newMatcher().part("alpha", blankOrNullString(), startsWith("text/plain"), equalTo("one")), true),
             arguments(newMatcher().part("alpha", blankOrNullString(), startsWith("text/plain"), equalTo("two")), false),
-            arguments(newMatcher().part("bravo", equalTo("bravo.dat"), startsWith("application/json"), equalTo("{\"label\":\"This is content!\"}")), true),
+            arguments(newMatcher().part(
+                "bravo", equalTo("bravo.dat"), startsWith("application/json"), equalTo("{\"label\":\"This is content!\"}")), true
+            ),
             arguments(newMatcher().part("bravo", equalTo("bravo.dat"), startsWith("application/json"), equalTo("something else")), false),
-            arguments(newMatcher().part("bravo", equalTo("bravo.dat"), startsWith("text/plain"), equalTo("{\"label\":\"This is content!\"}")), false),
-            arguments(newMatcher().part("bravo", endsWith(".json"), startsWith("application/json"), equalTo("{\"label\":\"This is content!\"}")), false),
+            arguments(newMatcher().part(
+                "bravo", equalTo("bravo.dat"), startsWith("text/plain"), equalTo("{\"label\":\"This is content!\"}")), false
+            ),
+            arguments(newMatcher().part(
+                "bravo", endsWith(".json"), startsWith("application/json"), equalTo("{\"label\":\"This is content!\"}")), false
+            ),
 
             arguments(newMatcher().part("bravo", "bravo.dat", "application/json", equalTo("{\"label\":\"This is content!\"}")), true),
             arguments(newMatcher().part("bravo", "bravo.dat", "application/json", equalTo("something else")), false),

@@ -32,7 +32,7 @@ public class RequestSchemeMatcher extends BaseMatcher<ClientRequest> {
         return ((ClientRequest) actual).getScheme().equalsIgnoreCase(secure ? "HTTPS" : "HTTP");
     }
 
-    @Override public void describeTo(Description description) {
+    @Override public void describeTo(final Description description) {
         description.appendText("Scheme is " + (secure ? "HTTPS" : "HTTP"));
     }
 }

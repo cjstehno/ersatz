@@ -48,9 +48,9 @@ class ScopingAndAutoCleanupTest {
     @BeforeEach
     void beforeEach(final GroovyErsatzServer server) {
         // this is a bit of a hack do to the order of operations
-        server.start();
+        server.start()
 
-        http = new Http(server.getHttpUrl())
+        http = new Http(server.httpUrl)
     }
 
     @Test

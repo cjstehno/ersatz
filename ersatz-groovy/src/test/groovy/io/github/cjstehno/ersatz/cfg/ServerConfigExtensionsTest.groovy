@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cjstehno.ersatz.cfg;
+package io.github.cjstehno.ersatz.cfg
 
 import io.github.cjstehno.ersatz.GroovyErsatzServer
-import io.github.cjstehno.ersatz.test.Http;
+import io.github.cjstehno.ersatz.test.Http
 import org.junit.jupiter.api.Test
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
-import static org.junit.jupiter.api.Assertions.*;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN
+import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 class ServerConfigExtensionsTest {
 
@@ -36,7 +37,7 @@ class ServerConfigExtensionsTest {
             }
         }
 
-        def http = new Http(server.getHttpUrl())
+        def http = new Http(server.httpUrl)
         def response = http.get('/foo')
 
         assertEquals 200, response.statusCode()

@@ -29,11 +29,17 @@ import java.util.stream.Stream;
 
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
-import static io.github.cjstehno.ersatz.match.QueryParamMatcher.*;
-import static org.hamcrest.CoreMatchers.*;
+import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryDoesNotExist;
+import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryExists;
+import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryHasParamMatching;
+import static io.github.cjstehno.ersatz.match.QueryParamMatcher.queryMatching;
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class QueryParamMatcherTest {

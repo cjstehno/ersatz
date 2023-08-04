@@ -26,10 +26,15 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
-import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.*;
+import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.cookieDoesNotExist;
+import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.cookieExists;
+import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.cookieMatching;
+import static io.github.cjstehno.ersatz.match.RequestCookieMatcher.hasNoCookies;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class RequestCookieMatcherTest {

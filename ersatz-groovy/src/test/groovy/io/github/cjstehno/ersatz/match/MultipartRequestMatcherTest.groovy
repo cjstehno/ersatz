@@ -16,11 +16,11 @@
 package io.github.cjstehno.ersatz.match
 
 import io.github.cjstehno.ersatz.encdec.MultipartRequestContent
-import io.github.cjstehno.ersatz.match.MultipartRequestMatcher
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 class MultipartRequestMatcherTest {
 

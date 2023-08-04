@@ -72,11 +72,11 @@ class FunctionMatcher<T> extends BaseMatcher<T> {
 
     private final Function<T, Boolean> function;
 
-    @Override public boolean matches(Object actual) {
+    @Override public boolean matches(final Object actual) {
         return function.apply((T) actual);
     }
 
-    @Override public void describeTo(Description description) {
+    @Override public void describeTo(final Description description) {
         description.appendText("A function that checks for matching.");
     }
 }
@@ -109,7 +109,10 @@ class ByteArrayMatcher extends BaseMatcher<byte[]> {
     }
 
     @Override
-    public void describeTo(Description description) {
-        description.appendText("A byte array of length " + array.length + " having " + array[0] + " as the first element and " + array[array.length - 1] + " as the last.");
+    public void describeTo(final Description description) {
+        description.appendText(
+            "A byte array of length " + array.length + " having " + array[0] + " as the first element and " +
+                array[array.length - 1] + " as the last."
+        );
     }
 }

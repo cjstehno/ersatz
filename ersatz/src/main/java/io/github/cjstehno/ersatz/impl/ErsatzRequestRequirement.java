@@ -17,7 +17,11 @@ package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.cfg.RequestRequirement;
 import io.github.cjstehno.ersatz.impl.matchers.RequestSchemeMatcher;
-import io.github.cjstehno.ersatz.match.*;
+import io.github.cjstehno.ersatz.match.HeaderMatcher;
+import io.github.cjstehno.ersatz.match.HttpMethodMatcher;
+import io.github.cjstehno.ersatz.match.PathMatcher;
+import io.github.cjstehno.ersatz.match.QueryParamMatcher;
+import io.github.cjstehno.ersatz.match.RequestCookieMatcher;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

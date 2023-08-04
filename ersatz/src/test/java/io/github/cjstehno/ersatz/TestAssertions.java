@@ -15,17 +15,14 @@
  */
 package io.github.cjstehno.ersatz;
 
-import io.github.cjstehno.ersatz.ErsatzServer;
 import lombok.NoArgsConstructor;
 import okhttp3.Response;
 
 import java.io.IOException;
 
 import static lombok.AccessLevel.PRIVATE;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @NoArgsConstructor(access = PRIVATE) @SuppressWarnings("unused")
 public class TestAssertions {

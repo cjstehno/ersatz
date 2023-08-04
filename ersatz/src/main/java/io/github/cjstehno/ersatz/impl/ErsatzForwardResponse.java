@@ -39,31 +39,31 @@ public class ErsatzForwardResponse implements Response {
 
     private static final String EXCEPTION_MESSAGE = "A forward response is not configurable.";
 
-    @Override public Response body(Object content) {
+    @Override public Response body(final Object content) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
-    @Override public Response header(String name, String... value) {
+    @Override public Response header(final String name, final String... value) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
-    @Override public Response header(String name, List<String> values) {
+    @Override public Response header(final String name, final List<String> values) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
-    @Override public Response headers(Map<String, Object> headers) {
+    @Override public Response headers(final Map<String, Object> headers) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
-    @Override public Response cookie(String name, String value) {
+    @Override public Response cookie(final String name, final String value) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
-    @Override public Response cookie(String name, Cookie cookie) {
+    @Override public Response cookie(final String name, final Cookie cookie) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
-    @Override public Response cookies(Map<String, String> cookies) {
+    @Override public Response cookies(final Map<String, String> cookies) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
@@ -71,11 +71,11 @@ public class ErsatzForwardResponse implements Response {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
-    @Override public Response code(int code) {
+    @Override public Response code(final int code) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
-    @Override public Response delay(long time) {
+    @Override public Response delay(final long time) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
@@ -83,7 +83,7 @@ public class ErsatzForwardResponse implements Response {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
-    @Override public Response chunked(Consumer<ChunkingConfig> config) {
+    @Override public Response chunked(final Consumer<ChunkingConfig> config) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
@@ -103,11 +103,11 @@ public class ErsatzForwardResponse implements Response {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
-    @Override public Response encoder(String contentType, Class objectType, Function<Object, byte[]> encoder) {
+    @Override public Response encoder(final String contentType, final Class objectType, final Function<Object, byte[]> encoder) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 
-    @Override public Response encoders(ResponseEncoders encoders) {
+    @Override public Response encoders(final ResponseEncoders encoders) {
         throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
     }
 }

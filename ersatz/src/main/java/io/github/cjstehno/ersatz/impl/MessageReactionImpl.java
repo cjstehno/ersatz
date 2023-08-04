@@ -30,12 +30,12 @@ public class MessageReactionImpl implements MessageReaction {
     private Object payload;
     private MessageType messageType;
 
-    @Override public MessageReaction payload(Object obj) {
+    @Override public MessageReaction payload(final Object obj) {
         this.payload = obj;
         return this;
     }
 
-    @Override public MessageReaction messageType(MessageType type) {
+    @Override public MessageReaction messageType(final MessageType type) {
         this.messageType = type;
         return this;
     }

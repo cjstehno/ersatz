@@ -16,7 +16,6 @@
 package io.github.cjstehno.ersatz.encdec;
 
 import io.github.cjstehno.ersatz.cfg.ContentType;
-import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +25,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.*;
+import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_JSON;
+import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_PNG;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_HTML;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 

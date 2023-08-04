@@ -124,7 +124,7 @@ public abstract class RequestCookieMatcher extends BaseMatcher<ClientRequest> {
                 .anyMatch(ent -> cookieMatcher.matches(ent.getValue()));
         }
 
-        @Override public void describeTo(Description description) {
+        @Override public void describeTo(final Description description) {
             description.appendText("Cookie name is ");
             nameMatcher.describeTo(description);
             description.appendText(" and is ");
@@ -142,7 +142,7 @@ public abstract class RequestCookieMatcher extends BaseMatcher<ClientRequest> {
             return negated != ((ClientRequest) actual).getCookies().keySet().stream().anyMatch(nameMatcher::matches);
         }
 
-        @Override public void describeTo(Description description) {
+        @Override public void describeTo(final Description description) {
             description.appendText("Cookie name is ");
             nameMatcher.describeTo(description);
         }

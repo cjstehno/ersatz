@@ -36,7 +36,7 @@ import static lombok.AccessLevel.PACKAGE;
 class ResponseChunker implements IoCallback {
 
     private final List<byte[]> chunks;
-    public final int delay;
+    private final int delay;
 
     @Override
     public void onComplete(final HttpServerExchange exchange, final Sender sender) {
@@ -57,7 +57,7 @@ class ResponseChunker implements IoCallback {
     }
 
     @Override
-    public void onException(HttpServerExchange exchange, Sender sender, IOException exception) {
+    public void onException(final HttpServerExchange exchange, final Sender sender, final IOException exception) {
         exception.printStackTrace();
     }
 

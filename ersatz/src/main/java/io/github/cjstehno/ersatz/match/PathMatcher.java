@@ -40,7 +40,7 @@ public class PathMatcher extends BaseMatcher<ClientRequest> {
      * @return the path matcher
      */
     public static PathMatcher pathMatching(final String path) {
-        return pathMatching(path.equals("*") ? any(String.class) : equalTo(path));
+        return pathMatching("*".equals(path) ? any(String.class) : equalTo(path));
     }
 
     /**

@@ -15,7 +15,6 @@
  */
 package io.github.cjstehno.ersatz.cfg;
 
-import io.github.cjstehno.testthings.Verifiers;
 import org.junit.jupiter.api.Test;
 
 import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_JSON;

@@ -26,10 +26,17 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.DELETE;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.PUT;
 import static io.github.cjstehno.ersatz.match.HttpMethodMatcher.methodMatching;
 import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -97,7 +104,10 @@ class UnmatchedRequestReportTest {
 
     private static Stream<Arguments> contentProvider() {
         return Stream.of(
-            arguments("application/octet-stream", "[84, 104, 105, 115, 32, 105, 115, 32, 115, 111, 109, 101, 32, 116, 101, 120, 116, 32, 99, 111, 110, 116, 101, 110, 116]"),
+            arguments(
+                "application/octet-stream",
+                "[84, 104, 105, 115, 32, 105, 115, 32, 115, 111, 109, 101, 32, 116, 101, 120, 116, 32, 99, 111, 110, 116, 101, 110, 116]"
+            ),
             arguments("text/plain", BODY),
             arguments("text/csv", BODY),
             arguments("application/json", BODY),

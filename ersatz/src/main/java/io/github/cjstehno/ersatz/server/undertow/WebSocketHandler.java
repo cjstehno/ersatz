@@ -24,7 +24,11 @@ import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.PathHandler;
-import io.undertow.websockets.core.*;
+import io.undertow.websockets.core.AbstractReceiveListener;
+import io.undertow.websockets.core.BufferedBinaryMessage;
+import io.undertow.websockets.core.BufferedTextMessage;
+import io.undertow.websockets.core.WebSocketChannel;
+import io.undertow.websockets.core.WebSockets;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,14 +71,20 @@ public class WebSocketHandler implements HttpHandler {
             log.debug("Connected ({}).", pathPrefix);
 
             // find the ws for this path and register a connection
-            WebSocketExpectationsImpl wsExpectation = (WebSocketExpectationsImpl) serverConfig.getExpectations().findWsMatch(pathPrefix);
+            val wsExpectation = (WebSocketExpectationsImpl) serverConfig.getExpectations().findWsMatch(pathPrefix);
             if (wsExpectation != null) {
                 wsExpectation.connect();
 
                 // perform on-connect sends
-                wsExpectation.eachSender(sm -> WebSocketHandler.sendMessage(channel, sm.getPayload(), sm.getMessageType()));
+                wsExpectation.eachSender(sm -> WebSocketHandler.sendMessage(
+                    channel,
+                    sm.getPayload(),
+                    sm.getMessageType())
+                );
 
-                channel.getReceiveSetter().set(new WebSocketHandler.ReceiveHandler(wsExpectation, serverConfig.isMismatchToConsole()));
+                channel.getReceiveSetter().set(
+                    new WebSocketHandler.ReceiveHandler(wsExpectation, serverConfig.isMismatchToConsole())
+                );
                 channel.resumeReceives();
 
             } else {
@@ -90,12 +100,12 @@ public class WebSocketHandler implements HttpHandler {
         private final boolean mismatchToConsole;
 
         @Override
-        protected void onFullTextMessage(WebSocketChannel ch, BufferedTextMessage message) throws IOException {
+        protected void onFullTextMessage(final WebSocketChannel ch, final BufferedTextMessage message) throws IOException {
             handleMessage(wsExpectation, ch, message);
         }
 
         @Override
-        protected void onFullBinaryMessage(WebSocketChannel ch, BufferedBinaryMessage message) throws IOException {
+        protected void onFullBinaryMessage(final WebSocketChannel ch, final BufferedBinaryMessage message) throws IOException {
             handleMessage(wsExpectation, ch, message);
         }
 
@@ -118,7 +128,7 @@ public class WebSocketHandler implements HttpHandler {
             );
         }
 
-        private static void performReactions(final InboundMessageImpl expectation, WebSocketChannel ch) {
+        private static void performReactions(final InboundMessageImpl expectation, final WebSocketChannel ch) {
             expectation.getReactions().forEach(reaction -> sendMessage(ch, reaction.getPayload(), reaction.getMessageType()));
         }
     }

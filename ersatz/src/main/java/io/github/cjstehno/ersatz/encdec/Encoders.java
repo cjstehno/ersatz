@@ -36,10 +36,10 @@ import static java.nio.file.Files.readAllBytes;
 import static lombok.AccessLevel.PRIVATE;
 
 /**
- * Reusable response content encoders. An encoder is simply a <code>Function&lt;Object,String&gt;</code> which is used to convert the configured response
- * content object into the response output bytes.
+ * Reusable response content encoders. An encoder is simply a <code>Function&lt;Object,String&gt;</code> which is used to convert the configured
+ * response content object into the response output bytes.
  */
-@NoArgsConstructor(access = PRIVATE)
+@NoArgsConstructor(access = PRIVATE) @SuppressWarnings("checkstyle:ConstantName")
 public final class Encoders {
 
     /**
@@ -70,7 +70,7 @@ public final class Encoders {
     /**
      * Encodes a byte array, InputStream or other object with a "getBytes()" method into a base-64 string.
      */
-    public static Function<Object, byte[]> binaryBase64 = obj -> obj == null ? "".getBytes(UTF_8) : Base64.getEncoder().encode(toBytes(obj));
+    public static final Function<Object, byte[]> binaryBase64 = obj -> obj == null ? "".getBytes(UTF_8) : Base64.getEncoder().encode(toBytes(obj));
 
     /**
      * Loads the content at the specified destination and returns it as a byte array. The content destination may be
@@ -83,7 +83,8 @@ public final class Encoders {
      * URI - will load the contents of the URI
      * URL - will load the contents of the URL
      */
-    public static Function<Object, byte[]> content = obj -> {
+    @SuppressWarnings({"checkstyle:ReturnCount", "checkstyle:LambdaBodyLength"})
+    public static final Function<Object, byte[]> content = obj -> {
         try {
             if (obj instanceof InputStream) {
                 return readStream((InputStream) obj);
@@ -125,7 +126,8 @@ public final class Encoders {
      * multipart content is a simple message implementing the minimal multipart content specification - you may want to
      * find a more robust implementation if you require a more detailed multipart API.
      */
-    public static Function<Object, byte[]> multipart = obj -> {
+    @SuppressWarnings("checkstyle:LambdaBodyLength")
+    public static final Function<Object, byte[]> multipart = obj -> {
         if (!(obj instanceof MultipartResponseContent)) {
             throw new IllegalArgumentException(obj.getClass().getName() + " found, MultipartRequestContent is required.");
         }
@@ -137,7 +139,9 @@ public final class Encoders {
             arrays.add(("--" + mrc.getBoundary() + "\r\n").getBytes(UTF_8));
 
             if (p.getFileName() != null) {
-                arrays.add(("Content-Disposition: form-data; name=\"" + p.getFieldName() + "\"; filename=\"" + p.getFileName() + "\"\r\n").getBytes(UTF_8));
+                arrays.add(
+                    ("Content-Disposition: form-data; name=\"" + p.getFieldName() + "\"; filename=\"" + p.getFileName() + "\"\r\n").getBytes(UTF_8)
+                );
             } else {
                 arrays.add(("Content-Disposition: form-data; name=\"" + p.getFieldName() + "\"\r\n").getBytes(UTF_8));
             }
