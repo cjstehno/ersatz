@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2023 Christopher J. Stehno
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,6 +27,7 @@ import java.io.Closeable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import static io.github.cjstehno.ersatz.cfg.WaitFor.ONE_SECOND;
 import static io.github.cjstehno.ersatz.cfg.WaitFor.atMost;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static lombok.AccessLevel.PROTECTED;
@@ -215,6 +216,8 @@ public class ErsatzServer implements Closeable {
      * @return a reference to this server
      */
     public ErsatzServer expectations(final Consumer<Expectations> expects) {
+        // FIXME: configuring expectations from this method is part of TEST_CONFIG
+        // FIXME: the serverConfig.expectations (from the serverconfig object) are part of SERVER_CONFIG
         serverConfig.expectations(expects);
 
         if (serverConfig.isAutoStartEnabled()) {
@@ -276,6 +279,8 @@ public class ErsatzServer implements Closeable {
 
     /**
      * Clears all configured expectations from the server. Does not affect global encoders or decoders.
+     *
+     * FIXME: this should clear the report and the registered matches
      */
     public void clearExpectations() {
         serverConfig.clearExpectations();
@@ -316,6 +321,10 @@ public class ErsatzServer implements Closeable {
      * all test interactions have been performed. This is an optional step since generally you will also be receiving the expected response back
      * from the server; however, this verification step can come in handy when simply needing to know that a request is actually called or not.
      *
+     * FIXME: make a note about reporting in the verify documentation
+     * FIXME: consider reworking this to throw an exception
+     * FIXME: verification should be determined by the expected calls and matches
+     *
      * @param waitFor the timeout waiting value
      * @return <code>true</code> if all call criteria were met during test execution.
      */
@@ -334,7 +343,7 @@ public class ErsatzServer implements Closeable {
      */
     @Deprecated(since = "4.0.0", forRemoval = true)
     public boolean verify(final long timeout) {
-        return verify(timeout, SECONDS);
+        return verify(atMost(timeout));
     }
 
     /**
@@ -345,7 +354,7 @@ public class ErsatzServer implements Closeable {
      * @return <code>true</code> if all call criteria were met during test execution.
      */
     public boolean verify() {
-        return verify(1, SECONDS);
+        return verify(ONE_SECOND);
     }
 
     /**
@@ -354,11 +363,13 @@ public class ErsatzServer implements Closeable {
      * This method applies a 1 second waiting time before timing out.
      */
     public void assertVerified() {
-        assertVerified(WaitFor.ONE_SECOND);
+        assertVerified(ONE_SECOND);
     }
 
     /**
      * Helper method to wrap a call to the <code>verify(timeout, unit)</code> method within a JUnit <code>assertTrue(...)</code> call.
+     *
+     * FIXME: maybe make this the main call for verification
      *
      * @param waitFor the amount of time the verification should wait before considering a timeout.
      */

@@ -42,7 +42,6 @@ import static io.github.cjstehno.ersatz.cfg.HttpMethod.HEAD;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.PATCH;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.PUT;
-import static io.github.cjstehno.ersatz.cfg.WaitFor.ONE_SECOND;
 import static java.util.Collections.unmodifiableList;
 
 /**
@@ -152,6 +151,8 @@ public class ExpectationsImpl implements Expectations {
      * @return a value of true if all requests are verified
      */
     public boolean verify(final WaitFor waitFor) {
+        // FIXME: all this really does is verify that the expected number of calls was matched
+
         for (final Request r : requests) {
             if (!((ErsatzRequest) r).verify(waitFor)) {
                 log.error("Call count mismatch -> {}", r);
@@ -159,6 +160,7 @@ public class ExpectationsImpl implements Expectations {
             }
         }
 
+        // FIXME: this verifies that the expected connections and messages were received
         for (final var entry : webSockets.entrySet()) {
             if (!(((WebSocketExpectationsImpl) entry.getValue()).verify(waitFor))) {
                 log.error("WebSocket expectations for {} were not met.", ((WebSocketExpectationsImpl) entry.getValue()).getPath());
@@ -167,16 +169,6 @@ public class ExpectationsImpl implements Expectations {
         }
 
         return true;
-    }
-
-    /**
-     * Used to verify that all request expectations have been called the expected number of times.
-     * This method will block until the call count expectations are met or the timeout (1 second) expires.
-     *
-     * @return a value of true if all requests are verified
-     */
-    public boolean verify() {
-        return verify(ONE_SECOND);
     }
 
     @Override public WebSocketExpectations webSocket(final String path, final Consumer<WebSocketExpectations> config) {

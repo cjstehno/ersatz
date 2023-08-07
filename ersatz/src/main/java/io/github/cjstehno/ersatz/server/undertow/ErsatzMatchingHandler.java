@@ -56,6 +56,8 @@ public class ErsatzMatchingHandler implements HttpHandler {
             return;
         }
 
+        // FIXME: add both match and mismatch to report
+
         // check the request against the expectations
         expectations.findMatch(clientRequest).ifPresentOrElse(
             req -> {
@@ -79,6 +81,7 @@ public class ErsatzMatchingHandler implements HttpHandler {
     }
 
     private void handleMismatch(final HttpServerExchange exchange, final ClientRequest clientRequest) {
+        // FIXME: report should be created earlier (elsewhere)
         val report = new UnmatchedRequestReport(
             clientRequest,
             expectations.getRequests().stream().map(r -> (ErsatzRequest) r).toList(),
@@ -87,6 +90,7 @@ public class ErsatzMatchingHandler implements HttpHandler {
 
         log.warn(report.render());
 
+        // FIXME: report may or may not still be written out here
         if (reportToConsole) {
             System.out.println(report.render());
         }

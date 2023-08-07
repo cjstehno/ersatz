@@ -40,6 +40,7 @@ import static io.github.cjstehno.ersatz.cfg.HttpMethod.OPTIONS;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.PATCH;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.PUT;
+import static io.github.cjstehno.ersatz.cfg.WaitFor.ONE_SECOND;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -353,13 +354,13 @@ class ExpectationsImplTest {
         RequestWithContent req = (RequestWithContent) expectations.POST("/alpha").called(equalTo(1));
         ((ErsatzRequestWithContent) req).mark(new MockClientRequest());
 
-        assertTrue(expectations.verify());
+        assertTrue(expectations.verify(ONE_SECOND));
     }
 
     @Test @DisplayName("verification (failure)")
     void verificationFailure() {
         expectations.POST("/alpha").called(equalTo(1));
-        assertFalse(expectations.verify());
+        assertFalse(expectations.verify(ONE_SECOND));
     }
 
     @Test @DisplayName("POST(String)")

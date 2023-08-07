@@ -27,6 +27,8 @@ import java.util.concurrent.atomic.AtomicReference;
 @RequiredArgsConstructor
 public class UnmatchedWsReport implements Report {
 
+    // FIXME: needs to be rolled into the new reporting framework
+
     private final WebSocketExpectationsImpl expectations;
     private final AtomicReference<String> cached = new AtomicReference<>();
 
