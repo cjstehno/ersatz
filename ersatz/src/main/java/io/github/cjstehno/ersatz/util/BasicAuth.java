@@ -29,8 +29,6 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public final class BasicAuth {
 
-    // FIXME: add usage to guide (and matcher)
-
     /**
      * The authorization header name.
      */
