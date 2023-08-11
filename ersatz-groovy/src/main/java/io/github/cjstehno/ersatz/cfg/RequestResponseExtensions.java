@@ -27,6 +27,7 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 /**
  * Groovy extensions of the RequestResponse class to provide Groovy DSL enhancements.
  */
+@SuppressWarnings("checkstyle:MethodName")
 public class RequestResponseExtensions {
 
     /**
@@ -54,7 +55,7 @@ public class RequestResponseExtensions {
      */
     public static Response chunked(
         final Response self,
-        @DelegatesTo(value = ChunkingConfig.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = ChunkingConfig.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return self.chunked(ConsumerWithDelegate.create(closure));
     }
@@ -69,8 +70,8 @@ public class RequestResponseExtensions {
      */
     public static Request ANY(
         final AnyExpectations self,
-        String path,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final String path,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return self.ANY(pathMatching(path), ConsumerWithDelegate.create(closure));
     }
@@ -85,8 +86,8 @@ public class RequestResponseExtensions {
      */
     public static Request ANY(
         final AnyExpectations self,
-        Matcher<String> matcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final Matcher<String> matcher,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return self.ANY(pathMatching(matcher), ConsumerWithDelegate.create(closure));
     }
@@ -102,7 +103,7 @@ public class RequestResponseExtensions {
     public static Request ANY(
         final AnyExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return self.ANY(pathMatcher, ConsumerWithDelegate.create(closure));
     }
@@ -117,8 +118,8 @@ public class RequestResponseExtensions {
      */
     public static Request GET(
         final GetExpectations self,
-        String path,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final String path,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return self.GET(pathMatching(path), ConsumerWithDelegate.create(closure));
     }
@@ -133,8 +134,8 @@ public class RequestResponseExtensions {
      */
     public static Request GET(
         final GetExpectations self,
-        Matcher<String> matcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final Matcher<String> matcher,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return self.GET(pathMatching(matcher), ConsumerWithDelegate.create(closure));
     }
@@ -150,7 +151,7 @@ public class RequestResponseExtensions {
     public static Request GET(
         final GetExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return self.GET(pathMatcher, ConsumerWithDelegate.create(closure));
     }
@@ -166,7 +167,7 @@ public class RequestResponseExtensions {
     public static Request HEAD(
         final HeadExpectations self,
         final String path,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return self.HEAD(pathMatching(path), ConsumerWithDelegate.create(closure));
     }
@@ -182,7 +183,7 @@ public class RequestResponseExtensions {
     public static Request HEAD(
         final HeadExpectations self,
         final Matcher<String> matcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return self.HEAD(pathMatching(matcher), ConsumerWithDelegate.create(closure));
     }
@@ -198,7 +199,7 @@ public class RequestResponseExtensions {
     public static Request HEAD(
         final HeadExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return self.HEAD(pathMatcher, ConsumerWithDelegate.create(closure));
     }
@@ -213,8 +214,8 @@ public class RequestResponseExtensions {
      */
     public static Request DELETE(
         final DeleteExpectations self,
-        String path,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final String path,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
         return self.DELETE(pathMatching(path), ConsumerWithDelegate.create(closure));
     }
@@ -229,8 +230,8 @@ public class RequestResponseExtensions {
      */
     public static Request DELETE(
         final DeleteExpectations self,
-        Matcher<String> matcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final Matcher<String> matcher,
+        final @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.DELETE(pathMatching(matcher), ConsumerWithDelegate.create(closure));
     }
@@ -246,7 +247,7 @@ public class RequestResponseExtensions {
     public static Request DELETE(
         final DeleteExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.DELETE(pathMatcher, ConsumerWithDelegate.create(closure));
     }
@@ -262,7 +263,7 @@ public class RequestResponseExtensions {
     public static Request OPTIONS(
         final OptionsExpectations self,
         final String path,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.OPTIONS(pathMatching(path), ConsumerWithDelegate.create(closure));
     }
@@ -278,7 +279,7 @@ public class RequestResponseExtensions {
     public static Request OPTIONS(
         final OptionsExpectations self,
         final Matcher<String> matcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.OPTIONS(pathMatching(matcher), ConsumerWithDelegate.create(closure));
     }
@@ -294,7 +295,7 @@ public class RequestResponseExtensions {
     public static Request OPTIONS(
         final OptionsExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.OPTIONS(pathMatcher, ConsumerWithDelegate.create(closure));
     }
@@ -310,7 +311,7 @@ public class RequestResponseExtensions {
     public static RequestWithContent PATCH(
         final PatchExpectations self,
         final String path,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.PATCH(pathMatching(path), ConsumerWithDelegate.create(closure));
     }
@@ -326,7 +327,7 @@ public class RequestResponseExtensions {
     public static RequestWithContent PATCH(
         final PatchExpectations self,
         final Matcher<String> matcher,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.PATCH(pathMatching(matcher), ConsumerWithDelegate.create(closure));
     }
@@ -342,7 +343,7 @@ public class RequestResponseExtensions {
     public static RequestWithContent PATCH(
         final PatchExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.PATCH(pathMatcher, ConsumerWithDelegate.create(closure));
     }
@@ -358,7 +359,7 @@ public class RequestResponseExtensions {
     public static RequestWithContent POST(
         final PostExpectations self,
         final String path,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.POST(pathMatching(path), ConsumerWithDelegate.create(closure));
     }
@@ -374,7 +375,7 @@ public class RequestResponseExtensions {
     public static RequestWithContent POST(
         final PostExpectations self,
         final Matcher<String> matcher,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.POST(pathMatching(matcher), ConsumerWithDelegate.create(closure));
     }
@@ -390,7 +391,7 @@ public class RequestResponseExtensions {
     public static RequestWithContent POST(
         final PostExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.POST(pathMatcher, ConsumerWithDelegate.create(closure));
     }
@@ -405,8 +406,8 @@ public class RequestResponseExtensions {
      */
     public static RequestWithContent PUT(
         final PutExpectations self,
-        String path,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final String path,
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.PUT(pathMatching(path), ConsumerWithDelegate.create(closure));
     }
@@ -422,7 +423,7 @@ public class RequestResponseExtensions {
     public static RequestWithContent PUT(
         final PutExpectations self,
         final Matcher<String> matcher,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.PUT(pathMatching(matcher), ConsumerWithDelegate.create(closure));
     }
@@ -438,7 +439,7 @@ public class RequestResponseExtensions {
     public static RequestWithContent PUT(
         final PutExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
         return self.PUT(pathMatcher, ConsumerWithDelegate.create(closure));
     }

@@ -17,20 +17,28 @@ package io.github.cjstehno.ersatz.util;
 
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.InMemoryCookieJar;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.junit.jupiter.api.extension.*;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
+import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.ModifierSupport;
 import org.junit.platform.commons.support.ReflectionSupport;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.print.attribute.standard.MediaSize;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.security.KeyManagementException;
@@ -38,8 +46,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static io.github.cjstehno.ersatz.util.BasicAuth.AUTHORIZATION_HEADER;
@@ -47,7 +59,6 @@ import static io.github.cjstehno.ersatz.util.BasicAuth.header;
 import static java.util.Arrays.stream;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
-import static org.junit.platform.commons.support.HierarchyTraversalMode.BOTTOM_UP;
 import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
 
 /**
@@ -229,7 +240,9 @@ public class HttpClientExtension implements BeforeEachCallback, ParameterResolve
             return client.newCall(request.build()).execute();
         }
 
-        public Response post(final String path, final Consumer<Request.Builder> config, final RequestBody body, final boolean https) throws IOException {
+        public Response post(
+            final String path, final Consumer<Request.Builder> config, final RequestBody body, final boolean https
+        ) throws IOException {
             val request = new Request.Builder().url((https ? httpsUrl : httpUrl) + path).post(body);
             if (config != null) config.accept(request);
 
@@ -248,7 +261,9 @@ public class HttpClientExtension implements BeforeEachCallback, ParameterResolve
             return post(path, null, body, false);
         }
 
-        public Response put(final String path, final Consumer<Request.Builder> config, final RequestBody body, final boolean https) throws IOException {
+        public Response put(
+            final String path, final Consumer<Request.Builder> config, final RequestBody body, final boolean https
+        ) throws IOException {
             val request = new Request.Builder().url((https ? httpsUrl : httpUrl) + path).put(body);
             if (config != null) config.accept(request);
 
@@ -267,7 +282,9 @@ public class HttpClientExtension implements BeforeEachCallback, ParameterResolve
             return put(path, null, body, false);
         }
 
-        public Response patch(final String path, final Consumer<Request.Builder> config, final RequestBody body, final boolean https) throws IOException {
+        public Response patch(
+            final String path, final Consumer<Request.Builder> config, final RequestBody body, final boolean https
+        ) throws IOException {
             val request = new Request.Builder().url((https ? httpsUrl : httpUrl) + path).patch(body);
             if (config != null) config.accept(request);
 
@@ -286,21 +303,36 @@ public class HttpClientExtension implements BeforeEachCallback, ParameterResolve
             return patch(path, null, body, false);
         }
 
+        public void webSocket(final String path, final WebSocketListener listener, final Consumer<WebSocket> consumer){
+            val webSocket = client.newWebSocket(
+                new Request.Builder().url(path).build(),
+                listener != null ? listener : new CapturingWebSocketListener(0)
+            );
+
+            if (consumer != null) {
+                consumer.accept(webSocket);
+            }
+
+            webSocket.close(1000, "done");
+        }
+
         public static Request.Builder basicAuthHeader(final Request.Builder builder, final String user, final String pass) {
             return builder.header(AUTHORIZATION_HEADER, header(user, pass));
         }
 
-        private static OkHttpClient.Builder configureHttps(final OkHttpClient.Builder builder, final boolean enabled) throws KeyManagementException, NoSuchAlgorithmException {
+        private static OkHttpClient.Builder configureHttps(
+            final OkHttpClient.Builder builder, final boolean enabled
+        ) throws KeyManagementException, NoSuchAlgorithmException {
             if (enabled) {
                 // Create a trust manager that does not validate certificate chains
                 final var trustAllCerts = new TrustManager[]{
                     new X509TrustManager() {
                         @Override
-                        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                        public void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
                         }
 
                         @Override
-                        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                        public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
                         }
 
                         @Override public X509Certificate[] getAcceptedIssuers() {
@@ -324,6 +356,49 @@ public class HttpClientExtension implements BeforeEachCallback, ParameterResolve
             }
 
             return builder;
+        }
+    }
+
+    @Slf4j
+    public static class CapturingWebSocketListener extends WebSocketListener {
+
+        @Getter private final List<Object> messages = new LinkedList<>();
+        private final CountDownLatch latch;
+
+        public CapturingWebSocketListener(final int expectedMessageCount) {
+            latch = new CountDownLatch(expectedMessageCount);
+        }
+
+        public boolean await(final long timeout, final TimeUnit unit) throws InterruptedException {
+            return latch.await(timeout, unit);
+        }
+
+        @Override public void onOpen(final WebSocket webSocket, final okhttp3.Response response) {
+            log.info("open");
+        }
+
+        @Override public void onMessage(final WebSocket webSocket, final String text) {
+            log.info("message (string): {}", text);
+            messages.add(text);
+            latch.countDown();
+        }
+
+        @Override public void onMessage(final WebSocket webSocket, final ByteString bytes) {
+            log.info("message (bytes): {}", bytes);
+            messages.add(bytes);
+            latch.countDown();
+        }
+
+        @Override public void onClosing(final WebSocket webSocket, final int code, final String reason) {
+            log.info("closing");
+        }
+
+        @Override public void onClosed(final WebSocket webSocket, final int code, final String reason) {
+            log.info("closed");
+        }
+
+        @Override public void onFailure(final WebSocket webSocket, final Throwable t, final okhttp3.Response response) {
+            log.info("failure: {}", t.getMessage());
         }
     }
 }

@@ -52,7 +52,7 @@ public class ErsatzThingsTest {
     private static final String SECRET_HEADER = "X-Secret";
 
     // loads the image resource as a byte array
-    @Resource("/test-image.jpg") private static byte[] IMAGE_CONTENT;
+    @Resource("/test-image.jpg") @SuppressWarnings("checkstyle:StaticVariableName") private static byte[] IMAGE_CONTENT;
 
     @Test void things(final ErsatzServer ersatz, final Client client) throws Exception {
         // generates a random secret value

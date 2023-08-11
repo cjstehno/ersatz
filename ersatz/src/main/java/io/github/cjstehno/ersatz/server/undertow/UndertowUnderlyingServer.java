@@ -36,7 +36,9 @@ import java.net.InetSocketAddress;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
-import static io.undertow.UndertowOptions.*;
+import static io.undertow.UndertowOptions.IDLE_TIMEOUT;
+import static io.undertow.UndertowOptions.NO_REQUEST_TIMEOUT;
+import static io.undertow.UndertowOptions.REQUEST_PARSE_TIMEOUT;
 
 /**
  * An <code>UnderlyingServer</code> implementation based on the Undertow server platform.
@@ -45,6 +47,7 @@ import static io.undertow.UndertowOptions.*;
 public class UndertowUnderlyingServer implements UnderlyingServer {
 
     private static final String LOCALHOST = "localhost";
+    private static final int GZIP_HANDLER_PRIORITY = 50;
     private static final int UNSPECIFIED_PORT = -1;
     private final ServerConfigImpl serverConfig;
     private Undertow server;
@@ -75,21 +78,24 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
             }
 
             server = builder.setHandler(
-                new BlockingHandler(new EncodingHandler(
-                    new HttpTraceHandler(
-                        new ErsatzMatchingHandler(
-                            serverConfig.getRequirements(),
-                            serverConfig.getExpectations(),
-                            serverConfig.isMismatchToConsole(),
-                            new ErsatzForwardHandler(
-                                new ErsatzHttpHandler(
-                                    serverConfig.isLogResponseContent()
+                new WebSocketHandler(
+                    new BlockingHandler(new EncodingHandler(
+                        new HttpTraceHandler(
+                            new ErsatzMatchingHandler(
+                                serverConfig.getRequirements(),
+                                serverConfig.getExpectations(),
+                                serverConfig.isMismatchToConsole(),
+                                new ErsatzForwardHandler(
+                                    new ErsatzHttpHandler(
+                                        serverConfig.isLogResponseContent()
+                                    )
                                 )
                             )
-                        )
-                    ),
-                    new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), 50)
-                ))
+                        ),
+                        new ContentEncodingRepository().addEncodingHandler("gzip", new GzipEncodingProvider(), GZIP_HANDLER_PRIORITY)
+                    )),
+                    serverConfig
+                )
             ).build();
 
             server.start();
@@ -148,9 +154,11 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
         try {
             KeyStore keyStore = KeyStore.getInstance("JKS");
 
-            final var location = serverConfig.getKeystoreLocation() != null ? serverConfig.getKeystoreLocation() : ErsatzServer.class.getResource("/ersatz.keystore");
+            val location = serverConfig.getKeystoreLocation() != null
+                ? serverConfig.getKeystoreLocation()
+                : ErsatzServer.class.getResource("/ersatz.keystore");
 
-            try (final InputStream instr = location.openStream()) {
+            try (InputStream instr = location.openStream()) {
                 keyStore.load(instr, serverConfig.getKeystorePass().toCharArray());
             }
 

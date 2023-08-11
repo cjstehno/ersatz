@@ -33,12 +33,12 @@ public class InMemoryCookieJar implements CookieJar {
     private final ConcurrentMap<HttpUrl, List<Cookie>> cookies = new ConcurrentHashMap<>();
 
     @Override
-    public void saveFromResponse(HttpUrl url, List<Cookie> cook) {
+    public void saveFromResponse(final HttpUrl url, final List<Cookie> cook) {
         cookies.put(url, cook);
     }
 
     @Override
-    public List<Cookie> loadForRequest(HttpUrl url) {
+    public List<Cookie> loadForRequest(final HttpUrl url) {
         return cookies.getOrDefault(url, emptyList());
     }
 }

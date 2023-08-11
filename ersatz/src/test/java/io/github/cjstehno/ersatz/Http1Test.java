@@ -15,7 +15,6 @@
  */
 package io.github.cjstehno.ersatz;
 
-import io.github.cjstehno.ersatz.ErsatzServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -47,7 +46,7 @@ public class Http1Test {
     }
 
     @Test @DisplayName("Support for Http/1")
-    void http_1_support() throws Exception {
+    void http1Support() throws Exception {
         server.expectations(exp -> {
             exp.GET("/hello", req -> {
                 req.called(1);
@@ -67,7 +66,7 @@ public class Http1Test {
         connection.setDoOutput(true);
         connection.setDoInput(true);
 
-        try (final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()))) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()))) {
             writer.write("GET /containers/json HTTP/1.0\n");
             writer.write("Host: localhost\n");
             writer.write("Accept: application/json\n");
@@ -79,7 +78,7 @@ public class Http1Test {
 
         final var lines = new LinkedList<String>();
 
-        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
             String line = reader.readLine();
             while (line != null) {
                 lines.add(line);

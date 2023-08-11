@@ -15,7 +15,6 @@
  */
 package io.github.cjstehno.ersatz.encdec;
 
-import io.github.cjstehno.ersatz.encdec.MimeTypes;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

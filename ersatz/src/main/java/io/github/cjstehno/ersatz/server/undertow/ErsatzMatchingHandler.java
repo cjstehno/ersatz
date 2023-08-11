@@ -20,6 +20,7 @@ import io.github.cjstehno.ersatz.impl.ExpectationsImpl;
 import io.github.cjstehno.ersatz.impl.RequirementsImpl;
 import io.github.cjstehno.ersatz.impl.UnmatchedRequestReport;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import io.github.cjstehno.ersatz.util.StatusCode;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import lombok.AccessLevel;
@@ -69,7 +70,7 @@ public class ErsatzMatchingHandler implements HttpHandler {
 
                 } catch (final Exception ex) {
                     log.error("Error-Response: Internal Server Error (500): {}", ex.getMessage(), ex);
-                    exchange.setStatusCode(500);
+                    exchange.setStatusCode(StatusCode.INTERNAL_SERVER_ERROR.getValue());
                     exchange.getResponseSender().send(ByteBuffer.wrap(EMPTY_RESPONSE));
                 }
             },
@@ -90,6 +91,6 @@ public class ErsatzMatchingHandler implements HttpHandler {
             System.out.println(report.render());
         }
 
-        exchange.setStatusCode(404).getResponseSender().send(NOT_FOUND_BODY);
+        exchange.setStatusCode(StatusCode.NOT_FOUND.getValue()).getResponseSender().send(NOT_FOUND_BODY);
     }
 }

@@ -27,7 +27,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.startsWith;
 
 /**
  * A Hamcrest matcher used to match <code>MultipartRequestContent</code>. The matcher may be created directly or by using the closure or consumer
@@ -135,7 +137,9 @@ public class MultipartRequestMatcher extends BaseMatcher<MultipartRequestContent
      * @param value       the value matcher
      * @return a reference to this multipart request matcher
      */
-    public MultipartRequestMatcher part(String fieldName, Matcher<String> fileName, Matcher<String> contentType, Matcher<Object> value) {
+    public MultipartRequestMatcher part(
+        final String fieldName, final Matcher<String> fileName, final Matcher<String> contentType, final Matcher<Object> value
+    ) {
         matchers.put(fieldName, Map.of("fileName", fileName, "contentType", contentType, VALUE, value));
         return this;
     }
@@ -151,7 +155,7 @@ public class MultipartRequestMatcher extends BaseMatcher<MultipartRequestContent
      * @param value       the value matcher
      * @return a reference to this multipart request matcher
      */
-    public MultipartRequestMatcher part(String fieldName, String fileName, String contentType, Matcher<Object> value) {
+    public MultipartRequestMatcher part(final String fieldName, final String fileName, final String contentType, final Matcher<Object> value) {
         return part(fieldName, equalTo(fileName), startsWith(contentType), value);
     }
 
@@ -166,7 +170,7 @@ public class MultipartRequestMatcher extends BaseMatcher<MultipartRequestContent
      * @param value       the value matcher
      * @return a reference to this multipart request matcher
      */
-    public MultipartRequestMatcher part(String fieldName, String fileName, ContentType contentType, Matcher<Object> value) {
+    public MultipartRequestMatcher part(final String fieldName, final String fileName, final ContentType contentType, final Matcher<Object> value) {
         return part(fieldName, fileName, contentType.getValue(), value);
     }
 

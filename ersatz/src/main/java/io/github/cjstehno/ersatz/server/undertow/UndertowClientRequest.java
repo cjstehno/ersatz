@@ -152,7 +152,10 @@ class UndertowClientRequest implements ClientRequest {
             contentString = format("<%d of %s content>", getContentLength(), getContentType());
         }
 
-        return format("{ %s %s(query=%s, headers=%s, cookies=%s): %s }", getMethod(), getPath(), getQueryParams(), getHeaders(), getCookies(), contentString);
+        return format(
+            "{ %s %s(query=%s, headers=%s, cookies=%s): %s }",
+            getMethod(), getPath(), getQueryParams(), getHeaders(), getCookies(), contentString
+        );
     }
 
     /**

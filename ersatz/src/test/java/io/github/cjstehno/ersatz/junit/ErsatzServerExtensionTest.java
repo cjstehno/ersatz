@@ -18,7 +18,6 @@ package io.github.cjstehno.ersatz.junit;
 import io.github.cjstehno.ersatz.ErsatzServer;
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
-import io.github.cjstehno.ersatz.match.PathMatcher;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -17,8 +17,6 @@ package io.github.cjstehno.ersatz.match;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import io.github.cjstehno.ersatz.match.CookieMatcher;
-import io.github.cjstehno.ersatz.match.MultipartRequestMatcher;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;

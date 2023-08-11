@@ -17,12 +17,20 @@ package io.github.cjstehno.ersatz.impl;
 
 import io.github.cjstehno.ersatz.cfg.ChunkingConfig;
 import io.github.cjstehno.ersatz.cfg.Response;
-import io.github.cjstehno.ersatz.encdec.*;
+import io.github.cjstehno.ersatz.encdec.Cookie;
+import io.github.cjstehno.ersatz.encdec.EncoderChain;
+import io.github.cjstehno.ersatz.encdec.ErsatzMultipartResponseContent;
+import io.github.cjstehno.ersatz.encdec.MultipartResponseContent;
+import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
+import io.github.cjstehno.ersatz.util.StatusCode;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -35,9 +43,9 @@ import static java.util.Collections.unmodifiableMap;
 /**
  * Implementation of the <code>Response</code> interface.
  */
+@Slf4j
 public class ErsatzResponse implements Response {
 
-    private static final Logger log = LoggerFactory.getLogger(ErsatzResponse.class);
     private final ResponseEncoders localEncoders = new ResponseEncoders();
     private final EncoderChain encoderChain;
 
@@ -46,7 +54,7 @@ public class ErsatzResponse implements Response {
     private ChunkingConfigImpl chunkingConfig;
     private final AtomicReference<byte[]> cachedContent = new AtomicReference<>();
     private Object content;
-    private Integer code = 200;
+    private Integer code = StatusCode.OK.getValue();
     private long delayTime;
 
     /**
@@ -151,7 +159,7 @@ public class ErsatzResponse implements Response {
     }
 
     @Override
-    public Response chunked(Consumer<ChunkingConfig> config) {
+    public Response chunked(final Consumer<ChunkingConfig> config) {
         chunkingConfig = new ChunkingConfigImpl();
         config.accept(chunkingConfig);
         return this;
@@ -181,7 +189,10 @@ public class ErsatzResponse implements Response {
                     cachedContent.set((byte[]) content);
 
                 } else {
-                    log.warn("No encoder configured for content ({}) of type ({}) - returning string bytes.", content.getClass().getSimpleName(), getContentType());
+                    log.warn(
+                        "No encoder configured for content ({}) of type ({}) - returning string bytes.",
+                        content.getClass().getSimpleName(), getContentType()
+                    );
                     cachedContent.set(content.toString().getBytes(UTF_8));
                 }
             }

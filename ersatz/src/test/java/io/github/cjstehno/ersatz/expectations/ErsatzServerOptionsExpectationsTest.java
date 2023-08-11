@@ -31,8 +31,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static io.github.cjstehno.ersatz.cfg.HttpMethod.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.DELETE;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.OPTIONS;
+import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @ExtendWith({SharedErsatzServerExtension.class, HttpClientExtension.class}) @ApplyServerConfig("serverConfig")

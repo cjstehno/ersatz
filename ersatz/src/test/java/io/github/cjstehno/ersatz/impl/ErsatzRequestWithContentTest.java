@@ -35,7 +35,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.io.IOException;
 import java.util.Map;
 
-import static io.github.cjstehno.ersatz.cfg.ContentType.*;
+import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_URLENCODED;
+import static io.github.cjstehno.ersatz.cfg.ContentType.IMAGE_PNG;
+import static io.github.cjstehno.ersatz.cfg.ContentType.MULTIPART_MIXED;
+import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
 import static io.github.cjstehno.ersatz.encdec.MultipartRequestContent.multipartRequest;
 import static io.github.cjstehno.ersatz.match.MultipartRequestMatcher.multipartMatcher;
@@ -72,7 +75,7 @@ class ErsatzRequestWithContentTest {
         );
     }
 
-    @Test @DisplayName("to string")
+    @Test @DisplayName("to string") @SuppressWarnings("checkstyle:LineLength")
     void string() {
         request.body("Some body", TEXT_PLAIN);
 

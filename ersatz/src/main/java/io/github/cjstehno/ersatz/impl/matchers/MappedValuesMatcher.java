@@ -41,7 +41,7 @@ public class MappedValuesMatcher extends BaseMatcher<ClientRequest> {
     private final Function<ClientRequest, Map<String, Deque<String>>> mapProvider;
 
     @Override public boolean matches(final Object actual) {
-        return mapProvider.apply(((ClientRequest) actual)).entrySet().stream()
+        return mapProvider.apply((ClientRequest) actual).entrySet().stream()
             .filter(ent -> nameMatcher.matches(ent.getKey()))
             .anyMatch(ent -> valuesMatcher.matches(new ArrayDeque<>(asList(ent.getValue().toArray(new String[0])))));
     }

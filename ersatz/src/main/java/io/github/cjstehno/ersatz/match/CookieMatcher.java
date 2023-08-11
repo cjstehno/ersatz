@@ -231,4 +231,3 @@ public class CookieMatcher extends BaseMatcher<Cookie> {
         VALUE, COMMENT, DOMAIN, PATH, MAX_AGE, HTTP_ONLY, SECURE, VERSION
     }
 }
-

@@ -17,7 +17,6 @@ package io.github.cjstehno.ersatz;
 
 import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.junit.ApplyServerConfig;
-import io.github.cjstehno.ersatz.junit.ErsatzServerExtension;
 import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension.Client;

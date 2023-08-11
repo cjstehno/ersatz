@@ -38,14 +38,16 @@ import static java.nio.file.Files.createTempDirectory;
 import static lombok.AccessLevel.PRIVATE;
 
 /**
- * Reusable request content decoder functions. Decoders are simply implementations of the <code>BiFunction&lt;byte[], DecodingContext, Object&gt;</code>
- * interface, which takes the request content as a byte array along with the <code>DecodingContext</code> to return an <code>Object</code>
+ * Reusable request content decoder functions. Decoders are simply implementations of the
+ * <code>BiFunction&lt;byte[], DecodingContext, Object&gt;</code> interface, which takes the request content as a byte array along with the
+ * <code>DecodingContext</code> to return an <code>Object</code>
  * representation of the request data.
  */
-@NoArgsConstructor(access = PRIVATE)
+@NoArgsConstructor(access = PRIVATE) @SuppressWarnings("checkstyle:ConstantName")
 public final class Decoders {
 
     private static final String TEMP_DIR = "ersatz-multipart-";
+    private static final int FILE_SIZE_THRESHOLD = 10_000;
 
     /**
      * Decoder that simply passes the content bytes through as an array of bytes.
@@ -89,7 +91,7 @@ public final class Decoders {
     /**
      * Decoder that converts request content bytes in an url-encoded format into a map of name/value pairs.
      */
-    public static BiFunction<byte[], DecodingContext, Object> urlEncoded = (content, ctx) -> {
+    public static final BiFunction<byte[], DecodingContext, Object> urlEncoded = (content, ctx) -> {
         val map = new HashMap<String, String>();
 
         if (content != null) {
@@ -111,13 +113,12 @@ public final class Decoders {
     /**
      * Decoder that converts request content bytes into a <code>MultipartRequestContent</code> object populated with the multipart request content.
      */
-    public static BiFunction<byte[], DecodingContext, Object> multipart = (content, ctx) -> {
+    public static final BiFunction<byte[], DecodingContext, Object> multipart = (content, ctx) -> {
         val parts = resolveFileParts(content, ctx);
         val multipartRequest = new MultipartRequestContent();
 
         parts.forEach(part -> {
             val partCtx = new DecodingContext(part.getSize(), part.getContentType(), null, ctx.getDecoderChain());
-
             if (part.isFormField()) {
                 multipartRequest.part(part.getFieldName(), TEXT_PLAIN, ctx.getDecoderChain().resolve(TEXT_PLAIN).apply(part.get(), partCtx));
             } else {
@@ -135,7 +136,7 @@ public final class Decoders {
 
     private static List<FileItem> resolveFileParts(final byte[] content, final DecodingContext ctx) {
         try {
-            return new FileUpload(new DiskFileItemFactory(10_000, createTempDirectory(TEMP_DIR).toFile()))
+            return new FileUpload(new DiskFileItemFactory(FILE_SIZE_THRESHOLD, createTempDirectory(TEMP_DIR).toFile()))
                 .parseRequest(new ErsatzUploadContext(content, ctx));
         } catch (final Exception e) {
             throw new IllegalArgumentException(e.getMessage());

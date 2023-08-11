@@ -24,7 +24,9 @@ import org.junit.jupiter.api.Test;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.PUT;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MappedValuesMatcherTest {
 

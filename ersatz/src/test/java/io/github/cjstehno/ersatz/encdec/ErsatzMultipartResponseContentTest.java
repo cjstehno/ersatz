@@ -16,7 +16,6 @@
 package io.github.cjstehno.ersatz.encdec;
 
 
-import io.github.cjstehno.testthings.Resources;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

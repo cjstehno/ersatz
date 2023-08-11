@@ -31,10 +31,16 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
-import static io.github.cjstehno.ersatz.match.BodyParamMatcher.*;
+import static io.github.cjstehno.ersatz.match.BodyParamMatcher.bodyParamDoesNotExist;
+import static io.github.cjstehno.ersatz.match.BodyParamMatcher.bodyParamExists;
+import static io.github.cjstehno.ersatz.match.BodyParamMatcher.bodyParamMatching;
 import static io.github.cjstehno.ersatz.match.ErsatzMatchers.stringIterableMatcher;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class BodyParamMatcherTest {
@@ -52,7 +58,7 @@ class BodyParamMatcherTest {
 
     private static Stream<Arguments> paramProvider() {
         final var factory = new Function<Map<String, Deque<String>>, MockClientRequest>() {
-            @Override public MockClientRequest apply(Map<String, Deque<String>> map) {
+            @Override public MockClientRequest apply(final Map<String, Deque<String>> map) {
                 final var mcr = new MockClientRequest();
                 mcr.setBodyParameters(map);
                 return mcr;

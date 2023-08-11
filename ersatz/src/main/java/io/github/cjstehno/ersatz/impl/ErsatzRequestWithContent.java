@@ -43,7 +43,9 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
      * @param globalDecoders the shared global decoders
      * @param globalEncoders the shared global encoders
      */
-    public ErsatzRequestWithContent(final HttpMethod method, final PathMatcher pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
+    public ErsatzRequestWithContent(
+        final HttpMethod method, final PathMatcher pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders
+    ) {
         super(method, pathMatcher, globalEncoders, false);
         this.decoderChain = new DecoderChain(globalDecoders, localDecoders);
     }
@@ -65,4 +67,3 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
         return this;
     }
 }
-

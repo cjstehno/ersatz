@@ -53,6 +53,7 @@ public abstract class MultipartResponseContent {
      *
      * @return a random boundary label
      */
+    @SuppressWarnings("checkstyle:MagicNumber")
     public static String generateBoundary() {
         final StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < 18; i++) {
@@ -68,7 +69,7 @@ public abstract class MultipartResponseContent {
      * @param responseEncoders the parent set of shared encoders
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent encoders(final ResponseEncoders responseEncoders);
+    public abstract MultipartResponseContent encoders(ResponseEncoders responseEncoders);
 
     /**
      * Used to override the default random boundary value with the provided one.
@@ -76,7 +77,7 @@ public abstract class MultipartResponseContent {
      * @param value the boundary label to be used
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent boundary(final String value);
+    public abstract MultipartResponseContent boundary(String value);
 
     /**
      * Configures a response content encoder for the specified contentType and content class.
@@ -86,7 +87,7 @@ public abstract class MultipartResponseContent {
      * @param encoder     the encoder
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent encoder(final String contentType, final Class type, final Function<Object, byte[]> encoder);
+    public abstract MultipartResponseContent encoder(String contentType, Class type, Function<Object, byte[]> encoder);
 
     /**
      * Configures a response content encoder for the specified contentType and content class.
@@ -96,7 +97,7 @@ public abstract class MultipartResponseContent {
      * @param encoder     the encoder
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent encoder(final ContentType contentType, final Class type, final Function<Object, byte[]> encoder);
+    public abstract MultipartResponseContent encoder(ContentType contentType, Class type, Function<Object, byte[]> encoder);
 
     /**
      * Used to add a "field" part to the response.
@@ -105,7 +106,7 @@ public abstract class MultipartResponseContent {
      * @param value     the field value
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent field(final String fieldName, final String value);
+    public abstract MultipartResponseContent field(String fieldName, String value);
 
     /**
      * Used to add a "field" part to the response.
@@ -115,7 +116,7 @@ public abstract class MultipartResponseContent {
      * @param value       the field value
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent part(final String fieldName, final String contentType, final Object value);
+    public abstract MultipartResponseContent part(String fieldName, String contentType, Object value);
 
     /**
      * Used to add a "field" part to the response.
@@ -126,7 +127,7 @@ public abstract class MultipartResponseContent {
      * @param transferEncoding the content-transfer-encoding value
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent part(final String fieldName, final ContentType contentType, final Object value, final String transferEncoding);
+    public abstract MultipartResponseContent part(String fieldName, ContentType contentType, Object value, String transferEncoding);
 
     /**
      * Used to add a "field" part to the response.
@@ -136,7 +137,7 @@ public abstract class MultipartResponseContent {
      * @param value            the field value
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent part(final String fieldName, final ContentType contentType, final Object value);
+    public abstract MultipartResponseContent part(String fieldName, ContentType contentType, Object value);
 
     /**
      * Used to add a "file" part to the response.
@@ -184,4 +185,3 @@ public abstract class MultipartResponseContent {
      */
     public abstract MultipartResponseContent part(String fieldName, String fileName, ContentType contentType, Object value);
 }
-

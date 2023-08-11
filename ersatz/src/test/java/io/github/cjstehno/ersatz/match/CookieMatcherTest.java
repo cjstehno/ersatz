@@ -15,7 +15,6 @@
  */
 package io.github.cjstehno.ersatz.match;
 
-import io.github.cjstehno.ersatz.match.CookieMatcher;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;

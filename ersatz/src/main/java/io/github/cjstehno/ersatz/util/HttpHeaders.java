@@ -15,7 +15,6 @@
  */
 package io.github.cjstehno.ersatz.util;
 
-import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import static lombok.AccessLevel.PRIVATE;

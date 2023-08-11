@@ -1,5 +1,13 @@
 == What's New
 
+=== In 4.0
+
+* Updated Groovy support to 4.x and switched to the new coordinates - it _should_ still work with older Groovy versions, please file an issue if you are unable to use 3.x versions.
+* Added an updated version of the old websockets support - still limited at this time (only non-secure connections).
+* Re-removed the old standalone proxy server - the forwarding functionality replaces this.
+* Verification timeouts using time+unit are deprecated (or removed) in favor of versions using a new `WaitFor` utility object - this provides most of the standard configurations, as well as a `FOREVER` waiting time.
+* General testing and code cleanup (mostly checkstyle and codenarc formatting)
+
 === In 3.2
 
 * Added generic `request` expectations to the `Expectations` interface - this allows programmatic specification of the request method.

@@ -13,27 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cjstehno.ersatz.server;
+package io.github.cjstehno.ersatz.cfg;
 
 /**
- * Defines the access points into the underlying proxy server implementation.
+ * Defines the available types of web socket messages.
  */
-public interface UnderlyingProxyServer {
+public enum MessageType {
 
     /**
-     * Used to start the server, if not already started.
+     * Denotes a text-based message.
      */
-    void start();
+    TEXT,
 
     /**
-     * Used to stop the server, if it has been started.
+     * Denotes a byte-based message.
      */
-    void stop();
+    BINARY;
 
     /**
-     * Used to retrieve the actual applied HTTP port for the server.
+     * Resolves the default message type for the specified object.
      *
-     * @return the HTTP port
+     * @param obj the payload object
+     * @return the message type determined by content
      */
-    int getActualHttpPort();
+    public static MessageType resolve(final Object obj) {
+        return obj instanceof byte[] ? BINARY : TEXT;
+    }
 }

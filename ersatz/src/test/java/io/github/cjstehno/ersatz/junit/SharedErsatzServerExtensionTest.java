@@ -20,7 +20,6 @@ import io.github.cjstehno.ersatz.cfg.ServerConfig;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension.Client;
 import lombok.val;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 

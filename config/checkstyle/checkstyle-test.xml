@@ -1,0 +1,81 @@
+<!DOCTYPE module PUBLIC
+        "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+        "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+<module name="Checker">
+    <module name="SuppressWarningsFilter" />
+
+    <module name="LineLength">
+        <property name="max" value="150"/>
+    </module>
+
+    <module name="TreeWalker">
+        <module name="SuppressWarningsHolder" />
+
+        <property name="tabWidth" value="4"/>
+
+        <module name="AvoidStarImport">
+            <property name="severity" value="warning" />
+        </module>
+
+        <module name="RedundantImport"/>
+
+        <!-- Checks for naming conventions -->
+        <module name="MethodName"/>
+        <module name="LocalFinalVariableName"/>
+        <module name="MemberName"/>
+        <module name="ParameterName"/>
+        <module name="StaticVariableName"/>
+        <module name="TypeName"/>
+
+        <module name="MissingDeprecated"/>
+
+        <!-- Checks for class design -->
+        <module name="InnerAssignment"/>
+        <module name="ModifierOrder"/>
+        <module name="RedundantModifier"/>
+        <module name="VisibilityModifier"/>
+
+        <!-- Checks for unnecessary code -->
+        <module name="EmptyBlock"/>
+        <module name="EmptyStatement"/>
+        <module name="OuterTypeFilename"/>
+
+        <!-- Checks for potential bugs and issues -->
+        <module name="EqualsHashCode"/>
+        <module name="IllegalInstantiation"/>
+        <module name="AvoidNestedBlocks"/>
+        <module name="EqualsAvoidNull"/>
+        <module name="MethodParamPad"/>
+        <module name="PackageName"/>
+
+
+        <module name="DefaultComesLast"/>
+
+        <module name="UnusedImports"/>
+
+        <module name="ReturnCount">
+            <property name="max" value="3"/>
+            <property name="maxForVoid" value="1" />
+        </module>
+
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+        <module name="StringLiteralEquality"/>
+        <module name="UnnecessaryParentheses"/>
+        <module name="UnusedLocalVariable"/>
+        <module name="VariableDeclarationUsageDistance"/>
+
+        <module name="BooleanExpressionComplexity">
+            <property name="max" value="5" />
+        </module>
+
+        <module name="BooleanExpressionComplexity"/>
+        <module name="BooleanExpressionComplexity"/>
+        <module name="NPathComplexity"/>
+
+        <module name="FinalParameters"/>
+
+
+
+    </module>
+</module>

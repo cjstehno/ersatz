@@ -74,5 +74,5 @@ public interface Requirements {
      * @param config        the requirements configuration
      * @return a reference to the request requirement for chained configuration
      */
-    RequestRequirement that(final HttpMethodMatcher methodMatcher, final PathMatcher pathMatcher, final Consumer<RequestRequirement> config);
+    RequestRequirement that(HttpMethodMatcher methodMatcher, PathMatcher pathMatcher,  Consumer<RequestRequirement> config);
 }

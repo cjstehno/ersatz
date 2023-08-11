@@ -15,8 +15,8 @@
  */
 package io.github.cjstehno.ersatz.server;
 
-import io.github.cjstehno.ersatz.encdec.Cookie;
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
+import io.github.cjstehno.ersatz.encdec.Cookie;
 
 import java.util.Deque;
 import java.util.Map;

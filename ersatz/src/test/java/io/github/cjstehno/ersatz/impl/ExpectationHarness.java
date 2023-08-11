@@ -42,7 +42,9 @@ abstract class ExpectationHarness {
         expectations = new ExpectationsImpl(new ResponseEncoders(), new RequestDecoders());
     }
 
-    void execAndAssert(final Consumer<MockClientRequest> requestConfig, final Function<ExpectationsImpl, Request> methodExecutor, final boolean matchExists) {
+    void execAndAssert(
+        final Consumer<MockClientRequest> requestConfig, final Function<ExpectationsImpl, Request> methodExecutor, final boolean matchExists
+    ) {
         final var request = new MockClientRequest(method);
         requestConfig.accept(request);
 

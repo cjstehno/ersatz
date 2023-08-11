@@ -24,7 +24,7 @@ import static lombok.AccessLevel.PRIVATE;
 /**
  * Some available HTTP response status codes.
  */
-@RequiredArgsConstructor(access = PRIVATE)
+@RequiredArgsConstructor(access = PRIVATE) @SuppressWarnings("checkstyle:MagicNumber")
 public enum StatusCode {
 
     // 100s
@@ -368,7 +368,7 @@ public enum StatusCode {
         return isBetween(code, 500, 599);
     }
 
-    private static boolean isBetween(final StatusCode code, int lowInclusive, int highInclusive) {
+    private static boolean isBetween(final StatusCode code, final int lowInclusive, final int highInclusive) {
         return code.value >= lowInclusive && code.value <= highInclusive;
     }
 }

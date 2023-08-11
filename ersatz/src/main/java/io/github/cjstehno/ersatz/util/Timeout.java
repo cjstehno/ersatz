@@ -32,6 +32,8 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public final class Timeout {
 
+    private static final long POLLING_TIME = 260;
+
     /**
      * Used to wrap a blocking timeout around the provided condition. If it is not met (resolves <code>true</code>)
      * before the timeout expires, a value of <code>false</code> will be returned.
@@ -48,10 +50,10 @@ public final class Timeout {
         if (!condition.get()) {
             val executor = newSingleThreadScheduledExecutor();
             try {
-                var future = executor.schedule(condition::get, 250, MILLISECONDS);
+                var future = executor.schedule(condition::get, POLLING_TIME, MILLISECONDS);
 
                 while (!future.get(timeout, unit) && !timedOut(started, timeoutMs)) {
-                    future = executor.schedule(condition::get, 250, MILLISECONDS);
+                    future = executor.schedule(condition::get, POLLING_TIME, MILLISECONDS);
                 }
 
                 return !timedOut(started, timeoutMs);

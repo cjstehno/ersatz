@@ -25,6 +25,7 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 /**
  * Defines the available generic request (ANY) expectations.
  */
+@SuppressWarnings("checkstyle:MethodName")
 public interface AnyExpectations {
 
     /**
@@ -90,5 +91,5 @@ public interface AnyExpectations {
      * @param consumer the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    Request ANY(final PathMatcher pathMatcher, Consumer<Request> consumer);
+    Request ANY(PathMatcher pathMatcher, Consumer<Request> consumer);
 }

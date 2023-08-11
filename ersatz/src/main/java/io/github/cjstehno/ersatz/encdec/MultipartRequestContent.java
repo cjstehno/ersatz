@@ -95,7 +95,7 @@ public class MultipartRequestContent {
      * @param value       the value
      * @return a reference to this multipart request instance
      */
-    public MultipartRequestContent part(String fieldName, String fileName, String contentType, Object value) {
+    public MultipartRequestContent part(final String fieldName, final String fileName, final String contentType, final Object value) {
         parts.put(fieldName, new MultipartPart(fieldName, fileName, contentType, null, value));
         return this;
     }
@@ -109,7 +109,7 @@ public class MultipartRequestContent {
      * @param value       the value
      * @return a reference to this multipart request instance
      */
-    public MultipartRequestContent part(String fieldName, String fileName, ContentType contentType, Object value) {
+    public MultipartRequestContent part(final String fieldName, final String fileName, final ContentType contentType, final Object value) {
         parts.put(fieldName, new MultipartPart(fieldName, fileName, contentType.getValue(), null, value));
         return this;
     }

@@ -32,5 +32,5 @@ public interface ErsatzHandler {
      * @param response the configured outgoing response
      * @throws Exception if there is a problem handling the request
      */
-    void handleRequest(final HttpServerExchange exchange, final ClientRequest request, final Response response) throws Exception;
+    void handleRequest(HttpServerExchange exchange, ClientRequest request, Response response) throws Exception;
 }

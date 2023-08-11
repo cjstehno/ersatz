@@ -7,6 +7,8 @@ plugins {
     id 'jacoco'
     id 'signing'
     id 'com.adarshr.test-logger' version '3.2.0'
+    id 'codenarc'
+    id 'checkstyle'
 }
 
 group = rootProject.group
@@ -21,8 +23,8 @@ repositories {
 
 dependencies {
     implementation project(':ersatz')
-    implementation "org.codehaus.groovy:groovy:$groovyVersion"
-    implementation "org.codehaus.groovy:groovy-json:$groovyVersion"
+    implementation "org.apache.groovy:groovy:$groovyVersion"
+    implementation "org.apache.groovy:groovy-json:$groovyVersion"
 
     testImplementation 'io.github.cjstehno:test-things:0.1.0'
 
@@ -89,7 +91,7 @@ shadowJar {
         exclude(dependency('org.slf4j:slf4j-api:.*'))
         exclude(dependency('org.hamcrest::.*'))
         exclude(dependency('org.wildfly.client::.*'))
-        exclude(dependency('org.codehaus.groovy::.*'))
+        exclude(dependency('org.apache.groovy::.*'))
     }
 
     mergeServiceFiles()
@@ -170,3 +172,24 @@ signing {
     sign publishing.publications.ersatzGroovy
 }
 
+codenarc {
+    toolVersion = '3.3.0'
+}
+
+codenarcTest {
+    configFile file("$rootDir/config/codenarc/rules.groovy")
+    ignoreFailures = false
+}
+
+checkstyle {
+    toolVersion "10.12.2"
+}
+
+checkstyleMain {
+    configFile file("$rootDir/config/checkstyle/checkstyle.xml")
+}
+
+tasks.withType(Checkstyle) {
+    minHeapSize = "200m"
+    maxHeapSize = "1g"
+}

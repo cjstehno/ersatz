@@ -133,6 +133,7 @@ public abstract class HeaderMatcher extends BaseMatcher<ClientRequest> {
      *
      * @param username the BASIC auth username
      * @param password the BASIC auth password
+     * @return a header matcher
      */
     public static HeaderMatcher basicAuthHeader(final String username, final String password) {
         return headerMatching(AUTHORIZATION, hasItem(basicAuthHeaderValue(username, password)));

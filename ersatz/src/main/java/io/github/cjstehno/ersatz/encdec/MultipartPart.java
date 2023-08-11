@@ -42,7 +42,7 @@ public class MultipartPart {
      * @param transferEncoding the transfer encoding
      * @param value            the part value
      */
-    public MultipartPart(String fieldName, String fileName, String contentType, String transferEncoding, Object value) {
+    public MultipartPart(final String fieldName, final String fileName, final String contentType, final String transferEncoding, final Object value) {
         this.fieldName = fieldName;
         this.fileName = fileName;
         this.contentType = contentType;
@@ -50,7 +50,7 @@ public class MultipartPart {
         this.value = value;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MultipartPart that = (MultipartPart) o;

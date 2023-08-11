@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 /**
  * Defines the available HEAD request expectations.
  */
+@SuppressWarnings("checkstyle:MethodName")
 public interface HeadExpectations {
 
     /**
@@ -46,8 +47,8 @@ public interface HeadExpectations {
     }
 
     /**
-     * Allows configuration of a HEAD request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The <code>Consumer&lt;Request&gt;</code> will
-     * have an instance of <code>Request</code> passed into it for configuration.
+     * Allows configuration of a HEAD request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The
+     * <code>Consumer&lt;Request&gt;</code> will have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param path   the expected request path
      * @param config the configuration consumer
@@ -58,8 +59,8 @@ public interface HeadExpectations {
     }
 
     /**
-     * Allows configuration of a HEAD request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The <code>Consumer&lt;Request&gt;</code> will
-     * have an instance of <code>Request</code> passed into it for configuration.
+     * Allows configuration of a HEAD request expectation using the provided <code>Consumer&lt;Request&gt;</code>. The
+     * <code>Consumer&lt;Request&gt;</code> will have an instance of <code>Request</code> passed into it for configuration.
      *
      * @param matcher the path matcher
      * @param config  the configuration consumer
@@ -86,5 +87,5 @@ public interface HeadExpectations {
      * @param config the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    Request HEAD(final PathMatcher pathMatcher, final Consumer<Request> config);
+    Request HEAD(PathMatcher pathMatcher, Consumer<Request> config);
 }

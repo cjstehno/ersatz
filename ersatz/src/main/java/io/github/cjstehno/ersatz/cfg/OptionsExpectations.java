@@ -25,6 +25,7 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 /**
  * Defines the available OPTIONS request expectations.
  */
+@SuppressWarnings("checkstyle:MethodName")
 public interface OptionsExpectations {
 
     /**
@@ -88,5 +89,5 @@ public interface OptionsExpectations {
      * @param config  the configuration consumer
      * @return a <code>Request</code> configuration object
      */
-    Request OPTIONS(final PathMatcher pathMatcher, final Consumer<Request> config);
+    Request OPTIONS(PathMatcher pathMatcher, Consumer<Request> config);
 }

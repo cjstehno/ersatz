@@ -17,15 +17,16 @@ package io.github.cjstehno.ersatz.match
 
 import io.github.cjstehno.ersatz.encdec.Cookie
 import io.github.cjstehno.ersatz.encdec.MultipartRequestContent
-import io.github.cjstehno.ersatz.match.CookieMatcher
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
 import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_JSON
-import static org.hamcrest.Matchers.equalTo
-import static org.junit.jupiter.api.Assertions.*
 import static io.github.cjstehno.ersatz.match.MultipartRequestMatcher.multipartMatcher
+import static org.hamcrest.Matchers.equalTo
+import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertFalse
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 class MatchExtensionsTest {
 
@@ -33,7 +34,7 @@ class MatchExtensionsTest {
     @CsvSource([
         '/foo,stuff,true,true',
         '/foo,other,true,false',
-        '/bar,stuff,true,false'
+        '/bar,stuff,true,false',
     ])
     void cookieMatcherExtension(final String cookiePath, final String cookieValue, final boolean http, final boolean result) {
         def matcher = CookieMatcher.cookieMatcher {

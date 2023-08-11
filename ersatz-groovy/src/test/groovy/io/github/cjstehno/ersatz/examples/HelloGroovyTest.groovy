@@ -15,7 +15,6 @@
  */
 package io.github.cjstehno.ersatz.examples
 
-
 import io.github.cjstehno.ersatz.GroovyErsatzServer
 import io.github.cjstehno.ersatz.cfg.HttpMethod
 import io.github.cjstehno.ersatz.cfg.ServerConfig
@@ -59,7 +58,7 @@ class HelloGroovyTest {
     }
 
     @Test
-    @ApplyServerConfig("localConfig")
+    @ApplyServerConfig('localConfig')
     void 'Using annotation config with field and param'(final GroovyErsatzServer myServer) {
         myServer.expectations {
             GET('/foo') {
@@ -71,24 +70,24 @@ class HelloGroovyTest {
         }
 
         assertEquals(
-                200,
-                newHttpClient().send(
-                        newBuilder(URI.create(myServer.httpUrl('/foo'))).GET().header('key', 'unlocked').build(),
-                        ofString()
-                ).statusCode()
-        );
+            200,
+            newHttpClient().send(
+                newBuilder(URI.create(myServer.httpUrl('/foo'))).GET().header('key', 'unlocked').build(),
+                ofString()
+            ).statusCode()
+        )
         assertEquals(
-                404,
-                newHttpClient().send(
-                        newBuilder(URI.create(myServer.httpUrl('/foo'))).GET().build(),
-                        ofString()
-                ).statusCode()
-        );
-        assertTrue(myServer.verify());
+            404,
+            newHttpClient().send(
+                newBuilder(URI.create(myServer.httpUrl('/foo'))).GET().build(),
+                ofString()
+            ).statusCode()
+        )
+        assertTrue(myServer.verify())
     }
 
-    @SuppressWarnings("unused")
-    private void localConfig(final ServerConfig config) {
+    @SuppressWarnings(['unused', 'UnusedPrivateMethod'])
+    private static void localConfig(final ServerConfig config) {
         config.requirements {
             that HttpMethod.GET, pathMatching('/foo'), { cfg ->
                 cfg.header(KEY_HEADER, 'unlocked')

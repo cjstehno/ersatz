@@ -15,20 +15,17 @@
  */
 package io.github.cjstehno.ersatz.impl.matchers;
 
-import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.server.ClientRequest;
 import io.github.cjstehno.ersatz.server.MockClientRequest;
 import lombok.val;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.StringDescription;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.GET;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MapKeyMatcherTest {
 
