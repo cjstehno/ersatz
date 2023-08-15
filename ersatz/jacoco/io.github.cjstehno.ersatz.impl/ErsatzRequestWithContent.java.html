@@ -43,27 +43,28 @@ public class ErsatzRequestWithContent extends ErsatzRequest implements RequestWi
      * @param globalDecoders the shared global decoders
      * @param globalEncoders the shared global encoders
      */
-    public ErsatzRequestWithContent(final HttpMethod method, final PathMatcher pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders) {
-<span class="fc" id="L47">        super(method, pathMatcher, globalEncoders, false);</span>
-<span class="fc" id="L48">        this.decoderChain = new DecoderChain(globalDecoders, localDecoders);</span>
-<span class="fc" id="L49">    }</span>
+    public ErsatzRequestWithContent(
+        final HttpMethod method, final PathMatcher pathMatcher, final RequestDecoders globalDecoders, final ResponseEncoders globalEncoders
+    ) {
+<span class="fc" id="L49">        super(method, pathMatcher, globalEncoders, false);</span>
+<span class="fc" id="L50">        this.decoderChain = new DecoderChain(globalDecoders, localDecoders);</span>
+<span class="fc" id="L51">    }</span>
 
     @Override public RequestWithContent body(final BodyMatcher bodyMatcher) {
-<span class="fc" id="L52">        bodyMatcher.setDecoderChain(decoderChain);</span>
-<span class="fc" id="L53">        addMatcher(bodyMatcher);</span>
-<span class="fc" id="L54">        return this;</span>
+<span class="fc" id="L54">        bodyMatcher.setDecoderChain(decoderChain);</span>
+<span class="fc" id="L55">        addMatcher(bodyMatcher);</span>
+<span class="fc" id="L56">        return this;</span>
     }
 
     @Override
     public RequestWithContent decoder(final String contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {
-<span class="fc" id="L59">        localDecoders.register(contentType, decoder);</span>
-<span class="fc" id="L60">        return this;</span>
+<span class="fc" id="L61">        localDecoders.register(contentType, decoder);</span>
+<span class="fc" id="L62">        return this;</span>
     }
 
     @Override public RequestWithContent param(final BodyParamMatcher bodyParamMatcher) {
-<span class="fc" id="L64">        addMatcher(bodyParamMatcher);</span>
-<span class="fc" id="L65">        return this;</span>
+<span class="fc" id="L66">        addMatcher(bodyParamMatcher);</span>
+<span class="fc" id="L67">        return this;</span>
     }
 }
-
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -18,6 +18,7 @@ package io.github.cjstehno.ersatz.match;
 import io.github.cjstehno.ersatz.encdec.DecoderChain;
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
 import io.github.cjstehno.ersatz.server.ClientRequest;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
@@ -27,63 +28,64 @@ import org.hamcrest.Matcher;
 
 import static io.github.cjstehno.ersatz.match.HeaderMatcher.contentTypeHeader;
 import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PROTECTED;
 import static org.hamcrest.CoreMatchers.startsWith;
 
 /**
  * Matcher for matching request body content.
  */
-<span class="fc" id="L35">public abstract class BodyMatcher extends BaseMatcher&lt;ClientRequest&gt; {</span>
+<span class="fc" id="L37">public abstract class BodyMatcher extends BaseMatcher&lt;ClientRequest&gt; {</span>
 
     /**
      * The decoder chain to be used when decoding the request body.
      */
-<span class="fc" id="L40">    @Setter public DecoderChain decoderChain;</span>
+<span class="fc" id="L42">    @Setter @Getter(PROTECTED) private DecoderChain decoderChain;</span>
 
     /**
      * Creates a matcher which will match based on the body content matcher and the specified content type.
      *
-     * @param matcher the body content matcher
+     * @param matcher     the body content matcher
      * @param contentType the expected content type
      * @return the body matcher
      */
     public static BodyMatcher bodyMatching(final Matcher&lt;Object&gt; matcher, final String contentType) {
-<span class="fc" id="L50">        return new BodyMatches(contentType, matcher);</span>
+<span class="fc" id="L52">        return new BodyMatches(contentType, matcher);</span>
     }
 
-<span class="fc" id="L53">    @RequiredArgsConstructor(access = PRIVATE)</span>
+<span class="fc" id="L55">    @RequiredArgsConstructor(access = PRIVATE)</span>
     private static class BodyMatches extends BodyMatcher {
 
         private final String contentType;
         private final Matcher&lt;Object&gt; bodyMatcher;
 
         @Override public boolean matches(final Object actual) {
-<span class="fc" id="L60">            val request = (ClientRequest) actual;</span>
-<span class="fc bfc" id="L61" title="All 2 branches covered.">            return contentTypeHeader(startsWith(contentType)).matches(request) &amp;&amp;</span>
-<span class="fc bfc" id="L62" title="All 2 branches covered.">                bodyMatcher.matches(decode(request));</span>
+<span class="fc" id="L62">            val request = (ClientRequest) actual;</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            return contentTypeHeader(startsWith(contentType)).matches(request) &amp;&amp;</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">                bodyMatcher.matches(decode(request));</span>
         }
 
         private Object decode(final ClientRequest request) {
-<span class="fc" id="L66">            val decoder = decoderChain.resolve(contentType);</span>
-<span class="pc bpc" id="L67" title="1 of 2 branches missed.">            if (decoder != null) {</span>
-<span class="fc" id="L68">                return decoder.apply(</span>
-<span class="fc" id="L69">                    request.getBody(),</span>
+<span class="fc" id="L68">            val decoder = getDecoderChain().resolve(contentType);</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">            if (decoder != null) {</span>
+<span class="fc" id="L70">                return decoder.apply(</span>
+<span class="fc" id="L71">                    request.getBody(),</span>
                     new DecodingContext(
-<span class="fc" id="L71">                        request.getContentLength(),</span>
-<span class="fc" id="L72">                        request.getContentType(),</span>
-<span class="fc" id="L73">                        request.getCharacterEncoding(),</span>
-                        decoderChain
+<span class="fc" id="L73">                        request.getContentLength(),</span>
+<span class="fc" id="L74">                        request.getContentType(),</span>
+<span class="fc" id="L75">                        request.getCharacterEncoding(),</span>
+<span class="fc" id="L76">                        getDecoderChain()</span>
                     )
                 );
             } else {
-<span class="nc" id="L78">                throw new IllegalStateException(&quot;No decoder found for \&quot;&quot; + contentType + &quot;\&quot; - Did you configure one?&quot;);</span>
+<span class="nc" id="L80">                throw new IllegalStateException(&quot;No decoder found for \&quot;&quot; + contentType + &quot;\&quot; - Did you configure one?&quot;);</span>
             }
         }
 
         @Override public void describeTo(final Description description) {
-<span class="fc" id="L83">            description.appendText(&quot;Body is &quot;);</span>
-<span class="fc" id="L84">            bodyMatcher.describeTo(description);</span>
-<span class="fc" id="L85">            description.appendText(&quot; and content-type is a string starting with &quot; + contentType);</span>
-<span class="fc" id="L86">        }</span>
+<span class="fc" id="L85">            description.appendText(&quot;Body is &quot;);</span>
+<span class="fc" id="L86">            bodyMatcher.describeTo(description);</span>
+<span class="fc" id="L87">            description.appendText(&quot; and content-type is a string starting with &quot; + contentType);</span>
+<span class="fc" id="L88">        }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

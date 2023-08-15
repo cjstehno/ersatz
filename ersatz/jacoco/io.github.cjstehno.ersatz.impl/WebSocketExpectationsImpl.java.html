@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebSocketExpectationsImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.impl</a> &gt; <span class="el_source">WebSocketExpectationsImpl.java</span></div><h1>WebSocketExpectationsImpl.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2023 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.impl;
+
+import io.github.cjstehno.ersatz.cfg.InboundMessage;
+import io.github.cjstehno.ersatz.cfg.MessageType;
+import io.github.cjstehno.ersatz.cfg.OutboundMessage;
+import io.github.cjstehno.ersatz.cfg.WaitFor;
+import io.github.cjstehno.ersatz.cfg.WebSocketExpectations;
+import io.undertow.websockets.core.BufferedBinaryMessage;
+import io.undertow.websockets.core.BufferedTextMessage;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
+
+/**
+ * Implementation of the WebSocketExpectations.
+ */
+<span class="fc" id="L41">@RequiredArgsConstructor @Slf4j</span>
+public class WebSocketExpectationsImpl implements WebSocketExpectations {
+
+<span class="fc" id="L44">    private final CountDownLatch connectionLatch = new CountDownLatch(1);</span>
+<span class="fc" id="L45">    private final List&lt;InboundMessageImpl&gt; inboundMessages = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L46">    private final List&lt;OutboundMessageImpl&gt; outboundMessages = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L47">    @Getter private final String path;</span>
+
+    @Override public InboundMessage receives(final Object payload, final MessageType messageType) {
+<span class="fc" id="L50">        val message = new InboundMessageImpl(payload, messageType);</span>
+<span class="fc" id="L51">        inboundMessages.add(message);</span>
+<span class="fc" id="L52">        return message;</span>
+    }
+
+    @Override public InboundMessage receives(final Consumer&lt;InboundMessage&gt; config) {
+<span class="nc" id="L56">        val message = new InboundMessageImpl();</span>
+<span class="nc" id="L57">        config.accept(message);</span>
+<span class="nc" id="L58">        inboundMessages.add(message);</span>
+<span class="nc" id="L59">        return message;</span>
+    }
+
+    @Override public OutboundMessage sends(final Object payload, final MessageType messageType) {
+<span class="fc" id="L63">        val message = new OutboundMessageImpl(payload, messageType);</span>
+<span class="fc" id="L64">        outboundMessages.add(message);</span>
+<span class="fc" id="L65">        return message;</span>
+    }
+
+    @Override public OutboundMessage sends(final Consumer&lt;OutboundMessage&gt; config) {
+<span class="nc" id="L69">        val message = new OutboundMessageImpl();</span>
+<span class="nc" id="L70">        config.accept(message);</span>
+<span class="nc" id="L71">        outboundMessages.add(message);</span>
+<span class="nc" id="L72">        return message;</span>
+    }
+
+    /**
+     * Marks that the websocket has connected for this expectation.
+     */
+    public void connect() {
+<span class="fc" id="L79">        connectionLatch.countDown();</span>
+<span class="fc" id="L80">    }</span>
+
+    /**
+     * Determines whether this expectation has connected.
+     *
+     * @return true if the websocket has connected for this expectation
+     */
+    public boolean isConnected() {
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        return connectionLatch.getCount() == 0;</span>
+    }
+
+    /**
+     * Retrieves the number of messages that are expected.
+     *
+     * @return the expected count
+     */
+    public int getExpectedMessageCount() {
+<span class="nc" id="L97">        return inboundMessages.size();</span>
+    }
+
+    /**
+     * Iterates over the outbound messages with the given consumer.
+     *
+     * @param consumer the iteration consumer
+     */
+    public void eachSender(final Consumer&lt;OutboundMessageImpl&gt; consumer) {
+<span class="fc" id="L106">        outboundMessages.forEach(consumer);</span>
+<span class="fc" id="L107">    }</span>
+
+    /**
+     * Iterates over the inbound messages with the given consumer.
+     *
+     * @param consumer the iteration consumer
+     */
+    public void eachMessage(final Consumer&lt;InboundMessageImpl&gt; consumer) {
+<span class="nc" id="L115">        inboundMessages.forEach(consumer);</span>
+<span class="nc" id="L116">    }</span>
+
+    /**
+     * Finds a websocket expectation matching the provided message.
+     *
+     * @param message the message
+     * @return the message expectation
+     */
+    public Optional&lt;InboundMessageImpl&gt; findMatch(final Object message) {
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (message instanceof BufferedTextMessage) {</span>
+<span class="fc" id="L126">            return findMatch((BufferedTextMessage) message);</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">        } else if (message instanceof BufferedBinaryMessage) {</span>
+<span class="fc" id="L128">            return findMatch((BufferedBinaryMessage) message);</span>
+        } else {
+<span class="nc" id="L130">            return Optional.empty();</span>
+        }
+    }
+
+    private Optional&lt;InboundMessageImpl&gt; findMatch(final BufferedTextMessage message) {
+<span class="fc" id="L135">        return inboundMessages.stream().filter(m -&gt; m.matches(message)).findFirst();</span>
+    }
+
+    private Optional&lt;InboundMessageImpl&gt; findMatch(final BufferedBinaryMessage message) {
+<span class="fc" id="L139">        return inboundMessages.stream().filter(m -&gt; m.matches(message)).findFirst();</span>
+    }
+
+    /**
+     * Verifies that the configured expectations have been met.
+     *
+     * @param waitFor the amount of time verification should wait before considering a timeout
+     * @return true if the verification conditions have been met
+     */
+    public boolean verify(final WaitFor waitFor) {
+<span class="pc bpc" id="L149" title="1 of 4 branches missed.">        return waitForLatch(waitFor) &amp;&amp; inboundMessages.stream().allMatch(m -&gt; m.marked(waitFor));</span>
+    }
+
+    private boolean waitForLatch(final WaitFor waitFor) {
+        try {
+<span class="fc bfc" id="L154" title="All 2 branches covered.">            if (waitFor == FOREVER) {</span>
+<span class="fc" id="L155">                connectionLatch.await();</span>
+<span class="fc" id="L156">                return true;</span>
+
+            } else {
+<span class="fc" id="L159">                return connectionLatch.await(waitFor.getTime(), waitFor.getUnit());</span>
+            }
+
+<span class="nc" id="L162">        } catch (InterruptedException e) {</span>
+<span class="nc" id="L163">            return false;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

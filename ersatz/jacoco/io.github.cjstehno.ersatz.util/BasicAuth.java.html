@@ -41,9 +41,22 @@ public final class BasicAuth {
      * @param password the password (cannot contain a colon)
      * @return the generated header value
      */
-    public static String header(final String username, final String password) {
+    public static String basicAuthHeaderValue(final String username, final String password) {
 <span class="fc" id="L45">        check(username, password);</span>
 <span class="fc" id="L46">        return &quot;Basic &quot; + getEncoder().encodeToString((username + &quot;:&quot; + password).getBytes(UTF_8));</span>
+    }
+
+    /**
+     * Used to generate the Authorization header value for the given username and password.
+     *
+     * @param username the username (cannot contain a colon)
+     * @param password the password (cannot contain a colon)
+     * @return the generated header value
+     * @deprecated Use &lt;code&gt;basicAuthHeaderValue(String,String)&lt;/code&gt; instead.
+     */
+    @Deprecated
+    public static String header(final String username, final String password) {
+<span class="fc" id="L59">        return basicAuthHeaderValue(username, password);</span>
     }
 
     /**
@@ -56,14 +69,14 @@ public final class BasicAuth {
      * @return the request passed in (to allow chaining)
      */
     public static Request basicAuth(final Request request, final String userame, final String password) {
-<span class="fc" id="L59">        return request.header(AUTHORIZATION_HEADER, header(userame, password));</span>
+<span class="fc" id="L72">        return request.header(AUTHORIZATION_HEADER, header(userame, password));</span>
     }
 
     private static void check(final String... values) {
-<span class="fc bfc" id="L63" title="All 2 branches covered.">        for (String value : values) {</span>
-<span class="pc bpc" id="L64" title="1 of 2 branches missed.">            if (value.contains(&quot;:&quot;))</span>
-<span class="nc" id="L65">                throw new IllegalArgumentException(&quot;The username and password cannot contain a colon!&quot;);</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        for (String value : values) {</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">            if (value.contains(&quot;:&quot;))</span>
+<span class="nc" id="L78">                throw new IllegalArgumentException(&quot;The username and password cannot contain a colon!&quot;);</span>
         }
-<span class="fc" id="L67">    }</span>
+<span class="fc" id="L80">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

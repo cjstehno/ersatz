@@ -124,7 +124,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 <span class="fc" id="L124">                .anyMatch(ent -&gt; cookieMatcher.matches(ent.getValue()));</span>
         }
 
-        @Override public void describeTo(Description description) {
+        @Override public void describeTo(final Description description) {
 <span class="fc" id="L128">            description.appendText(&quot;Cookie name is &quot;);</span>
 <span class="fc" id="L129">            nameMatcher.describeTo(description);</span>
 <span class="fc" id="L130">            description.appendText(&quot; and is &quot;);</span>
@@ -142,7 +142,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 <span class="fc bfc" id="L142" title="All 2 branches covered.">            return negated != ((ClientRequest) actual).getCookies().keySet().stream().anyMatch(nameMatcher::matches);</span>
         }
 
-        @Override public void describeTo(Description description) {
+        @Override public void describeTo(final Description description) {
 <span class="nc" id="L146">            description.appendText(&quot;Cookie name is &quot;);</span>
 <span class="nc" id="L147">            nameMatcher.describeTo(description);</span>
 <span class="nc" id="L148">        }</span>

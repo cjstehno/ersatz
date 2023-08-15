@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InboundMessageImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.impl</a> &gt; <span class="el_source">InboundMessageImpl.java</span></div><h1>InboundMessageImpl.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2023 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.impl;
+
+import io.github.cjstehno.ersatz.cfg.InboundMessage;
+import io.github.cjstehno.ersatz.cfg.MessageReaction;
+import io.github.cjstehno.ersatz.cfg.MessageType;
+import io.github.cjstehno.ersatz.cfg.WaitFor;
+import io.github.cjstehno.ersatz.util.ByteArrays;
+import io.undertow.websockets.core.BufferedBinaryMessage;
+import io.undertow.websockets.core.BufferedTextMessage;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.val;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.Consumer;
+
+import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
+import static io.github.cjstehno.ersatz.cfg.MessageType.TEXT;
+import static io.github.cjstehno.ersatz.cfg.WaitFor.FOREVER;
+
+/**
+ * Implementation of the InboundMessage for websocket connections.
+ */
+<span class="pc" id="L43">@AllArgsConstructor @NoArgsConstructor</span>
+public class InboundMessageImpl implements InboundMessage {
+
+<span class="nc" id="L46">    @Getter private Object payload;</span>
+<span class="nc" id="L47">    @Getter private MessageType messageType;</span>
+<span class="pc" id="L48">    @Getter private final List&lt;MessageReactionImpl&gt; reactions = new LinkedList&lt;&gt;();</span>
+<span class="pc" id="L49">    private final CountDownLatch matchLatch = new CountDownLatch(1);</span>
+
+    @Override public InboundMessage payload(final Object obj) {
+<span class="nc" id="L52">        this.payload = obj;</span>
+<span class="nc" id="L53">        return this;</span>
+    }
+
+    @Override public InboundMessage messageType(final MessageType type) {
+<span class="nc" id="L57">        this.messageType = type;</span>
+<span class="nc" id="L58">        return this;</span>
+    }
+
+    @Override public MessageReaction reaction(final Object payload, final MessageType messageType) {
+<span class="fc" id="L62">        val messageReaction = new MessageReactionImpl(payload, messageType);</span>
+<span class="fc" id="L63">        reactions.add(messageReaction);</span>
+<span class="fc" id="L64">        return messageReaction;</span>
+    }
+
+    @Override public MessageReaction reaction(final Consumer&lt;MessageReaction&gt; config) {
+<span class="nc" id="L68">        val reaction = new MessageReactionImpl();</span>
+<span class="nc" id="L69">        config.accept(reaction);</span>
+<span class="nc" id="L70">        reactions.add(reaction);</span>
+<span class="nc" id="L71">        return reaction;</span>
+    }
+
+    /**
+     * Determines whether the message matches the configured expectations.
+     *
+     * @param message the message
+     * @return true if the expectations are matched
+     */
+    public boolean matches(final BufferedBinaryMessage message) {
+<span class="pc bpc" id="L81" title="2 of 4 branches missed.">        return messageType == BINARY &amp;&amp; Arrays.equals(ByteArrays.join(message.getData().getResource()), (byte[]) payload);</span>
+    }
+
+    /**
+     * Determines whether the message matches the configured expectations.
+     *
+     * @param message the message
+     * @return true if the expectations are matched
+     */
+    public boolean matches(final BufferedTextMessage message) {
+<span class="pc bpc" id="L91" title="2 of 4 branches missed.">        return messageType == TEXT &amp;&amp; message.getData().equals(payload);</span>
+    }
+
+    /**
+     * Marks the message.
+     */
+    public void mark() {
+<span class="fc" id="L98">        matchLatch.countDown();</span>
+<span class="fc" id="L99">    }</span>
+
+    /**
+     * Determines whether the message has been marked.
+     *
+     * @param waitFor amount of time to wait before timing out
+     * @return true if the message has been marked
+     */
+    public boolean marked(final WaitFor waitFor) {
+        try {
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">            if (waitFor == FOREVER) {</span>
+<span class="fc" id="L110">                matchLatch.await();</span>
+<span class="fc" id="L111">                return true;</span>
+            } else {
+<span class="nc" id="L113">                return matchLatch.await(waitFor.getTime(), waitFor.getUnit());</span>
+            }
+<span class="nc" id="L115">        } catch (InterruptedException e) {</span>
+<span class="nc" id="L116">            return false;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

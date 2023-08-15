@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 /**
  * Defines the available POST request expectations.
  */
+@SuppressWarnings(&quot;checkstyle:MethodName&quot;)
 public interface PostExpectations {
 
     /**
@@ -32,7 +33,7 @@ public interface PostExpectations {
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
     default RequestWithContent POST(final String path) {
-<span class="fc" id="L35">        return POST(PathMatcher.pathMatching(path));</span>
+<span class="fc" id="L36">        return POST(PathMatcher.pathMatching(path));</span>
     }
 
     /**
@@ -42,7 +43,7 @@ public interface PostExpectations {
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
     default RequestWithContent POST(final Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L45">        return POST(PathMatcher.pathMatching(matcher));</span>
+<span class="fc" id="L46">        return POST(PathMatcher.pathMatching(matcher));</span>
     }
 
     /**
@@ -54,7 +55,7 @@ public interface PostExpectations {
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
     default RequestWithContent POST(final String path, final Consumer&lt;RequestWithContent&gt; config) {
-<span class="fc" id="L57">        return POST(PathMatcher.pathMatching(path), config);</span>
+<span class="fc" id="L58">        return POST(PathMatcher.pathMatching(path), config);</span>
     }
 
     /**
@@ -66,7 +67,7 @@ public interface PostExpectations {
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
     default RequestWithContent POST(final Matcher&lt;String&gt; matcher, final Consumer&lt;RequestWithContent&gt; config) {
-<span class="fc" id="L69">        return POST(PathMatcher.pathMatching(matcher), config);</span>
+<span class="fc" id="L70">        return POST(PathMatcher.pathMatching(matcher), config);</span>
     }
 
     /**
@@ -76,7 +77,7 @@ public interface PostExpectations {
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
     default RequestWithContent POST(final PathMatcher pathMatcher) {
-<span class="fc" id="L79">        return POST(pathMatcher, null);</span>
+<span class="fc" id="L80">        return POST(pathMatcher, null);</span>
     }
 
     /**
@@ -86,6 +87,6 @@ public interface PostExpectations {
      * @param config  the configuration consumer
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
-    RequestWithContent POST(final PathMatcher pathMatcher, final Consumer&lt;RequestWithContent&gt; config);
+    RequestWithContent POST(PathMatcher pathMatcher, Consumer&lt;RequestWithContent&gt; config);
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -16,9 +16,7 @@
 package io.github.cjstehno.ersatz.cfg;
 
 import io.github.cjstehno.ersatz.encdec.DecodingContext;
-import lombok.SneakyThrows;
 
-import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
@@ -75,7 +73,7 @@ public interface ServerConfig {
      * @return a reference to the server being configured
      */
     default ServerConfig timeout(int value) {
-<span class="fc" id="L78">        return timeout(value, SECONDS);</span>
+<span class="fc" id="L76">        return timeout(value, SECONDS);</span>
     }
 
     /**
@@ -84,7 +82,7 @@ public interface ServerConfig {
      * @return a reference to the server being configured
      */
     default ServerConfig reportToConsole() {
-<span class="fc" id="L87">        return reportToConsole(true);</span>
+<span class="fc" id="L85">        return reportToConsole(true);</span>
     }
 
     /**
@@ -125,7 +123,7 @@ public interface ServerConfig {
      * @param expects the &lt;code&gt;Consumer&amp;lt;Expectations&amp;gt;&lt;/code&gt; instance to perform the configuration
      * @return a reference to this server
      */
-    ServerConfig expectations(final Consumer&lt;Expectations&gt; expects);
+    ServerConfig expectations(Consumer&lt;Expectations&gt; expects);
 
     /**
      * An alternate means of starting the expectation chain.
@@ -142,7 +140,7 @@ public interface ServerConfig {
      * @param decoder     the request content decoder
      * @return the reference to the server configuration
      */
-    ServerConfig decoder(final String contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder);
+    ServerConfig decoder(String contentType, BiFunction&lt;byte[], DecodingContext, Object&gt; decoder);
 
     /**
      * Configures the given request content decoder for the specified request content-type. The decoder will be configured globally and used if no
@@ -152,8 +150,8 @@ public interface ServerConfig {
      * @param decoder     the request content decoder
      * @return the reference to the server configuration
      */
-    default ServerConfig decoder(final ContentType contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder){
-<span class="fc" id="L156">        return decoder(contentType.getValue(), decoder);</span>
+    default ServerConfig decoder(final ContentType contentType, final BiFunction&lt;byte[], DecodingContext, Object&gt; decoder) {
+<span class="fc" id="L154">        return decoder(contentType.getValue(), decoder);</span>
     }
 
     /**
@@ -179,7 +177,7 @@ public interface ServerConfig {
      * @return a reference to this server configuration
      */
     default ServerConfig encoder(ContentType contentType, Class objectType, Function&lt;Object, byte[]&gt; encoder) {
-<span class="fc" id="L182">        return encoder(contentType.getValue(), objectType, encoder);</span>
+<span class="fc" id="L180">        return encoder(contentType.getValue(), objectType, encoder);</span>
     }
 
     /**
@@ -214,7 +212,7 @@ public interface ServerConfig {
      * @param value whether or not to enable logging of response content (false by default)
      * @return a reference to this server configuration.
      */
-    ServerConfig logResponseContent(final boolean value);
+    ServerConfig logResponseContent(boolean value);
 
     /**
      * Causes the full response content to be rendered in the server log message for the cases where the response
@@ -224,7 +222,7 @@ public interface ServerConfig {
      * @return a reference to this server configuration.
      */
     default ServerConfig logResponseContent() {
-<span class="fc" id="L227">        return logResponseContent(true);</span>
+<span class="fc" id="L225">        return logResponseContent(true);</span>
     }
 
     /**
@@ -234,7 +232,7 @@ public interface ServerConfig {
      * @param worker the number of worker threads (should be more than io; default is 16)
      * @return a reference to this server configuration
      */
-    ServerConfig serverThreads(final int io, final int worker);
+    ServerConfig serverThreads(int io, int worker);
 
     /**
      * Allows the configuration of the number of IO threads to be used by the underlying server. The worker threads will
@@ -243,8 +241,9 @@ public interface ServerConfig {
      * @param io the number of IO threads (should be a small number; default is 2)
      * @return a reference to this server configuration
      */
+    @SuppressWarnings(&quot;checkstyle:MagicNumber&quot;)
     default ServerConfig serverThreads(final int io) {
-<span class="fc" id="L247">        return serverThreads(io, io * 8);</span>
+<span class="fc" id="L246">        return serverThreads(io, io * 8);</span>
     }
 
     /**
@@ -253,6 +252,6 @@ public interface ServerConfig {
      * @param requirements the requirements configuration consumer
      * @return a reference to this server configuration
      */
-    ServerConfig requirements(final Consumer&lt;Requirements&gt; requirements);
+    ServerConfig requirements(Consumer&lt;Requirements&gt; requirements);
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

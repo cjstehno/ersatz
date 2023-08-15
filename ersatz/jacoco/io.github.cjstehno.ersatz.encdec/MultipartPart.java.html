@@ -42,7 +42,7 @@ public class MultipartPart {
      * @param transferEncoding the transfer encoding
      * @param value            the part value
      */
-<span class="fc" id="L45">    public MultipartPart(String fieldName, String fileName, String contentType, String transferEncoding, Object value) {</span>
+<span class="fc" id="L45">    public MultipartPart(final String fieldName, final String fileName, final String contentType, final String transferEncoding, final Object value) {</span>
 <span class="fc" id="L46">        this.fieldName = fieldName;</span>
 <span class="fc" id="L47">        this.fileName = fileName;</span>
 <span class="fc" id="L48">        this.contentType = contentType;</span>
@@ -50,7 +50,7 @@ public class MultipartPart {
 <span class="fc" id="L50">        this.value = value;</span>
 <span class="fc" id="L51">    }</span>
 
-    @Override public boolean equals(Object o) {
+    @Override public boolean equals(final Object o) {
 <span class="fc bfc" id="L54" title="All 2 branches covered.">        if (this == o) return true;</span>
 <span class="pc bpc" id="L55" title="2 of 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
 <span class="fc" id="L56">        MultipartPart that = (MultipartPart) o;</span>

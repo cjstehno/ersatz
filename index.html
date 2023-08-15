@@ -59,9 +59,7 @@
 
             <ul>
                 <li>Uses an embedded <a href="http://undertow.io/">Undertow server</a> to setup the HTTP server</li>
-                <li>Works with Java 11+</li>
-                <li>Provides an extension (see ersatz-groovy) with a Groovy configuration DSL</li>
-                <li>Works well with Kotlin</li>
+                <li>Works with Java 11+, Groovy, and Kotlin</li>
                 <li>Compatible with the <a href="http://junit.org/">JUnit 5</a> and <a href="http://spockframework.org/">Spock</a> testing
                     frameworks (and probably others).
                 </li>
@@ -69,13 +67,12 @@
                 <li>Support for <a href="http://hamcrest.org/" target="_blank">Hamcrest</a> matchers</li>
                 <li>Call verification to ensure that expected requests are actually called (including specific call counts).</li>
                 <li>Support for both multipart request <em>and</em> response body content.</li>
-                <li>Support for mocking HTTPS requests.</li>
-                <li>Support for GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, and TRACE request methods.</li>
-                <li>Ability to delay the response from the server to simulate slow connections.</li>
+                <li>Support for HTTP and HTTPS requests for GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS, and TRACE request methods.</li>
                 <li>Alternate distribution as a shadowed jar with many of the dependencies repackaged to avoid collisions.</li>
                 <li>Support for upload requests with up to 1.5 GB of content and response downloads of up to 500 MB.</li>
-                <li>Support for chunked response content (e.g. Transfer-encoding: "chunked"), with optional delay times.</li>
+                <li>Support for chunked response content (e.g. Transfer-encoding: "chunked"), and the configuration of delay times.</li>
                 <li>Provides a means of using an external endpoint as a configured response (i.e. request forwarding).</li>
+                <li>Limited support for web sockets messaging.</li>
             </ul>
 
             <h2><span aria-hidden="true" class="octicon octicon-link"></span>Getting Started</h2>
@@ -112,18 +109,18 @@ ersatz.expectations(expect -> {
 
             The Ersatz Server library is available on Maven Central; it may be added to a project via Gradle dependency:
 
-            <pre><code>testImplementation 'io.github.cjstehno.ersatz:ersatz:3.2.0'</code></pre>
+            <pre><code>testImplementation 'io.github.cjstehno.ersatz:ersatz:4.0.0'</code></pre>
 
             for Java, and
 
-            <pre><code>testImplementation 'io.github.cjstehno.ersatz:ersatz-groovy:3.2.0'</code></pre>
+            <pre><code>testImplementation 'io.github.cjstehno.ersatz:ersatz-groovy:4.0.0'</code></pre>
 
             for Groovy (and Java). Or, if you are using Maven:
 
             <pre><code>&lt;dependency&gt;
     &lt;groupId&gt;io.github.cjstehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz&lt;/artifactId&gt;
-    &lt;version&gt;3.2.0&lt;/version&gt;
+    &lt;version&gt;4.0.0&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 
             and
@@ -131,7 +128,7 @@ ersatz.expectations(expect -> {
             <pre><code>&lt;dependency&gt;
     &lt;groupId&gt;io.github.cjstehno.ersatz&lt;/groupId&gt;
     &lt;artifactId&gt;ersatz-groovy&lt;/artifactId&gt;
-    &lt;version&gt;3.2.0&lt;/version&gt;
+    &lt;version&gt;4.0.0&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 
             respectively.

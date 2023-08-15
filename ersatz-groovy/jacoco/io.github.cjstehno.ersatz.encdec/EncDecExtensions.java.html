@@ -17,7 +17,6 @@ package io.github.cjstehno.ersatz.encdec;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import io.github.cjstehno.ersatz.encdec.*;
 import space.jasan.support.groovy.closure.ConsumerWithDelegate;
 
 import static groovy.lang.Closure.DELEGATE_FIRST;
@@ -25,7 +24,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
 /**
  * Groovy extensions for the encoder and decoder functionality.
  */
-<span class="nc" id="L28">public class EncDecExtensions {</span>
+<span class="nc" id="L27">public class EncDecExtensions {</span>
 
     /**
      * Used to configure a request cookie with a configuration closure.
@@ -38,7 +37,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
         final Cookie type,
         @DelegatesTo(value = Cookie.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="fc" id="L41">        return Cookie.cookie(ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L40">        return Cookie.cookie(ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -50,9 +49,9 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
      */
     public static ResponseEncoders encoders(
         final ResponseEncoders type,
-        @DelegatesTo(value = ResponseEncoders.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = ResponseEncoders.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="fc" id="L55">        return ResponseEncoders.encoders(ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L54">        return ResponseEncoders.encoders(ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -64,9 +63,9 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
      */
     public static RequestDecoders decoders(
         final RequestDecoders type,
-        @DelegatesTo(value = RequestDecoders.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = RequestDecoders.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="fc" id="L69">        return RequestDecoders.decoders(ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L68">        return RequestDecoders.decoders(ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -80,7 +79,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
         final MultipartRequestContent type,
         @DelegatesTo(value = MultipartRequestContent.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="fc" id="L83">        return MultipartRequestContent.multipartRequest(ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L82">        return MultipartRequestContent.multipartRequest(ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -94,7 +93,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
         final MultipartResponseContent type,
         final @DelegatesTo(value = MultipartResponseContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="fc" id="L97">        return MultipartResponseContent.multipartResponse(ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L96">        return MultipartResponseContent.multipartResponse(ConsumerWithDelegate.create(closure));</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

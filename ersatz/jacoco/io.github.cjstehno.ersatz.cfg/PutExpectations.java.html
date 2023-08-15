@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 /**
  * Defines the available PUT request expectations.
  */
+@SuppressWarnings(&quot;checkstyle:MethodName&quot;)
 public interface PutExpectations {
 
     /**
@@ -32,7 +33,7 @@ public interface PutExpectations {
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
     default RequestWithContent PUT(final String path) {
-<span class="fc" id="L35">        return PUT(PathMatcher.pathMatching(path));</span>
+<span class="fc" id="L36">        return PUT(PathMatcher.pathMatching(path));</span>
     }
 
     /**
@@ -42,7 +43,7 @@ public interface PutExpectations {
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
     default RequestWithContent PUT(final Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L45">        return PUT(PathMatcher.pathMatching(matcher));</span>
+<span class="fc" id="L46">        return PUT(PathMatcher.pathMatching(matcher));</span>
     }
 
     /**
@@ -54,7 +55,7 @@ public interface PutExpectations {
      * @param config the configuration consumer
      */
     default RequestWithContent PUT(final String path, final Consumer&lt;RequestWithContent&gt; config) {
-<span class="fc" id="L57">        return PUT(PathMatcher.pathMatching(path), config);</span>
+<span class="fc" id="L58">        return PUT(PathMatcher.pathMatching(path), config);</span>
     }
 
     /**
@@ -66,7 +67,7 @@ public interface PutExpectations {
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
     default RequestWithContent PUT(final Matcher&lt;String&gt; matcher, final Consumer&lt;RequestWithContent&gt; config) {
-<span class="fc" id="L69">        return PUT(PathMatcher.pathMatching(matcher), config);</span>
+<span class="fc" id="L70">        return PUT(PathMatcher.pathMatching(matcher), config);</span>
     }
 
     /**
@@ -76,7 +77,7 @@ public interface PutExpectations {
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
     default RequestWithContent PUT(final PathMatcher pathMatcher) {
-<span class="fc" id="L79">        return PUT(pathMatcher, null);</span>
+<span class="fc" id="L80">        return PUT(pathMatcher, null);</span>
     }
 
     /**
@@ -86,6 +87,6 @@ public interface PutExpectations {
      * @param config the configuration consumer
      * @return a &lt;code&gt;RequestWithContent&lt;/code&gt; configuration object
      */
-    RequestWithContent PUT(final PathMatcher pathMatcher, final Consumer&lt;RequestWithContent&gt; config);
+    RequestWithContent PUT(PathMatcher pathMatcher, Consumer&lt;RequestWithContent&gt; config);
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

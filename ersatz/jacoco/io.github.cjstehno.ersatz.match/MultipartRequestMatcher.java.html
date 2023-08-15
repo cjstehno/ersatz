@@ -27,18 +27,20 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.startsWith;
 
 /**
  * A Hamcrest matcher used to match &lt;code&gt;MultipartRequestContent&lt;/code&gt;. The matcher may be created directly or by using the closure or consumer
  * static configuration methods.
  */
-<span class="fc" id="L36">public class MultipartRequestMatcher extends BaseMatcher&lt;MultipartRequestContent&gt; {</span>
+<span class="fc" id="L38">public class MultipartRequestMatcher extends BaseMatcher&lt;MultipartRequestContent&gt; {</span>
 
     private static final String VALUE = &quot;value&quot;;
     private static final String CONTENT_TYPE = &quot;contentType&quot;;
     private static final String FILE_NAME = &quot;fileName&quot;;
-<span class="fc" id="L41">    private final Map&lt;String, Map&lt;String, Matcher&gt;&gt; matchers = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L43">    private final Map&lt;String, Map&lt;String, Matcher&gt;&gt; matchers = new LinkedHashMap&lt;&gt;();</span>
 
     /**
      * Creates a new multipart matcher with a consumer - it will have an instance of &lt;code&gt;MultipartRequestMatcher&lt;/code&gt; passed into it for
@@ -48,9 +50,9 @@ import static org.hamcrest.Matchers.*;
      * @return a configured matcher instance
      */
     public static MultipartRequestMatcher multipartMatcher(final Consumer&lt;MultipartRequestMatcher&gt; config) {
-<span class="fc" id="L51">        MultipartRequestMatcher matcher = new MultipartRequestMatcher();</span>
-<span class="fc" id="L52">        config.accept(matcher);</span>
-<span class="fc" id="L53">        return matcher;</span>
+<span class="fc" id="L53">        MultipartRequestMatcher matcher = new MultipartRequestMatcher();</span>
+<span class="fc" id="L54">        config.accept(matcher);</span>
+<span class="fc" id="L55">        return matcher;</span>
     }
 
     /**
@@ -60,7 +62,7 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName) {
-<span class="fc" id="L63">        return part(fieldName, notNullValue());</span>
+<span class="fc" id="L65">        return part(fieldName, notNullValue());</span>
     }
 
     /**
@@ -71,8 +73,8 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName, final Matcher&lt;Object&gt; value) {
-<span class="fc" id="L74">        matchers.put(fieldName, Map.of(VALUE, value));</span>
-<span class="fc" id="L75">        return this;</span>
+<span class="fc" id="L76">        matchers.put(fieldName, Map.of(VALUE, value));</span>
+<span class="fc" id="L77">        return this;</span>
     }
 
     /**
@@ -84,7 +86,7 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName, final String value) {
-<span class="fc" id="L87">        return part(fieldName, equalTo(value));</span>
+<span class="fc" id="L89">        return part(fieldName, equalTo(value));</span>
     }
 
     /**
@@ -96,8 +98,8 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName, final Matcher&lt;String&gt; contentType, final Matcher&lt;Object&gt; value) {
-<span class="fc" id="L99">        matchers.put(fieldName, Map.of(CONTENT_TYPE, contentType, VALUE, value));</span>
-<span class="fc" id="L100">        return this;</span>
+<span class="fc" id="L101">        matchers.put(fieldName, Map.of(CONTENT_TYPE, contentType, VALUE, value));</span>
+<span class="fc" id="L102">        return this;</span>
     }
 
     /**
@@ -110,7 +112,7 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName, final String contentType, final Matcher&lt;Object&gt; value) {
-<span class="fc" id="L113">        return part(fieldName, startsWith(contentType), value);</span>
+<span class="fc" id="L115">        return part(fieldName, startsWith(contentType), value);</span>
     }
 
     /**
@@ -123,7 +125,7 @@ import static org.hamcrest.Matchers.*;
      * @return a reference to this multipart request matcher
      */
     public MultipartRequestMatcher part(final String fieldName, final ContentType contentType, final Matcher&lt;Object&gt; value) {
-<span class="fc" id="L126">        return part(fieldName, contentType.getValue(), value);</span>
+<span class="fc" id="L128">        return part(fieldName, contentType.getValue(), value);</span>
     }
 
     /**
@@ -135,9 +137,11 @@ import static org.hamcrest.Matchers.*;
      * @param value       the value matcher
      * @return a reference to this multipart request matcher
      */
-    public MultipartRequestMatcher part(String fieldName, Matcher&lt;String&gt; fileName, Matcher&lt;String&gt; contentType, Matcher&lt;Object&gt; value) {
-<span class="fc" id="L139">        matchers.put(fieldName, Map.of(&quot;fileName&quot;, fileName, &quot;contentType&quot;, contentType, VALUE, value));</span>
-<span class="fc" id="L140">        return this;</span>
+    public MultipartRequestMatcher part(
+        final String fieldName, final Matcher&lt;String&gt; fileName, final Matcher&lt;String&gt; contentType, final Matcher&lt;Object&gt; value
+    ) {
+<span class="fc" id="L143">        matchers.put(fieldName, Map.of(&quot;fileName&quot;, fileName, &quot;contentType&quot;, contentType, VALUE, value));</span>
+<span class="fc" id="L144">        return this;</span>
     }
 
     /**
@@ -151,8 +155,8 @@ import static org.hamcrest.Matchers.*;
      * @param value       the value matcher
      * @return a reference to this multipart request matcher
      */
-    public MultipartRequestMatcher part(String fieldName, String fileName, String contentType, Matcher&lt;Object&gt; value) {
-<span class="fc" id="L155">        return part(fieldName, equalTo(fileName), startsWith(contentType), value);</span>
+    public MultipartRequestMatcher part(final String fieldName, final String fileName, final String contentType, final Matcher&lt;Object&gt; value) {
+<span class="fc" id="L159">        return part(fieldName, equalTo(fileName), startsWith(contentType), value);</span>
     }
 
     /**
@@ -166,8 +170,8 @@ import static org.hamcrest.Matchers.*;
      * @param value       the value matcher
      * @return a reference to this multipart request matcher
      */
-    public MultipartRequestMatcher part(String fieldName, String fileName, ContentType contentType, Matcher&lt;Object&gt; value) {
-<span class="fc" id="L170">        return part(fieldName, fileName, contentType.getValue(), value);</span>
+    public MultipartRequestMatcher part(final String fieldName, final String fileName, final ContentType contentType, final Matcher&lt;Object&gt; value) {
+<span class="fc" id="L174">        return part(fieldName, fileName, contentType.getValue(), value);</span>
     }
 
     /**
@@ -178,33 +182,33 @@ import static org.hamcrest.Matchers.*;
      */
     @Override
     public boolean matches(final Object item) {
-<span class="fc bfc" id="L181" title="All 2 branches covered.">        if (!(item instanceof MultipartRequestContent)) {</span>
-<span class="fc" id="L182">            return false;</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (!(item instanceof MultipartRequestContent)) {</span>
+<span class="fc" id="L186">            return false;</span>
         }
 
-<span class="fc" id="L185">        val results = new LinkedList&lt;Boolean&gt;();</span>
-<span class="fc" id="L186">        val mrc = (MultipartRequestContent) item;</span>
+<span class="fc" id="L189">        val results = new LinkedList&lt;Boolean&gt;();</span>
+<span class="fc" id="L190">        val mrc = (MultipartRequestContent) item;</span>
 
-<span class="fc" id="L188">        matchers.forEach((fn, matcher) -&gt; {</span>
-<span class="fc" id="L189">            final var part = mrc.getAt(fn);</span>
-<span class="fc bfc" id="L190" title="All 2 branches covered.">            if (part != null) {</span>
-<span class="fc bfc" id="L191" title="All 2 branches covered.">                if (matcher.containsKey(FILE_NAME)) {</span>
-<span class="fc" id="L192">                    results.add(matcher.get(FILE_NAME).matches(part.getFileName()));</span>
+<span class="fc" id="L192">        matchers.forEach((fn, matcher) -&gt; {</span>
+<span class="fc" id="L193">            final var part = mrc.getAt(fn);</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">            if (part != null) {</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">                if (matcher.containsKey(FILE_NAME)) {</span>
+<span class="fc" id="L196">                    results.add(matcher.get(FILE_NAME).matches(part.getFileName()));</span>
                 }
 
-<span class="fc bfc" id="L195" title="All 2 branches covered.">                if (matcher.containsKey(CONTENT_TYPE)) {</span>
-<span class="fc" id="L196">                    results.add(matcher.get(CONTENT_TYPE).matches(part.getContentType()));</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">                if (matcher.containsKey(CONTENT_TYPE)) {</span>
+<span class="fc" id="L200">                    results.add(matcher.get(CONTENT_TYPE).matches(part.getContentType()));</span>
                 }
 
-<span class="pc bpc" id="L199" title="1 of 2 branches missed.">                if (matcher.containsKey(VALUE)) {</span>
-<span class="fc" id="L200">                    results.add(matcher.get(VALUE).matches(part.getValue()));</span>
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">                if (matcher.containsKey(VALUE)) {</span>
+<span class="fc" id="L204">                    results.add(matcher.get(VALUE).matches(part.getValue()));</span>
                 }
             } else {
-<span class="fc" id="L203">                results.add(false);</span>
+<span class="fc" id="L207">                results.add(false);</span>
             }
-<span class="fc" id="L205">        });</span>
+<span class="fc" id="L209">        });</span>
 
-<span class="fc" id="L207">        return results.stream().allMatch(r -&gt; r);</span>
+<span class="fc" id="L211">        return results.stream().allMatch(r -&gt; r);</span>
     }
 
     /**
@@ -214,15 +218,15 @@ import static org.hamcrest.Matchers.*;
      */
     @Override
     public void describeTo(final Description description) {
-<span class="fc" id="L217">        description.appendText(&quot;MultipartRequestMatcher: &quot;);</span>
+<span class="fc" id="L221">        description.appendText(&quot;MultipartRequestMatcher: &quot;);</span>
 
-<span class="fc" id="L219">        matchers.forEach((fn, map) -&gt; {</span>
-<span class="fc" id="L220">            map.forEach((f, m) -&gt; {</span>
-<span class="fc" id="L221">                description.appendText(f + &quot;(&quot;);</span>
-<span class="fc" id="L222">                m.describeTo(description);</span>
-<span class="fc" id="L223">                description.appendText(&quot;) &quot;);</span>
-<span class="fc" id="L224">            });</span>
-<span class="fc" id="L225">        });</span>
-<span class="fc" id="L226">    }</span>
+<span class="fc" id="L223">        matchers.forEach((fn, map) -&gt; {</span>
+<span class="fc" id="L224">            map.forEach((f, m) -&gt; {</span>
+<span class="fc" id="L225">                description.appendText(f + &quot;(&quot;);</span>
+<span class="fc" id="L226">                m.describeTo(description);</span>
+<span class="fc" id="L227">                description.appendText(&quot;) &quot;);</span>
+<span class="fc" id="L228">            });</span>
+<span class="fc" id="L229">        });</span>
+<span class="fc" id="L230">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

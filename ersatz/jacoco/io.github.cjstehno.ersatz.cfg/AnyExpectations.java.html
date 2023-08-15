@@ -25,6 +25,7 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 /**
  * Defines the available generic request (ANY) expectations.
  */
+@SuppressWarnings(&quot;checkstyle:MethodName&quot;)
 public interface AnyExpectations {
 
     /**
@@ -34,7 +35,7 @@ public interface AnyExpectations {
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request ANY(final String path) {
-<span class="fc" id="L37">        return ANY(pathMatching(path));</span>
+<span class="fc" id="L38">        return ANY(pathMatching(path));</span>
     }
 
     /**
@@ -44,7 +45,7 @@ public interface AnyExpectations {
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request ANY(final Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L47">        return ANY(pathMatching(matcher));</span>
+<span class="fc" id="L48">        return ANY(pathMatching(matcher));</span>
     }
 
     /**
@@ -56,7 +57,7 @@ public interface AnyExpectations {
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request ANY(final String path, Consumer&lt;Request&gt; consumer) {
-<span class="fc" id="L59">        return ANY(pathMatching(path), consumer);</span>
+<span class="fc" id="L60">        return ANY(pathMatching(path), consumer);</span>
     }
 
     /**
@@ -68,7 +69,7 @@ public interface AnyExpectations {
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request ANY(final Matcher&lt;String&gt; matcher, final Consumer&lt;Request&gt; consumer) {
-<span class="fc" id="L71">        return ANY(pathMatching(matcher), consumer);</span>
+<span class="fc" id="L72">        return ANY(pathMatching(matcher), consumer);</span>
     }
 
     /**
@@ -79,7 +80,7 @@ public interface AnyExpectations {
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request ANY(final PathMatcher pathMatcher) {
-<span class="fc" id="L82">        return ANY(pathMatcher, null);</span>
+<span class="fc" id="L83">        return ANY(pathMatcher, null);</span>
     }
 
     /**
@@ -90,6 +91,6 @@ public interface AnyExpectations {
      * @param consumer the configuration consumer
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
-    Request ANY(final PathMatcher pathMatcher, Consumer&lt;Request&gt; consumer);
+    Request ANY(PathMatcher pathMatcher, Consumer&lt;Request&gt; consumer);
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

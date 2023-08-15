@@ -72,11 +72,11 @@ class FunctionMatcher&lt;T&gt; extends BaseMatcher&lt;T&gt; {
 
     private final Function&lt;T, Boolean&gt; function;
 
-    @Override public boolean matches(Object actual) {
+    @Override public boolean matches(final Object actual) {
 <span class="fc" id="L76">        return function.apply((T) actual);</span>
     }
 
-    @Override public void describeTo(Description description) {
+    @Override public void describeTo(final Description description) {
 <span class="fc" id="L80">        description.appendText(&quot;A function that checks for matching.&quot;);</span>
 <span class="fc" id="L81">    }</span>
 }
@@ -109,8 +109,11 @@ class ByteArrayMatcher extends BaseMatcher&lt;byte[]&gt; {
     }
 
     @Override
-    public void describeTo(Description description) {
-<span class="fc" id="L113">        description.appendText(&quot;A byte array of length &quot; + array.length + &quot; having &quot; + array[0] + &quot; as the first element and &quot; + array[array.length - 1] + &quot; as the last.&quot;);</span>
-<span class="fc" id="L114">    }</span>
+    public void describeTo(final Description description) {
+<span class="fc" id="L113">        description.appendText(</span>
+            &quot;A byte array of length &quot; + array.length + &quot; having &quot; + array[0] + &quot; as the first element and &quot; +
+                array[array.length - 1] + &quot; as the last.&quot;
+        );
+<span class="fc" id="L117">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

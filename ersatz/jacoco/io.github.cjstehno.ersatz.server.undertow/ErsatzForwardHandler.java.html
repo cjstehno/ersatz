@@ -111,11 +111,11 @@ public class ErsatzForwardHandler implements ErsatzHandler {
 <span class="fc" id="L111">            final var trustAllCerts = new TrustManager[]{</span>
 <span class="fc" id="L112">                new X509TrustManager() {</span>
                     @Override
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                    public void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
 <span class="nc" id="L115">                    }</span>
 
                     @Override
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                    public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
 <span class="fc" id="L119">                    }</span>
 
                     @Override public X509Certificate[] getAcceptedIssuers() {

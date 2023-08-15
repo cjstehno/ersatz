@@ -25,6 +25,7 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 /**
  * Defines the available DELETE request expectations.
  */
+@SuppressWarnings(&quot;checkstyle:MethodName&quot;)
 public interface DeleteExpectations {
 
     /**
@@ -34,7 +35,7 @@ public interface DeleteExpectations {
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request DELETE(final String path) {
-<span class="fc" id="L37">        return DELETE(pathMatching(path));</span>
+<span class="fc" id="L38">        return DELETE(pathMatching(path));</span>
     }
 
     /**
@@ -44,7 +45,7 @@ public interface DeleteExpectations {
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request DELETE(final Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L47">        return DELETE(pathMatching(matcher));</span>
+<span class="fc" id="L48">        return DELETE(pathMatching(matcher));</span>
     }
 
     /**
@@ -57,7 +58,7 @@ public interface DeleteExpectations {
      * @param config the configuration consumer
      */
     default Request DELETE(final String path, final Consumer&lt;Request&gt; config) {
-<span class="fc" id="L60">        return DELETE(pathMatching(path), config);</span>
+<span class="fc" id="L61">        return DELETE(pathMatching(path), config);</span>
     }
 
     /**
@@ -70,7 +71,7 @@ public interface DeleteExpectations {
      * @param config the configuration consumer
      */
     default Request DELETE(final Matcher&lt;String&gt; matcher, final Consumer&lt;Request&gt; config) {
-<span class="fc" id="L73">        return DELETE(pathMatching(matcher), config);</span>
+<span class="fc" id="L74">        return DELETE(pathMatching(matcher), config);</span>
     }
 
     /**
@@ -80,7 +81,7 @@ public interface DeleteExpectations {
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request DELETE(final PathMatcher pathMatcher) {
-<span class="fc" id="L83">        return DELETE(pathMatcher, null);</span>
+<span class="fc" id="L84">        return DELETE(pathMatcher, null);</span>
     }
 
     /**
@@ -92,6 +93,6 @@ public interface DeleteExpectations {
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      * @param config the configuration consumer
      */
-    Request DELETE(final PathMatcher pathMatcher, final Consumer&lt;Request&gt; config);
+    Request DELETE(PathMatcher pathMatcher, Consumer&lt;Request&gt; config);
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

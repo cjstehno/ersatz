@@ -40,7 +40,7 @@ public class PathMatcher extends BaseMatcher&lt;ClientRequest&gt; {
      * @return the path matcher
      */
     public static PathMatcher pathMatching(final String path) {
-<span class="fc bfc" id="L43" title="All 2 branches covered.">        return pathMatching(path.equals(&quot;*&quot;) ? any(String.class) : equalTo(path));</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        return pathMatching(&quot;*&quot;.equals(path) ? any(String.class) : equalTo(path));</span>
     }
 
     /**

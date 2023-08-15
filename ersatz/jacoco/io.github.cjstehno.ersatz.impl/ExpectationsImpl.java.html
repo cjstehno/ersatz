@@ -19,6 +19,8 @@ import io.github.cjstehno.ersatz.cfg.Expectations;
 import io.github.cjstehno.ersatz.cfg.HttpMethod;
 import io.github.cjstehno.ersatz.cfg.Request;
 import io.github.cjstehno.ersatz.cfg.RequestWithContent;
+import io.github.cjstehno.ersatz.cfg.WaitFor;
+import io.github.cjstehno.ersatz.cfg.WebSocketExpectations;
 import io.github.cjstehno.ersatz.encdec.RequestDecoders;
 import io.github.cjstehno.ersatz.encdec.ResponseEncoders;
 import io.github.cjstehno.ersatz.match.PathMatcher;
@@ -26,10 +28,12 @@ import io.github.cjstehno.ersatz.server.ClientRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.ANY;
@@ -38,15 +42,17 @@ import static io.github.cjstehno.ersatz.cfg.HttpMethod.HEAD;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.PATCH;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.POST;
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.PUT;
+import static io.github.cjstehno.ersatz.cfg.WaitFor.ONE_SECOND;
 import static java.util.Collections.unmodifiableList;
 
 /**
  * Implementation of the &lt;code&gt;Expectations&lt;/code&gt; interface.
  */
-<span class="fc" id="L46">@Slf4j @RequiredArgsConstructor</span>
+<span class="fc" id="L51">@Slf4j @RequiredArgsConstructor</span>
 public class ExpectationsImpl implements Expectations {
 
-<span class="fc" id="L49">    private final List&lt;Request&gt; requests = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L54">    private final List&lt;Request&gt; requests = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L55">    private final Map&lt;String, WebSocketExpectations&gt; webSockets = new LinkedHashMap&lt;&gt;();</span>
     private final ResponseEncoders globalEncoders;
     private final RequestDecoders globalDecoders;
 
@@ -54,66 +60,68 @@ public class ExpectationsImpl implements Expectations {
      * Removes all expectation configuration, but does not modify global encoders or decoders.
      */
     public void clear() {
-<span class="fc" id="L57">        requests.clear();</span>
-<span class="fc" id="L58">    }</span>
+<span class="fc" id="L63">        requests.clear();</span>
+<span class="fc" id="L64">    }</span>
 
     @Override
     public Request request(final HttpMethod method, final PathMatcher pathMatcher, final Consumer&lt;Request&gt; consumer) {
-<span class="fc" id="L62">        return applyExpectation(new ErsatzRequestWithContent(method, pathMatcher, globalDecoders, globalEncoders), consumer);</span>
+<span class="fc" id="L68">        return applyExpectation(new ErsatzRequestWithContent(method, pathMatcher, globalDecoders, globalEncoders), consumer);</span>
     }
 
-    private RequestWithContent requestWithContent(final HttpMethod method, final PathMatcher pathMatcher, final Consumer&lt;RequestWithContent&gt; consumer) {
-<span class="fc" id="L66">        return applyExpectation(new ErsatzRequestWithContent(method, pathMatcher, globalDecoders, globalEncoders), consumer);</span>
+    private RequestWithContent requestWithContent(
+        final HttpMethod method, final PathMatcher pathMatcher, final Consumer&lt;RequestWithContent&gt; consumer
+    ) {
+<span class="fc" id="L74">        return applyExpectation(new ErsatzRequestWithContent(method, pathMatcher, globalDecoders, globalEncoders), consumer);</span>
     }
 
     @Override
     public Request ANY(final PathMatcher pathMatcher, final Consumer&lt;Request&gt; consumer) {
-<span class="fc" id="L71">        return request(ANY, pathMatcher, consumer);</span>
+<span class="fc" id="L79">        return request(ANY, pathMatcher, consumer);</span>
     }
 
     @Override
     public Request GET(final PathMatcher pathMatcher, final Consumer&lt;Request&gt; consumer) {
-<span class="fc" id="L76">        return request(GET, pathMatcher, consumer);</span>
+<span class="fc" id="L84">        return request(GET, pathMatcher, consumer);</span>
     }
 
     @Override
     public Request HEAD(final PathMatcher pathMatcher, final Consumer&lt;Request&gt; consumer) {
-<span class="fc" id="L81">        return request(HEAD, pathMatcher, consumer);</span>
+<span class="fc" id="L89">        return request(HEAD, pathMatcher, consumer);</span>
     }
 
     @Override
-    public RequestWithContent POST(final PathMatcher pathMatcher, Consumer&lt;RequestWithContent&gt; consumer) {
-<span class="fc" id="L86">        return requestWithContent(POST, pathMatcher, consumer);</span>
+    public RequestWithContent POST(final PathMatcher pathMatcher, final Consumer&lt;RequestWithContent&gt; consumer) {
+<span class="fc" id="L94">        return requestWithContent(POST, pathMatcher, consumer);</span>
     }
 
     @Override
-    public RequestWithContent PUT(final PathMatcher pathMatcher, Consumer&lt;RequestWithContent&gt; config) {
-<span class="fc" id="L91">        return requestWithContent(PUT, pathMatcher, config);</span>
+    public RequestWithContent PUT(final PathMatcher pathMatcher, final Consumer&lt;RequestWithContent&gt; config) {
+<span class="fc" id="L99">        return requestWithContent(PUT, pathMatcher, config);</span>
     }
 
     @Override
-    public Request DELETE(final PathMatcher pathMatcher, Consumer&lt;Request&gt; config) {
-<span class="fc" id="L96">        return request(HttpMethod.DELETE, pathMatcher, config);</span>
+    public Request DELETE(final PathMatcher pathMatcher, final Consumer&lt;Request&gt; config) {
+<span class="fc" id="L104">        return request(HttpMethod.DELETE, pathMatcher, config);</span>
     }
 
     @Override
-    public RequestWithContent PATCH(final PathMatcher pathMatcher, Consumer&lt;RequestWithContent&gt; config) {
-<span class="fc" id="L101">        return requestWithContent(PATCH, pathMatcher, config);</span>
+    public RequestWithContent PATCH(final PathMatcher pathMatcher, final Consumer&lt;RequestWithContent&gt; config) {
+<span class="fc" id="L109">        return requestWithContent(PATCH, pathMatcher, config);</span>
     }
 
     @Override
-    public Request OPTIONS(final PathMatcher pathMatcher, Consumer&lt;Request&gt; config) {
-<span class="fc" id="L106">        return request(HttpMethod.OPTIONS, pathMatcher, config);</span>
+    public Request OPTIONS(final PathMatcher pathMatcher, final Consumer&lt;Request&gt; config) {
+<span class="fc" id="L114">        return request(HttpMethod.OPTIONS, pathMatcher, config);</span>
     }
 
     private &lt;R extends Request&gt; R applyExpectation(final R request, final Consumer&lt;R&gt; consumer) {
-<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (consumer != null) {</span>
-<span class="fc" id="L111">            consumer.accept(request);</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (consumer != null) {</span>
+<span class="fc" id="L119">            consumer.accept(request);</span>
         }
 
-<span class="fc" id="L114">        requests.add(request);</span>
+<span class="fc" id="L122">        requests.add(request);</span>
 
-<span class="fc" id="L116">        return request;</span>
+<span class="fc" id="L124">        return request;</span>
     }
 
     /**
@@ -123,7 +131,7 @@ public class ExpectationsImpl implements Expectations {
      * @return the matching request expectation
      */
     public Optional&lt;Request&gt; findMatch(final ClientRequest clientRequest) {
-<span class="fc" id="L126">        return requests.stream().filter(r -&gt; ((ErsatzRequest) r).matches(clientRequest)).findFirst();</span>
+<span class="fc" id="L134">        return requests.stream().filter(r -&gt; ((ErsatzRequest) r).matches(clientRequest)).findFirst();</span>
     }
 
     /**
@@ -132,7 +140,7 @@ public class ExpectationsImpl implements Expectations {
      * @return the list of request expectations
      */
     public List&lt;Request&gt; getRequests() {
-<span class="fc" id="L135">        return unmodifiableList(requests);</span>
+<span class="fc" id="L143">        return unmodifiableList(requests);</span>
     }
 
     /**
@@ -140,31 +148,25 @@ public class ExpectationsImpl implements Expectations {
      * &lt;p&gt;
      * This method will block until the call count expectations are met or the timeout expires.
      *
-     * @param timeout the amount of time to wait in the specified units
-     * @param unit    the timeout unit to be used
+     * @param waitFor the amount of time the verification should wait before timing out
      * @return a value of true if all requests are verified
      */
-    public boolean verify(final long timeout, final TimeUnit unit) {
-<span class="fc bfc" id="L148" title="All 2 branches covered.">        for (final Request r : requests) {</span>
-<span class="fc bfc" id="L149" title="All 2 branches covered.">            if (!((ErsatzRequest) r).verify(timeout, unit)) {</span>
-<span class="fc" id="L150">                log.error(&quot;Call count mismatch -&gt; {}&quot;, r);</span>
-<span class="fc" id="L151">                return false;</span>
+    public boolean verify(final WaitFor waitFor) {
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        for (final Request r : requests) {</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">            if (!((ErsatzRequest) r).verify(waitFor)) {</span>
+<span class="fc" id="L157">                log.error(&quot;Call count mismatch -&gt; {}&quot;, r);</span>
+<span class="fc" id="L158">                return false;</span>
             }
-<span class="fc" id="L153">        }</span>
+<span class="fc" id="L160">        }</span>
 
-<span class="fc" id="L155">        return true;</span>
-    }
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        for (final var entry : webSockets.entrySet()) {</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            if (!(((WebSocketExpectationsImpl) entry.getValue()).verify(waitFor))) {</span>
+<span class="fc" id="L164">                log.error(&quot;WebSocket expectations for {} were not met.&quot;, ((WebSocketExpectationsImpl) entry.getValue()).getPath());</span>
+<span class="fc" id="L165">                return false;</span>
+            }
+<span class="fc" id="L167">        }</span>
 
-    /**
-     * Used to verify that all request expectations have been called the expected number of times.
-     * &lt;p&gt;
-     * This method will block until the call count expectations are met or the timeout expires.
-     *
-     * @param timeout the amount of time to wait (in seconds)
-     * @return a value of true if all requests are verified
-     */
-    public boolean verify(final long timeout) {
-<span class="nc" id="L167">        return verify(timeout, TimeUnit.SECONDS);</span>
+<span class="fc" id="L169">        return true;</span>
     }
 
     /**
@@ -174,7 +176,38 @@ public class ExpectationsImpl implements Expectations {
      * @return a value of true if all requests are verified
      */
     public boolean verify() {
-<span class="fc" id="L177">        return verify(1, TimeUnit.SECONDS);</span>
+<span class="fc" id="L179">        return verify(ONE_SECOND);</span>
+    }
+
+    @Override public WebSocketExpectations webSocket(final String path, final Consumer&lt;WebSocketExpectations&gt; config) {
+<span class="fc" id="L183">        final WebSocketExpectationsImpl wse = new WebSocketExpectationsImpl(path);</span>
+
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (config != null) {</span>
+<span class="fc" id="L186">            config.accept(wse);</span>
+        }
+
+<span class="fc" id="L189">        webSockets.put(path, wse);</span>
+
+<span class="fc" id="L191">        return wse;</span>
+    }
+
+    /**
+     * Retrieves the set of web socket paths configured by the expectations.
+     *
+     * @return the set of socket paths
+     */
+    public Set&lt;String&gt; getWebSocketPaths() {
+<span class="fc" id="L200">        return webSockets.keySet();</span>
+    }
+
+    /**
+     * Finds the web socket expectation matching the given path.
+     *
+     * @param path the path
+     * @return the matching expectation
+     */
+    public WebSocketExpectations findWsMatch(final String path) {
+<span class="fc" id="L210">        return webSockets.get(path);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

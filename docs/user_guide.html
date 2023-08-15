@@ -442,8 +442,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>Ersatz Server User Guide</h1>
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
-<span id="revnumber">version 3.2.0,</span>
-<span id="revdate">April 2023</span>
+<span id="revnumber">version 4.0.0,</span>
+<span id="revdate">August 2023</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -451,6 +451,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_introduction">Introduction</a></li>
 <li><a href="#_whats_new">What&#8217;s New</a>
 <ul class="sectlevel2">
+<li><a href="#_in_4_0">In 4.0</a></li>
 <li><a href="#_in_3_2">In 3.2</a></li>
 <li><a href="#_in_3_1">In 3.1</a></li>
 <li><a href="#_in_3_0">In 3.0</a>
@@ -574,7 +575,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </li>
-<li><a href="#_proxy_server">Proxy Server</a></li>
+<li><a href="#_web_sockets">Web Sockets</a></li>
 <li><a href="#_shadow_jar">Shadow Jar</a>
 <ul class="sectlevel2">
 <li><a href="#_gradle_2">Gradle</a></li>
@@ -637,6 +638,28 @@ The code examples throughout this document are written with either Java or Groov
 <div class="sect1">
 <h2 id="_whats_new">What&#8217;s New</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_in_4_0">In 4.0</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Updated Groovy support to 4.x and switched to the new coordinates - it <em>should</em> still work with older Groovy versions, please file an issue if you are unable to use 3.x versions.</p>
+</li>
+<li>
+<p>Added an updated version of the old websockets support - still limited at this time (only non-secure connections).</p>
+</li>
+<li>
+<p>Re-removed the old standalone proxy server - the forwarding functionality replaces this.</p>
+</li>
+<li>
+<p>Verification timeouts using time+unit are deprecated (or removed) in favor of versions using a new <code>WaitFor</code> utility object - this provides most of the standard configurations, as well as a <code>FOREVER</code> waiting time.</p>
+</li>
+<li>
+<p>General testing and code cleanup (mostly checkstyle and codenarc formatting)</p>
+</li>
+</ul>
+</div>
+</div>
 <div class="sect2">
 <h3 id="_in_3_2">In 3.2</h3>
 <div class="ulist">
@@ -882,10 +905,10 @@ The code examples throughout this document are written with either Java or Groov
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz:3.2.0'</span>
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz:4.0.0'</span>
 
 <span class="c1">// or, for the Groovy extensions</span>
-<span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:3.2.0'</span></code></pre>
+<span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:4.0.0'</span></code></pre>
 </div>
 </div>
 </div>
@@ -899,7 +922,7 @@ The code examples throughout this document are written with either Java or Groov
 <pre class="rouge highlight"><code data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>3.2.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>4.0.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 
@@ -907,7 +930,7 @@ The code examples throughout this document are written with either Java or Groov
 <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz-groovy<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>3.2.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>4.0.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span></code></pre>
 </div>
@@ -2720,48 +2743,8 @@ Content-Type: image/jpeg
 </div>
 </div>
 <div class="sect1">
-<h2 id="_proxy_server">Proxy Server</h2>
+<h2 id="_web_sockets">Web Sockets</h2>
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Warning</div>
-</td>
-<td class="content">
-This functionality has been brought back into the framework, and slightly updated, but it will be removed in a near-future release. The request forwarding functionality should be used instead, as it provides a more flexible and expressive framework.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>A simple standalone proxy server is available/ The <code>io.github.cjstehno.ersatz.ErsatzProxyServer</code> is useful for testing proxied HTTP connections.
-The proxy server has a similar configuration to the <code>ErsatzServer</code> and allows limited expectation configuration; it is expected that more detailed expectation configuration will be done on a standard <code>ErsatzServer</code> instance at the other end of the proxy, something like the following:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="java"><span class="kt">var</span> <span class="n">ersatzServer</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ErsatzServer</span><span class="o">(</span><span class="n">cfg</span> <span class="o">-&gt;</span> <span class="o">{</span>
-    <span class="n">cfg</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expect</span> <span class="o">-&gt;</span> <span class="o">{</span>
-        <span class="n">expect</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/"</span><span class="o">).</span><span class="na">called</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">responds</span><span class="o">().</span><span class="na">code</span><span class="o">(</span><span class="mi">200</span><span class="o">).</span><span class="na">content</span><span class="o">(</span><span class="s">"Hello"</span><span class="o">,</span> <span class="no">TEXT_PLAIN</span><span class="o">);</span>
-        <span class="n">expect</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/foo"</span><span class="o">).</span><span class="na">called</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">responds</span><span class="o">().</span><span class="na">code</span><span class="o">(</span><span class="mi">200</span><span class="o">).</span><span class="na">content</span><span class="o">(</span><span class="s">"Foo!"</span><span class="o">,</span> <span class="no">TEXT_PLAIN</span><span class="o">);</span>
-    <span class="o">});</span>
-<span class="o">});</span>
-
-<span class="kt">var</span> <span class="n">ersatzProxy</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ErsatzProxyServer</span><span class="o">(</span><span class="n">cfg</span> <span class="o">-&gt;</span> <span class="o">{</span>
-    <span class="n">cfg</span><span class="o">.</span><span class="na">target</span><span class="o">(</span><span class="n">ersatzServer</span><span class="o">.</span><span class="na">httpUrl</span><span class="o">);</span>
-    <span class="n">cfg</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expect</span> <span class="o">-&gt;</span> <span class="o">{</span>
-        <span class="n">expect</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/"</span><span class="o">);</span>
-        <span class="n">expect</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/foo"</span><span class="o">);</span>
-    <span class="o">});</span>
-<span class="o">});</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Such that, hitting the proxy <code>/foo</code> URL will forward the request to the <code>/foo</code> URL on the server, and likewise it will pass through the response.</p>
-</div>
-<div class="paragraph">
-<p>Notice that the <code>ErsatzProxy</code> has the same lifecycle as the <code>ErsatzServer</code>: you should call the <code>verify()</code> method to ensure that the expected requests were proxied, and the <code>stop()</code> method must be closed once the server is no longer needed.</p>
-</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -2769,19 +2752,34 @@ The proxy server has a similar configuration to the <code>ErsatzServer</code> an
 <div class="title">Note</div>
 </td>
 <td class="content">
-One difference from the <code>ErsatzServer</code> lifecycle is that the proxy server defaults auto-starting, and must be disabled if this is not desired.
+The websocket support is very rudimentary at this time and only supports non-secure (ws://) connections. Please file an issue if this is blocking your usage of it.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>The requests made to the proxy server are passed through to the <code>targetUri</code> and the response from that server is returned as the response from the proxy server.</p>
+<p>WebSocket support is provided in the "expectations" configuration. You can expect that a websocket is connected-to, and that it receives a specified message. You can also "react" to the connection or inbound message by sending a message back to the client.</p>
 </div>
 <div class="paragraph">
-<p>The proxy server is usable from both Java and Groovy based on the use of Groovy `Closure`s or Java `Consumer`s for configuration.</p>
+<p>An example would be something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="java"><span class="n">ersatz</span><span class="o">.</span><span class="na">expectations</span><span class="o">(</span><span class="n">expects</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">expects</span><span class="o">.</span><span class="na">webSocket</span><span class="o">(</span><span class="s">"/game"</span><span class="o">,</span> <span class="n">ws</span> <span class="o">-&gt;</span> <span class="o">{</span>
+        <span class="n">ws</span><span class="o">.</span><span class="na">receives</span><span class="o">(</span><span class="n">pingBytes</span><span class="o">).</span><span class="na">reaction</span><span class="o">(</span><span class="n">pongBytes</span><span class="o">,</span> <span class="no">BINARY</span><span class="o">);</span>
+    <span class="o">});</span>
+<span class="o">});</span></code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Currently, the proxy server only supports HTTP endpoints (HTTPS <em>may</em> be supported in a future release).</p>
+<p>In this example, the server expects that a websocket connection occurs for "/game", when that connection occurs, the server will expect to receive a message of <code>pingBytes</code>. When it receives that message, it will respond with a message <code>pongBytes</code> (in <code>BINARY</code> format).</p>
+</div>
+<div class="paragraph">
+<p>If the client does not make the "/game" request with the expected message, it will not receive the reaction message, and the test should fail - verification will also fail.</p>
+</div>
+<div class="paragraph">
+<p><strong>Verification Timeouts.</strong> Sometimes, when running asynchronous network tests, such as these, you can run into issues on different environments - your laptop might burn through the tests quickly and have no issues, but your over-worked build server might take more time and cause tests to fail by timing out. The <code>verify</code> methods accept a <code>WaitFor</code> parameter which allows you to configure a wait time. One useful value here is <code>FOREVER</code> which causes the test verification to wait for the expected conditions. When this fails, it will hang your test environment - not a great condition, but at least then you know you have a real problem, rather than having to come up with some arbitrary timeout value.</p>
 </div>
 </div>
 </div>
@@ -2813,14 +2811,14 @@ There are examples of various usage configurations in the <a href="https://githu
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz:3.2.0:safe'</span><span class="o">){</span>
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz:4.0.0:safe'</span><span class="o">){</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'io.undertow'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'undertow-core'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'javax.servlet'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'javax.servlet-api'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'commons-fileupload'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'commons-fileupload'</span>
 <span class="o">}</span>
 
 <span class="c1">// or for the Groovy DSL</span>
-<span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:3.2.0:safe'</span><span class="o">){</span>
+<span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:4.0.0:safe'</span><span class="o">){</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'io.undertow'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'undertow-core'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'javax.servlet'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'javax.servlet-api'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'commons-fileupload'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'commons-fileupload'</span>
@@ -2845,7 +2843,7 @@ There are examples of various usage configurations in the <a href="https://githu
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz<span class="nt">&lt;/artifactId&gt;</span>
     <span class="nt">&lt;classifier&gt;</span>safe<span class="nt">&lt;/classifier&gt;</span>
-    <span class="nt">&lt;version&gt;</span>3.2.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>4.0.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
     <span class="nt">&lt;exclusions&gt;</span>
         <span class="nt">&lt;exclusion&gt;</span>
@@ -2868,7 +2866,7 @@ There are examples of various usage configurations in the <a href="https://githu
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz-groovy<span class="nt">&lt;/artifactId&gt;</span>
     <span class="nt">&lt;classifier&gt;</span>safe<span class="nt">&lt;/classifier&gt;</span>
-    <span class="nt">&lt;version&gt;</span>3.2.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>4.0.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;type&gt;</span>jar<span class="nt">&lt;/type&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
     <span class="nt">&lt;exclusions&gt;</span>
@@ -3292,8 +3290,8 @@ limitations under the License.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 3.2.0<br>
-Last updated 2023-04-25 04:05:12 -0500
+Version 4.0.0<br>
+Last updated 2023-08-15 04:49:29 -0500
 </div>
 </div>
 <style>

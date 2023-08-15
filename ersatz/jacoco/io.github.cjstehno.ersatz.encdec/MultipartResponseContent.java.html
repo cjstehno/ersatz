@@ -53,12 +53,13 @@ import java.util.function.Function;
      *
      * @return a random boundary label
      */
+    @SuppressWarnings(&quot;checkstyle:MagicNumber&quot;)
     public static String generateBoundary() {
-<span class="fc" id="L57">        final StringBuilder buffer = new StringBuilder();</span>
-<span class="fc bfc" id="L58" title="All 2 branches covered.">        for (int i = 0; i &lt; 18; i++) {</span>
-<span class="fc" id="L59">            buffer.append(ALPHANUMERICS[ThreadLocalRandom.current().nextInt(0, ALPHANUMERICS.length)]);</span>
+<span class="fc" id="L58">        final StringBuilder buffer = new StringBuilder();</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        for (int i = 0; i &lt; 18; i++) {</span>
+<span class="fc" id="L60">            buffer.append(ALPHANUMERICS[ThreadLocalRandom.current().nextInt(0, ALPHANUMERICS.length)]);</span>
         }
-<span class="fc" id="L61">        return buffer.toString();</span>
+<span class="fc" id="L62">        return buffer.toString();</span>
     }
 
     /**
@@ -68,7 +69,7 @@ import java.util.function.Function;
      * @param responseEncoders the parent set of shared encoders
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent encoders(final ResponseEncoders responseEncoders);
+    public abstract MultipartResponseContent encoders(ResponseEncoders responseEncoders);
 
     /**
      * Used to override the default random boundary value with the provided one.
@@ -76,7 +77,7 @@ import java.util.function.Function;
      * @param value the boundary label to be used
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent boundary(final String value);
+    public abstract MultipartResponseContent boundary(String value);
 
     /**
      * Configures a response content encoder for the specified contentType and content class.
@@ -86,7 +87,7 @@ import java.util.function.Function;
      * @param encoder     the encoder
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent encoder(final String contentType, final Class type, final Function&lt;Object, byte[]&gt; encoder);
+    public abstract MultipartResponseContent encoder(String contentType, Class type, Function&lt;Object, byte[]&gt; encoder);
 
     /**
      * Configures a response content encoder for the specified contentType and content class.
@@ -96,7 +97,7 @@ import java.util.function.Function;
      * @param encoder     the encoder
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent encoder(final ContentType contentType, final Class type, final Function&lt;Object, byte[]&gt; encoder);
+    public abstract MultipartResponseContent encoder(ContentType contentType, Class type, Function&lt;Object, byte[]&gt; encoder);
 
     /**
      * Used to add a &quot;field&quot; part to the response.
@@ -105,7 +106,7 @@ import java.util.function.Function;
      * @param value     the field value
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent field(final String fieldName, final String value);
+    public abstract MultipartResponseContent field(String fieldName, String value);
 
     /**
      * Used to add a &quot;field&quot; part to the response.
@@ -115,7 +116,7 @@ import java.util.function.Function;
      * @param value       the field value
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent part(final String fieldName, final String contentType, final Object value);
+    public abstract MultipartResponseContent part(String fieldName, String contentType, Object value);
 
     /**
      * Used to add a &quot;field&quot; part to the response.
@@ -126,7 +127,7 @@ import java.util.function.Function;
      * @param transferEncoding the content-transfer-encoding value
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent part(final String fieldName, final ContentType contentType, final Object value, final String transferEncoding);
+    public abstract MultipartResponseContent part(String fieldName, ContentType contentType, Object value, String transferEncoding);
 
     /**
      * Used to add a &quot;field&quot; part to the response.
@@ -136,7 +137,7 @@ import java.util.function.Function;
      * @param value            the field value
      * @return a reference to this MultipartResponseContent instance
      */
-    public abstract MultipartResponseContent part(final String fieldName, final ContentType contentType, final Object value);
+    public abstract MultipartResponseContent part(String fieldName, ContentType contentType, Object value);
 
     /**
      * Used to add a &quot;file&quot; part to the response.
@@ -184,5 +185,4 @@ import java.util.function.Function;
      */
     public abstract MultipartResponseContent part(String fieldName, String fileName, ContentType contentType, Object value);
 }
-
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

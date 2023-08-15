@@ -32,6 +32,8 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public final class Timeout {
 
+    private static final long POLLING_TIME = 260;
+
     /**
      * Used to wrap a blocking timeout around the provided condition. If it is not met (resolves &lt;code&gt;true&lt;/code&gt;)
      * before the timeout expires, a value of &lt;code&gt;false&lt;/code&gt; will be returned.
@@ -42,34 +44,34 @@ public final class Timeout {
      * @return a value of true if the condition was met before the timeout expired
      */
     public static boolean isTrueBefore(final Supplier&lt;Boolean&gt; condition, final long timeout, final TimeUnit unit) {
-<span class="fc" id="L45">        val started = currentTimeMillis();</span>
-<span class="fc" id="L46">        val timeoutMs = unit.toMillis(timeout);</span>
+<span class="fc" id="L47">        val started = currentTimeMillis();</span>
+<span class="fc" id="L48">        val timeoutMs = unit.toMillis(timeout);</span>
 
-<span class="fc bfc" id="L48" title="All 2 branches covered.">        if (!condition.get()) {</span>
-<span class="fc" id="L49">            val executor = newSingleThreadScheduledExecutor();</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (!condition.get()) {</span>
+<span class="fc" id="L51">            val executor = newSingleThreadScheduledExecutor();</span>
             try {
-<span class="fc" id="L51">                var future = executor.schedule(condition::get, 250, MILLISECONDS);</span>
+<span class="fc" id="L53">                var future = executor.schedule(condition::get, POLLING_TIME, MILLISECONDS);</span>
 
-<span class="fc bfc" id="L53" title="All 4 branches covered.">                while (!future.get(timeout, unit) &amp;&amp; !timedOut(started, timeoutMs)) {</span>
-<span class="fc" id="L54">                    future = executor.schedule(condition::get, 250, MILLISECONDS);</span>
+<span class="fc bfc" id="L55" title="All 4 branches covered.">                while (!future.get(timeout, unit) &amp;&amp; !timedOut(started, timeoutMs)) {</span>
+<span class="fc" id="L56">                    future = executor.schedule(condition::get, POLLING_TIME, MILLISECONDS);</span>
                 }
 
-<span class="fc bfc" id="L57" title="All 2 branches covered.">                return !timedOut(started, timeoutMs);</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">                return !timedOut(started, timeoutMs);</span>
 
-<span class="nc" id="L59">            } catch (final Exception e) {</span>
-<span class="nc" id="L60">                return false;</span>
+<span class="nc" id="L61">            } catch (final Exception e) {</span>
+<span class="nc" id="L62">                return false;</span>
             } finally {
-<span class="fc" id="L62">                executor.shutdown();</span>
+<span class="fc" id="L64">                executor.shutdown();</span>
             }
 
         } else {
-<span class="fc" id="L66">            return true;</span>
+<span class="fc" id="L68">            return true;</span>
         }
     }
 
     @SuppressWarnings(&quot;BooleanMethodIsAlwaysInverted&quot;)
     private static boolean timedOut(final long started, final long timeoutMs) {
-<span class="fc bfc" id="L72" title="All 2 branches covered.">        return currentTimeMillis() - started &gt;= timeoutMs;</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        return currentTimeMillis() - started &gt;= timeoutMs;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

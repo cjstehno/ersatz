@@ -27,7 +27,8 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
 /**
  * Groovy extensions of the RequestResponse class to provide Groovy DSL enhancements.
  */
-<span class="nc" id="L30">public class RequestResponseExtensions {</span>
+@SuppressWarnings(&quot;checkstyle:MethodName&quot;)
+<span class="nc" id="L31">public class RequestResponseExtensions {</span>
 
     /**
      * Allows for configuration of a &lt;code&gt;Response&lt;/code&gt; by the given Groovy &lt;code&gt;Closure&lt;/code&gt;, which will delegate to a &lt;code&gt;Response&lt;/code&gt;
@@ -41,7 +42,7 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
         final Request self,
         @DelegatesTo(value = Response.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="fc" id="L44">        return self.responder(ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L45">        return self.responder(ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -54,9 +55,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
      */
     public static Response chunked(
         final Response self,
-        @DelegatesTo(value = ChunkingConfig.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = ChunkingConfig.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="fc" id="L59">        return self.chunked(ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L60">        return self.chunked(ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -69,10 +70,10 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
      */
     public static Request ANY(
         final AnyExpectations self,
-        String path,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final String path,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="fc" id="L75">        return self.ANY(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L76">        return self.ANY(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -85,10 +86,10 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
      */
     public static Request ANY(
         final AnyExpectations self,
-        Matcher&lt;String&gt; matcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final Matcher&lt;String&gt; matcher,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="nc" id="L91">        return self.ANY(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
+<span class="nc" id="L92">        return self.ANY(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -102,9 +103,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static Request ANY(
         final AnyExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="nc" id="L107">        return self.ANY(pathMatcher, ConsumerWithDelegate.create(closure));</span>
+<span class="nc" id="L108">        return self.ANY(pathMatcher, ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -117,10 +118,10 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
      */
     public static Request GET(
         final GetExpectations self,
-        String path,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final String path,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="fc" id="L123">        return self.GET(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L124">        return self.GET(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -133,10 +134,10 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
      */
     public static Request GET(
         final GetExpectations self,
-        Matcher&lt;String&gt; matcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final Matcher&lt;String&gt; matcher,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="fc" id="L139">        return self.GET(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L140">        return self.GET(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -150,9 +151,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static Request GET(
         final GetExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="nc" id="L155">        return self.GET(pathMatcher, ConsumerWithDelegate.create(closure));</span>
+<span class="nc" id="L156">        return self.GET(pathMatcher, ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -166,9 +167,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static Request HEAD(
         final HeadExpectations self,
         final String path,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="fc" id="L171">        return self.HEAD(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L172">        return self.HEAD(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -182,9 +183,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static Request HEAD(
         final HeadExpectations self,
         final Matcher&lt;String&gt; matcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="fc" id="L187">        return self.HEAD(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L188">        return self.HEAD(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -198,9 +199,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static Request HEAD(
         final HeadExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="nc" id="L203">        return self.HEAD(pathMatcher, ConsumerWithDelegate.create(closure));</span>
+<span class="nc" id="L204">        return self.HEAD(pathMatcher, ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -213,10 +214,10 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
      */
     public static Request DELETE(
         final DeleteExpectations self,
-        String path,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final String path,
+        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) final Closure closure
     ) {
-<span class="fc" id="L219">        return self.DELETE(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L220">        return self.DELETE(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -229,10 +230,10 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
      */
     public static Request DELETE(
         final DeleteExpectations self,
-        Matcher&lt;String&gt; matcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final Matcher&lt;String&gt; matcher,
+        final @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="fc" id="L235">        return self.DELETE(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L236">        return self.DELETE(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -246,9 +247,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static Request DELETE(
         final DeleteExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="nc" id="L251">        return self.DELETE(pathMatcher, ConsumerWithDelegate.create(closure));</span>
+<span class="nc" id="L252">        return self.DELETE(pathMatcher, ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -262,9 +263,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static Request OPTIONS(
         final OptionsExpectations self,
         final String path,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="fc" id="L267">        return self.OPTIONS(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L268">        return self.OPTIONS(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -278,9 +279,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static Request OPTIONS(
         final OptionsExpectations self,
         final Matcher&lt;String&gt; matcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="fc" id="L283">        return self.OPTIONS(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L284">        return self.OPTIONS(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -294,9 +295,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static Request OPTIONS(
         final OptionsExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = Request.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="nc" id="L299">        return self.OPTIONS(pathMatcher, ConsumerWithDelegate.create(closure));</span>
+<span class="nc" id="L300">        return self.OPTIONS(pathMatcher, ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -310,9 +311,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static RequestWithContent PATCH(
         final PatchExpectations self,
         final String path,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="fc" id="L315">        return self.PATCH(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L316">        return self.PATCH(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -326,9 +327,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static RequestWithContent PATCH(
         final PatchExpectations self,
         final Matcher&lt;String&gt; matcher,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="fc" id="L331">        return self.PATCH(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L332">        return self.PATCH(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -342,9 +343,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static RequestWithContent PATCH(
         final PatchExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="nc" id="L347">        return self.PATCH(pathMatcher, ConsumerWithDelegate.create(closure));</span>
+<span class="nc" id="L348">        return self.PATCH(pathMatcher, ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -358,9 +359,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static RequestWithContent POST(
         final PostExpectations self,
         final String path,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="fc" id="L363">        return self.POST(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L364">        return self.POST(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -374,9 +375,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static RequestWithContent POST(
         final PostExpectations self,
         final Matcher&lt;String&gt; matcher,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="fc" id="L379">        return self.POST(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L380">        return self.POST(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -390,9 +391,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static RequestWithContent POST(
         final PostExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="nc" id="L395">        return self.POST(pathMatcher, ConsumerWithDelegate.create(closure));</span>
+<span class="nc" id="L396">        return self.POST(pathMatcher, ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -405,10 +406,10 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
      */
     public static RequestWithContent PUT(
         final PutExpectations self,
-        String path,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final String path,
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="fc" id="L411">        return self.PUT(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L412">        return self.PUT(pathMatching(path), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -422,9 +423,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static RequestWithContent PUT(
         final PutExpectations self,
         final Matcher&lt;String&gt; matcher,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="fc" id="L427">        return self.PUT(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
+<span class="fc" id="L428">        return self.PUT(pathMatching(matcher), ConsumerWithDelegate.create(closure));</span>
     }
 
     /**
@@ -438,9 +439,9 @@ import static io.github.cjstehno.ersatz.match.PathMatcher.pathMatching;
     public static RequestWithContent PUT(
         final PutExpectations self,
         final PathMatcher pathMatcher,
-        @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
+        final @DelegatesTo(value = RequestWithContent.class, strategy = DELEGATE_FIRST) Closure closure
     ) {
-<span class="nc" id="L443">        return self.PUT(pathMatcher, ConsumerWithDelegate.create(closure));</span>
+<span class="nc" id="L444">        return self.PUT(pathMatcher, ConsumerWithDelegate.create(closure));</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

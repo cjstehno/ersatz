@@ -40,7 +40,7 @@ public class ConsumerWithDelegate&lt;T&gt; implements Consumer&lt;T&gt; {
      * @param &lt;T&gt; the parameter
      * @return the consumer
      */
-    public static &lt;T&gt; Consumer&lt;T&gt; create(Closure c, Object owner, int strategy) {
+    public static &lt;T&gt; Consumer&lt;T&gt; create(final Closure c, final Object owner, final int strategy) {
 <span class="fc" id="L44">        return new ConsumerWithDelegate&lt;&gt;(c, strategy, owner);</span>
     }
 
@@ -52,7 +52,7 @@ public class ConsumerWithDelegate&lt;T&gt; implements Consumer&lt;T&gt; {
      * @param &lt;T&gt; the parameter
      * @return the consumer
      */
-    public static &lt;T&gt; Consumer&lt;T&gt; create(Closure c, Object owner) {
+    public static &lt;T&gt; Consumer&lt;T&gt; create(final Closure c, final Object owner) {
 <span class="fc" id="L56">        return create(c, owner, Closure.DELEGATE_FIRST);</span>
     }
 
@@ -64,7 +64,7 @@ public class ConsumerWithDelegate&lt;T&gt; implements Consumer&lt;T&gt; {
      * @param &lt;T&gt; the parameter
      * @return the consumer
      */
-    public static &lt;T&gt; Consumer&lt;T&gt; create(Closure c, int strategy) {
+    public static &lt;T&gt; Consumer&lt;T&gt; create(final Closure c, final int strategy) {
 <span class="fc" id="L68">        return create(c, GroovyClosure.getPropagatedOwner(c.getOwner()), strategy);</span>
     }
 
@@ -75,7 +75,7 @@ public class ConsumerWithDelegate&lt;T&gt; implements Consumer&lt;T&gt; {
      * @param &lt;T&gt; the parameter
      * @return the consumer
      */
-    public static &lt;T&gt; Consumer&lt;T&gt; create(Closure c) {
+    public static &lt;T&gt; Consumer&lt;T&gt; create(final Closure c) {
 <span class="fc" id="L79">        return create(c, Closure.DELEGATE_FIRST);</span>
     }
 
@@ -83,14 +83,14 @@ public class ConsumerWithDelegate&lt;T&gt; implements Consumer&lt;T&gt; {
     private final Object owner;
     private final Closure closure;
 
-<span class="fc" id="L86">    private ConsumerWithDelegate(Closure closure, int strategy, Object owner) {</span>
+<span class="fc" id="L86">    private ConsumerWithDelegate(final Closure closure, final int strategy, final Object owner) {</span>
 <span class="fc" id="L87">        this.strategy = strategy;</span>
 <span class="fc" id="L88">        this.owner = owner;</span>
 <span class="fc" id="L89">        this.closure = closure;</span>
 <span class="fc" id="L90">    }</span>
 
     @Override
-    public void accept(T t) {
+    public void accept(final T t) {
 <span class="fc" id="L94">        Closure closure = this.closure.rehydrate(t, owner, this.closure.getThisObject());</span>
 <span class="fc" id="L95">        closure.setResolveStrategy(strategy);</span>
 <span class="fc" id="L96">        closure.call(t);</span>

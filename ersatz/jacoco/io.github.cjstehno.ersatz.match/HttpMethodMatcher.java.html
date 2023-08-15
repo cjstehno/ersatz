@@ -24,12 +24,14 @@ import org.hamcrest.Matcher;
 
 import static io.github.cjstehno.ersatz.cfg.HttpMethod.ANY;
 import static java.util.Arrays.stream;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.any;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * A matcher used to match the HTTP method of a request.
  */
-<span class="fc" id="L32">@RequiredArgsConstructor(staticName = &quot;methodMatching&quot;)</span>
+<span class="fc" id="L34">@RequiredArgsConstructor(staticName = &quot;methodMatching&quot;)</span>
 public class HttpMethodMatcher extends BaseMatcher&lt;ClientRequest&gt; {
 
     private final Matcher&lt;HttpMethod&gt; matcher;
@@ -42,22 +44,22 @@ public class HttpMethodMatcher extends BaseMatcher&lt;ClientRequest&gt; {
      */
     @SuppressWarnings(&quot;unchecked&quot;)
     public static HttpMethodMatcher methodMatching(final HttpMethod... methods) {
-<span class="fc" id="L45">        return methodMatching(</span>
-<span class="fc" id="L46">            anyOf(</span>
-<span class="fc" id="L47">                stream(methods)</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">                    .map(m -&gt; m == ANY ? any(HttpMethod.class) : equalTo(m))</span>
-<span class="fc" id="L49">                    .toList().toArray(new Matcher[0])</span>
+<span class="fc" id="L47">        return methodMatching(</span>
+<span class="fc" id="L48">            anyOf(</span>
+<span class="fc" id="L49">                stream(methods)</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">                    .map(m -&gt; m == ANY ? any(HttpMethod.class) : equalTo(m))</span>
+<span class="fc" id="L51">                    .toList().toArray(new Matcher[0])</span>
             )
         );
     }
 
     @Override public boolean matches(final Object actual) {
-<span class="fc" id="L55">        return matcher.matches(((ClientRequest) actual).getMethod());</span>
+<span class="fc" id="L57">        return matcher.matches(((ClientRequest) actual).getMethod());</span>
     }
 
     @Override public void describeTo(final Description description) {
-<span class="fc" id="L59">        description.appendText(&quot;HTTP method is &quot;);</span>
-<span class="fc" id="L60">        matcher.describeTo(description);</span>
-<span class="fc" id="L61">    }</span>
+<span class="fc" id="L61">        description.appendText(&quot;HTTP method is &quot;);</span>
+<span class="fc" id="L62">        matcher.describeTo(description);</span>
+<span class="fc" id="L63">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

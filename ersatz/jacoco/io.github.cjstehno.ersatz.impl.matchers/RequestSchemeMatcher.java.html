@@ -32,7 +32,7 @@ public class RequestSchemeMatcher extends BaseMatcher&lt;ClientRequest&gt; {
 <span class="fc bfc" id="L32" title="All 2 branches covered.">        return ((ClientRequest) actual).getScheme().equalsIgnoreCase(secure ? &quot;HTTPS&quot; : &quot;HTTP&quot;);</span>
     }
 
-    @Override public void describeTo(Description description) {
+    @Override public void describeTo(final Description description) {
 <span class="fc bfc" id="L36" title="All 2 branches covered.">        description.appendText(&quot;Scheme is &quot; + (secure ? &quot;HTTPS&quot; : &quot;HTTP&quot;));</span>
 <span class="fc" id="L37">    }</span>
 }

@@ -36,134 +36,142 @@ import java.net.InetSocketAddress;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
-import static io.undertow.UndertowOptions.*;
+import static io.undertow.UndertowOptions.IDLE_TIMEOUT;
+import static io.undertow.UndertowOptions.NO_REQUEST_TIMEOUT;
+import static io.undertow.UndertowOptions.REQUEST_PARSE_TIMEOUT;
 
 /**
  * An &lt;code&gt;UnderlyingServer&lt;/code&gt; implementation based on the Undertow server platform.
  */
-<span class="fc" id="L44">@Slf4j</span>
+<span class="fc" id="L46">@Slf4j</span>
 public class UndertowUnderlyingServer implements UnderlyingServer {
 
     private static final String LOCALHOST = &quot;localhost&quot;;
+    private static final int GZIP_HANDLER_PRIORITY = 50;
     private static final int UNSPECIFIED_PORT = -1;
     private final ServerConfigImpl serverConfig;
     private Undertow server;
-<span class="fc" id="L51">    private int actualHttpPort = UNSPECIFIED_PORT;</span>
-<span class="fc" id="L52">    private int actualHttpsPort = UNSPECIFIED_PORT;</span>
+<span class="fc" id="L54">    private int actualHttpPort = UNSPECIFIED_PORT;</span>
+<span class="fc" id="L55">    private int actualHttpsPort = UNSPECIFIED_PORT;</span>
 
     /**
      * Creates a new Undertow underlying server with the specified server config.
      *
      * @param serverConfig the server config information
      */
-<span class="fc" id="L59">    public UndertowUnderlyingServer(final ServerConfigImpl serverConfig) {</span>
-<span class="fc" id="L60">        this.serverConfig = serverConfig;</span>
-<span class="fc" id="L61">    }</span>
+<span class="fc" id="L62">    public UndertowUnderlyingServer(final ServerConfigImpl serverConfig) {</span>
+<span class="fc" id="L63">        this.serverConfig = serverConfig;</span>
+<span class="fc" id="L64">    }</span>
 
     @Override public void start() {
-<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (server == null) {</span>
-<span class="fc" id="L65">            val builder = Undertow.builder()</span>
-<span class="fc" id="L66">                .addHttpListener(serverConfig.getDesiredHttpPort(), LOCALHOST)</span>
-<span class="fc" id="L67">                .setIoThreads(serverConfig.getIoThreads())</span>
-<span class="fc" id="L68">                .setWorkerThreads(serverConfig.getWorkerThreads());</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        if (server == null) {</span>
+<span class="fc" id="L68">            val builder = Undertow.builder()</span>
+<span class="fc" id="L69">                .addHttpListener(serverConfig.getDesiredHttpPort(), LOCALHOST)</span>
+<span class="fc" id="L70">                .setIoThreads(serverConfig.getIoThreads())</span>
+<span class="fc" id="L71">                .setWorkerThreads(serverConfig.getWorkerThreads());</span>
 
-<span class="fc" id="L70">            applyTimeout(builder, serverConfig.getTimeout());</span>
+<span class="fc" id="L73">            applyTimeout(builder, serverConfig.getTimeout());</span>
 
-<span class="fc bfc" id="L72" title="All 2 branches covered.">            if (serverConfig.isHttpsEnabled()) {</span>
-<span class="fc" id="L73">                builder.addHttpsListener(serverConfig.getDesiredHttpsPort(), LOCALHOST, sslContext());</span>
-<span class="fc" id="L74">                log.debug(&quot;HTTPS listener enabled and configured.&quot;);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            if (serverConfig.isHttpsEnabled()) {</span>
+<span class="fc" id="L76">                builder.addHttpsListener(serverConfig.getDesiredHttpsPort(), LOCALHOST, sslContext());</span>
+<span class="fc" id="L77">                log.debug(&quot;HTTPS listener enabled and configured.&quot;);</span>
             }
 
-<span class="fc" id="L77">            server = builder.setHandler(</span>
-                new BlockingHandler(new EncodingHandler(
-                    new HttpTraceHandler(
-                        new ErsatzMatchingHandler(
-<span class="fc" id="L81">                            serverConfig.getRequirements(),</span>
-<span class="fc" id="L82">                            serverConfig.getExpectations(),</span>
-<span class="fc" id="L83">                            serverConfig.isMismatchToConsole(),</span>
-                            new ErsatzForwardHandler(
-                                new ErsatzHttpHandler(
-<span class="fc" id="L86">                                    serverConfig.isLogResponseContent()</span>
+<span class="fc" id="L80">            server = builder.setHandler(</span>
+                new WebSocketHandler(
+                    new BlockingHandler(new EncodingHandler(
+                        new HttpTraceHandler(
+                            new ErsatzMatchingHandler(
+<span class="fc" id="L85">                                serverConfig.getRequirements(),</span>
+<span class="fc" id="L86">                                serverConfig.getExpectations(),</span>
+<span class="fc" id="L87">                                serverConfig.isMismatchToConsole(),</span>
+                                new ErsatzForwardHandler(
+                                    new ErsatzHttpHandler(
+<span class="fc" id="L90">                                        serverConfig.isLogResponseContent()</span>
+                                    )
                                 )
                             )
-                        )
-                    ),
-<span class="fc" id="L91">                    new ContentEncodingRepository().addEncodingHandler(&quot;gzip&quot;, new GzipEncodingProvider(), 50)</span>
-                ))
-<span class="fc" id="L93">            ).build();</span>
+                        ),
+<span class="fc" id="L95">                        new ContentEncodingRepository().addEncodingHandler(&quot;gzip&quot;, new GzipEncodingProvider(), GZIP_HANDLER_PRIORITY)</span>
+                    )),
+                    serverConfig
+                )
+<span class="fc" id="L99">            ).build();</span>
 
-<span class="fc" id="L95">            server.start();</span>
+<span class="fc" id="L101">            server.start();</span>
 
-<span class="fc" id="L97">            applyPorts();</span>
+<span class="fc" id="L103">            applyPorts();</span>
 
-<span class="fc" id="L99">            log.info(&quot;Started.&quot;);</span>
+<span class="fc" id="L105">            log.info(&quot;Started.&quot;);</span>
         }
-<span class="fc" id="L101">    }</span>
+<span class="fc" id="L107">    }</span>
 
     private void applyTimeout(final Undertow.Builder builder, final long timeout) {
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        if (timeout &gt; 0) {</span>
-<span class="fc" id="L105">            final var ms = (int) timeout;</span>
-<span class="fc" id="L106">            builder.setServerOption(IDLE_TIMEOUT, ms);</span>
-<span class="fc" id="L107">            builder.setServerOption(NO_REQUEST_TIMEOUT, ms);</span>
-<span class="fc" id="L108">            builder.setServerOption(REQUEST_PARSE_TIMEOUT, ms);</span>
-<span class="fc" id="L109">            builder.setSocketOption(Options.READ_TIMEOUT, ms);</span>
-<span class="fc" id="L110">            builder.setSocketOption(Options.WRITE_TIMEOUT, ms);</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (timeout &gt; 0) {</span>
+<span class="fc" id="L111">            final var ms = (int) timeout;</span>
+<span class="fc" id="L112">            builder.setServerOption(IDLE_TIMEOUT, ms);</span>
+<span class="fc" id="L113">            builder.setServerOption(NO_REQUEST_TIMEOUT, ms);</span>
+<span class="fc" id="L114">            builder.setServerOption(REQUEST_PARSE_TIMEOUT, ms);</span>
+<span class="fc" id="L115">            builder.setSocketOption(Options.READ_TIMEOUT, ms);</span>
+<span class="fc" id="L116">            builder.setSocketOption(Options.WRITE_TIMEOUT, ms);</span>
 
-<span class="fc" id="L112">            log.debug(&quot;Timeout ({} ms) applied.&quot;, timeout);</span>
+<span class="fc" id="L118">            log.debug(&quot;Timeout ({} ms) applied.&quot;, timeout);</span>
         }
-<span class="fc" id="L114">    }</span>
+<span class="fc" id="L120">    }</span>
 
     @Override public void stop() {
-<span class="fc bfc" id="L117" title="All 2 branches covered.">        if (server != null) {</span>
-<span class="fc" id="L118">            actualHttpPort = UNSPECIFIED_PORT;</span>
-<span class="fc" id="L119">            actualHttpsPort = UNSPECIFIED_PORT;</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">        if (server != null) {</span>
+<span class="fc" id="L124">            actualHttpPort = UNSPECIFIED_PORT;</span>
+<span class="fc" id="L125">            actualHttpsPort = UNSPECIFIED_PORT;</span>
 
-<span class="fc" id="L121">            server.stop();</span>
+<span class="fc" id="L127">            server.stop();</span>
 
-<span class="fc" id="L123">            server = null;</span>
+<span class="fc" id="L129">            server = null;</span>
         }
 
-<span class="fc" id="L126">        log.info(&quot;Stopped.&quot;);</span>
-<span class="fc" id="L127">    }</span>
+<span class="fc" id="L132">        log.info(&quot;Stopped.&quot;);</span>
+<span class="fc" id="L133">    }</span>
 
     @Override public int getActualHttpPort() {
-<span class="fc" id="L130">        return actualHttpPort;</span>
+<span class="fc" id="L136">        return actualHttpPort;</span>
     }
 
     @Override public int getActualHttpsPort() {
-<span class="fc" id="L134">        return actualHttpsPort;</span>
+<span class="fc" id="L140">        return actualHttpsPort;</span>
     }
 
     private void applyPorts() {
-<span class="fc" id="L138">        actualHttpPort = ((InetSocketAddress) server.getListenerInfo().get(0).getAddress()).getPort();</span>
+<span class="fc" id="L144">        actualHttpPort = ((InetSocketAddress) server.getListenerInfo().get(0).getAddress()).getPort();</span>
 
-<span class="fc bfc" id="L140" title="All 2 branches covered.">        if (serverConfig.isHttpsEnabled()) {</span>
-<span class="fc" id="L141">            actualHttpsPort = ((InetSocketAddress) server.getListenerInfo().get(1).getAddress()).getPort();</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        if (serverConfig.isHttpsEnabled()) {</span>
+<span class="fc" id="L147">            actualHttpsPort = ((InetSocketAddress) server.getListenerInfo().get(1).getAddress()).getPort();</span>
         }
 
-<span class="fc" id="L144">        log.debug(&quot;Applied ports (http:{}, https:{}).&quot;, actualHttpPort, actualHttpsPort);</span>
-<span class="fc" id="L145">    }</span>
+<span class="fc" id="L150">        log.debug(&quot;Applied ports (http:{}, https:{}).&quot;, actualHttpPort, actualHttpsPort);</span>
+<span class="fc" id="L151">    }</span>
 
     private SSLContext sslContext() {
         try {
-<span class="fc" id="L149">            KeyStore keyStore = KeyStore.getInstance(&quot;JKS&quot;);</span>
+<span class="fc" id="L155">            KeyStore keyStore = KeyStore.getInstance(&quot;JKS&quot;);</span>
 
-<span class="pc bpc" id="L151" title="1 of 2 branches missed.">            final var location = serverConfig.getKeystoreLocation() != null ? serverConfig.getKeystoreLocation() : ErsatzServer.class.getResource(&quot;/ersatz.keystore&quot;);</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">            val location = serverConfig.getKeystoreLocation() != null</span>
+<span class="nc" id="L158">                ? serverConfig.getKeystoreLocation()</span>
+<span class="fc" id="L159">                : ErsatzServer.class.getResource(&quot;/ersatz.keystore&quot;);</span>
 
-<span class="fc" id="L153">            try (final InputStream instr = location.openStream()) {</span>
-<span class="fc" id="L154">                keyStore.load(instr, serverConfig.getKeystorePass().toCharArray());</span>
+<span class="fc" id="L161">            try (InputStream instr = location.openStream()) {</span>
+<span class="fc" id="L162">                keyStore.load(instr, serverConfig.getKeystorePass().toCharArray());</span>
             }
 
-<span class="fc" id="L157">            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());</span>
-<span class="fc" id="L158">            keyManagerFactory.init(keyStore, serverConfig.getKeystorePass().toCharArray());</span>
+<span class="fc" id="L165">            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());</span>
+<span class="fc" id="L166">            keyManagerFactory.init(keyStore, serverConfig.getKeystorePass().toCharArray());</span>
 
-<span class="fc" id="L160">            SSLContext sslContext = SSLContext.getInstance(&quot;TLS&quot;);</span>
-<span class="fc" id="L161">            sslContext.init(keyManagerFactory.getKeyManagers(), null, null);</span>
+<span class="fc" id="L168">            SSLContext sslContext = SSLContext.getInstance(&quot;TLS&quot;);</span>
+<span class="fc" id="L169">            sslContext.init(keyManagerFactory.getKeyManagers(), null, null);</span>
 
-<span class="fc" id="L163">            return sslContext;</span>
+<span class="fc" id="L171">            return sslContext;</span>
 
-<span class="nc" id="L165">        } catch (IOException | GeneralSecurityException ex) {</span>
-<span class="nc" id="L166">            throw new IllegalStateException(ex);</span>
+<span class="nc" id="L173">        } catch (IOException | GeneralSecurityException ex) {</span>
+<span class="nc" id="L174">            throw new IllegalStateException(ex);</span>
         }
     }
 }

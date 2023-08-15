@@ -152,7 +152,10 @@ class UndertowClientRequest implements ClientRequest {
 <span class="fc" id="L152">            contentString = format(&quot;&lt;%d of %s content&gt;&quot;, getContentLength(), getContentType());</span>
         }
 
-<span class="fc" id="L155">        return format(&quot;{ %s %s(query=%s, headers=%s, cookies=%s): %s }&quot;, getMethod(), getPath(), getQueryParams(), getHeaders(), getCookies(), contentString);</span>
+<span class="fc" id="L155">        return format(</span>
+            &quot;{ %s %s(query=%s, headers=%s, cookies=%s): %s }&quot;,
+<span class="fc" id="L157">            getMethod(), getPath(), getQueryParams(), getHeaders(), getCookies(), contentString</span>
+        );
     }
 
     /**
@@ -162,7 +165,7 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Override
     public long getContentLength() {
-<span class="fc" id="L165">        return exchange.getRequestContentLength();</span>
+<span class="fc" id="L168">        return exchange.getRequestContentLength();</span>
     }
 
     /**
@@ -172,7 +175,7 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Override
     public String getCharacterEncoding() {
-<span class="fc" id="L175">        return exchange.getRequestCharset();</span>
+<span class="fc" id="L178">        return exchange.getRequestCharset();</span>
     }
 
     /**
@@ -182,8 +185,8 @@ class UndertowClientRequest implements ClientRequest {
      */
     @Override
     public String getContentType() {
-<span class="fc" id="L185">        final var header = exchange.getRequestHeaders().get(CONTENT_TYPE_HEADER);</span>
-<span class="fc bfc" id="L186" title="All 2 branches covered.">        return header != null ? header.getFirst() : null;</span>
+<span class="fc" id="L188">        final var header = exchange.getRequestHeaders().get(CONTENT_TYPE_HEADER);</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        return header != null ? header.getFirst() : null;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 /**
  * Defines the available HEAD request expectations.
  */
+@SuppressWarnings(&quot;checkstyle:MethodName&quot;)
 public interface HeadExpectations {
 
     /**
@@ -32,7 +33,7 @@ public interface HeadExpectations {
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request HEAD(final String path) {
-<span class="fc" id="L35">        return HEAD(PathMatcher.pathMatching(path));</span>
+<span class="fc" id="L36">        return HEAD(PathMatcher.pathMatching(path));</span>
     }
 
     /**
@@ -42,31 +43,31 @@ public interface HeadExpectations {
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request HEAD(final Matcher&lt;String&gt; matcher) {
-<span class="fc" id="L45">        return HEAD(PathMatcher.pathMatching(matcher));</span>
+<span class="fc" id="L46">        return HEAD(PathMatcher.pathMatching(matcher));</span>
     }
 
     /**
-     * Allows configuration of a HEAD request expectation using the provided &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt;. The &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt; will
-     * have an instance of &lt;code&gt;Request&lt;/code&gt; passed into it for configuration.
+     * Allows configuration of a HEAD request expectation using the provided &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt;. The
+     * &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt; will have an instance of &lt;code&gt;Request&lt;/code&gt; passed into it for configuration.
      *
      * @param path   the expected request path
      * @param config the configuration consumer
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request HEAD(final String path, final Consumer&lt;Request&gt; config) {
-<span class="fc" id="L57">        return HEAD(PathMatcher.pathMatching(path), config);</span>
+<span class="fc" id="L58">        return HEAD(PathMatcher.pathMatching(path), config);</span>
     }
 
     /**
-     * Allows configuration of a HEAD request expectation using the provided &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt;. The &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt; will
-     * have an instance of &lt;code&gt;Request&lt;/code&gt; passed into it for configuration.
+     * Allows configuration of a HEAD request expectation using the provided &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt;. The
+     * &lt;code&gt;Consumer&amp;lt;Request&amp;gt;&lt;/code&gt; will have an instance of &lt;code&gt;Request&lt;/code&gt; passed into it for configuration.
      *
      * @param matcher the path matcher
      * @param config  the configuration consumer
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request HEAD(final Matcher&lt;String&gt; matcher, final Consumer&lt;Request&gt; config) {
-<span class="fc" id="L69">        return HEAD(PathMatcher.pathMatching(matcher), config);</span>
+<span class="fc" id="L70">        return HEAD(PathMatcher.pathMatching(matcher), config);</span>
     }
 
     /**
@@ -76,7 +77,7 @@ public interface HeadExpectations {
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
     default Request HEAD(final PathMatcher pathMatcher) {
-<span class="fc" id="L79">        return HEAD(pathMatcher, null);</span>
+<span class="fc" id="L80">        return HEAD(pathMatcher, null);</span>
     }
 
     /**
@@ -86,6 +87,6 @@ public interface HeadExpectations {
      * @param config the configuration consumer
      * @return a &lt;code&gt;Request&lt;/code&gt; configuration object
      */
-    Request HEAD(final PathMatcher pathMatcher, final Consumer&lt;Request&gt; config);
+    Request HEAD(PathMatcher pathMatcher, Consumer&lt;Request&gt; config);
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

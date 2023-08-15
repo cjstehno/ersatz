@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - WebSocketsTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>WebSocketsTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/io.github.cjstehno.ersatz.html">io.github.cjstehno.ersatz</a> &gt; WebSocketsTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">8</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">9.925s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">connecting(ErsatzServer, Client)</td>
+<td class="success">0.097s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">expectingConnectThatNeverHappens(ErsatzServer, Client)</td>
+<td class="success">1.133s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">multipleConnections(ErsatzServer, Client)</td>
+<td class="success">0.187s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">reactToMessageWithBinary(ErsatzServer, Client)</td>
+<td class="success">0.175s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">reactToMessageWithText(ErsatzServer, Client)</td>
+<td class="success">0.107s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">sendAndReceiveBinary(ErsatzServer, Client)</td>
+<td class="success">0.205s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">sendAndReceiveText(ErsatzServer, Client)</td>
+<td class="success">0.078s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">sendingMessageOnConnect(ErsatzServer, Client)</td>
+<td class="success">7.943s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>04:56:51.196 [Test worker] DEBUG org.jboss.logging -- Logging Provider: org.jboss.logging.Slf4jLoggerProvider
+04:56:51.312 [Test worker] INFO io.undertow -- starting server: Undertow - 2.3.7.Final
+04:56:51.460 [Test worker] INFO org.xnio -- XNIO version 3.8.8.Final
+04:56:51.679 [Test worker] INFO org.xnio.nio -- XNIO NIO Implementation Version 3.8.8.Final
+04:56:52.455 [Test worker] DEBUG org.xnio -- Creating worker:null, pool size:16, max pool size:16, keep alive:60000, io threads:2, stack size:0
+04:56:52.705 [Test worker] INFO org.jboss.threads -- JBoss Threads version 3.5.0.Final
+04:56:52.912 [XNIO-1 I/O-1] DEBUG org.xnio.nio -- Started channel thread 'XNIO-1 I/O-1', selector sun.nio.ch.EPollSelectorImpl@58849048
+04:56:52.930 [XNIO-1 I/O-2] DEBUG org.xnio.nio -- Started channel thread 'XNIO-1 I/O-2', selector sun.nio.ch.EPollSelectorImpl@4e54c24
+04:56:52.950 [XNIO-1 Accept] DEBUG org.xnio.nio -- Started channel thread 'XNIO-1 Accept', selector sun.nio.ch.EPollSelectorImpl@60a0feb7
+04:56:52.961 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTP for interface localhost and port 0
+04:56:53.442 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Applied ports (http:33017, https:-1).
+04:56:53.472 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Started.
+04:56:57.654 [XNIO-1 I/O-1] DEBUG io.undertow.request -- Matched prefix path /hello for path /hello
+04:56:57.707 [XNIO-1 I/O-1] DEBUG io.undertow.websockets.core.request -- Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@498427fc on HttpServerExchange{ GET /hello}
+04:56:57.712 [XNIO-1 I/O-1] DEBUG io.undertow.request -- Upgrading request HttpServerExchange{ GET /hello}
+04:56:58.112 [OkHttp http://localhost:33017/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- open
+04:56:58.186 [XNIO-1 I/O-1] DEBUG io.github.cjstehno.ersatz.server.undertow.WebSocketHandler -- Connected (/hello).
+04:56:58.333 [OkHttp http://localhost:33017/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- message (string): message for you, sir
+04:56:58.352 [Test worker] INFO io.undertow -- stopping server: Undertow - 2.3.7.Final
+04:56:58.392 [XNIO-1 I/O-1] DEBUG io.undertow.websockets.core.request -- UT025003: Decoding WebSocket Frame with opCode 8
+04:56:58.485 [OkHttp http://localhost:33017/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- closing
+04:56:58.486 [OkHttp http://localhost:33017/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- closed
+04:56:58.490 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Stopped.
+04:56:58.580 [Test worker] INFO io.undertow -- starting server: Undertow - 2.3.7.Final
+04:56:58.589 [Test worker] DEBUG org.xnio -- Creating worker:null, pool size:16, max pool size:16, keep alive:60000, io threads:2, stack size:0
+04:56:58.623 [XNIO-2 I/O-1] DEBUG org.xnio.nio -- Started channel thread 'XNIO-2 I/O-1', selector sun.nio.ch.EPollSelectorImpl@5dcc0b28
+04:56:58.639 [XNIO-2 I/O-2] DEBUG org.xnio.nio -- Started channel thread 'XNIO-2 I/O-2', selector sun.nio.ch.EPollSelectorImpl@4106241a
+04:56:58.655 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTP for interface localhost and port 0
+04:56:58.656 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Applied ports (http:42575, https:-1).
+04:56:58.657 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Started.
+04:56:58.659 [XNIO-2 Accept] DEBUG org.xnio.nio -- Started channel thread 'XNIO-2 Accept', selector sun.nio.ch.EPollSelectorImpl@79173b18
+04:56:58.723 [XNIO-2 I/O-2] DEBUG io.undertow.request -- Matched prefix path /ws for path /ws
+04:56:58.723 [XNIO-2 I/O-2] DEBUG io.undertow.websockets.core.request -- Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@4bfe4f6a on HttpServerExchange{ GET /ws}
+04:56:58.723 [XNIO-2 I/O-2] DEBUG io.undertow.request -- Upgrading request HttpServerExchange{ GET /ws}
+04:56:58.728 [XNIO-2 I/O-2] DEBUG io.github.cjstehno.ersatz.server.undertow.WebSocketHandler -- Connected (/ws).
+04:56:58.728 [OkHttp http://localhost:42575/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- open
+04:56:58.735 [XNIO-2 I/O-2] DEBUG io.undertow.websockets.core.request -- UT025003: Decoding WebSocket Frame with opCode 2
+04:56:58.759 [Test worker] INFO io.undertow -- stopping server: Undertow - 2.3.7.Final
+04:56:58.763 [OkHttp http://localhost:42575/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- failure: null
+04:56:58.772 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Stopped.
+04:56:58.787 [Test worker] INFO io.undertow -- starting server: Undertow - 2.3.7.Final
+04:56:58.792 [Test worker] DEBUG org.xnio -- Creating worker:null, pool size:16, max pool size:16, keep alive:60000, io threads:2, stack size:0
+04:56:58.822 [XNIO-3 I/O-1] DEBUG org.xnio.nio -- Started channel thread 'XNIO-3 I/O-1', selector sun.nio.ch.EPollSelectorImpl@2af651cc
+04:56:58.851 [XNIO-3 I/O-2] DEBUG org.xnio.nio -- Started channel thread 'XNIO-3 I/O-2', selector sun.nio.ch.EPollSelectorImpl@38ab9bd3
+04:56:58.862 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTP for interface localhost and port 0
+04:56:58.862 [XNIO-3 Accept] DEBUG org.xnio.nio -- Started channel thread 'XNIO-3 Accept', selector sun.nio.ch.EPollSelectorImpl@1352e718
+04:56:58.864 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Applied ports (http:36783, https:-1).
+04:56:58.864 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Started.
+04:56:58.898 [XNIO-3 I/O-2] DEBUG io.undertow.request -- Matched default handler path /ever
+04:56:58.932 [XNIO-3 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { GET /ever(query={}, headers={Connection=[Upgrade], Sec-WebSocket-Version=[13], Accept-Encoding=[gzip], Sec-WebSocket-Key=[boTUXlQE8P1P9Y50+TVyOw==], Upgrade=[websocket], User-Agent=[okhttp/4.11.0], Sec-WebSocket-Extensions=[permessage-deflate], Host=[localhost:36783]}, cookies={}): &lt;-1 of null content&gt; }
+04:56:59.033 [XNIO-3 task-2] WARN io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- # Unmatched Request
+
+http GET /ever ? 
+Headers:
+ - Connection: [Upgrade]
+ - Sec-WebSocket-Version: [13]
+ - Accept-Encoding: [gzip]
+ - Sec-WebSocket-Key: [boTUXlQE8P1P9Y50+TVyOw==]
+ - Upgrade: [websocket]
+ - User-Agent: [okhttp/4.11.0]
+ - Sec-WebSocket-Extensions: [permessage-deflate]
+ - Host: [localhost:36783]
+Cookies:
+Character-Encoding: ISO-8859-1
+Content:
+  []
+
+# Requirements
+
+# Expectations
+
+
+04:56:59.181 [OkHttp http://localhost:36783/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- failure: Expected HTTP 101 response but was '404 Not Found'
+04:56:59.889 [Test worker] ERROR io.github.cjstehno.ersatz.impl.ExpectationsImpl -- WebSocket expectations for /never were not met.
+04:56:59.891 [Test worker] INFO io.undertow -- stopping server: Undertow - 2.3.7.Final
+04:56:59.895 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Stopped.
+04:56:59.917 [Test worker] INFO io.undertow -- starting server: Undertow - 2.3.7.Final
+04:56:59.939 [Test worker] DEBUG org.xnio -- Creating worker:null, pool size:16, max pool size:16, keep alive:60000, io threads:2, stack size:0
+04:56:59.971 [XNIO-4 I/O-1] DEBUG org.xnio.nio -- Started channel thread 'XNIO-4 I/O-1', selector sun.nio.ch.EPollSelectorImpl@2d49531f
+04:56:59.989 [XNIO-4 I/O-2] DEBUG org.xnio.nio -- Started channel thread 'XNIO-4 I/O-2', selector sun.nio.ch.EPollSelectorImpl@1434ded5
+04:57:00.006 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTP for interface localhost and port 0
+04:57:00.008 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Applied ports (http:34773, https:-1).
+04:57:00.008 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Started.
+04:57:00.010 [XNIO-4 Accept] DEBUG org.xnio.nio -- Started channel thread 'XNIO-4 Accept', selector sun.nio.ch.EPollSelectorImpl@16f672f
+04:57:00.046 [XNIO-4 I/O-2] DEBUG io.undertow.request -- Matched default handler path /alpha
+04:57:00.047 [XNIO-4 I/O-2] DEBUG io.undertow.request -- Matched prefix path /alpha for path /alpha
+04:57:00.047 [XNIO-4 I/O-2] DEBUG io.undertow.websockets.core.request -- Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@1eccb5a5 on HttpServerExchange{ GET /alpha}
+04:57:00.047 [XNIO-4 I/O-2] DEBUG io.undertow.request -- Upgrading request HttpServerExchange{ GET /alpha}
+04:57:00.048 [XNIO-4 I/O-2] DEBUG io.github.cjstehno.ersatz.server.undertow.WebSocketHandler -- Connected (/alpha).
+04:57:00.053 [OkHttp http://localhost:34773/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- open
+04:57:00.055 [XNIO-4 I/O-2] DEBUG io.undertow.websockets.core.request -- UT025003: Decoding WebSocket Frame with opCode 8
+04:57:00.060 [XNIO-4 I/O-1] DEBUG io.undertow.request -- Matched prefix path /bravo for path /bravo
+04:57:00.065 [XNIO-4 I/O-1] DEBUG io.undertow.websockets.core.request -- Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@6a5f52ec on HttpServerExchange{ GET /bravo}
+04:57:00.066 [XNIO-4 I/O-1] DEBUG io.undertow.request -- Upgrading request HttpServerExchange{ GET /bravo}
+04:57:00.068 [OkHttp http://localhost:34773/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- open
+04:57:00.065 [OkHttp http://localhost:34773/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- closing
+04:57:00.070 [OkHttp http://localhost:34773/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- closed
+04:57:00.072 [XNIO-4 I/O-1] DEBUG io.github.cjstehno.ersatz.server.undertow.WebSocketHandler -- Connected (/bravo).
+04:57:00.073 [Test worker] INFO io.undertow -- stopping server: Undertow - 2.3.7.Final
+04:57:00.073 [XNIO-4 I/O-1] DEBUG io.undertow.websockets.core.request -- UT025003: Decoding WebSocket Frame with opCode 8
+04:57:00.076 [OkHttp http://localhost:34773/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- closing
+04:57:00.076 [OkHttp http://localhost:34773/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- closed
+04:57:00.099 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Stopped.
+04:57:00.102 [Test worker] INFO io.undertow -- starting server: Undertow - 2.3.7.Final
+04:57:00.114 [Test worker] DEBUG org.xnio -- Creating worker:null, pool size:16, max pool size:16, keep alive:60000, io threads:2, stack size:0
+04:57:00.142 [XNIO-5 I/O-2] DEBUG org.xnio.nio -- Started channel thread 'XNIO-5 I/O-2', selector sun.nio.ch.EPollSelectorImpl@290c02b2
+04:57:00.166 [XNIO-5 Accept] DEBUG org.xnio.nio -- Started channel thread 'XNIO-5 Accept', selector sun.nio.ch.EPollSelectorImpl@3239e2f5
+04:57:00.154 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTP for interface localhost and port 0
+04:57:00.168 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Applied ports (http:34267, https:-1).
+04:57:00.168 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Started.
+04:57:00.166 [XNIO-5 I/O-1] DEBUG org.xnio.nio -- Started channel thread 'XNIO-5 I/O-1', selector sun.nio.ch.EPollSelectorImpl@396ace43
+04:57:00.191 [XNIO-5 I/O-2] DEBUG io.undertow.request -- Matched prefix path /stuff for path /stuff
+04:57:00.192 [XNIO-5 I/O-2] DEBUG io.undertow.websockets.core.request -- Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@23f469c2 on HttpServerExchange{ GET /stuff}
+04:57:00.192 [XNIO-5 I/O-2] DEBUG io.undertow.request -- Upgrading request HttpServerExchange{ GET /stuff}
+04:57:00.193 [XNIO-5 I/O-2] DEBUG io.github.cjstehno.ersatz.server.undertow.WebSocketHandler -- Connected (/stuff).
+04:57:00.195 [Test worker] INFO io.undertow -- stopping server: Undertow - 2.3.7.Final
+04:57:00.196 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Stopped.
+04:57:00.199 [Test worker] INFO io.undertow -- starting server: Undertow - 2.3.7.Final
+04:57:00.201 [Test worker] DEBUG org.xnio -- Creating worker:null, pool size:16, max pool size:16, keep alive:60000, io threads:2, stack size:0
+04:57:00.206 [OkHttp http://localhost:34267/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- open
+04:57:00.210 [OkHttp http://localhost:34267/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- failure: null
+04:57:00.212 [XNIO-6 I/O-1] DEBUG org.xnio.nio -- Started channel thread 'XNIO-6 I/O-1', selector sun.nio.ch.EPollSelectorImpl@11e9843a
+04:57:00.227 [XNIO-6 I/O-2] DEBUG org.xnio.nio -- Started channel thread 'XNIO-6 I/O-2', selector sun.nio.ch.EPollSelectorImpl@77aaf677
+04:57:00.234 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTP for interface localhost and port 0
+04:57:00.236 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Applied ports (http:38363, https:-1).
+04:57:00.237 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Started.
+04:57:00.236 [XNIO-6 Accept] DEBUG org.xnio.nio -- Started channel thread 'XNIO-6 Accept', selector sun.nio.ch.EPollSelectorImpl@762aae9f
+04:57:00.267 [XNIO-6 I/O-1] DEBUG io.undertow.request -- Matched prefix path /ws for path /ws
+04:57:00.267 [XNIO-6 I/O-1] DEBUG io.undertow.websockets.core.request -- Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@1b11ef4a on HttpServerExchange{ GET /ws}
+04:57:00.267 [XNIO-6 I/O-1] DEBUG io.undertow.request -- Upgrading request HttpServerExchange{ GET /ws}
+04:57:00.268 [XNIO-6 I/O-1] DEBUG io.github.cjstehno.ersatz.server.undertow.WebSocketHandler -- Connected (/ws).
+04:57:00.269 [OkHttp http://localhost:38363/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- open
+04:57:00.269 [XNIO-6 I/O-1] DEBUG io.undertow.websockets.core.request -- UT025003: Decoding WebSocket Frame with opCode 1
+04:57:00.272 [Test worker] INFO io.undertow -- stopping server: Undertow - 2.3.7.Final
+04:57:00.275 [OkHttp http://localhost:38363/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- failure: null
+04:57:00.276 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Stopped.
+04:57:00.283 [Test worker] INFO io.undertow -- starting server: Undertow - 2.3.7.Final
+04:57:00.288 [Test worker] DEBUG org.xnio -- Creating worker:null, pool size:16, max pool size:16, keep alive:60000, io threads:2, stack size:0
+04:57:00.302 [XNIO-7 I/O-1] DEBUG org.xnio.nio -- Started channel thread 'XNIO-7 I/O-1', selector sun.nio.ch.EPollSelectorImpl@447a0b94
+04:57:00.358 [XNIO-7 I/O-2] DEBUG org.xnio.nio -- Started channel thread 'XNIO-7 I/O-2', selector sun.nio.ch.EPollSelectorImpl@6813591b
+04:57:00.374 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTP for interface localhost and port 0
+04:57:00.376 [XNIO-7 Accept] DEBUG org.xnio.nio -- Started channel thread 'XNIO-7 Accept', selector sun.nio.ch.EPollSelectorImpl@31c13ab6
+04:57:00.376 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Applied ports (http:36521, https:-1).
+04:57:00.376 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Started.
+04:57:00.407 [XNIO-7 I/O-1] DEBUG io.undertow.request -- Matched prefix path /foo for path /foo
+04:57:00.408 [XNIO-7 I/O-1] DEBUG io.undertow.websockets.core.request -- Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@4e8260e4 on HttpServerExchange{ GET /foo}
+04:57:00.408 [XNIO-7 I/O-1] DEBUG io.undertow.request -- Upgrading request HttpServerExchange{ GET /foo}
+04:57:00.409 [XNIO-7 I/O-1] DEBUG io.github.cjstehno.ersatz.server.undertow.WebSocketHandler -- Connected (/foo).
+04:57:00.413 [OkHttp http://localhost:36521/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- open
+04:57:00.415 [XNIO-7 I/O-1] DEBUG io.undertow.websockets.core.request -- UT025003: Decoding WebSocket Frame with opCode 2
+04:57:00.423 [OkHttp http://localhost:36521/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- message (bytes): [text=pong]
+04:57:00.426 [Test worker] INFO io.undertow -- stopping server: Undertow - 2.3.7.Final
+04:57:00.434 [XNIO-7 I/O-1] DEBUG io.undertow.websockets.core.request -- UT025003: Decoding WebSocket Frame with opCode 8
+04:57:00.441 [OkHttp http://localhost:36521/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- closing
+04:57:00.441 [OkHttp http://localhost:36521/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- closed
+04:57:00.452 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Stopped.
+04:57:00.458 [Test worker] INFO io.undertow -- starting server: Undertow - 2.3.7.Final
+04:57:00.468 [Test worker] DEBUG org.xnio -- Creating worker:null, pool size:16, max pool size:16, keep alive:60000, io threads:2, stack size:0
+04:57:00.499 [XNIO-8 I/O-1] DEBUG org.xnio.nio -- Started channel thread 'XNIO-8 I/O-1', selector sun.nio.ch.EPollSelectorImpl@44584fc8
+04:57:00.507 [XNIO-8 I/O-2] DEBUG org.xnio.nio -- Started channel thread 'XNIO-8 I/O-2', selector sun.nio.ch.EPollSelectorImpl@ab0fe2a
+04:57:00.522 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTP for interface localhost and port 0
+04:57:00.524 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Applied ports (http:39411, https:-1).
+04:57:00.524 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Started.
+04:57:00.527 [XNIO-8 Accept] DEBUG org.xnio.nio -- Started channel thread 'XNIO-8 Accept', selector sun.nio.ch.EPollSelectorImpl@61838908
+04:57:00.548 [XNIO-8 I/O-1] DEBUG io.undertow.request -- Matched prefix path /foo for path /foo
+04:57:00.548 [XNIO-8 I/O-1] DEBUG io.undertow.websockets.core.request -- Attempting websocket handshake with io.undertow.websockets.core.protocol.version13.Hybi13Handshake@4ea024b8 on HttpServerExchange{ GET /foo}
+04:57:00.548 [XNIO-8 I/O-1] DEBUG io.undertow.request -- Upgrading request HttpServerExchange{ GET /foo}
+04:57:00.549 [XNIO-8 I/O-1] DEBUG io.github.cjstehno.ersatz.server.undertow.WebSocketHandler -- Connected (/foo).
+04:57:00.550 [OkHttp http://localhost:39411/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- open
+04:57:00.553 [XNIO-8 I/O-1] DEBUG io.undertow.websockets.core.request -- UT025003: Decoding WebSocket Frame with opCode 1
+04:57:00.554 [OkHttp http://localhost:39411/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- message (string): pong
+04:57:00.559 [Test worker] INFO io.undertow -- stopping server: Undertow - 2.3.7.Final
+04:57:00.554 [XNIO-8 I/O-1] DEBUG io.undertow.websockets.core.request -- UT025003: Decoding WebSocket Frame with opCode 8
+04:57:00.562 [OkHttp http://localhost:39411/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- closing
+04:57:00.563 [OkHttp http://localhost:39411/...] INFO io.github.cjstehno.ersatz.util.HttpClientExtension$CapturingWebSocketListener -- closed
+04:57:00.563 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Stopped.
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.1.1</a> at Aug 15, 2023, 4:57:08 AM</p>
+</div>
+</div>
+</body>
+</html>

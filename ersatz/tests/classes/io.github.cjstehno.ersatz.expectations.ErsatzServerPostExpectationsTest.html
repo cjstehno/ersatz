@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">6.277s</div>
+<div class="counter">6.174s</div>
 <p>duration</p>
 </div>
 </td>
@@ -81,91 +81,91 @@
 <tr>
 <td class="success">handling exception in encoder</td>
 <td class="success">encoderErrorHandling(ErsatzServer)</td>
-<td class="success">0.013s</td>
+<td class="success">0.045s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[1] layered encoders/decoders: https(false)</td>
 <td class="success">layeredEncodingDecoding(boolean, ErsatzServer)[1]</td>
-<td class="success">0.009s</td>
+<td class="success">0.035s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[2] layered encoders/decoders: https(true)</td>
 <td class="success">layeredEncodingDecoding(boolean, ErsatzServer)[2]</td>
-<td class="success">0.068s</td>
+<td class="success">0.083s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[1] post params: https(false) -&gt; {1}</td>
 <td class="success">postParams(boolean, ErsatzServer)[1]</td>
-<td class="success">0.010s</td>
+<td class="success">0.284s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[2] post params: https(true) -&gt; {1}</td>
 <td class="success">postParams(boolean, ErsatzServer)[2]</td>
-<td class="success">0.065s</td>
+<td class="success">0.101s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[1] variable case headers: https(false) -&gt; insecure content</td>
 <td class="success">variableCaseHeaders(boolean, String, ErsatzServer)[1]</td>
-<td class="success">4.729s</td>
+<td class="success">3.663s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[2] variable case headers: https(true) -&gt; secure content</td>
 <td class="success">variableCaseHeaders(boolean, String, ErsatzServer)[2]</td>
-<td class="success">1.024s</td>
+<td class="success">0.719s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[1] path only: https(false) -&gt; insecure content</td>
 <td class="success">withPath(boolean, String, ErsatzServer)[1]</td>
-<td class="success">0.011s</td>
+<td class="success">0.291s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[2] path only: https(true) -&gt; secure content</td>
 <td class="success">withPath(boolean, String, ErsatzServer)[2]</td>
-<td class="success">0.088s</td>
+<td class="success">0.136s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[1] path and consumer: https(false) -&gt; insecure content</td>
 <td class="success">withPathAndConsumer(boolean, String, ErsatzServer)[1]</td>
-<td class="success">0.007s</td>
+<td class="success">0.034s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[2] path and consumer: https(true) -&gt; secure content</td>
 <td class="success">withPathAndConsumer(boolean, String, ErsatzServer)[2]</td>
-<td class="success">0.069s</td>
+<td class="success">0.140s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[1] path matcher: https(false) -&gt; insecure content</td>
 <td class="success">withPathMatcher(boolean, String, ErsatzServer)[1]</td>
-<td class="success">0.018s</td>
+<td class="success">0.296s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[2] path matcher: https(true) -&gt; secure content</td>
 <td class="success">withPathMatcher(boolean, String, ErsatzServer)[2]</td>
-<td class="success">0.089s</td>
+<td class="success">0.208s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[1] path matcher and consumer: https(false) -&gt; insecure content</td>
 <td class="success">withPathMatcherAndConsumer(boolean, String, ErsatzServer)[1]</td>
-<td class="success">0.008s</td>
+<td class="success">0.022s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">[2] path matcher and consumer: https(true) -&gt; secure content</td>
 <td class="success">withPathMatcherAndConsumer(boolean, String, ErsatzServer)[2]</td>
-<td class="success">0.069s</td>
+<td class="success">0.117s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -173,63 +173,65 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>04:05:56.137 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- HTTPS listener enabled and configured.
-04:05:56.594 [Test worker] DEBUG org.jboss.logging -- Logging Provider: org.jboss.logging.Slf4jLoggerProvider
-04:05:56.656 [Test worker] INFO io.undertow -- starting server: Undertow - 2.3.5.Final
-04:05:56.791 [Test worker] INFO org.xnio -- XNIO version 3.8.8.Final
-04:05:57.197 [Test worker] INFO org.xnio.nio -- XNIO NIO Implementation Version 3.8.8.Final
-04:05:57.821 [Test worker] DEBUG org.xnio -- Creating worker:null, pool size:16, max pool size:16, keep alive:60000, io threads:2, stack size:0
-04:05:58.028 [Test worker] INFO org.jboss.threads -- JBoss Threads version 3.5.0.Final
-04:05:58.257 [XNIO-1 I/O-1] DEBUG org.xnio.nio -- Started channel thread 'XNIO-1 I/O-1', selector sun.nio.ch.EPollSelectorImpl@2e41f7b5
-04:05:58.258 [XNIO-1 I/O-2] DEBUG org.xnio.nio -- Started channel thread 'XNIO-1 I/O-2', selector sun.nio.ch.EPollSelectorImpl@57a73ac0
-04:05:58.263 [XNIO-1 Accept] DEBUG org.xnio.nio -- Started channel thread 'XNIO-1 Accept', selector sun.nio.ch.EPollSelectorImpl@4f0a39f1
-04:05:58.277 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTP for interface localhost and port 0
-04:05:58.879 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTPS for interface localhost and port 0
-04:05:59.001 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Applied ports (http:35361, https:42443).
-04:05:59.002 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Started.
-04:06:03.634 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /postit(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], something-headery=[a-value], Host=[localhost:35361]}, cookies={}): &lt;18 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
-04:06:03.749 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$425/0x0000000800d6b880@52250ad) for content (String).
-04:06:03.774 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:35361/postit; {}): insecure content
-04:06:04.043 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /postit(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], SOMETHING-headery=[a-value], Host=[localhost:35361]}, cookies={}): &lt;18 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
-04:06:04.044 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:35361/postit; {}): insecure content
-04:06:04.059 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /postit(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], Something-Headery=[a-value], Host=[localhost:35361]}, cookies={}): &lt;18 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
-04:06:04.061 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:35361/postit; {}): insecure content
-04:06:04.860 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /postit(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], something-headery=[a-value], Host=[localhost:42443]}, cookies={}): &lt;18 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
-04:06:04.862 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$425/0x0000000800d6b880@52250ad) for content (String).
-04:06:04.862 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:42443/postit; {}): secure content
-04:06:04.876 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /postit(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], SOMETHING-headery=[a-value], Host=[localhost:42443]}, cookies={}): &lt;18 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
-04:06:04.877 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:42443/postit; {}): secure content
-04:06:04.884 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /postit(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], Something-Headery=[a-value], Host=[localhost:42443]}, cookies={}): &lt;18 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
-04:06:04.886 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:42443/postit; {}): secure content
-04:06:05.169 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], Host=[localhost:35361]}, cookies={}): this is some text! }
-04:06:05.171 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$425/0x0000000800d6b880@52250ad) for content (String).
-04:06:05.172 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:35361/loader/something; {Content-Type=[text/plain]}): insecure content
-04:06:05.272 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], Host=[localhost:42443]}, cookies={}): this is some text! }
-04:06:05.273 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$425/0x0000000800d6b880@52250ad) for content (String).
-04:06:05.274 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:42443/loader/something; {Content-Type=[text/plain]}): secure content
-04:06:05.286 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], Host=[localhost:35361]}, cookies={}): this is some text! }
-04:06:05.288 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$425/0x0000000800d6b880@52250ad) for content (String).
-04:06:05.289 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:35361/something; {Content-Type=[text/plain]}): insecure content
-04:06:05.377 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], Host=[localhost:42443]}, cookies={}): this is some text! }
-04:06:05.379 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$425/0x0000000800d6b880@52250ad) for content (String).
-04:06:05.380 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:42443/something; {Content-Type=[text/plain]}): secure content
-04:06:05.388 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], Host=[localhost:35361]}, cookies={}): this is some text! }
-04:06:05.389 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$425/0x0000000800d6b880@52250ad) for content (String).
-04:06:05.389 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:35361/something; {Content-Type=[text/plain]}): insecure content
-04:06:05.459 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], Host=[localhost:42443]}, cookies={}): this is some text! }
-04:06:05.460 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$425/0x0000000800d6b880@52250ad) for content (String).
-04:06:05.460 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:42443/something; {Content-Type=[text/plain]}): secure content
-04:06:05.467 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /foo(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], Host=[localhost:35361]}, cookies={}): this is some text! }
-04:06:05.468 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$427/0x0000000800d6bd08@3288f30) for content (Date).
-04:06:05.468 [XNIO-1 task-2] ERROR io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Error-Response: Internal Server Error (500): Content must be specified as an InputSteam, String, Path, File, URI, or URL instance.
+<pre>04:56:50.978 [Test worker] INFO io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension -- Using server config from method named: serverConfig
+04:56:51.236 [Test worker] INFO io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension -- Creating server instance with provided config.
+04:56:52.459 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- HTTPS listener enabled and configured.
+04:56:52.953 [Test worker] DEBUG org.jboss.logging -- Logging Provider: org.jboss.logging.Slf4jLoggerProvider
+04:56:53.014 [Test worker] INFO io.undertow -- starting server: Undertow - 2.3.7.Final
+04:56:53.154 [Test worker] INFO org.xnio -- XNIO version 3.8.8.Final
+04:56:53.427 [Test worker] INFO org.xnio.nio -- XNIO NIO Implementation Version 3.8.8.Final
+04:56:54.270 [Test worker] DEBUG org.xnio -- Creating worker:null, pool size:16, max pool size:16, keep alive:60000, io threads:2, stack size:0
+04:56:54.544 [Test worker] INFO org.jboss.threads -- JBoss Threads version 3.5.0.Final
+04:56:54.751 [XNIO-1 I/O-1] DEBUG org.xnio.nio -- Started channel thread 'XNIO-1 I/O-1', selector sun.nio.ch.EPollSelectorImpl@32597e70
+04:56:54.774 [XNIO-1 I/O-2] DEBUG org.xnio.nio -- Started channel thread 'XNIO-1 I/O-2', selector sun.nio.ch.EPollSelectorImpl@303d7ca0
+04:56:54.780 [XNIO-1 Accept] DEBUG org.xnio.nio -- Started channel thread 'XNIO-1 Accept', selector sun.nio.ch.EPollSelectorImpl@1ea46a77
+04:56:54.808 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTP for interface localhost and port 0
+04:56:55.337 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTPS for interface localhost and port 0
+04:56:55.434 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Applied ports (http:34565, https:39469).
+04:56:55.436 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Started.
+04:56:58.833 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /postit(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], something-headery=[a-value], Host=[localhost:34565]}, cookies={}): &lt;18 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
+04:56:59.032 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$436/0x00007feb201737f0@4d2bebf0) for content (String).
+04:56:59.079 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34565/postit; {}): insecure content
+04:56:59.390 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /postit(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], SOMETHING-headery=[a-value], Host=[localhost:34565]}, cookies={}): &lt;18 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
+04:56:59.391 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34565/postit; {}): insecure content
+04:56:59.402 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /postit(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], Something-Headery=[a-value], Host=[localhost:34565]}, cookies={}): &lt;18 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
+04:56:59.404 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34565/postit; {}): insecure content
+04:57:00.140 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /postit(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], something-headery=[a-value], Host=[localhost:39469]}, cookies={}): &lt;18 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
+04:57:00.142 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$436/0x00007feb201737f0@4d2bebf0) for content (String).
+04:57:00.142 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:39469/postit; {}): secure content
+04:57:00.164 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /postit(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], SOMETHING-headery=[a-value], Host=[localhost:39469]}, cookies={}): &lt;18 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
+04:57:00.166 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:39469/postit; {}): secure content
+04:57:00.186 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /postit(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], Something-Headery=[a-value], Host=[localhost:39469]}, cookies={}): &lt;18 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
+04:57:00.187 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:39469/postit; {}): secure content
+04:57:00.233 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], Host=[localhost:34565]}, cookies={}): this is some text! }
+04:57:00.235 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$436/0x00007feb201737f0@4d2bebf0) for content (String).
+04:57:00.235 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34565/loader/something; {Content-Type=[text/plain]}): insecure content
+04:57:00.695 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], Host=[localhost:39469]}, cookies={}): this is some text! }
+04:57:00.697 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$436/0x00007feb201737f0@4d2bebf0) for content (String).
+04:57:00.697 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:39469/loader/something; {Content-Type=[text/plain]}): secure content
+04:57:00.768 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], Host=[localhost:34565]}, cookies={}): this is some text! }
+04:57:00.776 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$436/0x00007feb201737f0@4d2bebf0) for content (String).
+04:57:00.777 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34565/something; {Content-Type=[text/plain]}): insecure content
+04:57:01.161 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], Host=[localhost:39469]}, cookies={}): this is some text! }
+04:57:01.163 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$436/0x00007feb201737f0@4d2bebf0) for content (String).
+04:57:01.163 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:39469/something; {Content-Type=[text/plain]}): secure content
+04:57:01.229 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], Host=[localhost:34565]}, cookies={}): this is some text! }
+04:57:01.230 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$436/0x00007feb201737f0@4d2bebf0) for content (String).
+04:57:01.231 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34565/something; {Content-Type=[text/plain]}): insecure content
+04:57:01.365 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], Host=[localhost:39469]}, cookies={}): this is some text! }
+04:57:01.369 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$436/0x00007feb201737f0@4d2bebf0) for content (String).
+04:57:01.370 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:39469/something; {Content-Type=[text/plain]}): secure content
+04:57:01.401 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /foo(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], Host=[localhost:34565]}, cookies={}): this is some text! }
+04:57:01.402 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$438/0x00007feb20173c78@e9effaf) for content (Date).
+04:57:01.403 [XNIO-1 task-2] ERROR io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Error-Response: Internal Server Error (500): Content must be specified as an InputSteam, String, Path, File, URI, or URL instance.
 java.lang.IllegalArgumentException: Content must be specified as an InputSteam, String, Path, File, URI, or URL instance.
-	at io.github.cjstehno.ersatz.encdec.Encoders.lambda$static$2(Encoders.java:107)
-	at io.github.cjstehno.ersatz.impl.ErsatzResponse.getContent(ErsatzResponse.java:177)
-	at io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler.handleRequest(ErsatzHttpHandler.java:69)
+	at io.github.cjstehno.ersatz.encdec.Encoders.lambda$static$2(Encoders.java:108)
+	at io.github.cjstehno.ersatz.impl.ErsatzResponse.getContent(ErsatzResponse.java:185)
+	at io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler.handleRequest(ErsatzHttpHandler.java:70)
 	at io.github.cjstehno.ersatz.server.undertow.ErsatzForwardHandler.handleRequest(ErsatzForwardHandler.java:96)
-	at io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler.lambda$handleRequest$0(ErsatzMatchingHandler.java:65)
+	at io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler.lambda$handleRequest$0(ErsatzMatchingHandler.java:66)
 	at java.base/java.util.Optional.ifPresentOrElse(Optional.java:196)
-	at io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler.handleRequest(ErsatzMatchingHandler.java:59)
+	at io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler.handleRequest(ErsatzMatchingHandler.java:60)
 	at io.undertow.server.handlers.HttpTraceHandler.handleRequest(HttpTraceHandler.java:70)
 	at io.undertow.server.handlers.encoding.EncodingHandler.handleRequest(EncodingHandler.java:72)
 	at io.undertow.server.Connectors.executeRootHandler(Connectors.java:393)
@@ -239,12 +241,12 @@ java.lang.IllegalArgumentException: Content must be specified as an InputSteam, 
 	at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1538)
 	at org.xnio.XnioWorker$WorkerThreadFactory$1$1.run(XnioWorker.java:1282)
 	at java.base/java.lang.Thread.run(Thread.java:833)
-04:06:05.474 [XNIO-1 task-2] DEBUG io.undertow.request.error-response -- Setting error code 500 for exchange HttpServerExchange{ POST /foo}
+04:57:01.420 [XNIO-1 task-2] DEBUG io.undertow.request.error-response -- Setting error code 500 for exchange HttpServerExchange{ POST /foo}
 java.lang.RuntimeException: null
 	at io.undertow.server.HttpServerExchange.setStatusCode(HttpServerExchange.java:1491)
-	at io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler.lambda$handleRequest$0(ErsatzMatchingHandler.java:72)
+	at io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler.lambda$handleRequest$0(ErsatzMatchingHandler.java:73)
 	at java.base/java.util.Optional.ifPresentOrElse(Optional.java:196)
-	at io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler.handleRequest(ErsatzMatchingHandler.java:59)
+	at io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler.handleRequest(ErsatzMatchingHandler.java:60)
 	at io.undertow.server.handlers.HttpTraceHandler.handleRequest(HttpTraceHandler.java:70)
 	at io.undertow.server.handlers.encoding.EncodingHandler.handleRequest(EncodingHandler.java:72)
 	at io.undertow.server.Connectors.executeRootHandler(Connectors.java:393)
@@ -254,24 +256,24 @@ java.lang.RuntimeException: null
 	at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1538)
 	at org.xnio.XnioWorker$WorkerThreadFactory$1$1.run(XnioWorker.java:1282)
 	at java.base/java.lang.Thread.run(Thread.java:833)
-04:06:05.485 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], Host=[localhost:35361]}, cookies={}): this is some text! }
-04:06:05.486 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$425/0x0000000800d6b880@52250ad) for content (String).
-04:06:05.486 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:35361/loader/something; {Content-Type=[text/plain]}): insecure content
-04:06:05.554 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], Host=[localhost:42443]}, cookies={}): this is some text! }
-04:06:05.555 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$425/0x0000000800d6b880@52250ad) for content (String).
-04:06:05.555 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:42443/loader/something; {Content-Type=[text/plain]}): secure content
-04:06:05.569 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /posting(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], Host=[localhost:35361]}, cookies={}): this is some text! }
-04:06:05.571 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.expectations.ErsatzServerPostExpectationsTest$$Lambda$648/0x0000000800eba308@56d1c6e0) for content (String).
-04:06:05.571 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:35361/posting; {Content-Type=[text/plain]}): Double-encoded: Some Content
-04:06:05.638 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /posting(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.10.0], Host=[localhost:42443]}, cookies={}): this is some text! }
-04:06:05.640 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.expectations.ErsatzServerPostExpectationsTest$$Lambda$648/0x0000000800eba308@56d1c6e0) for content (String).
-04:06:05.640 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:42443/posting; {Content-Type=[text/plain]}): Double-encoded: Some Content
-04:06:05.650 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /updates(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[7], User-Agent=[okhttp/4.10.0], Host=[localhost:35361]}, cookies={}): &lt;7 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
-04:06:05.653 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:35361/updates; {}): 
-04:06:05.718 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /updates(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[7], User-Agent=[okhttp/4.10.0], Host=[localhost:42443]}, cookies={}): &lt;7 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
-04:06:05.719 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:42443/updates; {}): 
-04:06:05.722 [Test worker] INFO io.undertow -- stopping server: Undertow - 2.3.5.Final
-04:06:05.727 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Stopped.
+04:57:01.471 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], Host=[localhost:34565]}, cookies={}): this is some text! }
+04:57:01.473 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$436/0x00007feb201737f0@4d2bebf0) for content (String).
+04:57:01.473 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34565/loader/something; {Content-Type=[text/plain]}): insecure content
+04:57:01.590 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /loader/something(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], Host=[localhost:39469]}, cookies={}): this is some text! }
+04:57:01.592 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.encdec.Encoders$$Lambda$436/0x00007feb201737f0@4d2bebf0) for content (String).
+04:57:01.592 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:39469/loader/something; {Content-Type=[text/plain]}): secure content
+04:57:01.636 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /posting(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], Host=[localhost:34565]}, cookies={}): this is some text! }
+04:57:01.637 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.expectations.ErsatzServerPostExpectationsTest$$Lambda$667/0x00007feb202a9988@5aae4396) for content (String).
+04:57:01.638 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34565/posting; {Content-Type=[text/plain]}): Double-encoded: Some Content
+04:57:01.727 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /posting(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[text/plain; charset=utf-8], Content-Length=[18], User-Agent=[okhttp/4.11.0], Host=[localhost:39469]}, cookies={}): this is some text! }
+04:57:01.728 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.impl.ErsatzResponse -- Found encoder (io.github.cjstehno.ersatz.expectations.ErsatzServerPostExpectationsTest$$Lambda$667/0x00007feb202a9988@5aae4396) for content (String).
+04:57:01.729 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:39469/posting; {Content-Type=[text/plain]}): Double-encoded: Some Content
+04:57:01.755 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /updates(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[7], User-Agent=[okhttp/4.11.0], Host=[localhost:34565]}, cookies={}): &lt;7 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
+04:57:01.762 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; http://localhost:34565/updates; {}): 
+04:57:02.120 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { POST /updates(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], Content-Type=[application/x-www-form-urlencoded; charset=utf-8], Content-Length=[7], User-Agent=[okhttp/4.11.0], Host=[localhost:39469]}, cookies={}): &lt;7 of application/x-www-form-urlencoded; charset=utf-8 content&gt; }
+04:57:02.121 [XNIO-1 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzHttpHandler -- Response(HTTP/1.1; https://localhost:39469/updates; {}): 
+04:57:02.130 [Test worker] INFO io.undertow -- stopping server: Undertow - 2.3.7.Final
+04:57:02.149 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Stopped.
 </pre>
 </span>
 </div>
@@ -283,7 +285,7 @@ java.lang.RuntimeException: null
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 8.0.2</a> at Apr 25, 2023, 4:06:10 AM</p>
+<a href="http://www.gradle.org">Gradle 8.1.1</a> at Aug 15, 2023, 4:57:08 AM</p>
 </div>
 </div>
 </body>

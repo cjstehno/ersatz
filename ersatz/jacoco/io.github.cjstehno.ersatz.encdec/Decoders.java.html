@@ -38,24 +38,26 @@ import static java.nio.file.Files.createTempDirectory;
 import static lombok.AccessLevel.PRIVATE;
 
 /**
- * Reusable request content decoder functions. Decoders are simply implementations of the &lt;code&gt;BiFunction&amp;lt;byte[], DecodingContext, Object&amp;gt;&lt;/code&gt;
- * interface, which takes the request content as a byte array along with the &lt;code&gt;DecodingContext&lt;/code&gt; to return an &lt;code&gt;Object&lt;/code&gt;
+ * Reusable request content decoder functions. Decoders are simply implementations of the
+ * &lt;code&gt;BiFunction&amp;lt;byte[], DecodingContext, Object&amp;gt;&lt;/code&gt; interface, which takes the request content as a byte array along with the
+ * &lt;code&gt;DecodingContext&lt;/code&gt; to return an &lt;code&gt;Object&lt;/code&gt;
  * representation of the request data.
  */
-@NoArgsConstructor(access = PRIVATE)
+@NoArgsConstructor(access = PRIVATE) @SuppressWarnings(&quot;checkstyle:ConstantName&quot;)
 public final class Decoders {
 
     private static final String TEMP_DIR = &quot;ersatz-multipart-&quot;;
+    private static final int FILE_SIZE_THRESHOLD = 10_000;
 
     /**
      * Decoder that simply passes the content bytes through as an array of bytes.
      */
-<span class="fc" id="L53">    public static final BiFunction&lt;byte[], DecodingContext, Object&gt; passthrough = (content, ctx) -&gt; content;</span>
+<span class="fc" id="L55">    public static final BiFunction&lt;byte[], DecodingContext, Object&gt; passthrough = (content, ctx) -&gt; content;</span>
 
     /**
      * Decoder that converts request content bytes into a UTF-8 string.
      */
-<span class="fc" id="L58">    public static final BiFunction&lt;byte[], DecodingContext, Object&gt; utf8String = string(UTF_8);</span>
+<span class="fc" id="L60">    public static final BiFunction&lt;byte[], DecodingContext, Object&gt; utf8String = string(UTF_8);</span>
 
     /**
      * Decoder that converts request content bytes into a UTF-8 string.
@@ -63,7 +65,7 @@ public final class Decoders {
      * @return the decoded bytes as a string
      */
     public static BiFunction&lt;byte[], DecodingContext, Object&gt; string() {
-<span class="fc" id="L66">        return string(UTF_8);</span>
+<span class="fc" id="L68">        return string(UTF_8);</span>
     }
 
     /**
@@ -73,7 +75,7 @@ public final class Decoders {
      * @return the decoded bytes as a string
      */
     public static BiFunction&lt;byte[], DecodingContext, Object&gt; string(final String charset) {
-<span class="fc" id="L76">        return string(Charset.forName(charset));</span>
+<span class="fc" id="L78">        return string(Charset.forName(charset));</span>
     }
 
     /**
@@ -83,66 +85,65 @@ public final class Decoders {
      * @return the decoded bytes as a string
      */
     public static BiFunction&lt;byte[], DecodingContext, Object&gt; string(final Charset charset) {
-<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        return (content, ctx) -&gt; content != null ? new String(content, charset) : &quot;&quot;;</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        return (content, ctx) -&gt; content != null ? new String(content, charset) : &quot;&quot;;</span>
     }
 
     /**
      * Decoder that converts request content bytes in an url-encoded format into a map of name/value pairs.
      */
-<span class="fc" id="L92">    public static BiFunction&lt;byte[], DecodingContext, Object&gt; urlEncoded = (content, ctx) -&gt; {</span>
-<span class="fc" id="L93">        val map = new HashMap&lt;String, String&gt;();</span>
+<span class="fc" id="L94">    public static final BiFunction&lt;byte[], DecodingContext, Object&gt; urlEncoded = (content, ctx) -&gt; {</span>
+<span class="fc" id="L95">        val map = new HashMap&lt;String, String&gt;();</span>
 
-<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if (content != null) {</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">            for (val nvp : new String(content, UTF_8).split(&quot;&amp;&quot;)) {</span>
-<span class="fc" id="L97">                val parts = nvp.split(&quot;=&quot;);</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        if (content != null) {</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            for (val nvp : new String(content, UTF_8).split(&quot;&amp;&quot;)) {</span>
+<span class="fc" id="L99">                val parts = nvp.split(&quot;=&quot;);</span>
                 try {
-<span class="fc bfc" id="L99" title="All 2 branches covered.">                    if (parts.length == 2) {</span>
-<span class="fc" id="L100">                        map.put(decode(parts[0], UTF_8), decode(parts[1], UTF_8));</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">                    if (parts.length == 2) {</span>
+<span class="fc" id="L102">                        map.put(decode(parts[0], UTF_8), decode(parts[1], UTF_8));</span>
                     }
-<span class="fc" id="L102">                } catch (Exception e) {</span>
-<span class="fc" id="L103">                    throw new IllegalArgumentException(e.getMessage());</span>
-<span class="fc" id="L104">                }</span>
+<span class="fc" id="L104">                } catch (Exception e) {</span>
+<span class="fc" id="L105">                    throw new IllegalArgumentException(e.getMessage());</span>
+<span class="fc" id="L106">                }</span>
             }
         }
 
-<span class="fc" id="L108">        return map;</span>
+<span class="fc" id="L110">        return map;</span>
     };
 
     /**
      * Decoder that converts request content bytes into a &lt;code&gt;MultipartRequestContent&lt;/code&gt; object populated with the multipart request content.
      */
-<span class="fc" id="L114">    public static BiFunction&lt;byte[], DecodingContext, Object&gt; multipart = (content, ctx) -&gt; {</span>
-<span class="fc" id="L115">        val parts = resolveFileParts(content, ctx);</span>
-<span class="fc" id="L116">        val multipartRequest = new MultipartRequestContent();</span>
+<span class="fc" id="L116">    public static final BiFunction&lt;byte[], DecodingContext, Object&gt; multipart = (content, ctx) -&gt; {</span>
+<span class="fc" id="L117">        val parts = resolveFileParts(content, ctx);</span>
+<span class="fc" id="L118">        val multipartRequest = new MultipartRequestContent();</span>
 
-<span class="fc" id="L118">        parts.forEach(part -&gt; {</span>
-<span class="fc" id="L119">            val partCtx = new DecodingContext(part.getSize(), part.getContentType(), null, ctx.getDecoderChain());</span>
-
-<span class="fc bfc" id="L121" title="All 2 branches covered.">            if (part.isFormField()) {</span>
-<span class="fc" id="L122">                multipartRequest.part(part.getFieldName(), TEXT_PLAIN, ctx.getDecoderChain().resolve(TEXT_PLAIN).apply(part.get(), partCtx));</span>
+<span class="fc" id="L120">        parts.forEach(part -&gt; {</span>
+<span class="fc" id="L121">            val partCtx = new DecodingContext(part.getSize(), part.getContentType(), null, ctx.getDecoderChain());</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            if (part.isFormField()) {</span>
+<span class="fc" id="L123">                multipartRequest.part(part.getFieldName(), TEXT_PLAIN, ctx.getDecoderChain().resolve(TEXT_PLAIN).apply(part.get(), partCtx));</span>
             } else {
-<span class="fc" id="L124">                multipartRequest.part(</span>
-<span class="fc" id="L125">                    part.getFieldName(),</span>
-<span class="fc" id="L126">                    part.getName(),</span>
-<span class="fc" id="L127">                    part.getContentType(),</span>
-<span class="fc" id="L128">                    ctx.getDecoderChain().resolve(part.getContentType()).apply(part.get(), partCtx)</span>
+<span class="fc" id="L125">                multipartRequest.part(</span>
+<span class="fc" id="L126">                    part.getFieldName(),</span>
+<span class="fc" id="L127">                    part.getName(),</span>
+<span class="fc" id="L128">                    part.getContentType(),</span>
+<span class="fc" id="L129">                    ctx.getDecoderChain().resolve(part.getContentType()).apply(part.get(), partCtx)</span>
                 );
             }
-<span class="fc" id="L131">        });</span>
+<span class="fc" id="L132">        });</span>
 
-<span class="fc" id="L133">        return multipartRequest;</span>
+<span class="fc" id="L134">        return multipartRequest;</span>
     };
 
     private static List&lt;FileItem&gt; resolveFileParts(final byte[] content, final DecodingContext ctx) {
         try {
-<span class="fc" id="L138">            return new FileUpload(new DiskFileItemFactory(10_000, createTempDirectory(TEMP_DIR).toFile()))</span>
-<span class="fc" id="L139">                .parseRequest(new ErsatzUploadContext(content, ctx));</span>
-<span class="fc" id="L140">        } catch (final Exception e) {</span>
-<span class="fc" id="L141">            throw new IllegalArgumentException(e.getMessage());</span>
+<span class="fc" id="L139">            return new FileUpload(new DiskFileItemFactory(FILE_SIZE_THRESHOLD, createTempDirectory(TEMP_DIR).toFile()))</span>
+<span class="fc" id="L140">                .parseRequest(new ErsatzUploadContext(content, ctx));</span>
+<span class="fc" id="L141">        } catch (final Exception e) {</span>
+<span class="fc" id="L142">            throw new IllegalArgumentException(e.getMessage());</span>
         }
     }
 
-<span class="fc" id="L145">    @RequiredArgsConstructor(access = PRIVATE) @SuppressWarnings(&quot;ClassCanBeRecord&quot;)</span>
+<span class="fc" id="L146">    @RequiredArgsConstructor(access = PRIVATE) @SuppressWarnings(&quot;ClassCanBeRecord&quot;)</span>
     private static final class ErsatzUploadContext implements UploadContext {
 
         private final byte[] content;
@@ -150,27 +151,27 @@ public final class Decoders {
 
         @Override
         public long contentLength() {
-<span class="fc" id="L153">            return ctx.getContentLength();</span>
+<span class="fc" id="L154">            return ctx.getContentLength();</span>
         }
 
         @Override
         public String getCharacterEncoding() {
-<span class="fc" id="L158">            return ctx.getCharacterEncoding();</span>
+<span class="fc" id="L159">            return ctx.getCharacterEncoding();</span>
         }
 
         @Override
         public String getContentType() {
-<span class="fc" id="L163">            return ctx.getContentType();</span>
+<span class="fc" id="L164">            return ctx.getContentType();</span>
         }
 
         @Override
         public int getContentLength() {
-<span class="fc" id="L168">            return (int) ctx.getContentLength();</span>
+<span class="fc" id="L169">            return (int) ctx.getContentLength();</span>
         }
 
         @Override
         public InputStream getInputStream() throws IOException {
-<span class="fc" id="L173">            return new ByteArrayInputStream(content);</span>
+<span class="fc" id="L174">            return new ByteArrayInputStream(content);</span>
         }
     }
 }

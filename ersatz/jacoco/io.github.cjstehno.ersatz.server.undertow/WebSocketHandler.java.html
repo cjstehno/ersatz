@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebSocketHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.server.undertow</a> &gt; <span class="el_source">WebSocketHandler.java</span></div><h1>WebSocketHandler.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2023 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.server.undertow;
+
+import io.github.cjstehno.ersatz.cfg.MessageType;
+import io.github.cjstehno.ersatz.impl.InboundMessageImpl;
+import io.github.cjstehno.ersatz.impl.ServerConfigImpl;
+import io.github.cjstehno.ersatz.impl.UnmatchedWsReport;
+import io.github.cjstehno.ersatz.impl.WebSocketExpectationsImpl;
+import io.undertow.Handlers;
+import io.undertow.server.HttpHandler;
+import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.PathHandler;
+import io.undertow.websockets.core.AbstractReceiveListener;
+import io.undertow.websockets.core.BufferedBinaryMessage;
+import io.undertow.websockets.core.BufferedTextMessage;
+import io.undertow.websockets.core.WebSocketChannel;
+import io.undertow.websockets.core.WebSockets;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import static io.github.cjstehno.ersatz.cfg.MessageType.BINARY;
+import static io.github.cjstehno.ersatz.cfg.MessageType.resolve;
+
+/**
+ * Undertow handler for the websocket support. It resolves the handled paths for each request so that the configuration
+ * does not get frozen on the first server startup (which can be before the socket expectations are configured).
+ */
+<span class="fc" id="L47">@RequiredArgsConstructor @Slf4j</span>
+public class WebSocketHandler implements HttpHandler {
+
+    private final HttpHandler defaultHandler;
+    private final ServerConfigImpl serverConfig;
+    private HttpHandler effectiveHandler;
+
+    @Override public void handleRequest(final HttpServerExchange exchange) throws Exception {
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (effectiveHandler == null) {</span>
+            // only create the effective handlers once (on the first request)
+<span class="fc" id="L57">            HttpHandler handler = defaultHandler;</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            for (val path : serverConfig.getExpectations().getWebSocketPaths()) {</span>
+<span class="fc" id="L59">                handler = build(path, handler);</span>
+<span class="fc" id="L60">            }</span>
+
+            // store the configured handler
+<span class="fc" id="L63">            effectiveHandler = handler;</span>
+        }
+
+<span class="fc" id="L66">        effectiveHandler.handleRequest(exchange);</span>
+<span class="fc" id="L67">    }</span>
+
+    private PathHandler build(final String pathPrefix, final HttpHandler wrappedHandler) {
+<span class="fc" id="L70">        return Handlers.path(wrappedHandler).addPrefixPath(pathPrefix, Handlers.websocket((exchange, channel) -&gt; {</span>
+<span class="fc" id="L71">            log.debug(&quot;Connected ({}).&quot;, pathPrefix);</span>
+
+            // find the ws for this path and register a connection
+<span class="fc" id="L74">            val wsExpectation = (WebSocketExpectationsImpl) serverConfig.getExpectations().findWsMatch(pathPrefix);</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">            if (wsExpectation != null) {</span>
+<span class="fc" id="L76">                wsExpectation.connect();</span>
+
+                // perform on-connect sends
+<span class="fc" id="L79">                wsExpectation.eachSender(sm -&gt; WebSocketHandler.sendMessage(</span>
+                    channel,
+<span class="fc" id="L81">                    sm.getPayload(),</span>
+<span class="fc" id="L82">                    sm.getMessageType())</span>
+                );
+
+<span class="fc" id="L85">                channel.getReceiveSetter().set(</span>
+<span class="fc" id="L86">                    new WebSocketHandler.ReceiveHandler(wsExpectation, serverConfig.isMismatchToConsole())</span>
+                );
+<span class="fc" id="L88">                channel.resumeReceives();</span>
+
+            } else {
+<span class="nc" id="L91">                throw new IllegalArgumentException(&quot;Web socket expectation was never connected.&quot;);</span>
+            }
+<span class="fc" id="L93">        }));</span>
+    }
+
+<span class="fc" id="L96">    @RequiredArgsConstructor(access = AccessLevel.PACKAGE)</span>
+    private static class ReceiveHandler extends AbstractReceiveListener {
+
+        private final WebSocketExpectationsImpl wsExpectation;
+        private final boolean mismatchToConsole;
+
+        @Override
+        protected void onFullTextMessage(final WebSocketChannel ch, final BufferedTextMessage message) throws IOException {
+<span class="fc" id="L104">            handleMessage(wsExpectation, ch, message);</span>
+<span class="fc" id="L105">        }</span>
+
+        @Override
+        protected void onFullBinaryMessage(final WebSocketChannel ch, final BufferedBinaryMessage message) throws IOException {
+<span class="fc" id="L109">            handleMessage(wsExpectation, ch, message);</span>
+<span class="fc" id="L110">        }</span>
+
+        private void handleMessage(final WebSocketExpectationsImpl wsExpectation, final WebSocketChannel ch, final Object message) {
+<span class="fc" id="L113">            wsExpectation.findMatch(message).ifPresentOrElse(</span>
+                expect -&gt; {
+<span class="fc" id="L115">                    expect.mark();</span>
+<span class="fc" id="L116">                    performReactions(expect, ch);</span>
+<span class="fc" id="L117">                },</span>
+                () -&gt; {
+<span class="nc" id="L119">                    log.warn(&quot;Received ({}) message that has no configured expectation: {}&quot;, resolve(message), message);</span>
+
+<span class="nc" id="L121">                    final var report = new UnmatchedWsReport(wsExpectation);</span>
+<span class="nc" id="L122">                    log.warn(report.render());</span>
+
+<span class="nc bnc" id="L124" title="All 2 branches missed.">                    if (mismatchToConsole) {</span>
+<span class="nc" id="L125">                        System.out.println(report);</span>
+                    }
+<span class="nc" id="L127">                }</span>
+            );
+<span class="fc" id="L129">        }</span>
+
+        private static void performReactions(final InboundMessageImpl expectation, final WebSocketChannel ch) {
+<span class="fc" id="L132">            expectation.getReactions().forEach(reaction -&gt; sendMessage(ch, reaction.getPayload(), reaction.getMessageType()));</span>
+<span class="fc" id="L133">        }</span>
+    }
+
+    private static void sendMessage(final WebSocketChannel ch, final Object payload, final MessageType messageType) {
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (messageType == BINARY) {</span>
+<span class="fc" id="L138">            WebSockets.sendBinary(ByteBuffer.wrap((byte[]) payload), ch, null);</span>
+        } else {
+<span class="fc" id="L140">            WebSockets.sendText(payload.toString(), ch, null);</span>
+        }
+<span class="fc" id="L142">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

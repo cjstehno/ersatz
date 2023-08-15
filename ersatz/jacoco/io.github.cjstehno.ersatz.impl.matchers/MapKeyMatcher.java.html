@@ -43,19 +43,21 @@ public class MapKeyMatcher extends BaseMatcher&lt;ClientRequest&gt; {
      * @param negated whether the match is negated
      * @param mapProvider the provider of the data map
      */
-<span class="fc" id="L46">    public MapKeyMatcher(final String label, final Matcher&lt;String&gt; nameMatcher, final boolean negated, final Function&lt;ClientRequest, Map&lt;String, ?&gt;&gt; mapProvider) {</span>
-<span class="fc" id="L47">        this.label = label;</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">        this.keyMatcher = negated ? not(hasKey(nameMatcher)) : hasKey(nameMatcher);</span>
-<span class="fc" id="L49">        this.mapProvider = mapProvider;</span>
-<span class="fc" id="L50">    }</span>
+    public MapKeyMatcher(
+        final String label, final Matcher&lt;String&gt; nameMatcher, final boolean negated, final Function&lt;ClientRequest, Map&lt;String, ?&gt;&gt; mapProvider
+<span class="fc" id="L48">    ) {</span>
+<span class="fc" id="L49">        this.label = label;</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        this.keyMatcher = negated ? not(hasKey(nameMatcher)) : hasKey(nameMatcher);</span>
+<span class="fc" id="L51">        this.mapProvider = mapProvider;</span>
+<span class="fc" id="L52">    }</span>
 
     @Override public boolean matches(final Object actual) {
-<span class="fc" id="L53">        return keyMatcher.matches(mapProvider.apply((ClientRequest) actual));</span>
+<span class="fc" id="L55">        return keyMatcher.matches(mapProvider.apply((ClientRequest) actual));</span>
     }
 
-    @Override public void describeTo(Description description) {
-<span class="fc" id="L57">        description.appendText(label + &quot; name is &quot;);</span>
-<span class="fc" id="L58">        keyMatcher.describeTo(description);</span>
-<span class="fc" id="L59">    }</span>
+    @Override public void describeTo(final Description description) {
+<span class="fc" id="L59">        description.appendText(label + &quot; name is &quot;);</span>
+<span class="fc" id="L60">        keyMatcher.describeTo(description);</span>
+<span class="fc" id="L61">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

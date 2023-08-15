@@ -95,7 +95,7 @@ import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
      * @param value       the value
      * @return a reference to this multipart request instance
      */
-    public MultipartRequestContent part(String fieldName, String fileName, String contentType, Object value) {
+    public MultipartRequestContent part(final String fieldName, final String fileName, final String contentType, final Object value) {
 <span class="fc" id="L99">        parts.put(fieldName, new MultipartPart(fieldName, fileName, contentType, null, value));</span>
 <span class="fc" id="L100">        return this;</span>
     }
@@ -109,7 +109,7 @@ import static io.github.cjstehno.ersatz.cfg.ContentType.TEXT_PLAIN;
      * @param value       the value
      * @return a reference to this multipart request instance
      */
-    public MultipartRequestContent part(String fieldName, String fileName, ContentType contentType, Object value) {
+    public MultipartRequestContent part(final String fieldName, final String fileName, final ContentType contentType, final Object value) {
 <span class="fc" id="L113">        parts.put(fieldName, new MultipartPart(fieldName, fileName, contentType.getValue(), null, value));</span>
 <span class="fc" id="L114">        return this;</span>
     }

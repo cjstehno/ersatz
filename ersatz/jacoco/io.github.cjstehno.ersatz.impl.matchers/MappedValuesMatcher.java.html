@@ -41,7 +41,7 @@ public class MappedValuesMatcher extends BaseMatcher&lt;ClientRequest&gt; {
     private final Function&lt;ClientRequest, Map&lt;String, Deque&lt;String&gt;&gt;&gt; mapProvider;
 
     @Override public boolean matches(final Object actual) {
-<span class="fc" id="L44">        return mapProvider.apply(((ClientRequest) actual)).entrySet().stream()</span>
+<span class="fc" id="L44">        return mapProvider.apply((ClientRequest) actual).entrySet().stream()</span>
 <span class="fc" id="L45">            .filter(ent -&gt; nameMatcher.matches(ent.getKey()))</span>
 <span class="fc" id="L46">            .anyMatch(ent -&gt; valuesMatcher.matches(new ArrayDeque&lt;&gt;(asList(ent.getValue().toArray(new String[0])))));</span>
     }

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WaitFor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ersatz</a> &gt; <a href="index.source.html" class="el_package">io.github.cjstehno.ersatz.cfg</a> &gt; <span class="el_source">WaitFor.java</span></div><h1>WaitFor.java</h1><pre class="source lang-java linenums">/**
+ * Copyright (C) 2023 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cjstehno.ersatz.cfg;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
+import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static lombok.AccessLevel.PRIVATE;
+
+/**
+ * An abstraction for expectation timeouts, allowing for explicit values, along with a FOREVER value.
+ * &lt;p&gt;
+ * Generally, it is advisable to minimize your waiting time to avoid allowing a failing test to over-extend the build
+ * runtime, though there are cases where tests run slow on certain machines, so it is good to find the best value for
+ * your configurations.
+ */
+<span class="pc bpc" id="L36" title="8 of 16 branches missed.">@RequiredArgsConstructor(access = PRIVATE) @Getter @EqualsAndHashCode @ToString</span>
+public class WaitFor {
+
+    /**
+     * Denotes that the waiting should continue until the conditions are met - never timing out.
+     *
+     * The actual values are configured to &lt;code&gt;Long.MAX_VALUE HOURS&lt;/code&gt;, though they may not necessarily be used.
+     */
+<span class="fc" id="L44">    public static final WaitFor FOREVER = new WaitFor(Long.MAX_VALUE, HOURS);</span>
+
+    /**
+     * Denotes that the waiting should continue for 1 second, if the conditions are not met, then timeout.
+     */
+<span class="fc" id="L49">    public static final WaitFor ONE_SECOND = new WaitFor(1, SECONDS);</span>
+
+<span class="fc" id="L51">    private final long time;</span>
+<span class="fc" id="L52">    private final TimeUnit unit;</span>
+
+    /**
+     * Denotes that the waiting should continue until the elapsed time (with unit), if the conditions are not met, and
+     * then it should timeout.
+     *
+     * @param time the waiting time (in units)
+     * @param unit the units of the waiting time
+     * @return the configured WaitFor instance
+     */
+    public static WaitFor atMost(final long time, final TimeUnit unit) {
+<span class="fc" id="L63">        return new WaitFor(time, unit);</span>
+    }
+
+    /**
+     * Denotes that the waiting should continue until the elapsed time (in seconds), if the conditions are not met, and
+     * then it should timeout.
+     *
+     * @param seconds the waiting time (in seconds)
+     * @return the configured WaitFor instance
+     */
+    public static WaitFor atMost(final long seconds) {
+<span class="fc" id="L74">        return atMost(seconds, SECONDS);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

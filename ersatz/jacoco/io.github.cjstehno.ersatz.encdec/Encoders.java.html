@@ -36,10 +36,10 @@ import static java.nio.file.Files.readAllBytes;
 import static lombok.AccessLevel.PRIVATE;
 
 /**
- * Reusable response content encoders. An encoder is simply a &lt;code&gt;Function&amp;lt;Object,String&amp;gt;&lt;/code&gt; which is used to convert the configured response
- * content object into the response output bytes.
+ * Reusable response content encoders. An encoder is simply a &lt;code&gt;Function&amp;lt;Object,String&amp;gt;&lt;/code&gt; which is used to convert the configured
+ * response content object into the response output bytes.
  */
-@NoArgsConstructor(access = PRIVATE)
+@NoArgsConstructor(access = PRIVATE) @SuppressWarnings(&quot;checkstyle:ConstantName&quot;)
 public final class Encoders {
 
     /**
@@ -70,7 +70,7 @@ public final class Encoders {
     /**
      * Encodes a byte array, InputStream or other object with a &quot;getBytes()&quot; method into a base-64 string.
      */
-<span class="fc bfc" id="L73" title="All 2 branches covered.">    public static Function&lt;Object, byte[]&gt; binaryBase64 = obj -&gt; obj == null ? &quot;&quot;.getBytes(UTF_8) : Base64.getEncoder().encode(toBytes(obj));</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">    public static final Function&lt;Object, byte[]&gt; binaryBase64 = obj -&gt; obj == null ? &quot;&quot;.getBytes(UTF_8) : Base64.getEncoder().encode(toBytes(obj));</span>
 
     /**
      * Loads the content at the specified destination and returns it as a byte array. The content destination may be
@@ -83,40 +83,41 @@ public final class Encoders {
      * URI - will load the contents of the URI
      * URL - will load the contents of the URL
      */
-<span class="fc" id="L86">    public static Function&lt;Object, byte[]&gt; content = obj -&gt; {</span>
+    @SuppressWarnings({&quot;checkstyle:ReturnCount&quot;, &quot;checkstyle:LambdaBodyLength&quot;})
+<span class="fc" id="L87">    public static final Function&lt;Object, byte[]&gt; content = obj -&gt; {</span>
         try {
-<span class="fc bfc" id="L88" title="All 2 branches covered.">            if (obj instanceof InputStream) {</span>
-<span class="fc" id="L89">                return readStream((InputStream) obj);</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            if (obj instanceof InputStream) {</span>
+<span class="fc" id="L90">                return readStream((InputStream) obj);</span>
 
-<span class="fc bfc" id="L91" title="All 2 branches covered.">            } else if (obj instanceof Path) {</span>
-<span class="fc" id="L92">                return readAllBytes((Path) obj);</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            } else if (obj instanceof Path) {</span>
+<span class="fc" id="L93">                return readAllBytes((Path) obj);</span>
 
-<span class="fc bfc" id="L94" title="All 2 branches covered.">            } else if (obj instanceof File) {</span>
-<span class="fc" id="L95">                return readAllBytes(((File) obj).toPath());</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            } else if (obj instanceof File) {</span>
+<span class="fc" id="L96">                return readAllBytes(((File) obj).toPath());</span>
 
-<span class="fc bfc" id="L97" title="All 2 branches covered.">            } else if (obj instanceof URI) {</span>
-<span class="fc" id="L98">                return readStream(((URI) obj).toURL().openStream());</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            } else if (obj instanceof URI) {</span>
+<span class="fc" id="L99">                return readStream(((URI) obj).toURL().openStream());</span>
 
-<span class="fc bfc" id="L100" title="All 2 branches covered.">            } else if (obj instanceof URL) {</span>
-<span class="fc" id="L101">                return readStream(((URL) obj).openStream());</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            } else if (obj instanceof URL) {</span>
+<span class="fc" id="L102">                return readStream(((URL) obj).openStream());</span>
 
-<span class="fc bfc" id="L103" title="All 2 branches covered.">            } else if (obj instanceof CharSequence) {</span>
-<span class="fc" id="L104">                return readAllBytes(Paths.get(Encoders.class.getResource(obj.toString()).toURI()));</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            } else if (obj instanceof CharSequence) {</span>
+<span class="fc" id="L105">                return readAllBytes(Paths.get(Encoders.class.getResource(obj.toString()).toURI()));</span>
 
             } else {
-<span class="fc" id="L107">                throw new IllegalArgumentException(&quot;Content must be specified as an InputSteam, String, Path, File, URI, or URL instance.&quot;);</span>
+<span class="fc" id="L108">                throw new IllegalArgumentException(&quot;Content must be specified as an InputSteam, String, Path, File, URI, or URL instance.&quot;);</span>
             }
 
-<span class="fc" id="L110">        } catch (final RuntimeException re) {</span>
-<span class="fc" id="L111">            throw re;</span>
-<span class="fc" id="L112">        } catch (final Exception ex) {</span>
-<span class="fc" id="L113">            throw new IllegalArgumentException(&quot;Unable to resolve content due to error: &quot; + ex.getMessage());</span>
+<span class="fc" id="L111">        } catch (final RuntimeException re) {</span>
+<span class="fc" id="L112">            throw re;</span>
+<span class="fc" id="L113">        } catch (final Exception ex) {</span>
+<span class="fc" id="L114">            throw new IllegalArgumentException(&quot;Unable to resolve content due to error: &quot; + ex.getMessage());</span>
         }
     };
 
     private static byte[] readStream(final InputStream stream) throws IOException {
-<span class="fc" id="L118">        try (stream) {</span>
-<span class="fc" id="L119">            return stream.readAllBytes();</span>
+<span class="fc" id="L119">        try (stream) {</span>
+<span class="fc" id="L120">            return stream.readAllBytes();</span>
         }
     }
 
@@ -125,51 +126,54 @@ public final class Encoders {
      * multipart content is a simple message implementing the minimal multipart content specification - you may want to
      * find a more robust implementation if you require a more detailed multipart API.
      */
-<span class="fc" id="L128">    public static Function&lt;Object, byte[]&gt; multipart = obj -&gt; {</span>
-<span class="fc bfc" id="L129" title="All 2 branches covered.">        if (!(obj instanceof MultipartResponseContent)) {</span>
-<span class="fc" id="L130">            throw new IllegalArgumentException(obj.getClass().getName() + &quot; found, MultipartRequestContent is required.&quot;);</span>
+    @SuppressWarnings(&quot;checkstyle:LambdaBodyLength&quot;)
+<span class="fc" id="L130">    public static final Function&lt;Object, byte[]&gt; multipart = obj -&gt; {</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        if (!(obj instanceof MultipartResponseContent)) {</span>
+<span class="fc" id="L132">            throw new IllegalArgumentException(obj.getClass().getName() + &quot; found, MultipartRequestContent is required.&quot;);</span>
         }
 
-<span class="fc" id="L133">        val mrc = (ErsatzMultipartResponseContent) obj;</span>
-<span class="fc" id="L134">        val arrays = new LinkedList&lt;byte[]&gt;();</span>
+<span class="fc" id="L135">        val mrc = (ErsatzMultipartResponseContent) obj;</span>
+<span class="fc" id="L136">        val arrays = new LinkedList&lt;byte[]&gt;();</span>
 
-<span class="fc" id="L136">        mrc.parts().forEach(p -&gt; {</span>
-<span class="fc" id="L137">            arrays.add((&quot;--&quot; + mrc.getBoundary() + &quot;\r\n&quot;).getBytes(UTF_8));</span>
+<span class="fc" id="L138">        mrc.parts().forEach(p -&gt; {</span>
+<span class="fc" id="L139">            arrays.add((&quot;--&quot; + mrc.getBoundary() + &quot;\r\n&quot;).getBytes(UTF_8));</span>
 
-<span class="fc bfc" id="L139" title="All 2 branches covered.">            if (p.getFileName() != null) {</span>
-<span class="fc" id="L140">                arrays.add((&quot;Content-Disposition: form-data; name=\&quot;&quot; + p.getFieldName() + &quot;\&quot;; filename=\&quot;&quot; + p.getFileName() + &quot;\&quot;\r\n&quot;).getBytes(UTF_8));</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">            if (p.getFileName() != null) {</span>
+<span class="fc" id="L142">                arrays.add(</span>
+<span class="fc" id="L143">                    (&quot;Content-Disposition: form-data; name=\&quot;&quot; + p.getFieldName() + &quot;\&quot;; filename=\&quot;&quot; + p.getFileName() + &quot;\&quot;\r\n&quot;).getBytes(UTF_8)</span>
+                );
             } else {
-<span class="fc" id="L142">                arrays.add((&quot;Content-Disposition: form-data; name=\&quot;&quot; + p.getFieldName() + &quot;\&quot;\r\n&quot;).getBytes(UTF_8));</span>
+<span class="fc" id="L146">                arrays.add((&quot;Content-Disposition: form-data; name=\&quot;&quot; + p.getFieldName() + &quot;\&quot;\r\n&quot;).getBytes(UTF_8));</span>
             }
 
-<span class="fc bfc" id="L145" title="All 2 branches covered.">            if (p.getTransferEncoding() != null) {</span>
-<span class="fc" id="L146">                arrays.add((&quot;Content-Transfer-Encoding: &quot; + p.getTransferEncoding() + &quot;\r\n&quot;).getBytes(UTF_8));</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">            if (p.getTransferEncoding() != null) {</span>
+<span class="fc" id="L150">                arrays.add((&quot;Content-Transfer-Encoding: &quot; + p.getTransferEncoding() + &quot;\r\n&quot;).getBytes(UTF_8));</span>
             }
 
-<span class="fc" id="L149">            arrays.add((&quot;Content-Type: &quot; + p.getContentType() + &quot;\r\n\r\n&quot;).getBytes(UTF_8));</span>
+<span class="fc" id="L153">            arrays.add((&quot;Content-Type: &quot; + p.getContentType() + &quot;\r\n\r\n&quot;).getBytes(UTF_8));</span>
 
-<span class="fc" id="L151">            final Function&lt;Object, byte[]&gt; encoderFn = mrc.encoder(p.getContentType(), p.getValue().getClass());</span>
-<span class="fc" id="L152">            final var encoded = encoderFn.apply(p.getValue());</span>
-<span class="fc" id="L153">            arrays.add(encoded);</span>
-<span class="fc" id="L154">            arrays.add(&quot;\r\n&quot;.getBytes(UTF_8));</span>
-<span class="fc" id="L155">        });</span>
+<span class="fc" id="L155">            final Function&lt;Object, byte[]&gt; encoderFn = mrc.encoder(p.getContentType(), p.getValue().getClass());</span>
+<span class="fc" id="L156">            final var encoded = encoderFn.apply(p.getValue());</span>
+<span class="fc" id="L157">            arrays.add(encoded);</span>
+<span class="fc" id="L158">            arrays.add(&quot;\r\n&quot;.getBytes(UTF_8));</span>
+<span class="fc" id="L159">        });</span>
 
-<span class="fc" id="L157">        arrays.add((&quot;--&quot; + mrc.getBoundary() + &quot;--\r\n&quot;).getBytes(UTF_8));</span>
+<span class="fc" id="L161">        arrays.add((&quot;--&quot; + mrc.getBoundary() + &quot;--\r\n&quot;).getBytes(UTF_8));</span>
 
-<span class="fc" id="L159">        return join(arrays);</span>
+<span class="fc" id="L163">        return join(arrays);</span>
     };
 
     private static byte[] toBytes(final Object obj) {
-<span class="fc bfc" id="L163" title="All 2 branches covered.">        if (obj instanceof byte[]) {</span>
-<span class="fc" id="L164">            return (byte[]) obj;</span>
-<span class="fc bfc" id="L165" title="All 2 branches covered.">        } else if (obj instanceof InputStream) {</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">        if (obj instanceof byte[]) {</span>
+<span class="fc" id="L168">            return (byte[]) obj;</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        } else if (obj instanceof InputStream) {</span>
             try {
-<span class="fc" id="L167">                return readStream((InputStream) obj);</span>
-<span class="fc" id="L168">            } catch (IOException e) {</span>
-<span class="fc" id="L169">                throw new IllegalArgumentException(&quot;Unable to read InputStream: &quot; + e.getMessage());</span>
+<span class="fc" id="L171">                return readStream((InputStream) obj);</span>
+<span class="fc" id="L172">            } catch (IOException e) {</span>
+<span class="fc" id="L173">                throw new IllegalArgumentException(&quot;Unable to read InputStream: &quot; + e.getMessage());</span>
             }
         } else {
-<span class="fc" id="L172">            return obj.toString().getBytes(UTF_8);</span>
+<span class="fc" id="L176">            return obj.toString().getBytes(UTF_8);</span>
         }
     }
 }

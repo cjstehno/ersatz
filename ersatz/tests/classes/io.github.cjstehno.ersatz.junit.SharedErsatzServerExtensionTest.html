@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - SharedErsatzServerExtensionTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>SharedErsatzServerExtensionTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/io.github.cjstehno.ersatz.junit.html">io.github.cjstehno.ersatz.junit</a> &gt; SharedErsatzServerExtensionTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">1.154s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">ensureConfig(ErsatzServer, Client)</td>
+<td class="success">1.154s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>04:57:00.606 [Test worker] INFO io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension -- Using server config from method named: serverConfig
+04:57:00.620 [Test worker] INFO io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension -- Creating server instance with provided config.
+04:57:00.625 [Test worker] INFO io.undertow -- starting server: Undertow - 2.3.7.Final
+04:57:00.627 [Test worker] DEBUG org.xnio -- Creating worker:null, pool size:16, max pool size:16, keep alive:60000, io threads:2, stack size:0
+04:57:00.646 [XNIO-2 I/O-1] DEBUG org.xnio.nio -- Started channel thread 'XNIO-2 I/O-1', selector sun.nio.ch.EPollSelectorImpl@507e7c20
+04:57:00.655 [XNIO-2 I/O-2] DEBUG org.xnio.nio -- Started channel thread 'XNIO-2 I/O-2', selector sun.nio.ch.EPollSelectorImpl@71bd2f04
+04:57:00.657 [XNIO-2 Accept] DEBUG org.xnio.nio -- Started channel thread 'XNIO-2 Accept', selector sun.nio.ch.EPollSelectorImpl@a340d30
+04:57:00.657 [Test worker] DEBUG io.undertow -- Configuring listener with protocol HTTP for interface localhost and port 0
+04:57:00.658 [Test worker] DEBUG io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Applied ports (http:34649, https:-1).
+04:57:00.659 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Started.
+04:57:00.722 [XNIO-2 task-2] DEBUG io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- Handling request(HTTP/1.1): { GET /hello(query={}, headers={Connection=[Keep-Alive], Accept-Encoding=[gzip], User-Agent=[okhttp/4.11.0], Host=[localhost:34649]}, cookies={}): &lt;-1 of null content&gt; }
+04:57:00.750 [XNIO-2 task-2] WARN io.github.cjstehno.ersatz.server.undertow.ErsatzMatchingHandler -- # Unmatched Request
+
+http GET /hello ? 
+Headers:
+ - Connection: [Keep-Alive]
+ - Accept-Encoding: [gzip]
+ - User-Agent: [okhttp/4.11.0]
+ - Host: [localhost:34649]
+Cookies:
+Character-Encoding: ISO-8859-1
+Content:
+  []
+
+# Requirements
+
+Requirement 0 (HTTP method is (&lt;GET&gt;) &amp; Path matches an instance of java.lang.String):
+  ?[31mX Request header name is a string equal to &quot;X-Foo&quot; ignoring case and values are a collection containing &quot;BAR&quot;?[0m
+
+# Expectations
+
+Expectation 0 (2 matchers):
+  ?[32m+?[0m HTTP method is (&lt;GET&gt;)
+  ?[32m+?[0m Path matches &quot;/hello&quot;
+  (2 matchers: 2 matched, 0 failed)
+
+
+04:57:01.810 [Test worker] ERROR io.github.cjstehno.ersatz.impl.ExpectationsImpl -- Call count mismatch -&gt; Expectations (ErsatzRequestWithContent): HTTP method is (&lt;GET&gt;), Path matches &quot;/hello&quot;, and Called a value equal to or greater than &lt;1&gt;
+04:57:01.813 [Test worker] INFO io.undertow -- stopping server: Undertow - 2.3.7.Final
+04:57:01.823 [Test worker] INFO io.github.cjstehno.ersatz.server.undertow.UndertowUnderlyingServer -- Stopped.
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.1.1</a> at Aug 15, 2023, 4:57:08 AM</p>
+</div>
+</div>
+</body>
+</html>
