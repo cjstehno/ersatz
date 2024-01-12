@@ -23,13 +23,16 @@ repositories {
 
 dependencies {
     implementation project(':ersatz')
-    implementation "org.apache.groovy:groovy:$groovyVersion"
-    implementation "org.apache.groovy:groovy-json:$groovyVersion"
+    
+    compileOnly "org.apache.groovy:groovy:$groovyVersion"
+    compileOnly "org.apache.groovy:groovy-json:$groovyVersion"
 
     testImplementation 'io.github.cjstehno:test-things:0.1.0'
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+    testImplementation "org.apache.groovy:groovy:$groovyVersion"
+    testImplementation "org.apache.groovy:groovy-json:$groovyVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
 
