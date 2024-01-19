@@ -8,14 +8,14 @@ Project artifacts are available via the Maven Central repository.
 
 For Gradle:
 
-    testImplementation 'io.github.cjstehno.ersatz-groovy:ersatz:4.0.0'
+    testImplementation 'io.github.cjstehno.ersatz-groovy:ersatz:4.0.1'
 
 For Maven:
 
     <dependency>
         <groupId>io.github.cjstehno.ersatz</groupId>
         <artifactId>ersatz-groovy</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1</version>
         <scope>test</scope>
     </dependency>
     

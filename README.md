@@ -35,17 +35,17 @@ Maven, more details are provided in the
 
 ### Gradle
 
-    testImplementation 'io.github.cjstehno.ersatz:ersatz:4.0.0'
+    testImplementation 'io.github.cjstehno.ersatz:ersatz:4.0.1'
 
     // or, for the Groovy DSL extensions
-    testImplementation 'io.github.cjstehno.ersatz:ersatz-groovy:4.0.0'
+    testImplementation 'io.github.cjstehno.ersatz:ersatz-groovy:4.0.1'
 
 ### Maven
 
     <dependency>
         <groupId>io.github.cjstehno.ersatz</groupId>
         <artifactId>ersatz</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1</version>
         <scope>test</scope>
     </dependency>
     
@@ -53,7 +53,7 @@ Maven, more details are provided in the
     <dependency>
         <groupId>io.github.cjstehno.ersatz</groupId>
         <artifactId>ersatz-groovy</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1</version>
         <scope>test</scope>
     </dependency>
 

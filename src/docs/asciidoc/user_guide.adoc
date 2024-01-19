@@ -1,6 +1,6 @@
 = Ersatz Server User Guide
 Christopher J. Stehno
-v4.0.0, August 2023
+v4.0.1, February 2024
 :toc: left
 :toclevels: 4
 
@@ -52,14 +52,14 @@ A Gradle `gradle.build` file would have the following defined in the `dependenci
 
 [source,groovy]
 ----
-testImplementation('io.github.cjstehno.ersatz:ersatz:4.0.0:safe'){
+testImplementation('io.github.cjstehno.ersatz:ersatz:4.0.1:safe'){
     exclude group:'io.undertow', module:'undertow-core'
     exclude group:'javax.servlet', module:'javax.servlet-api'
     exclude group:'commons-fileupload', module:'commons-fileupload'
 }
 
 // or for the Groovy DSL
-testImplementation('io.github.cjstehno.ersatz:ersatz-groovy:4.0.0:safe'){
+testImplementation('io.github.cjstehno.ersatz:ersatz-groovy:4.0.1:safe'){
     exclude group:'io.undertow', module:'undertow-core'
     exclude group:'javax.servlet', module:'javax.servlet-api'
     exclude group:'commons-fileupload', module:'commons-fileupload'
@@ -81,7 +81,7 @@ For a Maven `pom.xml` entry, this would be:
     <groupId>io.github.cjstehno.ersatz</groupId>
     <artifactId>ersatz</artifactId>
     <classifier>safe</classifier>
-    <version>4.0.0</version>
+    <version>4.0.1</version>
     <scope>test</scope>
     <exclusions>
         <exclusion>
@@ -104,7 +104,7 @@ For a Maven `pom.xml` entry, this would be:
     <groupId>io.github.cjstehno.ersatz</groupId>
     <artifactId>ersatz-groovy</artifactId>
     <classifier>safe</classifier>
-    <version>4.0.0</version>
+    <version>4.0.1</version>
     <type>jar</type>
     <scope>test</scope>
     <exclusions>
