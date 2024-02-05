@@ -442,8 +442,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>Ersatz Server User Guide</h1>
 <div class="details">
 <span id="author" class="author">Christopher J. Stehno</span><br>
-<span id="revnumber">version 4.0.0,</span>
-<span id="revdate">August 2023</span>
+<span id="revnumber">version 4.0.1,</span>
+<span id="revdate">February 2024</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -905,10 +905,10 @@ The code examples throughout this document are written with either Java or Groov
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz:4.0.0'</span>
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz:4.0.1'</span>
 
 <span class="c1">// or, for the Groovy extensions</span>
-<span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:4.0.0'</span></code></pre>
+<span class="n">testImplementation</span> <span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:4.0.1'</span></code></pre>
 </div>
 </div>
 </div>
@@ -922,7 +922,7 @@ The code examples throughout this document are written with either Java or Groov
 <pre class="rouge highlight"><code data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>4.0.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>4.0.1<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 
@@ -930,7 +930,7 @@ The code examples throughout this document are written with either Java or Groov
 <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz-groovy<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>4.0.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>4.0.1<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span></code></pre>
 </div>
@@ -2811,14 +2811,14 @@ There are examples of various usage configurations in the <a href="https://githu
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz:4.0.0:safe'</span><span class="o">){</span>
+<pre class="rouge highlight"><code data-lang="groovy"><span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz:4.0.1:safe'</span><span class="o">){</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'io.undertow'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'undertow-core'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'javax.servlet'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'javax.servlet-api'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'commons-fileupload'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'commons-fileupload'</span>
 <span class="o">}</span>
 
 <span class="c1">// or for the Groovy DSL</span>
-<span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:4.0.0:safe'</span><span class="o">){</span>
+<span class="n">testImplementation</span><span class="o">(</span><span class="s1">'io.github.cjstehno.ersatz:ersatz-groovy:4.0.1:safe'</span><span class="o">){</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'io.undertow'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'undertow-core'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'javax.servlet'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'javax.servlet-api'</span>
     <span class="n">exclude</span> <span class="nl">group:</span><span class="s1">'commons-fileupload'</span><span class="o">,</span> <span class="nl">module:</span><span class="s1">'commons-fileupload'</span>
@@ -2843,7 +2843,7 @@ There are examples of various usage configurations in the <a href="https://githu
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz<span class="nt">&lt;/artifactId&gt;</span>
     <span class="nt">&lt;classifier&gt;</span>safe<span class="nt">&lt;/classifier&gt;</span>
-    <span class="nt">&lt;version&gt;</span>4.0.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>4.0.1<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
     <span class="nt">&lt;exclusions&gt;</span>
         <span class="nt">&lt;exclusion&gt;</span>
@@ -2866,7 +2866,7 @@ There are examples of various usage configurations in the <a href="https://githu
     <span class="nt">&lt;groupId&gt;</span>io.github.cjstehno.ersatz<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>ersatz-groovy<span class="nt">&lt;/artifactId&gt;</span>
     <span class="nt">&lt;classifier&gt;</span>safe<span class="nt">&lt;/classifier&gt;</span>
-    <span class="nt">&lt;version&gt;</span>4.0.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>4.0.1<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;type&gt;</span>jar<span class="nt">&lt;/type&gt;</span>
     <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
     <span class="nt">&lt;exclusions&gt;</span>
@@ -3290,8 +3290,8 @@ limitations under the License.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 4.0.0<br>
-Last updated 2023-08-15 04:49:29 -0500
+Version 4.0.1<br>
+Last updated 2024-01-19 04:37:47 -0600
 </div>
 </div>
 <style>
