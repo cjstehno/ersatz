@@ -55,10 +55,16 @@ WARNING: The HTTPS support is rudimentary and meant to test HTTPS endpoints, not
 
 ==== Keystore
 
-A default keystore is provided with the Ersatz library, and it should suffice for most test cases; however, you may need/wish to provide your own custom keystore for whatever reason. A supported keystore file may be created using the following command:
+A default keystore is provided with the Ersatz library, and it should suffice for most test cases; however, you may need/wish to provide your own custom keystore for whatever reason. A supported keystore file may be created using the following command (or something similar):
 
 ----
-./keytool -genkey -alias <NAME> -keyalg RSA -keystore <FILE_LOCATION>
+keytool -genkey -alias ersatz \
+    -keyalg RSA \
+    -dname "CN=Ersatz,OU=Ersatz,O=Ersatz,L=Nowhere,ST=Nowhere,C=US" \
+    -ext "SAN:c=DNS:localhost,IP:127.0.0.1" \
+    -validity 3650 \
+    -keystore ./src/main/resources/ersatz.jks \
+    -storepass ersatz -keypass ersatz
 ----
 
 where `<NAME>` is the key name and `<FILE_LOCATION>` is the location where the keystore file is to be created. You will be asked a few questions about the key being created. The default keystore name is `ersatz` and it has the following properties.

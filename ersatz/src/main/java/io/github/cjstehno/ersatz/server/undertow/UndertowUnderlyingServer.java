@@ -156,7 +156,7 @@ public class UndertowUnderlyingServer implements UnderlyingServer {
 
             val location = serverConfig.getKeystoreLocation() != null
                 ? serverConfig.getKeystoreLocation()
-                : ErsatzServer.class.getResource("/ersatz.keystore");
+                : ErsatzServer.class.getResource("/ersatz.jks");
 
             try (InputStream instr = location.openStream()) {
                 keyStore.load(instr, serverConfig.getKeystorePass().toCharArray());
