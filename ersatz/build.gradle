@@ -1,12 +1,12 @@
 plugins {
     id 'java-library'
-    id "com.github.hierynomus.license" version '0.16.1'
+    id 'com.github.hierynomus.license' version '0.16.1'
     id 'maven-publish'
-    id 'com.github.ben-manes.versions' version '0.47.0'
-    id "com.github.johnrengelman.shadow" version '8.1.1'
+    id 'com.github.ben-manes.versions' version '0.51.0'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'jacoco'
     id 'signing'
-    id 'com.adarshr.test-logger' version '3.2.0'
+    id 'com.adarshr.test-logger' version '4.0.0'
     id 'checkstyle'
 }
 
@@ -38,7 +38,7 @@ dependencies {
     implementation 'commons-io:commons-io:2.13.0'
 
     // this is required for the forwarding
-    api 'com.squareup.okhttp3:okhttp:4.11.0'
+    api 'com.squareup.okhttp3:okhttp:4.12.0'
 
     // this is required for the test extension
     compileOnly "org.junit.jupiter:junit-jupiter-api:$junitVersion"
