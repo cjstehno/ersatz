@@ -22,6 +22,7 @@ import io.github.cjstehno.ersatz.junit.SharedErsatzServerExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension;
 import io.github.cjstehno.ersatz.util.HttpClientExtension.Client;
 import lombok.val;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static io.github.cjstehno.ersatz.TestAssertions.verify;
+import static io.github.cjstehno.ersatz.cfg.ContentType.APPLICATION_OCTET_STREAM;
 import static io.github.cjstehno.ersatz.util.BasicAuth.basicAuth;
 import static io.github.cjstehno.ersatz.util.HttpClientExtension.Client.basicAuthHeader;
 import static org.hamcrest.Matchers.startsWith;
@@ -128,5 +130,24 @@ public class ErsatzServerHeadExpectationsTest {
 
         assertEquals(200, client.head("/safe", builder -> basicAuthHeader(builder, "basicuser", "ba$icp@$$"), https).code());
         verify(server);
+    }
+
+    @Test void headWithContentLength(final ErsatzServer server) throws IOException {
+        server.expectations(expect -> {
+            expect.HEAD("/talking", req -> {
+                req.called(1);
+                req.responder(res -> {
+                    res.code(200);
+                    res.header("Content-Length", "123");
+                    res.contentType(APPLICATION_OCTET_STREAM);
+                });
+            });
+        });
+
+        val response = client.head("/talking");
+
+        assertEquals(200, response.code());
+        assertEquals("123", response.header("Content-Length"));
+        assertEquals(APPLICATION_OCTET_STREAM.toString(), response.header("Content-Type"));
     }
 }
