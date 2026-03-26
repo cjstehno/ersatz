@@ -3,7 +3,7 @@ plugins {
     id 'groovy'
     id 'maven-publish'
     id "com.github.hierynomus.license" version '0.16.1'
-    id "com.github.johnrengelman.shadow" version '8.1.1'
+    id "com.gradleup.shadow" version '8.3.5'
     id 'jacoco'
     id 'signing'
     id 'com.adarshr.test-logger' version '4.0.0'
@@ -14,8 +14,8 @@ plugins {
 group = rootProject.group
 version = rootProject.version
 
-sourceCompatibility = 17
-targetCompatibility = 17
+sourceCompatibility = 21
+targetCompatibility = 21
 
 repositories {
     mavenCentral()
