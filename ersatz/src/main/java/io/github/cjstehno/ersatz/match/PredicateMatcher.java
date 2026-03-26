@@ -25,6 +25,8 @@ import static lombok.AccessLevel.PRIVATE;
 
 /**
  * Matcher used to match based on the result of a Predicate.
+ * 
+ * @param <T> the type of object being tested
  */
 @RequiredArgsConstructor(access = PRIVATE)
 public class PredicateMatcher<T> extends BaseMatcher<T> {

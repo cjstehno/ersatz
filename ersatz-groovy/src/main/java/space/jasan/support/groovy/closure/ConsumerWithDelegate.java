@@ -28,6 +28,8 @@ import java.util.function.Consumer;
 
 /**
  * Utility for converting closure to consumer.
+ * 
+ * @param <T> the parameter
  */
 public class ConsumerWithDelegate<T> implements Consumer<T> {
 
