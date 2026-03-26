@@ -1,5 +1,10 @@
 == What's New
 
+=== In 4.1
+
+* Requires JDK 21
+* General dependency updates
+
 === In 4.0
 
 * Updated Groovy support to 4.x and switched to the new coordinates - it _should_ still work with older Groovy versions, please file an issue if you are unable to use 3.x versions.
@@ -29,7 +34,7 @@
 === In 3.0
 
 * Not directly backward compatible with the 2.x codebase (see migration notes below).
-* Requires Java 21+
+* Requires Java 17+
 * Removed support for legacy JUnit -- now only 5+ is directly supported.
 * Added new option, `ServerConfig::logResponseContent()`, to enable response content rendering (disabled by default).
 * Removed Web Sockets support –- this may be re-implemented later with a more stable API if there is any interest.
